@@ -4,6 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AngularFirestoreDocument } from '@angular/fire/compat/firestore';
+import { HttpClient } from '@angular/common/http';
 export interface User {
   uid: string;
   email: string;
@@ -18,9 +19,10 @@ export class AuthService {
   authState: any;
   afAuth: any;
   afs: any;
+  emailActivationToken:any;
   public showLoader:boolean=false;
 
-  constructor(private afu: AngularFireAuth, private router: Router,public ngZone: NgZone) {
+  constructor(private afu: AngularFireAuth, private router: Router,public ngZone: NgZone,private http: HttpClient) {
     this.afu.authState.subscribe((auth: any) => {
       this.authState = auth;
     });
@@ -144,5 +146,17 @@ ForgotPassword(passwordResetEmail:any) {
     }).catch((error:any) => {
       window.alert(error);
     });
+}
+
+login(email: string, password: string) {
+  return this.http
+    .post<any>(`${environment.apiUrl}/login/`, {
+      email,
+      password,
+    })
+  }
+register(data:any){
+  return this.http.post<any>(`${environment.apiUrl}/signup/`, data )  
+
 }
 }

@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -24,12 +25,16 @@ export const admin: Routes = [
     loadComponent: () =>
       import('./under-maintainance/under-maintainance.component').then((m) => m.UnderMaintainanceComponent),
   },
-
+  {
+    path: 'email-activation',
+    loadComponent: () =>
+      import('./email-activation/email-activation.component').then((m) => m.EmailActivationComponent),
+  },
 
 ]}
 ];
 @NgModule({
-  imports: [RouterModule.forChild(admin)],
+  imports: [RouterModule.forChild(admin),HttpClientModule],
   exports: [RouterModule],
 })
 export class authenticationRoutingModule {

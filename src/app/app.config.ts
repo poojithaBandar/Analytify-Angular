@@ -14,12 +14,15 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { ToastrModule } from 'ngx-toastr';
+import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(App_Route),RouterOutlet,ColorPickerModule,ColorPickerService,provideAnimations(),  AngularFireModule,
+    provideHttpClient(),
     AngularFireDatabaseModule,
     AngularFirestoreModule,
     AngularFireAuthModule,
+    HttpClientModule,
   importProvidersFrom(CalendarModule.forRoot({
     provide: DateAdapter,
     useFactory: adapterFactory,

@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  // production: true,
   firebase: {
     apiKey: "************************************",
     authDomain: "**********************************************",
@@ -9,4 +9,7 @@ export const environment = {
     appId: "**********************************************",
     measurementId: "**********************************************"
   },
+  production: false,
+  apiUrl:'http://50.18.24.167/api',
+     //prod_domain
 };

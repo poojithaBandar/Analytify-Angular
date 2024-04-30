@@ -10,24 +10,30 @@
                             <div class="card shadow-none">
                                 <div class="card-body p-sm-6">
                                     <div class="text-center mb-4">
-                                        <h4 class="mb-1">Forgot Password?</h4>
-                                        <p>Enter your email address registered on your account</p>
+                                        <h4 class="mb-1">Email Activation</h4>
+                                        <p>Enter otp sent to registered E-mail.</p>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="mb-3">
-                                                <label class="mb-2 fw-500">Email<span class="text-danger ms-1">*</span></label>
-                                                <input class="form-control ms-0" type="email" placeholder="Enter your email">
+                                                <label class="mb-2 fw-500">OTP<span class="text-danger ms-1">*</span></label>
+                                                <ng-otp-input [config]="config" (onInputChange)="onOtpChange($event)"></ng-otp-input>   
                                             </div>
                                         </div>
                                         <div class="col-xl-12">
                                             <div class="d-grid mb-3">
                                                 <a routerLink="/dashboard" class="btn btn-primary"> Submit</a>
-                                            </div>
+                                            </div>                                      
                                             <div class="text-center">
-                                                <p class="mb-0 tx-14">Remembered your password?
-                                                    <a routerLink="/authentication/login" class="tx-primary ms-1 text-decoration-underline">Sign In</a>
-                                                </p>
+                                                    <!-- <a routerLink="/authentication/login" class="tx-primary ms-1 text-decoration-underline">Send again</a> -->
+                                                    <div style="float: right;">
+                                                        @if(displayTimer){
+                                                        <p >Didn't recieved otp? Resend in {{ display }}s</p>
+                                                        }
+                                                        @if(resendOtp){
+                                                        <a >Resend OTP</a>
+                                                        }
+                                                    </div>
                                             </div>
                                         </div>
                                     </div>

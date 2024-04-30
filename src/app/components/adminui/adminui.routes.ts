@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { authGuard } from '../../auth.guard';
 
 export const admin: Routes = [
  {path:'adminui',children:[ {
   path: 'card-design',
+  // canLoad:[authGuard],
+  canActivate:[authGuard],
   loadComponent: () =>
     import('./card-design/card-design.component').then((m) => m.CardDesignComponent),
 },

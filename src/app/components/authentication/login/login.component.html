@@ -2,7 +2,7 @@
      <!-- CONTAINER OPEN -->
      <div class="">
         <div class="text-center">
-            <a routerLink="/dashboard"><img src="./assets/images/brand/desktop-dark.png" class="header-brand-img" alt=""></a>
+            <a routerLink="/dashboard"><img src="./assets/images/brand/insightappstext.png" class="header-brand-img" alt=""></a>
         </div>
     </div>
     <div class="container-lg">
@@ -14,18 +14,19 @@
                             <h4 class="mb-1">Sign In</h4>
                             <p>Sign in to your account to continue.</p>
                         </div>
-                        <div class="row">
+                        <div class="row" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                            <form>
                             <div class="col-sm-12">
                                 <div class="mb-3">
                                     <label class="mb-2 fw-500">Email<span class="text-danger ms-1">*</span></label>
-                                    <input class="form-control ms-0" type="email" placeholder="Enter your Email">
+                                    <input class="form-control ms-0" type="email" formControlName="email" placeholder="Enter your Email">
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <div class="mb-3">
                                     <label class="mb-2 fw-500">Password<span class="text-danger ms-1">*</span></label>
                                     <div >
-                                        <input type="password" class="form-control" id="input-password" placeholder="Password">
+                                        <input type="password" class="form-control" id="input-password" formControlName="password" placeholder="Password">
                                     </div>
                                 </div>
                             </div>
@@ -42,7 +43,8 @@
                                     </div>
                                 </div>
                                 <div class="d-grid mb-3">
-                                    <a routerLink="/dashboard" class="btn btn-primary"> Login</a>
+                                    <button routerLink="/dashboard" class="btn btn-primary" [disabled]="!loginForm.valid "
+                                    type="submit"> Login</button>
                                 </div>
                                 <div class="text-center">
                                     <p class="mb-0 tx-14">Don't have an account yet?
@@ -50,6 +52,7 @@
                                     </p>
                                 </div>
                             </div>
+                            </form>
                         </div>
                         <p class="text-center mt-3 mb-2">Signin with</p>
                         <div class="d-flex justify-content-center">
