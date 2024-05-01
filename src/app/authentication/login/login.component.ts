@@ -73,35 +73,35 @@ export class LoginComponent {
     this._error = { name: '', message: '' };
   }
 
-  login() {
-    console.log(this.loginForm)
+  // login() {
+  //   console.log(this.loginForm)
 
-    // this.disabled = "btn-loading"
-    this.clearErrorMessage();
-    if (this.validateForm(this.email, this.password)) {
-      this.authservice
-        .loginWithEmail(this.email, this.password)
-        .then(() => {
-          this.router.navigate(['/dashboard']);
-          console.clear();
-          this.toastr.success('log in successful','vexel', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-          });
-        })
-        .catch((_error: any) => {
-          this._error = _error;
-          this.router.navigate(['/']);
-        });
+  //   // this.disabled = "btn-loading"
+  //   this.clearErrorMessage();
+  //   if (this.validateForm(this.email, this.password)) {
+  //     this.authservice
+  //       .loginWithEmail(this.email, this.password)
+  //       .then(() => {
+  //         this.router.navigate(['/dashboard']);
+  //         console.clear();
+  //         this.toastr.success('log in successful','vexel', {
+  //           timeOut: 3000,
+  //           positionClass: 'toast-top-right',
+  //         });
+  //       })
+  //       .catch((_error: any) => {
+  //         this._error = _error;
+  //         this.router.navigate(['/']);
+  //       });
      
-    }
-    else {
-      this.toastr.error('Invalid details','vexel', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-      });
-    }
-  }
+  //   }
+  //   else {
+  //     this.toastr.error('Invalid details','vexel', {
+  //       timeOut: 3000,
+  //       positionClass: 'toast-top-right',
+  //     });
+  //   }
+  // }
 
   validateForm(email: string, password: string) {
     if (email.length === 0) {

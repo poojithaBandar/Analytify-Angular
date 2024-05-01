@@ -20,13 +20,18 @@ export const admin: Routes = [
     path: 'forgot-password',
     loadComponent: () =>
       import('./forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
-  }, {
+  },
+  {
+    path: 'reset-password/:token',
+    loadComponent: () =>
+      import('./forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+  },  {
     path: 'under-maintainance',
     loadComponent: () =>
       import('./under-maintainance/under-maintainance.component').then((m) => m.UnderMaintainanceComponent),
   },
   {
-    path: 'email-activation',
+    path: 'email-activation/:token',
     loadComponent: () =>
       import('./email-activation/email-activation.component').then((m) => m.EmailActivationComponent),
   },

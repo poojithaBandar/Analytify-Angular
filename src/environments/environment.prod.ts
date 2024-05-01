@@ -10,6 +10,6 @@ export const environment = {
     measurementId: "**********************************************"
   },
   production: false,
-  apiUrl:'http://50.18.24.167/api',
+  apiUrl:'http://50.18.24.167:50/v1',
      //prod_domain
 };

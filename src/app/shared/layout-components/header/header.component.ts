@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Menu, NavService } from '../../services/navservice';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 interface Item {
   id: number;
   name: string;
@@ -17,8 +19,9 @@ export class HeaderComponent implements OnInit {
   cartItemCount: number = 5;
   notificationCount: number = 4;
   public isCollapsed = true;
+  userName:any;
 collapse: any;
-  constructor(public navServices: NavService,public modalService:NgbModal,private cdr: ChangeDetectorRef,
+  constructor(public navServices: NavService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private authService:AuthService,private router:Router,
     private elementRef: ElementRef,public renderer:Renderer2) {
   }  SwicherOpen(){
     document.querySelector('.offcanvas-end')?.classList.add('show')
@@ -200,8 +203,16 @@ collapse: any;
     this.navServices.items.subscribe((menuItems) => {
       this.items = menuItems;
     });
+    const currentUser = localStorage.getItem( 'username' );
+    this.userName = JSON.parse( currentUser! )['userName'];
   }
-  
+  logOut() {
+    this.authService.logOut().subscribe((res) => {
+      if (!res.success) {
+        this.router.navigate(['/authentication/signin']);
+      }
+    });
+  }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];
       // items array which stores the elements

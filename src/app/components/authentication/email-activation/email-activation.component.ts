@@ -1,8 +1,10 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, Inject, Renderer2 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgOtpInputModule } from 'ng-otp-input';
+import Swal from 'sweetalert2';
+import { AuthService } from '../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-email-activation',
@@ -27,8 +29,8 @@ export class EmailActivationComponent {
   display: any;
   resendOtp: boolean = false;
   displayTimer: boolean = false;
-
-constructor( @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,
+  otp:any;
+constructor( @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,private router:Router,
 private renderer: Renderer2,private sanitizer: DomSanitizer){}
 
 ngOnInit(): void {
@@ -43,9 +45,7 @@ ngOnDestroy(): void {
   this.renderer.removeClass(this.document.body, 'login-img');
   this.renderer.removeClass(this.document.body, 'ltr');
 }
-onOtpChange(number:any){
 
-}
 
 start(minute:any) {
   this.displayTimer = true;
@@ -84,4 +84,45 @@ start(minute:any) {
     }
   }, 1000);
 }
+onOtpChange(value:any){
+  this.otp=value;
+}
+validateOtp(){
+  const obj ={
+    otp:this.otp
+  }
+  this.authService.validateOtp(obj)
+  .subscribe(
+    {
+      next:(data) => {
+        console.log(data);
+        if(data.message ='Account successfully activated'){
+          Swal.fire({
+            icon: 'success',
+            title: 'Congratulations!',
+            text: 'Your Email is verified!, Please Login',
+            width: '400px',
+          })
+          this.router.navigate(['/authentication/login']);
+        }
+        
+                  
+      },
+      error:(error)=>{
+        console.log(error)
+        if(error){
+          Swal.fire({
+            icon: 'error',
+            title: 'Congratulations!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      }
+    }
+  )
+}
+
+
+
 }

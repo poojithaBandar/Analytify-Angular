@@ -21,7 +21,7 @@
                 <img src="./assets/images/firebase.svg" class="firebase" alt="" />
               </a>
               <ng-template ngbNavContent>
-                <form [formGroup]="loginForm"   (ngSubmit)="login()">
+                <form [formGroup]="loginForm"   >
                     @if(errorMessage.length > 0){
     
                         <p  class="text-danger">

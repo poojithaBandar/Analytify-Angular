@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, ElementRef, Inject, Renderer2 } from '@angular/core';
+import { Component, ElementRef, Inject, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
@@ -19,6 +19,7 @@ export class RegisterComponent {
   signupForm:FormGroup;
   confirmPasswordError = false;
   emailActivationToken:any;
+  @ViewChild('inputRef') inputRef!: ElementRef;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,
@@ -61,6 +62,10 @@ export class RegisterComponent {
     this.renderer.removeClass(this.document.body, 'login-img');
     this.renderer.removeClass(this.document.body, 'ltr');
 }
+ngAfterViewInit() {
+  this.inputRef.nativeElement.setAttribute('autocomplete', 'off');
+}
+
 showPassword = false;
 showPassword1 = false;
 toggleClass = "off-line";
@@ -123,7 +128,8 @@ checkConfirmPassword(){
 
 
 onSubmit(){
-  if (this.signupForm.invalid) {
+  this.checkConfirmPassword();
+  if (this.signupForm.invalid || this.confirmPasswordError) {
     return;
   } else {
     this.authService.register(this.signupForm.value)
@@ -133,12 +139,12 @@ onSubmit(){
           console.log(data);
           this.emailActivationToken = data.emailActivationToken;
           this.authService.emailActivationToken = data.emailActivationToken;
-          this.router.navigate(['/authentication/activate_account/'+ this.emailActivationToken]);
+          this.router.navigate(['/authentication/email-activation/'+ this.emailActivationToken]);
 
         },
         error:(error:any)=>{
           console.log(error);
-          if(error.error.message==='username already exists'){
+          if(error){
             Swal.fire({
               icon: 'error',
               title: 'oops!',

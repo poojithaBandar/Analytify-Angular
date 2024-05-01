@@ -33,12 +33,12 @@
                                         <div class="col-sm-12">
                                             <div class="mb-3">
                                                 <label class="mb-2 fw-500">Email<span class="text-danger ms-1">*</span></label>
-                                                <input class="form-control ms-0" type="email" formControlName="email" autocomplete="off" placeholder="Enter your Email">
-                                                @if(signupForm.get('email')?.hasError('required')){
+                                                <input class="form-control ms-0" type="email" formControlName="email" autocomplete="off" #inputRef placeholder="Enter your Email">
+                                                @if(signupForm.get('email')?.hasError('required') && signupForm.get('email')?.touched){
                                                     <div class="text-danger">Email required</div>
                                                 }
                                                 @if(signupForm.get('email')?.hasError('pattern')){
-                                                    <div class="text-danger">Email</div>
+                                                    <div class="text-danger">Please enter a valid email address</div>
                                                 }
                                             </div>
                                         </div>
@@ -46,16 +46,17 @@
                                             <div class="mb-3">
                                                 <label class="mb-2 fw-500">Create a Password<span class="text-danger ms-1">*</span></label>
                                                 <div class="input-group has-validation">
-                                                    <input type="password" class="form-control ms-0 border-end-0" placeholder="Create a Password" formControlname="password" id="signup-password" 
+                                                    <input type="password" class="form-control ms-0 border-end-0" placeholder="Create a Password" formControlName="password" #inputRef id="signup-password" 
                                                     [type]="showPassword ? 'text' : 'password'" autocomplete="off">
                                                      <button class="btn btn-light" (click)="toggleVisibility()" type="button" id="button-addon2">
                                                         <i class="ri-eye-{{toggleClass}} align-middle"></i></button>
-                                                        <div class="invalid-feedback">
+                                                        <div class="invalid-feedback" style="display: block !important;">
                                                             <!-- required -->
                                                             <!-- <span class="text-danger" *ngIf="(f.password.dirty || submitted) && !requiredValid">Password is required</span> -->
                                                 
                                                             <!-- password validation rules -->
-                                                            <div id="validation-rules" class="mt-3" >
+                                                            @if(requiredValid){
+                                                            <div id="validation-rules" class="mt-3"  >
                                                               <!-- minlength -->
                                                               <div class="pwd_character" [ngClass]="{ 'text-success': minLengthValid, 'text-danger': !minLengthValid }">
                                                                 <i [attr.class]="minLengthValid ? 'bi-check-square-fill' : 'bi-x-square'"></i>
@@ -86,7 +87,7 @@
                                                                 Must contain at least 1 special character
                                                               </div>
                                                             </div>
-                                                        
+                                                            }
                                                           </div>
                                                 </div>
                                             </div>
@@ -95,13 +96,13 @@
                                             <div class="mb-3">
                                                 <label class="mb-2 fw-500">Confirm Password<span class="text-danger ms-1">*</span></label>
                                                 <div class="input-group has-validation">
-                                                    <input type="password" class="form-control ms-0 border-end-0" placeholder="Confirm your Password" (input)="checkConfirmPassword()" formControlName="conformpassword" id="signup-confirmpassword"
+                                                    <input type="password" class="form-control ms-0 border-end-0" placeholder="Confirm your Password" formControlName="conformpassword" id="signup-confirmpassword"
                                                     [type]="showPassword1 ? 'text' : 'password'" autocomplete="off">
                                                         <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
                                                 </div>
-                                                <!-- @if(confirmPasswordError){
+                                                @if(confirmPasswordError){
                                                     <div class="text-danger">Password Didn't match</div>
-                                                } -->
+                                                }
                                             </div>
                                         </div>
                                         <div class="col-xl-12">
@@ -112,7 +113,7 @@
                                                 </label>
                                                 </div>
                                             <div class="d-grid mb-3">
-                                                <button type="submit" [disabled]="!signupForm.valid " class="btn btn-primary"> Create an Account</button>
+                                                <button type="submit" [disabled]="!signupForm.valid" class="btn btn-primary"> Create an Account</button>
                                             </div>
                                             <div class="text-center">
                                                 <p class="mb-0 tx-14">Already have an account ?

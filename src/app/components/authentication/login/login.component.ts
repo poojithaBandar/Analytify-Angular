@@ -47,7 +47,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
   next:(data:any) => {
     console.log(data);   
     const userToken = { Token: data.accessToken,};
-    const userName = { userName: data.name};
+    const userName = { userName: data.username};
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
     if(data.accessToken){
