@@ -1,5 +1,113 @@
-<app-page-header title="Widgets" title1="Widgets" activeitem="Widgets"></app-page-header>
-      <!-- CONTAINER -->
+  <app-page-header title="Drog & Drop" title1="Widgets" activeitem="Widgets"></app-page-header>
+ 
+
+  <div cdkDropListGroup>
+    <div class="example-container">
+      <h2>To do</h2>
+  
+      <div
+        cdkDropList
+        [cdkDropListData]="todo"
+        class="example-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (item of todo; track item) {
+          <div class="example-box" cdkDrag>{{item}}</div>
+        }
+      </div>
+    </div>
+  
+    <div class="example-container">
+      <h2>Done</h2>
+  
+      <div
+        cdkDropList
+        [cdkDropListData]="done"
+        class="example-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (item of done; track item) {
+          <div class="example-box" cdkDrag>{{item}}</div>
+        }
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- Copyright 2024 Google LLC. All Rights Reserved.
+      Use of this source code is governed by an MIT-style license that
+      can be found in the LICENSE file at https://angular.io/license -->
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  <!--   CONTAINER 
       <div class="main-container container-fluid">
 
        
@@ -790,7 +898,7 @@
                             [dataLabels]="chartOptions.dataLabels" [plotOptions]="chartOptions.plotOptions"
                             [yaxis]="chartOptions.yaxis" [fill]="chartOptions.fill" [stroke]="chartOptions.stroke"
                             [tooltip]="chartOptions.tooltip" [xaxis]="chartOptions.xaxis"[grid]="chartOptions.grid"></apx-chart>
-                            <!-- <div echarts [options]="echartLineBarOption">  </div> -->
+                             <div echarts [options]="echartLineBarOption">  </div>
 
                         </div>
                     </div>
@@ -1241,4 +1349,4 @@
 </div>
 
 </div>
-<!-- CONTAINER CLOSED -->
+ CONTAINER CLOSED -->

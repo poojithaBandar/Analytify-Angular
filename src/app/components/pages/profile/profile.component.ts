@@ -7,20 +7,28 @@ import {
  } from '@ks89/angular-modal-gallery';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { Gallery, GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule ,NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
+import { PagesService } from '../pages.service';
+
 @Component({
   selector: 'app-profile',
   standalone:true,
-  imports: [SharedModule, NgbModule, GalleryModule,LightboxModule],
+  imports: [SharedModule, NgbModule, GalleryModule,LightboxModule,FormsModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent {
   url1:string = '';
+  postGreServerName = "e-commerce.cj3oddyv0bsk.us-west-1.rds.amazonaws.com";
+  postGrePortName = "5432";
+  postGreDatabaseName = "insightapps";
+  postGreUserName = "postgres";
+  PostGrePassword = "Welcome!234";
   handleFileInput(event: any): void {
     const file = event.target.files[0];
     if (file) { 
@@ -36,13 +44,38 @@ export class ProfileComponent {
 
   imageData = data;
 
-  constructor(public gallery: Gallery) {}
+  constructor(public gallery: Gallery,private modalService: NgbModal,private pageService: PagesService) {}
 
   ngOnInit() {
     // Creat gallery items
     this.items = this.imageData.map((item) => {
       return new ImageItem({ src: item.srcUrl, thumb: item.previewUrl });
     });
+  }
+  Openmdo(OpenmdoModal: any) {
+    this.modalService.open(OpenmdoModal);
+  }
+  Openfat(OpenfatModal: any) {
+    this.modalService.open(OpenfatModal);
+  }
+  postgreSignIn(){
+    const obj={
+        "database_type":"postgresql",
+        "hostname":this.postGreServerName,
+        "port":this.postGrePortName,
+        "username":this.postGreUserName,
+        "password":this.PostGrePassword,
+        "database": this.postGreDatabaseName
+    }
+      this.pageService.postGreSqlConnection(obj).subscribe({next: (data) => {
+            console.log(data);
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        }
+      )
+    
   }
 }  
 

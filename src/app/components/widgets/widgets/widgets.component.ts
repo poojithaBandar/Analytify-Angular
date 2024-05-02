@@ -9,16 +9,82 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+
+import {
+  CdkDragDrop,
+  CdkDrag,
+  CdkDropList,
+  CdkDropListGroup,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-widgets',
   standalone:true,
-  imports: [RouterModule,LeafletModule,NgApexchartsModule,SharedModule,NgbModule],
-  
+  imports: [RouterModule,LeafletModule,NgApexchartsModule,SharedModule,NgbModule,CdkDropListGroup, CdkDropList, CdkDrag],
   templateUrl: './widgets.component.html',
   styleUrls: ['./widgets.component.scss']
 })
 export class WidgetsComponent {
-  public chartOptions5 = chartOptions5;
+
+  todo = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
+
+  done = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /* public chartOptions5 = chartOptions5;
   public chartOptions3 = chartOptions3;
   public chartOptions4 = chartOptions4;
   public echartLineBarOption:Partial<any> = chartData.echartLineBarOption;
@@ -65,5 +131,5 @@ export class WidgetsComponent {
     el.scrollIntoView({ behavior: 'smooth' });
   }
   
-  scrolled = false;
+  scrolled = false;*/
 }

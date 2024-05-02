@@ -21,7 +21,7 @@
                                             Light
                                         </label>
                                         <input class="form-check-input" type="radio" name="theme-style" id="switcher-light-theme"
-                                        (click)="themeChange('light','light')" [checked]="localdata['vexeldarktheme']!='dark'"
+                                        (click)="themeChange('light','light')" [checked]="localdata['insightappsdarktheme']!='dark'"
                                             >
                                     </div>
                                 </div>
@@ -31,7 +31,7 @@
                                             Dark
                                         </label>
                                         <input class="form-check-input" type="radio" name="theme-style" id="switcher-dark-theme"
-                                        (click)="themeChange('dark','dark')" [checked]="localdata['vexeldarktheme']=='dark'">
+                                        (click)="themeChange('dark','dark')" [checked]="localdata['insightappsdarktheme']=='dark'">
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
                                         <label class="form-check-label" for="switcher-ltr">
                                             LTR
                                         </label>
-                                        <input class="form-check-input" type="radio" name="direction" id="switcher-ltr" (click)="DirectionsChange('ltr')" [checked]="localdata['vexel-dir'] != 'rtl'">
+                                        <input class="form-check-input" type="radio" name="direction" id="switcher-ltr" (click)="DirectionsChange('ltr')" [checked]="localdata['insightapps-dir'] != 'rtl'">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -53,7 +53,7 @@
                                             RTL
                                         </label>
                                         <input class="form-check-input" type="radio" name="direction" id="switcher-rtl" (click)="DirectionsChange('rtl')"
-                                        [checked]="localdata['vexel-dir'] == 'rtl'">
+                                        [checked]="localdata['insightapps-dir'] == 'rtl'">
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="navigation-style" id="switcher-vertical"
                                         (click)="NavigationChange('vertical')"
-                                        [checked]="localdata['vexel-nav-mode'] != 'horizontal'">
+                                        [checked]="localdata['insightapps-nav-mode'] != 'horizontal'">
                                     </div>
                                 </div>
                                 <div class="col-sm-4 col-6">
@@ -77,7 +77,7 @@
                                             Horizontal
                                         </label>
                                         <input class="form-check-input" type="radio" name="navigation-style"
-                                            id="switcher-horizontal" [checked]="localdata['vexel-nav-mode'] == 'horizontal'"
+                                            id="switcher-horizontal" [checked]="localdata['insightapps-nav-mode'] == 'horizontal'"
                                             (click)="NavigationChange('horizontal')">
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                             Menu Click
                                         </label>
                                         <input class="form-check-input" type="radio" name="navigation-menu-styles"
-                                            id="switcher-menu-click" (click)="Menus('menu-click-closed', 'menu-click')"[checked]="localdata['vexelMenu'] == 'menu-click'">
+                                            id="switcher-menu-click" (click)="Menus('menu-click-closed', 'menu-click')"[checked]="localdata['insightappsMenu'] == 'menu-click'">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -102,7 +102,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="navigation-menu-styles"
                                             id="switcher-menu-hover" (click)="Menus('menu-hover-closed', 'menu-hover')"
-                                            [checked]="localdata['vexelMenu'] == 'menu-hover'">
+                                            [checked]="localdata['insightappsMenu'] == 'menu-hover'">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -112,7 +112,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="navigation-menu-styles"
                                             id="switcher-icon-click"  (click)="Menus('icon-click-closed', 'icon-click')"
-                                            [checked]="localdata['vexelMenu'] == 'icon-click'">
+                                            [checked]="localdata['insightappsMenu'] == 'icon-click'">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -122,7 +122,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="navigation-menu-styles"
                                             id="switcher-icon-hover" (click)="Menus('icon-hover-closed', 'icon-hover')"
-                                            [checked]="localdata['vexelMenu'] == 'icon-hover'">
+                                            [checked]="localdata['insightappsMenu'] == 'icon-hover'">
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +137,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
                                             id="switcher-default-menu"  (click)="SideMenus('overlay', '')"
-                                            [checked]="localdata['vexelverticalstyles']  == 'default-menu'|| !localdata['vexelverticalstyles']&&!localdata['vexelMenu']">
+                                            [checked]="localdata['insightappsverticalstyles']  == 'default-menu'|| !localdata['insightappsverticalstyles']&&!localdata['insightappsMenu']">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -147,7 +147,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
                                             id="switcher-closed-menu"(click)="SideMenus('close-menu-close', 'closed')"
-                                            [checked]="localdata['vexelverticalstyles'] == 'closed'">
+                                            [checked]="localdata['insightappsverticalstyles'] == 'closed'">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -157,7 +157,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
                                             id="switcher-icontext-menu" (click)="SideMenus('icon-text-close', 'icontext')"
-                                            [checked]="localdata['vexelverticalstyles'] == 'icontext'">
+                                            [checked]="localdata['insightappsverticalstyles'] == 'icontext'">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -167,7 +167,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
                                             id="switcher-icon-overlay" (click)="SideMenus('icon-overlay-close', 'overlay')"
-                                            [checked]="localdata['vexelverticalstyles'] == 'overlay'">
+                                            [checked]="localdata['insightappsverticalstyles'] == 'overlay'">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -177,7 +177,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
                                             id="switcher-detached" (click)="SideMenus('detached-close', 'detached')"
-                                            [checked]="localdata['vexelverticalstyles'] == 'detached'">
+                                            [checked]="localdata['insightappsverticalstyles'] == 'detached'">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -187,7 +187,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
                                             id="switcher-double-menu"  (click)="SideMenus('double-menu-open', 'doublemenu')"
-                                            [checked]="localdata['vexelverticalstyles'] == 'doublemenu'">
+                                            [checked]="localdata['insightappsverticalstyles'] == 'doublemenu'">
                                     </div>
                                 </div>
                             </div>
@@ -202,7 +202,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="page-styles" id="switcher-regular"
                                         (click)="PageChange('regular')"
-                                        [checked]="localdata['vexel-page-mode'] != 'classic'">
+                                        [checked]="localdata['insightapps-page-mode'] != 'classic'">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -211,7 +211,7 @@
                                             Classic
                                         </label>
                                         <input class="form-check-input" type="radio" name="page-styles" id="switcher-classic" (click)="PageChange('classic')"
-                                        [checked]="localdata['vexel-page-mode'] == 'classic'">
+                                        [checked]="localdata['insightapps-page-mode'] == 'classic'">
                                     </div>
                                 </div>
                             </div>
@@ -226,7 +226,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="layout-width" id="switcher-full-width"
                                         (click)="WidthChange('full-width')"
-                                        [checked]="localdata['vexel-width-mode'] != 'boxed'">
+                                        [checked]="localdata['insightapps-width-mode'] != 'boxed'">
                                     </div>
                                 </div>
                                 <div class="col-sm-4 col-6">
@@ -235,7 +235,7 @@
                                             Boxed
                                         </label>
                                         <input class="form-check-input" type="radio" name="layout-width" id="switcher-boxed" (click)="WidthChange('boxed')"
-                                        [checked]="localdata['vexel-width-mode'] == 'boxed'">
+                                        [checked]="localdata['insightapps-width-mode'] == 'boxed'">
                                     </div>
                                 </div>
                             </div>
@@ -250,7 +250,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="menu-positions" id="switcher-menu-fixed"
                                         (click)="MenuChange('fixed')"
-                                        [checked]="localdata['vexel-menu-mode'] != 'scrollable'">
+                                        [checked]="localdata['insightapps-menu-mode'] != 'scrollable'">
                                     </div>
                                 </div>
                                 <div class="col-sm-4 col-6">
@@ -259,7 +259,7 @@
                                             Scrollable
                                         </label>
                                         <input class="form-check-input" type="radio" name="menu-positions" id="switcher-menu-scroll" (click)="MenuChange('scrollable')"
-                                        [checked]="localdata['vexel-menu-mode'] == 'scrollable'">
+                                        [checked]="localdata['insightapps-menu-mode'] == 'scrollable'">
                                     </div>
                                 </div>
                             </div>
@@ -274,7 +274,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="header-positions"
                                             id="switcher-header-fixed" (click)="HeaderChange('fixed')"
-                                            [checked]="localdata['vexel-header-position'] != 'scrollable'">
+                                            [checked]="localdata['insightapps-header-position'] != 'scrollable'">
                                     </div>
                                 </div>
                                 <div class="col-sm-4 col-6">
@@ -284,7 +284,7 @@
                                         </label>
                                         <input class="form-check-input" type="radio" name="header-positions"
                                             id="switcher-header-scroll" (click)="HeaderChange('scrollable')"
-                                            [checked]="localdata['vexel-header-position'] == 'scrollable'">
+                                            [checked]="localdata['insightapps-header-position'] == 'scrollable'">
                                     </div>
                                 </div>
                             </div>
@@ -305,31 +305,31 @@
                                                     <input class="form-check-input color-input color-white" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Light Menu" type="radio" name="menu-colors"
                                                         id="switcher-menu-light"  (click)="menuTheme('light')"
-                                                        [checked]="localdata['vexel-menu-mode'] == 'light'">
+                                                        [checked]="localdata['insightapps-menu-mode'] == 'light'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-dark" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Dark Menu" type="radio" name="menu-colors"
                                                         id="switcher-menu-dark" (click)="menuTheme('dark')"
-                                                        [checked]="localdata['vexel-menu-mode'] == 'dark'">
+                                                        [checked]="localdata['insightapps-menu-mode'] == 'dark'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-primary" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Color Menu" type="radio" name="menu-colors"
                                                         id="switcher-menu-primary" (click)="menuTheme('color')"
-                                                        [checked]="localdata['vexel-menu-mode'] == 'color'">
+                                                        [checked]="localdata['insightapps-menu-mode'] == 'color'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-gradient" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Gradient Menu" type="radio" name="menu-colors"
                                                         id="switcher-menu-gradient" (click)="menuTheme('gradient')"
-                                                        [checked]="localdata['vexel-menu-mode'] == 'gradient'">
+                                                        [checked]="localdata['insightapps-menu-mode'] == 'gradient'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-transparent"
                                                         data-bs-toggle="tooltip" data-bs-placement="top" title="Transparent Menu"
                                                         type="radio" name="menu-colors" id="switcher-menu-transparent" (click)="menuTheme('transparent')"
-                                                        [checked]="localdata['vexel-menu-mode'] == 'transparent'">
+                                                        [checked]="localdata['insightapps-menu-mode'] == 'transparent'">
                                                 </div>
                                             </div>
                                             <div class="px-4 pb-3 text-muted fs-11">Note:If you want to change color Menu dynamically change from below Theme Primary color picker</div>
@@ -341,31 +341,31 @@
                                                     <input class="form-check-input color-input color-white" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Light Header" type="radio" name="header-colors"
                                                         id="switcher-header-light" (click)="headerTheme('light')"
-                                                        [checked]="localdata['vexelHeader'] == 'light'">
+                                                        [checked]="localdata['insightappsHeader'] == 'light'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-dark" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Dark Header" type="radio" name="header-colors"
                                                         id="switcher-header-dark" (click)="headerTheme('dark')"
-                                                        [checked]="localdata['vexelHeader'] == 'dark'">
+                                                        [checked]="localdata['insightappsHeader'] == 'dark'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-primary" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Color Header" type="radio" name="header-colors"
                                                         id="switcher-header-primary" (click)="headerTheme('color')"
-                                                        [checked]="localdata['vexelHeader'] == 'color'">
+                                                        [checked]="localdata['insightappsHeader'] == 'color'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-gradient" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Gradient Header" type="radio" name="header-colors"
                                                         id="switcher-header-gradient"  (click)="headerTheme('gradient')"
-                                                        [checked]="localdata['vexelHeader'] == 'gradient'">
+                                                        [checked]="localdata['insightappsHeader'] == 'gradient'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-transparent" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Transparent Header" type="radio" name="header-colors"
                                                         id="switcher-header-transparent" (click)="headerTheme('transparent')"
-                                                        [checked]="localdata['vexelHeader'] == 'transparent'">
+                                                        [checked]="localdata['insightappsHeader'] == 'transparent'">
                                                 </div>
                                             </div>
                                             <div class="px-4 pb-3 text-muted fs-11">Note:If you want to change color Header dynamically change from below Theme Primary color picker</div>
@@ -380,22 +380,22 @@
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-primary-2" type="radio"
                                                         name="theme-primary" id="switcher-primary1"  (click)="primary('92, 144, 163')"
-                                                        [checked]="localdata['vexel-primary-mode'] == '92 144 163'">
+                                                        [checked]="localdata['insightapps-primary-mode'] == '92 144 163'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-primary-3" type="radio" name="theme-primary"
                                                         id="switcher-primary2" (click)="primary('161, 90, 223')"
-                                                        [checked]="localdata['vexel-primary-mode'] == '161 90 223'">
+                                                        [checked]="localdata['insightapps-primary-mode'] == '161 90 223'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-primary-4" type="radio" name="theme-primary"
                                                         id="switcher-primary3"  (click)="primary('78, 172 ,76')"
-                                                        [checked]="localdata['vexel-primary-mode'] == '78 172 76'">
+                                                        [checked]="localdata['insightapps-primary-mode'] == '78 172 76'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-primary-5" type="radio" name="theme-primary"
                                                         id="switcher-primary4" (click)="primary('223, 90, 90')"
-                                                        [checked]="localdata['vexel-primary-mode'] == '223 90 90'">
+                                                        [checked]="localdata['insightapps-primary-mode'] == '223 90 90'">
                                                 </div>
                                                 <div class="form-check switch-select ps-0 mt-1 color-primary-light">
                                                     <div class="theme-container-primary"></div>
@@ -433,7 +433,7 @@
                                                           'dark'
                                                         )
                                                       "
-                                                      [checked]="localdata['vexel-background-mode-dark'] == '50 62 93'">
+                                                      [checked]="localdata['insightapps-background-mode-dark'] == '50 62 93'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-bg-2" type="radio"
@@ -444,7 +444,7 @@
                                                           'dark'
                                                         )
                                                       "
-                                                      [checked]="localdata['vexel-background-mode-dark'] == '81 93 50'">
+                                                      [checked]="localdata['insightapps-background-mode-dark'] == '81 93 50'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-bg-3" type="radio" name="theme-background"
@@ -456,7 +456,7 @@
                                                         )
                                                       
                                                       "
-                                                      [checked]="localdata['vexel-background-mode-dark'] == '79 50 93'">
+                                                      [checked]="localdata['insightapps-background-mode-dark'] == '79 50 93'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-bg-4" type="radio"
@@ -467,7 +467,7 @@
                                                           'dark'
                                                         )
                                                         "
-                                                        [checked]="localdata['vexel-background-mode-dark'] == '50 87 93'">
+                                                        [checked]="localdata['insightapps-background-mode-dark'] == '50 87 93'">
                                                 </div>
                                                 <div class="form-check switch-select me-3">
                                                     <input class="form-check-input color-input color-bg-5" type="radio"
@@ -476,7 +476,7 @@
                                                           'dark',
                                                           'dark'
                                                         )"
-                                                      [checked]="localdata['vexel-background-mode-dark'] == '93 50 50'">
+                                                      [checked]="localdata['insightapps-background-mode-dark'] == '93 50 50'">
                                                 </div>
                                                 <div class="form-check switch-select ps-0 mt-1 tooltip-static-demo color-bg-transparent">
                                                     <div class="theme-container-background"></div>
@@ -506,27 +506,27 @@
                                                 <div class="form-check switch-select m-2">
                                                     <input class="form-check-input bgimage-input bg-img1" type="radio"
                                                         name="theme-background" id="switcher-bg-img" (click)="ImageTheme('bgimg1')"
-                                                        [checked]="localdata['vexel-image'] == 'bgimg1'">
+                                                        [checked]="localdata['insightapps-image'] == 'bgimg1'">
                                                 </div>
                                                 <div class="form-check switch-select m-2">
                                                     <input class="form-check-input bgimage-input bg-img2" type="radio"
                                                         name="theme-background" id="switcher-bg-img1" (click)="ImageTheme('bgimg2')"
-                                                        [checked]="localdata['vexel-image'] == 'bgimg2'">
+                                                        [checked]="localdata['insightapps-image'] == 'bgimg2'">
                                                 </div>
                                                 <div class="form-check switch-select m-2">
                                                     <input class="form-check-input bgimage-input bg-img3" type="radio" name="theme-background"
                                                         id="switcher-bg-img2" (click)="ImageTheme('bgimg3')"
-                                                        [checked]="localdata['vexel-image'] == 'bgimg3'">
+                                                        [checked]="localdata['insightapps-image'] == 'bgimg3'">
                                                 </div>
                                                 <div class="form-check switch-select m-2">
                                                     <input class="form-check-input bgimage-input bg-img4" type="radio"
                                                         name="theme-background" id="switcher-bg-img3" (click)="ImageTheme('bgimg4')"
-                                                        [checked]="localdata['vexel-image'] == 'bgimg4'">
+                                                        [checked]="localdata['insightapps-image'] == 'bgimg4'">
                                                 </div>
                                                 <div class="form-check switch-select m-2">
                                                     <input class="form-check-input bgimage-input bg-img5" type="radio"
                                                         name="theme-background" id="switcher-bg-img4"(click)="ImageTheme('bgimg5')"
-                                                        [checked]="localdata['vexel-image'] == 'bgimg5'">
+                                                        [checked]="localdata['insightapps-image'] == 'bgimg5'">
                                                 </div>
                                             </div>
                                           

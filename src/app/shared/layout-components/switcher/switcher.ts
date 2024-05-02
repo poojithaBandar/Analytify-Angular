@@ -132,59 +132,59 @@ export function localStorageBackUp() {
     }
   }
 
-  if (localStorage.getItem('vexel-dir') == 'rtl') {
+  if (localStorage.getItem('insightapps-dir') == 'rtl') {
     html?.setAttribute("dir", 'rtl');
   }
-  if (localStorage.getItem('vexeldarktheme')) {
-    const type: any = localStorage.getItem('vexeldarktheme');
+  if (localStorage.getItem('insightappsdarktheme')) {
+    const type: any = localStorage.getItem('insightappsdarktheme');
     html?.setAttribute('data-theme-mode', type);
   }
-  if (localStorage.getItem('vexel-theme-mode')) {
-    const type: any = localStorage.getItem('vexel-theme-mode');
+  if (localStorage.getItem('insightapps-theme-mode')) {
+    const type: any = localStorage.getItem('insightapps-theme-mode');
     html?.setAttribute('data-theme-mode', type);
   }
-  if (localStorage.getItem('vexel-nav-mode')) {
-    const type: any = localStorage.getItem('vexel-nav-mode');
+  if (localStorage.getItem('insightapps-nav-mode')) {
+    const type: any = localStorage.getItem('insightapps-nav-mode');
     html?.setAttribute('data-nav-layout', type);
     if(type == 'horizontal'){
       html?.setAttribute('data-nav-style', 'menu-click');
       html?.removeAttribute('data-vertical-style')
     }
   }
-  if (localStorage.getItem('vexel-page-mode')) {
-    const type: any = localStorage.getItem('vexel-page-mode');
+  if (localStorage.getItem('insightapps-page-mode')) {
+    const type: any = localStorage.getItem('insightapps-page-mode');
     html?.setAttribute('data-page-style', type);
   }
-  if (localStorage.getItem('vexel-width-mode')) {
-    const type: any = localStorage.getItem('vexel-width-mode');
+  if (localStorage.getItem('insightapps-width-mode')) {
+    const type: any = localStorage.getItem('insightapps-width-mode');
     html?.setAttribute('data-width', type);
   }
-  if (localStorage.getItem('vexel-menu-position')) {
-    const type: any = localStorage.getItem('vexel-menu-position');
+  if (localStorage.getItem('insightapps-menu-position')) {
+    const type: any = localStorage.getItem('insightapps-menu-position');
     html?.setAttribute('data-menu-position', type);
   }
-  if (localStorage.getItem('vexel-menu-mode')) {
-    const type: any = localStorage.getItem('vexel-menu-mode');
+  if (localStorage.getItem('insightapps-menu-mode')) {
+    const type: any = localStorage.getItem('insightapps-menu-mode');
     html?.setAttribute('data-menu-styles', type);
   }
-  if (localStorage.getItem('vexel-header-position')) {
-    const type: any = localStorage.getItem('vexel-header-position');
+  if (localStorage.getItem('insightapps-header-position')) {
+    const type: any = localStorage.getItem('insightapps-header-position');
     html?.setAttribute('data-header-position', type);
   }
-  if (localStorage.getItem('vexelHeader')) {
-    const type: any = localStorage.getItem('vexelHeader');
+  if (localStorage.getItem('insightappsHeader')) {
+    const type: any = localStorage.getItem('insightappsHeader');
     html?.setAttribute('data-header-styles', type);
   }
 
-  if (localStorage.getItem("vexel-background-mode-body")) {
-    const bodytype: any = localStorage.getItem("vexel-background-mode-body")
-    const darktype: any = localStorage.getItem("vexel-background-mode-dark")
-    const lighttype: any = localStorage.getItem("vexel-background-mode-light")
-    const formtype: any = localStorage.getItem("vexel-background-mode-formcontrol")
-    const inputtype: any = localStorage.getItem("vexel-background-mode-inputBorder")
+  if (localStorage.getItem("insightapps-background-mode-body")) {
+    const bodytype: any = localStorage.getItem("insightapps-background-mode-body")
+    const darktype: any = localStorage.getItem("insightapps-background-mode-dark")
+    const lighttype: any = localStorage.getItem("insightapps-background-mode-light")
+    const formtype: any = localStorage.getItem("insightapps-background-mode-formcontrol")
+    const inputtype: any = localStorage.getItem("insightapps-background-mode-inputBorder")
 
 
-    const event: any = localStorage.getItem("vexeldarktheme");
+    const event: any = localStorage.getItem("insightappsdarktheme");
     html?.style.setProperty('--body-bg-rgb', bodytype);
     html?.style.setProperty('--body-bg-rgb2', darktype);
     html?.style.setProperty('--light-rgb', lighttype);
@@ -199,7 +199,7 @@ export function localStorageBackUp() {
     const bodytype: any = localStorage.getItem("bodyBgRGB")
     const darktype: any = localStorage.getItem("bodyBgRGB2")
     const lighttype: any = localStorage.getItem("bodylightRGB")
-    const formtype: any = localStorage.getItem("vexellight-background-formcontrol")
+    const formtype: any = localStorage.getItem("insightappslight-background-formcontrol")
 
 
     html?.style.setProperty('--body-bg-rgb', bodytype);
@@ -213,7 +213,7 @@ export function localStorageBackUp() {
     const bodytype: any = localStorage.getItem("bodyBgRGB")
     const darktype: any = localStorage.getItem("bodyBgRGB2")
     const lighttype: any = localStorage.getItem("bodylightRGB")
-    const formtype: any = localStorage.getItem("vexellight-background-formcontrol")
+    const formtype: any = localStorage.getItem("insightappslight-background-formcontrol")
     html?.style.setProperty('--body-bg-rgb', bodytype);
     html?.style.setProperty('--body-bg-rgb2', darktype);
     html?.style.setProperty('--light-rgb', lighttype);
@@ -224,50 +224,50 @@ export function localStorageBackUp() {
     const bodytype: any = localStorage.getItem("bodyBgRGB")
     const darktype: any = localStorage.getItem("bodyBgRGB2")
     const lighttype: any = localStorage.getItem("bodylightRGB")
-    const formtype: any = localStorage.getItem("vexellight-background-formcontrol")
+    const formtype: any = localStorage.getItem("insightappslight-background-formcontrol")
     html?.style.setProperty('--body-bg-rgb', bodytype);
     html?.style.setProperty('--body-bg-rgb2', darktype);
     html?.style.setProperty('--light-rgb', lighttype);
     html?.style.setProperty('--form-control-bg', formtype);
     html?.classList.add('dark');
   }
-  if (localStorage.getItem("vexelMenu")) {
-    const type1: any = localStorage.getItem("vexelMenu");
+  if (localStorage.getItem("insightappsMenu")) {
+    const type1: any = localStorage.getItem("insightappsMenu");
     html?.setAttribute("data-nav-style", type1);
-    const type: any = localStorage.getItem('vexelMenu-toggled');
+    const type: any = localStorage.getItem('insightappsMenu-toggled');
     html?.setAttribute('data-toggled', type);
   }
  
-  if (localStorage.getItem('vexelverticalstyles')) {
-    const type1: any = localStorage.getItem('vexelverticalstyles');
+  if (localStorage.getItem('insightappsverticalstyles')) {
+    const type1: any = localStorage.getItem('insightappsverticalstyles');
     document.querySelector('html')?.setAttribute('data-vertical-style', type1);
-    const type: any = localStorage.getItem('vexelverticalstyles');
+    const type: any = localStorage.getItem('insightappsverticalstyles');
     document.querySelector('html')?.setAttribute('data-toggled', type);
 
     if (localStorage.getItem('data-vertical-style') == type1) {
       html?.setAttribute('data-toggled', type);
     } else {
-      const type1: any = localStorage.getItem('vexelverticalstyles-toggled');
+      const type1: any = localStorage.getItem('insightappsverticalstyles-toggled');
       document.querySelector('html')?.setAttribute('data-toggled', document.querySelector(".slide.open")?.classList.contains("has-sub") ? type1 : 'double-menu-close');
 
     }
   }
-  if (localStorage.getItem("vexel-image")) {
-    const type: any = localStorage.getItem("vexel-image");
+  if (localStorage.getItem("insightapps-image")) {
+    const type: any = localStorage.getItem("insightapps-image");
     html?.setAttribute('data-bg-img', type);
   }
 
-  if (localStorage.getItem("vexel-primary-mode")) { 
-    const type: any = localStorage.getItem("vexel-primary-mode");
+  if (localStorage.getItem("insightapps-primary-mode")) { 
+    const type: any = localStorage.getItem("insightapps-primary-mode");
     html?.style.setProperty('--primary-rgb', type);
   }
 
-  if (localStorage.getItem("vexellight-primary-color")) {
-    const type: any = localStorage.getItem("vexellight-primary-color");
+  if (localStorage.getItem("insightappslight-primary-color")) {
+    const type: any = localStorage.getItem("insightappslight-primary-color");
     html?.style.setProperty('--primary-rgb', type);
   }
-  if (localStorage.getItem("vexellight-primary-color1")) {
-    const type: any = localStorage.getItem("vexellight-primary-color1");
+  if (localStorage.getItem("insightappslight-primary-color1")) {
+    const type: any = localStorage.getItem("insightappslight-primary-color1");
     // html?.style.setProperty('--primary-rgb', type);
     html?.style.setProperty('--primary', type);
   }

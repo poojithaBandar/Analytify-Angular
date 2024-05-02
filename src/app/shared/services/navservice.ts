@@ -103,17 +103,18 @@ export class NavService implements OnDestroy {
       path:"/dashboard"
     
     },
-    { headTitle: 'PAGES' },
+    { headTitle: 'Server' },
     {
-      title: 'Pages',
+    /*  title: 'SQL',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
       <path d="M0 0h24v24H0V0z" fill="none"></path>
       <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16zm0-11.47L17.74 9 12 13.47 6.26 9 12 4.53z">
       </path>
   </svg>`,
       type: 'sub',
+      type: 'link',
       active: false,
-      children: [
+     children: [
         {
           title: 'Profile',
           type: 'link',
@@ -206,18 +207,19 @@ export class NavService implements OnDestroy {
           ],
         },
      
-      ],
+      ],*/
     },
     {
-      title: 'Authentication',
+     /*  title: 'MySQL',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" class="side-menu__icon" fill="#000000">
       <path d="M11 15h2v2h-2v-2zm0-8h2v6h-2V7zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z">
       </path>
   </svg>`,
       type: 'sub',
+        type: 'link',
       Menusub: true,
       active: false,
-      children: [
+     children: [
         {
           title: 'LogIn',
           Menusub: true,
@@ -265,13 +267,35 @@ export class NavService implements OnDestroy {
           ],
         },
      
-      ],
+      ],*/
     },
     //Widgets
     {
-      title: 'Widgets',
+      title: 'Data Source',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 -960 960 960" fill="#000000">
       <path d="M679-466 466-679l213-213 213 213-213 213Zm-559-72v-301h301v301H120Zm418 418v-301h301v301H538Zm-418 0v-301h301v301H120Zm60-478h181v-181H180v181Zm502 51 129-129-129-129-129 129 129 129Zm-84 367h181v-181H598v181Zm-418 0h181v-181H180v181Zm181-418Zm192-78ZM361-361Zm237 0Z"></path>
+  </svg>`,
+      active: false,
+      badgeClass: 'badge badge-sm bg-secondary badge-hide',
+      badgeValue: 'new',
+      path: '/pages/profile',
+      type: 'link',
+      nochild: true,
+    },
+    //component
+
+
+    {
+      title: 'Drog & Drop',
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000">
+      <g>
+          <rect fill="none" height="24" width="24"></rect>
+      </g>
+      <g>
+          <g>
+              <path d="M6,15c-0.83,0-1.58,0.34-2.12,0.88C2.7,17.06,2,22,2,22s4.94-0.7,6.12-1.88C8.66,19.58,9,18.83,9,18C9,16.34,7.66,15,6,15 z M6.71,18.71c-0.28,0.28-2.17,0.76-2.17,0.76s0.47-1.88,0.76-2.17C5.47,17.11,5.72,17,6,17c0.55,0,1,0.45,1,1 C7,18.28,6.89,18.53,6.71,18.71z M17.42,13.65L17.42,13.65c6.36-6.36,4.24-11.31,4.24-11.31s-4.95-2.12-11.31,4.24l-2.49-0.5 C7.21,5.95,6.53,6.16,6.05,6.63L2,10.69l5,2.14L11.17,17l2.14,5l4.05-4.05c0.47-0.47,0.68-1.15,0.55-1.81L17.42,13.65z M7.41,10.83L5.5,10.01l1.97-1.97l1.44,0.29C8.34,9.16,7.83,10.03,7.41,10.83z M13.99,18.5l-0.82-1.91 c0.8-0.42,1.67-0.93,2.49-1.5l0.29,1.44L13.99,18.5z M16,12.24c-1.32,1.32-3.38,2.4-4.04,2.73l-2.93-2.93 c0.32-0.65,1.4-2.71,2.73-4.04c4.68-4.68,8.23-3.99,8.23-3.99S20.68,7.56,16,12.24z M15,11c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2 S13.9,11,15,11z"></path>
+          </g>
+      </g>
   </svg>`,
       active: false,
       badgeClass: 'badge badge-sm bg-secondary badge-hide',
@@ -280,10 +304,9 @@ export class NavService implements OnDestroy {
       type: 'link',
       nochild: true,
     },
-    //component
-    { headTitle: 'GENERAL' },
+    { headTitle: 'Files' },
     {
-      title: 'UI Kit',
+      title: 'Text File',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
       <g>
           <rect fill="none" height="24" width="24"></rect>
@@ -295,10 +318,12 @@ export class NavService implements OnDestroy {
           </g>
       </g>
   </svg>`,
-      type: 'sub',
-      Menusub: true,
+  
+     // type: 'sub',
+     // Menusub: true,
+     type: 'link',
       active: false,
-      children: [
+      /*children: [
         { path: '/uikit/alerts', title: 'Alerts', type: 'link' },
         { path: '/uikit/buttons', title: 'Buttons', type: 'link' },
         { path: '/uikit/colors', title: 'Colors', type: 'link' },
@@ -321,10 +346,10 @@ export class NavService implements OnDestroy {
         { path: '/uikit/tooltip-popover',title: 'Tooltip & popovers', type: 'link', },
         { path: '/uikit/progress', title: 'progress', type: 'link' },
         { path: '/uikit/carousels', title: 'Carousels', type: 'link' },
-      ],
+      ],*/
     },
     {
-      title: 'Icons',
+      title: 'Json File',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
       <g>
           <rect fill="none" height="24" width="24"></rect>
@@ -339,10 +364,11 @@ export class NavService implements OnDestroy {
           </g>
       </g>
   </svg>`,
-      type: 'sub',
-      Menusub: true,
+     // type: 'sub',
+     // Menusub: true,
+     type: 'link',
       active: false,
-      children: [
+     /* children: [
         { path: '/icons/font-awesome-icons', title: 'Font Awesome Icons', type: 'link' },
         { path: '/icons/material-design-icons', title: 'Material Design Icons', type: 'link' },
         { path: '/icons/simple-line-icons', title: 'Simple Line Icons', type: 'link' },
@@ -353,22 +379,23 @@ export class NavService implements OnDestroy {
         { path: '/icons/typicon-icons', title: 'Typicon Icons', type: 'link' },
         { path: '/icons/weather-icons', title: 'Weather Icons', type: 'link' },
         { path: '/icons/bootstrap-icons', title: 'Bootstrap Icons', type: 'link' },
-      ],
+      ],*/
     },
 
   
     //Advanced
     {
-      title: 'Admin Ui',
+      title: 'Excel File',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
       <path d="M0 0h24v24H0V0z" fill="none"></path>
       <path d="M16.66 4.52l2.83 2.83-2.83 2.83-2.83-2.83 2.83-2.83M9 5v4H5V5h4m10 10v4h-4v-4h4M9 15v4H5v-4h4m7.66-13.31L11 7.34 16.66 13l5.66-5.66-5.66-5.65zM11 3H3v8h8V3zm10 10h-8v8h8v-8zm-10 0H3v8h8v-8z">
       </path>
   </svg>`,
-      type: 'sub',
-      Menusub: true,
+     // type: 'sub',
+     // Menusub: true,
+     type: 'link',
       active: false,
-      children: [
+     /* children: [
         { path: '/adminui/card-design', title: 'Card Design', type: 'link' },
         { path: '/adminui/full-calendar', title: 'Full Calender', type: 'link' },
         { path: '/adminui/chat', title: 'Chat', type: 'link' },
@@ -384,9 +411,9 @@ export class NavService implements OnDestroy {
         { path: '/adminui/swiperjs', title: 'SwiperJs', type: 'link' },
         { path: '/adminui/userlist', title: 'User List', type: 'link' },
         { path: '/adminui/search', title: 'Search', type: 'link' },  
-      ],
+      ],*/
     },
-    {
+   /* {
       title: 'LandingPage',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000">
       <g>
@@ -441,7 +468,7 @@ export class NavService implements OnDestroy {
           ],
         },
       ],
-    },
+    },*/
     { headTitle: 'FORMS & TABLES' },
 
     {

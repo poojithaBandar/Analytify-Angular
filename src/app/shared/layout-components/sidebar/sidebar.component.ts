@@ -83,10 +83,10 @@ export class SidebarComponent {
 
     bodyElement.onclick = () => {
       if (
-        localStorage.getItem('vexelMenu') == 'icon-click' ||
-        localStorage.getItem('vexelMenu') == 'menu-click' ||
-        localStorage.getItem('vexelMenu') == 'icon-hover' ||
-        localStorage.getItem('vexellayout') == 'horizontal'
+        localStorage.getItem('insightappsMenu') == 'icon-click' ||
+        localStorage.getItem('insightappsMenu') == 'menu-click' ||
+        localStorage.getItem('insightappsMenu') == 'icon-hover' ||
+        localStorage.getItem('insightappslayout') == 'horizontal'
       ) {
         document
           .querySelectorAll('.main-menu .slide-menu.child1')
@@ -159,24 +159,24 @@ setNavActive(item: any) {
       });
     }
   });
-  if(item.nochild && localStorage.getItem('vexelverticalstyles')){
+  if(item.nochild && localStorage.getItem('insightappsverticalstyles')){
     document.documentElement.setAttribute('data-toggled','double-menu-close')
    }
 }
 
 // Toggle menu
 toggleNavActive(item: any) {
-  if (localStorage.getItem('vexelverticalstyles') == 'icontext') {
+  if (localStorage.getItem('insightappsverticalstyles') == 'icontext') {
     document.querySelector('html')?.setAttribute('data-icon-text','open')
   }else{
     document.querySelector('html')?.removeAttribute('data-icon-text')
   }
     //toggle the double menu 
-    if(localStorage.getItem('vexelverticalstyles') == 'doublemenu'){
+    if(localStorage.getItem('insightappsverticalstyles') == 'doublemenu'){
       if(item.active)return;
       document.querySelector('html')?.setAttribute('data-toggled','double-menu-open')
     }
-  if (localStorage.getItem('vexelverticalstyles') == 'doublemenu') {
+  if (localStorage.getItem('insightappsverticalstyles') == 'doublemenu') {
     if(item.active)return;
     }else{
   }

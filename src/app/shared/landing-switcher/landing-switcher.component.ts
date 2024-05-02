@@ -39,10 +39,10 @@ export class LandingSwitcherComponent {
   }
  
   CheckOpe = () => {
-    if (localStorage.getItem('vexel-dir') == 'rtl') {
+    if (localStorage.getItem('insightapps-dir') == 'rtl') {
       this.RtlChecked = true;
     }
-    if (localStorage.getItem('vexel-dir') == 'rtl') {
+    if (localStorage.getItem('insightapps-dir') == 'rtl') {
       this.darkchecked = true;
     }
   };
@@ -61,12 +61,12 @@ export class LandingSwitcherComponent {
       this.elementRef.nativeElement.ownerDocument.documentElement;
   
     this.renderer.setAttribute(htmlElement, 'data-theme-mode', type);
-    localStorage.setItem('vexel-theme-mode', type);
+    localStorage.setItem('insightapps-theme-mode', type);
   
     this.renderer.setAttribute(htmlElement, 'data-header-styles', type1);
-    localStorage.setItem('vexelHeader', type1);
+    localStorage.setItem('insightappsHeader', type1);
   
-    if (localStorage.getItem('vexelHeader') === type1) {
+    if (localStorage.getItem('insightappsHeader') === type1) {
       this.renderer.removeAttribute(htmlElement, 'style');
      
     }
@@ -74,11 +74,11 @@ export class LandingSwitcherComponent {
   primary(type: string) {
 
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--primary-rgb', type);
-    localStorage.setItem('vexel-primary-mode', type);
+    localStorage.setItem('insightapps-primary-mode', type);
    
    
     
-    // localStorage.removeItem('vexellight-primary-color');
+    // localStorage.removeItem('insightappslight-primary-color');
   }
   
   color1 = '#1457e6';
@@ -92,9 +92,9 @@ export class LandingSwitcherComponent {
 
   switcher.dynamicLightPrimaryColor(dynamicPrimaryLight, this.color1);
 
-  localStorage.setItem('vexellight-primary-color', switcher.hexToRgba(this.color1) || '');
-  localStorage.setItem('vexellight-primary-color1', switcher.hexToRgba(this.color1) || '');
-  localStorage.setItem('vexellight-mode', 'true');
+  localStorage.setItem('insightappslight-primary-color', switcher.hexToRgba(this.color1) || '');
+  localStorage.setItem('insightappslight-primary-color1', switcher.hexToRgba(this.color1) || '');
+  localStorage.setItem('insightappslight-mode', 'true');
   this.body?.classList.remove('transparent-mode');
 
   // Adding
@@ -107,13 +107,13 @@ export class LandingSwitcherComponent {
   // removing data from session storage
 
   // switcher.checkOptions();
-  localStorage.removeItem('vexel-primary-mode');
+  localStorage.removeItem('insightapps-primary-mode');
 }
   DirectionsChange(type: string) {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'dir', type);
-    localStorage.setItem('vexel-dir', type);
+    localStorage.setItem('insightapps-dir', type);
   }
   public localDark = localStorage;
   public localdata = localStorage;

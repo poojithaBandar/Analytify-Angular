@@ -13,7 +13,7 @@ export const admin: Routes = [
     import('./mail-inbox/mail-inbox.component').then((m) => m.MailInboxComponent),
 },
 {
-  path: 'profile',
+  path: 'profile', 
   loadComponent: () =>
     import('./profile/profile.component').then((m) => m.ProfileComponent),
 },

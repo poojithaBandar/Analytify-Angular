@@ -39,7 +39,7 @@ export class ContentLayoutComponent {
   document.querySelector("body")!.classList.remove("padding-right:4px");
 
 
-  if(localStorage.getItem('vexelverticalstyles') == 'icontext'){
+  if(localStorage.getItem('insightappsverticalstyles') == 'icontext'){
     document.documentElement.removeAttribute('icon-text');
   }
   if (document.documentElement.getAttribute('data-nav-layout') == 'horizontal' && window.innerWidth > 992) {

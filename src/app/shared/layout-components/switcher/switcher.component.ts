@@ -38,29 +38,29 @@ export class SwitcherComponent {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-theme-mode', type);
-    localStorage.setItem('vexeldarktheme', type);
-    localStorage.removeItem("vexel-background-mode-body");
-    localStorage.removeItem("vexel-background-mode-dark");
-    localStorage.removeItem("vexel-background-mode-light");
-    localStorage.removeItem("vexel-background-mode-formcontrol");
-    localStorage.removeItem("vexel-background-mode-inputBorder");
+    localStorage.setItem('insightappsdarktheme', type);
+    localStorage.removeItem("insightapps-background-mode-body");
+    localStorage.removeItem("insightapps-background-mode-dark");
+    localStorage.removeItem("insightapps-background-mode-light");
+    localStorage.removeItem("insightapps-background-mode-formcontrol");
+    localStorage.removeItem("insightapps-background-mode-inputBorder");
     this.elementRef.nativeElement.ownerDocument.documentElement?.removeAttribute(
       'style'
     );
     this.renderer.setAttribute(htmlElement, 'data-header-styles', type1);
-    localStorage.setItem('vexelHeader', type1);
-    if (localStorage.getItem('vexeldarktheme') == 'light') {
-      localStorage.removeItem("vexel-background-mode-body");
-      localStorage.removeItem("vexel-background-mode-dark");
-      localStorage.removeItem("vexel-background-mode-light");
-      localStorage.removeItem("vexel-background-mode-formcontrol");
-      localStorage.removeItem("vexel-background-mode-inputBorder");
+    localStorage.setItem('insightappsHeader', type1);
+    if (localStorage.getItem('insightappsdarktheme') == 'light') {
+      localStorage.removeItem("insightapps-background-mode-body");
+      localStorage.removeItem("insightapps-background-mode-dark");
+      localStorage.removeItem("insightapps-background-mode-light");
+      localStorage.removeItem("insightapps-background-mode-formcontrol");
+      localStorage.removeItem("insightapps-background-mode-inputBorder");
       this.elementRef.nativeElement.ownerDocument.documentElement?.removeAttribute(
         'style'
       );
 
     }
-    if (localStorage.getItem('vexelHeader') == 'light') {
+    if (localStorage.getItem('insightappsHeader') == 'light') {
       this.elementRef.nativeElement.ownerDocument.documentElement?.removeAttribute('style');
       this.body = document.querySelector('body');
       this.body?.classList.remove('dark');
@@ -68,11 +68,11 @@ export class SwitcherComponent {
   }
   DirectionsChange(type: string) {
     // this.elementRef.nativeElement.ownerDocument.documentElement?.setAttribute('dir', type);
-    // localStorage.setItem('vexel-dir', type);
+    // localStorage.setItem('insightapps-dir', type);
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'dir', type);
-    localStorage.setItem('vexel-dir', type);
+    localStorage.setItem('insightapps-dir', type);
   }
   NavigationChange(type: string) {
     const htmlElement = this.elementRef.nativeElement.ownerDocument.documentElement;
@@ -81,7 +81,7 @@ export class SwitcherComponent {
       this.renderer.setAttribute(htmlElement, 'data-nav-style', 'menu-click');
       this.renderer.removeAttribute(htmlElement, 'data-vertical-style');
 
-      localStorage.removeItem('vexelverticalstyles');
+      localStorage.removeItem('insightappsverticalstyles');
 
       const menuclickclosed = document.getElementById(
         'switcher-menu-click'
@@ -94,16 +94,16 @@ export class SwitcherComponent {
     
     }else{
     }
-    localStorage.setItem('vexel-nav-mode', type);
+    localStorage.setItem('insightapps-nav-mode', type);
   }
   Menustyles(type: string, type1: string) {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
-    localStorage.setItem('vexelMenu', type);
+    localStorage.setItem('insightappsMenu', type);
     this.renderer.setAttribute(htmlElement, 'data-toggled', type1);
-    localStorage.setItem('vexelMenu-toggled', type1);
+    localStorage.setItem('insightappsMenu-toggled', type1);
     this.renderer.setAttribute(htmlElement, 'data-toggled', type1);
-    localStorage.setItem('vexelMenu-toggled', type1);
+    localStorage.setItem('insightappsMenu-toggled', type1);
   }
   menuItems!: any;
   Menus(type: string, type1: string) {
@@ -113,12 +113,12 @@ export class SwitcherComponent {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-nav-style', type1);
-    localStorage.setItem('vexelMenu', type1);
-    localStorage.setItem('vexelMenu-toggled', type);
+    localStorage.setItem('insightappsMenu', type1);
+    localStorage.setItem('insightappsMenu-toggled', type);
     this.renderer.setAttribute(htmlElement, 'data-toggled', type);
     this.renderer.removeAttribute(htmlElement, 'data-vertical-style');
-    localStorage.removeItem('vexelverticalstyles');
-    localStorage.removeItem('vexelverticalstyles-toggled');
+    localStorage.removeItem('insightappsverticalstyles');
+    localStorage.removeItem('insightappsverticalstyles-toggled');
 
 
   }
@@ -130,8 +130,8 @@ export class SwitcherComponent {
     } else {
       this.setAttr('data-toggled', dataToggleClass);
     }
-    localStorage.setItem('vexelverticalstyles', datatVerticalStyles);
-    localStorage.setItem('vexelverticalstyles-toggled', dataToggleClass);
+    localStorage.setItem('insightappsverticalstyles', datatVerticalStyles);
+    localStorage.setItem('insightappsverticalstyles-toggled', dataToggleClass);
     this.navServices.items.subscribe((items) => {
       this.menuItems = items;
     });
@@ -154,7 +154,7 @@ export class SwitcherComponent {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-page-style', type);
-    localStorage.setItem('vexel-page-mode', type);
+    localStorage.setItem('insightapps-page-mode', type);
   }
   doubleMenuActive: boolean = false;
 
@@ -162,19 +162,19 @@ export class SwitcherComponent {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-width', type);
-    localStorage.setItem('vexel-width-mode', type);
+    localStorage.setItem('insightapps-width-mode', type);
   }
   MenuChange(type: string) {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-menu-position', type);
-    localStorage.setItem('vexel-menu-position', type);
+    localStorage.setItem('insightapps-menu-position', type);
   }
   menuTheme(type: string) {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-menu-styles', type);
-    localStorage.setItem('vexel-menu-mode', type); 
+    localStorage.setItem('insightapps-menu-mode', type); 
     if(type =="dark"){
       const darkMenu = document.getElementById(
         'switcher-menu-dark'
@@ -189,13 +189,13 @@ export class SwitcherComponent {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-header-position', type);
-    localStorage.setItem('vexel-header-position', type);
+    localStorage.setItem('insightapps-header-position', type);
   }
   headerTheme(type: string) {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-header-styles', type);
-    localStorage.setItem('vexelHeader', type);
+    localStorage.setItem('insightappsHeader', type);
   }
   closeMenu(type1: any) {
     if (type1 == 'icon-hover' || type1 == 'menu-hover') {
@@ -214,8 +214,8 @@ export class SwitcherComponent {
 
   primary(type: string) {
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--primary-rgb', type);
-    localStorage.setItem('vexel-primary-mode', type);
-    // localStorage.removeItem('vexellight-primary-color');
+    localStorage.setItem('insightapps-primary-mode', type);
+    // localStorage.removeItem('insightappslight-primary-color');
   }
   background(bodyBg: string, darkBg: string,lightBg:string,inputBorder:string,formControl:string, event: string, type1: string) {
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--body-bg-rgb', bodyBg);
@@ -224,24 +224,24 @@ export class SwitcherComponent {
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--form-control-bg', formControl);
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--input-border', inputBorder);
 
-    localStorage.setItem('vexel-background-mode-body', bodyBg);
-    localStorage.setItem('vexel-background-mode-dark', darkBg);
-    localStorage.setItem('vexel-background-mode-light', lightBg);
-    localStorage.setItem('vexel-background-mode-formcontrol', formControl);
-    localStorage.setItem('vexel-background-mode-inputBorder', inputBorder);
+    localStorage.setItem('insightapps-background-mode-body', bodyBg);
+    localStorage.setItem('insightapps-background-mode-dark', darkBg);
+    localStorage.setItem('insightapps-background-mode-light', lightBg);
+    localStorage.setItem('insightapps-background-mode-formcontrol', formControl);
+    localStorage.setItem('insightapps-background-mode-inputBorder', inputBorder);
 
 
     this.elementRef.nativeElement.ownerDocument.documentElement?.setAttribute('data-theme-mode', event);
-    localStorage.setItem('vexeldarktheme', event);
+    localStorage.setItem('insightappsdarktheme', event);
 
     this.elementRef.nativeElement.ownerDocument.documentElement?.setAttribute('data-header-styles', type1);
-    localStorage.setItem('vexelHeader', type1);
+    localStorage.setItem('insightappsHeader', type1);
 
     localStorage.removeItem("bodyBgRGB2");
     localStorage.removeItem("bodyBgRGB");
     localStorage.removeItem("bodylightRGB")
-    localStorage.removeItem("vexellight-background-formcontrol")
-    localStorage.removeItem("vexellight-background-inputBorder")
+    localStorage.removeItem("insightappslight-background-formcontrol")
+    localStorage.removeItem("insightappslight-background-inputBorder")
 
 
 
@@ -257,8 +257,8 @@ export class SwitcherComponent {
 
     switcher.dynamicLightPrimaryColor(dynamicPrimaryLight, this.color1);
 
-    localStorage.setItem('vexellight-primary-color', switcher.hexToRgba(this.color1) || '');
-    localStorage.setItem('vexellight-mode', 'true');
+    localStorage.setItem('insightappslight-primary-color', switcher.hexToRgba(this.color1) || '');
+    localStorage.setItem('insightappslight-mode', 'true');
     this.body?.classList.remove('transparent-mode');
 
     // Adding
@@ -271,7 +271,7 @@ export class SwitcherComponent {
     // removing data from session storage
 
     // switcher.checkOptions();
-    localStorage.removeItem('vexel-primary-mode');
+    localStorage.removeItem('insightapps-primary-mode');
   }
 
   //background theme change
@@ -291,9 +291,9 @@ export class SwitcherComponent {
     localStorage.setItem('bodyBgRGB', switcher.hexToRgba(this.color4) || '');
     localStorage.setItem('bodyBgRGB2', switcher.hexToRgba1(this.color4) || '');
     localStorage.setItem('bodylightRGB', switcher.hexToRgba1(this.color4) || '');
-    localStorage.setItem('vexeldarktheme', 'dark');
-    localStorage.setItem('vexelHeader', 'dark');
-    localStorage.setItem('vexellight-background-formcontrol', switcher.hexToRgba1(this.color4) || '');
+    localStorage.setItem('insightappsdarktheme', 'dark');
+    localStorage.setItem('insightappsHeader', 'dark');
+    localStorage.setItem('insightappslight-background-formcontrol', switcher.hexToRgba1(this.color4) || '');
 
 
     // Removing
@@ -301,8 +301,8 @@ export class SwitcherComponent {
     html.setAttribute('data-header-styles', 'dark');
     html.setAttribute('data-theme-mode', 'dark');
 
-    localStorage.removeItem('vexelDark');
-    localStorage.removeItem('vexelLight');
+    localStorage.removeItem('insightappsDark');
+    localStorage.removeItem('insightappsLight');
 
     this.elementRef.nativeElement.ownerDocument.documentElement?.classList.add('dark');
     document
@@ -314,14 +314,14 @@ export class SwitcherComponent {
         'stickyClass'
       );
 
-    localStorage.removeItem('vexel-header-styles');
-    localStorage.removeItem('vexellight-primary-hover');
-    localStorage.removeItem('vexellight-primary-border');
-    localStorage.removeItem('vexeldark-primary-color');
-    localStorage.removeItem('vexeltransparent-bgImg-primary-color');
-    localStorage.removeItem('vexelBgImage');
-    localStorage.removeItem("vexel-background-mode-body")
-    localStorage.removeItem("vexel-background-mode-dark")
+    localStorage.removeItem('insightapps-header-styles');
+    localStorage.removeItem('insightappslight-primary-hover');
+    localStorage.removeItem('insightappslight-primary-border');
+    localStorage.removeItem('insightappsdark-primary-color');
+    localStorage.removeItem('insightappstransparent-bgImg-primary-color');
+    localStorage.removeItem('insightappsBgImage');
+    localStorage.removeItem("insightapps-background-mode-body")
+    localStorage.removeItem("insightapps-background-mode-dark")
   }
 
   color1 = '#1457e6';
@@ -329,7 +329,7 @@ export class SwitcherComponent {
 
   ImageTheme(type: string) {
     this.elementRef.nativeElement.ownerDocument.documentElement?.setAttribute('data-bg-img', type);
-    localStorage.setItem('vexel-image', type);
+    localStorage.setItem('insightapps-image', type);
   }
   reset() {
     localStorage.clear();
@@ -350,7 +350,7 @@ export class SwitcherComponent {
     html.removeAttribute('data-toggled', 'overlay');
     body.removeAttribute('data-theme-mode');
     html.removeAttribute("data-nav-style")
-    localStorage.setItem('vexel-menu-mode', 'dark');
+    localStorage.setItem('insightapps-menu-mode', 'dark');
     const darkMenu = document.getElementById(
       'switcher-menu-dark'
     ) as HTMLInputElement;
@@ -394,7 +394,7 @@ export class SwitcherComponent {
   }
   ngOnInit(): void {
     switcher.localStorageBackUp();
-    this.closeMenu(localStorage.getItem('vexelMenus'));
+    this.closeMenu(localStorage.getItem('insightappsMenus'));
   }
 
   public localdata = localStorage;
