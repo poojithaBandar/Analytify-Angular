@@ -1,0 +1,482 @@
+<app-page-header title="Workbench" title1="home" activeitem="workbench"></app-page-header>
+<!-- CONTAINER -->
+<div class="main-container container-fluid">
+
+
+  <div class="row">
+    <div class="col-xxl-3 col-xl-4 col-lg-5 col-md-5" style="padding: 0px;">
+     
+      <div class="card" style="height: 500px;width: 200px;">
+        <div class="card-header">
+            <div class="dropdown" ngbDropdown>
+                <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Datasets
+                </button>
+                <ul class="dropdown-menu" ngbDropdownMenu style>
+                  <li><a class="dropdown-item"  ngbDropdownItem >Oracle</a></li>
+                  <li><a class="dropdown-item" (click)="Openmdo(mdo)" ngbDropdownItem >postgreSql</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+          
+        </div>
+      </div>
+      
+      
+    </div>
+    <div class="col-xxl-9 col-xl-8 col-lg-7 col-md-7">
+      <div class="card">
+        <div class="">
+          <div class="card-body p-0">
+            <div class="tab-content" id="pills-tabContent">
+
+
+
+              <!-- <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav nav-pills gap-2 p-4 border-bottom" id="pills-tab" role="tablist">
+
+                <li [ngbNavItem]="1"><a ngbNavLink >About</a>
+                <ng-template ngbNavContent>
+
+                  <div class="tab-pane  show active" id="about">
+                    <div class="p-5">
+                      <h5 class="text-dark">Biodata</h5>
+                      <p class="text-dark mb-2">Hi I'm Teri Dactyl,has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.</p>
+                      <p class="text-dark mb-0">Industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.</p>
+                    </div>
+                    <div class="border-top"></div>
+                    <div class="p-5">
+                      <h5 class="mb-3">Experience</h5>
+                      <div class="d-flex">
+                        <div class="experience-icon bg-primary rounded-circle">
+                          <i class="fe fe-pocket fs-22 tx-fixed-white"></i>
+                        </div>
+                        <div class="ms-3">
+                          <h6 class="text-dark fw-semibold mb-0">Lead designer / Developer</h6>
+                          <a href="javascript:void(0);" class="text-primary">sprukotechnologies.com</a>
+                          <p class="mb-2 mt-2"><b>2010-2015</b></p>
+                          <p class="text-muted">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                        </div>
+                      </div>
+                      <div class="d-flex mt-2">
+                        <div class="experience-icon bg-secondary rounded-circle">
+                          <i class="fe fe-award fs-22 tx-fixed-white"></i>
+                        </div>
+                        <div class="ms-3">
+                          <h6 class="text-dark fw-semibold mb-0">Senior Graphic Designer</h6>
+                          <a href="javascript:void(0);" class="text-primary">sprukotechnologies.com</a>
+                          <p class="mb-2 mt-2"><b>2007-2009</b></p>
+                          <p class="text-muted">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                        </div>
+                      </div>
+                      <div class="d-flex mt-2">
+                        <div class="experience-icon bg-info rounded-circle">
+                          <i class="fe fe-award fs-22 tx-fixed-white"></i>
+                        </div>
+                        <div class="ms-3">
+                          <h6 class="text-dark fw-semibold mb-0">Senior Backend Designer</h6>
+                          <a href="javascript:void(0);" class="text-primary">sprukotechnologies.com</a>
+                          <p class="mb-2 mt-2"><b>2005-2007</b></p>
+                          <p class="text-muted mb-2">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                          <p class="text-muted mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="border-top"></div>
+                    <div class="table-responsive p-5">
+                      <h5 class="mb-3">Personal Info</h5>
+                      <div class="row">
+                        <div class="col-xl-8 ms-3">
+                          <div class="row row-sm">
+                            <div class="col-md-3">
+                              <span class="fw-semibold fs-14">First Name : </span>
+                            </div>
+                            <div class="col-md-9">
+                              <span class="fs-15">Cedric Kelly</span>
+                            </div>
+                          </div>
+                          <div class="row row-sm mt-3">
+                            <div class="col-md-3">
+                              <span class="fw-semibold fs-14">Last Name : </span>
+                            </div>
+                            <div class="col-md-9">
+                              <span class="fs-15">Macro</span>
+                            </div>
+                          </div>
+                          <div class="row row-sm mt-3">
+                            <div class="col-md-3">
+                              <span class="fw-semibold fs-14">Designation : </span>
+                            </div>
+                            <div class="col-md-9">
+                              <span class="fs-15">UI/UX Designer</span>
+                            </div>
+                          </div>
+                          <div class="row row-sm mt-3">
+                            <div class="col-md-3">
+                              <span class="fw-semibold fs-14">Email : </span>
+                            </div>
+                            <div class="col-md-9">
+                              <span class="fs-15 text-primary">sprukotechnologies8&#64;gmail.com</span>
+                            </div>
+                          </div>
+                          <div class="row row-sm mt-3">
+                            <div class="col-md-3">
+                              <span class="fw-semibold fs-14">Website : </span>
+                            </div>
+                            <div class="col-md-9">
+                              <span class="fs-15 text-primary">https://www.spruko.com/</span>
+                            </div>
+                          </div>
+                          <div class="row row-sm mt-3">
+                            <div class="col-md-3">
+                              <span class="fw-semibold fs-14">Address : </span>
+                            </div>
+                            <div class="col-md-9">
+                              <span class="fs-15">San franscisko, UAE</span>
+                            </div>
+                          </div>
+                          <div class="row row-sm mt-3">
+                            <div class="col-md-3">
+                              <span class="fw-semibold fs-14">Phone : </span>
+                            </div>
+                            <div class="col-md-9">
+                              <span class="fs-15 text-primary">(+65) 7894 5612 3212</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="border-top"></div>
+                    <div class="p-5">
+                      <h5 class="mb-3">Social</h5>
+                      <div class="d-xxl-flex justify-content-between flex-wrap">
+
+                        <div class="main-profile-contact-list">
+                          <div class="media mx-2 mb-2">
+                            <div class="media-icon bg-primary tx-fixed-white"> <i class="bi bi-github fs-20"></i> </div>
+                            <div class="media-body ms-2">
+                              <span class="text-muted">Github</span>
+                              <p class="mb-0"> <a href="javascript:void(0);" class="text-dark">github.com/spruko</a> </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="main-profile-contact-list">
+                          <div class="media mx-2 mb-2">
+                            <div class="media-icon bg-info tx-fixed-white"> <i class="bi bi-linkedin fs-20"></i> </div>
+                            <div class="media-body ms-2">
+                              <span class="text-muted">Linkedin</span>
+                              <p class="mb-0"> <a href="javascript:void(0);" class="text-dark">linkedin.com/in/spruko</a> </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="main-profile-contact-list">
+                          <div class="media mx-2 mb-2">
+                            <div class="media-icon bg-secondary tx-fixed-white"> <i class="bi bi-instagram fs-20"></i> </div>
+                            <div class="media-body ms-2">
+                              <span class="text-muted">Instagram</span>
+                              <p class="mb-0"> <a href="javascript:void(0);" class="text-dark">instagram.com/in/spruko</a> </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="main-profile-contact-list">
+                          <div class="media mx-2 mb-2">
+                            <div class="media-icon bg-success tx-fixed-white"> <i class="bi bi-twitter-x fs-20"></i> </div>
+                            <div class="media-body ms-2">
+                              <span class="text-muted">Twitter</span>
+                              <p class="mb-0"> <a href="javascript:void(0);" class="text-dark text-break">twitter.com/spruko.me</a> </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2"><a ngbNavLink >Timeline</a>
+              <ng-template ngbNavContent>
+                <div class="tab-pane " id="timeline">
+                  <div class="row p-5">
+                    <div class="col-xl-12">
+                      <div class="card border p-0 shadow-none">
+                        <div class="card-body">
+                          <div class="d-flex">
+                            <div class="media mt-0">
+                              <div class="media-user me-2">
+                                <div class=""><img alt="" class="rounded-circle avatar avatar-md" src="./assets/images/users/16.jpg"></div>
+                              </div>
+                              <div class="media-body">
+                                <h6 class="mb-0 mt-1">Peter Hill</h6>
+                                <small class="text-muted">just now</small>
+                              </div>
+                            </div>
+                            <div class="ms-auto toggledrop" ngbDropdown>
+                              <div class="dropdown show">
+                                <a aria-label="anchor" class="new option-dots" href="JavaScript:void(0);" data-bs-toggle="dropdown" ngbDropdownToggle>
+                                  <span class=""><i class="fe fe-more-vertical"></i></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Edit Post</a>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Delete Post</a>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Personal Settings</a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="mt-4">
+                            <h5 class="mt-3">There is nothing more beautiful.</h5>
+                            <p class="mb-0 text-muted">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
+                            </p>
+                          </div>
+                        </div>
+                        <div class="card-footer user-pro-2">
+                          <div class="media mt-0 flex-wrap overflow-visible">
+                            <div class="media-user me-2">
+                              <div class="avatar-list avatar-list-stacked">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/12.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/2.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/9.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/2.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/4.jpg">
+                                <span class="avatar brround avatar-sm cover-image bg-primary">+28</span>
+                              </div>
+                            </div>
+                            <div class="media-body flex-fill">
+                              <p class="mb-0 ms-2">28 people like your photo</p>
+                            </div>
+                            <div>
+                              <div class="d-flex mt-1">
+                                <a aria-label="anchor" class="new me-2 text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-heart"></i></span></a>
+                                <a aria-label="anchor" class="new me-2 text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-message-square"></i></span></a>
+                                <a aria-label="anchor" class="new text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-share-2"></i></span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card border p-0 shadow-none">
+                        <div class="card-body">
+                          <div class="d-flex">
+                            <div class="media mt-0">
+                              <div class="media-user me-2">
+                                <div class=""><img alt="" class="rounded-circle avatar avatar-md" src="./assets/images/users/16.jpg"></div>
+                              </div>
+                              <div class="media-body">
+                                <h6 class="mb-0 mt-1">Peter Hill</h6>
+                                <small class="text-muted">Sep 26 2019, 10:14am</small>
+                              </div>
+                            </div>
+                            <div class="ms-auto toggledrop" ngbDropdown>
+                              <div class="dropdown show">
+                                <a aria-label="anchor" class="new option-dots" href="JavaScript:void(0);" data-bs-toggle="dropdown" ngbDropdownToggle>
+                                  <span class=""><i class="fe fe-more-vertical"></i></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Edit Post</a>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Delete Post</a>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Personal Settings</a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="mt-4">
+                            <div class="d-flex">
+                              <a routerLink="/pages/gallery" class="w-20 m-2"><img src="./assets/images/media/22.jpg" alt="img" class="br-5"></a>
+                              <a routerLink="/pages/gallery" class="w-20 m-2"><img src="./assets/images/media/24.jpg" alt="img" class="br-5"></a>
+                            </div>
+                            <h5 class="mt-3">There is nothing more beautiful.</h5>
+                            <p class="mb-0 text-muted">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
+                            </p>
+                          </div>
+                        </div>
+                        <div class="card-footer user-pro-2">
+                          <div class="media mt-0 flex-wrap overflow-visible">
+                            <div class="media-user me-2">
+                              <div class="avatar-list avatar-list-stacked">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/12.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/2.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/9.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/2.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/4.jpg">
+                                <span class="avatar brround avatar-sm cover-image bg-primary">+28</span>
+                              </div>
+                            </div>
+                            <div class="media-body flex-fill">
+                              <p class="mb-0 ms-2">28 people like your photo</p>
+                            </div>
+                            <div class="">
+                              <div class="d-flex mt-1">
+                                <a aria-label="anchor" class="new me-2 text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-heart"></i></span></a>
+                                <a aria-label="anchor" class="new me-2 text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-message-square"></i></span></a>
+                                <a aria-label="anchor" class="new text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-share-2"></i></span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card border p-0 shadow-none">
+                        <div class="card-body">
+                          <div class="d-flex">
+                            <div class="media mt-0">
+                              <div class="media-user me-2">
+                                <div class=""><img alt="" class="rounded-circle avatar avatar-md" src="./assets/images/users/16.jpg"></div>
+                              </div>
+                              <div class="media-body">
+                                <h6 class="mb-0 mt-1">Peter Hill</h6>
+                                <small class="text-muted">Sep 24 2019, 09:14am</small>
+                              </div>
+                            </div>
+                            <div class="ms-auto toggledrop" ngbDropdown>
+                              <div class="dropdown show">
+                                <a aria-label="anchor" class="new option-dots" href="JavaScript:void(0);" data-bs-toggle="dropdown" ngbDropdownToggle>
+                                  <span class=""><i class="fe fe-more-vertical"></i></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Edit Post</a>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Delete Post</a>
+                                  <a ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Personal Settings</a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="mt-4">
+                            <div class="d-flex">
+                              <a routerLink="/pages/gallery" class="w-20 m-2"><img src="./assets/images/media/26.jpg" alt="img" class="br-5"></a>
+                              <a routerLink="/pages/gallery" class="w-20 m-2"><img src="./assets/images/media/23.jpg" alt="img" class="br-5"></a>
+                              <a routerLink="/pages/gallery" class="w-20 m-2"><img src="./assets/images/media/20.jpg" alt="img" class="br-5"></a>
+                            </div>
+                            <h5 class="mt-3">There is nothing more beautiful.</h5>
+                            <p class="mb-0 text-muted">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
+                            </p>
+                          </div>
+                        </div>
+                        <div class="card-footer user-pro-2">
+                          <div class="media mt-0 flex-wrap overflow-visible">
+                            <div class="media-user me-2">
+                              <div class="avatar-list avatar-list-stacked">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/12.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/2.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/9.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/2.jpg">
+                                <img class="avatar brround avatar-sm cover-image" src="./assets/images/users/4.jpg">
+                                <span class="avatar brround avatar-sm cover-image bg-primary">+28</span>
+                              </div>
+                            </div>
+                            <div class="media-body flex-fill">
+                              <p class="mb-0 ms-2">28 people like your photo</p>
+                            </div>
+                            <div class="">
+                              <div class="d-flex mt-1">
+                                <a aria-label="anchor" class="new me-2 text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-heart"></i></span></a>
+                                <a aria-label="anchor" class="new me-2 text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-message-square"></i></span></a>
+                                <a aria-label="anchor" class="new text-muted fs-16" href="JavaScript:void(0);"><span class=""><i class="fe fe-share-2"></i></span></a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="shadow-none">
+                        <div class="card-body p-0">
+                          <form class="profile-edit">
+                            <textarea class="form-control" placeholder="What's in your mind right now" rows="7"></textarea>
+                            <div class="profile-share border-top-0">
+                              <div class="mt-2">
+                                <a aria-label="anchor" href="javascript:void(0);" class="me-2" ngbTooltip="Audio" data-bs-toggle="tooltip" placement="top"><span class="text-muted"><i class="fe fe-mic"></i></span></a>
+                                <a aria-label="anchor" href="javascript:void(0);" class="me-2" ngbTooltip="Video" data-bs-toggle="tooltip" placement="top"><span class="text-muted"><i class="fe fe-video"></i></span></a>
+                                <a aria-label="anchor" href="javascript:void(0);" class="me-2" ngbTooltip="Image" data-bs-toggle="tooltip" placement="top"><span class="text-muted"><i class="fe fe-image"></i></span></a>
+                              </div>
+                              <button type="submit" class="btn btn-sm btn-success ms-auto"><i class="fa fa-share ms-1"></i> Share</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="3"><a ngbNavLink >Gallery</a>
+            <ng-template ngbNavContent>
+              <div class="tab-pane " id="gallery">
+
+                <ul id="lightgallery" class="list-unstyled row" gallerize>
+                  @for (img of imageData; track $index) {
+                    <li
+                      class={{img.class}}
+                      data-responsive="./assets/img/media/1.jpg"
+                      data-src="./assets/img/media/1.jpg"
+                      data-sub-html="<h4>Gallery Image 1</h4><p> Many desktop publishing packages and web page editors now use Lorem Ipsum</p>">
+                      <a>
+                        <img
+                          class="br-5"
+                          [src]="img.srcUrl"
+                          alt="image"
+                          />
+                      </a>
+                    </li>
+                  }
+                </ul>
+
+              </div>
+            </ng-template>
+          </li>
+
+
+
+</ul> -->
+
+<!-- <div [ngbNavOutlet]="nav" class="mt-2"></div> -->
+</div>
+</div>
+
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+<!-- CONTAINER CLOSED -->
+
+<ng-template #mdo let-modal >
+
+    <div  >
+      <div >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="inputModalLabel">PostgreSQL</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-2">
+                <label for="recipient-name" class="col-form-label">Server:</label>
+                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}">
+              </div>
+              <div class="mb-2">
+                <label for="message-text" class="col-form-label">Port:</label>
+                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}">
+              </div>
+              <div class="mb-2">
+                <label class="col-form-label">Database:</label>
+                <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}">
+              </div>
+              <div class="mb-2">
+                <label class="col-form-label">Username:</label>
+                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}">
+              </div>
+              <div class="mb-2">
+                <label class="col-form-label">Password:</label>
+                <input type="text" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>

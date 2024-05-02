@@ -71,6 +71,7 @@ export const content: Routes = [
     loadChildren: () => import('../../../app/components/icons/icons.routes').then(r => r.iconsRoutingModule)
   },
 
+
   //    ...chartsRoutingModule.routes,
   //  ...dashboardRoutingModule.routes,
   //  ...ecommerceRoutingModule.routes,

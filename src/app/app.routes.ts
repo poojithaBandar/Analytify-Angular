@@ -5,6 +5,8 @@ import { AuthenticationLayoutComponent } from './shared/layout-components/layout
 import { authen } from './shared/routes/authenticationroutes';
 import { LandingpageLayoutComponent } from './shared/layout-components/layouts/landingpage-layout/landingpage-layout.component';
 import { landing } from './shared/routes/landingroutes';
+import { workbench } from './shared/routes/workbenckroutes';
+import { WorkbenchLayoutsComponent } from './shared/layout-components/layouts/workbench-layouts/workbench-layouts.component';
 export const App_Route: Route[] = [
       { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
       {
@@ -15,5 +17,7 @@ export const App_Route: Route[] = [
       { path: '', component: ContentLayoutComponent, children: content },
       { path: '', component: AuthenticationLayoutComponent, children: authen },
       { path: '', component: LandingpageLayoutComponent, children: landing },
+      { path: '', component: WorkbenchLayoutsComponent, children: workbench },
+
 
     ]
