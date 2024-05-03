@@ -10,16 +10,27 @@
         <div class="card-header">
             <div class="dropdown" ngbDropdown>
                 <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Datasets
+                  Data Connections
                 </button>
                 <ul class="dropdown-menu" ngbDropdownMenu style>
                   <li><a class="dropdown-item"  ngbDropdownItem >Oracle</a></li>
-                  <li><a class="dropdown-item" (click)="Openmdo(mdo)" ngbDropdownItem >postgreSql</a></li>
+                  <li><a class="dropdown-item" (click)="Openmdo(mdo)" ngbDropdownItem >PostGreSQL</a></li>
                 </ul>
             </div>
         </div>
         <div class="card-body">
-          
+          <div cdkDropListGroup>
+            <div class="example-container">
+              <h6>Table</h6>
+              <label>InsightApps</label>
+              <div  >
+                @for (item of tableList; track item.table) {
+                  <div class="example-box" (cdkDragStarted)="dragItem(item.table)" cdkDrag>{{item.table}}</div>
+                }
+              </div>
+              
+            </div>
+          </div>
         </div>
       </div>
       

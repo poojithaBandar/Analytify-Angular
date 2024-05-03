@@ -14,7 +14,6 @@ import { LightboxModule } from 'ng-gallery/lightbox';
 import { NgbModule ,NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { PagesService } from '../pages.service';
-
 @Component({
   selector: 'app-profile',
   standalone:true,
@@ -24,11 +23,6 @@ import { PagesService } from '../pages.service';
 })
 export class ProfileComponent {
   url1:string = '';
-  postGreServerName = "e-commerce.cj3oddyv0bsk.us-west-1.rds.amazonaws.com";
-  postGrePortName = "5432";
-  postGreDatabaseName = "insightapps";
-  postGreUserName = "postgres";
-  PostGrePassword = "Welcome!234";
   handleFileInput(event: any): void {
     const file = event.target.files[0];
     if (file) { 
@@ -52,31 +46,8 @@ export class ProfileComponent {
       return new ImageItem({ src: item.srcUrl, thumb: item.previewUrl });
     });
   }
-  Openmdo(OpenmdoModal: any) {
-    this.modalService.open(OpenmdoModal);
-  }
-  Openfat(OpenfatModal: any) {
-    this.modalService.open(OpenfatModal);
-  }
-  postgreSignIn(){
-    const obj={
-        "database_type":"postgresql",
-        "hostname":this.postGreServerName,
-        "port":this.postGrePortName,
-        "username":this.postGreUserName,
-        "password":this.PostGrePassword,
-        "database": this.postGreDatabaseName
-    }
-      this.pageService.postGreSqlConnection(obj).subscribe({next: (data) => {
-            console.log(data);
-          },
-          error: (error) => {
-            console.log(error);
-          }
-        }
-      )
-    
-  }
+
+
 }  
 
 const data = [
