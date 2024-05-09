@@ -15,6 +15,7 @@ export class WorkbenchLayoutsComponent {
   public menuItems!: Menu[];
   currentRoute:  string | undefined;
   urlData:  string[] | undefined;
+  document: any;
  constructor(
   private router:Router, 
    public navServices: NavService,
@@ -77,4 +78,16 @@ clearToggle() {
  
   document.querySelector('#responsive-overlay')?.classList.remove('active');
 }
+
+
+// ngOnInit(): void {
+//   this.renderer.addClass(this.document.body, 'landing-page');
+//   this.renderer.addClass(this.document.body, 'ltr');
+//   this.renderer.removeClass(this.document.body, 'sidebar-mini');
+//  }
+//  ngOnDestroy(): void  {
+//   this.renderer.removeClass(this.document.body, 'landing-page');
+//   this.renderer.removeClass(this.document.body, 'ltr');
+//   this.renderer.addClass(this.document.body, 'sidebar-mini');
+//  }
 }

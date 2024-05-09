@@ -8,9 +8,9 @@ import { landing } from './shared/routes/landingroutes';
 import { workbench } from './shared/routes/workbenckroutes';
 import { WorkbenchLayoutsComponent } from './shared/layout-components/layouts/workbench-layouts/workbench-layouts.component';
 export const App_Route: Route[] = [
-      { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+      { path: '', redirectTo: 'authentication/login', pathMatch: 'full' },
       {
-        path: 'auth/login',
+        path: '',
         loadComponent: () =>
           import('../app/authentication/login/login.component').then((m) => m.LoginComponent),
       },

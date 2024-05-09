@@ -13,7 +13,7 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     console.log(JSON.parse( currentUser!))
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/db_check/`,obj);
+    return this.http.post<any>(`${environment.apiUrl}/database_connection/`+this.accessToken,obj);
   }
   getTableData(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );

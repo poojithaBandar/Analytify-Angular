@@ -278,7 +278,7 @@ export class NavService implements OnDestroy {
       active: false,
       badgeClass: 'badge badge-sm bg-secondary badge-hide',
       badgeValue: 'new',
-      path: '/pages/profile',
+      path: 'workbench/work-bench',
       type: 'link',
       nochild: true,
     },
