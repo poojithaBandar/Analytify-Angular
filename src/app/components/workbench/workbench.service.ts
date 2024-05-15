@@ -15,10 +15,17 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/database_connection/`+this.accessToken,obj);
   }
+  // getTableData(obj:any){
+  //   const currentUser = localStorage.getItem( 'currentUser' );
+  //   console.log(JSON.parse( currentUser!))
+  //   this.accessToken = JSON.parse( currentUser! )['Token'];
+  //   return this.http.post<any>(`${environment.apiUrl}/get_details/`,obj);
+  // }
+
+  tableRelation(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj);
+  }
   getTableData(obj:any){
-    const currentUser = localStorage.getItem( 'currentUser' );
-    console.log(JSON.parse( currentUser!))
-    this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/get_details/`,obj);
+    return this.http.put<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj)
   }
 }

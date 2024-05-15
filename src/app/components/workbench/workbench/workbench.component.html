@@ -130,13 +130,13 @@
                     <li class="list-group-item">SQLite</li>
                     <li class="list-group-item">Cassandra</li>
                 </ul>
-                <ul class="list-group">
+                <!-- <ul class="list-group">
                     <li class="list-group-item active">File Source</li>
                     <li class="list-group-item">Excel</li>
                     <li class="list-group-item">TXT</li>
                     <li class="list-group-item">XML</li>
                     <li class="list-group-item">CSV</li>
-                </ul>
+                </ul> -->
         </div>
     </div>
     <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
@@ -230,15 +230,19 @@
                             [cdkDropListConnectedTo]="[destinationList]"
                             class="example-list"
                             (cdkDropListDropped)="drop($event)">
-                            @for(item of tableList; track item){
-                            <div class="example-box"  cdkDrag>{{item.table}}</div>
+                            @for(item of tableList; track item; let i = $index){
+                                <!-- @for(value of item.data;track value){
+                                    <div class="example-box"  cdkDrag>{{value.table}} ({{item.schema}})</div>
+                                } -->
+                                <div class="example-box"  cdkDrag>{{item.table}} ({{item.schema}})</div>
+
                             }
                           </div>
                         </div>
                     }
                     </div>
                 </div>
-                <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-7">
+                <div class="col-xxl-4 col-xl-4 col-lg-7 col-md-7">
                     <div class="card" style="height: 350px;">
                         <div class="card-header">
                             <label>Drag Tables Here</label>
@@ -247,14 +251,14 @@
                             <div cdkDropList #destinationList="cdkDropList" [cdkDropListData]="draggedtables" class="example-list-drop"
                                 (cdkDropListDropped)="drop($event)">
                                 @for(item of draggedtables;track $index){
-                                <div class="example-box" cdkDrag>{{item.table}}
+                                <div class="example-box" cdkDrag>{{item.table}}({{item.schema}})
                                     <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="mdi mdi-delete"></i>
                                 </div>
                                 }
                             </div>
                         </div>
                     </div>
-                    <div class="col-xxl-10 col-xl-8 col-lg-7 col-md-7">
+                    <!-- <div class="col-xxl-10 col-xl-8 col-lg-7 col-md-7">
                         <div class="card">
                             <div class="card-header">
                 
@@ -264,19 +268,151 @@
                             </div>
                 
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 
-                <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-7">
+                <div class="col-xxl-6 col-xl-6 col-lg-7 col-md-7">
                     <div class="card" style="height: 350px;">
                         <div class="card-header">
                             <label>Table Relations</label>
+                            <div style="margin-left: 400px">
+                            <button class="btn btn-primary" aria-expanded="false" (click)="tableRelationUi=!tableRelationUi">
+                                Add
+                            </button>
                         </div>
+                        </div>
+                        @if(draggedtables.length > 1){
                         <div class="card-body">
-                            
+                            @if(tableRelationUi){
+                            <div class="row">
+                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
+                                    <label>{{draggedtables[0]?.table}}({{draggedtables[0]?.schema}})</label>
+                                    <div class="btn-group my-2" ngbDropdown>
+                                        <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                            {{ selectedClmnT1 ? selectedClmnT1 : 'Columns' }}
+                                        </button>
+                                        <ul class="dropdown-menu" ngbDropdownMenu>
+                                            @for(data of draggedtables[0]?.columns;track data){
+                                                <li>
+                                            <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT1 = data.columns + ' (' + data.datatypes + ')'">{{data.columns}}({{data.datatypes}})</a>
+                                                
+                                            </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3" >
+                                    <div style="display: flex;justify-content: center;"><label>operator</label></div>
+                                    <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
+                                        <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                            {{ selectedCndn ? selectedCndn : 'Condition' }}
+                                        </button>
+                                        <ul class="dropdown-menu" ngbDropdownMenu>
+                                            <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >equals(=)</a></li>
+                                           
+                                        </ul>
+                                    </div>
+                                 </div>
+                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
+                                    <label>{{draggedtables[1]?.table}}({{draggedtables[1]?.schema}})</label>
+                                    <div class="btn-group my-2" ngbDropdown>
+                                        <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                            {{ selectedClmnT2 ? selectedClmnT2 : 'Columns' }}
+                                        </button>
+                                        <ul class="dropdown-menu" ngbDropdownMenu>
+                                            @for(data of draggedtables[1]?.columns;track data){
+                                            <li>
+                                            <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2 = data.columns + ' (' + data.datatypes + ')';buildCustomRelation()">{{data.columns}}({{data.datatypes}})</a>                                               
+                                            </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                            <div>
+                                @if(relationOfTables.length){
+                                    <div class="card-header">
+                                        <h3 class="card-title">Relations:</h3>
+                                    </div>                                   
+                                    <ul class="tags">
+                                        @for(relation of relationOfTables;track relation;let i = $index){
+                                        <li class="tag">{{relation}}</li>
+                                        }
+                                    </ul>                            
+                                }
+                                @if(!relationOfTables.length){
+                                    <div class="card-header">
+                                        <h3 class="card-title">Relations:</h3>
+                                    </div>                                   
+                                    <ul class="tags">
+                                        <li class="tag">No relation found</li>
+                                    </ul>                            
+                                }
+                            </div>
+                           
                         </div>
+                    }
                     </div>
                 </div>
+                @if(draggedtables.length){
+                <div  class="col-xxl-10 col-xl-10 col-lg-7 col-md-7 side-card">
+                    <div class="row">
+                        <div class="col-xxl-12 col-xl-12 col-lg-6 col-md-6">
+                            <div  class="card">
+                                <div class="card-header">
+                                    <!-- <label>Table Data</label> -->
+                                    @if(draggedtables && draggedtables[1]){
+                                         <div class="dropdown" ngbDropdown>
+                                <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Tables
+                                </button>
+                                <ul class="dropdown-menu" ngbDropdownMenu style>
+                                    @for(tables of draggedtables;track tables){
+                                    <li><a class="dropdown-item" (click)="getTablerowclms(tables.table,tables.schema)" ngbDropdownItem>{{tables.table}}</a></li>
+                                    }
+                                    <!-- <li><a class="dropdown-item" (click)="Openmdo(mdo)" ngbDropdownItem>{{PostGreSQL}}</a></li> -->
+                                </ul>
+                            </div>
+                                    }
+                                    @if(tableName){
+                                    {{tableName}}
+                                    }
+                                </div>
+                                <div class="card-body" style="padding: 0px;height: 200px;overflow: scroll;">
+                                    <div class="table-responsive">
+                                        <table class="table border text-nowrap text-md-nowrap table-sm mb-0">
+                                            <thead>
+                                                <tr>
+                                                    @for(dataa of getTableColumns;track dataa;let i = $index){
+                                                            <th>{{dataa.columns}}</th>                                                       
+                                                    }                                                    
+                                                </tr>
+                                              
+                                            </thead>
+                                            <tbody>
+                                                @for(rowss of getTableRows;track rowss;){
+                                                <tr>
+                                                    @for(rowdata of rowss;track rowdata;let i = $index){
+
+                                                    <td>{{rowdata}}</td>
+                                                    }
+                                                </tr>
+                                            }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+
+                        </div>
+                    </div>
+                   
+                </div>
+                }
             </div>
             </div>
     }

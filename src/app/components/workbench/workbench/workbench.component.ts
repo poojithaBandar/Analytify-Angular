@@ -13,6 +13,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { of } from 'rxjs';
+import { data } from '../../charts/echarts/echarts';
 @Component({
   selector: 'app-workbench',
   standalone: true,
@@ -25,9 +26,20 @@ export class WorkbenchComponent implements OnInit{
   dragedTableName: any;
   databaseconnectionsList=true;
   draggedtables = [] as any;
+  getTableColumns = [] as any;
+  getTableRows = [] as any;
+  relationOfTables = [] as any;
+  databaseId:any;
   openPostgreSqlForm= false;
   openTablesUI = false;
   databaseName:any;
+  tableName:any;
+  selectedClmnT1:any;
+  selectedClmnT2:any;
+  selectedCndn:any;
+  tableRelationUi = false;
+  custmT1Data = [] as any;
+  custmT2Data = [] as any;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService){   
   }
   
@@ -54,8 +66,16 @@ export class WorkbenchComponent implements OnInit{
       }
         this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
               console.log(responce);
-              this.tableList = responce.data
+              // this.tableList = responce.data
+              if(Array.isArray(responce.data)){
+                this.tableList= responce.data
+              }
+              else{
+              this.tableList = this.combineArrays(responce.data)
+              }
+              console.log('tablelist',this.tableList)
               this.databaseName = responce.database.database_name
+              this.databaseId = responce.database.database_id
               if(responce){
                 // this.modalService.dismissAll();
                 this.openPostgreSqlForm = false;
@@ -67,24 +87,33 @@ export class WorkbenchComponent implements OnInit{
             }
           }
         )
-      
+
     }
-    dragItem(item:any){
-      this.dragedTableName = item;
-      const obj={
-        "db_url":"postgresql://postgres:Welcome!234@e-commerce.cj3oddyv0bsk.us-west-1.rds.amazonaws.com/HMS_Production",
-        "tables":this.dragedTableName
+    private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
+      let result: any[] = [];
+    for (const obj of arraysOfObjects) {
+      if (Array.isArray(obj.data)) {
+        result = result.concat(obj.data);
+      }
     }
-      this.workbechService.getTableData(obj).subscribe({next: (responce:any) => {
-            console.log(responce);
-           // this.tablePreview = responce;
-          },
-          error: (error) => {
-            console.log(error);
-          }
-        }
-      )
+    return result;
     }
+    // dragItem(item:any){
+    //   this.dragedTableName = item;
+    //   const obj={
+    //     "db_url":"postgresql://postgres:Welcome!234@e-commerce.cj3oddyv0bsk.us-west-1.rds.amazonaws.com/HMS_Production",
+    //     "tables":this.dragedTableName
+    // }
+    //   this.workbechService.getTableData(obj).subscribe({next: (responce:any) => {
+    //         console.log(responce);
+    //        // this.tablePreview = responce;
+    //       },
+    //       error: (error) => {
+    //         console.log(error);
+    //       }
+    //     }
+    //   )
+    // }
     Openmdo(OpenmdoModal: any) {
       this.modalService.open(OpenmdoModal);
     }
@@ -142,10 +171,93 @@ export class WorkbenchComponent implements OnInit{
         }
       }
       this.draggedtables.splice(event.currentIndex, 0, element);
+      console.log('darggedtable',this.draggedtables)
+     }
+     this.getTableData();
+     if(this.draggedtables.length > 1){
+      const obj ={
+        database_id : this.databaseId,
+        tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]]
+      }
+      this.workbechService.tableRelation(obj)
+      .subscribe(
+        {
+          next:(data:any) =>{
+            console.log(data)
+            this.relationOfTables = data[2]?.relation?.condition
+            console.log('relation',this.relationOfTables)
+          },
+          error:(error:any)=>{
+          console.log(error)
+        }
+        })
      }
   }
+  getTablerowclms(table:any,schema:any){
+    const obj ={
+      database_id:this.databaseId,
+      tables:[[schema,table]]
+    }
+    this.workbechService.getTableData(obj).subscribe({
+      next:(data:any)=>{
+        console.log(data);
+        this.getTableColumns = data.column_data;
+        this.getTableRows = data.row_data;
+        this.tableName = data?.column_data[0]?.table
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    })
+  }
+  getTableData(){
+    const obj ={
+      database_id:this.databaseId,
+      tables:[[this.draggedtables[0].schema,this.draggedtables[0].table]]
+    }
+    this.workbechService.getTableData(obj).subscribe({
+      next:(data:any)=>{
+        console.log(data);
+        this.getTableColumns = data.column_data;
+        this.getTableRows = data.row_data;
+        this.tableName = data?.column_data[0]?.table
+
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    })
+
+    
+  }
+
   onDeleteItem(index: number) {
      this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
      console.log(this.draggedtables)
+  }
+
+  buildCustomRelation(){
+    const parts = this.selectedClmnT1.split('(');
+    this.selectedClmnT1 = parts[0].trim()
+    const parst = this.selectedClmnT2.split('(');
+    this.selectedClmnT2 = parst[0].trim()
+    const obj ={
+      database_id:this.databaseId,
+      tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]],
+      condition:[[this.draggedtables[0].schema+'.'+this.draggedtables[0].table+'.'+this.selectedClmnT1 +'=' +this.draggedtables[1].schema+'.'+this.draggedtables[1].table+'.'+this.selectedClmnT2]]
+    }
+    this.workbechService.tableRelation(obj)
+      .subscribe(
+        {
+          next:(data:any) =>{
+            console.log(data)
+            this.relationOfTables = data[2]?.relation?.condition
+            console.log('relation',this.relationOfTables)
+          },
+          error:(error:any)=>{
+          console.log(error)
+        }
+        })
+
   }
 }
