@@ -3,15 +3,98 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { WorkbenchService } from '../../workbench/workbench.service';
+import {
+  CdkDragDrop,
+  CdkDrag,
+  CdkDropList,
+  CdkDropListGroup,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-select2',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule],
+  imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,CdkDropListGroup, CdkDropList, CdkDrag],
   templateUrl: './select2.component.html',
   styleUrls: ['./select2.component.scss']
 })
 export class Select2Component {
+  tableColumnsData = [] as any;
+  draggedtables = [] as any;
+  constructor(private workbechService:WorkbenchService){   
+  }
+
+  ngOnInit(): void {
+    this.columnsData();
+  }
+
+  columnsData(){
+    const obj={
+      "db_id":"182",
+      "table_name":["user_profile","user_role"],
+  }
+    this.workbechService.getColumnsData(obj).subscribe({next: (responce:any) => {
+          console.log(responce);
+          this.tableColumnsData = responce;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      }
+    )
+  }
+
+    drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      console.log('Transfering item to new container')
+      // transferArrayItem(event.previousContainer.data,
+      //                   event.container.data,
+      //                   event.previousIndex,
+      //                   event.currentIndex);
+      //                   console.log('previouscont:'+event.previousContainer.data,
+      //                   'eventcont:'+event.container.data)
+      //                  console.log(event.previousContainer.data,'inex:'+event.currentIndex)
+
+
+      let item: any = event.previousContainer.data[event.previousIndex];
+      console.log('item' + JSON.stringify(item));
+      let copy: any = JSON.parse(JSON.stringify(item));
+
+      console.log('copy' + JSON.stringify(copy));
+      let element: any = {};
+      for (let attr in copy) {
+        console.log('attr' + attr);
+        if (attr == 'title') {
+          element[attr] = copy[attr];
+        } else {
+          element[attr] = copy[attr];
+        }
+      }
+      this.draggedtables.splice(event.currentIndex, 0, element);
+     }
+     this.columnsData();
+    /* if(this.draggedtables.length > 1){
+      const obj ={
+        database_id : this.databaseId,
+        tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]]
+      }
+      this.workbechService.tableRelation(obj)
+      .subscribe(
+        {
+          next:(data:any) =>{
+            console.log(data)
+            this.relationOfTables = data[2]?.relation?.condition
+            console.log('relation',this.relationOfTables)
+          },
+          error:(error:any)=>{
+          console.log(error)
+        }
+        })
+     }*/
+  }
   genders = [
     {id: 1,name: 'Texas'},
     {id: 2,name: 'Georgia'},
