@@ -22,6 +22,8 @@ import {
 export class Select2Component {
   tableColumnsData = [] as any;
   draggedtables = [] as any;
+  dimentions = [] as any;
+  measurments = [] as any;
   constructor(private workbechService:WorkbenchService){   
   }
 
@@ -32,11 +34,16 @@ export class Select2Component {
   columnsData(){
     const obj={
       "db_id":"182",
-      "table_name":["user_profile","user_role"],
+      "queryset_id":"35",
   }
     this.workbechService.getColumnsData(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.tableColumnsData = responce;
+        /*  this.tableColumnsData.forEach((res:any)=> {
+            this.dimentions = res.dimensions;
+            this.measurments = res.measures;
+            console.log(this.measurments);
+          });*/
         },
         error: (error) => {
           console.log(error);
@@ -46,9 +53,9 @@ export class Select2Component {
   }
 
     drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
+   // if (event.previousContainer === event.container) {
+   //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    //} else {
       console.log('Transfering item to new container')
       // transferArrayItem(event.previousContainer.data,
       //                   event.container.data,
@@ -74,8 +81,8 @@ export class Select2Component {
         }
       }
       this.draggedtables.splice(event.currentIndex, 0, element);
-     }
-     this.columnsData();
+    // }
+    // this.columnsData();
     /* if(this.draggedtables.length > 1){
       const obj ={
         database_id : this.databaseId,
