@@ -35,4 +35,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/columnextracting/`+this.accessToken,obj);
   }
+  getDataExtraction(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    console.log(JSON.parse( currentUser!))
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/multi_col_dk/`+this.accessToken,obj);
+  }
 }
