@@ -13,18 +13,19 @@
                                 <label for="inputName" class="form-control mb-0">Columns</label>
                             </div>
                         </div>
-                        <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" style="overflow: auto; white-space: nowrap;">
+                        <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list"
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" style="
+                                position: relative; top: 11px; min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
                                     @for(columns of draggedColumns;track columns){
-                                    <div class="example-box" cdkDrag>{{ columns.column }}
+                                    <div class="example-box" cdkDrag >{{ columns.column }}
                                     </div>
                                     }
                                 </div> 
-                              <!--  <ul style=" bottom: 17px; left: 10px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
+                                <ul style=" bottom: 15px; left: -5px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
                                     <li role="presentation" class="nav-item">
                                         <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnRowStyle span-right">
                                             <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
@@ -35,7 +36,7 @@
                                             <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right"> </i>
                                         </button>
                                     </li>
-                                </ul> -->                          
+                                </ul>                         
                             
                         </div>
                     </div>
@@ -47,7 +48,8 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
                            
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list"
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" style="
+                                position: relative; top: 11px; min-height: 33px; padding: 2px;"
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)">
@@ -56,7 +58,7 @@
                                     </div>
                                     }
                                 </div>  
-                                <ul style=" bottom: 17px; left: 10px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
+                                <ul style=" bottom: 15px; left: -5px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
                                     <li role="presentation" class="nav-item">
                                         <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnRowStyle span-right">
                                             <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
@@ -74,7 +76,7 @@
                 </div>
             </div>
 
-            <div class="card mb-0" style="height: 290px; overflow-y: scroll;">
+            <div class="card mb-0" style="height: 310px; overflow-y: scroll;">
                  <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
 
                       
@@ -191,12 +193,28 @@
                         </div>
                     </div>
                 </div>
-                <div class="card mb-1" style=" overflow-y: scroll; height: 100px;">
+                <div class="card mb-1" style=" overflow-y: scroll; height: 160px;">
                     <div class="card-header justify-content-between align-items-center">
                         <div class="card-title fs-12">Charts </div>
                     </div>
-                    <div class="card-body">
-                   
+                    <div class="card-body" style=" padding: 2px 12px;">
+                        <div class="row"> 
+                            <div class="col-4 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            </div>
+                            <div class="col-4 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            </div>
+                            <div class="col-4 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            </div>
+                            <div class="col-4 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            </div>
+                            <div class="col-4 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card mb-0" style=" height: 195px; overflow-y: scroll;">
@@ -251,18 +269,19 @@
                 </div>
             </div>
             <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-                <div class="card mb-0" style="height: 402px; overflow-y: scroll;">
+                <div class="card mb-0" style="height: 466px; overflow-y: scroll;">
                     <div class="card-body" style="padding: 8px 20px;">
                         <h6 class="fw-600 fs-12 mt-2 mb-0">Tables</h6>
                     </div>
                     <div>
                         @for(columns of tableColumnsData; track columns){
-                            <h6 class="example-box">{{columns.table_name}}</h6>
+                            <br>
+                            <h6 class="example-box" style="background-color: #4996b2;"
+                            >{{columns.table_name}}</h6>
                             <div  cdkDropList 
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.dimensions"
                             [cdkDropListConnectedTo]="[columnList]"
-                           
                             (cdkDropListDropped)="columndrop($event)" >
                             @for(dimensions of columns.dimensions; track dimensions){
                                 <div class="example-box" 
@@ -273,13 +292,11 @@
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.measures"
                             [cdkDropListConnectedTo]="[rowList]"
-                           
                             (cdkDropListDropped)="rowdrop($event)">
                             @for(measures of columns.measures; track measures){
                                 <div class="example-box" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
                             }
                             </div>
-
                         }
                       </div>
                 </div>

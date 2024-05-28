@@ -171,6 +171,7 @@ export class SheetsComponent {
   this.tableName = tablename;
   this.table_alias = tableAlias;
   }
+ 
   columndrop(event: CdkDragDrop<string[]>){
     console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
