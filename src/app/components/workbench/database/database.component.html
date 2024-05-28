@@ -1,0 +1,400 @@
+<app-page-header title="Database" title1="home" activeitem="Database"></app-page-header>
+
+<div class="main-container container-fluid">
+    <div class="row" cdkListGroup>
+            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-5">
+            <div class="card" style="height: 683px;">
+                <div class="card-header" style="justify-content: center;">
+                    <!-- <div class="dropdown" ngbDropdown>
+                        <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Data Connections
+                        </button>
+                        <ul class="dropdown-menu" ngbDropdownMenu style>
+                            <li><a class="dropdown-item" ngbDropdownItem>Oracle</a></li>
+                            <li><a class="dropdown-item" (click)="Openmdo(mdo)" ngbDropdownItem>PostGreSQL</a></li>
+                        </ul>
+                    </div> -->
+                    <label class="list-group-item active">{{databaseName}}</label>
+                </div>
+                @if(tableList.length){ 
+                <div class="card-body" style="padding: 0px;">
+                    <div
+                    cdkDropList
+                    #originList="cdkDropList"
+                    [cdkDropListData]="tableList"
+                    [cdkDropListConnectedTo]="[destinationList]"
+                    class="example-list"
+                    (cdkDropListDropped)="drop($event)">
+                    @for(item of tableList; track item; let i = $index){
+                        <!-- @for(value of item.data;track value){
+                            <div class="example-box"  cdkDrag>{{value.table}} ({{item.schema}})</div>
+                        } -->
+                        <div class="example-box"  cdkDrag>{{item.table}} ({{item.schema}})</div>
+
+                    }
+                  </div>
+                </div>
+            }
+            </div>
+        </div>
+        <div class="col-xxl-4 col-xl-4 col-lg-7 col-md-7">
+            <div class="card" style="height: 350px;">
+                <div class="card-header">
+                    <label>Drag Tables Here</label>
+                </div>
+                <div class="card-body">
+                    <div cdkDropList #destinationList="cdkDropList" [cdkDropListData]="draggedtables" class="example-list-drop"
+                        (cdkDropListDropped)="drop($event)">
+                        @for(item of draggedtables;track $index){
+                        <div class="example-box" cdkDrag>{{item.alias}}({{item.schema}})
+                            <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="mdi mdi-delete"></i>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-xxl-10 col-xl-8 col-lg-7 col-md-7">
+                <div class="card">
+                    <div class="card-header">
+        
+                    </div>
+                    <div class="card-body">
+        
+                    </div>
+        
+                </div>
+            </div> -->
+        </div>
+        
+        <div class="col-xxl-6 col-xl-6 col-lg-7 col-md-7">
+            <div class="card" style="height: 350px;">
+                <div class="card-header">
+                    <label>Table Joining</label>
+                    <div style="margin-left: 400px">
+                    <button class="btn btn-primary" aria-expanded="false" (click)="tableRelationUi=!tableRelationUi">
+                        Add
+                    </button>
+                </div>
+                </div>
+                <div class="card-body">
+                    @if(tableRelationUi){
+                    <div class="row">
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
+                            <div class="btn-group mt-2 mb-2" ngbDropdown>
+                                <button type="button" class="btn btn-default btn-pill dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown">
+                                    {{selectedClmnT1 ? selectedClmnT1:'Select Column'}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-plus-title" ngbDropdownMenu style="max-height: 200px;overflow: scroll;">
+                                    @for(table of draggedtables;track table){
+                                    <li class="dropdown-plus-title">
+                                        {{ table.schema }}.{{ table.alias }}  
+                                     </li>
+                                     @for(column of table.columns;track column){
+                                    <li><a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT1 = column.columns;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables()">{{ column.columns }}</a></li>
+                                     }
+                                }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3" >
+                            <div style="display: flex;justify-content: center;">
+                                <!-- <label>Joins</label> -->
+                            </div>
+                            <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
+                                <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ selectedJoin ? selectedJoin : 'Condition' }}
+                                </button>
+                                <ul class="dropdown-menu" ngbDropdownMenu>
+                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Left'" ngbDropdownItem >Left</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Right'" ngbDropdownItem >Right</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Inner'" ngbDropdownItem >Inner</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Self'" ngbDropdownItem >Self</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedJoin = 'full Outer'" ngbDropdownItem >Full Outer</a></li>
+                                </ul>
+                            </div>
+                         </div>
+                         <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3" >
+                            <div style="display: flex;justify-content: center;">
+                                <!-- <label>Joins</label> -->
+                            </div>
+                            <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
+                                <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ selectedCndn ? selectedCndn : 'Operator' }}
+                                </button>
+                                <ul class="dropdown-menu" ngbDropdownMenu>
+                                    <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >Equals</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedCndn = '>'" ngbDropdownItem >Greater than</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedCndn = '<'" ngbDropdownItem >Less than</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedCndn = '>='" ngbDropdownItem >Greater than equals</a></li>
+                                    <li><a class="dropdown-item" (click)="selectedCndn = '<='" ngbDropdownItem >Less than equals</a></li>
+                                </ul>
+                            </div>
+                            <div class="mb-2">
+                                <!-- Selected table name will be displayed here -->
+                              </div>
+                         </div>
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
+                            <div class="btn-group mt-2 mb-2" ngbDropdown>
+                                <button type="button" class="btn btn-default btn-pill dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown">
+                                    {{ selectedClmnT2 ? selectedClmnT2 : 'Select Column' }}
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-plus-title" ngbDropdownMenu style="max-height: 200px;overflow: scroll;">
+                                    @for(table of remainingTables;track table){
+                                    <li class="dropdown-plus-title">
+                                        {{ table.schema }}.{{ table.alias }}  
+                                     </li>
+                                     @for(column of table.columns;track column){
+                                    <li><a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2= column.columns;getSelectedT2 = table.table;selectedAliasT2 = table.alias;selectedSchema2 = table.schema" >{{ column.columns }}</a></li>
+                                     }
+                                }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="border-block-start:none">
+                            <button class="btn btn-secondary" (click)="clearJoinCondns()" aria-expanded="false">
+                                clear
+                            </button>
+                            <button class="btn btn-primary" (click)="customTableJoin()" aria-expanded="false">
+                                Join
+                            </button>                       
+                         </div>
+                        </div>
+                }
+                    <div style="margin-top: -18px;">
+                        @if(relationOfTables.length){
+                            <div class="card-header">
+                                <h3 class="card-title">Joinings:</h3>
+                               
+                            </div>                                   
+                            <ul class="tags" style="max-height: 115px;overflow: scroll;">
+                                @for(relation of displayJoiningCndnsList;track relation;let i = $index){
+                                <!-- <li class="tag">{{relation}}</li> -->
+                                <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
+                                    <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
+                                        <i class="fa fa-circle" style="opacity: 0.5; margin-left: -10px;"></i></span>
+                                        {{relation}}
+                                    <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
+                                </li>
+                                }
+                            </ul>                            
+                        }
+                        @if(!relationOfTables.length){
+                            <div class="card-header">
+                                <h3 class="card-title">Joinings:</h3>
+                            </div>                                   
+                            <ul class="tags">
+                                <li class="tag">No relation found</li>
+                            </ul>                            
+                        }
+                    </div>
+                   
+                </div>
+            
+            </div>
+        </div>
+
+        <div  class="col-xxl-10 col-xl-10 col-lg-7 col-md-7 side-card">
+            <div class="row">
+                <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6">
+                    <div class="card" style="width: 410px;">
+                        <div class="card-header">
+                            <label>Custom SQL</label>
+                        </div>
+                        <div class="card-body" style="padding: 0px !important;">
+                                <div class="">
+                                    <textarea [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here" style="height:192px;width:409px;outline: none;"></textarea>
+                                </div>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button"  class="btn btn-secondary" (click)="clrQuery()">clear</button>
+                            <button  type="button" class="btn btn-primary" (click)="executeQuery()">Run Query</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6" style="margin-left: -18px;width: 626px;">
+                    <div  class="card" style="width: 625px;">
+                        <div class="card-header">
+                          <label>Result</label>
+                          <div class="col-sm-6 col-md-6 col-xl-3" style="margin-left: 470px;">
+                            <a class="modal-effect btn btn-primary"
+                                data-bs-effect="effect-super-scaled" data-bs-toggle="modal"  (click)="openSuperScaled(content)"
+                               ><i class="fa fa-filter"></i></a>
+                        </div>
+                        </div>
+                        <div class="card-body" style="padding: 0px;height: 259px;overflow: scroll;">
+                            <div class="table-responsive">
+                                <table class="table border text-nowrap text-md-nowrap table-sm mb-0">
+                                    <thead>
+                                        <tr>
+                                            @for(data of cutmquryTable.column_data;track data){
+                                                    <th>{{data}}</th>                                                       
+                                            }                                           
+                                        </tr>
+                                      
+                                    </thead>
+                                    <tbody>
+                                        @for(rowss of cutmquryTable.row_data;track rowss;){
+                                        <tr>
+                                            @for(rowdata of rowss;track rowdata;let i = $index){
+
+                                            <td>{{rowdata}}</td>
+                                            }
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>                       
+            </div>
+           
+        </div>
+        <!-- <div  class="col-xxl-10 col-xl-10 col-lg-7 col-md-7 side-card">
+            <div class="row">
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <label>Table Joinings</label>
+                        </div>
+                        <div class="card-body">
+                            @if(tableRelationUi){
+                                <div class="row">
+                                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
+                                        <label>{{draggedtables[0]?.table}}({{draggedtables[0]?.schema}})</label>
+                                        <div class="btn-group my-2" ngbDropdown>
+                                            <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                                {{ selectedClmnT1 ? selectedClmnT1 : 'Columns' }}
+                                            </button>
+                                            <ul class="dropdown-menu" ngbDropdownMenu>
+                                                @for(data of draggedtables[0]?.columns;track data){
+                                                    <li>
+                                                <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT1 = data.columns + ' (' + data.datatypes + ')'">{{data.columns}}({{data.datatypes}})</a>
+                                                    
+                                                </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3" >
+                                        <div style="display: flex;justify-content: center;"><label>operator</label></div>
+                                        <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
+                                            <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                                {{ selectedCndn ? selectedCndn : 'Condition' }}
+                                            </button>
+                                            <ul class="dropdown-menu" ngbDropdownMenu>
+                                                <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >equals(=)</a></li>
+                                               
+                                            </ul>
+                                        </div>
+                                     </div>
+                                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
+                                        <label>{{draggedtables[1]?.table}}({{draggedtables[1]?.schema}})</label>
+                                        <div class="btn-group my-2" ngbDropdown>
+                                            <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                                {{ selectedClmnT2 ? selectedClmnT2 : 'Columns' }}
+                                            </button>
+                                            <ul class="dropdown-menu" ngbDropdownMenu>
+                                                @for(data of draggedtables[1]?.columns;track data){
+                                                <li>
+                                                <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2 = data.columns + ' (' + data.datatypes + ')';buildCustomRelation()">{{data.columns}}({{data.datatypes}})</a>                                               
+                                                </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                    <div  class="card">
+                        <div class="card-header">
+                            @if(draggedtables && draggedtables[1]){
+                                 <div class="dropdown" ngbDropdown>
+                        <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Tables
+                        </button>
+                        <ul class="dropdown-menu" ngbDropdownMenu style>
+                            @for(tables of draggedtables;track tables){
+                            <li><a class="dropdown-item" (click)="getTablerowclms(tables.table,tables.schema)" ngbDropdownItem>{{tables.table}}</a></li>
+                            }
+                        </ul>
+                    </div>
+                            }
+                            @if(tableName){
+                            {{tableName}}
+                            }
+                        </div>
+                        <div class="card-body" style="padding: 0px;height: 200px;overflow: scroll;">
+                            <div class="table-responsive">
+                                <table class="table border text-nowrap text-md-nowrap table-sm mb-0">
+                                    <thead>
+                                        <tr>
+                                            @for(dataa of getTableColumns;track dataa;let i = $index){
+                                                    <th>{{dataa.columns}}</th>                                                       
+                                            }                                                    
+                                        </tr>
+                                      
+                                    </thead>
+                                    <tbody>
+                                        @for(rowss of getTableRows;track rowss;){
+                                        <tr>
+                                            @for(rowdata of rowss;track rowdata;let i = $index){
+
+                                            <td>{{rowdata}}</td>
+                                            }
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>                       
+            </div>
+           
+        </div> -->
+    </div>
+    </div>
+
+    <ng-template #content let-modal>
+        <div class="modal-header">
+          <h6 class="modal-title">Filters</h6>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="modal.dismiss('Cross click')"
+          >
+          </button>
+        </div>
+        <div class="modal-body">
+            <ul class="dropdown-plus-title">
+                @for(table of draggedtables;track table){
+                <li class="dropdown-plus-title">
+                    {{ table.schema }}.{{ table.alias }}  
+                 </li>
+                 @for(column of table.columns;track column){
+                <li><a class="dropdown-item" >{{ column.columns }}</a></li>
+                 }
+            }
+            </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn ripple btn-primary">Save changes</button>
+          <button
+            type="button"
+            class="btn ripple btn-secondary"
+            (click)="modal.close('Save click')"
+          >
+            Close
+          </button>
+        </div>
+      </ng-template>

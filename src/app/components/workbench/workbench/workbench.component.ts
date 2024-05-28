@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +14,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { of } from 'rxjs';
 import { data } from '../../charts/echarts/echarts';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-workbench',
   standalone: true,
@@ -40,7 +41,8 @@ export class WorkbenchComponent implements OnInit{
   tableRelationUi = false;
   custmT1Data = [] as any;
   custmT2Data = [] as any;
-  constructor(private modalService: NgbModal, private workbechService:WorkbenchService){   
+  connectionList =[] as any;
+  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router){   
   }
   
     postGreServerName = "e-commerce.cj3oddyv0bsk.us-west-1.rds.amazonaws.com";
@@ -124,13 +126,50 @@ export class WorkbenchComponent implements OnInit{
         ? document.querySelector('html')?.removeAttribute('data-toggled')
         : document
             .querySelector('html')
-            ?.setAttribute('data-toggled', 'icon-overlay-close');
-
-            
+            ?.setAttribute('data-toggled', 'icon-overlay-close');    
     }
+   this.getDbConnectionList();
   }
+  getDbConnectionList(){
+    this.workbechService.getdatabaseConnectionsList().subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.connectionList = data.connections
+       },
+      error:(error)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
+  getTablesFromConnectedDb(id:any){
+    this.router.navigate(['/workbench/database-connection/tables/'+id]);
+    //     this.workbechService.getTablesFromConnectedDb(id).subscribe({next: (responce) => {
 
-
+//     if(Array.isArray(responce.data)){
+//       this.tableList= responce.data
+//     }
+//     else{
+//     this.tableList = this.combineArrays(responce.data)
+//     }
+//     console.log('tablelist',this.tableList)
+//     this.databaseName = responce.database.database_name
+//     this.databaseId = responce.database.database_id
+//     if(responce){
+//       this.databaseconnectionsList= false
+//       this.openTablesUI = true;
+//     }
+//   },
+//   error:(error)=>{
+//     console.log(error);
+//   }
+// })
+}
   // drop(event: CdkDragDrop<string[]>) {
   //   if (event?.previousContainer === event?.container) {
   //     moveItemInArray(event?.container?.data, event?.previousIndex, event?.currentIndex);

@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,26 @@ export class LoginComponent {
 loginForm:FormGroup;
 
 
-
+showPassword = false;
+showPassword1 = false;
+toggleClass = "off-line";
+toggleClass1 = "off-line";
+toggleVisibility() {
+  this.showPassword = !this.showPassword;
+  if (this.toggleClass === "off-line") {
+    this.toggleClass = "line";
+  } else {
+    this.toggleClass = "off-line";
+  }
+}
+toggleVisibility1() {
+  this.showPassword1 = !this.showPassword1;
+  if (this.toggleClass1 === "off-line") {
+    this.toggleClass1 = "line";
+  } else {
+    this.toggleClass1 = "off-line";
+  }
+}
   constructor(
     @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,    private router: Router,
     private renderer: Renderer2,private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService
@@ -56,6 +76,14 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
   },
   error:(error:any)=>{
     console.log(error);
+    if(error){
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
   }
 })
 }

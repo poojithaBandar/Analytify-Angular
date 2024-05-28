@@ -85,19 +85,19 @@
                 <h3 class="card-title">Database Connections</h3>
             </div> -->
                 <div class="">
-                    <ul class="list-group">
+                    <!-- <ul class="list-group">
                         <li class="list-group-item active">Big Data Platform</li>
                         <li class="list-group-item">Hadoop</li>
                         <li class="list-group-item">Green Plum</li>
                         <li class="list-group-item">Kyln</li>
                         
-                    </ul>
-                    <ul class="list-group">
-                        <li class="list-group-item active">Multi-dimensional Database</li>
-                        <li class="list-group-item">SAP HANA</li>
-                        <li class="list-group-item">SAP BW</li>
-                        <li class="list-group-item">SSAS</li>
-                        <li class="list-group-item">EssBase</li>
+                    </ul> -->
+                   <ul class="list-group">
+                        <li class="list-group-item active">Connected Database</li>
+                        @for(database of connectionList;track database){
+                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
+                        }
+                        
                     </ul>
                 </div>
     </div>
@@ -125,6 +125,24 @@
         </div> -->
             <div class="">
                 <ul class="list-group">
+                    <li class="list-group-item active">Program Data Source&Others</li>
+                    <li class="list-group-item">Java API</li>
+                    <li class="list-group-item">Hibernate</li>
+                    <li class="list-group-item">Webservice Data Source</li>
+                    <li class="list-group-item">SOA Data Source</li>
+                    <li class="list-group-item">Analytics Data Source</li>
+                    <li class="list-group-item">ODBC Data Source</li>
+                    <li class="list-group-item">JNDI Data Source</li>
+                    <li class="list-group-item">SAp Data Source</li>
+                </ul>
+        </div>
+    </div>
+    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
+        <!-- <div class="card-header">
+            <h3 class="card-title">Active List item</h3>
+        </div> -->
+            <div class="">
+                <ul class="list-group">
                     <li class="list-group-item active">NoSQL Database</li>
                     <li class="list-group-item">MongoDB</li>
                     <li class="list-group-item">SQLite</li>
@@ -137,26 +155,16 @@
                     <li class="list-group-item">XML</li>
                     <li class="list-group-item">CSV</li>
                 </ul> -->
-        </div>
-    </div>
-    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-        <!-- <div class="card-header">
-            <h3 class="card-title">Active List item</h3>
-        </div> -->
-            <div class="">
                 <ul class="list-group">
-                    <li class="list-group-item active">Program Data Source&Others</li>
-                    <li class="list-group-item">Java API</li>
-                    <li class="list-group-item">Hibernate</li>
-                    <li class="list-group-item">Webservice Data Source</li>
-                    <li class="list-group-item">SOA Data Source</li>
-                    <li class="list-group-item">Analytics Data Source</li>
-                    <li class="list-group-item">ODBC Data Source</li>
-                    <li class="list-group-item">JNDI Data Source</li>
-                    <li class="list-group-item">SAp Data Source</li>
+                    <li class="list-group-item active">Multi-dimensional Database</li>
+                    <li class="list-group-item">SAP HANA</li>
+                    <li class="list-group-item">SAP BW</li>
+                    <li class="list-group-item">SSAS</li>
+                    <li class="list-group-item">EssBase</li>
                 </ul>
         </div>
-    </div>   
+    </div>
+       
     </div>
   </div>
 }
@@ -358,7 +366,63 @@
                 @if(draggedtables.length){
                 <div  class="col-xxl-10 col-xl-10 col-lg-7 col-md-7 side-card">
                     <div class="row">
-                        <div class="col-xxl-12 col-xl-12 col-lg-6 col-md-6">
+                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <label>Table Joinings</label>
+                                </div>
+                                <div class="card-body">
+                                    @if(tableRelationUi){
+                                        <div class="row">
+                                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
+                                                <label>{{draggedtables[0]?.table}}({{draggedtables[0]?.schema}})</label>
+                                                <div class="btn-group my-2" ngbDropdown>
+                                                    <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                                        {{ selectedClmnT1 ? selectedClmnT1 : 'Columns' }}
+                                                    </button>
+                                                    <ul class="dropdown-menu" ngbDropdownMenu>
+                                                        @for(data of draggedtables[0]?.columns;track data){
+                                                            <li>
+                                                        <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT1 = data.columns + ' (' + data.datatypes + ')'">{{data.columns}}({{data.datatypes}})</a>
+                                                            
+                                                        </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3" >
+                                                <div style="display: flex;justify-content: center;"><label>operator</label></div>
+                                                <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
+                                                    <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                                        {{ selectedCndn ? selectedCndn : 'Condition' }}
+                                                    </button>
+                                                    <ul class="dropdown-menu" ngbDropdownMenu>
+                                                        <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >equals(=)</a></li>
+                                                       
+                                                    </ul>
+                                                </div>
+                                             </div>
+                                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
+                                                <label>{{draggedtables[1]?.table}}({{draggedtables[1]?.schema}})</label>
+                                                <div class="btn-group my-2" ngbDropdown>
+                                                    <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
+                                                        {{ selectedClmnT2 ? selectedClmnT2 : 'Columns' }}
+                                                    </button>
+                                                    <ul class="dropdown-menu" ngbDropdownMenu>
+                                                        @for(data of draggedtables[1]?.columns;track data){
+                                                        <li>
+                                                        <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2 = data.columns + ' (' + data.datatypes + ')';buildCustomRelation()">{{data.columns}}({{data.datatypes}})</a>                                               
+                                                        </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
                             <div  class="card">
                                 <div class="card-header">
                                     <!-- <label>Table Data</label> -->
@@ -405,14 +469,12 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
-
-                        </div>
+                        </div>                       
                     </div>
                    
                 </div>
                 }
+                
             </div>
             </div>
     }

@@ -71,7 +71,7 @@
               <ul class="slide-menu child1" [ngClass]="{'active':menuItem.active,'double-menu-active':menuItem.active }" [ngStyle]="{ display: menuItem.active ? 'block' : 'none' }" >
                 <li class="slide side-menu__label1"><a href="javascript:void(0)">{{menuItem.title}}</a></li>
                 @for (childrenItem of menuItem.children; track childrenItem) {
-                  <li class="slide" [ngClass]="{'active':childrenItem.selected}"
+                  <li class="slide" [ngClass]="{'active':childrenItem?.selected}"
                     [ngClass]="{'open': childrenItem.active, 'has-sub': childrenItem.type === 'sub','active':childrenItem.selected}">
                     <!-- link -->
                     @if (childrenItem.type === 'link') {
@@ -79,6 +79,13 @@
                         (click)="setNavActive(childrenItem)">
                         {{childrenItem.title}}
                       </a>
+                    }
+                    @if(childrenItem.type === 'action')
+                    {
+                      <a class="side-menu__item" 
+                      (click)="clickAction(childrenItem);setNavActive(childrenItem)">
+                      {{childrenItem.title}}
+                    </a>
                     }
                     <!-- empty -->
                     @if (childrenItem.type === 'empty' ) {

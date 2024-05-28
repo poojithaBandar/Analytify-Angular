@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy} from '@angular/core';
 import { Subject, BehaviorSubject, fromEvent } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -23,7 +23,6 @@ export interface Menu {
   menutype?:string;
   nochild?: any,
 }
-
 @Injectable({
   providedIn: 'root',
 })
@@ -78,7 +77,6 @@ export class NavService implements OnDestroy {
       });
     }
   }
-
   ngOnDestroy() {
     this.unsubscriber.next;
     this.unsubscriber.complete();
@@ -269,6 +267,33 @@ export class NavService implements OnDestroy {
      
       ],*/
     },
+
+  //   {
+  //     title: 'Data Source',
+  //     type: 'sub',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
+  //     <path d="M0 0h24v24H0V0z" fill="none"></path>
+  //     <path d="M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z">
+  //     </path>
+  // </svg>`,
+  //     Menusub: true,
+  //     active: false,
+  //      children: [
+  //       { path: 'workbench/work-bench', title: 'Form Elements', type: 'link' },
+  //       { path: '/form-module/form-layouts', title: 'Form Layouts', type: 'link' },
+  //       { path: '/form-module/form-advanced', title: 'Form Advanced', type: 'link' },
+  //       { path: '/form-module/form-editor', title: 'Form Editor', type: 'link' },
+  //       { path: '/form-module/form-validation', title: 'Form Validation', type: 'link' },
+  //       { path: '/form-module/form-input-spinners', title: 'Form Input Spinners', type: 'link' },
+  //       { path: '/form-module/select2', title: 'Select-2', type: 'link' },
+  //       //  this.childrenss[0]
+
+  //      ],
+  //     //children:this.childrenss[0]
+  //   },
+
+
+
     //Widgets
     {
       title: 'Data Source',
@@ -279,6 +304,18 @@ export class NavService implements OnDestroy {
       badgeClass: 'badge badge-sm bg-secondary badge-hide',
       badgeValue: 'new',
       path: 'workbench/work-bench',
+      type: 'link',
+      nochild: true,
+    },
+    {
+      title: 'Sheets',
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 -960 960 960" fill="#000000">
+      <path d="M679-466 466-679l213-213 213 213-213 213Zm-559-72v-301h301v301H120Zm418 418v-301h301v301H538Zm-418 0v-301h301v301H120Zm60-478h181v-181H180v181Zm502 51 129-129-129-129-129 129 129 129Zm-84 367h181v-181H598v181Zm-418 0h181v-181H180v181Zm181-418Zm192-78ZM361-361Zm237 0Z"></path>
+  </svg>`,
+      active: false,
+      badgeClass: 'badge badge-sm bg-secondary badge-hide',
+      badgeValue: 'new',
+      path: 'workbench/sheets',
       type: 'link',
       nochild: true,
     },
@@ -304,115 +341,115 @@ export class NavService implements OnDestroy {
       type: 'link',
       nochild: true,
     },
-    { headTitle: 'Files' },
-    {
-      title: 'Text File',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
-      <g>
-          <rect fill="none" height="24" width="24"></rect>
-      </g>
-      <g>
-          <g>
-              <path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10 C22,6.48,17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8c0-4.41,3.59-8,8-8s8,3.59,8,8C20,16.41,16.41,20,12,20z" fill-rule="evenodd"></path>
-              <path d="M13.49,11.38c0.43-1.22,0.17-2.64-0.81-3.62c-1.11-1.11-2.79-1.3-4.1-0.59 l2.35,2.35l-1.41,1.41L7.17,8.58c-0.71,1.32-0.52,2.99,0.59,4.1c0.98,0.98,2.4,1.24,3.62,0.81l3.41,3.41c0.2,0.2,0.51,0.2,0.71,0 l1.4-1.4c0.2-0.2,0.2-0.51,0-0.71L13.49,11.38z" fill-rule="evenodd"></path>
-          </g>
-      </g>
-  </svg>`,
+  //   { headTitle: 'Files' },
+  //   {
+  //     title: 'Text File',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+  //     <g>
+  //         <rect fill="none" height="24" width="24"></rect>
+  //     </g>
+  //     <g>
+  //         <g>
+  //             <path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10 C22,6.48,17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8c0-4.41,3.59-8,8-8s8,3.59,8,8C20,16.41,16.41,20,12,20z" fill-rule="evenodd"></path>
+  //             <path d="M13.49,11.38c0.43-1.22,0.17-2.64-0.81-3.62c-1.11-1.11-2.79-1.3-4.1-0.59 l2.35,2.35l-1.41,1.41L7.17,8.58c-0.71,1.32-0.52,2.99,0.59,4.1c0.98,0.98,2.4,1.24,3.62,0.81l3.41,3.41c0.2,0.2,0.51,0.2,0.71,0 l1.4-1.4c0.2-0.2,0.2-0.51,0-0.71L13.49,11.38z" fill-rule="evenodd"></path>
+  //         </g>
+  //     </g>
+  // </svg>`,
   
-     // type: 'sub',
-     // Menusub: true,
-     type: 'link',
-      active: false,
-      /*children: [
-        { path: '/uikit/alerts', title: 'Alerts', type: 'link' },
-        { path: '/uikit/buttons', title: 'Buttons', type: 'link' },
-        { path: '/uikit/colors', title: 'Colors', type: 'link' },
-        { path: '/uikit/avatars', title: 'Avatars', type: 'link' },
-        { path: '/uikit/dropdowns', title: 'Dropdowns', type: 'link' },
-        { path: '/uikit/listgroup', title: 'Listgroup', type: 'link' },
-        { path: '/uikit/tags', title: 'Tags', type: 'link' },
-        { path: '/uikit/pagination', title: 'pagination', type: 'link' },
-        { path: '/uikit/navigation', title: 'Navigation', type: 'link' },
-        { path: '/uikit/typography', title: 'Typography', type: 'link' },
-        { path: '/uikit/breadcrumbs', title: 'Breadcrumb', type: 'link' },
-        { path: '/uikit/badges-pills', title: 'Badges/Pills', type: 'link' },
-        { path: '/uikit/offcanvas', title: 'Offcanvas', type: 'link' },
-        { path: '/uikit/toast', title: 'Toast', type: 'link' },
-        { path: '/uikit/media-object', title: 'Media Object', type: 'link' },
-        { path: '/uikit/scrollspy', title: 'Scrollspy', type: 'link' },
-        { path: '/uikit/accordions', title: 'Accordions', type: 'link' },
-        { path: '/uikit/tabs', title: 'Tabs', type: 'link' },
-        { path: '/uikit/modal', title: 'Modal', type: 'link' },
-        { path: '/uikit/tooltip-popover',title: 'Tooltip & popovers', type: 'link', },
-        { path: '/uikit/progress', title: 'progress', type: 'link' },
-        { path: '/uikit/carousels', title: 'Carousels', type: 'link' },
-      ],*/
-    },
-    {
-      title: 'Json File',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
-      <g>
-          <rect fill="none" height="24" width="24"></rect>
-      </g>
-      <g>
-          <g></g>
-          <g>
-              <circle cx="15.5" cy="9.5" r="1.5"></circle>
-              <circle cx="8.5" cy="9.5" r="1.5"></circle>
-              <path d="M12,18c2.28,0,4.22-1.66,5-4H7C7.78,16.34,9.72,18,12,18z"></path>
-              <path d="M11.99,2C6.47,2,2,6.48,2,12c0,5.52,4.47,10,9.99,10C17.52,22,22,17.52,22,12C22,6.48,17.52,2,11.99,2z M12,20 c-4.42,0-8-3.58-8-8c0-4.42,3.58-8,8-8s8,3.58,8,8C20,16.42,16.42,20,12,20z"></path>
-          </g>
-      </g>
-  </svg>`,
-     // type: 'sub',
-     // Menusub: true,
-     type: 'link',
-      active: false,
-     /* children: [
-        { path: '/icons/font-awesome-icons', title: 'Font Awesome Icons', type: 'link' },
-        { path: '/icons/material-design-icons', title: 'Material Design Icons', type: 'link' },
-        { path: '/icons/simple-line-icons', title: 'Simple Line Icons', type: 'link' },
-        { path: '/icons/feather-icons', title: 'Feather Icons', type: 'link' },
-        { path: '/icons/ionic-icons', title: 'Ionic Icons', type: 'link' },
-        { path: '/icons/flag-icons', title: 'Flag Icons', type: 'link' },
-        { path: '/icons/pe7-icons', title: 'Pe7 Icons', type: 'link' },
-        { path: '/icons/typicon-icons', title: 'Typicon Icons', type: 'link' },
-        { path: '/icons/weather-icons', title: 'Weather Icons', type: 'link' },
-        { path: '/icons/bootstrap-icons', title: 'Bootstrap Icons', type: 'link' },
-      ],*/
-    },
+  //    // type: 'sub',
+  //    // Menusub: true,
+  //    type: 'link',
+  //     active: false,
+  //     /*children: [
+  //       { path: '/uikit/alerts', title: 'Alerts', type: 'link' },
+  //       { path: '/uikit/buttons', title: 'Buttons', type: 'link' },
+  //       { path: '/uikit/colors', title: 'Colors', type: 'link' },
+  //       { path: '/uikit/avatars', title: 'Avatars', type: 'link' },
+  //       { path: '/uikit/dropdowns', title: 'Dropdowns', type: 'link' },
+  //       { path: '/uikit/listgroup', title: 'Listgroup', type: 'link' },
+  //       { path: '/uikit/tags', title: 'Tags', type: 'link' },
+  //       { path: '/uikit/pagination', title: 'pagination', type: 'link' },
+  //       { path: '/uikit/navigation', title: 'Navigation', type: 'link' },
+  //       { path: '/uikit/typography', title: 'Typography', type: 'link' },
+  //       { path: '/uikit/breadcrumbs', title: 'Breadcrumb', type: 'link' },
+  //       { path: '/uikit/badges-pills', title: 'Badges/Pills', type: 'link' },
+  //       { path: '/uikit/offcanvas', title: 'Offcanvas', type: 'link' },
+  //       { path: '/uikit/toast', title: 'Toast', type: 'link' },
+  //       { path: '/uikit/media-object', title: 'Media Object', type: 'link' },
+  //       { path: '/uikit/scrollspy', title: 'Scrollspy', type: 'link' },
+  //       { path: '/uikit/accordions', title: 'Accordions', type: 'link' },
+  //       { path: '/uikit/tabs', title: 'Tabs', type: 'link' },
+  //       { path: '/uikit/modal', title: 'Modal', type: 'link' },
+  //       { path: '/uikit/tooltip-popover',title: 'Tooltip & popovers', type: 'link', },
+  //       { path: '/uikit/progress', title: 'progress', type: 'link' },
+  //       { path: '/uikit/carousels', title: 'Carousels', type: 'link' },
+  //     ],*/
+  //   },
+  //   {
+  //     title: 'Json File',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
+  //     <g>
+  //         <rect fill="none" height="24" width="24"></rect>
+  //     </g>
+  //     <g>
+  //         <g></g>
+  //         <g>
+  //             <circle cx="15.5" cy="9.5" r="1.5"></circle>
+  //             <circle cx="8.5" cy="9.5" r="1.5"></circle>
+  //             <path d="M12,18c2.28,0,4.22-1.66,5-4H7C7.78,16.34,9.72,18,12,18z"></path>
+  //             <path d="M11.99,2C6.47,2,2,6.48,2,12c0,5.52,4.47,10,9.99,10C17.52,22,22,17.52,22,12C22,6.48,17.52,2,11.99,2z M12,20 c-4.42,0-8-3.58-8-8c0-4.42,3.58-8,8-8s8,3.58,8,8C20,16.42,16.42,20,12,20z"></path>
+  //         </g>
+  //     </g>
+  // </svg>`,
+  //    // type: 'sub',
+  //    // Menusub: true,
+  //    type: 'link',
+  //     active: false,
+  //    /* children: [
+  //       { path: '/icons/font-awesome-icons', title: 'Font Awesome Icons', type: 'link' },
+  //       { path: '/icons/material-design-icons', title: 'Material Design Icons', type: 'link' },
+  //       { path: '/icons/simple-line-icons', title: 'Simple Line Icons', type: 'link' },
+  //       { path: '/icons/feather-icons', title: 'Feather Icons', type: 'link' },
+  //       { path: '/icons/ionic-icons', title: 'Ionic Icons', type: 'link' },
+  //       { path: '/icons/flag-icons', title: 'Flag Icons', type: 'link' },
+  //       { path: '/icons/pe7-icons', title: 'Pe7 Icons', type: 'link' },
+  //       { path: '/icons/typicon-icons', title: 'Typicon Icons', type: 'link' },
+  //       { path: '/icons/weather-icons', title: 'Weather Icons', type: 'link' },
+  //       { path: '/icons/bootstrap-icons', title: 'Bootstrap Icons', type: 'link' },
+  //     ],*/
+  //   },
 
   
     //Advanced
-    {
-      title: 'Excel File',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
-      <path d="M0 0h24v24H0V0z" fill="none"></path>
-      <path d="M16.66 4.52l2.83 2.83-2.83 2.83-2.83-2.83 2.83-2.83M9 5v4H5V5h4m10 10v4h-4v-4h4M9 15v4H5v-4h4m7.66-13.31L11 7.34 16.66 13l5.66-5.66-5.66-5.65zM11 3H3v8h8V3zm10 10h-8v8h8v-8zm-10 0H3v8h8v-8z">
-      </path>
-  </svg>`,
-     // type: 'sub',
-     // Menusub: true,
-     type: 'link',
-      active: false,
-     /* children: [
-        { path: '/adminui/card-design', title: 'Card Design', type: 'link' },
-        { path: '/adminui/full-calendar', title: 'Full Calender', type: 'link' },
-        { path: '/adminui/chat', title: 'Chat', type: 'link' },
-        { path: '/adminui/notifications', title: 'Notifications', type: 'link' },
-        { path: '/adminui/sweetalerts', title: 'Sweet alerts', type: 'link' },
-        { path: '/adminui/range-slider', title: 'Range slider', type: 'link' },
-        { path: '/adminui/content-scrollbar', title: 'Content Scrollbar', type: 'link' },
-        { path: '/adminui/loaders', title: 'Loaders', type: 'link' },
-        { path: '/adminui/rating', title: 'Rating', type: 'link' },
-        { path: '/adminui/timeline', title: 'Timeline', type: 'link' },
-        { path: '/adminui/treeview', title: 'Treeview', type: 'link' },
-        { path: '/adminui/ribbons', title: 'Ribbons', type: 'link' },
-        { path: '/adminui/swiperjs', title: 'SwiperJs', type: 'link' },
-        { path: '/adminui/userlist', title: 'User List', type: 'link' },
-        { path: '/adminui/search', title: 'Search', type: 'link' },  
-      ],*/
-    },
+  //   {
+  //     title: 'Excel File',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+  //     <path d="M0 0h24v24H0V0z" fill="none"></path>
+  //     <path d="M16.66 4.52l2.83 2.83-2.83 2.83-2.83-2.83 2.83-2.83M9 5v4H5V5h4m10 10v4h-4v-4h4M9 15v4H5v-4h4m7.66-13.31L11 7.34 16.66 13l5.66-5.66-5.66-5.65zM11 3H3v8h8V3zm10 10h-8v8h8v-8zm-10 0H3v8h8v-8z">
+  //     </path>
+  // </svg>`,
+  //    // type: 'sub',
+  //    // Menusub: true,
+  //    type: 'link',
+  //     active: false,
+  //    /* children: [
+  //       { path: '/adminui/card-design', title: 'Card Design', type: 'link' },
+  //       { path: '/adminui/full-calendar', title: 'Full Calender', type: 'link' },
+  //       { path: '/adminui/chat', title: 'Chat', type: 'link' },
+  //       { path: '/adminui/notifications', title: 'Notifications', type: 'link' },
+  //       { path: '/adminui/sweetalerts', title: 'Sweet alerts', type: 'link' },
+  //       { path: '/adminui/range-slider', title: 'Range slider', type: 'link' },
+  //       { path: '/adminui/content-scrollbar', title: 'Content Scrollbar', type: 'link' },
+  //       { path: '/adminui/loaders', title: 'Loaders', type: 'link' },
+  //       { path: '/adminui/rating', title: 'Rating', type: 'link' },
+  //       { path: '/adminui/timeline', title: 'Timeline', type: 'link' },
+  //       { path: '/adminui/treeview', title: 'Treeview', type: 'link' },
+  //       { path: '/adminui/ribbons', title: 'Ribbons', type: 'link' },
+  //       { path: '/adminui/swiperjs', title: 'SwiperJs', type: 'link' },
+  //       { path: '/adminui/userlist', title: 'User List', type: 'link' },
+  //       { path: '/adminui/search', title: 'Search', type: 'link' },  
+  //     ],*/
+  //   },
    /* {
       title: 'LandingPage',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000">
@@ -469,89 +506,89 @@ export class NavService implements OnDestroy {
         },
       ],
     },*/
-    { headTitle: 'FORMS & TABLES' },
+  //   { headTitle: 'FORMS & TABLES' },
 
-    {
-      title: 'Forms',
-      type: 'sub',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
-      <path d="M0 0h24v24H0V0z" fill="none"></path>
-      <path d="M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z">
-      </path>
-  </svg>`,
-      Menusub: true,
-      active: false,
-      children: [
-        { path: '/form-module/form-elements', title: 'Form Elements', type: 'link' },
-        { path: '/form-module/form-layouts', title: 'Form Layouts', type: 'link' },
-        { path: '/form-module/form-advanced', title: 'Form Advanced', type: 'link' },
-        { path: '/form-module/form-editor', title: 'Form Editor', type: 'link' },
-        { path: '/form-module/form-validation', title: 'Form Validation', type: 'link' },
-        { path: '/form-module/form-input-spinners', title: 'Form Input Spinners', type: 'link' },
-        { path: '/form-module/select2', title: 'Select-2', type: 'link' },
+  //   {
+  //     title: 'Forms',
+  //     type: 'sub',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
+  //     <path d="M0 0h24v24H0V0z" fill="none"></path>
+  //     <path d="M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z">
+  //     </path>
+  // </svg>`,
+  //     Menusub: true,
+  //     active: false,
+  //     children: [
+  //       { path: '/form-module/form-elements', title: 'Form Elements', type: 'link' },
+  //       { path: '/form-module/form-layouts', title: 'Form Layouts', type: 'link' },
+  //       { path: '/form-module/form-advanced', title: 'Form Advanced', type: 'link' },
+  //       { path: '/form-module/form-editor', title: 'Form Editor', type: 'link' },
+  //       { path: '/form-module/form-validation', title: 'Form Validation', type: 'link' },
+  //       { path: '/form-module/form-input-spinners', title: 'Form Input Spinners', type: 'link' },
+  //       { path: '/form-module/select2', title: 'Select-2', type: 'link' },
 
-      ],
-    },
-        {
-          title: 'Tables',
-          type: 'sub',
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000">
-          <g>
-              <rect fill="none" height="24" width="24"></rect>
-          </g>
-          <g>
-              <g>
-                  <g>
-                      <path d="M3,3v8h8V3H3z M9,9H5V5h4V9z M3,13v8h8v-8H3z M9,19H5v-4h4V19z M13,3v8h8V3H13z M19,9h-4V5h4V9z M13,13v8h8v-8H13z M19,19h-4v-4h4V19z"></path>
-                  </g>
-              </g>
-          </g>
-      </svg>`,
-          Menusub: true,
-          active: false,
-          children: [
-            { path: '/tables/default-tables', title: 'Default Tables', type: 'link' },
-            { path: '/tables/data-tables', title: 'Data Tables', type: 'link' },
-            { path: '/tables/gridjs-tables', title: 'Grid Tables', type: 'link' },
+  //     ],
+  //   },
+  //       {
+  //         title: 'Tables',
+  //         type: 'sub',
+  //         icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000">
+  //         <g>
+  //             <rect fill="none" height="24" width="24"></rect>
+  //         </g>
+  //         <g>
+  //             <g>
+  //                 <g>
+  //                     <path d="M3,3v8h8V3H3z M9,9H5V5h4V9z M3,13v8h8v-8H3z M9,19H5v-4h4V19z M13,3v8h8V3H13z M19,9h-4V5h4V9z M13,13v8h8v-8H13z M19,19h-4v-4h4V19z"></path>
+  //                 </g>
+  //             </g>
+  //         </g>
+  //     </svg>`,
+  //         Menusub: true,
+  //         active: false,
+  //         children: [
+  //           { path: '/tables/default-tables', title: 'Default Tables', type: 'link' },
+  //           { path: '/tables/data-tables', title: 'Data Tables', type: 'link' },
+  //           { path: '/tables/gridjs-tables', title: 'Grid Tables', type: 'link' },
 
-          ],
-        },
+  //         ],
+  //       },
       
     
 
    
 
-    { headTitle: 'MAPS & CHARTS' },
-    {
-      title: 'Maps',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
-      <path d="M0 0h24v24H0z" fill="none"></path>
-      <path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-1.8C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z">
-      </path>
-  </svg>`,
-      type: 'sub',
-      Menusub: true,
-      active: false,
-      children: [
-        { path: '/maps/leaflet', title: 'Leaflet Maps', type: 'link' },
-      ],
-    },
-    {
-      title: 'Charts',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
-      <path d="M0 0h24v24H0V0z" fill="none"></path>
-      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z">
-      </path>
-  </svg>`,
-      type: 'sub',
-      Menusub: true,
-      active: false,
-      children: [
-        { path: '/charts/apexcharts', title: 'Apexcharts', type: 'link' },
-        { path: '/charts/chartjs', title: 'chartJs', type: 'link' },
-        { path: '/charts/echarts', title: 'Echarts', type: 'link' },
-      ],
-    },
+  //   { headTitle: 'MAPS & CHARTS' },
+  //   {
+  //     title: 'Maps',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
+  //     <path d="M0 0h24v24H0z" fill="none"></path>
+  //     <path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-1.8C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z">
+  //     </path>
+  // </svg>`,
+  //     type: 'sub',
+  //     Menusub: true,
+  //     active: false,
+  //     children: [
+  //       { path: '/maps/leaflet', title: 'Leaflet Maps', type: 'link' },
+  //     ],
+  //   },
+  //   {
+  //     title: 'Charts',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
+  //     <path d="M0 0h24v24H0V0z" fill="none"></path>
+  //     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z">
+  //     </path>
+  // </svg>`,
+  //     type: 'sub',
+  //     Menusub: true,
+  //     active: false,
+  //     children: [
+  //       { path: '/charts/apexcharts', title: 'Apexcharts', type: 'link' },
+  //       { path: '/charts/chartjs', title: 'chartJs', type: 'link' },
+  //       { path: '/charts/echarts', title: 'Echarts', type: 'link' },
+  //     ],
+  //   },
   
   
   ];

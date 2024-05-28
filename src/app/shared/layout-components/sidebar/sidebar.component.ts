@@ -1,4 +1,4 @@
-import { Component,ViewChild,ElementRef,Renderer2, HostListener  } from '@angular/core';
+import { Component,ViewChild,ElementRef,Renderer2, HostListener, AfterViewInit  } from '@angular/core';
 import { Menu, NavService } from '../../services/navservice';
 import { Subscription, fromEvent } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -10,7 +10,7 @@ import { checkHoriMenu,switcherArrowFn} from './sidebar';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent {
+export class SidebarComponent{
   // Addding sticky-pin
   scrolled = false;
 
@@ -77,7 +77,9 @@ export class SidebarComponent {
       ?.setAttribute('data-vertical-style', 'overlay');
     document.querySelector('html')?.setAttribute('data-nav-layout', 'vertical');
   }
-
+  clickAction(item:any){
+    console.log('kjrvgug',item)
+  }
   ngOnInit() {
     let bodyElement: any = document.querySelector('.main-content');
 
@@ -98,8 +100,7 @@ export class SidebarComponent {
     this.menuResizeFn();
     this.menuitemsSubscribe$ = this.navServices.items.subscribe((items) => {
       this.menuItems = items;
-    });
-
+    })
     this.ParentActive();
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -124,6 +125,7 @@ export class SidebarComponent {
   } 
 //Active Nav State
 setNavActive(item: any) {
+  console.log('item',item)
   this.menuItems?.filter((menuItem) => {
     if (menuItem !== item) {
       menuItem.active = false;
