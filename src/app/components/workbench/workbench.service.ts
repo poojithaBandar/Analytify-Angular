@@ -11,7 +11,6 @@ export class WorkbenchService {
 
   postGreSqlConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
-    console.log(JSON.parse( currentUser!))
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/database_connection/`+this.accessToken,obj);
   }
@@ -40,7 +39,6 @@ export class WorkbenchService {
   }
   getColumnsData(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
-    console.log(JSON.parse( currentUser!))
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/columnextracting/`+this.accessToken,obj);
   }
@@ -57,8 +55,12 @@ export class WorkbenchService {
   }
   getDataExtraction(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
-    console.log(JSON.parse( currentUser!))
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/multi_col_dk/`+this.accessToken,obj);
+  }
+  getChartsEnableDisable(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/test_show_me/`+this.accessToken,obj);
   }
 }

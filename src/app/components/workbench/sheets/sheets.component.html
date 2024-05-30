@@ -4,6 +4,43 @@
  
    <div class="main-container container-fluid"> 
     <div class="row main-container" style="position: fixed; width: -webkit-fill-available;">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+            <div class="card mb-0" style="height: 466px; overflow-y: scroll;">
+                <div class="card-body" style="padding: 8px 20px;">
+                    <h6 class="fw-600 fs-12 mt-2 mb-0">Tables</h6>
+                </div>
+                <div>
+                    @for(columns of tableColumnsData; track columns){
+                        <br>
+                        <h6 class="example-box" style="background-color: #4996b2;"
+                        >{{columns.table_name}}</h6>
+                        <div  cdkDropList 
+                        #originList="cdkDropList"
+                        [cdkDropListData]="columns.dimensions"
+                        [cdkDropListConnectedTo]="[columnList]"
+                        (cdkDropListDropped)="columndrop($event)" >
+                       <!-- <h6 class="example-box" style="background-color: #49b29d;">Dimentions</h6>-->
+                        @for(dimensions of columns.dimensions; track dimensions){
+                           
+                            <div class="example-box"
+                (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag> {{dimensions.column}}</div>
+                        }
+                    </div>
+                        <div cdkDropList
+                        #originList="cdkDropList"
+                        [cdkDropListData]="columns.measures"
+                        [cdkDropListConnectedTo]="[rowList]"
+                        (cdkDropListDropped)="rowdrop($event)">
+                        
+                        <!--<h6 class="example-box" style="background-color: #49b29d;">Measures</h6>-->
+                        @for(measures of columns.measures; track measures){ 
+                            <div class="example-box" style="background-color: #49b29d;" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
+                        }
+                        </div>
+                    }
+                  </div>
+            </div>
+        </div>
         <div class="col-xl-8 col-md-12 p-1">
             <div class="card p-0 mb-1">
                 <div class="card-body p-4">
@@ -15,13 +52,13 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" style="
-                                position: relative; top: 11px; min-height: 33px; padding: 2px;" 
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
+                                style="position: relative; top: 11px; min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
-                                    @for(columns of draggedColumns;track columns){
-                                    <div class="example-box" cdkDrag >{{ columns.column }}
+                                    @for(columns of draggedColumns;track columns;let index = $index){
+                                    <div class="example-box" (cdkDragStarted)="dragStartedColumn(index)" cdkDrag >{{ columns.column }}
                                     </div>
                                     }
                                 </div> 
@@ -32,8 +69,8 @@
                                         </button>
                                     </li>
                                     <li role="presentation" class="nav-item">
-                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnRowStyle span-left">
-                                            <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right"> </i>
+                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnRowStyle span-left" (click)="rightArrow()" >
+                                            <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right" > </i>
                                         </button>
                                     </li>
                                 </ul>                         
@@ -53,8 +90,8 @@
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)">
-                                    @for(rows of draggedRows;track rows){
-                                    <div class="example-box" cdkDrag>{{ rows.column }}
+                                    @for(rows of draggedRows;track rows;let index = $index){
+                                    <div class="example-boxrow" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
                                     </div>
                                     }
                                 </div>  
@@ -104,49 +141,11 @@
                 [yaxis]="barChartOptions.yaxis!" [legend]="barChartOptions.legend!" [fill]="barChartOptions.fill!"
                 [stroke]="barChartOptions.stroke!" [tooltip]="barChartOptions.tooltip!" [xaxis]="barChartOptions.xaxis!"[grid]="barChartOptions.grid!">
               </apx-chart>-->
-                              </div>
-                             
-                   <!--  @if(!draggedtables.length){ <h6 class=" fs-12 mt-2 mb-0 drag-txt">Drop field here</h6>}
-                        <div cdkDropList 
-                        #destinationList="cdkDropList" 
-                        [cdkDropListData]="draggedtables" class="example-list-drop"
-                        (cdkDropListDropped)="drop($event)">
-                            @for(item of draggedtables;track item){
-                            <div class="example-box" cdkDrag>{{ item.column }}
-                            </div>
-                            }
-                        </div>-->
-                       <!-- <div class="col-xl-4 col-md-4 p-1">
-                            <div class="body table-responsive" style="max-height:370px;padding: 0px;">
-                                <table class="table table-bordered">
-                                    <thead style="position:sticky;top: -1px;">
-                                 
-                                    </thead>
-                                    <tbody>
-                                      @for(data of tablePreviewRow;track data){
-                                      <tr>
-                                        <td><b>{{data.column}}:</b> {{data.result_data}}</td>
-                                      </tr>
-                                  }
-                                    </tbody>
-                                </table>
-                              </div>
-                              </div>-->
-                            
-                           <!-- <div class="body table-responsive" style="max-height:370px;padding: 0px;">
-                                <table class="table table-bordered">
-                                  <thead style="position:sticky;top: -1px;">
-                                 
-                                  </thead>
-                                  <tbody>
-                                    @for(data of tablePreviewColumn;track data){
-                                    <tr>
-                                      <td><b>{{data.column}}:</b> {{data.result_data}}</td>
-                                    </tr>
-                                }
-                                  </tbody>
-                                </table>
-                              </div>-->
+              <h6>Bar Chart</h6>
+              <figure id="bar"></figure>
+             <!-- <h6>Pie Chart</h6>
+             <figure id="pie"></figure>-->
+                    </div>     
                  </div>
                     <div class="card-footer d-flex p-2">
                           <ul ngbnav="" id="footer-tab border-1" role="tablist" class="nav nav-pills fs-12">
@@ -208,7 +207,7 @@
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-100 mrk-t"></a>
                             </div>
                             <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="barChartDisplay()"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-100 mrk-t"></a>
                             </div>
                             <div class="col-4 px-2 mt-2">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-100 mrk-t"></a>
@@ -274,39 +273,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-                <div class="card mb-0" style="height: 466px; overflow-y: scroll;">
-                    <div class="card-body" style="padding: 8px 20px;">
-                        <h6 class="fw-600 fs-12 mt-2 mb-0">Tables</h6>
-                    </div>
-                    <div>
-                        @for(columns of tableColumnsData; track columns){
-                            <br>
-                            <h6 class="example-box" style="background-color: #4996b2;"
-                            >{{columns.table_name}}</h6>
-                            <div  cdkDropList 
-                            #originList="cdkDropList"
-                            [cdkDropListData]="columns.dimensions"
-                            [cdkDropListConnectedTo]="[columnList]"
-                            (cdkDropListDropped)="columndrop($event)" >
-                            @for(dimensions of columns.dimensions; track dimensions){
-                                <div class="example-box" 
-                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag> {{dimensions.column}}</div>
-                            }
-                        </div>
-                            <div cdkDropList
-                            #originList="cdkDropList"
-                            [cdkDropListData]="columns.measures"
-                            [cdkDropListConnectedTo]="[rowList]"
-                            (cdkDropListDropped)="rowdrop($event)">
-                            @for(measures of columns.measures; track measures){
-                                <div class="example-box" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
-                            }
-                            </div>
-                        }
-                      </div>
-                </div>
-            </div>
+           
         </div>
     </div>
 
