@@ -48,7 +48,7 @@
                         (cdkDropListDropped)="drop($event)">
                         @for(item of draggedtables;track $index){
                         <div class="example-box" cdkDrag>{{item.alias}}({{item.schema}})
-                            <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="mdi mdi-delete"></i>
+                            <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i>
                         </div>
                         }
                     </div>
@@ -245,6 +245,7 @@
                                         </tr>
                                     }
                                     </tbody>
+                              
                                 </table>
                             
                             </div>
@@ -367,6 +368,43 @@
     <ng-template #content let-modal>
         <div class="modal-header">
           <h6 class="modal-title">Filters</h6>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="modal.dismiss('Cross click')"
+          >
+          </button>
+        </div>
+        <div class="modal-body">
+            <ul class="dropdown-plus-title">
+                @for(table of draggedtables;track table){
+                <li class="dropdown-plus-title">
+                    {{ table.schema }}.{{ table.alias }}  
+                 </li>
+                 @for(column of table.columns;track column){
+                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.columns }}</a></li>
+                 }
+            }
+            </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn ripple btn-primary">Save changes</button>
+          <button
+            type="button"
+            class="btn ripple btn-secondary"
+            (click)="modal.close('Save click')"
+          >
+            Close
+          </button>
+        </div>
+      </ng-template>
+
+
+
+      <ng-template #rowData let-modal>
+        <div class="modal-header">
+          <h6 class="modal-title">Row Filters</h6>
           <button
             type="button"
             class="btn-close"

@@ -15,10 +15,12 @@ import {
 import { of } from 'rxjs';
 import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
+import { GalleryModule } from 'ng-gallery';
+import { LightboxModule } from 'ng-gallery/lightbox';
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule],
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.scss'
 })
@@ -42,6 +44,10 @@ export class WorkbenchComponent implements OnInit{
   custmT1Data = [] as any;
   custmT2Data = [] as any;
   connectionList =[] as any;
+
+  viewNewDbs = false;
+  imageData3 = data3;
+
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router){   
   }
   
@@ -53,10 +59,10 @@ export class WorkbenchComponent implements OnInit{
   
 
 
-    openPostgreSql(){
-    this.openPostgreSqlForm=true;
-    this.databaseconnectionsList= false;
-    }
+    // openPostgreSql(){
+    // this.openPostgreSqlForm=true;
+    // this.databaseconnectionsList= false;
+    // }
     postgreSignIn(){
       const obj={
           "database_type":"postgresql",
@@ -299,4 +305,39 @@ export class WorkbenchComponent implements OnInit{
         })
 
   }
+
+
+
+  
 }
+const data3 = [
+  {
+    srcUrl: "./assets/images/Db_server_images/ibmdb2.png",
+    previewUrl: "./assets/images/Db_server_images/ibmdb2.png",
+  },
+  {
+    srcUrl: "./assets/images/Db_server_images/MongoDB_Logo.png",
+    previewUrl: "./assets/images/Db_server_images/MongoDB_Logo.png",
+  },
+  {
+    srcUrl: "./assets/images/Db_server_images/mysql.png",
+    previewUrl: "./assets/images/Db_server_images/mysql.png",
+  },
+  {
+    srcUrl: "./assets/images/Db_server_images/Oracle_logosvg.png",
+    previewUrl: "./assets/images/Db_server_images/Oracle_logosvg.png"
+  },
+  {
+    srcUrl: './assets/images/Db_server_images/postgreSql.png',
+    previewUrl: './assets/images/Db_server_images/postgreSql.png',
+  },
+  {
+    srcUrl: './assets/images/Db_server_images/sql_server.png',
+    previewUrl: './assets/images/Db_server_images/sql_server.png',
+  },
+  {
+    srcUrl: './assets/images/Db_server_images/sqlite.png',
+    previewUrl: './assets/images/Db_server_images/sqlite.png',
+  },
+
+];

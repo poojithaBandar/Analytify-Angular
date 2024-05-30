@@ -128,13 +128,12 @@ drop(event: CdkDragDrop<string[]>) {
     this.pushToDraggedTables(element)
     console.log('darggedtable',this.draggedtables)
    }
-   this.getTableData();
-   if(this.draggedtables.length > 1){
+   //this.joiningTables();
+   if(this.draggedtables.length !== 0){
     this.joiningTables();
-    const obj ={
-      database_id : this.databaseId,
-      tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]]
-    }
+    //   database_id : this.databaseId,
+    //   tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]]
+    // }
     // this.workbechService.tableRelation(obj)
     // .subscribe(
     //   {
@@ -199,9 +198,10 @@ getTableData(){
   this.workbechService.getTableData(obj).subscribe({
     next:(data:any)=>{
       console.log(data);
-      this.getTableColumns = data.column_data;
-      this.getTableRows = data.row_data;
-      this.tableName = data?.column_data[0]?.table
+      // this.getTableColumns = data.column_data;
+      // this.getTableRows = data.row_data;
+      // this.tableName = data?.column_data[0]?.table
+      this.cutmquryTable = data
 
     },
     error:(error:any)=>{
@@ -213,7 +213,9 @@ getTableData(){
 onDeleteItem(index: number) {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
    console.log(this.draggedtables);
+   if(this.draggedtables.length !== 0){
    this.joiningTables();
+   }
 }
 buildCustomRelation(){
   const parts = this.selectedClmnT1.split('(');
@@ -273,7 +275,6 @@ updateRemainingTables() {
 joiningTables(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
   console.log(schemaTablePairs)
-  if(schemaTablePairs.length == 2){
   const obj ={
     query_set_id:'0',
     database_id:this.databaseId,
@@ -295,33 +296,39 @@ joiningTables(){
         this.getJoiningTableData();
       },
       error:(error:any)=>{
-      console.log(error)
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
     }
     })
-  }else if(schemaTablePairs.length > 2){
-    const obj ={
-      query_set_id:this.qurtySetId,
-      database_id:this.databaseId,
-      joining_tables: schemaTablePairs,
-      join_type:[],
-      //joining_conditions:this.relationOfTables
-      joining_conditions:[]
-    }
-    this.workbechService.joiningTables(obj)
-    .subscribe(
-      {
-        next:(data:any) =>{
-          console.log(data)
-          this.relationOfTables = data.table_columns_and_rows?.joining_condition;
-          this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
-          console.log('relation',this.relationOfTables);
-          this.getJoiningTableData();
-        },
-        error:(error:any)=>{
-        console.log(error)
-      }
-      })
-  }
+  
+  // else if(schemaTablePairs.length > 2){
+  //   const obj ={
+  //     query_set_id:this.qurtySetId,
+  //     database_id:this.databaseId,
+  //     joining_tables: schemaTablePairs,
+  //     join_type:[],
+  //     joining_conditions:[]
+  //   }
+  //   this.workbechService.joiningTables(obj)
+  //   .subscribe(
+  //     {
+  //       next:(data:any) =>{
+  //         console.log(data)
+  //         this.relationOfTables = data.table_columns_and_rows?.joining_condition;
+  //         this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
+  //         console.log('relation',this.relationOfTables);
+  //         this.getJoiningTableData();
+  //       },
+  //       error:(error:any)=>{
+  //       console.log(error)
+  //     }
+  //     })
+  // }
 }
 customTableJoin(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any;alias:any }) => [item.schema, item.table, item.alias]);
@@ -357,6 +364,7 @@ customTableJoin(){
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
         this.getJoiningTableData();
+        this.clearJoinCondns();
       },
       error:(error:any)=>{
       console.log(error);
@@ -460,6 +468,12 @@ deleteJoiningRelation(index:number){
 }
 
 openSuperScaled(modal: any) {
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+}
+openRowsData(modal: any) {
   this.modalService.open(modal, {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',

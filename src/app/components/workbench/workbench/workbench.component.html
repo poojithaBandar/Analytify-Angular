@@ -1,37 +1,6 @@
 <app-page-header title="Workbench" title1="home" activeitem="workbench"></app-page-header>
 <!-- CONTAINER -->
 
-
-
-<!-- <div class="example-container" cdkDropListGroup cdkScrollable>
-    <h2>Tables</h2>
-      <div
-      cdkDropList
-      #originList="cdkDropList"
-      [cdkDropListData]="tableList"
-      [cdkDropListConnectedTo]="[destinationList]"
-      class="example-list"
-      (cdkDropListDropped)="drop($event)">
-      @for(item of tableList; track item){
-      <div class="example-box"  cdkDrag>{{item.table}}</div>
-      }
-    </div>
-
-      <h2>relation</h2>
-
-    <div
-      cdkDropList
-      #destinationList="cdkDropList"
-      [cdkDropListData]="draggedtables"
-      class="example-list"
-      (cdkDropListDropped)="drop($event)">
-      @for(item of draggedtables;track item){
-      <div class="example-box"  cdkDrag>{{item.table}}</div>
-      }
-    </div>
-</div> -->
-
-
 <ng-template #mdo let-modal >
 
     <div  >
@@ -79,32 +48,62 @@
 <!-- screen2 -->
 @if(databaseconnectionsList){
   <div class="main-container container-fluid">
-    <div class="row" class="card" style="flex-direction: row;padding: 20px;">
-    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-            <!-- <div class="card-header">
-                <h3 class="card-title">Database Connections</h3>
-            </div> -->
-                <div class="">
-                    <!-- <ul class="list-group">
-                        <li class="list-group-item active">Big Data Platform</li>
-                        <li class="list-group-item">Hadoop</li>
-                        <li class="list-group-item">Green Plum</li>
-                        <li class="list-group-item">Kyln</li>
-                        
-                    </ul> -->
-                   <ul class="list-group">
-                        <li class="list-group-item active">Connected Database</li>
+    <div class="row" class="card" style="padding: 20px;">
+    <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+        <div class="card-header" >
+            <h4 class="card-title">Connected Database</h4>
+            <div>
+            <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="position: absolute;top: 0;right: 0;"><i class="fa fa-plus"></i> New Database</button></div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive" style="height: 26rem;">
+                <table class="table border text-nowrap text-md-nowrap mb-0">
+                    <thead class="table-primary" style="position: sticky;top: 0;background-color: #00a5a2;">
+                        <tr>
+                            <th>Database Name</th>
+                            <th>Server</th>
+                            <th>Created at</th>
+                            <th>Last Modified</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(database of connectionList;track database){
+                        <tr>
+                            <td>{{database.display_name}}</td>
+                            <td>{{database.server_type}}</td>
+                            <td></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+                <!-- <div class="">
+                   <ul class="list-group" style="max-height: 409px;overflow-y: scroll;">
+                        <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
                         @for(database of connectionList;track database){
                         <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
                         }
                         
                     </ul>
-                </div>
+                </div> -->
+                <!-- <div class="card-body">
+                    <div class="text-wrap">
+                        <div class="dropdown-samples">
+                            <ul class="dropdown-menu dropdown-scroll">
+                                <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
+                                <li>
+                                    @for(database of connectionList;track database){
+                                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
+                                        }
+                                </li>
+                            </ul>               
+                        </div>
+                    </div>
+                </div> -->
     </div>
-    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-            <!-- <div class="card-header">
-                <h3 class="card-title">Active List item</h3>
-            </div> -->
+    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
                 <div class="">
                     <ul class="list-group">
                         <li class="list-group-item active">Relational Database</li>
@@ -118,11 +117,8 @@
                         <li class="list-group-item">Informix</li>
                     </ul>
                 </div>
-    </div>
-    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-        <!-- <div class="card-header">
-            <h3 class="card-title">Active List item</h3>
-        </div> -->
+    </div> -->
+    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
             <div class="">
                 <ul class="list-group">
                     <li class="list-group-item active">Program Data Source&Others</li>
@@ -138,9 +134,6 @@
         </div>
     </div>
     <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-        <!-- <div class="card-header">
-            <h3 class="card-title">Active List item</h3>
-        </div> -->
             <div class="">
                 <ul class="list-group">
                     <li class="list-group-item active">NoSQL Database</li>
@@ -148,13 +141,6 @@
                     <li class="list-group-item">SQLite</li>
                     <li class="list-group-item">Cassandra</li>
                 </ul>
-                <!-- <ul class="list-group">
-                    <li class="list-group-item active">File Source</li>
-                    <li class="list-group-item">Excel</li>
-                    <li class="list-group-item">TXT</li>
-                    <li class="list-group-item">XML</li>
-                    <li class="list-group-item">CSV</li>
-                </ul> -->
                 <ul class="list-group">
                     <li class="list-group-item active">Multi-dimensional Database</li>
                     <li class="list-group-item">SAP HANA</li>
@@ -163,10 +149,12 @@
                     <li class="list-group-item">EssBase</li>
                 </ul>
         </div>
-    </div>
+    </div> -->
        
     </div>
   </div>
+
+
 }
   <!-- screen3 -->
   @if(openPostgreSqlForm){
@@ -479,3 +467,55 @@
             </div>
     }
   
+
+
+    @if(viewNewDbs){
+        <div class="main-container container-fluid">
+            <div class="row" class="card" style="padding: 20px;">
+            <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+                <div class="card-header" >
+                    <h4 class="card-title">Connect to Database</h4>
+                    <div>
+                    <button type="button" class="btn btn-primary" (click)="viewNewDbs=false;databaseconnectionsList=true;" style="position: absolute;top: 0;right: 0;"><i class="fa fa-eye"></i> View Database</button></div>
+                </div>
+                <div class="card-body">
+                    <div class="image-card-container">
+                    <div class="imgcard">
+                        <img src="./assets/images/Db_server_images/ibmdb2.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard">
+                        <img src="./assets/images/Db_server_images/MongoDB_Logo.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard">
+                        <img src="./assets/images/Db_server_images/mysql.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard">
+                        <img src="./assets/images/Db_server_images/Oracle_logosvg.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard">
+                        <img src="./assets/images/Db_server_images/postgreSql.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard">
+                        <img src="./assets/images/Db_server_images/sql_server.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard">
+                        <img src="./assets/images/Db_server_images/sqlite.png" alt="Image" class="card-img"/>
+                    </div>
+                </div>
+                    <!-- <div class="card-content">
+                        <div class="row gy-3">
+                                <div class="avatar-list avatar-badges">
+                                    @for (img of imageData3; track img) {
+                                    <span class="avatar avatar-xl avatar-radius cover-image ">
+                                        <img class=" avatar avatar-xl avatar-radius cover-image" [src]="img.srcUrl">
+                                        </span>
+                                    }
+                                </div>
+                        </div>
+                    </div> -->
+                </div>         
+            </div>
+            </div>
+          </div>
+        
+    }
