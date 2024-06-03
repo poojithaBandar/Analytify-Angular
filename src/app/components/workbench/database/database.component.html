@@ -1,8 +1,242 @@
 <app-page-header title="Database" title1="home" activeitem="Database"></app-page-header>
 
-<div class="main-container container-fluid">
+<div class="main-container container-fluid"> 
+    <div class="row main-container" >
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+            <div class="card-header d-flex align-items-center justify-content-between border-bottom p-5">
+                <h6 class="mb-0">Connections</h6>
+                 <a href="#"><span class="add-txt text-info">Add</span></a>
+            </div>
+            <div class="card mb-0 p-5">
+                <h6>Database</h6>
+            </div>
+            <div class="card mb-0 ds-th">
+                    <div class="text-wrap">
+                        <div class="dropdown-samples">
+                            <ul class="dropdown-menu" >
+                                <li><h6 class="dropdown-header">Tables</h6></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 1</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 2</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 3</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 4</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 5</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 6</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 7</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 8</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 9</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 10</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 11</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 12</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 13</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 14</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 15</i></a></li>
+                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 16</i></a></li> 
+                            </ul>
+                        </div>
+                    </div>
+               
+            </div>
+        </div>
+        <div class="col-xl-10 col-md-12 p-1">
+                <div class="card-body p-0 ">
+                    <div class="card mb-0 dragT-H">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <label></label>
+                            <div class="right">
+                                <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" class="modal-effect btn btn-primary m-1">
+                                    <i class="fa fa-filter"> Apply Filters</i>
+                                </a>
+                                <a href="javascript:void(0);" class="btn btn-blue-light m-1">New Custom SQL</a>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-md-12 p-1">
+                        <div class="card-body p-1 ">
+                            <div class="row p-1">
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
+                                    <div class="card br-0 joining-T-H">
+                                        <div class="card-header d-flex align-items-center justify-content-between">
+                                            <h6>Table Joining</h6>
+                                            <i data-bs-toggle="tooltip" ngbtooltip="fa fa-chevron-left" class="fa fa-chevron-left chevron-left-icon p-2 "></i>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div class=" gap-1 d-flex flex-wrap p-2">
+                                                <div ngbdropdown="" class="btn-group my-2 dropdown">
+                                                    <button type="button" ngbdropdowntoggle="" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light">Select Column</button>
+                                                    <ul ngbdropdownmenu="" class="dropdown-menu">
+                                                        <li>
+                                                            <a ngbdropdownitem="" class="dropdown-item" tabindex="0">Action</a>
+                                                        </li>           
+                                                    </ul>
+                                                </div>
+                                                   <div ngbdropdown="" class="btn-group my-2 dropdown">
+                                                    <button type="button" ngbdropdowntoggle="" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light">Condition</button>
+                                                    <ul ngbdropdownmenu="" class="dropdown-menu">
+                                                        <li>
+                                                            <a ngbdropdownitem="" class="dropdown-item" tabindex="0">Action</a>
+                                                        </li>           
+                                                    </ul>
+                                                </div>
+                                                   <div ngbdropdown="" class="btn-group my-2 dropdown">
+                                                    <button type="button" ngbdropdowntoggle="" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light">Operator</button>
+                                                    <ul ngbdropdownmenu="" class="dropdown-menu">
+                                                        <li>
+                                                            <a ngbdropdownitem="" class="dropdown-item" tabindex="0">Action</a>
+                                                        </li>           
+                                                    </ul>
+                                                </div>
+                                                   <div ngbdropdown="" class="btn-group my-2 dropdown">
+                                                    <button type="button" ngbdropdowntoggle="" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light">Select Column</button>
+                                                    <ul ngbdropdownmenu="" class="dropdown-menu">
+                                                        <li>
+                                                            <a ngbdropdownitem="" class="dropdown-item" tabindex="0">Action</a>
+                                                        </li>           
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div style="margin-top: -18px;">
+                                                @if(relationOfTables.length){
+                                                    <div class="card-header">
+                                                        <h3 class="card-title">Joinings:</h3>
+                                                       
+                                                    </div>                                   
+                                                    <ul class="tags" style="max-height: 115px;overflow: scroll;">
+                                                        @for(relation of displayJoiningCndnsList;track relation;let i = $index){
+                                                        <!-- <li class="tag">{{relation}}</li> -->
+                                                        <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
+                                                            <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
+                                                                <i class="fa fa-circle" style="opacity: 0.5; margin-left: -10px;"></i></span>
+                                                                {{relation}}
+                                                            <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
+                                                        </li>
+                                                        }
+                                                    </ul>                            
+                                                }
+                                                @if(!relationOfTables.length){
+                                                    <div class="card-header">
+                                                        <h3 class="card-title">Joinings:</h3>
+                                                    </div>                                   
+                                                    <ul class="tags">
+                                                        <li class="tag">No relation found</li>
+                                                    </ul>                            
+                                                }
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
+                                    <div class="card br-0 joining-T-H">
+                                        <div class="card-body d-flex align-items-center justify-content-center">
+                                            <h6 class="fs-12 mt-2 mb-0 drag-txt">Table data preview</h6>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button aria-expanded="false" class="btn btn-primary"> Go to sheet </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                  </div> 
+                </div>
+          </div>            
+        </div>
+
+
+        <div class="row main-container" >
+            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+                <div class="card-header d-flex align-items-center justify-content-between border-bottom p-5">
+                    <h6 class="mb-0">Connections</h6>
+                     <a href="#"><span class="add-txt text-info">Add</span></a>
+                </div>
+                <div class="card mb-0 p-5">
+                    <h6>Database</h6>
+                </div>
+                <div class="card mb-0" style="height: 360px; overflow-y: scroll;">
+                        <div class="text-wrap">
+                            <div class="dropdown-samples">
+                                <ul class="dropdown-menu" >
+                                    <li><h6 class="dropdown-header">Tables</h6></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 1</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 2</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 3</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 4</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 5</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 6</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 7</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 8</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 9</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 10</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 11</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 12</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 13</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 14</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 15</i></a></li>
+                                    <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"> Table 16</i></a></li> 
+                                </ul>
+                            </div>
+                        </div>
+                   
+                </div>
+            </div>
+            <div class="col-xl-10 col-md-12 p-1">
+                    <div class="card-body p-0 ">
+                        <div class="card mb-0" style="height: 250px;">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <h6>Edit Custome SQL</h6>
+                                <div class="right">
+                                    <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" class="modal-effect btn btn-primary m-1">
+                                        <i class="fa fa-filter"> Apply Filters</i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex align-items-center justify-content-center">
+                                <h6 class="fs-12 mt-2 mb-0 drag-txt"></h6>
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button aria-expanded="false" class="btn btn-primary"> Ok </button>
+                                <button aria-expanded="false" class="btn btn-secondary"> Cancel </button>
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-md-12 p-1">
+                            <div class="card mb-0" style="height: 250px;">
+                                
+                                <div class="card-body d-flex align-items-center justify-content-center">
+                                    <h6 class="fs-12 mt-2 mb-0 drag-txt">Table data preview</h6>
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button aria-expanded="false" class="btn btn-primary"> Go to sheet </button>
+                                </div>
+                            </div>
+                    </div>
+              </div>            
+            </div>
+    </div>
+
+
+
+    <div class="row main-container" >
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-1">
+
+        </div>
+
+    </div>
+
+
+
+
+
+    
+<div class="main-container container-fluid mt-5">
     <div class="row" cdkListGroup>
-            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-5">
+         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-5">
             <div class="card" style="height: 683px;">
                 <div class="card-header" style="justify-content: center;">
                     <!-- <div class="dropdown" ngbDropdown>
@@ -38,11 +272,14 @@
             }
             </div>
         </div>
-        <div class="col-xxl-4 col-xl-4 col-lg-7 col-md-7">
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 p-0">
             <div class="card" style="height: 350px;">
                 <div class="card-header">
                     <label>Drag Tables Here</label>
                 </div>
+                <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
+                    <h6 class="fs-12 mt-2 mb-0 drag-txt">Drop field here</h6>
+                  </div>
                 <div class="card-body">
                     <div cdkDropList #destinationList="cdkDropList" [cdkDropListData]="draggedtables" class="example-list-drop"
                         (cdkDropListDropped)="drop($event)">
@@ -67,9 +304,9 @@
             </div> -->
         </div>
         
-        <div class="col-xxl-6 col-xl-6 col-lg-7 col-md-7">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
             <div class="card" style="height: 350px;">
-                <div class="card-header">
+                <div class="card-header ">
                     <label>Table Joining</label>
                     <div style="margin-left: 400px">
                     <button class="btn btn-primary" aria-expanded="false" (click)="tableRelationUi=!tableRelationUi">
@@ -365,6 +602,8 @@
     </div>
     </div>
 
+    
+
     <ng-template #content let-modal>
         <div class="modal-header">
           <h6 class="modal-title">Filters</h6>
@@ -436,3 +675,7 @@
           </button>
         </div>
       </ng-template>
+
+
+
+   
