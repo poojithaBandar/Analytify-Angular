@@ -63,4 +63,7 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/test_show_me/`+this.accessToken,obj);
   }
+  deleteDbConnection(id:any){
+    return this.http.delete<any>(`${environment.apiUrl}/database_disconnect/`+this.accessToken+'/'+id);
+  }
 }

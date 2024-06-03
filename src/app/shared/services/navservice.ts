@@ -88,124 +88,124 @@ export class NavService implements OnDestroy {
 
   MENUITEMS: Menu[] = [
     // Dashboard
-    { headTitle: 'MAIN' },
-    {
-      title: 'Dashboard',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
-      <path d="M0 0h24v24H0V0z" fill="none"></path>
-      <path d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"></path>
-  </svg>`,
-      type: 'link',
-      active: false,
-      nochild: true,
-      path:"/dashboard"
+  //   { headTitle: 'MAIN' },
+  //   {
+  //     title: 'Dashboard',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+  //     <path d="M0 0h24v24H0V0z" fill="none"></path>
+  //     <path d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"></path>
+  // </svg>`,
+  //     type: 'link',
+  //     active: false,
+  //     nochild: true,
+  //     path:"/dashboard"
     
-    },
+  //   },
     { headTitle: 'Server' },
     {
-    /*  title: 'SQL',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
-      <path d="M0 0h24v24H0V0z" fill="none"></path>
-      <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16zm0-11.47L17.74 9 12 13.47 6.26 9 12 4.53z">
-      </path>
-  </svg>`,
-      type: 'sub',
-      type: 'link',
-      active: false,
-     children: [
-        {
-          title: 'Profile',
-          type: 'link',
-          active: false,
-          path:'/pages/profile'
+  //     title: 'SQL',
+  //     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
+  //     <path d="M0 0h24v24H0V0z" fill="none"></path>
+  //     <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16zm0-11.47L17.74 9 12 13.47 6.26 9 12 4.53z">
+  //     </path>
+  // </svg>`,
+  //     type: 'sub',
+  //     type: 'link',
+  //     active: false,
+  //    children: [
+  //       {
+  //         title: 'Profile',
+  //         type: 'link',
+  //         active: false,
+  //         path:'/pages/profile'
          
-        },
-        {
-          title: 'Notification List',
-          type: 'link',
-          active: false,
-          path:"/pages/notification-list"
+  //       },
+  //       {
+  //         title: 'Notification List',
+  //         type: 'link',
+  //         active: false,
+  //         path:"/pages/notification-list"
         
-        },
-        {
-          title: 'Mail Inbox',
-          type: 'link',
-          active: false,
-          path:"/pages/mail-inbox"
+  //       },
+  //       {
+  //         title: 'Mail Inbox',
+  //         type: 'link',
+  //         active: false,
+  //         path:"/pages/mail-inbox"
         
-        },
-        {
-          title: 'Gallery',
-          type: 'link',
-          active: false,
-          path:"/pages/gallery"
+  //       },
+  //       {
+  //         title: 'Gallery',
+  //         type: 'link',
+  //         active: false,
+  //         path:"/pages/gallery"
         
-        },
-        {
-          title: 'Extension',
-          type: 'sub',
-          active: false,
-          selected:false,
-          children: [
-            { path: '/pages/extension/about-company', title: 'About Company', type: 'link' },
-            { path: '/pages/extension/faqs', title: 'FAQS', type: 'link' },
-            { path: '/pages/extension/terms', title: 'Terms', type: 'link' },
-            { path: '/pages/extension/invoice', title: 'Invoice', type: 'link' },
-            { path: '/pages/extension/pricing-tables', title: 'Pricing Tables', type: 'link' },
-            { path: '/pages/extension/settings', title: 'Settings', type: 'link' },
-            { path: '/pages/extension/blog', title: 'Blog', type: 'link' },
-            { path: '/pages/extension/blog-details', title: 'Blog Details', type: 'link' },
-            { path: '/pages/extension/blog-post', title: 'Blog Post', type: 'link' },
-            { path: '/pages/extension/empty-page', title: 'Empty Page', type: 'link' },
-          ],
-        },
-        {
-          title: 'File Manager',
-          type: 'sub',
-          Menusub: true,
-          active: false,
-          children: [
-            { path: '/pages/file-manager/filemanager', title: 'File Manager', type: 'link' },
-            { path: '/pages/file-manager/filemanager-list', title: 'File Manager List', type: 'link' },
+  //       },
+  //       {
+  //         title: 'Extension',
+  //         type: 'sub',
+  //         active: false,
+  //         selected:false,
+  //         children: [
+  //           { path: '/pages/extension/about-company', title: 'About Company', type: 'link' },
+  //           { path: '/pages/extension/faqs', title: 'FAQS', type: 'link' },
+  //           { path: '/pages/extension/terms', title: 'Terms', type: 'link' },
+  //           { path: '/pages/extension/invoice', title: 'Invoice', type: 'link' },
+  //           { path: '/pages/extension/pricing-tables', title: 'Pricing Tables', type: 'link' },
+  //           { path: '/pages/extension/settings', title: 'Settings', type: 'link' },
+  //           { path: '/pages/extension/blog', title: 'Blog', type: 'link' },
+  //           { path: '/pages/extension/blog-details', title: 'Blog Details', type: 'link' },
+  //           { path: '/pages/extension/blog-post', title: 'Blog Post', type: 'link' },
+  //           { path: '/pages/extension/empty-page', title: 'Empty Page', type: 'link' },
+  //         ],
+  //       },
+  //       {
+  //         title: 'File Manager',
+  //         type: 'sub',
+  //         Menusub: true,
+  //         active: false,
+  //         children: [
+  //           { path: '/pages/file-manager/filemanager', title: 'File Manager', type: 'link' },
+  //           { path: '/pages/file-manager/filemanager-list', title: 'File Manager List', type: 'link' },
            
-          ],
-        },
-        {
-          title: 'Ecommerce',
-          type: 'sub',
-          Menusub: true,
-          active: false,
-          children: [
-            {
-              path: '/pages/ecommerce/shop',
-              title: 'Shop',
-              type: 'link',
-            },
-            {
-              path: '/pages/ecommerce/product-details',
-              title: 'Product Details',
-              type: 'link',
-            },
-            { path: '/pages/ecommerce/shopping-cart', 
-            title: 'Shopping Cart', 
-            type: 'link' 
-          },
-          {
-            path: '/pages/ecommerce/add-product',
-            title: 'Add Product',
-            type: 'link',
-          },
-          { path: '/pages/ecommerce/wishlist', 
-          title: 'Wishlist',
-           type: 'link'
-           },
-           { path: '/pages/ecommerce/checkout',
-            title: 'CheckOut',
-             type: 'link' },   
-          ],
-        },
+  //         ],
+  //       },
+  //       {
+  //         title: 'Ecommerce',
+  //         type: 'sub',
+  //         Menusub: true,
+  //         active: false,
+  //         children: [
+  //           {
+  //             path: '/pages/ecommerce/shop',
+  //             title: 'Shop',
+  //             type: 'link',
+  //           },
+  //           {
+  //             path: '/pages/ecommerce/product-details',
+  //             title: 'Product Details',
+  //             type: 'link',
+  //           },
+  //           { path: '/pages/ecommerce/shopping-cart', 
+  //           title: 'Shopping Cart', 
+  //           type: 'link' 
+  //         },
+  //         {
+  //           path: '/pages/ecommerce/add-product',
+  //           title: 'Add Product',
+  //           type: 'link',
+  //         },
+  //         { path: '/pages/ecommerce/wishlist', 
+  //         title: 'Wishlist',
+  //          type: 'link'
+  //          },
+  //          { path: '/pages/ecommerce/checkout',
+  //           title: 'CheckOut',
+  //            type: 'link' },   
+  //         ],
+  //       },
      
-      ],*/
+  //     ],
     },
     {
      /*  title: 'MySQL',

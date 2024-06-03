@@ -71,7 +71,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
     if(data.accessToken){
-      this.router.navigate(['dashboard'])
+      this.router.navigate(['workbench/work-bench'])
     }
   },
   error:(error:any)=>{

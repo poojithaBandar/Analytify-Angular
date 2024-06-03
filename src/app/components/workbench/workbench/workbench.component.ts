@@ -17,10 +17,11 @@ import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule],
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.scss'
 })
@@ -47,17 +48,19 @@ export class WorkbenchComponent implements OnInit{
 
   viewNewDbs = false;
   imageData3 = data3;
-
-  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router){   
+  showPassword1 = false;
+  toggleClass = "off-line";
+toggleClass1 = "off-line";
+  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){   
   }
   
-    postGreServerName = "e-commerce.cj3oddyv0bsk.us-west-1.rds.amazonaws.com";
-    postGrePortName = "5432";
-    postGreDatabaseName = "insightapps";
-    postGreUserName = "postgres";
-    PostGrePassword = "Welcome!234";
-  
-
+    postGreServerName = '';
+    postGrePortName = '';
+    postGreDatabaseName = '';
+    postGreUserName = '';
+    PostGrePassword = '';
+    OracleServiceName = '';
+    displayName ='';
 
     // openPostgreSql(){
     // this.openPostgreSqlForm=true;
@@ -70,31 +73,134 @@ export class WorkbenchComponent implements OnInit{
           "port":this.postGrePortName,
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
-          "database": this.postGreDatabaseName
+          "database": this.postGreDatabaseName,
+          "display_name":this.displayName
       }
         this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
               console.log(responce);
-              // this.tableList = responce.data
-              if(Array.isArray(responce.data)){
-                this.tableList= responce.data
-              }
-              else{
-              this.tableList = this.combineArrays(responce.data)
-              }
               console.log('tablelist',this.tableList)
               this.databaseName = responce.database.database_name
               this.databaseId = responce.database.database_id
               if(responce){
-                // this.modalService.dismissAll();
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
                 this.openPostgreSqlForm = false;
-                this.openTablesUI = true;
+                this.router.navigate(['/workbench/database-connection/tables/'+this.databaseId]);
               }
             },
             error: (error) => {
               console.log(error);
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              // Swal.fire({
+              //   icon:'error',
+              //   title:'error',
+              //   text:error.error.message,
+              //   width:'600px'
+              // })
+
             }
           }
         )
+
+    }
+    OracleSignIn(){
+      const obj={
+          "database_type":"oracle",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName
+      }
+        this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
+              console.log(responce);
+              console.log('tablelist',this.tableList)
+              this.databaseName = responce.database.database_name
+              this.databaseId = responce.database.database_id
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.openPostgreSqlForm = false;
+                this.router.navigate(['/workbench/database-connection/tables/'+this.databaseId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+
+    }
+
+    deleteDbConnection(id:any){
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result)=>{
+        if(result.isConfirmed){
+          this.workbechService.deleteDbConnection(id)
+          .subscribe(
+            {
+              next:(data:any) => {
+                console.log(data);      
+                if(data){
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: 'Databse Deleted Successfully',
+                    width: '400px',
+                  })
+                }
+                this.getDbConnectionList();
+              },
+              error:(error:any)=>{
+                Swal.fire({
+                  icon: 'warning',
+                  text: error.error.message,
+                  width: '300px',
+                })
+                console.log(error)
+              }
+            } 
+          )
+        }})
+    }
+    editDbConnectionModal(OpenmdoModal: any) {
+      this.modalService.open(OpenmdoModal);
+    }
+    editDbDetails(id:any){
+      const editDataArray  = this.connectionList.filter((item: { database_id: number; }) => item.database_id == id);
+      console.log(editDataArray)
+      const editData = editDataArray[0] 
+    this.postGreServerName =editData.hostname;
+    this.postGrePortName = editData.port;
+    this.postGreDatabaseName = editData.database;
+    this.postGreUserName = editData.username;
+    this.PostGrePassword = '';
+    this.OracleServiceName = '';
+    this.displayName = editData.display_name;
+
+
 
     }
     private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
@@ -125,7 +231,14 @@ export class WorkbenchComponent implements OnInit{
     Openmdo(OpenmdoModal: any) {
       this.modalService.open(OpenmdoModal);
     }
-
+    toggleVisibility1() {
+      this.showPassword1 = !this.showPassword1;
+      if (this.toggleClass1 === "off-line") {
+        this.toggleClass1 = "line";
+      } else {
+        this.toggleClass1 = "off-line";
+      }
+    }
   ngOnInit(): void {
     {
       document.querySelector('html')?.getAttribute('data-toggled') != null
