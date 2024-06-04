@@ -13,13 +13,33 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,],
+  imports: [SharedModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule],
   templateUrl: './database.component.html',
-  styleUrl: './database.component.scss'
+  styleUrl: './database.component.scss',
+  animations:[
+    trigger('toggle', [
+      state('open', style({
+        width: '610px', // Adjust as needed
+        // flex: '1 1 610px',
+        opacity: 1,
+      })),
+      state('closed', style({
+        width: '0px',
+        opacity: 0,
+        display: 'none'
+      })),
+      transition('open <=> closed', [
+        animate('0.3s ease-in-out')
+      ]),
+    ])
+  ]
 })
 export class DatabaseComponent {
   databaseName:any;
@@ -54,6 +74,28 @@ export class DatabaseComponent {
   remainingTables = [] as any;
   qurtySetId:any;
   enableJoinBtn = true;
+  customSql = false;
+  tableJoiningUI = true;
+  isOpen = true;
+
+  menus = [
+    {
+      name: 'Schema1',
+      expanded: false,
+      submenus: [
+        { name: 'Table 1' },
+        { name: 'Table 2' }
+      ]
+    },
+    {
+      name: 'Schema 2',
+      expanded: false,
+      submenus: [
+        { name: 'Table 1' },
+        { name: 'Table 2' }
+      ]
+    }
+  ]
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
      this.databaseId = route.snapshot.params['id']
@@ -67,6 +109,12 @@ export class DatabaseComponent {
             ?.setAttribute('data-toggled', 'icon-overlay-close');    
     }
     this.getTablesFromConnectedDb();
+  }
+  toggleCard() {
+    this.isOpen = !this.isOpen;
+  }
+  toggleSubMenu(menu: any) {
+    menu.expanded = !menu.expanded;
   }
   getTablesFromConnectedDb(){
      this.workbechService.getTablesFromConnectedDb(this.databaseId).subscribe({next: (responce) => {
@@ -480,3 +528,20 @@ openRowsData(modal: any) {
   });
 }
 }
+
+// import { trigger, state, style, transition, animate } from '@angular/animations';
+
+// export const toggleAnimation = trigger('toggle', [
+//   state('open', style({
+//     width: '300px', // Adjust as needed
+//     opacity: 1,
+//   })),
+//   state('closed', style({
+//     width: '0px',
+//     opacity: 0,
+//     display: 'none'
+//   })),
+//   transition('open <=> closed', [
+//     animate('0.3s ease-in-out')
+//   ]),
+// ]);

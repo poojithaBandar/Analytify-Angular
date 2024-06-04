@@ -123,3 +123,62 @@ background-color: aliceblue;
 .card-header {
   background-color: #fff;
 }
+
+.sidebar {
+  width: 230px;
+  padding: 10px;
+}
+
+.menu-item {
+  margin-bottom: 10px;
+}
+
+.menu-title {
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sub-menu {
+  margin-top: 5px;
+  padding-left: 10px;
+}
+
+.sub-menu-item {
+  padding: 5px 0;
+  margin-bottom: 5px;
+}
+
+.arrow {
+  font-size: 12px;
+}
+
+
+// .side-card {
+//   padding: 10px;
+//   background-color: #f0f0f0;
+//   flex: 0 0 100px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+// .table-joining-card {
+//   overflow: hidden;
+//   transition: flex-grow 0.3s ease-in-out;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+
+// .right-card {
+//   flex: 1;
+//   padding: 10px;
+//   background-color: #e0e0e0;
+//   transition: flex-grow 0.3s ease-in-out;
+// }
+
+.right-card.expanded {
+  // flex: 2; /* Adjust this value to control how much the right card expands */
+width: 1225px;
+}
