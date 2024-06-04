@@ -139,8 +139,8 @@ export class DatabaseComponent {
 getSchemaTablesFromConnectedDb(){
   this.workbechService.getSchemaTablesFromConnectedDb(this.databaseId).subscribe({next: (data) => {
    this.schematableList= data;
-       this.databaseName = data.database.database_name;
-        this.hostName = data.database.display_name;
+       this.databaseName = data.database.database;
+        this.hostName = data.database.hostname;
     console.log(data)
 
 },

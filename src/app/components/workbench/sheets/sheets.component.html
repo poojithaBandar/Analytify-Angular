@@ -6,39 +6,46 @@
     <div class="row main-container" style="position: fixed; width: -webkit-fill-available;">
         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
             <div class="card mb-0" style="height: 466px; overflow-y: scroll;">
-                <div class="card-body" style="padding: 8px 20px;">
-                    <h6 class="fw-600 fs-12 mt-2 mb-0">Tables</h6>
-                </div>
-                <div>
-                    @for(columns of tableColumnsData; track columns){
-                        <br>
-                        <h6 class="example-box" style="background-color: #4996b2;"
-                        >{{columns.table_name}}</h6>
-                        <div  cdkDropList 
-                        #originList="cdkDropList"
-                        [cdkDropListData]="columns.dimensions"
-                        [cdkDropListConnectedTo]="[columnList]"
-                        (cdkDropListDropped)="columndrop($event)" >
-                       <!-- <h6 class="example-box" style="background-color: #49b29d;">Dimentions</h6>-->
-                        @for(dimensions of columns.dimensions; track dimensions){
+                <div class="card-body p-1">
+                    <h6 class="fw-600 fs-12 mt-2 mb-2 ">Tables</h6>
+                    <div>
+                        @for(columns of tableColumnsData; track columns){
+                            <div  class="menu-item">
+                            <div class="menu-title" class="example-box" style="background-color: #00a5a2; font-weight: 700;" (click)="toggleSubMenu(columns)">
+                                <span class="arrow">{{ columns.expanded ? '▲' : '▼' }}  
+                                    {{columns.table_name}} </span>
+                              </div>
+                              @if(columns.expanded){
+                            <div  cdkDropList 
+                            #originList="cdkDropList"
+                            [cdkDropListData]="columns.dimensions"
+                            [cdkDropListConnectedTo]="[columnList]"
+                            (cdkDropListDropped)="columndrop($event)" >
+                           <!-- <h6 class="example-box" style="background-color: #49b29d;">Dimentions</h6>-->
                            
-                            <div class="example-box"
-                (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag> {{dimensions.column}}</div>
-                        }
-                    </div>
-                        <div cdkDropList
-                        #originList="cdkDropList"
-                        [cdkDropListData]="columns.measures"
-                        [cdkDropListConnectedTo]="[rowList]"
-                        (cdkDropListDropped)="rowdrop($event)">
-                        
-                        <!--<h6 class="example-box" style="background-color: #49b29d;">Measures</h6>-->
-                        @for(measures of columns.measures; track measures){ 
-                            <div class="example-box" style="background-color: #49b29d;" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
-                        }
+                           @for(dimensions of columns.dimensions; track dimensions){
+                                <div class="example-box"
+                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag> {{dimensions.column}}</div>
+                            }
+                            
                         </div>
-                    }
-                  </div>
+                            <div cdkDropList
+                            #originList="cdkDropList"
+                            [cdkDropListData]="columns.measures"
+                            [cdkDropListConnectedTo]="[rowList]"
+                            (cdkDropListDropped)="rowdrop($event)">
+                            
+                            <!--<h6 class="example-box" style="background-color: #49b29d;">Measures</h6>-->
+                            @for(measures of columns.measures; track measures){ 
+                                <div class="example-box" style="background-color: #49b29d;" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
+                            }
+                            </div>
+                        }
+                            </div>
+                        }
+                      </div>
+                </div>
+                
             </div>
         </div>
         <div class="col-xl-8 col-md-12 p-1">
@@ -116,8 +123,9 @@
             <div class="card mb-0" style="height: 310px; overflow-y: scroll;">
                  <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
 
-                      
+                     
                             <div class="body table-responsive" style="max-height:370px;padding: 0px;">
+                                @if(table){
                                 <table>
                                     <thead>
                                       <tr>
@@ -136,16 +144,46 @@
                                     }
                                     </tbody>
                                   </table>
+                                }
+                               
+                            
                 <!--<apx-chart [chart]="barChartOptions.chart!" [series]="barChartOptions.series!"
                 [dataLabels]="barChartOptions.dataLabels!" [plotOptions]="barChartOptions.plotOptions!"
                 [yaxis]="barChartOptions.yaxis!" [legend]="barChartOptions.legend!" [fill]="barChartOptions.fill!"
                 [stroke]="barChartOptions.stroke!" [tooltip]="barChartOptions.tooltip!" [xaxis]="barChartOptions.xaxis!"[grid]="barChartOptions.grid!">
               </apx-chart>-->
+              @if(bar){
               <h6>Bar Chart</h6>
               <figure id="bar"></figure>
-             <!-- <h6>Pie Chart</h6>
-             <figure id="pie"></figure>-->
-                    </div>     
+              }
+              @if(pie){
+              <h6>Pie Chart</h6>
+             <figure id="pie"></figure>
+              }
+              @if(line){
+                <h6>Line Chart</h6>
+                <div class="card-body">
+                    <div id="line-chart">
+                        <apx-chart [series]="chartOptions.series || []" [chart]="chartOptions.chart"
+                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels"
+                        [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
+                        [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
+                    </div>
+                </div>
+              }
+              @if(area){
+                <h6>Area Chart</h6>
+                <div class="card-body">
+                    <div id="area-chart">
+                        <apx-chart [series]="chartOptions1.series" [chart]="chartOptions1.chart"
+                        [xaxis]="chartOptions1.xaxis" [stroke]="chartOptions1.stroke"
+                        [dataLabels]="chartOptions1.dataLabels" [yaxis]="chartOptions1.yaxis"
+                        [labels]="chartOptions1.labels" [legend]="chartOptions1.legend"  [grid]="chartOptions1.grid"
+                        [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
+                    </div>
+                </div>
+              }
+            </div>      
                  </div>
                     <div class="card-footer d-flex p-2">
                           <ul ngbnav="" id="footer-tab border-1" role="tablist" class="nav nav-pills fs-12">
@@ -204,19 +242,19 @@
                     <div class="card-body" style=" padding: 2px 12px;">
                         <div class="row"> 
                             <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-100 mrk-t"></a>
                             </div>
                             <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="barChartDisplay()"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-100 mrk-t"></a>
                             </div>
                             <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-100 mrk-t"></a>
                             </div>
                             <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-100 mrk-t"></a>
                             </div>
                             <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" ><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-100 mrk-t"></a>
                             </div>
                             
                         </div>

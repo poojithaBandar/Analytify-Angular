@@ -157,7 +157,7 @@
                 <table class="table border text-nowrap text-md-nowrap mb-0">
                     <thead class="table-primary" style="position: sticky;top: 0;background-color: #00a5a2;">
                         <tr>
-                            <th>Database Name</th>
+                            <th>Database</th>
                             <th>Server</th>
                             <th>Created at</th>
                             <th>Last Modified</th>
@@ -167,7 +167,9 @@
                     <tbody>
                         @for(database of connectionList;track database){
                         <tr>
-                            <td (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</td>
+                            <td (click)="getTablesFromConnectedDb(database.database_id)">
+                                <a  style="color: #05aff8;"> {{database.database}}</a>
+                               </td>
                             <td>{{database.server_type}}</td>
                             <td>{{database.created_at}}</td>
                             <td>{{database.updated_at}}</td>

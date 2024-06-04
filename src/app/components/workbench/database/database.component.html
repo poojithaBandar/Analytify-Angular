@@ -16,9 +16,11 @@
                 <div class="sidebar">
                     @for(menu of schematableList?.data?.schemas;track menu){
                     <div  class="menu-item">
+                        
                       <div class="menu-title" (click)="toggleSubMenu(menu)">
-                        {{ menu.schema }}
-                        <span class="arrow">{{ menu.expanded ? '▲' : '▼' }}</span>
+                        <span class="arrow">{{ menu.expanded ? '▲' : '▼' }}  
+                        {{ menu.schema }}</span>
+                        
                       </div>
                       @if(menu.expanded){
                       <div class="sub-menu">

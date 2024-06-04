@@ -130,3 +130,29 @@ button.BtnRowStyle.span-left {
     background-color: #f4f4f4;
     text-align: left;
   }
+  .chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  .menu-item {
+    margin-bottom: 10px;
+  }
+  .menu-title {
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+  }
+  .sub-menu {
+    margin-top: 5px;
+    padding-left: 10px;
+  }
+  
+  .sub-menu-item {
+    padding: 5px 0;
+    margin-bottom: 5px;
+  }
+  
