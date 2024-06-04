@@ -6,25 +6,25 @@
     <div class="row main-container" >
         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
             <div class="card-header d-flex align-items-center justify-content-between border-bottom p-5">
-                <h6 class="mb-0">Connections</h6>
+                <h6 class="mb-0">{{hostName}}</h6>
                  <a href="#"><span class="add-txt text-info">Add</span></a>
             </div>
             <div class="card mb-0 p-5">
-                <h6>Database</h6>
+                <h6>{{databaseName}}</h6>
             </div>
             <div class="card mb-0 ds-th">
                 <div class="sidebar">
-                    @for(menu of menus;track menu){
+                    @for(menu of schematableList?.data?.schemas;track menu){
                     <div  class="menu-item">
                       <div class="menu-title" (click)="toggleSubMenu(menu)">
-                        {{ menu.name }}
+                        {{ menu.schema }}
                         <span class="arrow">{{ menu.expanded ? '▲' : '▼' }}</span>
                       </div>
                       @if(menu.expanded){
                       <div class="sub-menu">
-                        @for(submenu of menu.submenus;track submenu){
+                        @for(submenu of menu?.tables;track submenu){
                         <div  class="sub-menu-item">
-                          {{ submenu.name }}
+                          {{ submenu }}
                         </div>
                     }
                       </div>

@@ -59,6 +59,8 @@ export class DatabaseComponent {
   custmT2Data = [] as any;
   connectionList =[] as any;
   tableList = [] as any;
+  schematableList = [] as any;
+  hostName:any;
   dragedTableName: any;
   databaseconnectionsList=true;
   draggedtables = [] as any;
@@ -109,6 +111,7 @@ export class DatabaseComponent {
             ?.setAttribute('data-toggled', 'icon-overlay-close');    
     }
     this.getTablesFromConnectedDb();
+    this.getSchemaTablesFromConnectedDb();
   }
   toggleCard() {
     this.isOpen = !this.isOpen;
@@ -125,12 +128,25 @@ export class DatabaseComponent {
     this.tableList = this.combineArrays(responce.data)
     }
     console.log('tablelist',this.tableList)
-    this.databaseName = responce.database.database_name
+    // this.databaseName = responce.database.database_name
     this.databaseId = responce.database.database_id
   },
   error:(error)=>{
     console.log(error);
   }
+})
+}
+getSchemaTablesFromConnectedDb(){
+  this.workbechService.getSchemaTablesFromConnectedDb(this.databaseId).subscribe({next: (data) => {
+   this.schematableList= data;
+       this.databaseName = data.database.database_name;
+        this.hostName = data.database.display_name;
+    console.log(data)
+
+},
+error:(error)=>{
+ console.log(error);
+}
 })
 }
 
