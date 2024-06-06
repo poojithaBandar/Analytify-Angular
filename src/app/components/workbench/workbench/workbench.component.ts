@@ -62,10 +62,11 @@ toggleClass1 = "off-line";
     OracleServiceName = '';
     displayName ='';
 
-    // openPostgreSql(){
-    // this.openPostgreSqlForm=true;
-    // this.databaseconnectionsList= false;
-    // }
+    openPostgreSql(){
+    this.openPostgreSqlForm=true;
+    this.databaseconnectionsList= false;
+    this.viewNewDbs = false;
+    }
     postgreSignIn(){
       const obj={
           "database_type":"postgresql",

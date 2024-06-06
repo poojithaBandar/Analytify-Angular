@@ -16,11 +16,12 @@ import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule],
+  imports: [SharedModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   animations:[
@@ -542,6 +543,10 @@ openRowsData(modal: any) {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
   });
+}
+
+goToConnections(){
+  this.router.navigate(['/workbench/work-bench'])
 }
 }
 

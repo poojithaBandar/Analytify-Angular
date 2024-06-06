@@ -8,14 +8,17 @@
   }
   
   .example-list {
-    border: solid 1px #ccc;
-    min-height: 60px;
+    width: 623px;
+    max-width: 100%;
+    border: solid 2px #eef1f8;
+    min-height: 259px;
     max-height: 611px;
     background: white;
     border-radius: 4px;
-    // overflow: hidden;
+    //overflow: hidden;
     overflow: scroll;
-    display: block;
+    display: flex;
+
   }
   .example-list-drop{
     border: solid 1px #ccc;
@@ -40,7 +43,8 @@
     cursor: move;
     background: white;
     font-size: 14px;
-  }
+    // border-radius: 8px;
+    margin-right: 5px;  }
   
   .cdk-drag-preview {
     box-sizing: border-box;
@@ -151,7 +155,10 @@ background-color: aliceblue;
 }
 
 .arrow {
-  font-size: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: -18px;
+  padding-left: 20px !important;
 }
 
 
@@ -181,4 +188,13 @@ background-color: aliceblue;
 .right-card.expanded {
   // flex: 2; /* Adjust this value to control how much the right card expands */
 width: 1225px;
+}
+button.TextTransform{
+  top: 178px;
+  position: absolute;
+  transform: translate(0%, 0%) rotate(270deg);
+  left: -124px;
+  padding: 10px 102px;
+  border: none;
+  border-bottom: 1px solid #9b9999;
 }

@@ -136,7 +136,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
+            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Update</button>
           </div>
         </div>
       </div>
@@ -263,315 +263,55 @@
 }
   <!-- screen3 -->
   @if(openPostgreSqlForm){
-  <div class="main-container container-fluid" style="display: flex;justify-content: center;">
-    <div class="col-md-12 col-xl-6">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">Connect To PostGreSQL</h4>
+    <div class="row main-container" >
+        <div class="row">
+            <div class="col-md-12 col-xl-6 p-1 mb-0">
+               <div class="card">
+                   
+               </div>
             </div>
-            <div class="card-body">
-                <form>
-                    <div class="mb-2">
-                        <label for="recipient-name" class="col-form-label">Server:</label>
-                        <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}">
-                      </div>
-                      <div class="mb-2">
-                        <label for="message-text" class="col-form-label">Port:</label>
-                        <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}">
-                      </div>
-                      <div class="mb-2">
-                        <label class="col-form-label">Database:</label>
-                        <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}">
-                      </div>
-                      <div class="mb-2">
-                        <label class="col-form-label">Username:</label>
-                        <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}">
-                      </div>
-                      <div class="mb-2">
-                        <label class="col-form-label">Password:</label>
-                        <input type="text" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}">
-                      </div>
-                      <div style="float: right;">
-                        <button type="button" class="btn btn-secondary mt-4 mb-0" style="margin-right: 20px;">Close</button>
-                        <button type="button" class="btn btn-primary mt-4 mb-0" (click)="postgreSignIn()">Sign In</button>
-                      </div>
-                </form>
+            <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Connect To PostgreSQL</h4>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                </div>
+                                <div class="form-group">
+                                    <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                    <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                    <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+                                <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-  </div>
     }
 
 
     <!-- screen4Tables -->
-    @if(openTablesUI){
-        <div class="main-container container-fluid">
-            <div class="row" cdkListGroup>
-                    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-5">
-                    <div class="card" style="height: 560px;">
-                        <div class="card-header" style="justify-content: center;">
-                            <!-- <div class="dropdown" ngbDropdown>
-                                <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Data Connections
-                                </button>
-                                <ul class="dropdown-menu" ngbDropdownMenu style>
-                                    <li><a class="dropdown-item" ngbDropdownItem>Oracle</a></li>
-                                    <li><a class="dropdown-item" (click)="Openmdo(mdo)" ngbDropdownItem>PostGreSQL</a></li>
-                                </ul>
-                            </div> -->
-                            <label class="list-group-item active">{{databaseName}}</label>
-                        </div>
-                        @if(tableList.length){ 
-                        <div class="card-body" style="padding: 0px;">
-                            <div
-                            cdkDropList
-                            #originList="cdkDropList"
-                            [cdkDropListData]="tableList"
-                            [cdkDropListConnectedTo]="[destinationList]"
-                            class="example-list"
-                            (cdkDropListDropped)="drop($event)">
-                            @for(item of tableList; track item; let i = $index){
-                                <!-- @for(value of item.data;track value){
-                                    <div class="example-box"  cdkDrag>{{value.table}} ({{item.schema}})</div>
-                                } -->
-                                <div class="example-box"  cdkDrag>{{item.table}} ({{item.schema}})</div>
-
-                            }
-                          </div>
-                        </div>
-                    }
-                    </div>
-                </div>
-                <div class="col-xxl-4 col-xl-4 col-lg-7 col-md-7">
-                    <div class="card" style="height: 350px;">
-                        <div class="card-header">
-                            <label>Drag Tables Here</label>
-                        </div>
-                        <div class="card-body">
-                            <div cdkDropList #destinationList="cdkDropList" [cdkDropListData]="draggedtables" class="example-list-drop"
-                                (cdkDropListDropped)="drop($event)">
-                                @for(item of draggedtables;track $index){
-                                <div class="example-box" cdkDrag>{{item.table}}({{item.schema}})
-                                    <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="mdi mdi-delete"></i>
-                                </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <!-- <div class="col-xxl-10 col-xl-8 col-lg-7 col-md-7">
-                        <div class="card">
-                            <div class="card-header">
-                
-                            </div>
-                            <div class="card-body">
-                
-                            </div>
-                
-                        </div>
-                    </div> -->
-                </div>
-                
-                <div class="col-xxl-6 col-xl-6 col-lg-7 col-md-7">
-                    <div class="card" style="height: 350px;">
-                        <div class="card-header">
-                            <label>Table Relations</label>
-                            <div style="margin-left: 400px">
-                            <button class="btn btn-primary" aria-expanded="false" (click)="tableRelationUi=!tableRelationUi">
-                                Add
-                            </button>
-                        </div>
-                        </div>
-                        @if(draggedtables.length > 1){
-                        <div class="card-body">
-                            @if(tableRelationUi){
-                            <div class="row">
-                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
-                                    <label>{{draggedtables[0]?.table}}({{draggedtables[0]?.schema}})</label>
-                                    <div class="btn-group my-2" ngbDropdown>
-                                        <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                            {{ selectedClmnT1 ? selectedClmnT1 : 'Columns' }}
-                                        </button>
-                                        <ul class="dropdown-menu" ngbDropdownMenu>
-                                            @for(data of draggedtables[0]?.columns;track data){
-                                                <li>
-                                            <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT1 = data.columns + ' (' + data.datatypes + ')'">{{data.columns}}({{data.datatypes}})</a>
-                                                
-                                            </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3" >
-                                    <div style="display: flex;justify-content: center;"><label>operator</label></div>
-                                    <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
-                                        <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                            {{ selectedCndn ? selectedCndn : 'Condition' }}
-                                        </button>
-                                        <ul class="dropdown-menu" ngbDropdownMenu>
-                                            <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >equals(=)</a></li>
-                                           
-                                        </ul>
-                                    </div>
-                                 </div>
-                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
-                                    <label>{{draggedtables[1]?.table}}({{draggedtables[1]?.schema}})</label>
-                                    <div class="btn-group my-2" ngbDropdown>
-                                        <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                            {{ selectedClmnT2 ? selectedClmnT2 : 'Columns' }}
-                                        </button>
-                                        <ul class="dropdown-menu" ngbDropdownMenu>
-                                            @for(data of draggedtables[1]?.columns;track data){
-                                            <li>
-                                            <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2 = data.columns + ' (' + data.datatypes + ')';buildCustomRelation()">{{data.columns}}({{data.datatypes}})</a>                                               
-                                            </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                            <div>
-                                @if(relationOfTables.length){
-                                    <div class="card-header">
-                                        <h3 class="card-title">Relations:</h3>
-                                    </div>                                   
-                                    <ul class="tags">
-                                        @for(relation of relationOfTables;track relation;let i = $index){
-                                        <li class="tag">{{relation}}</li>
-                                        }
-                                    </ul>                            
-                                }
-                                @if(!relationOfTables.length){
-                                    <div class="card-header">
-                                        <h3 class="card-title">Relations:</h3>
-                                    </div>                                   
-                                    <ul class="tags">
-                                        <li class="tag">No relation found</li>
-                                    </ul>                            
-                                }
-                            </div>
-                           
-                        </div>
-                    }
-                    </div>
-                </div>
-                @if(draggedtables.length){
-                <div  class="col-xxl-10 col-xl-10 col-lg-7 col-md-7 side-card">
-                    <div class="row">
-                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <label>Table Joinings</label>
-                                </div>
-                                <div class="card-body">
-                                    @if(tableRelationUi){
-                                        <div class="row">
-                                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
-                                                <label>{{draggedtables[0]?.table}}({{draggedtables[0]?.schema}})</label>
-                                                <div class="btn-group my-2" ngbDropdown>
-                                                    <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                                        {{ selectedClmnT1 ? selectedClmnT1 : 'Columns' }}
-                                                    </button>
-                                                    <ul class="dropdown-menu" ngbDropdownMenu>
-                                                        @for(data of draggedtables[0]?.columns;track data){
-                                                            <li>
-                                                        <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT1 = data.columns + ' (' + data.datatypes + ')'">{{data.columns}}({{data.datatypes}})</a>
-                                                            
-                                                        </li>
-                                                        }
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3" >
-                                                <div style="display: flex;justify-content: center;"><label>operator</label></div>
-                                                <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
-                                                    <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                                        {{ selectedCndn ? selectedCndn : 'Condition' }}
-                                                    </button>
-                                                    <ul class="dropdown-menu" ngbDropdownMenu>
-                                                        <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >equals(=)</a></li>
-                                                       
-                                                    </ul>
-                                                </div>
-                                             </div>
-                                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-3">
-                                                <label>{{draggedtables[1]?.table}}({{draggedtables[1]?.schema}})</label>
-                                                <div class="btn-group my-2" ngbDropdown>
-                                                    <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                                        {{ selectedClmnT2 ? selectedClmnT2 : 'Columns' }}
-                                                    </button>
-                                                    <ul class="dropdown-menu" ngbDropdownMenu>
-                                                        @for(data of draggedtables[1]?.columns;track data){
-                                                        <li>
-                                                        <a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2 = data.columns + ' (' + data.datatypes + ')';buildCustomRelation()">{{data.columns}}({{data.datatypes}})</a>                                               
-                                                        </li>
-                                                        }
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
-                            <div  class="card">
-                                <div class="card-header">
-                                    <!-- <label>Table Data</label> -->
-                                    @if(draggedtables && draggedtables[1]){
-                                         <div class="dropdown" ngbDropdown>
-                                <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Tables
-                                </button>
-                                <ul class="dropdown-menu" ngbDropdownMenu style>
-                                    @for(tables of draggedtables;track tables){
-                                    <li><a class="dropdown-item" (click)="getTablerowclms(tables.table,tables.schema)" ngbDropdownItem>{{tables.table}}</a></li>
-                                    }
-                                    <!-- <li><a class="dropdown-item" (click)="Openmdo(mdo)" ngbDropdownItem>{{PostGreSQL}}</a></li> -->
-                                </ul>
-                            </div>
-                                    }
-                                    @if(tableName){
-                                    {{tableName}}
-                                    }
-                                </div>
-                                <div class="card-body" style="padding: 0px;height: 200px;overflow: scroll;">
-                                    <div class="table-responsive">
-                                        <table class="table border text-nowrap text-md-nowrap table-sm mb-0">
-                                            <thead>
-                                                <tr>
-                                                    @for(dataa of getTableColumns;track dataa;let i = $index){
-                                                            <th>{{dataa.columns}}</th>                                                       
-                                                    }                                                    
-                                                </tr>
-                                              
-                                            </thead>
-                                            <tbody>
-                                                @for(rowss of getTableRows;track rowss;){
-                                                <tr>
-                                                    @for(rowdata of rowss;track rowdata;let i = $index){
-
-                                                    <td>{{rowdata}}</td>
-                                                    }
-                                                </tr>
-                                            }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>                       
-                    </div>
-                   
-                </div>
-                }
-                
-            </div>
-            </div>
-    }
-  
 
 
     @if(viewNewDbs){
@@ -605,7 +345,7 @@
                     <div class="imgcard" (click)="Openmdo(oracle)">
                         <img src="./assets/images/Db_server_images/Relational Database/Oracle_logo.png"  alt="Image" class="card-img"/>
                     </div>
-                    <div class="imgcard" (click)="Openmdo(mdo)">
+                    <div class="imgcard" (click)="openPostgreSql()">
                         <img src="./assets/images/Db_server_images/Relational Database/postgresql.png" alt="Image" class="card-img"/>
                     </div>
                     <div class="imgcard op-4">
@@ -661,7 +401,24 @@
                    
                 </div>
                 </div>
-               
+                <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >File Source</h6>
+                <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
+                    <div class="image-card-container">
+                    <div class="imgcard op-4">
+                        <img src="./assets/images/Db_server_images/File Source/csv.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard op-4">
+                        <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard op-4">
+                        <img src="./assets/images/Db_server_images/File Source/PDF_file_icon.png" alt="Image" class="card-img"/>
+                    </div>
+                    <div class="imgcard op-4">
+                        <img src="./assets/images/Db_server_images/File Source/text-img.png" alt="Image" class="card-img"/>
+                    </div>
+                   
+                </div>
+                </div>
             </div>
             </div>
           </div>
