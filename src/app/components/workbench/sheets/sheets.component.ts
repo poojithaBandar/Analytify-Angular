@@ -15,6 +15,10 @@ import {
 import * as d3 from 'd3';
 import type { EChartsOption } from 'echarts';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import {FormControl} from '@angular/forms';
+import {MatTabsModule} from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 interface TableRow {
   [key: string]: any;
 }
@@ -24,7 +28,7 @@ interface TableRow {
   selector: 'app-sheets',
   standalone: true,
   imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,
-    CdkDropListGroup, CdkDropList, CdkDrag,NgApexchartsModule],
+    CdkDropListGroup, CdkDropList, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -48,7 +52,7 @@ export class SheetsComponent {
   tableData: TableRow[] = [];
   displayedColumns: string[] = [];
   chartEnable = true;
-
+  dimensionExpand = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -61,10 +65,10 @@ export class SheetsComponent {
   private svg: any;
   private margin = 50;
   private width = 750 - (this.margin * 2);
-  private height = 400 - (this.margin * 2);
+  private height = 350 - (this.margin * 2);
   //Pie
-  private widthPie = 750;
-  private heightPie = 600;
+  private widthPie = 600;
+  private heightPie = 300;
   // The radius of the pie chart is half the smallest side
   private radius = Math.min(this.width, this.height) / 2 - this.margin;
   private colors:any;
@@ -83,6 +87,7 @@ export class SheetsComponent {
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
   }
+
   private createSvg(): void {
     this.svg = d3.select("figure#bar")
     .append("svg")
@@ -184,7 +189,7 @@ lineChart(){
     }],
    
         chart: {
-            height: 320,
+            height: 200,
             type: 'line',
             reponsive: true,
             zoom: {
@@ -246,13 +251,13 @@ areaChart(){
   this.chartOptions1 = {
     series: [
       {
-        name: "STOCK ABC",
+        name: "",
         data: this.chartsRowData,
       },
     ],
     chart: {
       type: "area",
-      height: 320,
+      height: 200,
       zoom: {
         enabled: false,
       },
@@ -264,7 +269,7 @@ areaChart(){
       curve: "straight",
     },
     subtitle: {
-      text: "Price Movements",
+      text: "",
       align: "left",
       style: {
         fontSize: "11px",
@@ -277,7 +282,7 @@ areaChart(){
     },
     labels: this.chartsColumnData,
     title: {
-      text: "Fundamental Analysis of Stocks",
+      text: "",
       align: "left",
       style: {
         fontSize: "13px",
@@ -287,7 +292,7 @@ areaChart(){
     },
     colors: ["#00a5a2"],
     xaxis: {
-      type: "datetime",
+      type: "",
       labels: {
         show: true,
         style: {
@@ -539,12 +544,13 @@ areaChart(){
     this.pie=pie;
     this.dataExtraction();
   }
+  showMe = [] as any;;
   enableDisableCharts(){
-    this.draggedColumnsData;
-    this.draggedRowsData;
+    console.log(this.draggedColumnsData);
+    console.log(this.draggedRowsData);
     const obj={
         "db_id":"182",
-        "col":this.draggedColumnsData,
+        "col":this.showMe.push(this.draggedColumnsData,this.draggedRowsData),
   }
     this.workbechService.getChartsEnableDisable(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -555,4 +561,23 @@ areaChart(){
       }
     )
   }
+  tabs = ['Sheet 1', 'Sheet 2', 'Sheet 3'];
+  selected = new FormControl(0);
+  tabtitle:string = '';
+
+  addSheet() {
+    if(this.tabtitle != ''){
+       this.tabs.push(this.tabtitle);
+    }else{
+      const index = this.tabs.length + 1;
+       this.tabs.push('Sheet ' +index);
+    }
+    this.tabtitle = '';
+   
+  }
+
+  removeTab(index: number) {
+    this.tabs.splice(index, 1);
+  }
+  
 }

@@ -11,36 +11,39 @@
                     <div>
                         @for(columns of tableColumnsData; track columns){
                             <div  class="menu-item">
-                            <div class="menu-title" class="example-box" style="background-color: #00a5a2; font-weight: 700;" (click)="toggleSubMenu(columns)">
-                                <span class="arrow">{{ columns.expanded ? '▲' : '▼' }}  
+                            <div class="menu-title" class="example-box" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
+                                <span class="arrow"> {{ columns.expanded ? '▲' : '▼' }}
                                     {{columns.table_name}} </span>
+
                               </div>
+                              
                               @if(columns.expanded){
                             <div  cdkDropList 
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.dimensions"
                             [cdkDropListConnectedTo]="[columnList]"
                             (cdkDropListDropped)="columndrop($event)" >
-                           <!-- <h6 class="example-box" style="background-color: #49b29d;">Dimentions</h6>-->
+                            
+                           
                            
                            @for(dimensions of columns.dimensions; track dimensions){
-                                <div class="example-box"
-                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag> {{dimensions.column}}</div>
+                                <li class="example-box" 
+                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag> {{dimensions.column}}</li>
                             }
                             
                         </div>
+                    
                             <div cdkDropList
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.measures"
                             [cdkDropListConnectedTo]="[rowList]"
                             (cdkDropListDropped)="rowdrop($event)">
                             
-                            <!--<h6 class="example-box" style="background-color: #49b29d;">Measures</h6>-->
                             @for(measures of columns.measures; track measures){ 
-                                <div class="example-box" style="background-color: #49b29d;" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
+                                <div class="example-box1"  (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
                             }
                             </div>
-                        }
+                      }
                             </div>
                         }
                       </div>
@@ -60,7 +63,7 @@
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
                                 <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
-                                style="position: relative; top: 11px; min-height: 33px; padding: 2px;" 
+                                style="position: relative;min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
@@ -69,7 +72,7 @@
                                     </div>
                                     }
                                 </div> 
-                                <ul style=" bottom: 15px; left: -5px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
+                             <!--   <ul style=" bottom: 15px; left: -5px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
                                     <li role="presentation" class="nav-item">
                                         <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnRowStyle span-right">
                                             <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
@@ -80,7 +83,7 @@
                                             <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right" > </i>
                                         </button>
                                     </li>
-                                </ul>                         
+                                </ul>  -->                       
                             
                         </div>
                     </div>
@@ -93,16 +96,16 @@
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
                            
                                 <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" style="
-                                position: relative; top: 11px; min-height: 33px; padding: 2px;"
+                                position: relative; min-height: 33px; padding: 2px;"
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-boxrow" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
+                                    <div class="example-box1" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
                                     </div>
                                     }
                                 </div>  
-                                <ul style=" bottom: 15px; left: -5px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
+                               <!-- <ul style=" bottom: 15px; left: -5px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
                                     <li role="presentation" class="nav-item">
                                         <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnRowStyle span-right">
                                             <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
@@ -113,18 +116,65 @@
                                             <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right"> </i>
                                         </button>
                                     </li>
-                                </ul>                          
+                                </ul> -->                         
                             
                         </div>
                     </div>
                 </div>
             </div>
+          <!--  <div class="">
 
-            <div class="card mb-0" style="height: 310px; overflow-y: scroll;">
+                <h2>Dynamic Sheets Example</h2>
+                  <div>
+                    <mat-form-field style="width:100%">
+                      <table class="example-full-width" cellspacing="0">
+                          <tr>
+                            <td>
+                              <mat-label>Sheet Name</mat-label>
+                              <input matInput  [(ngModel)]="tabtitle" >
+                            </td>
+                            <td>
+                              <button mat-raised-button
+                                  class="example-add-tab-button"
+                                    (click)="addSheet()">
+                              Add new Sheet
+                            </button>
+                            </td>
+                            <td>
+                             
+                        
+                          </td>
+                        </tr>
+                      </table>
+                   </mat-form-field>
+                  
+                </div>
+                
+                <mat-tab-group [selectedIndex]="selected.value"
+                               (selectedIndexChange)="selected.setValue($event)">
+                               @for(tab of tabs;track tab; let index = $index){
+                  <mat-tab  [label]="tab">
+                
+                    <br>  <br>
+                    Contents for {{tab}} tab
+                
+                    <button mat-raised-button
+                            class="example-delete-tab-button"
+                            [disabled]="tabs.length === 1"
+                            (click)="removeTab(index)">
+                      Delete Tab
+                    </button>
+                     <br> <br> <br>
+                  </mat-tab>
+                }
+                </mat-tab-group>
+                
+                </div>-->
+            <div class="card mb-0" style="height: 352px; overflow-y: scroll;">
                  <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
 
                      
-                            <div class="body table-responsive" style="max-height:370px;padding: 0px;">
+                            <div class="body table-responsive" style="max-height:300px;padding: 0px;">
                                 @if(table){
                                 <table>
                                     <thead>
@@ -145,13 +195,6 @@
                                     </tbody>
                                   </table>
                                 }
-                               
-                            
-                <!--<apx-chart [chart]="barChartOptions.chart!" [series]="barChartOptions.series!"
-                [dataLabels]="barChartOptions.dataLabels!" [plotOptions]="barChartOptions.plotOptions!"
-                [yaxis]="barChartOptions.yaxis!" [legend]="barChartOptions.legend!" [fill]="barChartOptions.fill!"
-                [stroke]="barChartOptions.stroke!" [tooltip]="barChartOptions.tooltip!" [xaxis]="barChartOptions.xaxis!"[grid]="barChartOptions.grid!">
-              </apx-chart>-->
               @if(bar){
               <h6>Bar Chart</h6>
               <figure id="bar"></figure>
@@ -216,13 +259,15 @@
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 6</button>
                             </li>
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">
+                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
+                                  tabindex="-1" class="nav-link BtnNewStyle">
                                     <i class="fa fa-plus-square-o"></i>
                                 </button>
                             </li>
                         </ul>
                    </div>
                 </div>
+
              </div>
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
                 <div class="card mb-1" style=" height: 100px; overflow-y: scroll;">
