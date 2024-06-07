@@ -1,10 +1,21 @@
 
-@if(isLoading){<div class="card-content text-center">
+<!-- @if(loading$){<div class="card-content text-center">
     <div class="dimmer active">
         <div class="spinner2">
             <div class="cube1"></div>
             <div class="cube2"></div>
         </div>
     </div>
-</div>
+</div> -->
+
+@if (loading$ | async ; as loading){
+<div class="loader">
+    <div class="dimmer active">
+        <div class="spinner2">
+            <div class="cube1"></div>
+            <div class="cube2"></div>
+        </div>
+    </div>
+    Loading...
+  </div>
 }

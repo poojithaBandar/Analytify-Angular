@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
+import { LoaderService } from '../services/loader.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-loader',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './loader.component.html',
   styleUrl: './loader.component.scss'
 })
 export class LoaderComponent {
-isLoading = false;
+  loading$ = this.loaderService.loading$;
 
-showLoader(loading:boolean){
-  this.isLoading = loading;
+  constructor(private loaderService: LoaderService) { }
 }
-}
+
