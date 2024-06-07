@@ -74,7 +74,7 @@ button.BtnRowStyle.span-left {
 .example-box {
   padding: 3px 13px;
   border-bottom: solid 1px #ccc;
-  color: rgb(var(--info-rgb))!important;
+  // color: rgb(var(--info-rgb))!important;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -89,7 +89,7 @@ button.BtnRowStyle.span-left {
   .example-box1 {
     padding: 3px 13px;
     border-bottom: solid 1px #ccc;
-    color: rgb(var(--success-rgb))!important;
+    // color: rgb(var(--success-rgb))!important;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -156,6 +156,9 @@ button.BtnRowStyle.span-left {
     padding: 5px 0;
     margin-bottom: 5px;
   }
-
+  span.abc-txt {
+    font-size: 8px;
+    margin-right: 5px;
+  }
   
   

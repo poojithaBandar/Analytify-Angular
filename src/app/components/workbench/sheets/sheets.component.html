@@ -28,7 +28,7 @@
                            
                            @for(dimensions of columns.dimensions; track dimensions){
                                 <li class="example-box" 
-                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag> {{dimensions.column}}</li>
+                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag style="display: flex; justify-content: start;"><span class="abc-txt">abc</span> {{dimensions.column}}</li>
                             }
                             
                         </div>

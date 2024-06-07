@@ -79,7 +79,7 @@ export class DatabaseComponent {
   enableJoinBtn = true;
   customSql = false;
   tableJoiningUI = true;
-  isOpen = true;
+  isOpen = false;
 
   menus = [
     {

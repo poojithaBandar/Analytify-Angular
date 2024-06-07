@@ -21,7 +21,7 @@
 
   }
   .example-list-drop{
-    border: solid 1px #ccc;
+    // border: solid 1px #ccc;
     min-height: 60px;
     max-height: 254px;
     background: white;
@@ -33,7 +33,7 @@
   }
   .example-box {
     padding: 20px 20px;
-    border-bottom: solid 1px #ccc;
+    // border-bottom: solid 1px #ccc;
     color: rgba(0, 0, 0, 0.87);
     display: flex;
     flex-direction: row;
@@ -96,25 +96,25 @@
     color: #c1c1c1;
 }
 
-/* width */
-::-webkit-scrollbar {
-  width: 5px;
-}
+// /* width */
+// ::-webkit-scrollbar {
+//   width: 5px;
+// }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-}
+// /* Track */
+// ::-webkit-scrollbar-track {
+//   background: #f1f1f1; 
+// }
  
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #c0c0c0a8 !important; 
-}
+// /* Handle */
+// ::-webkit-scrollbar-thumb {
+//   background: #c0c0c0a8 !important; 
+// }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #000; 
-}
+// /* Handle on hover */
+// ::-webkit-scrollbar-thumb:hover {
+//   background: #000; 
+// }
 
 ul.dropdown-menu {
   box-shadow: none;
@@ -190,11 +190,30 @@ background-color: aliceblue;
 width: 1225px;
 }
 button.TextTransform{
-  top: 178px;
+  top: 180px;
   position: absolute;
   transform: translate(0%, 0%) rotate(270deg);
   left: -124px;
-  padding: 10px 102px;
+  padding: 10px 88px;
   border: none;
   border-bottom: 1px solid #9b9999;
+}
+.drpdwnhgt{
+  height: 220px;
+  overflow-y: scroll;
+  background-color: #ffffff !important;
+}
+.table-left{
+  margin-left: 48px
+}
+.subMenuFlex{
+  display: flex;
+  justify-content: flex-start;
+}
+.databse-T-H{
+  height: 250px;
+}
+.ds-th {
+  height: 530px;
+  overflow-y: scroll;
 }
