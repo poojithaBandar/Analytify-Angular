@@ -131,6 +131,14 @@
 
 
 
+// 
+
+
+
+
+
+
+
 .example-container {
   max-width: 100%;
   max-height: 400px;
@@ -241,4 +249,28 @@
 .op-4{
   opacity: 0.5;
   background-color: #c1c1c1;
+}
+
+.table > :not(:last-child) > :last-child > * {
+  border-block-end-color: var(--default-border);
+  color: #fff;
+}
+a {
+  cursor: pointer;
+}
+.table td {
+  padding: 0.60rem;
+  vertical-align: middle;
+  border-block-start: 0;
+  color: var(--default-text-color);
+}
+.light-gry-txt {
+  color: #bec1c5;
+}
+.post-bg {
+  background-color: #f6f6f6;
+  height: 336px;
+}
+.dark-gry {
+  color: #837f7f;
 }

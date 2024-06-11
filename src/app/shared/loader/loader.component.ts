@@ -10,8 +10,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './loader.component.scss'
 })
 export class LoaderComponent {
-  loading$ = this.loaderService.loading$;
+  loading: boolean = false;
 
   constructor(private loaderService: LoaderService) { }
+
+  ngOnInit(): void {
+    this.loaderService.loading$.subscribe((isLoading: boolean) => {
+      // console.log('LoaderComponent: loading status changed to', isLoading); // Debug log
+      this.loading = isLoading;
+    });
+  }
 }
 

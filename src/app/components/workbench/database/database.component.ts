@@ -73,6 +73,11 @@ export class DatabaseComponent {
   databaseId:any;  
   sqlQuery ='';
   cutmquryTable = [] as any;
+  TabledataJoining = [] as any;
+  qryTime:any;
+  qryRows:any;
+  custmQryRows:any;
+  custmQryTime:any;
   cutmquryTableError:any;
   remainingTables = [] as any;
   qurtySetId:any;
@@ -101,7 +106,7 @@ export class DatabaseComponent {
   ]
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
-     this.databaseId = route.snapshot.params['id']
+     this.databaseId = +atob(route.snapshot.params['id']);
   }
   ngOnInit(){
     {
@@ -175,13 +180,13 @@ drop(event: CdkDragDrop<string[]>) {
 
 
     let item: any = event.previousContainer.data[event.previousIndex];
-    console.log('item' + JSON.stringify(item));
+    // console.log('item' + JSON.stringify(item));
     let copy: any = JSON.parse(JSON.stringify(item));
 
-    console.log('copy' + JSON.stringify(copy));
+    // console.log('copy' + JSON.stringify(copy));
     let element: any = {};
     for (let attr in copy) {
-      console.log('attr' + attr);
+      // console.log('attr' + attr);
       if (attr == 'title') {
         element[attr] = copy[attr];
       } else {
@@ -262,12 +267,10 @@ getTableData(){
   }
   this.workbechService.getTableData(obj).subscribe({
     next:(data:any)=>{
-      console.log(data);
-      // this.getTableColumns = data.column_data;
-      // this.getTableRows = data.row_data;
-      // this.tableName = data?.column_data[0]?.table
+      console.log('single table data',data);
       this.cutmquryTable = data
-
+      this.qryTime = data.query_exection_time;
+      this.qryRows = data.no_of_rows;
     },
     error:(error:any)=>{
       console.log(error)
@@ -322,6 +325,8 @@ executeQuery(){
         // this.relationOfTables = data[2]?.relation?.condition
         // console.log('relation',this.relationOfTables)
         this.cutmquryTable = data
+        this.custmQryTime = data.query_exection_time;
+        this.custmQryRows = data.no_of_rows;
         console.log('dkjshd',this.cutmquryTable)
       },
       error:(error:any)=>{
@@ -339,7 +344,7 @@ updateRemainingTables() {
 
 joiningTables(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
-  console.log(schemaTablePairs)
+  // console.log(schemaTablePairs)
   const obj ={
     query_set_id:'0',
     database_id:this.databaseId,
@@ -512,7 +517,9 @@ getJoiningTableData(){
     {
       next:(data:any) =>{
         console.log(data)
-        this.cutmquryTable = data
+        this.TabledataJoining = data;
+        this.qryTime = data.query_exection_time;
+        this.qryRows = data.no_of_rows;
       },
       error:(error:any)=>{
       console.log(error);
@@ -547,6 +554,12 @@ openRowsData(modal: any) {
 
 goToConnections(){
   this.router.navigate(['/workbench/work-bench'])
+}
+
+goToSheet(){
+  const encodedDatabaseId = btoa(this.databaseId.toString());
+  const encodedQuerySetId = btoa(this.qurtySetId.toString());
+  this.router.navigate(['/workbench/sheets'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
 }
 }
 

@@ -149,8 +149,13 @@
     <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
         <div class="card-header" >
             <h4 class="card-title">Connected Database</h4>
+            <div class="input-group" style="position: absolute;top: 0;right:173px ;width: 20%!important;">
+              <input type="text" class="form-control border-end-0" placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keydown)="getDbConnectionList()">
+              <button class="btn border" type="button" id="button-addon2"><i class="bi bi-search text-muted"></i></button>
+          </div>
             <div>
-            <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="position: absolute;top: 0;right: 23px;"><i class="fa fa-plus"></i> New Database</button></div>
+            <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="position: absolute;top: 0;right: 23px;"><i class="fa fa-plus"></i> New Database</button>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive" style="height: 26rem;">
@@ -168,7 +173,7 @@
                         @for(database of connectionList;track database){
                         <tr>
                             <td (click)="getTablesFromConnectedDb(database.database_id)">
-                                <a  style="color: #05aff8;"> {{database.database}}</a>
+                                <a  style="color: #05aff8;" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                </td>
                             <td>{{database.server_type}}</td>
                             <td>{{database.created_at}}</td>
@@ -264,50 +269,66 @@
   <!-- screen3 -->
   @if(openPostgreSqlForm){
     <div class="row main-container" >
-        <div class="row">
-            <div class="col-md-12 col-xl-6 p-1 mb-0">
-               <div class="card">
-                   
+      <div class="row">
+          <div class="col-md-12 col-xl-6 p-1 mb-0">
+             <div class="card">
+               <div class="card-header">
+                 <div class="card-body d-flex align-items-center justify-content-center">
+                    <img src="./assets/images/Db_server_images/Relational Database/postgresql.png" alt="Image" class="w-200"/>
+                 </div>
                </div>
-            </div>
-            <div class="col-md-12 col-xl-6 p-1 mb-0">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Connect To PostgreSQL</h4>
-                    </div>
-                    <div class="card-body">
-                        <form>
-                                <div class="form-group">
-                                    <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
-                                </div>
-                                <div class="form-group">
-                                    <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL">
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                                    <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
-                                    <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
-                                <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+               <div class="card-body post-bg">
+                  <div class="post-txt">
+                    <span class="light-gry-txt">PostgreSQL is a powerful, open source ojbect-relational database system that uses and extends the SQL language. 
+                      PostgreSQL supports both relational (SQL) and non-relational (JSON) queries. PostSQL is free and open-source.
+                    </span>
+                    <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
+                    <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for postgresql is 5432</span></h6>
+                    <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
+                    <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
+                    <h6 class="mb-0 dark-gry">Pssword:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                  </div>
+               </div>
+             </div>
+          </div>
+          <div class="col-md-12 col-xl-6 p-1 mb-0">
+              <div class="card">
+                  <div class="card-header">
+                      <h4 class="card-title">Connect To PostgreSQL</h4>
+                  </div>
+                  <div class="card-body">
+                      <form>
+                              <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                  <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                              </div>
+                              <div class="form-group">
+                                  <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                  <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                  <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL">
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                  <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                  <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                  <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
     }
 
 
@@ -315,112 +336,112 @@
 
 
     @if(viewNewDbs){
-        <div class="main-container container-fluid">
-            <div class="row" class="card" style="padding: 20px;">
-            <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
-                <div class="card-header" >
-                    <h4 class="card-title">Connect to Database</h4>
-                    <div>
-                        <div class="input-group" style="position: absolute;top: 0;right: 215px;width: 30%!important;">
-                            <input type="text" class="form-control border-end-0" placeholder="Search Database Server" aria-describedby="button-addon2">
-                            <button class="btn border" type="button" id="button-addon2"><i class="bi bi-search text-muted"></i></button>
-                            
-                        </div>
-                        <button type="button" class="btn btn-primary" (click)="viewNewDbs=false;databaseconnectionsList=true;" style="position: absolute;top: 0;right: 0;">
-                            <i class="fa fa-eye"></i> View Connected Database</button>
+      <div class="main-container container-fluid">
+        <div class="row" class="card" style="padding: 20px;">
+        <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+            <div class="card-header" >
+                <h4 class="card-title">Connect to Database</h4>
+                <div>
+                    <div class="input-group" style="position: absolute;top: 0;right: 215px;width: 30%!important;">
+                        <input type="text" class="form-control border-end-0" placeholder="Search Database Server" aria-describedby="button-addon2">
+                        <button class="btn border" type="button" id="button-addon2"><i class="bi bi-search text-muted"></i></button>
+                        
                     </div>
+                    <button type="button" class="btn btn-primary" (click)="viewNewDbs=false;databaseconnectionsList=true;" style="position: absolute;top: 0;right: 0;">
+                        <i class="fa fa-eye"></i> View Connected Database</button>
                 </div>
-                <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;">Relational Database</h6>
-                <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
-                    <div class="image-card-container">
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Relational Database/ibmdb2.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Relational Database/IBM-Informix.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Relational Database/mysql.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard" (click)="Openmdo(oracle)">
-                        <img src="./assets/images/Db_server_images/Relational Database/Oracle_logo.png"  alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard" (click)="openPostgreSql()">
-                        <img src="./assets/images/Db_server_images/Relational Database/postgresql.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Relational Database/sql server.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Relational Database/microsoft-access.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Relational Database/SyBase-logo.png" alt="Image" class="card-img"/>
-                    </div>
+            </div>
+            <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;">Relational Database</h6>
+            <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
+                <div class="image-card-container">
+                <div class="imgcard ">
+                    <img src="./assets/images/Db_server_images/Relational Database/ibmdb2.png" alt="Image" class="card-img"/>
                 </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Relational Database/IBM-Informix.png" alt="Image" class="card-img"/>
                 </div>
-                <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Big Data Platform</h6>
-                <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
-                    <div class="image-card-container">
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Big Data Platform/Apache_Kylin_logo.png" alt="Image" class="card-img"/>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Relational Database/mysql.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4" (click)="Openmdo(oracle)">
+                    <img src="./assets/images/Db_server_images/Relational Database/Oracle_logo.png"  alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4" (click)="openPostgreSql()">
+                    <img src="./assets/images/Db_server_images/Relational Database/postgresql.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Relational Database/sql server.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Relational Database/microsoft-access.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Relational Database/SyBase-logo.png" alt="Image" class="card-img"/>
+                </div>
+            </div>
+            </div>
+            <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Big Data Platform</h6>
+            <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
+                <div class="image-card-container">
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Big Data Platform/Apache_Kylin_logo.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Big Data Platform/greenplum_logo_icon_171038.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Big Data Platform/Hadoop.png" alt="Image" class="card-img"/>
+                </div>
+           
+            </div>
+            </div>
+            <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >No Sql Database</h6>
+            <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
+                <div class="image-card-container">
+                    <div class="imgcard p-4">
+                        <img src="./assets/images/Db_server_images/No Sql Database/cassandra-logo.png" alt="Image" class="card-img"/>
                     </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Big Data Platform/greenplum_logo_icon_171038.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Big Data Platform/Hadoop.png" alt="Image" class="card-img"/>
-                    </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/No Sql Database/sqlite.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/No Sql Database/MongoDB_Logo.png" alt="Image" class="card-img"/>
+                </div>
                
-                </div>
-                </div>
-                <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >No Sql Database</h6>
-                <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
-                    <div class="image-card-container">
-                        <div class="imgcard op-4">
-                            <img src="./assets/images/Db_server_images/No Sql Database/cassandra-logo.png" alt="Image" class="card-img"/>
-                        </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/No Sql Database/sqlite.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/No Sql Database/MongoDB_Logo.png" alt="Image" class="card-img"/>
-                    </div>
-                   
-                </div>
-                </div>
-                <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Multi dimensional  Database</h6>
-                <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
-                    <div class="image-card-container">
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Multi dimensional  Database/sap-bw.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" alt="Image" class="card-img"/>
-                    </div>
-                   
-                </div>
-                </div>
-                <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >File Source</h6>
-                <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
-                    <div class="image-card-container">
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/File Source/csv.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/File Source/PDF_file_icon.png" alt="Image" class="card-img"/>
-                    </div>
-                    <div class="imgcard op-4">
-                        <img src="./assets/images/Db_server_images/File Source/text-img.png" alt="Image" class="card-img"/>
-                    </div>
-                   
-                </div>
-                </div>
             </div>
             </div>
-          </div>
+            <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Multi dimensional  Database</h6>
+            <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
+                <div class="image-card-container">
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Multi dimensional  Database/sap-bw.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/Multi dimensional  Database/SAP-HANA.png" alt="Image" class="card-img"/>
+                </div>
+               
+            </div>
+            </div>
+            <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >File Source</h6>
+            <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
+                <div class="image-card-container">
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/File Source/csv.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/File Source/PDF_file_icon.png" alt="Image" class="card-img"/>
+                </div>
+                <div class="imgcard p-4">
+                    <img src="./assets/images/Db_server_images/File Source/text-img.png" alt="Image" class="card-img"/>
+                </div>
+               
+            </div>
+            </div>
+        </div>
+        </div>
+      </div>
         
     }

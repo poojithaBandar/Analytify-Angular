@@ -10,18 +10,19 @@ export class LoaderService {
   loading$ = this.loadingSubject.asObservable();
 
   show() {
-    console.log('Show loader'); 
     this.requestCount++;
+    // console.log('LoaderService: show loader, request count:', this.requestCount); // Detailed log
     this.loadingSubject.next(true);
   }
 
   hide() {
-    this.requestCount--;
-
-    console.log('Hide loader, request count:', this.requestCount); 
+    if (this.requestCount > 0) {
+      this.requestCount--;
+    }
+    // console.log('LoaderService: hide loader, request count:', this.requestCount); // Detailed log
     if (this.requestCount === 0) {
-
-    this.loadingSubject.next(false);
+      this.loadingSubject.next(false);
+      // console.log('LoaderService: loader hidden'); // Log when loader is hidden
     }
   }
 }

@@ -27,10 +27,10 @@ export class WorkbenchService {
   getTableData(obj:any){
     return this.http.put<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj)
   }
-  getdatabaseConnectionsList(){
+  getdatabaseConnectionsList(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.get<any>(`${environment.apiUrl}/connection_list/`+this.accessToken)
+    return this.http.put<any>(`${environment.apiUrl}/connection_list/`+this.accessToken,obj)
   }
   getTablesFromConnectedDb(id:any){
     const currentUser = localStorage.getItem( 'currentUser' );

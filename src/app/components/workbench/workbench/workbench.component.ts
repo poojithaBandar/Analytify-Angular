@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule } from '@angular/forms';
 import { WorkbenchService } from '../workbench.service';
@@ -18,10 +18,11 @@ import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule],
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.scss'
 })
@@ -45,15 +46,14 @@ export class WorkbenchComponent implements OnInit{
   custmT1Data = [] as any;
   custmT2Data = [] as any;
   connectionList =[] as any;
-
+  searchDbName :any;
   viewNewDbs = false;
   imageData3 = data3;
   showPassword1 = false;
   toggleClass = "off-line";
-toggleClass1 = "off-line";
+  toggleClass1 = "off-line";
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){   
   }
-  
     postGreServerName = '';
     postGrePortName = '';
     postGreDatabaseName = '';
@@ -91,7 +91,8 @@ toggleClass1 = "off-line";
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openPostgreSqlForm = false;
-                this.router.navigate(['/workbench/database-connection/tables/'+this.databaseId]);
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -250,8 +251,16 @@ toggleClass1 = "off-line";
     }
    this.getDbConnectionList();
   }
+
+
   getDbConnectionList(){
-    this.workbechService.getdatabaseConnectionsList().subscribe({
+    const Obj ={
+      search : this.searchDbName
+    }
+    if(Obj.search == '' || Obj.search == null){
+      delete Obj.search;
+    }
+    this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
       next:(data)=>{
         console.log(data);
         this.connectionList = data.connections
@@ -268,7 +277,8 @@ toggleClass1 = "off-line";
     })
   }
   getTablesFromConnectedDb(id:any){
-    this.router.navigate(['/workbench/database-connection/tables/'+id]);
+    const encodedId = btoa(id.toString());
+    this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
     //     this.workbechService.getTablesFromConnectedDb(id).subscribe({next: (responce) => {
 
 //     if(Array.isArray(responce.data)){

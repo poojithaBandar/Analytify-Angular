@@ -14,9 +14,10 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { ToastrModule } from 'ngx-toastr';
-import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { LoaderService } from './shared/services/loader.service';
 import { HttpInterceptorService } from './shared/services/http-interceptor.service';
+import { HttpAuthService } from './shared/services/http-auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(App_Route),RouterOutlet,ColorPickerModule,ColorPickerService,provideAnimations(),  AngularFireModule,
@@ -26,19 +27,32 @@ export const appConfig: ApplicationConfig = {
     AngularFireAuthModule,
     HttpClientModule,
     LoaderService,
+    provideHttpClient(withFetch(),withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpInterceptorService,
       multi: true
     },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpAuthService,multi: true},
+    importProvidersFrom(HttpClientModule),
   importProvidersFrom(CalendarModule.forRoot({
     provide: DateAdapter,
     useFactory: adapterFactory,
-  }), AngularFireModule.initializeApp(environment.firebase), ToastrModule.forRoot({
+  }),
+   AngularFireModule.initializeApp(environment.firebase),
+    ToastrModule.forRoot({
     timeOut: 15000, // 15 seconds
     closeButton: true,
     progressBar: true,
-  }),),]
+  }),
+ ),
+  // {
+  //   provide: HTTP_INTERCEPTORS,
+  //   useClass: HttpInterceptorService,
+  //   multi: true
+  // },
+  // { provide: HTTP_INTERCEPTORS, useClass: HttpAuthService,multi: true},
+]
 };
 
 

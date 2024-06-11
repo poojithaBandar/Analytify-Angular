@@ -19,6 +19,7 @@ import {FormControl} from '@angular/forms';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ActivatedRoute } from '@angular/router';
 interface TableRow {
   [key: string]: any;
 }
@@ -79,7 +80,13 @@ export class SheetsComponent {
   chartOptions:any;
   chartOptions1:any;
   sheetValue = "Sheet 1";
-  constructor(private workbechService:WorkbenchService){   
+  databaseId:any;
+  qrySetId:any;
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute){   
+    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+    this.databaseId = +atob(route.snapshot.params['id1']);
+    this.qrySetId = +atob(route.snapshot.params['id2'])
+    }
   }
 
   ngOnInit(): void {
@@ -381,8 +388,8 @@ areaChart(){
 }*/
   columnsData(){
     const obj={
-      "db_id":"182",
-      "queryset_id":"254",
+      "db_id":this.databaseId,
+      "queryset_id":this.qrySetId,
   }
     this.workbechService.getColumnsData(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -402,8 +409,8 @@ areaChart(){
     this.tableData = [];
     this.chartsData = [];
       const obj={
-          "database_id":182,
-          "queryset_id":254,
+          "database_id":this.databaseId,
+          "queryset_id":this.qrySetId,
           "col":this.draggedColumnsData,
           "row":this.draggedRowsData,
           "filter_id": [60]
@@ -550,7 +557,7 @@ areaChart(){
     console.log(this.draggedColumnsData);
     console.log(this.draggedRowsData);
     const obj={
-        "db_id":"182",
+        "db_id":this.databaseId,
         "col":this.showMe.push(this.draggedColumnsData,this.draggedRowsData),
   }
     this.workbechService.getChartsEnableDisable(obj).subscribe({next: (responce:any) => {
