@@ -1,80 +1,95 @@
 .drag-txt {
-    text-align: center;
+  text-align: center;
 }
 
 button.BtnNewStyle {
-    margin-inline: 0px !important;
-    border-radius: 0px !important;
-    background-color: #ccedec45;
-    border: 1px solid #0000003b;
+  margin-inline: 0px !important;
+  border-radius: 0px !important;
+  background-color: #ccedec45;
+  border: 1px solid #0000003b;
 }
 .nav-link.BtnNewStyle.active {
-    background: #ccedec !important;
-    color: #036e6c !important;
-    border-bottom: 2px solid #036e6c;
-    border-top: none;
+  background: #ccedec !important;
+  color: #036e6c !important;
+  border-bottom: 2px solid #036e6c;
+  border-top: none;
 }
 button.BtnNewStyle.span-right {
-    border-right: 0px;
-    padding: 8px 6px 8px 15px;
+  border-right: 0px;
+  padding: 8px 6px 8px 15px;
 }
 button.BtnNewStyle.span-left {
-    border-left: 0px;
-    padding: 8px 15px 8px 6px;
+  border-left: 0px;
+  padding: 8px 15px 8px 6px;
 }
 .drag-input-field {
-    border: 1px solid #e9edf6;
-    height: 34px;
-    border-radius: 3px;
-    // overflow: scroll;
-    padding: 6px 12px;
+  border: 1px solid #e9edf6;
+  height: 34px;
+  border-radius: 3px;
+  // overflow: scroll;
+  padding: 6px 12px;
 }
 
 
 button.BtnRowStyle {
-    margin-inline: 0px !important;
-    border-radius: 0px !important;
-    background-color: rgb(241 241 241 / 72%);
-    border: 1px solid rgb(0 0 0 / 16%);
+  margin-inline: 0px !important;
+  border-radius: 0px !important;
+  background-color: rgb(241 241 241 / 72%);
+  border: 1px solid rgb(0 0 0 / 16%);
 }
 .nav-link.BtnRowStyle.active {
-    background: #ccedec !important;
-    color: #036e6c !important;
-    border-top: none; 
+  background: #ccedec !important;
+  color: #036e6c !important;
+  border-top: none; 
 }
 button.BtnRowStyle.span-right {
-    border-right: 0px;
-    padding:1px 4px 1px 3px;
+  border-right: 0px;
+  padding:1px 4px 1px 3px;
 }
 button.BtnRowStyle.span-left {
-    border-left: 0px;
-    padding: 1px 3px 1px 4px;
+  border-left: 0px;
+  padding: 1px 3px 1px 4px;
 }
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+width: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+background: #f1f1f1; 
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #c0c0c0a8 !important; 
+background: #c0c0c0a8 !important; 
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #000; 
+background: #000; 
 }
 
 .example-box {
+padding: 3px 13px;
+border-bottom: solid 1px #ccc;
+color: rgb(var(--info-rgb))!important;
+display: flex;
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+box-sizing: border-box;
+cursor: move;
+
+font-size: 14px;
+border-radius: 8px;
+margin-right: 5px;
+}
+.example-box1 {
   padding: 3px 13px;
   border-bottom: solid 1px #ccc;
-  // color: rgb(var(--info-rgb))!important;
+  color: rgb(var(--success-rgb))!important;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -86,79 +101,63 @@ button.BtnRowStyle.span-left {
   border-radius: 8px;
   margin-right: 5px;
   }
-  .example-box1 {
-    padding: 3px 13px;
-    border-bottom: solid 1px #ccc;
-    // color: rgb(var(--success-rgb))!important;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    cursor: move;
-  
-    font-size: 14px;
-    border-radius: 8px;
-    margin-right: 5px;
-    }
 
-  .example-list {
-    width: 1000px;
-    max-width: 100%;
-    border: solid 2px #eef1f8;
-    min-height: 60px;
-    display: flex;
-    flex-direction: row;
-    background: white;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .table-container {
-    margin: 20px;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
-  th {
-    background-color: #f4f4f4;
-    text-align: left;
-  }
-  .chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-  .menu-item {
-    margin-bottom: 10px;
-  }
-  .menu-title {
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-  }
-  .sub-menu {
-    margin-top: 5px;
-    padding-left: 10px;
-  }
-  
-  .sub-menu-item {
-    padding: 5px 0;
-    margin-bottom: 5px;
-  }
-  span.abc-txt {
-    font-size: 8px;
-    margin-right: 5px;
-  }
-  
-  
+.example-list {
+  width: 1000px;
+  max-width: 100%;
+  border: solid 2px #eef1f8;
+  min-height: 60px;
+  display: flex;
+  flex-direction: row;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.table-container {
+  margin: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background-color: #f4f4f4;
+  text-align: left;
+}
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.menu-item {
+  margin-bottom: 10px;
+}
+.menu-title {
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+.sub-menu {
+  margin-top: 5px;
+  padding-left: 10px;
+}
+
+.sub-menu-item {
+  padding: 5px 0;
+  margin-bottom: 5px;
+}
+span.abc-txt {
+  font-size: 8px;
+  margin-right: 5px;
+}
+

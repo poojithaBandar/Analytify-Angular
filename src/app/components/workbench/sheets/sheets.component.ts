@@ -78,6 +78,7 @@ export class SheetsComponent {
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
   chartOptions1:any;
+  sheetValue = "Sheet 1";
   constructor(private workbechService:WorkbenchService){   
   }
 
@@ -561,7 +562,7 @@ areaChart(){
       }
     )
   }
-  tabs = ['Sheet 1', 'Sheet 2', 'Sheet 3'];
+  tabs = ['Sheet 1'];
   selected = new FormControl(0);
   tabtitle:string = '';
 
@@ -579,5 +580,12 @@ areaChart(){
   removeTab(index: number) {
     this.tabs.splice(index, 1);
   }
-  
+  onChange(event:any){
+  console.log(event.tab.textLabel)
+  this.sheetValue = event.tab.textLabel;
+  console.log(this.tabs)
+  }
+  sheetSave(){
+console.log("Sheet Save")
+  }
 }

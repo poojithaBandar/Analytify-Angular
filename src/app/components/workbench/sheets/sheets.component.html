@@ -28,11 +28,12 @@
                            
                            @for(dimensions of columns.dimensions; track dimensions){
                                 <li class="example-box" 
-                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag style="display: flex; justify-content: start;"><span class="abc-txt">abc</span> {{dimensions.column}}</li>
+                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag style="display: flex; justify-content: start;">
+                    <span class="abc-txt">abc</span> {{dimensions.column}}</li>
                             }
                             
                         </div>
-                    
+                       
                             <div cdkDropList
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.measures"
@@ -52,7 +53,7 @@
             </div>
         </div>
         <div class="col-xl-8 col-md-12 p-1">
-            <div class="card p-0 mb-1">
+           <div class="card p-0 mb-1">
                 <div class="card-body p-4">
                     <div class="row align-items-center mb-2">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
@@ -122,59 +123,29 @@
                     </div>
                 </div>
             </div>
-          <!--  <div class="">
-
-                <h2>Dynamic Sheets Example</h2>
-                  <div>
-                    <mat-form-field style="width:100%">
-                      <table class="example-full-width" cellspacing="0">
+                    <mat-form-field style="width:100%;">
+                      <table class="example-full-width">
                           <tr>
                             <td>
-                              <mat-label>Sheet Name</mat-label>
-                              <input matInput  [(ngModel)]="tabtitle" >
+                              <input matInput placeholder="Sheet Name" [(ngModel)]="tabtitle" >
                             </td>
                             <td>
                               <button mat-raised-button
                                   class="example-add-tab-button"
                                     (click)="addSheet()">
-                              Add new Sheet
+                              New Sheet
                             </button>
                             </td>
-                            <td>
-                             
-                        
-                          </td>
+                            <td><button (click)="sheetSave()">Save</button></td>
                         </tr>
                       </table>
                    </mat-form-field>
-                  
-                </div>
-                
-                <mat-tab-group [selectedIndex]="selected.value"
-                               (selectedIndexChange)="selected.setValue($event)">
-                               @for(tab of tabs;track tab; let index = $index){
-                  <mat-tab  [label]="tab">
-                
-                    <br>  <br>
-                    Contents for {{tab}} tab
-                
-                    <button mat-raised-button
-                            class="example-delete-tab-button"
-                            [disabled]="tabs.length === 1"
-                            (click)="removeTab(index)">
-                      Delete Tab
-                    </button>
-                     <br> <br> <br>
-                  </mat-tab>
-                }
-                </mat-tab-group>
-                
-                </div>-->
             <div class="card mb-0" style="height: 352px; overflow-y: scroll;">
                  <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-
-                     
+                    @for(tab of tabs;track tab; let index = $index){
+                        @if(tab === sheetValue){
                             <div class="body table-responsive" style="max-height:300px;padding: 0px;">
+                                <p>{{sheetValue}}</p>
                                 @if(table){
                                 <table>
                                     <thead>
@@ -225,11 +196,36 @@
                         [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
                     </div>
                 </div>
+
+
+               
               }
-            </div>      
+            </div>
+        }
+        }      
                  </div>
                     <div class="card-footer d-flex p-2">
-                          <ul ngbnav="" id="footer-tab border-1" role="tablist" class="nav nav-pills fs-12">
+                        <mat-tab-group [selectedIndex]="selected.value"
+                        (selectedIndexChange)="selected.setValue($event)" 
+                        (selectedTabChange)="onChange($event)">
+                        @for(tab of tabs;track tab; let index = $index){
+           <mat-tab  [label]="tab" >
+         
+          <!--  <br>  <br>
+             Contents for {{tab}} tab
+         
+             <button mat-raised-button
+                     class="example-delete-tab-button"
+                     [disabled]="tabs.length === 1"
+                     (click)="removeTab(index)">
+               Delete Tab
+             </button>
+              <br> <br> <br>-->
+           </mat-tab>
+         }
+         </mat-tab-group>
+         
+                       <!--   <ul ngbnav="" id="footer-tab border-1" role="tablist" class="nav nav-pills fs-12">
                                <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-right">
                                     <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
@@ -264,8 +260,9 @@
                                     <i class="fa fa-plus-square-o"></i>
                                 </button>
                             </li>
-                        </ul>
+                        </ul>-->
                    </div>
+                  
                 </div>
 
              </div>
