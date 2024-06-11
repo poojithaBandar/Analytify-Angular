@@ -379,7 +379,7 @@
                                     
                                 </div>
                                 <div class="card-body d-flex align-items-center justify-content-center p-0">
-                                    @if(!cutmquryTable.length){
+                                    @if(cutmquryTable.length){
                                     <h6 class="fs-12 mt-2 mb-0 drag-txt">Table data preview</h6>
                                     }@else{
                                         <div class="table-responsive" style="overflow-y: scroll;height: 233px;">
@@ -407,8 +407,8 @@
                                     }
                                 </div>
                                 <div class="modal-footer border-0">
-                                    @if(cutmquryTable.length){
-                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in {{custmQryTime}},Rows effected:{{custmQryRows}}</span>
+                                    @if(custmQryTime){
+                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <h6>{{custmQryTime}}</h6>,Rows effected:{{custmQryRows}}</span>
                                     }
                                     @if(qurtySetId && qurtySetId){
                                         <button aria-expanded="false" class="btn btn-primary" (click)="goToSheet()"> Go to sheet </button>

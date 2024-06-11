@@ -314,6 +314,10 @@
                                   <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
                                   <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
                               </div>
+                              <div class="mb-2">
+                                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                              </div>
                               <div class="form-group">
                                   <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
                                   <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
