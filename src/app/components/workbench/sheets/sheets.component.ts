@@ -49,7 +49,6 @@ export class SheetsComponent {
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
-  rowdataPreview = [] as any;
   tableData: TableRow[] = [];
   displayedColumns: string[] = [];
   chartEnable = true;
@@ -63,25 +62,28 @@ export class SheetsComponent {
   ];*/
 
   //Bar
-  private svg: any;
-  private margin = 50;
-  private width = 750 - (this.margin * 2);
-  private height = 350 - (this.margin * 2);
+  public svg: any;
+  public margin = 50;
+  public width = 750 - (this.margin * 2);
+  public height = 350 - (this.margin * 2);
   //Pie
-  private widthPie = 600;
-  private heightPie = 300;
+  public widthPie = 600;
+  public heightPie = 300;
   // The radius of the pie chart is half the smallest side
-  private radius = Math.min(this.width, this.height) / 2 - this.margin;
-  private colors:any;
-  private chartsData = [] as any;
+  public radius = Math.min(this.width, this.height) / 2 - this.margin;
+  public colors:any;
+  public chartsData = [] as any;
   chartsColumnData = [] as any;
   chartsRowData = [] as any;
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
   chartOptions1:any;
-  sheetValue = "Sheet 1";
+  sheetName = "Sheet 1";
   databaseId:any;
   qrySetId:any;
+  chartsEnableDisable = [] as any;
+  chartId = 1;
+  sheetResponce = [] as any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -405,15 +407,17 @@ areaChart(){
   dataExtraction(){
     this.tablePreviewColumn = [];
     this.tablePreviewRow = [];
-    this.rowdataPreview = [];
     this.tableData = [];
     this.chartsData = [];
+    this.displayedColumns = [];
+    this.chartsColumnData = [];
+    this.chartsRowData = [];
       const obj={
           "database_id":this.databaseId,
           "queryset_id":this.qrySetId,
           "col":this.draggedColumnsData,
           "row":this.draggedRowsData,
-          "filter_id": [60]
+          "filter_id": []
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -544,24 +548,26 @@ areaChart(){
   area = false;
   line = false;
   pie = false;
-  chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean){
+  chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
     this.line=line;
     this.pie=pie;
+    this.chartId = chartId;
     this.dataExtraction();
   }
-  showMe = [] as any;;
   enableDisableCharts(){
     console.log(this.draggedColumnsData);
     console.log(this.draggedRowsData);
     const obj={
         "db_id":this.databaseId,
-        "col":this.showMe.push(this.draggedColumnsData,this.draggedRowsData),
+        "col":this.draggedColumnsData,
+        "row":this.draggedRowsData,
   }
     this.workbechService.getChartsEnableDisable(obj).subscribe({next: (responce:any) => {
           console.log(responce);
+          this.chartsEnableDisable = responce;
         },
         error: (error) => {
           console.log(error);
@@ -583,16 +589,168 @@ areaChart(){
     this.tabtitle = '';
    
   }
+  sheetNameChange(event:any){
+    console.log(event)
 
+  }
   removeTab(index: number) {
     this.tabs.splice(index, 1);
   }
   onChange(event:any){
-  console.log(event.tab.textLabel)
-  this.sheetValue = event.tab.textLabel;
-  console.log(this.tabs)
+  console.log(event)
+  this.sheetName = event.tab.textLabel;
+  this.saveTableData = [] ;
+  this.savedisplayedColumns = [];
+  this.saveBar = [];
+  this.savePie = [];
+  this.lineYaxis = [];
+  this.lineXaxis = [];
+  this.areaYaxis = [];
+  this.areaXaxis = [];
+  this.draggedColumns = [];
+  this.draggedRows = [];
+  this.tablePreviewColumn = [];
+  this.tablePreviewRow = [];
+  this.tableData = [];
+  this.displayedColumns = [];
+  this.chartsData = [];
+  this.chartsRowData = [];
+  this.chartsColumnData = [];
+  this.draggedColumnsData = [];
+  this.draggedRowsData = [];
+  this.sheetRetrive();
   }
-  sheetSave(){
+  saveTableData = [] as any;
+  savedisplayedColumns = [] as any;
+  saveBar = [] as any;
+  savePie = [] as any;
+  lineYaxis = [] as any;
+  lineXaxis = [] as any;
+  areaYaxis = [] as any;
+  areaXaxis = [] as any;
+sheetSave(){
+  if(this.table && this.chartId == 1){
+   this.saveTableData =  this.tableData;
+   this.savedisplayedColumns = this.displayedColumns;
+  }
+  if(this.bar && this.chartId == 6){
+    this.saveBar = this.chartsData;
+  }
+  if(this.pie && this.chartId == 24){
+    this.savePie = this.chartsData;
+  }
+  if(this.line && this.chartId == 13){
+    this.lineYaxis = this.chartsRowData;
+    this.lineXaxis = this.chartsColumnData;
+  }
+  if(this.area && this.chartId == 17){
+    this.areaYaxis = this.chartsRowData;
+    this.areaXaxis = this.chartsColumnData;
+  }
 console.log("Sheet Save")
+const obj={
+  "chart_id": this.chartId,
+  "queryset_id":this.qrySetId,
+  "server_id": this.databaseId,
+  "sheet_name": this.sheetName,
+  "data":{
+  "columns": this.draggedColumns,
+  "rows": this.draggedRows,
+  "results": {
+    "tableData":this.saveTableData,
+    "tableColumns":this.savedisplayedColumns,
+
+    "bar":this.saveBar,
+
+    "pie":this.savePie,
+
+    "lineYaxis":this.lineYaxis,
+    "lineXaxis": this.lineXaxis,
+
+    "areaYaxis":this.areaYaxis,
+    "areaXaxis":this.areaXaxis
+  },
+}
+}
+this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
+    console.log(responce);
+  },
+  error: (error) => {
+    console.log(error);
+  }
+}
+)
+  }
+sheetRetrive(){
+  const obj={
+  "queryset_id":this.qrySetId,
+  "server_id": this.databaseId,
+  "sheet_name": this.sheetName,
+}
+  this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
+        console.log(responce);
+        this.sheetResponce = responce.sheet_data;
+        this.draggedColumns=this.sheetResponce.columns;
+        this.draggedRows = this.sheetResponce.rows;
+        if(responce.chart_id == "1"){
+          this.tableData = this.sheetResponce.results.tableData;
+          this.displayedColumns = this.sheetResponce.results.tableColumns;
+          this.table = true;
+          this.bar = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+         
+        }
+       if(responce.chart_id == "6"){
+        this.chartsData = this.sheetResponce.results.bar;
+        this.createSvg();
+        this.drawBars(this.chartsData);
+        this.bar = true;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+       }
+       if(responce.chart_id == "24"){
+        this.chartsData = this.sheetResponce.results.pie;
+        this.createSvgPie();
+        this.createColors();
+        this.drawChartPie();
+        this.bar = false;
+        this.table = false;
+          this.pie = true;
+          this.line = false;
+          this.area = false;
+       }
+       if(responce.chart_id == "13"){
+        this.chartsRowData = this.sheetResponce.results.lineYaxis;
+        this.chartsColumnData = this.sheetResponce.results.lineXaxis;
+        this.lineChart();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = true;
+          this.area = false;
+       }
+       if(responce.chart_id == "17"){
+        this.chartsRowData = this.sheetResponce.results.areaYaxis;
+        this.chartsColumnData = this.sheetResponce.results.areaXaxis;
+        this.areaChart();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = true;
+       }
+        
+   
+       
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }
+  )
   }
 }

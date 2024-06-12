@@ -66,9 +66,19 @@ export class WorkbenchService {
   getChartsEnableDisable(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/test_show_me/`+this.accessToken,obj);
+    return this.http.post<any>(`${environment.apiUrl}/show_me/`+this.accessToken,obj);
   }
   deleteDbConnection(id:any){
     return this.http.delete<any>(`${environment.apiUrl}/database_disconnect/`+this.accessToken+'/'+id);
+  }
+  sheetSave(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/sheetsave/`+this.accessToken,obj);
+  }
+  sheetGet(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/sheetretrieve/`+this.accessToken,obj);
   }
 }
