@@ -5,7 +5,7 @@
    <div class="main-container container-fluid"> 
     <div class="row main-container" style="position: fixed; width: -webkit-fill-available;">
         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-            <div class="card mb-0" style="height: 466px; overflow-y: scroll;">
+            <div class="card mb-0" style="height: 600px; overflow-y: scroll;">
                 <div class="card-body p-1">
                     <h6 class="fw-600 fs-12 mt-2 mb-2 ">Tables</h6>
                     <div>
@@ -54,7 +54,24 @@
         </div>
         <div class="col-xl-8 col-md-12 p-1">
            <div class="card p-0 mb-1">
+           
+                <div class="card p-0 mb-1">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center mb-2">
+                            <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
+                                <input  type="text" matInput placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="tabtitle" (onChange)="sheetNameChange($event)">
+                                
+                            </div>
+                            <div class="col-lg-1 col-md-1 col-sm-1 col-xl-1">
+                                <button class="btn btn-primary me-2" (click)="sheetSave()">Save </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
                 <div class="card-body p-4">
+                   
+                    
                     <div class="row align-items-center mb-2">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
@@ -123,30 +140,16 @@
                     </div>
                 </div>
             </div>
-                    <mat-form-field style="width:100%;">
-                      <table class="example-full-width">
-                          <tr>
-                            <td>
-                              <input matInput placeholder="Sheet Name" [(ngModel)]="tabtitle" >
-                            </td>
-                            <td>
-                              <button mat-raised-button
-                                  class="example-add-tab-button"
-                                    (click)="addSheet()">
-                              New Sheet
-                            </button>
-                            </td>
-                            <td><button (click)="sheetSave()">Save</button></td>
-                        </tr>
-                      </table>
-                   </mat-form-field>
-            <div class="card mb-0" style="height: 352px; overflow-y: scroll;">
+                    
+            <div class="card mb-0" style="height: 400px; overflow-y: scroll;">
                  <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
                     @for(tab of tabs;track tab; let index = $index){
-                        @if(tab === sheetValue){
+                       
+                        @if(tab === sheetName){
+                          
                             <div class="body table-responsive" style="max-height:300px;padding: 0px;">
-                                <p>{{sheetValue}}</p>
-                                @if(table){
+                                
+                                @if(table && chartId){
                                 <table>
                                     <thead>
                                       <tr>
@@ -166,15 +169,15 @@
                                     </tbody>
                                   </table>
                                 }
-              @if(bar){
+              @if(bar && chartId){
               <h6>Bar Chart</h6>
               <figure id="bar"></figure>
               }
-              @if(pie){
+              @if(pie && chartId){
               <h6>Pie Chart</h6>
              <figure id="pie"></figure>
               }
-              @if(line){
+              @if(line && chartId){
                 <h6>Line Chart</h6>
                 <div class="card-body">
                     <div id="line-chart">
@@ -185,7 +188,7 @@
                     </div>
                 </div>
               }
-              @if(area){
+              @if(area && chartId){
                 <h6>Area Chart</h6>
                 <div class="card-body">
                     <div id="area-chart">
@@ -225,8 +228,8 @@
          }
          </mat-tab-group>
          
-                       <!--   <ul ngbnav="" id="footer-tab border-1" role="tablist" class="nav nav-pills fs-12">
-                               <li role="presentation" class="nav-item">
+                          <ul ngbnav="" id="footer-tab border-1" role="tablist" class="nav nav-pills fs-12">
+                             <!--  <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-right">
                                     <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
                                 </button>
@@ -253,21 +256,21 @@
                             </li>
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 6</button>
-                            </li>
+                            </li>-->
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
-                                  tabindex="-1" class="nav-link BtnNewStyle">
+                                  tabindex="-1" class="nav-link BtnNewStyle" (click)="addSheet()" style="padding: 14px;">
                                     <i class="fa fa-plus-square-o"></i>
                                 </button>
                             </li>
-                        </ul>-->
+                        </ul>
                    </div>
                   
                 </div>
 
              </div>
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-                <div class="card mb-1" style=" height: 100px; overflow-y: scroll;">
+                <div class="card mb-1" style=" height: 150px; overflow-y: scroll;">
                     <div class="card-header justify-content-between align-items-center">
                         <div class="card-title fs-12">Filters </div>
                     </div>
@@ -277,32 +280,33 @@
                         </div>
                     </div>
                 </div>
-                <div class="card mb-1" style=" overflow-y: scroll; height: 160px;">
+                <div class="card mb-1" style=" overflow-y: scroll; height: 220px;">
                     <div class="card-header justify-content-between align-items-center">
                         <div class="card-title fs-12">Charts </div>
                     </div>
                     <div class="card-body" style=" padding: 2px 12px;">
                         <div class="row"> 
-                            <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                           
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-4 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-100 mrk-t"></a>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            
+                        
                         </div>
                     </div>
                 </div>
-                <div class="card mb-0" style=" height: 195px; overflow-y: scroll;">
+                <div class="card mb-0" style=" height: 222px; overflow-y: scroll;">
                     <div class="card-header justify-content-between align-items-center">
                         <div class="card-title fs-12">Marks </div>
                     </div>
@@ -319,21 +323,21 @@
                             </ul>
                         </div>
                         <div class="row"> 
-                            <div class="col-4 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/color.png" alt="img" class="rounded-2 w-100 mrk-t">
+                                    <img src="./assets/images/marks/color.png" alt="img" class="rounded-2 w-70 mrk-t">
                                 </a>
                                 <span class="mark-txt fs-11">Color</span>
                             </div>
-                            <div class="col-4 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/size.png" alt="img" class="rounded-2 w-100 mrk-t">
+                                    <img src="./assets/images/marks/size.png" alt="img" class="rounded-2 w-70 mrk-t">
                                 </a>
                                 <span class="mark-txt fs-11">Size</span>
                             </div>
-                            <div class="col-4 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-100 mrk-t">
+                                    <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-70 mrk-t">
                                 </a>
                                 <span class="mark-txt fs-11">Text</span>
                             </div>
@@ -343,9 +347,9 @@
                                 </a>
                                 <span class="mark-txt fs-11">Details</span>
                             </div>-->
-                            <div class="col-4 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-100 mrk-t">
+                                    <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-70 mrk-t">
                                 </a>
                                 <span class="mark-txt fs-11">Tooltip</span>
                             </div>
