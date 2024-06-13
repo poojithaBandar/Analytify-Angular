@@ -16,18 +16,26 @@
                 <h6 class="mb-0">Database</h6>
                 <p class="mb-0">{{databaseName}}</p>
             </div>
+            <div class="card mb-0 br-0">
+            <div class="input-group px-1">
+                <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
+                <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+                    <i class="fe fe-search" aria-hidden="true"></i>
+                </button>
+            </div>
+            </div>
             <div class="card mb-0  br-0 ds-th">
                 <div class="sidebar p-0">
                     <!-- <div class="input-group" style="width: 100%!important;">
                         <input type="text" class="form-control border-end-0" placeholder="Search Database Server" [(ngModel)]="searchTables" aria-describedby="button-addon2" (keydown)="filterTables()">
                         <button class="btn border" type="button" id="button-addon2" (click)="filterTables()"><i class="bi bi-search text-muted"></i></button>
                     </div> -->
-                    <div class="input-group me-2" style="padding-left: 2px;">
+                    <!-- <div class="input-group me-2" style="padding-left: 2px;">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
                         <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
                             <i class="fe fe-search" aria-hidden="true"></i>
                         </button>
-                    </div>
+                    </div> -->
                     <!-- <div class="search-container">
                         <input type="text" [(ngModel)]="searchTables" placeholder="Search tables..." (keydown.enter)="filterTables()" />
                       </div> -->
