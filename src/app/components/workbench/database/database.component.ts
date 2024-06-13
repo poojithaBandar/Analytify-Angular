@@ -61,6 +61,7 @@ export class DatabaseComponent {
   connectionList =[] as any;
   tableList = [] as any;
   schematableList = [] as any;
+  filteredSchematableList = [] as any;
   hostName:any;
   dragedTableName: any;
   databaseconnectionsList=true;
@@ -85,7 +86,7 @@ export class DatabaseComponent {
   customSql = false;
   tableJoiningUI = true;
   isOpen = false;
-
+  searchTables : any;
   menus = [
     {
       name: 'Schema1',
@@ -143,8 +144,15 @@ export class DatabaseComponent {
 })
 }
 getSchemaTablesFromConnectedDb(){
-  this.workbechService.getSchemaTablesFromConnectedDb(this.databaseId).subscribe({next: (data) => {
-   this.schematableList= data;
+  const obj ={
+    search:this.searchTables
+  }
+  if(obj.search == '' || obj.search == null){
+    delete obj.search;
+  }
+  this.workbechService.getSchemaTablesFromConnectedDb(this.databaseId,obj).subscribe({next: (data) => {
+   this.schematableList= data?.data?.schemas;
+   this.filteredSchematableList = this.schematableList?.data?.schemas
        this.databaseName = data.database.database;
         this.hostName = data.database.hostname;
     console.log(data)
@@ -154,6 +162,26 @@ error:(error)=>{
  console.log(error);
 }
 })
+}
+//filter tables from schemas
+filterTables(){
+  if (Array.isArray(this.schematableList)) {
+    const filteredSchemas = this.schematableList.map((schemaObj: { schema: any; tables: any[] }) => {
+      return {
+        schema: schemaObj.schema,
+        tables: schemaObj.tables.filter(tableObj => tableObj.table.includes(this.searchTables))
+      };
+    }).filter((schemaObj: { tables: string | any[]; }) => schemaObj.tables.length > 0); // Filter out schemas with no matching tables
+  
+    if (filteredSchemas.length > 0) {
+      console.log('Filtered data:', filteredSchemas);
+      this.schematableList = filteredSchemas
+    } else {
+      console.log('No matching tables found');
+    }
+  } else {
+    console.log('Something went wrong');
+  }
 }
 
 private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
@@ -170,19 +198,9 @@ drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
   } else {
     console.log('Transfering item to new container')
-    // transferArrayItem(event.previousContainer.data,
-    //                   event.container.data,
-    //                   event.previousIndex,
-    //                   event.currentIndex);
-    //                   console.log('previouscont:'+event.previousContainer.data,
-    //                   'eventcont:'+event.container.data)
-    //                  console.log(event.previousContainer.data,'inex:'+event.currentIndex)
-
-
     let item: any = event.previousContainer.data[event.previousIndex];
     // console.log('item' + JSON.stringify(item));
     let copy: any = JSON.parse(JSON.stringify(item));
-
     // console.log('copy' + JSON.stringify(copy));
     let element: any = {};
     for (let attr in copy) {
@@ -195,34 +213,17 @@ drop(event: CdkDragDrop<string[]>) {
     }
    // this.draggedtables.splice(event.currentIndex, 0, element);
    //this.draggedtables.push(element);
+   console.log('element',element)
     this.pushToDraggedTables(element)
     console.log('darggedtable',this.draggedtables)
    }
-   //this.joiningTables();
    if(this.draggedtables.length !== 0){
     this.joiningTables();
-    //   database_id : this.databaseId,
-    //   tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]]
-    // }
-    // this.workbechService.tableRelation(obj)
-    // .subscribe(
-    //   {
-    //     next:(data:any) =>{
-    //       console.log(data)
-    //       this.relationOfTables = data[2]?.relation?.condition
-    //       console.log('relation',this.relationOfTables)
-    //     },
-    //     error:(error:any)=>{
-    //     console.log(error)
-    //   }
-    //   })w
    }
 }
 
 pushToDraggedTables(newTable:any): void {
-  // if(!newTable.hasOwnProperty('alias')){
-  //   newTable['alias']=newTable.table;
-  //   this.draggedtables.push(newTable);
+
   const existingTableNames = this.draggedtables.map((table: { table: any; }) => table.table);
   const baseTableName = newTable.table
   const occurrences = existingTableNames.filter((name: string) => name.startsWith(baseTableName)).length;
@@ -234,13 +235,6 @@ pushToDraggedTables(newTable:any): void {
     }
     newTable['alias']=tableName;
     this.draggedtables.push(newTable);
-
-  // newTable.alias = tableName;
-  // this.draggedtables.push(newTable);
-  //console.log('tname',newTable.table)
-// }else{
-// console.log('something wrong')
-// }
 }
 
 getTablerowclms(table:any,schema:any){
@@ -516,7 +510,7 @@ getJoiningTableData(){
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
       next:(data:any) =>{
-        console.log(data)
+        console.log('qury_data/tablejoined_data',data)
         this.TabledataJoining = data;
         this.qryTime = data.query_exection_time;
         this.qryRows = data.no_of_rows;
@@ -561,21 +555,5 @@ goToSheet(){
   const encodedQuerySetId = btoa(this.qurtySetId.toString());
   this.router.navigate(['/workbench/sheets'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
 }
+
 }
-
-// import { trigger, state, style, transition, animate } from '@angular/animations';
-
-// export const toggleAnimation = trigger('toggle', [
-//   state('open', style({
-//     width: '300px', // Adjust as needed
-//     opacity: 1,
-//   })),
-//   state('closed', style({
-//     width: '0px',
-//     opacity: 0,
-//     display: 'none'
-//   })),
-//   transition('open <=> closed', [
-//     animate('0.3s ease-in-out')
-//   ]),
-// ]);

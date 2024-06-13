@@ -308,20 +308,7 @@ export class NavService implements OnDestroy {
       type: 'link',
       nochild: true,
     },
-    {
-      title: 'Dashboard',
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
-      <path d="M0 0h24v24H0V0z" fill="none"></path>
-      <path d="M11 7h6v2h-6zm0 4h6v2h-6zm0 4h6v2h-6zM7 7h2v2H7zm0 4h2v2H7zm0 4h2v2H7zM20.1 3H3.9c-.5 0-.9.4-.9.9v16.2c0 .4.4.9.9.9h16.2c.4 0 .9-.5.9-.9V3.9c0-.5-.5-.9-.9-.9zM19 19H5V5h14v14z">
-      </path>
-  </svg>`,
-      active: false,
-      badgeClass: 'badge badge-sm bg-secondary badge-hide',
-      badgeValue: 'new',
-      path: 'workbench/sheetsdashboard',
-      type: 'link',
-      nochild: true,
-    },
+
     {
       title: 'Data Source',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
@@ -337,6 +324,27 @@ export class NavService implements OnDestroy {
       nochild: true,
     },
     {
+      title: 'Saved Queries',
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#000000">
+              <g>
+                  <rect fill="none" height="24" width="24"></rect>
+              </g>
+              <g>
+                  <g>
+                      <g>
+                          <path d="M3,3v8h8V3H3z M9,9H5V5h4V9z M3,13v8h8v-8H3z M9,19H5v-4h4V19z M13,3v8h8V3H13z M19,9h-4V5h4V9z M13,13v8h8v-8H13z M19,19h-4v-4h4V19z"></path>
+                      </g>
+                  </g>
+              </g>
+          </svg>`,
+      active: false,
+      badgeClass: 'badge badge-sm bg-secondary badge-hide',
+      badgeValue: 'new',
+      path: 'workbench/sheets',
+      type: 'link',
+      nochild: true,
+    },
+    {
       title: 'Sheets',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" class="side-menu__icon">
           <path d="M0 0h24v24H0V0z" fill="none"></path>
@@ -347,6 +355,20 @@ export class NavService implements OnDestroy {
       badgeClass: 'badge badge-sm bg-secondary badge-hide',
       badgeValue: 'new',
       path: 'workbench/sheets',
+      type: 'link',
+      nochild: true,
+    },
+    {
+      title: 'Dashboard',
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+      <path d="M0 0h24v24H0V0z" fill="none"></path>
+      <path d="M11 7h6v2h-6zm0 4h6v2h-6zm0 4h6v2h-6zM7 7h2v2H7zm0 4h2v2H7zm0 4h2v2H7zM20.1 3H3.9c-.5 0-.9.4-.9.9v16.2c0 .4.4.9.9.9h16.2c.4 0 .9-.5.9-.9V3.9c0-.5-.5-.9-.9-.9zM19 19H5V5h14v14z">
+      </path>
+  </svg>`,
+      active: false,
+      badgeClass: 'badge badge-sm bg-secondary badge-hide',
+      badgeValue: 'new',
+      path: 'workbench/sheetsdashboard',
       type: 'link',
       nochild: true,
     },

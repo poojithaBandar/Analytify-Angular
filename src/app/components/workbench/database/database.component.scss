@@ -158,7 +158,8 @@ background-color: aliceblue;
   font-size: 18px;
   font-weight: 600;
   margin-left: -18px;
-  padding-left: 20px !important;
+  padding-left: 35px !important;
+  cursor: pointer;
 }
 
 
@@ -190,7 +191,7 @@ background-color: aliceblue;
 width: 1225px;
 }
 button.TextTransform{
-  top: 180px;
+  top: 178px;
   position: absolute;
   transform: translate(0%, 0%) rotate(270deg);
   left: -124px;
@@ -216,4 +217,30 @@ button.TextTransform{
 .ds-th {
   height: 540px;
   overflow-y: scroll;
+}
+a {
+  cursor: pointer;
+}
+.cdk-drag.sub-menu-item.example-box.subMenuFlex:hover {
+  background-color: #f0f8ff;
+}
+.table-card-header{
+  background-color: #f2fafa;
+}
+.table > :not(:last-child) > :last-child > * {
+  border-block-end-color: var(--default-border);
+  color: #fff;
+}
+.chevron-right-icon {
+  cursor: pointer;
+}
+.chevron-left-icon {
+  cursor: pointer;
+}
+span.time {
+  background-color: #5ac189;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 5px;
+  margin: 5px;
 }

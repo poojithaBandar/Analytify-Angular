@@ -17,12 +17,25 @@
                 <p class="mb-0">{{databaseName}}</p>
             </div>
             <div class="card mb-0  br-0 ds-th">
-                <div class="sidebar">
-                    @for(menu of schematableList?.data?.schemas;track menu){
-                    <div  class="menu-item">
+                <div class="sidebar p-0">
+                    <!-- <div class="input-group" style="width: 100%!important;">
+                        <input type="text" class="form-control border-end-0" placeholder="Search Database Server" [(ngModel)]="searchTables" aria-describedby="button-addon2" (keydown)="filterTables()">
+                        <button class="btn border" type="button" id="button-addon2" (click)="filterTables()"><i class="bi bi-search text-muted"></i></button>
+                    </div> -->
+                    <div class="input-group me-2" style="padding-left: 2px;">
+                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
+                        <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+                            <i class="fe fe-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <!-- <div class="search-container">
+                        <input type="text" [(ngModel)]="searchTables" placeholder="Search tables..." (keydown.enter)="filterTables()" />
+                      </div> -->
+                    @for(menu of schematableList;track menu){
+                    <div  class="menu-item mb-0">
                         
                       <div class="menu-title" class=""  (click)="toggleSubMenu(menu)">
-                        <span class="arrow d-flex"> 
+                        <span class="arrow d-flex p-2"> 
                             @if(menu.expanded){
                                 <i class="fa fa-chevron-down" style="font-size: 11px; color: #333335; margin-top: 7px !important;
                                 margin-right: 5px;"></i>
@@ -37,12 +50,12 @@
                       @if(menu.expanded){
                       <div class="sub-menu" cdkDropList
                       #originList="cdkDropList"
-                      [cdkDropListData]="tableList"
+                      [cdkDropListData]="menu.tables"
                       [cdkDropListConnectedTo]="[destinationList]"
                       (cdkDropListDropped)="drop($event)">
                         @for(submenu of menu?.tables;track submenu){
-                        <div  class="sub-menu-item example-box subMenuFlex" cdkDrag>
-                            <i class="fa fa-table" style="padding-right:10px ;"></i>   <span>{{ submenu }}</span>
+                        <div  class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
+                            <i class="fa fa-table" style="padding-right:10px ;"></i>   <span>{{ submenu.table}}</span>
                         </div>
                     }
                       </div>
@@ -68,14 +81,14 @@
                         <div class="d-flex">
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                            <div class="card card-body databse-T-H mb-0 br-0 p-0">
-                            <div class="card-body example-list-drop  mb-0"
+                            <div class="card-body example-list-drop  mb-0 border border-0"
                             cdkDropList 
                             #destinationList="cdkDropList" 
                             [cdkDropListData]="draggedtables" 
                            (cdkDropListDropped)="drop($event)">
                            @for(item of draggedtables;track $index){
-                               <div class="example-box" cdkDrag>{{item.alias}}({{item.schema}})
-                                   <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i>
+                               <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias}}({{item.schema}})
+                                   <i class="mdi mdi-delete" style="color: #db555d;" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i>
                                </div>
                                }
                                @if(!draggedtables.length){
@@ -99,45 +112,11 @@
                                         }
                                     </ul>                            
                                 }
-                                <!-- @if(!relationOfTables.length){
-                                    <div class="card-header">
-                                        <h3 class="card-title">Joinings:</h3>
-                                    </div>                                   
-                                    <ul class="tags">
-                                        <li class="tag">No relation found</li>
-                                    </ul>                            
-                                } -->
                             </div>
                         </div>
                         </div>
                         </div>
                     </div>
-                    <!-- <div class="card mb-0 dragT-H">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                            <label></label>
-                            <div class="right">
-                                <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" class="modal-effect btn btn-primary m-1">
-                                    <i class="fa fa-filter"> Apply Filters</i>
-                                </a>
-                                <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a>
-                            </div>
-                        </div>
-                        <div class="card-body d-flex align-items-center justify-content-center example-list"
-                         cdkDropList 
-                         #destinationList="cdkDropList" 
-                         [cdkDropListData]="draggedtables" 
-                        (cdkDropListDropped)="drop($event)">
-                        @for(item of draggedtables;track $index){
-                            <div class="example-box" cdkDrag>{{item.alias}}({{item.schema}})
-                                <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i>
-                            </div>
-                            }
-                            <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
-                        </div>
-                       
-                    </div> -->
-
-
 
                     <div class="col-xl-12 col-md-12 p-1">
                         <div class="card-body p-1 ">
@@ -264,7 +243,7 @@
                                             }@else{
                                              <div class="table-responsive" style="overflow-y: scroll;height: 233px;" [class.table-left]="!isOpen">
                                             <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                                <thead style="position: sticky;top: 0; background-color: #00a5a2;">
+                                                <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
                                                     <tr>
                                                         @for(data of TabledataJoining.column_data;track data){
                                                         <th>{{data}}</th>
@@ -288,7 +267,7 @@
                                         </div>
                                         <div class="modal-footer border-0">
                                             @if(qryTime){
-                                            <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in {{qryTime}}s,Rows effected:{{qryRows}}</span>
+                                            <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{qryTime}}s</span> Rows effected:{{qryRows}}</span>
                                             }
                                             @if(qurtySetId && qurtySetId){
                                             <button aria-expanded="false" class="btn btn-primary" (click)="goToSheet()"> Go to sheet </button>
@@ -319,7 +298,7 @@
                 </div>
                 <div class="card mb-0  br-0" style="height: 467px;overflow-y: scroll;">
                     <div class="sidebar">
-                        @for(menu of schematableList?.data?.schemas;track menu){
+                        @for(menu of schematableList;track menu){
                         <div  class="menu-item">
                             
                           <div class="menu-title" class=""  (click)="toggleSubMenu(menu)">
@@ -384,7 +363,7 @@
                                     }@else{
                                         <div class="table-responsive" style="overflow-y: scroll;height: 233px;">
                                             <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                                <thead style="position: sticky;top: 0; background-color: #00a5a2;">
+                                                <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
                                                     <tr>
                                                         @for(data of cutmquryTable.column_data;track data){
                                                         <th>{{data}}</th>
@@ -408,7 +387,7 @@
                                 </div>
                                 <div class="modal-footer border-0">
                                     @if(custmQryTime){
-                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <h6>{{custmQryTime}}</h6>,Rows effected:{{custmQryRows}}</span>
+                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{custmQryTime}} </span>,Rows effected:{{custmQryRows}}</span>
                                     }
                                     @if(qurtySetId && qurtySetId){
                                         <button aria-expanded="false" class="btn btn-primary" (click)="goToSheet()"> Go to sheet </button>
@@ -422,265 +401,10 @@
         }
 
 
-    <div class="row main-container" >
-        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-1">
-
-        </div>
-
-    </div>
-
-
-
-
-
-    
-<!-- <div class="main-container container-fluid mt-5">
-    <div class="row" cdkListGroup>
-         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-5">
-            <div class="card" style="height: 683px;">
-                <div class="card-header" style="justify-content: center;">
-                   
-                    <label class="list-group-item active">{{databaseName}}</label>
-                </div>
-                @if(tableList.length){ 
-                <div class="card-body" style="padding: 0px;">
-                    <div
-                    cdkDropList
-                    #originList="cdkDropList"
-                    [cdkDropListData]="tableList"
-                    [cdkDropListConnectedTo]="[destinationList]"
-                    class="example-list"
-                    (cdkDropListDropped)="drop($event)">
-                    @for(item of tableList; track item; let i = $index){
-                       
-                        <div class="example-box"  cdkDrag>{{item.table}} ({{item.schema}})</div>
-
-                    }
-                  </div>
-                </div>
-            }
-            </div>
-        </div>
-        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 p-0">
-            <div class="card" style="height: 350px;">
-                <div class="card-header">
-                    <label>Drag Tables Here</label>
-                </div>
-                <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                    <h6 class="fs-12 mt-2 mb-0 drag-txt">Drop field here</h6>
-                  </div>
-                <div class="card-body">
-                    <div cdkDropList #destinationList="cdkDropList" [cdkDropListData]="draggedtables" class="example-list-drop p-0"
-                        (cdkDropListDropped)="drop($event)">
-                        @for(item of draggedtables;track $index){
-                        <div class="example-box" cdkDrag>{{item.alias}}({{item.schema}})
-                            <i class="mdi mdi-delete" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i>
-                        </div>
-                        }
-                    </div>
-                </div>
-            </div>
-           
-        </div>
-        
-        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
-            <div class="card" style="height: 350px;">
-                <div class="card-header ">
-                    <label>Table Custom Join</label>
-                    <div style="margin-left: 400px">
-                    <button class="btn btn-primary" aria-expanded="false" (click)="tableRelationUi=!tableRelationUi">
-                        Add
-                    </button>
-                </div>
-                </div>
-                <div class="card-body">
-                    @if(tableRelationUi){
-                    <div class="row">
-                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
-                            <div class="btn-group mt-2 mb-2" ngbDropdown>
-                                <button type="button" class="btn btn-default btn-pill dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown">
-                                    {{selectedClmnT1 ? selectedClmnT1:'Select Column'}} <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-plus-title" ngbDropdownMenu style="max-height: 200px;overflow: scroll;">
-                                    @for(table of draggedtables;track table){
-                                    <li class="dropdown-plus-title">
-                                        {{ table.schema }}.{{ table.alias }}  
-                                     </li>
-                                     @for(column of table.columns;track column){
-                                    <li><a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT1 = column.columns;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables()">{{ column.columns }}</a></li>
-                                     }
-                                }
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3" >
-                            <div style="display: flex;justify-content: center;">
-                            </div>
-                            <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
-                                <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ selectedJoin ? selectedJoin : 'Condition' }}
-                                </button>
-                                <ul class="dropdown-menu" ngbDropdownMenu>
-                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Left'" ngbDropdownItem >Left</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Right'" ngbDropdownItem >Right</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Inner'" ngbDropdownItem >Inner</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedJoin = 'Self'" ngbDropdownItem >Self</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedJoin = 'full Outer'" ngbDropdownItem >Full Outer</a></li>
-                                </ul>
-                            </div>
-                         </div>
-                         <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3" >
-                            <div style="display: flex;justify-content: center;">
-                            </div>
-                            <div class="btn-group my-2" style="display: flex;justify-content: center;" ngbDropdown>
-                                <button type="button" class="btn btn-default dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ selectedCndn ? selectedCndn : 'Operator' }}
-                                </button>
-                                <ul class="dropdown-menu" ngbDropdownMenu>
-                                    <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >Equals</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedCndn = '>'" ngbDropdownItem >Greater than</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedCndn = '<'" ngbDropdownItem >Less than</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedCndn = '>='" ngbDropdownItem >Greater than equals</a></li>
-                                    <li><a class="dropdown-item" (click)="selectedCndn = '<='" ngbDropdownItem >Less than equals</a></li>
-                                </ul>
-                            </div>
-                            <div class="mb-2">
-                              </div>
-                         </div>
-                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
-                            <div class="btn-group mt-2 mb-2" ngbDropdown>
-                                <button type="button" class="btn btn-default btn-pill dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown">
-                                    {{ selectedClmnT2 ? selectedClmnT2 : 'Select Column' }}
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-plus-title" ngbDropdownMenu style="max-height: 200px;overflow: scroll;">
-                                    @for(table of remainingTables;track table){
-                                    <li class="dropdown-plus-title">
-                                        {{ table.schema }}.{{ table.alias }}  
-                                     </li>
-                                     @for(column of table.columns;track column){
-                                    <li><a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2= column.columns;getSelectedT2 = table.table;selectedAliasT2 = table.alias;selectedSchema2 = table.schema" >{{ column.columns }}</a></li>
-                                     }
-                                }
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="modal-footer" style="border-block-start:none">
-                            <button class="btn btn-secondary" (click)="clearJoinCondns()" aria-expanded="false">
-                                clear
-                            </button>
-                            <button class="btn btn-primary" (click)="customTableJoin()" aria-expanded="false">
-                                Join
-                            </button>                       
-                         </div>
-                        </div>
-                }
-                    <div style="margin-top: -18px;">
-                        @if(relationOfTables.length){
-                            <div class="card-header">
-                                <h3 class="card-title">Joinings:</h3>
-                               
-                            </div>                                   
-                            <ul class="tags" style="max-height: 115px;overflow: scroll;">
-                                @for(relation of displayJoiningCndnsList;track relation;let i = $index){
-                                <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
-                                    <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
-                                        <i class="fa fa-circle" style="opacity: 0.5; margin-left: -10px;"></i></span>
-                                        {{relation}}
-                                    <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
-                                </li>
-                                }
-                            </ul>                            
-                        }
-                        @if(!relationOfTables.length){
-                            <div class="card-header">
-                                <h3 class="card-title">Joinings:</h3>
-                            </div>                                   
-                            <ul class="tags">
-                                <li class="tag">No relation found</li>
-                            </ul>                            
-                        }
-                    </div>
-                   
-                </div>
-            
-            </div>
-        </div>
-
-        <div  class="col-xxl-10 col-xl-10 col-lg-7 col-md-7 side-card">
-            <div class="row">
-                <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6">
-                    <div class="card" style="width: 410px;">
-                        <div class="card-header">
-                            <label>Custom SQL</label>
-                        </div>
-                        <div class="card-body" style="padding: 0px !important;">
-                                <div class="">
-                                    <textarea [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here" style="height:192px;width:409px;outline: none;"></textarea>
-                                </div>
-                            
-                        </div>
-                        <div class="modal-footer">
-                            <button  type="button"  class="btn btn-secondary" (click)="clrQuery()">clear</button>
-                            <button  type="button" class="btn btn-primary" (click)="executeQuery()">Run Query</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6" style="margin-left: -18px;width: 626px;">
-                    <div  class="card" style="width: 625px;">
-                        <div class="card-header">
-                          <label>Result</label>
-                          <div class="col-sm-6 col-md-6 col-xl-3" style="margin-left: 470px;">
-                            <a class="modal-effect btn btn-primary"
-                                data-bs-effect="effect-super-scaled" data-bs-toggle="modal"  (click)="openSuperScaled(content)"
-                               ><i class="fa fa-filter"></i></a>
-                        </div>
-                        </div>
-                        <div class="card-body" style="padding: 0px;height: 259px;overflow: scroll;">
-                            <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-sm mb-0">
-                                    <thead>
-                                        <tr>
-                                            @for(data of cutmquryTable.column_data;track data){
-                                                    <th>{{data}}</th>                                                       
-                                            }                                           
-                                        </tr>
-                                      
-                                    </thead>
-                                    <tbody>
-                                        @for(rowss of cutmquryTable.row_data;track rowss;){
-                                        <tr>
-                                            @for(rowdata of rowss;track rowdata;let i = $index){
-
-                                            <td>{{rowdata}}</td>
-                                            }
-                                        </tr>
-                                    }
-                                    </tbody>
-                              
-                                </table>
-                            
-                            </div>
-                        </div>
-                    </div>
-                </div>                       
-            </div>
-           
-        </div>
-          </div>
-    </div> -->
-
-    
-
     <ng-template #content let-modal>
         <div class="modal-header">
           <h6 class="modal-title">Filters</h6>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            (click)="modal.dismiss('Cross click')"
-          >
+          <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
           </button>
         </div>
         <div class="modal-body">
@@ -690,7 +414,8 @@
                     {{ table.schema }}.{{ table.alias }}  
                  </li>
                  @for(column of table.columns;track column){
-                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.columns }}</a></li>
+                    <input class="custom-control-input" id="customCheck1" type="checkbox">
+                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
                  }
             }
             </ul>
