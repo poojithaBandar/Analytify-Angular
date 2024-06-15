@@ -1,4 +1,103 @@
-.dropdown-menu{
-    min-width:auto;
-    box-shadow:none;
+// .wrapper {
+//     position: relative;
+//     width: 100%;
+//     height: 100%;
+//     border: 1px solid black;
+//     overflow: hidden; /* Ensure resizable elements stay within the wrapper */
+//   }
+  
+//   .rectangle {
+//     // position: absolute;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     font-size: 25px;
+//     font-weight: bold;
+//     background-color: red;
+//   }
+  
+//   .resize-handle-top,
+//   .resize-handle-bottom {
+//     position: absolute;
+//     width: 100%;
+//     height: 8px;
+//     background-color: white;
+//     cursor: row-resize;
+//   }
+  
+//   .resize-handle-top {
+//     top: -4px;
+//   }
+  
+//   .resize-handle-bottom {
+//     bottom: -4px;
+//   }
+  
+//   .resize-handle-left,
+//   .resize-handle-right {
+//     position: absolute;
+//     height: 100%;
+//     width: 8px;
+//     background-color: white;
+//     cursor: col-resize;
+//   }
+  
+//   .resize-handle-left {
+//     left: -4px;
+//   }
+  
+//   .resize-handle-right {
+//     right: -4px;
+//   }
+
+
+gridster {
+  background: #f8f9fa;
+  margin-top:9px;
+}
+
+mat-card {
+  height: 100%;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.card {
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+}
+
+.card p {
+  margin: 0 0 20px;
+}
+.gridster-item-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chart-container {
+  flex: 1;
+  overflow-y: auto; /* Add scrollbar if content exceeds height */
+  padding: 10px; /* Optional: Add padding to the scrollable area */
+}
+
+apx-chart {
+  width: 100%;
+  height: 100%;
+}
+
+button {
+  margin-top: 10px;
 }
