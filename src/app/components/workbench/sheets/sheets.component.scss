@@ -160,4 +160,12 @@ span.abc-txt {
   font-size: 8px;
   margin-right: 5px;
 }
-
+::after {
+  display: none;
+}
+.mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+  color: #00a5a2 !important;
+}
+.mat-mdc-tab .mdc-tab-indicator__content--underline {
+  border-color: #00a5a2 !important;
+}

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -84,7 +84,11 @@ export class SheetsComponent {
   chartsEnableDisable = [] as any;
   chartId = 1;
   sheetResponce = [] as any;
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute){   
+  SheetIndex = 0;
+  chartOptions3:any;
+  chartOptions4:any;
+  DimetionMeasure = [] as any;
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
     this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -109,6 +113,7 @@ export class SheetsComponent {
 
 private drawBars(data: any[]): void {
   // Create the X-axis band scale
+  console.log(data)
   const x = d3.scaleBand()
   .range([0, this.width])
   .domain(data.map(d => d.col))
@@ -190,6 +195,164 @@ private drawChartPie(): void {
   .attr("transform", (d: any) => "translate(" + labelLocation.centroid(d) + ")")
   .style("text-anchor", "middle")
   .style("font-size", 15);
+}
+barChart(){
+  this.chartOptions3 = {
+    series: [
+      {
+        name: '',
+        data: this.chartsRowData,
+      },
+    ],
+    chart: {
+      toolbar: {
+        show: false
+      },
+      height: 385,
+      type: 'bar',
+      foreColor: '#9aa0ac',
+    },
+    grid: {
+      show: false,      // you can either change hear to disable all grids
+      xaxis: {
+        lines: {
+          show: false  //or just here to disable only x axis grids
+         }
+       },  
+      yaxis: {
+        lines: { 
+          show: false  //or just here to disable only y axis
+         }
+       },   
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          hideOverflowingLabels:false,
+          position: 'top', // top, center, bottom
+        },
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val: number) {
+        return val + '';
+      },
+      offsetY: -20,
+      style: {
+        fontSize: '12px',
+        colors: ['#9aa0ac'],
+      },
+    },
+    fill: {
+      type: 'gradient',
+    },
+    xaxis: {
+      categories: this.chartsColumnData,
+      position: 'bottom',
+      labels: {
+        rotate:0,
+        // offsetY: 0,
+        trim: true,
+        // minHeight: 40,
+        hideOverlappingLabels: false,
+        style: {
+          colors: '#9aa0ac',
+          
+        },
+      //   formatter: (value) => {
+      //     return (value && value.split(' ')[1][1] === '0' ? value : '');
+      // }
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      crosshairs: {
+        fill: {
+          type: 'gradient',
+          gradient: {
+            colorFrom: '#D8E3F0',
+            colorTo: '#BED1E6',
+            stops: [0, 100],
+            opacityFrom: 0.4,
+            opacityTo: 0.5,
+          },
+        },
+      },
+      tooltip: {
+        enabled: false,
+        offsetY: -35,
+      },
+
+    },
+
+    // fill: {
+    //   type: 'gradient',
+    //   gradient: {
+    //     shade: 'light',
+    //     type: 'horizontal',
+    //     shadeIntensity: 0.25,
+    //     gradientToColors: undefined,
+    //     inverseColors: true,
+    //     opacityFrom: 1,
+    //     opacityTo: 1,
+    //     stops: [50, 0, 100, 100],
+    //   },
+    // },
+    yaxis: {
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      labels: {
+        show: false,
+        formatter: function (val: number) {
+          return val + '$';
+        },
+      },
+    },
+    title: {
+      text: '',
+      offsetY: 10,
+      align: 'center',
+      style: {
+        color: '#9aa0ac',
+      },
+    },
+    // tooltip: {
+    //   theme: 'dark',
+    //   marker: {
+    //     show: true,
+    //   },
+    //   x: {
+    //     show: true,
+    //   },
+    // },
+  };
+}
+pieChart(){
+  this.chartOptions4={
+    series: this.chartsRowData,
+    chart: {
+        height: 300,
+        type: 'pie',
+    },
+    colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+    labels: this.chartsColumnData,
+    legend: {
+        position: "bottom"
+    },
+    dataLabels: {
+        dropShadow: {
+            enabled: false
+        }
+    },
+    };
 }
 lineChart(){
   this.chartOptions={
@@ -460,13 +623,16 @@ areaChart(){
         const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
         this.chartsData.push(aa);
       }
+      console.log(this.chartsData)
       if(this.chartsRowData.length >0){
         this.enableDisableCharts();
-        this.createSvg();
-        this.drawBars(this.chartsData);
-        this.createSvgPie();
-        this.createColors();
-        this.drawChartPie();
+       // this.createSvg();
+       // this.drawBars(this.chartsData);
+        this.barChart();
+        //this.createSvgPie();
+        //this.createColors();
+        //this.drawChartPie();
+        this.pieChart();
         this.lineChart();
         this.areaChart();
       }
@@ -577,27 +743,29 @@ areaChart(){
   }
   tabs = ['Sheet 1'];
   selected = new FormControl(0);
-  tabtitle:string = '';
+ // tabtitle:string = '';
 
   addSheet() {
-    if(this.tabtitle != ''){
-       this.tabs.push(this.tabtitle);
+    this.sheetName = '';
+    if(this.sheetName != ''){
+       this.tabs.push(this.sheetName);
     }else{
       const index = this.tabs.length + 1;
        this.tabs.push('Sheet ' +index);
+       this.sheetName = 'Sheet ' +index;
+       console.log(this.sheetName)
     }
-    this.tabtitle = '';
    
   }
-  sheetNameChange(event:any){
-    console.log(event)
-
+  sheetNameChange(name:any){
+    this.tabs[this.SheetIndex] = name;
   }
   removeTab(index: number) {
     this.tabs.splice(index, 1);
   }
   onChange(event:any){
   console.log(event)
+  this.SheetIndex = event.index;
   this.sheetName = event.tab.textLabel;
   this.saveTableData = [] ;
   this.savedisplayedColumns = [];
@@ -618,7 +786,15 @@ areaChart(){
   this.chartsColumnData = [];
   this.draggedColumnsData = [];
   this.draggedRowsData = [];
-  this.sheetRetrive();
+  this.table = true;
+  this.bar = false;
+  this.pie = false;
+  this.line = false;
+  this.area = false;
+  if(this.qrySetId || this.databaseId){
+    this.sheetRetrive();
+  }
+
   }
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
@@ -628,16 +804,20 @@ areaChart(){
   lineXaxis = [] as any;
   areaYaxis = [] as any;
   areaXaxis = [] as any;
+  barXaxis = [] as any;
+  pieXaxis = [] as any;
 sheetSave(){
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
    this.savedisplayedColumns = this.displayedColumns;
   }
   if(this.bar && this.chartId == 6){
-    this.saveBar = this.chartsData;
+    this.saveBar = this.chartsRowData;
+    this.barXaxis = this.chartsColumnData;
   }
   if(this.pie && this.chartId == 24){
-    this.savePie = this.chartsData;
+    this.savePie = this.chartsRowData;
+    this.pieXaxis = this.chartsColumnData
   }
   if(this.line && this.chartId == 13){
     this.lineYaxis = this.chartsRowData;
@@ -660,9 +840,11 @@ const obj={
     "tableData":this.saveTableData,
     "tableColumns":this.savedisplayedColumns,
 
-    "bar":this.saveBar,
-
-    "pie":this.savePie,
+    "barYaxis":this.saveBar,
+    "barXaxis":this.barXaxis,
+   
+    "pieYaxis":this.savePie,
+    "pieXaxis":this.pieXaxis,
 
     "lineYaxis":this.lineYaxis,
     "lineXaxis": this.lineXaxis,
@@ -700,12 +882,11 @@ sheetRetrive(){
           this.pie = false;
           this.line = false;
           this.area = false;
-         
         }
        if(responce.chart_id == "6"){
-        this.chartsData = this.sheetResponce.results.bar;
-        this.createSvg();
-        this.drawBars(this.chartsData);
+        this.chartsRowData = this.sheetResponce.results.barYaxis;
+        this.chartsColumnData = this.sheetResponce.results.barXaxis;
+       this.barChart();
         this.bar = true;
         this.table = false;
           this.pie = false;
@@ -713,10 +894,9 @@ sheetRetrive(){
           this.area = false;
        }
        if(responce.chart_id == "24"){
-        this.chartsData = this.sheetResponce.results.pie;
-        this.createSvgPie();
-        this.createColors();
-        this.drawChartPie();
+        this.chartsRowData = this.sheetResponce.results.pieYaxis;
+        this.chartsColumnData = this.sheetResponce.results.pieXaxis;
+        this.pieChart();
         this.bar = false;
         this.table = false;
           this.pie = true;
@@ -743,14 +923,22 @@ sheetRetrive(){
           this.line = false;
           this.area = true;
        }
-        
-   
-       
       },
       error: (error) => {
         console.log(error);
       }
     }
   )
+  }
+  openSuperScaled(modal: any) {
+    this.modalService.open(modal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+    });
+  }
+  
+filterApply(name:any){
+this.DimetionMeasure.push(name.column);
+console.log(this.DimetionMeasure);
   }
 }

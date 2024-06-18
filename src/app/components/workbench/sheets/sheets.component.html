@@ -1,10 +1,10 @@
-<app-page-header title="Sheet Title" title1="Forms" activeitem="Sheet title"></app-page-header>
+
 
    <!-- CONTAINER -->
  
-   <div class="main-container container-fluid"> 
+   <div class="main-container container-fluid mt-5"> 
     <div class="row main-container" style="position: fixed; width: -webkit-fill-available;">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-3">
             <div class="card mb-0" style="height: 600px; overflow-y: scroll;">
                 <div class="card-body p-1">
                     <h6 class="fw-600 fs-12 mt-2 mb-2 ">Tables</h6>
@@ -24,14 +24,67 @@
                             [cdkDropListConnectedTo]="[columnList]"
                             (cdkDropListDropped)="columndrop($event)" >
                             
-                           
-                           
                            @for(dimensions of columns.dimensions; track dimensions){
+                               <div class="d-flex justify-content-between border border-bottom">
                                 <li class="example-box" 
-                    (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag style="display: flex; justify-content: start;">
-                    <span class="abc-txt">abc</span> {{dimensions.column}}</li>
+                                (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag  (click)="filterApply(dimensions)">
+                                <span class="abc-txt">abc</span> {{dimensions.column}} 
+                               
+                                </li>
+                                <div class="dashboard-option">
+                                    <div class=" p-1" ngbDropdown>
+                                        <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                            aria-haspopup="true" aria-expanded="false" class=""><i
+                                                class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                        </a>
+                                        <div class="dropdown-menu" ngbDropdownMenu>
+                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScaled(content)"> Edit </a>
+                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>
+                                        </div>
+                                    </div>
+                                  </div>
+                               </div>
                             }
                             
+                            <ng-template #content let-modal>
+                                <div class="modal-header">
+                                  <h6 class="modal-title">Filters</h6>
+                                  <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- <ul class="dropdown-plus-title">
+                                        @for(table of draggedtables;track table){
+                                        <li class="dropdown-plus-title">
+                                            {{ table.schema }}.{{ table.alias }}  
+                                         </li>
+                                         @for(column of table.columns;track column){
+                                            <input class="custom-control-input" id="customCheck1" type="checkbox">
+                                        <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
+                                         }
+                                    }
+                                    </ul> -->
+                                    @for(table of draggedtables;track table){
+                                    <h6> {{ table.schema }}.{{ table.alias }}</h6>
+                                    @for(column of table.columns;track column){
+                                    <div class="form-check">
+                                        <input type="checkbox" value="" id="defaultCheck1" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ column.column }} </label>
+                                    </div>
+                                }
+                                }
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn ripple btn-primary">Filter Columns</button>
+                                  <button
+                                    type="button"
+                                    class="btn ripple btn-secondary"
+                                    (click)="modal.close('Save click')"
+                                  >
+                                    Close
+                                  </button>
+                                </div>
+                              </ng-template>
                         </div>
                        
                             <div cdkDropList
@@ -41,7 +94,7 @@
                             (cdkDropListDropped)="rowdrop($event)">
                             
                             @for(measures of columns.measures; track measures){ 
-                                <div class="example-box1"  (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag># {{measures.column}}</div>
+                                <div class="example-box1"  (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag (click)="filterApply(measures)"># {{measures.column}}</div>
                             }
                             </div>
                       }
@@ -52,26 +105,24 @@
                 
             </div>
         </div>
-        <div class="col-xl-8 col-md-12 p-1">
+        <div class="col-xl-8 col-md-12 p-1 mt-3">
            <div class="card p-0 mb-1">
            
                 <div class="card p-0 mb-1">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center mb-2">
+                    <div class="card-body" style="padding: 2px 16px;">
+                        <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
-                                <input  type="text" matInput placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="tabtitle" (onChange)="sheetNameChange($event)">
+                                <input  type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetName" (click)="sheetNameChange(sheetName)">
                                 
                             </div>
-                            <div class="col-lg-1 col-md-1 col-sm-1 col-xl-1">
-                                <button class="btn btn-primary me-2" (click)="sheetSave()">Save </button>
+                            <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0">
+                                <button class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
                             </div>
                         </div>
                     </div>
                 </div>
         
-                <div class="card-body p-4">
-                   
-                    
+                <div class="card-body" style="padding: 2px 16px;">
                     <div class="row align-items-center mb-2">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
@@ -141,7 +192,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0" style="height: 400px; overflow-y: scroll;">
+            <div class="card mb-0" style="height: 462px; overflow-y: scroll;">
                  <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
                     @for(tab of tabs;track tab; let index = $index){
                        
@@ -170,12 +221,30 @@
                                   </table>
                                 }
               @if(bar && chartId){
-              <h6>Bar Chart</h6>
-              <figure id="bar"></figure>
+              <!--<h6>Bar Chart</h6>
+              <figure id="bar"></figure>-->
+
+              <div class="card-body">
+                <div id="bar-chart">
+                    <apx-chart
+                    [series]="chartOptions3.series"
+                    [chart]="chartOptions3.chart"
+                    [dataLabels]="chartOptions3.dataLabels"
+                    [plotOptions]="chartOptions3.plotOptions"
+                    [xaxis]="chartOptions3.xaxis"[colors]="chartOptions3.colors"  [grid]="chartOptions3.grid"
+                  ></apx-chart>
+                </div>
+            </div>
               }
               @if(pie && chartId){
-              <h6>Pie Chart</h6>
-             <figure id="pie"></figure>
+             <!-- <h6>Pie Chart</h6>
+             <figure id="pie"></figure>-->
+             <div class="card-body">
+                <div id="pie-basic">
+                    <apx-chart [series]="chartOptions4.series" [chart]="chartOptions4.chart" [legend]="chartOptions4.legend"
+                    [labels]="chartOptions4.labels" [responsive]="chartOptions4.responsive" [colors]="chartOptions4.colors" [dataLabels]="chartOptions4.dataLabels"></apx-chart>
+                </div>
+            </div>
               }
               @if(line && chartId){
                 <h6>Line Chart</h6>
@@ -199,9 +268,6 @@
                         [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
                     </div>
                 </div>
-
-
-               
               }
             </div>
         }
@@ -269,15 +335,17 @@
                 </div>
 
              </div>
-             <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+             <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-3">
                 <div class="card mb-1" style=" height: 150px; overflow-y: scroll;">
                     <div class="card-header justify-content-between align-items-center">
                         <div class="card-title fs-12">Filters </div>
                     </div>
                     <div class="card-body px-5">
-                        <div class="row"> 
-                            
+                        @for(dimen of DimetionMeasure;track dimen;let index = $index){
+                        <div class="example-box" > 
+                           {{dimen}}
                         </div>
+                    }
                     </div>
                 </div>
                 <div class="card mb-1" style=" overflow-y: scroll; height: 220px;">
