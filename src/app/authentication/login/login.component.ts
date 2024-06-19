@@ -134,21 +134,21 @@ export class LoginComponent {
 
   Submit() {
     console.log(this.loginForm)
-    if (
-      this.loginForm.controls['username'].value === 'spruko@admin.com' &&
-      this.loginForm.controls['password'].value === 'sprukoadmin'
-    ) {
-      this.router.navigate(['/dashboard']);
-      this.toastr.success('log in successful','vexel', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-      });
-    } else {
-      this.toastr.error('Invalid details','vexel', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-      });
-    }
+    // if (
+    //   this.loginForm.controls['username'].value === 'spruko@admin.com' &&
+    //   this.loginForm.controls['password'].value === 'sprukoadmin'
+    // ) {
+    //   this.router.navigate(['/dashboard']);
+    //   this.toastr.success('log in successful','vexel', {
+    //     timeOut: 3000,
+    //     positionClass: 'toast-top-right',
+    //   });
+    // } else {
+    //   this.toastr.error('Invalid details','vexel', {
+    //     timeOut: 3000,
+    //     positionClass: 'toast-top-right',
+    //   });
+    // }
   
   }
 

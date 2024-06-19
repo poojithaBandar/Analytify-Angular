@@ -22,9 +22,9 @@ import { HttpAuthService } from './shared/services/http-auth.service';
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(App_Route),RouterOutlet,ColorPickerModule,ColorPickerService,provideAnimations(),  AngularFireModule,
     provideHttpClient(),
-    AngularFireDatabaseModule,
-    AngularFirestoreModule,
-    AngularFireAuthModule,
+    //AngularFireDatabaseModule,
+    //AngularFirestoreModule,
+    //AngularFireAuthModule,
     HttpClientModule,
     LoaderService,
     provideHttpClient(withFetch(),withInterceptorsFromDi()),

@@ -1,42 +1,42 @@
-<!-- <div class="row main-container" >
-    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-5">
-            <div class="card mb-0">
-                <div class="card-body p-2">
-                    <div class="panel panel-primary">
-                        <div class="tab-menu-heading tab-menu-heading-boxed">
-                            <div class="tabs-menu-boxed">
-                                <ul ngbnav="" class="nav panel-tabs fs-14" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <a href="" id="ngb-nav-0" role="tab" aria-selected="true" aria-disabled="false" class="nav-link active p-2" aria-controls="ngb-nav-0-panel">Dashboard</a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a href="" id="ngb-nav-1" role="tab" aria-selected="false" aria-disabled="false" class="nav-link p-2" tabindex="-1">Layout</a>
-                                    </li>
-                                  
-                                </ul>
-                            </div>
+<app-page-header title="Dashboard" title1="home" activeitem="Dashboard"></app-page-header>
+
+<div class="row main-container" >
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0">
+        <div class="card mb-0">
+            <div class="card-body p-0">
+                <div class="panel panel-primary">
+                    <div class="tab-menu-heading tab-menu-heading-boxed">
+                        <div class="tabs-menu-boxed">
+                            <ul ngbnav="" class="nav panel-tabs fs-14" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a href="" id="ngb-nav-0" role="tab" aria-selected="true" aria-disabled="false" class="nav-link active p-2 m-0" aria-controls="ngb-nav-0-panel">Dashboard</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a href="" id="ngb-nav-1" role="tab" aria-selected="false" aria-disabled="false" class="nav-link p-2" tabindex="-1">Layout</a>
+                                </li>
+                              
+                            </ul>
                         </div>
-                        <div class="panel-body tabs-menu-body p-0">
-                            <div class="tab-content">
-                                <div class="card mb-0 p-4 br-0">
-                                    <h6>Connections</h6>
-                                    <p>title</p>
-                                </div>
-                                <div class=" mb-0  mt-0 br-0" >
-                                    <div class="text-wrap">
-                                        <div class="dropdown-samples">
-                                            <ul class="dropdown-menu br-0" >
-                                                <li><h6 class="dropdown-header">Sheets</h6></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> Sheet 1</a></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> Sheet 2</a></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> Sheet 3</a></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> Sheet 4</a></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> KPI 1</a></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> KPI 2</a></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> KPI 3</a></li>
-                                                <li><a class="dropdown-item"  ><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> KPI 4</a></li>
-                                            </ul>
-                                        </div>
+                    </div>
+                    <div class="panel-body tabs-menu-body p-0">
+                        <div class="tab-content">
+                            <div class="card mb-0 p-4 br-0" style="box-shadow: none;">
+                                <h6 class="mb-0">Connections</h6>
+                                <p class="mb-0">title</p>
+                            </div>
+                            <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
+                                <div class="text-wrap">
+                                    <div class="dropdown-samples">
+                                        <ul class="dropdown-menu br-0 draggable-item"
+                                         cdkDropList
+                                         #originList="cdkDropList"
+                                        [cdkDropListData]="dashboardNew"
+                                        [cdkDropListConnectedTo]="[destinationList]"
+                                        (cdkDropListDropped)="drop($event)">
+                                            <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
+                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip" ngbtooltip="fa fa-table" class="fa fa-table"></i> {{item.data.title}}</a></li>
+                                            
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -44,14 +44,15 @@
                     </div>
                 </div>
             </div>
+        </div>
     </div>
-    <div class="col-xl-10 col-md-12 p-1 mt-5">
-        <div class="card mb-1">
-            <div class="card-body">
+    <div class="col-xl-10 col-md-12 p-1 ">
+         <div class="card mb-1">
+            <div class="card-body p-1">
                 <div class="d-flex align-items-start">
                     <div class="flex-grow-1">
-                        <h6>Dashboard Title</h6>
-                    </div>
+                        <input  type="text"  placeholder="Title" aria-label="Sheet" class="form-control" >
+                        </div><button (click)="saveDashboard()">save </button>
                     <div class="min-w-fit-content ms-3">
                             <a href=""><i class="fa fa-filter p-2"></i> </a>
                             <a href=""><i class="fa fa-edit p-2"></i> </a>
@@ -60,210 +61,93 @@
                     </div>
                 </div>
             </div>
-        </div>   
+        </div> 
         
-        <div class="card mb-1">
-            <div class="row card-body">
-                <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4">
-                    <div class="card br-0 mb-0">
-                        <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                            <h6 class="fs-12 mt-2 mb-0 drag-txt">KPI 1</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4">
-                    <div class="card br-0 mb-0">
-                        <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                            <h6 class="fs-12 mt-2 mb-0 drag-txt">KPI 2</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4">
-                    <div class="card br-0 mb-0">
-                        <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                            <h6 class="fs-12 mt-2 mb-0 drag-txt">KPI 3</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4">
-                    <div class="card br-0 mb-0">
-                        <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                            <h6 class="fs-12 mt-2 mb-0 drag-txt">KPI 4</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4">
-                    <div class="card br-0 mb-0">
-                        <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                            <h6 class="fs-12 mt-2 mb-0 drag-txt">KPI 5</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4">
-                    <div class="card br-0 mb-0">
-                        <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                            <h6 class="fs-12 mt-2 mb-0 drag-txt">KPI 6</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-       </div>
-
-       <div class="card mb-1">
-        <div class="row card-body">
-            <div class="col-xxl-6 col-xl-6 col-lg-12 col-md-12 p-0">
-                <div class="card br-0 mb-0">
-                    <div class="d-flex justify-content-end p-1" ngbDropdown>
-                        <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                            aria-haspopup="true" aria-expanded="false" class=""><i
-                                class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                        </a>
-                        <div class="dropdown-menu" ngbDropdownMenu>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Sheet title</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Go to sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Edit sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Apply filter</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Formating</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Duplicate</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Remove</a>
-                        </div>
-                    </div>
-                    <div class="card-body h-150" style="display: flex; justify-content: center; align-items: center;">
-                        <h6 class="fs-12 mt-2 mb-0 drag-txt">Sheet 1</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-6 col-xl-6 col-lg-12 col-md-12 p-0">
-                <div class="card br-0 mb-0">
-                    <div class="d-flex justify-content-end p-1" ngbDropdown>
-                        <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                            aria-haspopup="true" aria-expanded="false" class=""><i
-                                class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                        </a>
-                        <div class="dropdown-menu" ngbDropdownMenu>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Sheet title</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Go to sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Edit sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Apply filter</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Formating</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Duplicate</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Remove</a>
-                        </div>
-                    </div>
-                    <div class="card-body h-150" style="display: flex; justify-content: center; align-items: center;">
-                        <h6 class="fs-12 mt-2 mb-0 drag-txt">Sheet 2</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-6 col-xl-6 col-lg-12 col-md-12 p-0">
-                <div class="card br-0 mb-0">
-                    <div class="d-flex justify-content-end p-1" ngbDropdown>
-                        <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                            aria-haspopup="true" aria-expanded="false" class=""><i
-                                class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                        </a>
-                        <div class="dropdown-menu" ngbDropdownMenu>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Sheet title</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Go to sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Edit sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Apply filter</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Formating</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Duplicate</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Remove</a>
-                        </div>
-                    </div>
-                    <div class="card-body h-150" style="display: flex; justify-content: center; align-items: center;">
-                        <h6 class="fs-12 mt-2 mb-0 drag-txt">Sheet 3</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-6 col-xl-6 col-lg-12 col-md-12 p-0">
-                <div class="card br-0 mb-0">
-                    <div class="d-flex justify-content-end p-1" ngbDropdown>
-                        <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                            aria-haspopup="true" aria-expanded="false" class=""><i
-                                class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                        </a>
-                        <div class="dropdown-menu" ngbDropdownMenu>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Sheet title</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Go to sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Edit sheet</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Apply filter</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Formating</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Duplicate</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Remove</a>
-                        </div>
-                    </div>
-                    <div class="card-body h-150" style="display: flex; justify-content: center; align-items: center;">
-                        <h6 class="fs-12 mt-2 mb-0 drag-txt">Sheet 4</h6>
-                    </div>
-                </div>
-            </div>           
-        </div>
-        <div class="modal-footer p-2">
-            <button class="btn btn-primary me-2">Save Dashboard</button>
-        </div>
-   </div>
        
-    </div>
-</div> -->
-
-
-
-<!-- <gridster [options]="options">
-    <gridster-item *ngFor="let item of dashboard" [item]="item" style="margin-top: 105px !important;
-    height: 444px !important;">
-      <mat-card>
-        <mat-card-content>
-          <h2>{{ item.title }}</h2>
-          <p>{{ item.content }}</p>
-        </mat-card-content>
-      </mat-card>
-    </gridster-item>
-  </gridster> -->
-
-  <div style="width: 92vw; height: 100vh;">
-    <div class="options">
-      
-    </div> 
-    <div class="options-header" style="margin-top: 81px;">
-      <button mat-raised-button color="accent" (click)="pushItem()" class="add-button cols-2">
-        Resize first item and push others
-      </button>
-      <button mat-mini-fab (click)="addItem()" class="add-button cols-2">
-        add
-      </button>
-    </div>
+       <div style="max-width: 78vw;min-width: 78vw;height: 100vh;margin: auto 0;">
+        <div class="options">
+          
+        </div> 
+        <div class="d-flex align-items-center justify-content-start  mt-3">
+            <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
+            <!-- <a mat-mini-fab (click)="addItem()" class="btn btn-blue-light mb-0 me-3" ><i class="fa fa-plus"></i> Add</a>  -->
+        </div>
+        <!-- <div class="options-header" >
+          <button mat-raised-button color="accent" (click)="pushItem()" class="add-button cols-2">
+            Resize first item and push others
+          </button>
+          <button mat-mini-fab (click)="addItem()" class="add-button cols-2">
+            add
+          </button>
+        </div> -->
+        
+        
+        <gridster [options]="options" cdkDropList #destinationList="cdkDropList" 
+        [cdkDropListData]="dashboard" 
+       (cdkDropListDropped)="drop($event)">
+            <gridster-item [item]="item" *ngFor="let item of dashboard">
+              <div class="card mb-0">
+                <div class="card-header d-flex justify-content-between p-1">
+                    <h6>{{ item.data?.title }}</h6>
+                    <div class="dashboard-option">
+                        <div class=" p-1" ngbDropdown>
+                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                aria-haspopup="true" aria-expanded="false" class=""><i
+                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                            </a>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Edit </a>
+                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                <a class="dropdown-item" ngbDropdownItem (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)"> Delete</a>
+                            </div>
+                        </div>
+                      </div>
+                </div>
+                <div class="card-body p-1">
     
-    
-    <gridster [options]="options">
-        <gridster-item [item]="item" *ngFor="let item of dashboard">
-          <div class="card">
-            <div class="card-header">
-                <h3>{{ item.data?.title }}</h3>
-            </div>
-            <div class="card-body">
+                
+                <p class="mb-1">{{ item.data?.content }}</p>
+                
+                <div *ngIf="item.chartOptions">
+                    <!-- {{item.chartOptions | json}} -->
+                    <!-- {{rowArray}}{{colArray}} -->
+                     <apx-chart 
+                    [series]="item.chartOptions.series!" 
+                    [chart]="item.chartOptions.chart!" 
+                    [xaxis]="item.chartOptions.xaxis!"
+                    (chartInit)="onChartInit($event, item)">
+                  </apx-chart> 
+                  <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+                  </div>
+                  <div *ngIf="item.tableData">
+                    <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                        <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
 
-            
-            <p>{{ item.data?.content }}</p>
-            <div *ngIf="item.chartOptions">
-                <apx-chart 
-                [series]="item.chartOptions.series!" 
-                [chart]="item.chartOptions.chart!" 
-                [xaxis]="item.chartOptions.xaxis!"
-                (chartInit)="onChartInit($event, item)">
-              </apx-chart>
-              <button mat-raised-button color="primary" (click)="resizeChart(item)">
-                Resize Chart
-              </button>
+                            <!-- <tr>
+                            @for(data of TabledataJoining.column_data;track data){
+                                <th></th>
+                            }
+
+                            </tr> -->
+                    
+                        </thead>
+                        <tbody>
+                            <tr>
+                                
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="card-footer p-1">
+                    <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">
+                      Delete
+                    </button> -->
+                  </div>
               </div>
-            </div>
-            <div class="card-footer">
-                <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">
-                  Delete
-                </button>
-              </div>
-          </div>
-        </gridster-item>
-      </gridster>
+            </gridster-item>
+          </gridster>
+        </div>
     </div>
+</div> 

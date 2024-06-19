@@ -81,4 +81,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/sheetretrieve/`+this.accessToken,obj);
   }
+  getSheetData(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/sheetslist/`+this.accessToken);
+  }
+    
+  
 }

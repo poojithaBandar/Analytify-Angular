@@ -101,3 +101,16 @@ apx-chart {
 button {
   margin-top: 10px;
 }
+.dropdown-menu{
+    min-width:auto;
+    box-shadow:none;
+}
+.dropdown-toggle::after{
+    display: none;
+}
+gridster-item{
+    overflow: scroll !important;
+}
+.sheets-title {
+  color: var(--bs-heading-color);
+}

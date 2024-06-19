@@ -188,7 +188,9 @@ background-color: aliceblue;
 
 .right-card.expanded {
   // flex: 2; /* Adjust this value to control how much the right card expands */
-width: 1225px;
+max-width: 1226px;
+min-width: 1226px;
+margin:  auto 0;
 }
 button.TextTransform{
   top: 178px;

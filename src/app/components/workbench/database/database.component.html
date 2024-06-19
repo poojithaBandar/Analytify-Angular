@@ -63,7 +63,7 @@
                       (cdkDropListDropped)="drop($event)">
                         @for(submenu of menu?.tables;track submenu){
                         <div  class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
-                            <i class="fa fa-table" style="padding-right:10px ;"></i>   <span>{{ submenu.table}}</span>
+                            <i cl ass="fa fa-table" style="padding-right:10px ;"></i>   <span>{{ submenu.table}}</span>
                         </div>
                     }
                       </div>
@@ -109,7 +109,7 @@
                         </div>
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                             <div class="card databse-T-H mb-0 br-0">
-                            <div class="card-body ">
+                            <div class="card-body overflow-scroll ">
                                 @if(relationOfTables.length){                                   
                                     <ul class="tags">
                                         @for(relation of displayJoiningCndnsList;track relation;let i = $index){
@@ -151,7 +151,7 @@
                                                              </li>
                                                              @for(column of table.columns;track column){
                                                         <li>
-                                                            <a ngbDropdownItem class="dropdown-item" (click)="selectedClmnT1 = column.columns;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables()">{{ column.columns }}</a>
+                                                            <a ngbDropdownItem class="dropdown-item" (click)="selectedClmnT1 = column.column;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables()">{{ column.column }}</a>
                                                         </li>    
                                                     }
                                                     }       
@@ -186,7 +186,7 @@
                                                                 {{ table.schema }}.{{ table.alias }}  
                                                              </li>
                                                              @for(column of table.columns;track column){
-                                                            <li><a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2= column.columns;getSelectedT2 = table.table;selectedAliasT2 = table.alias;selectedSchema2 = table.schema" >{{ column.columns }}</a></li>
+                                                            <li><a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2= column.column;getSelectedT2 = table.table;selectedAliasT2 = table.alias;selectedSchema2 = table.schema" >{{ column.column }}</a></li>
                                                              }
                                                         }         
                                                     </ul>
