@@ -442,13 +442,16 @@ customTableJoin(){
   const customJoinCndn = this.selectedAliasT1+'.'+this.selectedClmnT1+' '+this.selectedCndn+' '+this.selectedAliasT2+'.'+this.selectedClmnT2
    const MaxInex = Math.max(t1Index,t2Index);
   console.log('custcon',customJoinCndn, 'maxind',MaxInex)
+  if (!this.relationOfTables[MaxInex - 1]) {
+    this.relationOfTables[MaxInex - 1] = [];
+  }
   this.relationOfTables[MaxInex - 1].push(customJoinCndn)
   console.log('customrelation',this.relationOfTables)
   this.joinTypes[MaxInex - 1] = this.selectedJoin
   console.log(this.joinTypes)
   if(schemaTablePairs.length >= 2){
   const obj ={
-    query_set_id:'0',
+    query_set_id:this.qurtySetId,
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
@@ -475,6 +478,7 @@ customTableJoin(){
         text: error.error.message,
         width: '400px',
       })
+      this.relationOfTables.pop();
     }
     })
   }
@@ -564,10 +568,21 @@ getJoiningTableData(){
     })
 }
 deleteJoiningRelation(index:number){
+  
+  const deleteCondtin = this.displayJoiningCndnsList[index][0]
+  console.log(deleteCondtin)
+  this.relationOfTables = this.relationOfTables.map((subArray: any[]) =>
+    subArray.filter(item => item !== deleteCondtin)
+  ).filter((subArray: string | any[]) => subArray.length > 0);
+  console.log('deletedcondfromrelatiion',this.relationOfTables)
+
   if (index > -1 && index < this.displayJoiningCndnsList.length) {
     this.displayJoiningCndnsList.splice(index, 1);
+    //this.relationOfTables.splice(index,1)
+   
   }
-  console.log('removedjoining',this.displayJoiningCndnsList)
+
+  // console.log('removedjoining',this.displayJoiningCndnsList)
 }
 
 openSuperScaled(modal: any) {

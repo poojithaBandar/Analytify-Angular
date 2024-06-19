@@ -2,7 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
-import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, GridType} from 'angular-gridster2';
+import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
+  GridType,
+  DisplayGrid,
+  GridsterComponent,
+  GridsterComponentInterface,
+ 
+} from 'angular-gridster2';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { EChartsOption } from 'echarts';
@@ -15,6 +21,7 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
+import { debounceTime, fromEvent, map } from 'rxjs';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -35,7 +42,8 @@ type DashboardItem = GridsterItem & {
 @Component({
   selector: 'app-sheetsdashboard',
   standalone: true,
-  imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,CommonModule,GridsterItemComponent,NgApexchartsModule,CdkDropListGroup, 
+  imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
+    CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
     CdkDropList, CdkDrag,ChartsStoreComponent  ],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
@@ -61,28 +69,83 @@ export class SheetsdashboardComponent {
   itemToPush!: GridsterItemComponent;
   @ViewChildren(GridsterItemComponent) GridsterItemComponent!: QueryList<GridsterItemComponent>;
   @ViewChild('gridster') gridster!: any; // Adjust the type as needed
-  static itemChange(item:any, itemComponent: any) {
+  static itemChange(
+    item: GridsterItem,
+    itemComponent: GridsterItemComponentInterface
+  ): void {
     console.info('itemChanged', item, itemComponent);
   }
 
-  static itemResize(item:any, itemComponent: any) {
+  static itemResize(
+    item: GridsterItem,
+    itemComponent: GridsterItemComponentInterface
+  ): void {
     console.info('itemResized', item, itemComponent);
+    const resize$ = fromEvent(window, 'resize');
+    resize$
+      .pipe(
+        map((i: any) => i),
+        debounceTime(500) // He waits > 0.5s between 2 events emitted before running the next.
+      )
+      .subscribe((event) => {
+        console.log('resize is finished');
+      });
   }
+
+  static itemInit(
+    item: GridsterItem,
+    itemComponent: GridsterItemComponentInterface
+  ): void {
+    console.info('itemInitialized', item, itemComponent);
+  }
+
+  static itemRemoved(
+    item: GridsterItem,
+    itemComponent: GridsterItemComponentInterface
+  ): void {
+    console.info('itemRemoved', item, itemComponent);
+  }
+
+  static itemValidate(item: GridsterItem): boolean {
+    return item.cols > 0 && item.rows > 0;
+  }
+
+  static gridInit(grid: GridsterComponentInterface): void {
+    console.info('gridInit', grid);
+  }
+
+  static gridDestroy(grid: GridsterComponentInterface): void {
+    console.info('gridDestroy', grid);
+  }
+
+  static gridSizeChanged(grid: GridsterComponentInterface): void {
+    console.info('gridSizeChanged', grid);
+  }
+
   
   ngOnInit() {  
     this.getSheetData();
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.None,
+      displayGrid: DisplayGrid.Always,
+      initCallback: SheetsdashboardComponent.gridInit,
+      destroyCallback: SheetsdashboardComponent.gridDestroy,
+      gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
       itemChangeCallback: SheetsdashboardComponent.itemChange,
-        // itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+      itemValidateCallback: SheetsdashboardComponent.itemValidate,
+      // itemChangeCallback: SheetsdashboardComponent.itemChange,
+      //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
 
-       itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
-        // this.updateSizeOnServer(item, itemComponent);
-        // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
-        // this.saveItemDimensions(item);
-      },
+      //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+      //   // this.updateSizeOnServer(item, itemComponent);
+      //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+      //   // this.saveItemDimensions(item);
+      // },
       pushItems: true,
       draggable: {
         enabled: true,
@@ -149,7 +212,8 @@ export class SheetsdashboardComponent {
       x: 0,
       data: { title: sheet.sheet_name, content: 'Content of card New' },
       chartOptions: sheet.sheet_type === 'Chart' ? {
-        ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
+        // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
+        ... this.getChartOptionsBasedOnType(sheet),
         chart: { type: sheet.chart, height: 300 },
         //chartData:this.getChartData(sheet.sheet_data.results, sheet.chart)
       } : undefined,
@@ -160,13 +224,20 @@ export class SheetsdashboardComponent {
        : undefined
     }));
     console.log('dashboardNew',this.dashboardNew)
-
       },
     error:(error)=>{
     console.log(error);
    }
    })
   }
+  getChartOptionsBasedOnType(sheet:any){
+    if(sheet.chart === 'bar'){
+      let xaxis = sheet.sheet_data?.results?.barXaxis;
+      let yaxis = sheet.sheet_data?.results?.barYaxis;
+      return this.getChartOptions(sheet.chart,xaxis,yaxis)
+    }
+  }
+
   getChartData(results: any, chartType: string): any[] | undefined{
     switch (chartType) {
       case 'bar':

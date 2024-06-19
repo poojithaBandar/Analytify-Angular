@@ -4,3 +4,6 @@
 a {
     cursor: pointer;
 }
+.dropdown-toggle::after{
+    display: none;
+}

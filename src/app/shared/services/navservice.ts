@@ -101,7 +101,7 @@ export class NavService implements OnDestroy {
   //     path:"/dashboard"
     
   //   },
-    { headTitle: 'Server' },
+    // { headTitle: 'Server' },
     {
   //     title: 'SQL',
   //     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
