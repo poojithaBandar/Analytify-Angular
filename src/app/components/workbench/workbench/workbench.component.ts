@@ -29,7 +29,7 @@ import { CommonModule } from '@angular/common';
 export class WorkbenchComponent implements OnInit{
   tableList = [] as any;
   dragedTableName: any;
-  databaseconnectionsList=true;
+  databaseconnectionsList!:boolean;
   draggedtables = [] as any;
   getTableColumns = [] as any;
   getTableRows = [] as any;
@@ -47,12 +47,19 @@ export class WorkbenchComponent implements OnInit{
   custmT2Data = [] as any;
   connectionList =[] as any;
   searchDbName :any;
-  viewNewDbs = false;
+  viewNewDbs!:boolean;
   imageData3 = data3;
   showPassword1 = false;
   toggleClass = "off-line";
   toggleClass1 = "off-line";
-  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){   
+  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){ 
+    const currentUrl = this.router.url; 
+    if(currentUrl.includes('workbench/work-bench/view-connections')){
+      this.databaseconnectionsList= true;   
+    } 
+    if(currentUrl.includes('workbench/work-bench/new-connections')){
+      this.viewNewDbs = true;
+    }
   }
     postGreServerName = '';
     postGrePortName = '';

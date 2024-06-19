@@ -7,11 +7,17 @@ import { authGuard } from '../../auth.guard';
 
 export const admin: Routes = [
   {path:'workbench',children:[ {
-   path: 'work-bench',
+   path: 'work-bench/new-connections',
    canActivate:[authGuard],
    loadComponent: () =>
      import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
  },
+ {
+  path: 'work-bench/view-connections',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+},
 //  {
 //   path: 'database-connection/tables/:id',
 //   canActivate:[authGuard],

@@ -17,5 +17,9 @@ constructor(private router:Router){
 
 
   dashboardRoute(){
-    this.router.navigate(['/workbench/sheetsdashboard'])  }
+    this.router.navigate(['/workbench/sheetsdashboard'])  
+  }
+  newConnections(){
+    this.router.navigate(['workbench/work-bench/view-connections']) 
+  }
 }

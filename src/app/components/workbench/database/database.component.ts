@@ -217,8 +217,11 @@ drop(event: CdkDragDrop<string[]>) {
     this.pushToDraggedTables(element)
     console.log('darggedtable',this.draggedtables)
    }
-   if(this.draggedtables.length !== 0){
+   if(this.qurtySetId){
     this.joiningTables();
+   }
+   else if(!this.qurtySetId){
+     this.joiningTablesWithoutQuerySetId()
    }
 }
 
@@ -335,12 +338,46 @@ updateRemainingTables() {
   this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
 }
 
-
-joiningTables(){
+joiningTablesWithoutQuerySetId(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
   // console.log(schemaTablePairs)
   const obj ={
-    query_set_id:'0',
+    query_set_id:null,
+    database_id:this.databaseId,
+    joining_tables: schemaTablePairs,
+    join_type:[],
+    joining_conditions:[]
+  }
+  this.workbechService.joiningTables(obj)
+  .subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.relationOfTables = data.table_columns_and_rows?.joining_condition;
+        this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
+        this.qurtySetId = data?.table_columns_and_rows?.query_set_id
+        this.joinTypes = data?.table_columns_and_rows?.join_types        
+        console.log('joining',data)
+        console.log('relation',this.relationOfTables);
+        this.getJoiningTableData();
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+  
+}
+joiningTables(){
+  const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
+   console.log(schemaTablePairs)
+  const obj ={
+    query_set_id:this.qurtySetId,
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:[],
