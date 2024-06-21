@@ -21,13 +21,13 @@
                             <div  cdkDropList 
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.dimensions"
-                            [cdkDropListConnectedTo]="[columnList]"
+                            [cdkDropListConnectedTo]="[columnList,rowList]"
                             (cdkDropListDropped)="columndrop($event)" >
                             
                            @for(dimensions of columns.dimensions; track dimensions){
                                <div class="d-flex justify-content-between border border-bottom">
                                 <li class="example-box" 
-                                (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag  (click)="filterApply(dimensions)">
+                                (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag  >
                                 <span class="abc-txt">abc</span> {{dimensions.column}} 
                                
                                 </li>
@@ -38,69 +38,79 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu" ngbDropdownMenu>
-                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScaled(content)"> Edit </a>
-                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
-                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>
+                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScaled(content,dimensions)"> Apply Filters </a>
+                                           <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
                                         </div>
                                     </div>
                                   </div>
                                </div>
                             }
-                            
-                            <ng-template #content let-modal>
-                                <div class="modal-header">
-                                  <h6 class="modal-title">Filters</h6>
-                                  <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
-                                  </button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- <ul class="dropdown-plus-title">
-                                        @for(table of draggedtables;track table){
-                                        <li class="dropdown-plus-title">
-                                            {{ table.schema }}.{{ table.alias }}  
-                                         </li>
-                                         @for(column of table.columns;track column){
-                                            <input class="custom-control-input" id="customCheck1" type="checkbox">
-                                        <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
-                                         }
-                                    }
-                                    </ul> -->
-                                    @for(table of draggedtables;track table){
-                                    <h6> {{ table.schema }}.{{ table.alias }}</h6>
-                                    @for(column of table.columns;track column){
-                                    <div class="form-check">
-                                        <input type="checkbox" value="" id="defaultCheck1" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ column.column }} </label>
-                                    </div>
-                                }
-                                }
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn ripple btn-primary">Filter Columns</button>
-                                  <button
-                                    type="button"
-                                    class="btn ripple btn-secondary"
-                                    (click)="modal.close('Save click')"
-                                  >
-                                    Close
-                                  </button>
-                                </div>
-                              </ng-template>
                         </div>
-                       
                             <div cdkDropList
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.measures"
-                            [cdkDropListConnectedTo]="[rowList]"
+                            [cdkDropListConnectedTo]="[rowList,columnList]"
                             (cdkDropListDropped)="rowdrop($event)">
                             
                             @for(measures of columns.measures; track measures){ 
-                                <div class="example-box1"  (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag (click)="filterApply(measures)"># {{measures.column}}</div>
+                                <div class="example-box1"  (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag ># {{measures.column}}
+                                    <div class="dashboard-option">
+                                        <div class=" p-1" ngbDropdown>
+                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                aria-haspopup="true" aria-expanded="false" class=""><i
+                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                            </a>
+                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScaled(content,measures)"> Apply Filters </a>
+                                               <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
+                                            </div>
+                                        </div>
+                                      </div>
+                                </div>
                             }
                             </div>
                       }
                             </div>
                         }
                       </div>
+                      <ng-template #content let-modal>
+                        <div class="modal-header">
+                          <h6 class="modal-title">Filters</h6>
+                          <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- <ul class="dropdown-plus-title">
+                                @for(table of draggedtables;track table){
+                                <li class="dropdown-plus-title">
+                                    {{ table.schema }}.{{ table.alias }}  
+                                 </li>
+                                 @for(column of table.columns;track column){
+                                    <input class="custom-control-input" id="customCheck1" type="checkbox">
+                                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
+                                 }
+                            }
+                            </ul> -->
+                            @for(data of filterData;track data){
+                            <div class="form-check">
+                                <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="filterValues" class="form-check-input" (click)="filterCheck(data)">    
+                                <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                            </div>
+                        }
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn ripple btn-primary" (click)="filterDataPut()">Filter Columns</button>
+                          <button
+                            type="button"
+                            class="btn ripple btn-secondary"
+                            (click)="modal.close('Save click')"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </ng-template>
                 </div>
                 
             </div>
@@ -137,10 +147,11 @@
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box" (cdkDragStarted)="dragStartedColumn(index)" cdkDrag >{{ columns.column }}
+                                    <div class="example-box" (cdkDragStarted)="dragStartedColumn(index)"  cdkDrag >{{ columns.column }}
                                     </div>
                                     }
                                 </div> 
+                                
                              <!--   <ul style=" bottom: 15px; left: -5px;  position: relative;" class="nav nav-pills fs-12 justify-content-end" role="tablist" id="footer-tab border-1" ngbnav="" >
                                     <li role="presentation" class="nav-item">
                                         <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnRowStyle span-right">
@@ -236,6 +247,17 @@
                 </div>
             </div>
               }
+              @if(sidebyside && chartId){
+                <div class="card-body">
+                    <div id="column-chart">
+                        <apx-chart [series]="chartOptions2.series" [chart]="chartOptions2.chart"
+                        [dataLabels]="chartOptions2.dataLabels" [plotOptions]="chartOptions2.plotOptions"
+                        [yaxis]="chartOptions2.yaxis" [legend]="chartOptions2.legend" [fill]="chartOptions2.fill"
+                        [stroke]="chartOptions2.stroke" [tooltip]="chartOptions2.tooltip" [colors]="chartOptions2.colors" [grid]="chartOptions2.grid"
+                        [xaxis]="chartOptions2.xaxis"></apx-chart>
+                    </div>
+                </div>
+              }
               @if(pie && chartId){
              <!-- <h6>Pie Chart</h6>
              <figure id="pie"></figure>-->
@@ -247,7 +269,6 @@
             </div>
               }
               @if(line && chartId){
-                <h6>Line Chart</h6>
                 <div class="card-body">
                     <div id="line-chart">
                         <apx-chart [series]="chartOptions.series || []" [chart]="chartOptions.chart"
@@ -258,7 +279,6 @@
                 </div>
               }
               @if(area && chartId){
-                <h6>Area Chart</h6>
                 <div class="card-body">
                     <div id="area-chart">
                         <apx-chart [series]="chartOptions1.series" [chart]="chartOptions1.chart"
@@ -269,6 +289,32 @@
                     </div>
                 </div>
               }
+              @if(stocked){
+                <div id="chart">
+                    <apx-chart
+                      [series]="chartOptions6.series"
+                      [chart]="chartOptions6.chart"
+                      [dataLabels]="chartOptions6.dataLabels"
+                      [plotOptions]="chartOptions6.plotOptions"
+                      [responsive]="chartOptions6.responsive"
+                      [xaxis]="chartOptions6.xaxis"
+                      [legend]="chartOptions6.legend"
+                      [fill]="chartOptions6.fill"
+                    ></apx-chart>
+                  </div>
+              }
+             @if(barLine){
+                <div class="card-body">
+                    <div id="mixed-linecolumn">
+                        <apx-chart [series]="chartOptions5.series" [chart]="chartOptions5.chart"
+                        [yaxis]="chartOptions5.yaxis" [xaxis]="chartOptions5.xaxis" [labels]="chartOptions5.labels"
+                        [stroke]="chartOptions5.stroke" [title]="chartOptions5.title"  [grid]="chartOptions5.grid"
+                        [dataLabels]="chartOptions5.dataLabels" [fill]="chartOptions5.fill"
+                        [tooltip]="chartOptions5.tooltip"[colors]="chartOptions5.colors"></apx-chart>
+                    </div>
+                </div>
+             }
+
             </div>
         }
         }      
@@ -276,7 +322,7 @@
                     <div class="card-footer d-flex p-2">
                         <mat-tab-group [selectedIndex]="selected.value"
                         (selectedIndexChange)="selected.setValue($event)" 
-                        (selectedTabChange)="onChange($event)">
+                        (selectedTabChange)="onChange($event);">
                         @for(tab of tabs;track tab; let index = $index){
            <mat-tab  [label]="tab" >
          
@@ -356,21 +402,29 @@
                         <div class="row"> 
                            
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                        
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="sidebyside-bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t"></a>
+                            </div>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="StockedBar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,7)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t"></a>
+                            </div>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,7)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t"></a>
+                            </div>
                         </div>
                     </div>
                 </div>

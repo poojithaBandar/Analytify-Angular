@@ -85,9 +85,17 @@ export class SheetsComponent {
   chartId = 1;
   sheetResponce = [] as any;
   SheetIndex = 0;
+  chartOptions2:any;
   chartOptions3:any;
   chartOptions4:any;
+  chartOptions6:any;
+  chartOptions5:any;
   DimetionMeasure = [] as any;
+  sheetEnable = false;
+  filterValues:any;
+  filterId = [] as any;
+  sidebysideBarColumnData = [] as any;
+  sidebysideBarRowData = [] as any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -493,6 +501,164 @@ areaChart(){
     },
   };
 }
+sidebysideBar(){
+  this.chartOptions2 = {
+    series: this.sidebysideBarRowData,
+    colors:['#00a5a2','#0dc9c5','#f43f63'],
+    chart: {
+      type: 'bar',
+      height: 320,
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        // endingShape: "rounded"
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent'],
+    },
+    xaxis: {
+      categories:this.sidebysideBarColumnData[0]?.data,
+      
+    },
+    yaxis: {
+      title: {
+        text: '$ (thousands)',
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+    tooltip: {
+      y: {
+        formatter: function (val: string) {
+          return '$ ' + val + ' thousands';
+        },
+      },
+    },
+    grid: {
+      borderColor: "rgba(119, 119, 142, 0.05)",
+    },
+  };
+}
+stockedBar(){
+  this.chartOptions6 = {
+    series: this.sidebysideBarRowData,
+    chart: {
+      type: "bar",
+      height: 350,
+      stacked: true,
+      toolbar: {
+        show: true
+      },
+      zoom: {
+        enabled: true
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: "bottom",
+            offsetX: -10,
+            offsetY: 0
+          }
+        }
+      }
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: false
+      }
+    },
+    xaxis: {
+      type: "category",
+      categories: this.sidebysideBarColumnData[0]?.data,
+    },
+    legend: {
+      position: "right",
+      offsetY: 40
+    },
+    fill: {
+      opacity: 1
+    }
+  };
+}
+barLineChart(){
+  this.chartOptions5 = {
+    series: [
+      {
+        name: this.sidebysideBarRowData[0]?.name,
+        type: "column",
+        data: this.sidebysideBarRowData[0]?.data
+      },
+      {
+        name: this.sidebysideBarRowData[1]?.name,
+        type: "line",
+        data: this.sidebysideBarRowData[1]?.data,
+      }
+    ],
+    colors:['#00a5a2','#31d1ce'],
+    chart: {
+      height: 350,
+      type: "line"
+    },
+    grid: {
+      borderColor: "rgba(119, 119, 142, 0.05)",
+    },
+    stroke: {
+      width: [0, 4]
+    },
+    title: {
+      text: "",
+      style: {
+        fontSize: "13px",
+        fontWeight: "bold",
+        color: "#8c9097",
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      enabledOnSeries: [1]
+    },
+    labels: this.sidebysideBarColumnData[0]?.data,
+    xaxis: {
+      type: ""
+    },
+    yaxis: [
+      {
+        title: {
+          text: "",
+          style: {
+            fontSize: "13px",
+            fontWeight: "bold",
+            color: "#8c9097",
+          },
+        }
+      },
+      {
+        opposite: true,
+        title: {
+          text: "",
+          style: {
+            fontSize: "13px",
+            fontWeight: "bold",
+            color: "#8c9097",
+          },
+        }
+      }
+    ]
+    
+  };
+}
 /*private createLineChart(): void {
   const data = this.chartsData.map((d:any) => ({
     col: d.col,
@@ -551,6 +717,8 @@ areaChart(){
     .attr('r', 5)
     .attr('fill', 'steelblue');
 }*/
+tableDimentions = [] as any;
+tableMeasures = [] as any;
   columnsData(){
     const obj={
       "db_id":this.databaseId,
@@ -559,6 +727,8 @@ areaChart(){
     this.workbechService.getColumnsData(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.tableColumnsData = responce;
+          this.tableDimentions = responce.dimensions;
+          this.tableMeasures = responce.measures;
         },
         error: (error) => {
           console.log(error);
@@ -575,12 +745,15 @@ areaChart(){
     this.displayedColumns = [];
     this.chartsColumnData = [];
     this.chartsRowData = [];
+    this.sidebysideBarColumnData = [];
+    this.sidebysideBarRowData = [];
       const obj={
           "database_id":this.databaseId,
           "queryset_id":this.qrySetId,
           "col":this.draggedColumnsData,
           "row":this.draggedRowsData,
-          "filter_id": []
+          "filter_id": this.filterId,
+          "datasource_querysetid":null
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -588,6 +761,22 @@ areaChart(){
           this.tablePreviewRow = responce.data[0].row;
           console.log(this.tablePreviewColumn);
           console.log(this.tablePreviewRow);
+          this.tablePreviewColumn.forEach((res:any) => {
+            let obj={
+              name: res.column,
+              data: res.result_data
+            }
+            this.sidebysideBarColumnData.push(obj);
+          });
+          this.tablePreviewRow.forEach((res:any) => {
+            let obj={
+              name: res.column,
+              data: res.result_data
+            }
+            this.sidebysideBarRowData.push(obj);
+          });
+          console.log(this.sidebysideBarColumnData)
+          console.log(this.sidebysideBarRowData);
           let rowCount:any;
          if(this.tablePreviewColumn[0]?.result_data?.length){
            rowCount = this.tablePreviewColumn[0]?.result_data?.length;
@@ -635,6 +824,9 @@ areaChart(){
         this.pieChart();
         this.lineChart();
         this.areaChart();
+        this.sidebysideBar();
+        this.stockedBar();
+        this.barLineChart();
       }
         },
         error: (error) => {
@@ -654,38 +846,71 @@ areaChart(){
   this.tableName = tablename;
   this.table_alias = tableAlias;
   }
- 
+  storeColumnData = [] as any;
+  storeRowData = [] as any;
   columndrop(event: CdkDragDrop<string[]>){
     console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
-    let copy: any = JSON.parse(JSON.stringify(item));
-    let element: any = {};
-    for (let attr in copy) {
-      if (attr == 'title') {
-        element[attr] = copy[attr];
-      } else {
-        element[attr] = copy[attr];
-      }
-    }
-    this.draggedColumns.splice(event.currentIndex, 0, element);
-    this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-    this.dataExtraction();
+    this.storeColumnData.push(event.previousContainer.data); 
+    // this.storeColumnData[0].forEach((element:any) => {
+     // if(element.column === item.column){
+        let copy: any = JSON.parse(JSON.stringify(item));
+        let element: any = {};
+        for (let attr in copy) {
+          if (attr == 'title') {
+            element[attr] = copy[attr];
+          } else {
+            element[attr] = copy[attr];
+          }
+        }
+        this.draggedColumns.splice(event.currentIndex, 0, element);
+        //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
+        this.draggedColumnsData.push([element.column,element.data_type,""])
+    
+        this.dataExtraction();
+     // }else{
+        console.log("Can't Accept")
+     // }
+
+   // });
+    
   }
   rowdrop(event: CdkDragDrop<string[]>){
     let item: any = event.previousContainer.data[event.previousIndex];
-    let copy: any = JSON.parse(JSON.stringify(item));
-    let element: any = {};
-    for (let attr in copy) {
-      if (attr == 'title') {
-        element[attr] = copy[attr];
-      } else {
-        element[attr] = copy[attr];
-      }
+   // this.storeRowData.push(event.previousContainer.data); 
+    //this.storeRowData[0].forEach((element:any) => {
+    //  if(element.column === item.column){
+        let copy: any = JSON.parse(JSON.stringify(item));
+        let element: any = {};
+        for (let attr in copy) {
+          if (attr == 'title') {
+            element[attr] = copy[attr];
+          } else {
+            element[attr] = copy[attr];
+          }
+        }
+        this.draggedRows.splice(event.currentIndex, 0, element);
+        //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
+        this.draggedRowsData.push([element.column,element.data_type,""])
+        console.log(this.draggedRowsData);
+        this.dataExtraction();
+      //}else{
+        console.log("Can't Accept")
+      //}
+   // });
+
+  }
+   drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
     }
-    this.draggedRows.splice(event.currentIndex, 0, element);
-    this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-    console.log(this.draggedRowsData);
-    this.dataExtraction();
   }
   dragStartedColumn(index:any){
     this.draggedColumns.splice(index, 1);
@@ -711,16 +936,22 @@ areaChart(){
   }
   table = true;
   bar = false;
+  sidebyside = false;
   area = false;
   line = false;
   pie = false;
-  chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,chartId:any){
+  stocked = false;
+  barLine = false;
+  chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
     this.line=line;
     this.pie=pie;
+    this.sidebyside = sidebysideBar;
     this.chartId = chartId;
+    this.stocked = stocked;
+    this.barLine = barLine;
     this.dataExtraction();
   }
   enableDisableCharts(){
@@ -750,6 +981,7 @@ areaChart(){
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
+      this.sheetEnable = true;
       const index = this.tabs.length + 1;
        this.tabs.push('Sheet ' +index);
        this.sheetName = 'Sheet ' +index;
@@ -767,34 +999,35 @@ areaChart(){
   console.log(event)
   this.SheetIndex = event.index;
   this.sheetName = event.tab.textLabel;
-  this.saveTableData = [] ;
-  this.savedisplayedColumns = [];
-  this.saveBar = [];
-  this.savePie = [];
-  this.lineYaxis = [];
-  this.lineXaxis = [];
-  this.areaYaxis = [];
-  this.areaXaxis = [];
-  this.draggedColumns = [];
-  this.draggedRows = [];
-  this.tablePreviewColumn = [];
-  this.tablePreviewRow = [];
-  this.tableData = [];
-  this.displayedColumns = [];
-  this.chartsData = [];
-  this.chartsRowData = [];
-  this.chartsColumnData = [];
-  this.draggedColumnsData = [];
-  this.draggedRowsData = [];
-  this.table = true;
-  this.bar = false;
-  this.pie = false;
-  this.line = false;
-  this.area = false;
-  if(this.qrySetId || this.databaseId){
-    this.sheetRetrive();
+  if(this.sheetEnable){
+    this.saveTableData = [] ;
+    this.savedisplayedColumns = [];
+    this.saveBar = [];
+    this.savePie = [];
+    this.lineYaxis = [];
+    this.lineXaxis = [];
+    this.areaYaxis = [];
+    this.areaXaxis = [];
+    this.draggedColumns = [];
+    this.draggedRows = [];
+    this.tablePreviewColumn = [];
+    this.tablePreviewRow = [];
+    this.tableData = [];
+    this.displayedColumns = [];
+    this.chartsData = [];
+    this.chartsRowData = [];
+    this.chartsColumnData = [];
+    this.draggedColumnsData = [];
+    this.draggedRowsData = [];
+    this.table = true;
+    this.bar = false;
+    this.pie = false;
+    this.line = false;
+    this.area = false;
+   
   }
-
+  this.sheetRetrive();
+   
   }
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
@@ -930,15 +1163,65 @@ sheetRetrive(){
     }
   )
   }
-  openSuperScaled(modal: any) {
+  filterName:any
+  filterType:any;
+  openSuperScaled(modal: any,data:any) {
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
     });
+    this.filterName = data.column;
+    this.filterType = data.data_type;
+    this.filterDataGet();
   }
-  
-filterApply(name:any){
-this.DimetionMeasure.push(name.column);
-console.log(this.DimetionMeasure);
+  filterData = [] as any;
+  filter_id: any;
+  filterDataGet(){
+    const obj={
+      "database_id" :this.databaseId,
+      "query_set_id":this.qrySetId,
+      "type_of_filter" : "sheet",
+      "datasource_queryset_id" :null,
+      "col_name":this.filterName,
+       "data_type":this.filterType,
+       "format_date":""
+}
+  this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
+        console.log(responce);
+        this.filterData = responce.col_data;
+        this.filter_id = responce.filter_id;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }
+  )
+  }
+  filterDataArray = [] as any;
+  filterCheck(data:any){
+   console.log(data)
+   this.filterDataArray.push(data);
+  }
+  filterDataPut(){
+    const obj={
+    "filter_id": this.filter_id,
+    "database_id": this.databaseId,
+    "queryset_id": this.qrySetId,
+    "type_of_filter":"sheet",
+    "datasource_querysetid" : null,
+    "range_values": [],
+    "select_values":this.filterDataArray
+}
+  this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
+        console.log(responce);
+        this.filterId.push(responce.filter_id);
+        this.DimetionMeasure.push(this.filterName);
+        this.dataExtraction();
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }
+  )
   }
 }
