@@ -122,7 +122,7 @@
                     <div class="card-body" style="padding: 2px 16px;">
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
-                                <input  type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetName" (click)="sheetNameChange(sheetName)">
+                                <input  type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetName" (keydown)="sheetNameChange(sheetName,$event)">
                                 
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0">
@@ -182,6 +182,29 @@
                                 (cdkDropListDropped)="rowdrop($event)">
                                     @for(rows of draggedRows;track rows;let index = $index){
                                     <div class="example-box1" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
+                                       <i class="fe fe-more-vertical fs-18 text-body-secondary" ></i>
+                                        <select  class="form-control" [(ngModel)]="measureValue"  (change)="rowMeasuresCount(rows,index,measureValue)">
+                                            <option value="sum">Sum</option>
+                                            <option value="avg">Avg</option>
+                                            <option value="min">Min</option>
+                                            <option value="max">Max</option>
+                                            <option value="count">Count</option>
+                                          </select>
+                                         <!-- <div class="dropdown">
+                                            <button (click)="toggleDropdown()" class="dropdown-button">
+                                              <span>▼</span> 
+                                            </button>
+                                            <div class="dropdown-content" [class.show]="isDropdownVisible">
+                                                <select  class="form-control" [(ngModel)]="measureValue"  (change)="rowMeasuresCount(rows,index,measureValue)">
+                                                    <option value="sum">Sum</option>
+                                                    <option value="avg">Avg</option>
+                                                    <option value="min">Min</option>
+                                                    <option value="max">Max</option>
+                                                    <option value="count">Count</option>
+                                                  </select>
+                                            </div>
+                                          </div>-->
+                                        
                                     </div>
                                     }
                                 </div>  
@@ -247,14 +270,24 @@
                 </div>
             </div>
               }
-              @if(sidebyside && chartId){
+              @if(area && chartId){
                 <div class="card-body">
-                    <div id="column-chart">
-                        <apx-chart [series]="chartOptions2.series" [chart]="chartOptions2.chart"
-                        [dataLabels]="chartOptions2.dataLabels" [plotOptions]="chartOptions2.plotOptions"
-                        [yaxis]="chartOptions2.yaxis" [legend]="chartOptions2.legend" [fill]="chartOptions2.fill"
-                        [stroke]="chartOptions2.stroke" [tooltip]="chartOptions2.tooltip" [colors]="chartOptions2.colors" [grid]="chartOptions2.grid"
-                        [xaxis]="chartOptions2.xaxis"></apx-chart>
+                    <div id="area-chart">
+                        <apx-chart [series]="chartOptions1.series" [chart]="chartOptions1.chart"
+                        [xaxis]="chartOptions1.xaxis" [stroke]="chartOptions1.stroke"
+                        [dataLabels]="chartOptions1.dataLabels" [yaxis]="chartOptions1.yaxis"
+                        [labels]="chartOptions1.labels" [legend]="chartOptions1.legend"  [grid]="chartOptions1.grid"
+                        [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
+                    </div>
+                </div>
+              }
+              @if(line && chartId){
+                <div class="card-body">
+                    <div id="line-chart">
+                        <apx-chart [series]="chartOptions.series || []" [chart]="chartOptions.chart"
+                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels"
+                        [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
+                        [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
                     </div>
                 </div>
               }
@@ -268,24 +301,16 @@
                 </div>
             </div>
               }
-              @if(line && chartId){
+              
+             
+              @if(sidebyside && chartId){
                 <div class="card-body">
-                    <div id="line-chart">
-                        <apx-chart [series]="chartOptions.series || []" [chart]="chartOptions.chart"
-                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels"
-                        [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
-                        [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
-                    </div>
-                </div>
-              }
-              @if(area && chartId){
-                <div class="card-body">
-                    <div id="area-chart">
-                        <apx-chart [series]="chartOptions1.series" [chart]="chartOptions1.chart"
-                        [xaxis]="chartOptions1.xaxis" [stroke]="chartOptions1.stroke"
-                        [dataLabels]="chartOptions1.dataLabels" [yaxis]="chartOptions1.yaxis"
-                        [labels]="chartOptions1.labels" [legend]="chartOptions1.legend"  [grid]="chartOptions1.grid"
-                        [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
+                    <div id="column-chart">
+                        <apx-chart [series]="chartOptions2.series" [chart]="chartOptions2.chart"
+                        [dataLabels]="chartOptions2.dataLabels" [plotOptions]="chartOptions2.plotOptions"
+                        [yaxis]="chartOptions2.yaxis" [legend]="chartOptions2.legend" [fill]="chartOptions2.fill"
+                        [stroke]="chartOptions2.stroke" [tooltip]="chartOptions2.tooltip" [colors]="chartOptions2.colors" [grid]="chartOptions2.grid"
+                        [xaxis]="chartOptions2.xaxis"></apx-chart>
                     </div>
                 </div>
               }
@@ -321,8 +346,9 @@
                  </div>
                     <div class="card-footer d-flex p-2">
                         <mat-tab-group [selectedIndex]="selected.value"
-                        (selectedIndexChange)="selected.setValue($event)" 
-                        (selectedTabChange)="onChange($event);">
+                        (selectedIndexChange)="selected.setValue($event)"
+                        (selectedTabChange)="onChange($event);" 
+                        (click)="getChartData()">
                         @for(tab of tabs;track tab; let index = $index){
            <mat-tab  [label]="tab" >
          
@@ -420,58 +446,52 @@
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="sidebyside-bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="StockedBar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,7)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="StockedBar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,7)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card mb-0" style=" height: 222px; overflow-y: scroll;">
+                <div class="card mb-0" style=" height: 222px; ">
                     <div class="card-header justify-content-between align-items-center">
                         <div class="card-title fs-12">Marks </div>
                     </div>
                     <div class="card-body" style=" padding: 2px 12px;">
-                        <div ngbdropdown="" class="btn-group my-1 dropdown">
-                            <button type="button" ngbdropdowntoggle="" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-outline-default" style="text-align:left;"> Automatic </button>
-                            <ul ngbdropdownmenu="" class="dropdown-menu" style="">
-                                <li>
-                                    <a ngbdropdownitem="" class="dropdown-item" tabindex="0">Automatic</a>
-                                </li>
-                                <li>
-                                    <a ngbdropdownitem="" class="dropdown-item" tabindex="0">Another action</a>
-                                </li>
-                            </ul>
-                        </div>
                         <div class="row"> 
-                            <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/color.png" alt="img" class="rounded-2 w-70 mrk-t">
-                                </a>
+                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
+                                <div class="" ngbDropdown>
+                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                        aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/color.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
+                                    </a>
+                                    <div class="dropdown-menu p-3" ngbDropdownMenu>
+                                        <h5 class="card-title fs-14 mb-1  border-bottom">Color...</h5>
+                                        <a class="btn btn-blue-light mx-4"> Edit colors</a> 
+                                    </div>
+                                </div>
                                 <span class="mark-txt fs-11">Color</span>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
                                 <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/size.png" alt="img" class="rounded-2 w-70 mrk-t">
-                                </a>
-                                <span class="mark-txt fs-11">Size</span>
-                            </div>
-                            <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-70 mrk-t">
+                                    <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
                                 </a>
                                 <span class="mark-txt fs-11">Text</span>
                             </div>
-                            <!--<div class="col-4 px-2 mt-2">
+                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
+                                <div class="" ngbDropdown>
+                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                        aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/size.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
+                                    </a>
+                                    <div class="dropdown-menu p-3" ngbDropdownMenu>
+                                        <input type="range" class="form-range" id="customRange1">
+                                    </div>
+                                </div>
+                                <span class="mark-txt fs-11">Size</span>
+                            </div>
+                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
                                 <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-100 mrk-t">
-                                </a>
-                                <span class="mark-txt fs-11">Details</span>
-                            </div>-->
-                            <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-70 mrk-t">
+                                    <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
                                 </a>
                                 <span class="mark-txt fs-11">Tooltip</span>
                             </div>

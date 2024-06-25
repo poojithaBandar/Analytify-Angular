@@ -20,6 +20,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
+import Swal from 'sweetalert2';
 interface TableRow {
   [key: string]: any;
 }
@@ -91,11 +92,12 @@ export class SheetsComponent {
   chartOptions6:any;
   chartOptions5:any;
   DimetionMeasure = [] as any;
-  sheetEnable = false;
   filterValues:any;
   filterId = [] as any;
   sidebysideBarColumnData = [] as any;
   sidebysideBarRowData = [] as any;
+  sheetEnable = false;
+  measureValue:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -105,6 +107,7 @@ export class SheetsComponent {
 
   ngOnInit(): void {
     this.columnsData();
+    this.sheetRetrive();
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -525,7 +528,7 @@ sidebysideBar(){
       colors: ['transparent'],
     },
     xaxis: {
-      categories:this.sidebysideBarColumnData[0]?.data,
+      categories:this.sidebysideBarColumnData[0],
       
     },
     yaxis: {
@@ -581,7 +584,7 @@ stockedBar(){
     },
     xaxis: {
       type: "category",
-      categories: this.sidebysideBarColumnData[0]?.data,
+      categories: this.sidebysideBarColumnData[0],
     },
     legend: {
       position: "right",
@@ -629,7 +632,7 @@ barLineChart(){
       enabled: true,
       enabledOnSeries: [1]
     },
-    labels: this.sidebysideBarColumnData[0]?.data,
+    labels: this.sidebysideBarColumnData[0],
     xaxis: {
       type: ""
     },
@@ -753,24 +756,24 @@ tableMeasures = [] as any;
           "col":this.draggedColumnsData,
           "row":this.draggedRowsData,
           "filter_id": this.filterId,
-          "datasource_querysetid":null
+          "datasource_querysetid":null,
+          "sheetfilter_querysets_id":null
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
           console.log(responce);
-          this.tablePreviewColumn = responce.data[0].col;
-          this.tablePreviewRow = responce.data[0].row;
+          this.tablePreviewColumn = responce.data.col;
+          this.tablePreviewRow = responce.data.row;
           console.log(this.tablePreviewColumn);
           console.log(this.tablePreviewRow);
           this.tablePreviewColumn.forEach((res:any) => {
             let obj={
-              name: res.column,
               data: res.result_data
             }
-            this.sidebysideBarColumnData.push(obj);
+            this.sidebysideBarColumnData.push(res.result_data);
           });
           this.tablePreviewRow.forEach((res:any) => {
             let obj={
-              name: res.column,
+              name: res.col,
               data: res.result_data
             }
             this.sidebysideBarRowData.push(obj);
@@ -785,15 +788,16 @@ tableMeasures = [] as any;
          }
           //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
           // Extract column names
-          this.displayedColumns = this.tablePreviewColumn.map((col:any) => col.column).concat(this.tablePreviewRow.map((row:any) => row.column));
+          this.displayedColumns = this.tablePreviewColumn.map((col:any) => col.column).concat(this.tablePreviewRow.map((row:any) => row.col));
           // Create table data
+console.log(this.displayedColumns)
           for (let i = 0; i < rowCount; i++) {
             const row: TableRow = {};
             this.tablePreviewColumn.forEach((col:any) => {
               row[col.column] = col.result_data[i];
             });
             this.tablePreviewRow.forEach((rowData:any) => {
-              row[rowData.column] = rowData.result_data[i];
+              row[rowData.col] = rowData.result_data[i];
             });
             this.tableData.push(row);
          
@@ -900,6 +904,20 @@ tableMeasures = [] as any;
    // });
 
   }
+  isDropdownVisible = false;
+
+  toggleDropdown() {
+    this.isDropdownVisible = !this.isDropdownVisible;
+  }
+  rowMeasuresCount(rows:any,index:any,type:any){
+    console.log(rows)
+    console.log(type)
+    console.log(index)
+    this.measureValue = type;
+    this.draggedRowsData[index] = [rows.column,"aggregate",type];
+    console.log(this.draggedRowsData);
+    this.dataExtraction();
+  }
    drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -949,9 +967,9 @@ tableMeasures = [] as any;
     this.line=line;
     this.pie=pie;
     this.sidebyside = sidebysideBar;
-    this.chartId = chartId;
     this.stocked = stocked;
     this.barLine = barLine;
+    this.chartId = chartId;
     this.dataExtraction();
   }
   enableDisableCharts(){
@@ -981,53 +999,65 @@ tableMeasures = [] as any;
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
-      this.sheetEnable = true;
       const index = this.tabs.length + 1;
        this.tabs.push('Sheet ' +index);
-       this.sheetName = 'Sheet ' +index;
-       console.log(this.sheetName)
+      // this.sheetName = 'Sheet ' +index;
+      // console.log(this.sheetName)
     }
    
   }
-  sheetNameChange(name:any){
-    this.tabs[this.SheetIndex] = name;
+  sheetNameChange(name:any,event:any){
+    console.log(this.SheetIndex)
+    if (event.keyCode === 13) {
+      this.sheetEnable = true;
+      this.tabs[this.SheetIndex] = name;
+    }
+    
   }
   removeTab(index: number) {
     this.tabs.splice(index, 1);
   }
   onChange(event:any){
-  console.log(event)
-  this.SheetIndex = event.index;
-  this.sheetName = event.tab.textLabel;
-  if(this.sheetEnable){
-    this.saveTableData = [] ;
-    this.savedisplayedColumns = [];
-    this.saveBar = [];
-    this.savePie = [];
-    this.lineYaxis = [];
-    this.lineXaxis = [];
-    this.areaYaxis = [];
-    this.areaXaxis = [];
-    this.draggedColumns = [];
-    this.draggedRows = [];
-    this.tablePreviewColumn = [];
-    this.tablePreviewRow = [];
-    this.tableData = [];
-    this.displayedColumns = [];
-    this.chartsData = [];
-    this.chartsRowData = [];
-    this.chartsColumnData = [];
-    this.draggedColumnsData = [];
-    this.draggedRowsData = [];
-    this.table = true;
-    this.bar = false;
-    this.pie = false;
-    this.line = false;
-    this.area = false;
-   
+    this.SheetIndex = event.index;
+    this.sheetName = event.tab.textLabel;
+    console.log(this.sheetName)
+    this.sheetRetrive();
   }
-  this.sheetRetrive();
-   
+  getChartData(){
+    this.sheetEnable = false;
+      this.saveTableData = [] ;
+      this.savedisplayedColumns = [];
+      this.saveBar = [];
+      this.savePie = [];
+      this.lineYaxis = [];
+      this.lineXaxis = [];
+      this.areaYaxis = [];
+      this.areaXaxis = [];
+      this.draggedColumns = [];
+      this.draggedRows = [];
+      this.tablePreviewColumn = [];
+      this.tablePreviewRow = [];
+      this.tableData = [];
+      this.displayedColumns = [];
+      this.chartsData = [];
+      this.chartsRowData = [];
+      this.chartsColumnData = [];
+      this.draggedColumnsData = [];
+      this.draggedRowsData = [];
+      this.sidebysideBarYaxis = [];
+      this.sidebysideBarXaxis = [];
+      this.stokedBarYaxis = [];
+      this.stokedBarXaxis = [];
+      this.barLineYaxis = [];
+      this.barLineXaxis = [];
+      this.table = true;
+      this.bar = false;
+      this.pie = false;
+      this.line = false;
+      this.area = false;
+      this.sidebyside = false;
+      this.stocked = false;
+      this.barLine = false;
   }
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
@@ -1039,6 +1069,12 @@ tableMeasures = [] as any;
   areaXaxis = [] as any;
   barXaxis = [] as any;
   pieXaxis = [] as any;
+  sidebysideBarYaxis = [] as any;
+  sidebysideBarXaxis = [] as any;
+  stokedBarYaxis = [] as any;
+  stokedBarXaxis = [] as any;
+  barLineYaxis = [] as any;
+  barLineXaxis = [] as any;
 sheetSave(){
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
@@ -1059,6 +1095,18 @@ sheetSave(){
   if(this.area && this.chartId == 17){
     this.areaYaxis = this.chartsRowData;
     this.areaXaxis = this.chartsColumnData;
+  }
+  if(this.sidebyside && this.chartId == 7){
+    this.sidebysideBarYaxis = this.sidebysideBarRowData;
+    this.sidebysideBarXaxis = this.sidebysideBarColumnData;
+  }
+  if(this.stocked && this.chartId == 5){
+    this.stokedBarYaxis = this.sidebysideBarRowData;
+    this.stokedBarXaxis = this.sidebysideBarColumnData;
+  }
+  if(this.barLine && this.chartId == 4){
+    this.barLineYaxis = this.sidebysideBarRowData;
+    this.barLineXaxis = this.sidebysideBarColumnData;
   }
 console.log("Sheet Save")
 const obj={
@@ -1083,15 +1131,37 @@ const obj={
     "lineXaxis": this.lineXaxis,
 
     "areaYaxis":this.areaYaxis,
-    "areaXaxis":this.areaXaxis
+    "areaXaxis":this.areaXaxis,
+
+  
+      "sidebysideBarYaxis": this.sidebysideBarYaxis,
+      "sidebysideBarXaxis": this.sidebysideBarXaxis,
+   
+      "stokedBarYaxis": this.stokedBarYaxis,
+      "stokedBarXaxis": this.stokedBarXaxis,
+  
+      "barLineYaxis":this.barLineYaxis,
+      "barLineXaxis":this.barLineXaxis
   },
 }
 }
 this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
     console.log(responce);
+    if(responce){
+      Swal.fire({
+        icon: 'success',
+        text: responce.message,
+        width: '200px',
+      })
+    }
   },
   error: (error) => {
     console.log(error);
+    Swal.fire({
+      icon: 'error',
+      text: error.error.message,
+      width: '200px',
+    })
   }
 }
 )
@@ -1107,6 +1177,13 @@ sheetRetrive(){
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
+        
+        this.draggedColumns.forEach((res:any) => {
+          this.draggedColumnsData.push([res.column,res.data_type,""])
+        });
+        this.draggedRows.forEach((res:any) => {
+          this.draggedRowsData.push([res.column,res.data_type,""])
+        });
         if(responce.chart_id == "1"){
           this.tableData = this.sheetResponce.results.tableData;
           this.displayedColumns = this.sheetResponce.results.tableColumns;
@@ -1115,6 +1192,9 @@ sheetRetrive(){
           this.pie = false;
           this.line = false;
           this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
         }
        if(responce.chart_id == "6"){
         this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -1125,6 +1205,9 @@ sheetRetrive(){
           this.pie = false;
           this.line = false;
           this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
        }
        if(responce.chart_id == "24"){
         this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -1135,6 +1218,9 @@ sheetRetrive(){
           this.pie = true;
           this.line = false;
           this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
        }
        if(responce.chart_id == "13"){
         this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -1145,6 +1231,9 @@ sheetRetrive(){
           this.pie = false;
           this.line = true;
           this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
        }
        if(responce.chart_id == "17"){
         this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -1155,6 +1244,48 @@ sheetRetrive(){
           this.pie = false;
           this.line = false;
           this.area = true;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+       }
+       if(responce.chart_id == "7"){
+        this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
+        this.sidebysideBarColumnData = this.sheetResponce.results.sidebysideBarXaxis;
+        this.sidebysideBar();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = true;
+          this.stocked = false;
+          this.barLine = false;
+       }
+       if(responce.chart_id == "5"){
+        this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
+        this.sidebysideBarColumnData = this.sheetResponce.results.stokedBarXaxis;
+        this.stockedBar();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = true;
+          this.barLine = false;
+       }
+       if(responce.chart_id == "4"){
+        this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
+        this.sidebysideBarColumnData = this.sheetResponce.results.barLineXaxis;
+        this.barLineChart();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = true;
        }
       },
       error: (error) => {
@@ -1184,7 +1315,7 @@ sheetRetrive(){
       "datasource_queryset_id" :null,
       "col_name":this.filterName,
        "data_type":this.filterType,
-       "format_date":""
+      // "format_date":""
 }
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
