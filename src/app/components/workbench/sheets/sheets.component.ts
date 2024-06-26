@@ -91,6 +91,10 @@ export class SheetsComponent {
   chartOptions4:any;
   chartOptions6:any;
   chartOptions5:any;
+  chartOptions7:any;
+  chartOptions8:any;
+  chartOptions9:any;
+  chartOptions10:any;
   DimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
@@ -595,6 +599,7 @@ stockedBar(){
     }
   };
 }
+
 barLineChart(){
   this.chartOptions5 = {
     series: [
@@ -660,6 +665,162 @@ barLineChart(){
       }
     ]
     
+  };
+}
+horizentalStockedBar(){
+  this.chartOptions7 = {
+    series: this.sidebysideBarRowData,
+    chart: {
+      type: "bar",
+      height: 350,
+      stacked: true,
+      toolbar: {
+        show: true
+      },
+      zoom: {
+        enabled: true
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: "bottom",
+            offsetX: -10,
+            offsetY: 0
+          }
+        }
+      }
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: true
+      }
+    },
+    xaxis: {
+      type: "category",
+      categories: this.sidebysideBarColumnData[0],
+    },
+    legend: {
+      position: "right",
+      offsetY: 40
+    },
+    fill: {
+      opacity: 1
+    }
+  };
+}
+hGrouped(){
+  this.chartOptions8 = {
+    series: this.sidebysideBarRowData,
+    chart: {
+      type: "bar",
+      height: 430
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        dataLabels: {
+          position: "top"
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      offsetX: -6,
+      style: {
+        fontSize: "12px",
+        colors: ["#fff"]
+      }
+    },
+    stroke: {
+      show: true,
+      width: 1,
+      colors: ["#fff"]
+    },
+    xaxis: {
+      categories: this.sidebysideBarColumnData[0]
+    }
+  };
+}
+multiLineChart(){
+  this.chartOptions9 = {
+    series: this.sidebysideBarRowData,
+    chart: {
+      height: 350,
+      type: "line"
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      width: 5,
+      curve: "straight",
+      dashArray: [0, 8, 5]
+    },
+    title: {
+      text: "",
+      align: "left"
+    },
+    legend: {
+      tooltipHoverFormatter: function(val:any, opts:any) {
+        return (
+          val +
+          " - <strong>" +
+          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
+          "</strong>"
+        );
+      }
+    },
+    markers: {
+      size: 0,
+      hover: {
+        sizeOffset: 6
+      }
+    },
+    xaxis: {
+      labels: {
+        trim: false
+      },
+      categories: this.sidebysideBarColumnData[0]
+    },
+    tooltip: {
+      y: [
+        {
+          title: {
+            formatter: function(val:any) {
+              return val;
+            }
+          }
+        },
+      ]
+    },
+    grid: {
+      borderColor: "#f1f1f1"
+    }
+  };
+}
+donutChart(){
+  this.chartOptions10 = {
+    series: this.chartsRowData,
+    chart: {
+      type: "donut"
+    },
+    labels: this.chartsColumnData,
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 100
+          },
+          legend: {
+            position: "bottom"
+          }
+        }
+      }
+    ]
   };
 }
 /*private createLineChart(): void {
@@ -790,7 +951,7 @@ tableMeasures = [] as any;
           // Extract column names
           this.displayedColumns = this.tablePreviewColumn.map((col:any) => col.column).concat(this.tablePreviewRow.map((row:any) => row.col));
           // Create table data
-console.log(this.displayedColumns)
+          console.log(this.displayedColumns)
           for (let i = 0; i < rowCount; i++) {
             const row: TableRow = {};
             this.tablePreviewColumn.forEach((col:any) => {
@@ -831,6 +992,10 @@ console.log(this.displayedColumns)
         this.sidebysideBar();
         this.stockedBar();
         this.barLineChart();
+        this.horizentalStockedBar();
+        this.hGrouped();
+        this.multiLineChart();
+        this.donutChart();
       }
         },
         error: (error) => {
@@ -880,6 +1045,7 @@ console.log(this.displayedColumns)
     
   }
   rowdrop(event: CdkDragDrop<string[]>){
+   console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
    // this.storeRowData.push(event.previousContainer.data); 
     //this.storeRowData[0].forEach((element:any) => {
@@ -910,10 +1076,7 @@ console.log(this.displayedColumns)
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
-    console.log(rows)
-    console.log(type)
-    console.log(index)
-    this.measureValue = type;
+      this.measureValue = ''; 
     this.draggedRowsData[index] = [rows.column,"aggregate",type];
     console.log(this.draggedRowsData);
     this.dataExtraction();
@@ -960,7 +1123,12 @@ console.log(this.displayedColumns)
   pie = false;
   stocked = false;
   barLine = false;
-  chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,chartId:any){
+  horizentalStocked = false;
+  grouped = false;
+  multiLine = false;
+  donut = false;
+  chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -969,6 +1137,10 @@ console.log(this.displayedColumns)
     this.sidebyside = sidebysideBar;
     this.stocked = stocked;
     this.barLine = barLine;
+    this.horizentalStocked = horizentalStocked;
+    this.grouped = grouped;
+    this.multiLine = multiLine;
+    this.donut = donut;
     this.chartId = chartId;
     this.dataExtraction();
   }
@@ -1050,6 +1222,14 @@ console.log(this.displayedColumns)
       this.stokedBarXaxis = [];
       this.barLineYaxis = [];
       this.barLineXaxis = [];
+      this.hStockedYaxis = [];
+      this.hStockedXaxis = [];
+      this.hgroupedYaxis = [];
+      this.hgroupedXaxis = [];
+      this.multiLineYaxis = [];
+      this.multiLineXaxis = [];
+      this.donutYaxis = [];
+      this.donutXaxis = [];
       this.table = true;
       this.bar = false;
       this.pie = false;
@@ -1058,6 +1238,10 @@ console.log(this.displayedColumns)
       this.sidebyside = false;
       this.stocked = false;
       this.barLine = false;
+      this.horizentalStocked = false;
+      this.grouped = false;
+      this.multiLine = false;
+      this.donut = false;
   }
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
@@ -1075,6 +1259,18 @@ console.log(this.displayedColumns)
   stokedBarXaxis = [] as any;
   barLineYaxis = [] as any;
   barLineXaxis = [] as any;
+  hStockedYaxis = [] as any;
+  hStockedXaxis = [] as any;
+  hgroupedYaxis = [] as any;
+  hgroupedXaxis = [] as any;
+  multiLineYaxis = [] as any;
+  multiLineXaxis = [] as any;
+  donutYaxis = [] as any;
+  donutXaxis = [] as any;
+
+sheetSaveUpdate(){
+
+  }
 sheetSave(){
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
@@ -1107,6 +1303,22 @@ sheetSave(){
   if(this.barLine && this.chartId == 4){
     this.barLineYaxis = this.sidebysideBarRowData;
     this.barLineXaxis = this.sidebysideBarColumnData;
+  }
+  if(this.horizentalStocked && this.chartId == 2){
+    this.hStockedYaxis = this.sidebysideBarRowData;
+    this.hStockedXaxis = this.sidebysideBarColumnData;
+  }
+  if(this.grouped && this.chartId == 3){
+    this.hgroupedYaxis = this.sidebysideBarRowData;
+    this.hgroupedXaxis = this.sidebysideBarColumnData;
+  }
+  if(this.multiLine && this.chartId == 3){
+    this.multiLineYaxis = this.sidebysideBarRowData;
+    this.multiLineXaxis = this.sidebysideBarColumnData;
+  }
+  if(this.donut && this.chartId == 10){
+    this.donutYaxis = this.chartsRowData;
+    this.donutXaxis = this.chartsColumnData;
   }
 console.log("Sheet Save")
 const obj={
@@ -1141,7 +1353,19 @@ const obj={
       "stokedBarXaxis": this.stokedBarXaxis,
   
       "barLineYaxis":this.barLineYaxis,
-      "barLineXaxis":this.barLineXaxis
+      "barLineXaxis":this.barLineXaxis,
+
+      "hStockedYaxis": this.hStockedYaxis,
+      "hStockedXaxis": this.hStockedXaxis,
+
+      "hgroupedYaxis": this.hgroupedYaxis,
+      "hgroupedXaxis": this.hgroupedXaxis,
+
+      "multiLineYaxis":this.multiLineYaxis,
+      "multiLineXaxis": this.multiLineXaxis,
+
+      "donutYaxis": this.chartsRowData,
+      "donutXaxis": this.chartsColumnData,
   },
 }
 }
@@ -1195,6 +1419,10 @@ sheetRetrive(){
           this.sidebyside = false;
           this.stocked = false;
           this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
         }
        if(responce.chart_id == "6"){
         this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -1208,6 +1436,10 @@ sheetRetrive(){
           this.sidebyside = false;
           this.stocked = false;
           this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
        }
        if(responce.chart_id == "24"){
         this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -1221,6 +1453,10 @@ sheetRetrive(){
           this.sidebyside = false;
           this.stocked = false;
           this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
        }
        if(responce.chart_id == "13"){
         this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -1234,6 +1470,10 @@ sheetRetrive(){
           this.sidebyside = false;
           this.stocked = false;
           this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
        }
        if(responce.chart_id == "17"){
         this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -1247,6 +1487,10 @@ sheetRetrive(){
           this.sidebyside = false;
           this.stocked = false;
           this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
        }
        if(responce.chart_id == "7"){
         this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -1260,6 +1504,10 @@ sheetRetrive(){
           this.sidebyside = true;
           this.stocked = false;
           this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
        }
        if(responce.chart_id == "5"){
         this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -1273,6 +1521,10 @@ sheetRetrive(){
           this.sidebyside = false;
           this.stocked = true;
           this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
        }
        if(responce.chart_id == "4"){
         this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
@@ -1286,6 +1538,78 @@ sheetRetrive(){
           this.sidebyside = false;
           this.stocked = false;
           this.barLine = true;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+       }
+       if(responce.chart_id == "2"){
+        this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
+        this.sidebysideBarColumnData = this.sheetResponce.results.hStockedXaxis;
+        this.horizentalStockedBar();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = true;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+       }
+       if(responce.chart_id == "3"){
+        this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
+        this.sidebysideBarColumnData = this.sheetResponce.results.hgroupedXaxis;
+        this.hGrouped();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = true;
+          this.multiLine = false;
+          this.donut = false;
+       }
+       if(responce.chart_id == "8"){
+        this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
+        this.sidebysideBarColumnData = this.sheetResponce.results.multiLineXaxis;
+        this.multiLineChart();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = true;
+          this.donut = false;
+       }
+       if(responce.chart_id == "10"){
+        this.chartsRowData = this.sheetResponce.results.donutYaxis;
+        this.chartsColumnData = this.sheetResponce.results.donutXaxis;
+        this.donutChart();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = true;
        }
       },
       error: (error) => {

@@ -111,6 +111,8 @@
                           </button>
                         </div>
                       </ng-template>
+
+                     
                 </div>
                 
             </div>
@@ -182,15 +184,16 @@
                                 (cdkDropListDropped)="rowdrop($event)">
                                     @for(rows of draggedRows;track rows;let index = $index){
                                     <div class="example-box1" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
-                                       <i class="fe fe-more-vertical fs-18 text-body-secondary" ></i>
-                                        <select  class="form-control" [(ngModel)]="measureValue"  (change)="rowMeasuresCount(rows,index,measureValue)">
+                                     
+                                        <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="toggleDropdown()"></i>
+                                        <select  class="form-control" [(ngModel)]="measureValue" [class.show]="isDropdownVisible" (change)="rowMeasuresCount(rows,index,measureValue)">
                                             <option value="sum">Sum</option>
                                             <option value="avg">Avg</option>
                                             <option value="min">Min</option>
                                             <option value="max">Max</option>
                                             <option value="count">Count</option>
                                           </select>
-                                         <!-- <div class="dropdown">
+                                        <!--  <div class="dropdown">
                                             <button (click)="toggleDropdown()" class="dropdown-button">
                                               <span>▼</span> 
                                             </button>
@@ -339,7 +342,61 @@
                     </div>
                 </div>
              }
-
+             @if(horizentalStocked){
+                <div id="chart">
+                    <apx-chart
+                      [series]="chartOptions7.series"
+                      [chart]="chartOptions7.chart"
+                      [dataLabels]="chartOptions7.dataLabels"
+                      [plotOptions]="chartOptions7.plotOptions"
+                      [responsive]="chartOptions7.responsive"
+                      [xaxis]="chartOptions7.xaxis"
+                      [legend]="chartOptions7.legend"
+                      [fill]="chartOptions7.fill"
+                    ></apx-chart>
+                  </div>
+              }
+              @if(grouped){
+                <div id="chart">
+                    <apx-chart
+                      [series]="chartOptions8.series"
+                      [chart]="chartOptions8.chart"
+                      [dataLabels]="chartOptions8.dataLabels"
+                      [plotOptions]="chartOptions8.plotOptions"
+                      [responsive]="chartOptions8.responsive"
+                      [xaxis]="chartOptions8.xaxis"
+                      [legend]="chartOptions8.legend"
+                      [fill]="chartOptions8.fill"
+                    ></apx-chart>
+                  </div>
+              }
+              @if(multiLine){
+                <div id="chart">
+                    <apx-chart
+                    [series]="chartOptions9.series"
+                    [chart]="chartOptions9.chart"
+                    [xaxis]="chartOptions9.xaxis"
+                    [stroke]="chartOptions9.stroke"
+                    [tooltip]="chartOptions9.tooltip"
+                    [dataLabels]="chartOptions9.dataLabels"
+                    [legend]="chartOptions9.legend"
+                    [markers]="chartOptions9.markers"
+                    [grid]="chartOptions9.grid"
+                    [yaxis]="chartOptions9.yaxis"
+                    [title]="chartOptions9.title"
+                  ></apx-chart>
+                  </div>
+              }
+              @if(donut){
+                <div id="donutchart">
+                <apx-chart
+                    [series]="chartOptions10.series"
+                    [chart]="chartOptions10.chart"
+                    [labels]="chartOptions10.labels"
+                    [responsive]="chartOptions10.responsive" >
+                </apx-chart>
+                  </div>
+              }
             </div>
         }
         }      
@@ -428,28 +485,40 @@
                         <div class="row"> 
                            
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="sidebyside-bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="sidebyside-bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="StockedBar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="StockedBar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t"></a>
+                            </div>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Horizental-Stocked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t"></a>
+                            </div>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Horizental-Stocked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t"></a>
+                            </div>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t"></a>
+                            </div>
+                            <div class="col-3 px-2 mt-2">
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,10)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                         </div>
                     </div>
