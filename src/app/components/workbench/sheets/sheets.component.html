@@ -10,10 +10,10 @@
                     <h6 class="fw-600 fs-12 mt-2 mb-2 ">Tables</h6>
                     <div>
                         @for(columns of tableColumnsData; track columns){
-                            <div  class="menu-item">
-                            <div class="menu-title" class="example-box" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
+                            <div  class="menu-item mb-1">
+                            <div class="menu-title" class="example-box border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
                                 <span class="arrow"> {{ columns.expanded ? '▲' : '▼' }}
-                                    {{columns.table_name}} </span>
+                                    {{columns.table_alias}} </span>
 
                               </div>
                               
@@ -28,8 +28,8 @@
                                <div class="d-flex justify-content-between border border-bottom">
                                 <li class="example-box" 
                                 (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag  >
-                                <span class="abc-txt">abc</span> {{dimensions.column}} 
-                               
+                                <span class="abc-txt">abc</span>
+                                {{ dimensions.column?.substr(0,15) }}{{ dimensions.column.length > 15 ? '...' : '' }}
                                 </li>
                                 <div class="dashboard-option">
                                     <div class=" p-1" ngbDropdown>
@@ -54,7 +54,8 @@
                             (cdkDropListDropped)="rowdrop($event)">
                             
                             @for(measures of columns.measures; track measures){ 
-                                <div class="example-box1"  (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag ># {{measures.column}}
+                                <div class="example-box1 border m-0 ps-3 pe-0"  (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag ># 
+                                    {{ measures.column?.substr(0,18) }}{{ measures.column.length > 18 ? '...' : '' }}
                                     <div class="dashboard-option">
                                         <div class=" p-1" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -101,7 +102,7 @@
                         }
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn ripple btn-primary" (click)="filterDataPut()">Filter Columns</button>
+                          <button type="button" class="btn ripple btn-primary" (click)="filterDataPut()">Apply</button>
                           <button
                             type="button"
                             class="btn ripple btn-secondary"
@@ -149,7 +150,18 @@
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box" (cdkDragStarted)="dragStartedColumn(index)"  cdkDrag >{{ columns.column }}
+                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index)"  cdkDrag >{{ columns.column }}
+                                        <div class="" ngbDropdown>
+                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
+                                                
+                                                <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
+                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index)"> Remove</a> 
+                                                </div>
+
+                                            </a>
+                                        </div>
+                                    
                                     </div>
                                     }
                                 </div> 
@@ -183,9 +195,55 @@
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
-                                     
-                                        <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="toggleDropdown()"></i>
+                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
+                                        <div class="" ngbDropdown>
+                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
+                                                
+                                                <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
+                                                    <a class="btn btn-outline-light mx-0 mb-2" (click)="openSuperScaledModal(aggregateUserModal)" style="text-align: left !important;"> Aggregation</a> 
+                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedRow(index)"> Remove</a> 
+                                                </div>
+
+                                            </a>
+                                        </div>
+                                        <ng-template #aggregateUserModal let-modal>
+                                            <div class="modal-header p-2 bg-light">
+                                              <h6 class="modal-title">Aggregated measures:</h6>
+                                              <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                                              </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="card-body p-0">
+                                                    <div class="column-card">
+                                                        <p class="fw-semibold mb-1 ">Row : {{rows.column}}</p>
+                                                       </div>
+                                                   <div class="aggregate-card mt-3">
+                                                    <p class="fw-semibold mb-1 ">Aggregate</p>
+                                                    <select  class="form-control" [(ngModel)]="measureValue"  (change)="rowMeasuresCount(rows,index,measureValue)">
+                                                        <option value="sum">Sum</option>
+                                                        <option value="avg">Avg</option>
+                                                        <option value="min">Min</option>
+                                                        <option value="max">Max</option>
+                                                        <option value="count">Count</option>
+                                                      </select>
+                                                   </div>
+                                                </div>
+                                           
+                                            </div>
+                                           <!-- <div class="modal-footer p-2">
+                                              <button type="button" class="btn ripple btn-primary">Save</button>
+                                              <button
+                                                type="button"
+                                                class="btn ripple btn-secondary"
+                                                (click)="modal.close('Save click')"
+                                              >
+                                                Close
+                                              </button>
+                                            </div>-->
+                                          </ng-template>
+                                        <!-- <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="openSuperScaledModal(aggregateModal)"></i> -->
+                                       <!--  <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="toggleDropdown()"></i>
                                         <select  class="form-control" [(ngModel)]="measureValue" [class.show]="isDropdownVisible" (change)="rowMeasuresCount(rows,index,measureValue)">
                                             <option value="sum">Sum</option>
                                             <option value="avg">Avg</option>
@@ -193,7 +251,7 @@
                                             <option value="max">Max</option>
                                             <option value="count">Count</option>
                                           </select>
-                                        <!--  <div class="dropdown">
+                                         <div class="dropdown">
                                             <button (click)="toggleDropdown()" class="dropdown-button">
                                               <span>▼</span> 
                                             </button>
@@ -466,16 +524,56 @@
              </div>
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-3">
                 <div class="card mb-1" style=" height: 150px; overflow-y: scroll;">
-                    <div class="card-header justify-content-between align-items-center">
+                    <div class="card-header justify-content-start align-items-center">
                         <div class="card-title fs-12">Filters </div>
                     </div>
-                    <div class="card-body px-5">
-                        @for(dimen of DimetionMeasure;track dimen;let index = $index){
-                        <div class="example-box" > 
-                           {{dimen}}
+                    <div class="card-body p-1">
+                        @for(dimen of dimetionMeasure;track dimen;let index = $index){
+                        <div class="example-box justify-content-start border-bottom" style="cursor: pointer;"> 
+                           {{dimen.column}}
+                           <div class="filter-icons">
+                            <i class="fe fe-edit fs-12 text-body-secondary ms-2" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
+                            <i class="fe fe-trash fs-12 text-body-secondary ms-1" (click)="filterDelete(index,dimen.filterId)"></i>
+                        </div>
                         </div>
                     }
                     </div>
+                    <ng-template #contentedit let-modal>
+                        <div class="modal-header">
+                          <h6 class="modal-title">Filters</h6>
+                          <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- <ul class="dropdown-plus-title">
+                                @for(table of draggedtables;track table){
+                                <li class="dropdown-plus-title">
+                                    {{ table.schema }}.{{ table.alias }}  
+                                 </li>
+                                 @for(column of table.columns;track column){
+                                    <input class="custom-control-input" id="customCheck1" type="checkbox">
+                                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
+                                 }
+                            }
+                            </ul> -->
+                            @for(data of filterData;track data){
+                            <div class="form-check">
+                                <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="filterValues" class="form-check-input" (click)="filterCheck(data)">    
+                                <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                            </div>
+                        }
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn ripple btn-primary" (click)="filterDataEditPut()">Apply</button>
+                          <button
+                            type="button"
+                            class="btn ripple btn-secondary"
+                            (click)="modal.close('Save click')"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </ng-template>
                 </div>
                 <div class="card mb-1" style=" overflow-y: scroll; height: 220px;">
                     <div class="card-header justify-content-between align-items-center">
@@ -512,13 +610,13 @@
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Horizental-Stocked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Horizental-Stocked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Horizental-Grouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,10)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                         </div>
                     </div>
@@ -573,3 +671,9 @@
     </div>
 
     <!-- CONTAINER CLOSED -->
+
+  
+
+      <!-- aggregateUser modal -->
+   
+      <!-- aggregateUser modal -->

@@ -73,7 +73,7 @@ background: #000;
 
 .example-box {
 padding: 3px 13px;
-border-bottom: solid 1px #ccc;
+// border-bottom: solid 1px #ccc;
 color: rgb(var(--info-rgb))!important;
 display: flex;
 flex-direction: row;
@@ -83,12 +83,12 @@ box-sizing: border-box;
 cursor: move;
 
 font-size: 14px;
-border-radius: 8px;
+// border-radius: 8px;
 margin-right: 5px;
 }
 .example-box1 {
   padding: 3px 13px;
-  border-bottom: solid 1px #ccc;
+  // border-bottom: solid 1px #ccc;
   color: rgb(var(--success-rgb))!important;
   display: flex;
   flex-direction: row;
@@ -98,7 +98,7 @@ margin-right: 5px;
   cursor: move;
 
   font-size: 14px;
-  border-radius: 8px;
+  // border-radius: 8px;
   margin-right: 5px;
   }
 
@@ -174,3 +174,4 @@ span.abc-txt {
   margin: 35px auto;
   padding: 0;
 }
+.dropdown-menu.cu.show{position:fixed !important; display: flex;flex-direction: column;}

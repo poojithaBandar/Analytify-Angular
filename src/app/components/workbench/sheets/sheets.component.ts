@@ -95,13 +95,17 @@ export class SheetsComponent {
   chartOptions8:any;
   chartOptions9:any;
   chartOptions10:any;
-  DimetionMeasure = [] as any;
+  dimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
   sidebysideBarColumnData = [] as any;
   sidebysideBarRowData = [] as any;
   sheetEnable = false;
   measureValue:any;
+  retriveDataSheet_id: any;
+  sheetfilter_querysets_id = null;
+  editFilterId: any;
+  isValuePresent: any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -111,7 +115,7 @@ export class SheetsComponent {
 
   ngOnInit(): void {
     this.columnsData();
-    this.sheetRetrive();
+   // this.sheetRetrive();
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -918,10 +922,11 @@ tableMeasures = [] as any;
           "row":this.draggedRowsData,
           "filter_id": this.filterId,
           "datasource_querysetid":null,
-          "sheetfilter_querysets_id":null
+          "sheetfilter_querysets_id": this.sheetfilter_querysets_id,
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
           console.log(responce);
+          this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id;
           this.tablePreviewColumn = responce.data.col;
           this.tablePreviewRow = responce.data.row;
           console.log(this.tablePreviewColumn);
@@ -1076,7 +1081,7 @@ tableMeasures = [] as any;
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
-      this.measureValue = ''; 
+     // this.measureValue = ''; 
     this.draggedRowsData[index] = [rows.column,"aggregate",type];
     console.log(this.draggedRowsData);
     this.dataExtraction();
@@ -1193,10 +1198,11 @@ tableMeasures = [] as any;
     this.SheetIndex = event.index;
     this.sheetName = event.tab.textLabel;
     console.log(this.sheetName)
-    this.sheetRetrive();
+   // this.sheetRetrive();
   }
   getChartData(){
     this.sheetEnable = false;
+    this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
       this.saveBar = [];
@@ -1268,9 +1274,6 @@ tableMeasures = [] as any;
   donutYaxis = [] as any;
   donutXaxis = [] as any;
 
-sheetSaveUpdate(){
-
-  }
 sheetSave(){
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
@@ -1312,7 +1315,7 @@ sheetSave(){
     this.hgroupedYaxis = this.sidebysideBarRowData;
     this.hgroupedXaxis = this.sidebysideBarColumnData;
   }
-  if(this.multiLine && this.chartId == 3){
+  if(this.multiLine && this.chartId == 8){
     this.multiLineYaxis = this.sidebysideBarRowData;
     this.multiLineXaxis = this.sidebysideBarColumnData;
   }
@@ -1364,12 +1367,14 @@ const obj={
       "multiLineYaxis":this.multiLineYaxis,
       "multiLineXaxis": this.multiLineXaxis,
 
-      "donutYaxis": this.chartsRowData,
-      "donutXaxis": this.chartsColumnData,
+      "donutYaxis": this.donutYaxis,
+      "donutXaxis": this.donutXaxis,
   },
 }
 }
-this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
+console.log(this.retriveDataSheet_id)
+if(this.retriveDataSheet_id){
+  this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
     console.log(responce);
     if(responce){
       Swal.fire({
@@ -1377,6 +1382,7 @@ this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
         text: responce.message,
         width: '200px',
       })
+      this.sheetRetrive();
     }
   },
   error: (error) => {
@@ -1389,8 +1395,34 @@ this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
   }
 }
 )
+}else{
+  this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
+    console.log(responce);
+    if(responce){
+      Swal.fire({
+        icon: 'success',
+        text: responce.message,
+        width: '200px',
+      })
+      this.sheetRetrive();
+    }
+
+  },
+  error: (error) => {
+    console.log(error);
+    Swal.fire({
+      icon: 'error',
+      text: error.error.message,
+      width: '200px',
+    })
+  }
+}
+)
+}
+
   }
 sheetRetrive(){
+  this.retriveDataSheet_id = '';
   const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
@@ -1398,6 +1430,7 @@ sheetRetrive(){
 }
   this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
         console.log(responce);
+        this.retriveDataSheet_id = responce.sheet_id;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
@@ -1670,7 +1703,8 @@ sheetRetrive(){
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterId.push(responce.filter_id);
-        this.DimetionMeasure.push(this.filterName);
+        this.dimetionMeasure.push({"column":this.filterName,"data_type":this.filterType,"filterId":responce.filter_id});
+        console.log(this.dimetionMeasure)
         this.dataExtraction();
       },
       error: (error) => {
@@ -1679,4 +1713,78 @@ sheetRetrive(){
     }
   )
   }
+  filterEditGet(){
+    const obj={
+      "type_filter":"chartfilter",
+      "database_id" :this.databaseId,
+      "filter_id" :this.filter_id
 }
+  this.workbechService.filterEditPost(obj).subscribe({next: (responce:any) => {
+        console.log(responce);
+        this.filter_id = responce.filter_id;
+        responce.result.forEach((element:any) => {
+          this.filterData.push(element.label);
+        });
+        
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }
+  )
+  }
+  filterDataEditPut(){
+    const obj={
+      "filter_id": this.filter_id,
+      "database_id": this.databaseId,
+      "queryset_id": this.qrySetId,
+      "type_of_filter":"sheet",
+      "datasource_querysetid" : null,
+      "range_values": [],
+      "select_values":this.filterDataArray
+  }
+    this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
+          console.log(responce);
+          this.dimetionMeasure.push({"column":this.filterName,"data_type":this.filterType,"filterId":responce.filter_id});
+          console.log(this.dimetionMeasure)
+          this.dataExtraction();
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      }
+    )
+  }
+  filterDelete(index:any,filterId:any){
+    const obj={
+      "type_of_filter" : "sheet",
+      "filter_id" : filterId,
+      "database_id" : this.databaseId
+}
+  this.workbechService.filterDelete(obj).subscribe({next: (responce:any) => {
+        console.log(responce);
+        this.dimetionMeasure = responce;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }
+  )
+  }
+  openSuperScaledModal(modal: any) {
+    this.modalService.open(modal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+    });
+}
+openSuperScalededitFilter(modal: any,data:any) {
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+  this.filterName = data.column;
+  this.filterType = data.data_type;
+  this.filterEditGet();
+}
+}
+
