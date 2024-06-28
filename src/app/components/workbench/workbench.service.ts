@@ -141,6 +141,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/get_datasource/`+this.accessToken,obj);
   }
+  deleteFilter(dbId:any,filterId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/filter_delete/`+dbId+'/'+filterId+'/'+'datasource'+'/'+this.accessToken);
+  }
   callColumnWithTable(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];

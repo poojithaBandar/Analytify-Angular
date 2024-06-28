@@ -90,7 +90,8 @@ export class DatabaseComponent {
   columnsInFilters = [] as any;
   tableColumnFilter!:boolean;
   columnRowFilter!:any;
-  datasourceFilterId:any;
+  datasourceFilterId:any;;
+  datasourceFilterIdArray:any[] =[];
   selectedRows = [];
   datasourceQuerysetId = null;
   filteredList = [] as any;
@@ -627,7 +628,8 @@ selectedColumnGetRows(col:any,datatype:any){
       next:(data:any) =>{
         console.log(data)
         this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
-        this.datasourceFilterId = data.filter_id
+        this.datasourceFilterId=data.filter_id;
+        this.datasourceFilterIdArray.push(data.filter_id);
         this.tableColumnFilter =false;
         this.columnRowFilter = true;
         console.log('colmnfilterrows',this.columnsInFilters)
@@ -684,7 +686,7 @@ getDsQuerysetId(){
   const obj ={
     datasource_queryset_id:this.datasourceQuerysetId,
     queryset_id:this.qurtySetId,
-    filter_id:[this.datasourceFilterId],
+    filter_id:this.datasourceFilterIdArray,
     database_id:this.databaseId
   }
   this.workbechService.getDsQuerysetId(obj).subscribe(
@@ -751,6 +753,49 @@ editFilter(id:any){
       })
     }
     })
+
+}
+deleteFilter(id:any){
+  this.modalService.dismissAll('close')
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result)=>{
+    if(result.isConfirmed){
+  this.workbechService.deleteFilter(this.databaseId,id).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        if(data){
+          Swal.fire({
+            icon: 'success',
+            title: 'Removed!',
+            text: ' Filter Removed Successfully',
+            width: '400px',
+          })
+        }
+        console.log('filter ids',this.datasourceFilterIdArray)
+        this.datasourceFilterIdArray = this.datasourceFilterIdArray.filter(item => item !== id);
+        this.getDsQuerysetId()
+        this.getFilteredList();
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+  }})
+
 
 }
 getSelectedRowsFromEdit() {

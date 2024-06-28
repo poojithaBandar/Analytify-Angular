@@ -482,7 +482,7 @@
 
       <ng-template #applyFiltersModal let-modal>
         <div class="modal-header">
-          <h6 class="modal-title">Row Filters</h6>
+          <h6 class="modal-title">Filters</h6>
           <button
             type="button"
             class="btn-close"
@@ -496,6 +496,7 @@
                 @for(data of filteredList;track data){
                 <li class="dropdown-plus-title">
                     {{data.column_name }} <i class="fa fa-edit" (click)="editFilter(data.filter_id);openSuperScaled(editFilters)" data-bs-toggle="tooltip" ngbTooltip="Edit"></i>
+                    <i class="fa fa-trash" (click)="deleteFilter(data.filter_id)" data-bs-toggle="tooltip" ngbTooltip="Delete"></i>
                  </li>
                 }
             </ul>
