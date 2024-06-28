@@ -111,4 +111,40 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.delete<any>(`${environment.apiUrl}/chart_filter/`+this.accessToken,obj);
   }
+  selectedColumnGetRows(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/chart_filter/`+this.accessToken,obj);
+  }
+  getSelectedRowsFilter(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/chart_filter/`+this.accessToken,obj);
+  }
+  getDsQuerysetId(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/data_source_data/`+this.accessToken,obj);
+  }
+  getUserSheetList(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/sheetslist/`+this.accessToken);
+  }
+  getFilteredList(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/list_filters/`+this.accessToken,obj);
+  }
+  editFilter(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/get_datasource/`+this.accessToken,obj);
+  }
+  callColumnWithTable(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/get_column_names/`+this.accessToken,obj);
+  }
+
 }

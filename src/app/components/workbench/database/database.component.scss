@@ -209,6 +209,9 @@ button.TextTransform{
 .table-left{
   margin-left: 48px
 }
+.table-right{
+  margin-left: 0px!important;
+}
 .subMenuFlex{
   display: flex;
   justify-content: flex-start;
@@ -245,4 +248,10 @@ span.time {
   padding: 3px 10px;
   border-radius: 5px;
   margin: 5px;
+}
+.swal2-container {
+  display: -webkit-box;
+  display: flex;
+  position: fixed;
+  z-index: 300000 !important;
 }

@@ -87,24 +87,15 @@ export class DatabaseComponent {
   tableJoiningUI = true;
   isOpen = false;
   searchTables : any;
-  menus = [
-    {
-      name: 'Schema1',
-      expanded: false,
-      submenus: [
-        { name: 'Table 1' },
-        { name: 'Table 2' }
-      ]
-    },
-    {
-      name: 'Schema 2',
-      expanded: false,
-      submenus: [
-        { name: 'Table 1' },
-        { name: 'Table 2' }
-      ]
-    }
-  ]
+  columnsInFilters = [] as any;
+  tableColumnFilter!:boolean;
+  columnRowFilter!:any;
+  datasourceFilterId:any;
+  selectedRows = [];
+  datasourceQuerysetId = null;
+  filteredList = [] as any;
+  editFilterList = [] as any;
+  columnWithTablesData = [] as any;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
      this.databaseId = +atob(route.snapshot.params['id']);
@@ -257,23 +248,23 @@ getTablerowclms(table:any,schema:any){
     }
   })
 }
-getTableData(){
-  const obj ={
-    database_id:this.databaseId,
-    tables:[[this.draggedtables[0].schema,this.draggedtables[0].table]]
-  }
-  this.workbechService.getTableData(obj).subscribe({
-    next:(data:any)=>{
-      console.log('single table data',data);
-      this.cutmquryTable = data
-      this.qryTime = data.query_exection_time;
-      this.qryRows = data.no_of_rows;
-    },
-    error:(error:any)=>{
-      console.log(error)
-    }
-  })
-}
+// getTableData(){
+//   const obj ={
+//     database_id:this.databaseId,
+//     tables:[[this.draggedtables[0].schema,this.draggedtables[0].table]]
+//   }
+//   this.workbechService.getTableData(obj).subscribe({
+//     next:(data:any)=>{
+//       console.log('single table data',data);
+//       this.cutmquryTable = data
+//       this.qryTime = data.query_exection_time;
+//       this.qryRows = data.no_of_rows;
+//     },
+//     error:(error:any)=>{
+//       console.log(error)
+//     }
+//   })
+// }
 
 onDeleteItem(index: number) {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
@@ -546,7 +537,8 @@ clearJoinCondns(){
 getJoiningTableData(){
   const obj ={
     database_id:this.databaseId,
-    query_id:this.qurtySetId
+    query_id:this.qurtySetId,
+    datasource_queryset_id:this.datasourceQuerysetId
   }
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
@@ -568,7 +560,7 @@ getJoiningTableData(){
     })
 }
 deleteJoiningRelation(index:number){
-  
+
   const deleteCondtin = this.displayJoiningCndnsList[index][0]
   console.log(deleteCondtin)
   this.relationOfTables = this.relationOfTables.map((subArray: any[]) =>
@@ -578,10 +570,8 @@ deleteJoiningRelation(index:number){
 
   if (index > -1 && index < this.displayJoiningCndnsList.length) {
     this.displayJoiningCndnsList.splice(index, 1);
-    //this.relationOfTables.splice(index,1)
-   
+    //this.relationOfTables.splice(index,1);
   }
-
   // console.log('removedjoining',this.displayJoiningCndnsList)
 }
 
@@ -590,6 +580,9 @@ openSuperScaled(modal: any) {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
   });
+  this.tableColumnFilter = true;
+  this.columnRowFilter = false;
+  this.callColumnWithTable();
 }
 openRowsData(modal: any) {
   this.modalService.open(modal, {
@@ -597,7 +590,205 @@ openRowsData(modal: any) {
     windowClass: 'animate__animated animate__zoomIn',
   });
 }
+callColumnWithTable(){
+  const obj ={
+    database_id:this.databaseId,
+    query_set_id :this.qurtySetId,
+    type_of_filter:'datasource'
+  }
+  this.workbechService.callColumnWithTable(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+       this.columnWithTablesData= data
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+}
+selectedColumnGetRows(col:any,datatype:any){
+  const obj ={
+    database_id:this.databaseId,
+    query_set_id:this.qurtySetId,
+    datasource_queryset_id:this.datasourceQuerysetId,
+    type_of_filter:'datasource',
+    col_name:col,
+    data_type:datatype,
+  }
+  this.workbechService.selectedColumnGetRows(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
+        this.datasourceFilterId = data.filter_id
+        this.tableColumnFilter =false;
+        this.columnRowFilter = true;
+        console.log('colmnfilterrows',this.columnsInFilters)
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+}
 
+getSelectedRows() {
+  this.selectedRows = this.columnsInFilters
+  .filter((row: { selected: any; }) => row.selected)
+  .map((row: { label: any; }) => row.label);
+  console.log('selected rows',this.selectedRows);
+
+  const obj = {
+    filter_id:this.datasourceFilterId,
+    database_id:this.databaseId,
+    queryset_id:this.qurtySetId,
+    type_of_filter:'datasource',
+    datasource_querysetid:null,
+    select_values:this.selectedRows,
+    range_values:null
+  }
+
+  this.workbechService.getSelectedRowsFilter(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.datasourceFilterId = data.filter_id;
+        this.getDsQuerysetId();
+        this.modalService.dismissAll('close')
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+
+}
+getDsQuerysetId(){
+  const obj ={
+    datasource_queryset_id:this.datasourceQuerysetId,
+    queryset_id:this.qurtySetId,
+    filter_id:[this.datasourceFilterId],
+    database_id:this.databaseId
+  }
+  this.workbechService.getDsQuerysetId(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.datasourceQuerysetId = data.data.datasource_queryset_id;
+        this.getJoiningTableData();
+        this.getFilteredList();
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+}
+getFilteredList(){
+  const obj ={
+    query_set_id:this.qurtySetId,
+    database_id:this.databaseId,
+    type_of_filter:'datasource'
+  }
+  this.workbechService.getFilteredList(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.filteredList = data.filters_data;
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+}
+editFilter(id:any){
+  const obj ={
+    type_filter:'datasource',
+    database_id:this.databaseId,
+    filter_id:id
+  }
+  this.workbechService.editFilter(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.editFilterList = data.result;
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+
+}
+getSelectedRowsFromEdit() {
+  this.selectedRows = this.editFilterList
+  .filter((row: { selected: any; }) => row.selected)
+  .map((row: { label: any; }) => row.label);
+  console.log('selected rows',this.selectedRows);
+
+  const obj = {
+    filter_id:this.datasourceFilterId,
+    database_id:this.databaseId,
+    queryset_id:this.qurtySetId,
+    type_of_filter:'datasource',
+    datasource_querysetid:null,
+    select_values:this.selectedRows,
+    range_values:null
+  }
+
+  this.workbechService.getSelectedRowsFilter(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.datasourceFilterId = data.filter_id;
+        this.getDsQuerysetId();
+         this.modalService.dismissAll('close')
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+
+}
 goToConnections(){
   this.router.navigate(['/workbench/work-bench'])
 }

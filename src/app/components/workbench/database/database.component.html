@@ -81,7 +81,7 @@
                             <label></label>
                             <div class="right">
                                 @if(draggedtables.length){
-                                <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" (click)="openSuperScaled(content)" class="modal-effect btn btn-primary m-1">
+                                <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" (click)="openSuperScaled(applyFiltersModal);getFilteredList()" class="modal-effect btn btn-primary m-1">
                                     <i class="fa fa-filter"></i> Apply Filters
                                 </a>
                                 }
@@ -139,6 +139,7 @@
                                             <h6 class="m-0">Table Custom Join</h6>
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()" ngbtooltip="fa fa-chevron-left" style="border: none;" class="fa fa-chevron-left chevron-left-icon "></i>
                                         </div>
+                                    
                                         <div class="card-body">
                                                 @if(isOpen){
                                             <div class=" gap-1 d-flex flex-wrap p-2">
@@ -239,19 +240,20 @@
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                                     <div class="card br-0 joining-T-H right-card" [class.expanded]="!isOpen">
                                         <div class="card-header d-flex align-items-center">
-
+                                            @if(draggedtables.length > 1){
                                             @if(!isOpen){
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()" ngbtooltip="fa fa-chevron-left" style="border: none;" class="fa fa-chevron-right chevron-right-icon p-2 ">
                                                 <button class="TextTransform"><h6>Table Custom Join</h6></button> 
                                             </i>
                                             }
+                                        }
                                             <h6 class="mb-0">Result Preview</h6>
                                         </div>
                                         <div class="card-body d-flex align-items-center justify-content-center p-0">
                                             @if(TabledataJoining.length){
                                             <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                             }@else{
-                                             <div class="table-responsive" style="overflow-y: scroll;height: 233px;" [class.table-left]="!isOpen">
+                                             <div class="table-responsive" style="overflow-y: scroll;height: 233px;" [class.table-left]="draggedtables.length > 1" [class.table-right]="draggedtables.length === 1">
                                             <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                 <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
                                                     <tr>
@@ -343,14 +345,12 @@
                     <div class="card-body p-0 ">
                         <div class="card mb-0" style="height: 250px;">
                             <div class="card-header d-flex align-items-center justify-content-between">
-                                <h6>Edit Custome SQL</h6>
+                                <h6>Edit Custom SQL</h6>
                                 <div class="right">
                                     <a class="btn btn-blue-light m-1" (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
-                                    @if(cutmquryTable.length){
-                                    <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" class="modal-effect btn btn-primary m-1">
+                                    <a *ngIf="cutmquryTable.length" data-bs-effect="effect-super-scaled" data-bs-toggle="modal" class="modal-effect btn btn-primary m-1">
                                         <i class="fa fa-filter"> Apply Filters</i>
                                     </a>
-                                    }
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -370,10 +370,10 @@
                                     
                                 </div>
                                 <div class="card-body d-flex align-items-center justify-content-center p-0">
-                                    @if(cutmquryTable.length){
-                                    <h6 class="fs-12 mt-2 mb-0 drag-txt">Table data preview</h6>
-                                    }@else{
-                                        <div class="table-responsive" style="overflow-y: scroll;height: 233px;">
+                                    <!-- @if(cutmquryTable.length){ -->
+                                    <h6 *ngIf="!cutmquryTable.length" class="fs-12 mt-2 mb-0 drag-txt">Table data preview</h6>
+                                    <!-- }@else{ -->
+                                        <div *ngIf="cutmquryTable.length" class="table-responsive" style="overflow-y: scroll;height: 233px;">
                                             <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                 <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
                                                     <tr>
@@ -395,7 +395,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                    }
+                                    <!-- } -->
                                 </div>
                                 <div class="modal-footer border-0">
                                     @if(custmQryTime){
@@ -414,34 +414,28 @@
 
 
     <ng-template #content let-modal>
+        <!-- table column filter -->
+        @if(tableColumnFilter){
         <div class="modal-header">
-          <h6 class="modal-title">Filters</h6>
+          <h6 class="modal-title">Filters  (select Column)</h6>
           <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
           </button>
         </div>
-        <div class="modal-body">
-            <!-- <ul class="dropdown-plus-title">
-                @for(table of draggedtables;track table){
+        <div class="modal-body" style="max-height: 350px;overflow-y: scroll;">
+            <ul class="dropdown-plus-title">
+                <!-- @for(table of draggedtables;track table){
                 <li class="dropdown-plus-title">
-                    {{ table.schema }}.{{ table.alias }}  
-                 </li>
-                 @for(column of table.columns;track column){
+                   <h6>{{ table.schema }}.{{ table.alias }}  </h6> 
+              </li> -->
+
+                   @for(column of columnWithTablesData;track column){
                     <input class="custom-control-input" id="customCheck1" type="checkbox">
-                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
+                <li><a class="dropdown-item" (click)="selectedColumnGetRows(column.column,column.data_type)">{{ column.column }} ({{column.data_type}})</a></li>
                  }
-            }
-            </ul> -->
-            @for(table of draggedtables;track table){
-            <h6> {{ table.schema }}.{{ table.alias }}</h6>
-            @for(column of table.columns;track column){
-            <div class="form-check">
-                <input type="checkbox" value="" id="defaultCheck1" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ column.column }} </label>
-            </div>
-        }
-        }
+            <!-- } -->
+            </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn ripple btn-primary">Filter Columns</button>
           <button
             type="button"
             class="btn ripple btn-secondary"
@@ -450,11 +444,43 @@
             Close
           </button>
         </div>
+    }
+     <!-- column Data filter -->
+    @if(columnRowFilter){
+            <div class="modal-header">
+                <h6 class="modal-title">Filters</h6>
+                <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                </button>
+              </div>
+              <div class="modal-body" style="max-height: 400px; overflow-y: scroll;">
+                @if(columnsInFilters.length){
+                  @for(rows of columnsInFilters;track rows;let i = $index){
+                  <div class="form-check">
+                      <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
+                  </div>
+                } 
+                }
+                @else{
+                    <h6>No data in selected column</h6>
+                }
+              
+              </div>
+              <div class="modal-footer">
+                <button type="button" (click)="getSelectedRows()" class="btn ripple btn-primary">Filter Data</button>
+                <button
+                  type="button"
+                  class="btn ripple btn-secondary"
+                  (click)="modal.close('Save click')"
+                >
+                  Close
+                </button>
+        </div>
+    }
       </ng-template>
 
 
 
-      <ng-template #rowData let-modal>
+      <ng-template #applyFiltersModal let-modal>
         <div class="modal-header">
           <h6 class="modal-title">Row Filters</h6>
           <button
@@ -467,18 +493,15 @@
         </div>
         <div class="modal-body">
             <ul class="dropdown-plus-title">
-                @for(table of draggedtables;track table){
+                @for(data of filteredList;track data){
                 <li class="dropdown-plus-title">
-                    {{ table.schema }}.{{ table.alias }}  
+                    {{data.column_name }} <i class="fa fa-edit" (click)="editFilter(data.filter_id);openSuperScaled(editFilters)" data-bs-toggle="tooltip" ngbTooltip="Edit"></i>
                  </li>
-                 @for(column of table.columns;track column){
-                <li><a class="dropdown-item" >{{ column.columns }}</a></li>
-                 }
-            }
+                }
             </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn ripple btn-primary">Save changes</button>
+          <button type="button" class="btn ripple btn-primary" (click)="openSuperScaled(content)">Add</button>
           <button
             type="button"
             class="btn ripple btn-secondary"
@@ -489,6 +512,35 @@
         </div>
       </ng-template>
 
+      <ng-template #editFilters let-modal>
+        <div class="modal-header">
+          <h6 class="modal-title">Edit Filters</h6>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="modal.dismiss('Cross click')"
+          >
+          </button>
+        </div>
+        <div class="modal-body">
+            @for(rows of editFilterList;track rows;let i = $index){
+                <div class="form-check">
+                    <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
+                </div>
+              } 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn ripple btn-primary" (click)="getSelectedRowsFromEdit()">Apply</button>
+          <button
+            type="button"
+            class="btn ripple btn-secondary"
+            (click)="modal.close('Save click')"
+          >
+            Close
+          </button>
+        </div>
+      </ng-template>
 
 
    
