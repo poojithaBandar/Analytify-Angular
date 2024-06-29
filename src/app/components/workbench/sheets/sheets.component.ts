@@ -1202,6 +1202,7 @@ tableMeasures = [] as any;
   }
   getChartData(){
     this.sheetEnable = false;
+    this.retriveDataSheet_id = '';
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
@@ -1713,9 +1714,14 @@ sheetRetrive(){
   )
   }
   filterDataArray = [] as any;
-  filterCheck(data:any){
-    console.log(data)
-   this.filterDataArray.push(data);
+  filterCheck(event:any,data:any){
+    if(event.target.checked){
+      this.filterDataArray.push(data);
+    }else{
+      let index1 = this.filterDataArray.findIndex((i:any) => i == data);
+      this.filterDataArray.splice(index1, 1);
+    }
+   console.log(this.filterDataArray)
   }
   filterDataPut(){
     const obj={

@@ -85,7 +85,7 @@
                         <div class="modal-body">
                             @for(data of filterData;track data){
                             <div class="form-check">
-                                <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck(data)">    
+                                <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
                                 <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
                             </div>
                         }
@@ -536,7 +536,7 @@
                         <div class="modal-body">
                             @for(data of filterData;track data){
                             <div class="form-check">
-                                <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck(data.label)">    
+                                <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
                                 <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
                             </div>
                         }
