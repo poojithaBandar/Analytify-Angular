@@ -83,20 +83,9 @@
                           </button>
                         </div>
                         <div class="modal-body">
-                            <!-- <ul class="dropdown-plus-title">
-                                @for(table of draggedtables;track table){
-                                <li class="dropdown-plus-title">
-                                    {{ table.schema }}.{{ table.alias }}  
-                                 </li>
-                                 @for(column of table.columns;track column){
-                                    <input class="custom-control-input" id="customCheck1" type="checkbox">
-                                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
-                                 }
-                            }
-                            </ul> -->
                             @for(data of filterData;track data){
                             <div class="form-check">
-                                <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="filterValues" class="form-check-input" (click)="filterCheck(data)">    
+                                <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck(data)">    
                                 <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
                             </div>
                         }
@@ -540,26 +529,15 @@
                     </div>
                     <ng-template #contentedit let-modal>
                         <div class="modal-header">
-                          <h6 class="modal-title">Filters</h6>
+                          <h6 class="modal-title"> Edit Filter</h6>
                           <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
                           </button>
                         </div>
                         <div class="modal-body">
-                            <!-- <ul class="dropdown-plus-title">
-                                @for(table of draggedtables;track table){
-                                <li class="dropdown-plus-title">
-                                    {{ table.schema }}.{{ table.alias }}  
-                                 </li>
-                                 @for(column of table.columns;track column){
-                                    <input class="custom-control-input" id="customCheck1" type="checkbox">
-                                <li><a class="dropdown-item" (click)="openRowsData(rowData)">{{ column.column }}</a></li>
-                                 }
-                            }
-                            </ul> -->
                             @for(data of filterData;track data){
                             <div class="form-check">
-                                <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="filterValues" class="form-check-input" (click)="filterCheck(data)">    
-                                <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                                <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck(data.label)">    
+                                <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
                             </div>
                         }
                         </div>
@@ -671,9 +649,3 @@
     </div>
 
     <!-- CONTAINER CLOSED -->
-
-  
-
-      <!-- aggregateUser modal -->
-   
-      <!-- aggregateUser modal -->

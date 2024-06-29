@@ -1375,7 +1375,10 @@ const obj={
 console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-    console.log(responce);
+    console.log(this.savePie);
+    console.log(this.retriveDataSheet_id)
+    this.retriveDataSheet_id = '';
+    console.log(this.retriveDataSheet_id)
     if(responce){
       Swal.fire({
         icon: 'success',
@@ -1384,6 +1387,7 @@ if(this.retriveDataSheet_id){
       })
       this.sheetRetrive();
     }
+  
   },
   error: (error) => {
     console.log(error);
@@ -1396,8 +1400,10 @@ if(this.retriveDataSheet_id){
 }
 )
 }else{
+  this.retriveDataSheet_id = '';
   this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
     console.log(responce);
+    this.retriveDataSheet_id = responce.sheet_id;
     if(responce){
       Swal.fire({
         icon: 'success',
@@ -1406,7 +1412,30 @@ if(this.retriveDataSheet_id){
       })
       this.sheetRetrive();
     }
-
+    this.saveTableData= [];
+    this.savedisplayedColumns = [];
+    this.saveBar =[];
+    this.barXaxis = [];
+    this.savePie = [];
+    this.pieXaxis =[];
+    this.lineYaxis = [];
+    this.lineXaxis =[];
+    this.areaYaxis =[];
+    this.areaXaxis =[];
+    this.sidebysideBarYaxis =[];
+    this.sidebysideBarXaxis =[];
+    this.stokedBarYaxis =[];
+    this.stokedBarXaxis =[];
+    this.barLineYaxis =[];
+    this.barLineXaxis =[];
+    this.hStockedYaxis =[];
+    this.hStockedXaxis =[];
+    this.hgroupedYaxis =[];
+    this.hgroupedXaxis =[];
+    this.multiLineYaxis =[];
+    this.multiLineXaxis =[];
+    this.donutYaxis =[];
+    this.donutXaxis =[];
   },
   error: (error) => {
     console.log(error);
@@ -1422,7 +1451,6 @@ if(this.retriveDataSheet_id){
 
   }
 sheetRetrive(){
-  this.retriveDataSheet_id = '';
   const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
@@ -1430,7 +1458,6 @@ sheetRetrive(){
 }
   this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
         console.log(responce);
-        this.retriveDataSheet_id = responce.sheet_id;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
@@ -1687,7 +1714,7 @@ sheetRetrive(){
   }
   filterDataArray = [] as any;
   filterCheck(data:any){
-   console.log(data)
+    console.log(data)
    this.filterDataArray.push(data);
   }
   filterDataPut(){
@@ -1714,6 +1741,7 @@ sheetRetrive(){
   )
   }
   filterEditGet(){
+    this.filterData = [];
     const obj={
       "type_filter":"chartfilter",
       "database_id" :this.databaseId,
@@ -1723,7 +1751,7 @@ sheetRetrive(){
         console.log(responce);
         this.filter_id = responce.filter_id;
         responce.result.forEach((element:any) => {
-          this.filterData.push(element.label);
+          this.filterData.push(element);
         });
         
       },
@@ -1733,6 +1761,7 @@ sheetRetrive(){
     }
   )
   }
+  filterDataEditArray = [] as any;
   filterDataEditPut(){
     const obj={
       "filter_id": this.filter_id,
@@ -1745,8 +1774,8 @@ sheetRetrive(){
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
-          this.dimetionMeasure.push({"column":this.filterName,"data_type":this.filterType,"filterId":responce.filter_id});
-          console.log(this.dimetionMeasure)
+         // this.dimetionMeasure.push({"column":this.filterName,"data_type":this.filterType,"filterId":responce.filter_id});
+         // console.log(this.dimetionMeasure)
           this.dataExtraction();
         },
         error: (error) => {
@@ -1756,14 +1785,11 @@ sheetRetrive(){
     )
   }
   filterDelete(index:any,filterId:any){
-    const obj={
-      "type_of_filter" : "sheet",
-      "filter_id" : filterId,
-      "database_id" : this.databaseId
-}
-  this.workbechService.filterDelete(obj).subscribe({next: (responce:any) => {
-        console.log(responce);
-        this.dimetionMeasure = responce;
+  this.workbechService.filterDelete(this.databaseId,filterId).subscribe({next: (responce:any) => {
+        this.dimetionMeasure.splice(index, 1);
+       let index1 = this.filterId.findIndex((i:any) => i == filterId);
+         this.filterId.splice(index1, 1);
+         this.dataExtraction();
       },
       error: (error) => {
         console.log(error);

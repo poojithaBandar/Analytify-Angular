@@ -79,7 +79,7 @@ export class WorkbenchService {
   sheetUpdate(obj:any,id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.put<any>(`${environment.apiUrl}/sheetupdate/`+id+this.accessToken,obj);
+    return this.http.post<any>(`${environment.apiUrl}/sheetupdate/`+id+"/"+this.accessToken,obj);
   }
   sheetGet(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -106,10 +106,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/get_datasource/`+this.accessToken,obj);
   }
-  filterDelete(obj:any){
+  filterDelete(databaseId:any,filterId:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.delete<any>(`${environment.apiUrl}/chart_filter/`+this.accessToken,obj);
+    return this.http.delete<any>(`${environment.apiUrl}/filter_delete/`+databaseId+"/"+filterId+"/sheet/"+this.accessToken);
   }
   selectedColumnGetRows(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
