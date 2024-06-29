@@ -51,7 +51,7 @@
             <div class="card-body p-1">
                 <div class="d-flex align-items-start">
                     <div class="flex-grow-1">
-                        <input  type="text"  placeholder="Title" aria-label="Sheet" class="form-control" >
+                        <input  type="text"  placeholder="Title" [(ngModel)]="dashboardName" aria-label="Sheet" class="form-control" >
                         </div><button (click)="saveDashboard()">save </button>
                     <div class="min-w-fit-content ms-3">
                             <a href=""><i class="fa fa-filter p-2"></i> </a>
@@ -108,16 +108,57 @@
                 
                 <p class="mb-1">{{ item.data?.content }}</p>
                 
-                <div *ngIf="item.chartOptions">
-                    <!-- {{item.chartOptions | json}} -->
-                    <!-- {{rowArray}}{{colArray}} -->
+                <!-- <div *ngIf="item.chartOptions">
                      <apx-chart 
                     [series]="item.chartOptions.series!" 
                     [chart]="item.chartOptions.chart!" 
                     [xaxis]="item.chartOptions.xaxis!"
                     (chartInit)="onChartInit($event, item)">
                   </apx-chart> 
-                  <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+                  <apx-chart
+                  [series]="item.chartOptions.series!"
+                  [chart]="item.chartOptions.chart!"
+                  [dataLabels]="item.chartOptions.dataLabels!"
+                  [plotOptions]="item.chartOptions.plotOptions!"
+                  [xaxis]="item.chartOptions.xaxis!"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                  (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div> -->
+                  <div *ngIf="item.chartOptions">
+                 <div *ngIf="item['chartType'] =='bar'">
+                    <apx-chart 
+                    [series]="item.chartOptions.series!"
+                    [chart]="item.chartOptions.chart!"
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [plotOptions]="item.chartOptions.plotOptions!"
+                    [xaxis]="item.chartOptions.xaxis!"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                   (chartInit)="onChartInit($event, item)">
+                 </apx-chart> 
+                  </div>
+                 <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+                 </div>
+                 <div *ngIf="item.chartOptions && item['chartType'] =='AREA_CHARTS'">
+                    <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
+                    [xaxis]="item.chartOptions.xaxis!" [stroke]="item.chartOptions.stroke!"
+                    [dataLabels]="item.chartOptions.dataLabels!" [yaxis]="item.chartOptions.yaxis!"
+                    [labels]="item.chartOptions.labels!" [legend]="item.chartOptions.legend!"  [grid]="item.chartOptions.grid!"
+                    [title]="item.chartOptions.title!" [subtitle]="item.chartOptions.subtitle!"[colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartType'] =='line'">
+                    <apx-chart [series]="item.chartOptions.series! || []" [chart]="item.chartOptions.chart!"
+                        [xaxis]="item.chartOptions.xaxis!" [dataLabels]="item.chartOptions.dataLabels!"
+                        [grid]="item.chartOptions.grid!" [stroke]="item.chartOptions.stroke!"
+                        [title]="item.chartOptions.title!" [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartType'] =='pie'">
+                    <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!" [legend]="item.chartOptions.legend!"
+                    [labels]="item.chartOptions.labels!" [responsive]="item.chartOptions.responsive!" [colors]="item.chartOptions.colors!" [dataLabels]="item.chartOptions.dataLabels!" (chartInit)="onChartInit($event, item)"></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartType'] =='STACKED_BAR'">
+                    <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
+                        [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
+                        [yaxis]="item.chartOptions.yaxis!" [legend]="item.chartOptions.legend!" [fill]="item.chartOptions.fill!"
+                        [stroke]="item.chartOptions.stroke!" [tooltip]="item.chartOptions.tooltip!" [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" 
+                        [xaxis]="item.chartOptions.xaxis!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.tableData">
                     <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
@@ -150,4 +191,10 @@
           </gridster>
         </div>
     </div>
-</div> 
+</div>
+
+
+
+
+
+

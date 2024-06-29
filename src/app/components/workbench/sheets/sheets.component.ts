@@ -19,7 +19,7 @@ import {FormControl} from '@angular/forms';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 interface TableRow {
   [key: string]: any;
@@ -106,7 +106,7 @@ export class SheetsComponent {
   sheetfilter_querysets_id = null;
   editFilterId: any;
   isValuePresent: any;
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal){   
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
     this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -1817,6 +1817,11 @@ openSuperScalededitFilter(modal: any,data:any) {
   this.filterName = data.column;
   this.filterType = data.data_type;
   this.filterEditGet();
+}
+gotoDashboard(){
+  const encodedDatabaseId = btoa(this.databaseId.toString());
+  const encodedQuerySetId = btoa(this.qrySetId.toString());
+  this.router.navigate(['/workbench/sheets/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
 }
 }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -22,6 +22,9 @@ import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
 import { debounceTime, fromEvent, map } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -44,15 +47,38 @@ type DashboardItem = GridsterItem & {
   standalone: true,
   imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent  ],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule  ],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
 export class SheetsdashboardComponent {
-  public chartOptions!: Partial<ChartOptions>;
-  constructor(private workbechService:WorkbenchService){
-    this.dashboard = [];
+ // @HostListener('window:resize', ['$event'])
+ qrySetId:any;
+ databaseId:any;
+ dashboardName = '';
+ sheetsIdArray = [] as any;
+ sheetsNewDashboard=false;
+ dashboardView = false;
+ chartOptionsBar:any;
 
+
+
+
+
+  public chartOptions!: Partial<ChartOptions>;
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router){
+    this.dashboard = [];
+    const currentUrl = this.router.url; 
+    if(currentUrl.includes('workbench/sheets/sheetsdashboard')){
+      this.sheetsNewDashboard = true;
+      // if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      //   this.databaseId = +atob(route.snapshot.params['id1']);
+      //   this.qrySetId = +atob(route.snapshot.params['id2'])
+      //   }
+    }else if(currentUrl.includes('workbench/landingpage/sheetsdashboard')){
+      this.dashboardView = true;
+    }
+    
   }
   options!: GridsterConfig;
   dashboard!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
@@ -90,7 +116,8 @@ export class SheetsdashboardComponent {
       .subscribe((event) => {
         console.log('resize is finished');
       });
-  }
+      window.dispatchEvent(new Event('resize'));
+    }
 
   static itemInit(
     item: GridsterItem,
@@ -124,7 +151,16 @@ export class SheetsdashboardComponent {
 
   
   ngOnInit() {  
-    this.getSheetData();
+    if(this.sheetsNewDashboard){
+      this.sheetsDataWithQuerysetId();
+    }
+    if(this.dashboardView){
+      this.getSavedDashboardData();
+      this.sheetsDataWithQuerysetId();
+
+    }
+   
+    //this.getSheetData();
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.None,
@@ -157,15 +193,15 @@ export class SheetsdashboardComponent {
       }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
-    this.dashboard = savedItems.map((item: { chartOptions: {
-      xaxis: any;
-      series: any; chart: {
-        type: ChartType; sheet: string; 
-}; 
-}; sheet_data: { x_values: any; y_values: any; }; }) => ({
-      ...item,
-      chartOptions: this.restoreChartOptions(item.chartOptions.chart.type as ChartType,item.chartOptions.xaxis.categories,item.chartOptions.series[0].data,)
-    }));
+//     this.dashboard = savedItems.map((item: { chartOptions: {
+//       xaxis: any;
+//       series: any; chart: {
+//         type: ChartType; sheet: string; 
+// }; 
+// }; sheet_data: { x_values: any; y_values: any; }; }) => ({
+//       ...item,
+//       chartOptions: this.restoreChartOptions(item.chartOptions.chart.type as ChartType,item.chartOptions.xaxis.categories,item.chartOptions.series[0].data,)
+//     }));
     // this.dashboard = [
     //   {cols: 2, rows: 1, y: 0, x: 0, data: { title: 'Card 1', content: 'Content of card 1' },
     //   chartOptions: {
@@ -196,29 +232,87 @@ export class SheetsdashboardComponent {
       }
     };
   }
-  saveDashboard(){
-    localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
+  getSavedDashboardData(){
+    const obj ={
+      queryset_id:1552,
+      server_id:394,
+      dashboard_name:'Test Dashboard 1',
+    }
+    this.workbechService.getSavedDashboardData(obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.dashboardName=data.dashboard_name
+        this.dashboard = data.dashboard_data
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
   }
-  getSheetData(){
-    this.workbechService.getSheetData()
+  saveDashboard(){
+    // localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
+    this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+    if(this.dashboardName===''){
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: 'Please add Name to Dashboard',
+        width: '400px',
+      })
+    }else{
+    const obj ={
+      queryset_id:1552,
+      server_id:394,
+       sheet_ids:this.sheetsIdArray,
+      dashboard_name:this.dashboardName,
+      data:this.dashboard
+    }
+    this.workbechService.saveDashboard(obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Congartualtions!',
+          text: 'Dashboard Saved Successfully',
+          width: '400px',
+        })
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+  }
+  sheetsDataWithQuerysetId(){
+    const obj ={
+      // server_id:this.databaseId,
+      // queryset_id:this.qrySetId
+      server_id:394,
+      queryset_id:1552
+    }
+    this.workbechService.sheetsDataWithQuerysetId(obj)
     .subscribe({next: (data) => {
        console.log('sheetData',data)
-       this.sheetData = data
+       this.sheetData = data,
     this.dashboardNew = this.sheetData.map((sheet:any) => ({
       id:uuidv4(),
       cols: 2,
       rows: 1,
       y: 0,
       x: 0,
+      sheetType:sheet.sheet_type,
+      sheetId:sheet.sheet_id,
+      chartType:sheet.chart,
+      chartId:sheet.chartId,
       data: { title: sheet.sheet_name, content: 'Content of card New' },
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
-        ... this.getChartOptionsBasedOnType(sheet),
-        chart: { type: sheet.chart, height: 300 },
+        ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
+        // chart: { type: sheet.chart, height: 300 },
         //chartData:this.getChartData(sheet.sheet_data.results, sheet.chart)
       } : undefined,
       tableData: sheet.sheet_type === 'Table' ? {
-       // this.getTableData(sheet.sheet_data)
+       ... this.getTableData(sheet.sheet_data)
 
       }
        : undefined
@@ -230,12 +324,66 @@ export class SheetsdashboardComponent {
    }
    })
   }
+  // getSheetData(){
+  //   this.workbechService.getSheetData()
+  //   .subscribe({next: (data) => {
+  //      console.log('sheetData',data)
+  //      this.sheetData = data
+  //   this.dashboardNew = this.sheetData.map((sheet:any) => ({
+  //     id:uuidv4(),
+  //     cols: 2,
+  //     rows: 1,
+  //     y: 0,
+  //     x: 0,
+  //     sheetType:sheet.sheet_type,
+  //     data: { title: sheet.sheet_name, content: 'Content of card New' },
+  //     chartOptions: sheet.sheet_type === 'Chart' ? {
+  //       // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
+  //       ... this.getChartOptionsBasedOnType(sheet),
+  //       chart: { type: sheet.chart, height: 300 },
+  //       //chartData:this.getChartData(sheet.sheet_data.results, sheet.chart)
+  //     } : undefined,
+  //     tableData: sheet.sheet_type === 'Table' ? {
+  //      ... this.getTableData(sheet.sheet_data)
+
+  //     }
+  //      : undefined
+  //   }));
+  //   console.log('dashboardNew',this.dashboardNew)
+  //     },
+  //   error:(error)=>{
+  //   console.log(error);
+  //  }
+  //  })
+  // }
   getChartOptionsBasedOnType(sheet:any){
     if(sheet.chart === 'bar'){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
-      return this.getChartOptions(sheet.chart,xaxis,yaxis)
+      return this.barChartOptions(xaxis,yaxis) 
     }
+    if(sheet.chart === 'AREA_CHARTS'){
+      let xaxis = sheet.sheet_data?.results?.areaXaxis;
+      let yaxis = sheet.sheet_data?.results?.areaYaxis;
+      return this.areaChartOptions(xaxis,yaxis)
+    }
+    if(sheet.chart === 'line'){
+      let xaxis = sheet.sheet_data?.results?.lineXaxis;
+      let yaxis = sheet.sheet_data?.results?.lineYaxis;
+      return this.lineChartOptions(xaxis,yaxis)
+    }
+    if(sheet.chart === 'pie'){
+      let xaxis = sheet.sheet_data?.results?.pieXaxis;
+      let yaxis = sheet.sheet_data?.results?.pieYaxis;
+      return this.pieChartOptions(xaxis,yaxis)
+    }
+    //sidebyside
+    if(sheet.chart === 'STACKED_BAR'){
+      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
+      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
+      return this.stackedBarChartOptions(xaxis,yaxis)
+    }
+
   }
 
   getChartData(results: any, chartType: string): any[] | undefined{
@@ -254,8 +402,8 @@ export class SheetsdashboardComponent {
 getTableData(tableData: any): { headers: any[], rows: any[] } {
     // Example implementation for table data extraction
     return {
-      headers: tableData.columns,
-      rows: tableData.rows
+      headers: tableData.results.tableColumns,
+      rows: tableData.results.tableData
     };
   }
   drop(event: CdkDragDrop<DashboardItem[]>) {
@@ -284,6 +432,10 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
         rows: copy.rows,
         cols: copy.cols,
         data: copy.data,
+        sheetType:copy.sheetType,
+        sheetId:copy.sheetId,
+        chartType:copy.chartType,
+        chartId:copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
         chartData:copy.chartOptions?.chartData || [],
@@ -499,6 +651,351 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
     item['chartInstance'] = event.chart;
   }
 
+/////chartOptions
+barChartOptions(xaxis:any,yaxis:any){
+   return {
+    series: [
+      {
+        name: '',
+        data: yaxis,
+      },
+    ],
+    chart: {
+      toolbar: {
+        show: false
+      },
+      height: 385,
+      type: 'bar',
+      foreColor: '#9aa0ac',
+    },
+    grid: {
+      show: false,      // you can either change hear to disable all grids
+      xaxis: {
+        lines: {
+          show: false  //or just here to disable only x axis grids
+         }
+       },  
+      yaxis: {
+        lines: { 
+          show: false  //or just here to disable only y axis
+         }
+       },   
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          hideOverflowingLabels:false,
+          position: 'top', // top, center, bottom
+        },
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val: number) {
+        return val + '';
+      },
+      offsetY: -20,
+      style: {
+        fontSize: '12px',
+        colors: ['#9aa0ac'],
+      },
+    },
+    fill: {
+      type: 'gradient',
+    },
+    xaxis: {
+      categories: xaxis,
+      position: 'bottom',
+      labels: {
+        rotate:0,
+        // offsetY: 0,
+        trim: true,
+        // minHeight: 40,
+        hideOverlappingLabels: false,
+        style: {
+          colors: '#9aa0ac',
+          
+        },
+      //   formatter: (value) => {
+      //     return (value && value.split(' ')[1][1] === '0' ? value : '');
+      // }
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      crosshairs: {
+        fill: {
+          type: 'gradient',
+          gradient: {
+            colorFrom: '#D8E3F0',
+            colorTo: '#BED1E6',
+            stops: [0, 100],
+            opacityFrom: 0.4,
+            opacityTo: 0.5,
+          },
+        },
+      },
+      tooltip: {
+        enabled: false,
+        offsetY: -35,
+      },
+
+    },
+
+    // fill: {
+    //   type: 'gradient',
+    //   gradient: {
+    //     shade: 'light',
+    //     type: 'horizontal',
+    //     shadeIntensity: 0.25,
+    //     gradientToColors: undefined,
+    //     inverseColors: true,
+    //     opacityFrom: 1,
+    //     opacityTo: 1,
+    //     stops: [50, 0, 100, 100],
+    //   },
+    // },
+    yaxis: {
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      labels: {
+        show: false,
+        formatter: function (val: number) {
+          return val + '$';
+        },
+      },
+    },
+    title: {
+      text: '',
+      offsetY: 10,
+      align: 'center',
+      style: {
+        color: '#9aa0ac',
+      },
+    },
+    // tooltip: {
+    //   theme: 'dark',
+    //   marker: {
+    //     show: true,
+    //   },
+    //   x: {
+    //     show: true,
+    //   },
+    // },
+  };
+}
+areaChartOptions(xaxis:any,yaxis:any){
+  return {
+    series: [
+      {
+        name: "",
+        data: yaxis,
+      },
+    ],
+    chart: {
+      type: "area",
+      height: 200,
+      zoom: {
+        enabled: false,
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: "straight",
+    },
+    subtitle: {
+      text: "",
+      align: "left",
+      style: {
+        fontSize: "11px",
+        fontWeight: "normal",
+        color: "#8c9097",
+      },
+    },
+    grid: {
+      borderColor: "rgba(119, 119, 142, 0.05)",
+    },
+    labels: xaxis,
+    title: {
+      text: "",
+      align: "left",
+      style: {
+        fontSize: "13px",
+        fontWeight: "bold",
+        color: "#8c9097",
+      },
+    },
+    colors: ["#00a5a2"],
+    xaxis: {
+      type: "",
+      labels: {
+        show: true,
+        style: {
+          colors: "#8c9097",
+          fontSize: "11px",
+          fontWeight: 600,
+          cssClass: "apexcharts-xaxis-label",
+        },
+      },
+    },
+    yaxis: {
+      opposite: true,
+      labels: {
+        show: true,
+        style: {
+          colors: "#8c9097",
+          fontSize: "11px",
+          fontWeight: 600,
+          cssClass: "apexcharts-xaxis-label",
+        },
+      },
+    },
+    legend: {
+      horizontalAlign: "left",
+    },
+  };
+}
+lineChartOptions(xaxis:any,yaxis:any){
+ return {
+    series: [{
+        name: "",
+        data: yaxis
+    }],
+   
+        chart: {
+            height: 200,
+            type: 'line',
+            reponsive: true,
+            zoom: {
+                enabled: false
+            },
+            events: {
+                mounted: (chart:any) => {
+                  chart.windowResizeHandler();
+                }
+              },
+        },
+        colors: ['#00a5a2'],
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'straight',
+            width: 3,
+        },
+        grid: {
+          borderColor: "rgba(119, 119, 142, 0.05)",
+        },
+        title: {
+            text: '',
+            align: 'left',
+            style: {
+                fontSize: '13px',
+                fontWeight: 'bold',
+                color: '#8c9097'
+            },
+        },
+        xaxis: {
+            categories: xaxis,
+            labels: {
+                show: true,
+                style: {
+                    colors: "#8c9097",
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cssClass: 'apexcharts-xaxis-label',
+                },
+            }
+        },
+        yaxis: {
+            labels: {
+                show: true,
+                style: {
+                    colors: "#8c9097",
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cssClass: 'apexcharts-yaxis-label',
+                },
+            }
+        }
+    
+}
+}
+pieChartOptions(xaxis:any,yaxis:any){
+  return {
+    series: yaxis,
+    chart: {
+        height: 300,
+        type: 'pie',
+    },
+    colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+    labels: xaxis,
+    legend: {
+        position: "bottom"
+    },
+    dataLabels: {
+        dropShadow: {
+            enabled: false
+        }
+    },
+    };
+}
+stackedBarChartOptions(xaxis:any,yaxis:any){
+  return {
+    series: yaxis,
+    colors:['#00a5a2','#0dc9c5','#f43f63'],
+    chart: {
+      type: 'bar',
+      height: 320,
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        // endingShape: "rounded"
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent'],
+    },
+    xaxis: {
+      categories:xaxis[0],
+      
+    },
+    yaxis: {
+      title: {
+        text: '$ (thousands)',
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+    tooltip: {
+      y: {
+        formatter: function (val: string) {
+          return '$ ' + val + ' thousands';
+        },
+      },
+    },
+    grid: {
+      borderColor: "rgba(119, 119, 142, 0.05)",
+    },
+  };
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
