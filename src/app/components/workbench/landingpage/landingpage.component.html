@@ -243,66 +243,24 @@
                     <h6 class="fw-bold mb-1">Saved Dashboard</h6>
                     <div class="view-card">
                         <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Dashboard</a> -->
-                        <a class="">
-                            <span class="add-txt text-info me-2">View All <i class="fa fa-angle-double-right"> </i></span>
-                        </a>
+                        @if(!showAllDasboards){
+                            <a class="">
+                                <span class="add-txt text-info me-2" (click)="showAllDasboards=!showAllDasboards">Show Less <i class="fa fa-angle-double-right"> </i></span>
+                            </a>
+                            } @if(showAllDasboards){
+                            <a class="">
+                                <span class="add-txt text-info me-2" (click)="showAllDasboards=!showAllDasboards">View All <i class="fa fa-angle-double-right"> </i></span>
+                            </a>
+                        }
                     </div>
                 </div>
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-4.jpg" class="card-img-top " alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> Title</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified 3 days ago </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-                 <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-3.jpg" class="card-img-top " alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> Title</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified 3 days ago </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div class="card img-shadow">
+                <div *ngFor="let dashboardList of savedDashboardList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div *ngIf="showAllDasboards && i < 3" class="card img-shadow">
                         <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
                           <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> Title</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified 3 days ago </p>
+                            <h5 class="card-title fs-14 mb-1"> {{dashboardList.dashboard_name}}</h5>
+                            <p class="card-text fs-11 fw-300 ">Modified on {{dashboardList.Modified}} </p>
                           </div>
                           <div class="dashboard-option">
                             <div class="d-flex justify-content-end p-1" ngbDropdown>
@@ -311,13 +269,39 @@
                                         class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                 </a>
                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
                                 </div>
                             </div>
                           </div>
                         </div>
+                        
+                    </div>
+                    <div *ngIf="!showAllDasboards" class="card img-shadow">
+                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                          <div class="dashboard-card-title">
+                            <h5 class="card-title fs-14 mb-1"> {{dashboardList.dashboard_name}}</h5>
+                            <p class="card-text fs-11 fw-300 ">Modified on {{dashboardList.Modified}} </p>
+                          </div>
+                          <div class="dashboard-option">
+                            <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                    aria-haspopup="true" aria-expanded="false" class=""><i
+                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                </a>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -357,8 +341,8 @@
                                 </a>
                                 <div class="dropdown-menu" ngbDropdownMenu>
                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-trash"></i> Delete</a>
                                 </div>
                             </div>
                           </div>
@@ -381,7 +365,7 @@
                                 <div class="dropdown-menu" ngbDropdownMenu>
                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
                                     <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-trash"></i> Delete</a>
                                 </div>
                             </div>
                           </div>

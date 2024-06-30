@@ -55,7 +55,7 @@ export const admin: Routes = [
     import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent)
 },
 {
-  path: 'landingpage/sheetsdashboard/:id1/:id2',
+  path: 'landingpage/sheetsdashboard/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent)

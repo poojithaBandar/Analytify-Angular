@@ -106,6 +106,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/dashboardsave/`+this.accessToken,obj);
   }
+  updateDashboard(obj:any,dashboardId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dashboardupdate/`+dashboardId+'/'+this.accessToken,obj);
+  }
   getSavedDashboardData(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -150,6 +155,21 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/sheetslist/`+this.accessToken);
+  }
+  deleteSheet(serverId:any,qurysetId:any,sheetId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/sheetdelete/`+serverId+'/'+qurysetId+'/'+sheetId+'/'+this.accessToken);
+  }
+  getuserDashboardsList(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/dashboardlist/`+this.accessToken);
+  }
+  deleteDashboard(serverId:any,querysetId:any,dashboardId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/dashboarddelete/`+serverId+'/'+querysetId+'/'+dashboardId+'/'+this.accessToken);
   }
   getFilteredList(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );

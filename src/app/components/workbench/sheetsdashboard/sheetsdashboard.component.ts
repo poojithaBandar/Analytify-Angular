@@ -60,23 +60,27 @@ export class SheetsdashboardComponent {
  sheetsNewDashboard=false;
  dashboardView = false;
  chartOptionsBar:any;
-
-
-
-
-
+ dashboardId:any;
+ updateDashbpardBoolen= false;
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/sheets/sheetsdashboard')){
       this.sheetsNewDashboard = true;
-      // if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-      //   this.databaseId = +atob(route.snapshot.params['id1']);
-      //   this.qrySetId = +atob(route.snapshot.params['id2'])
-      //   }
+      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+        this.databaseId = +atob(route.snapshot.params['id1']);
+        this.qrySetId = +atob(route.snapshot.params['id2'])
+        }
     }else if(currentUrl.includes('workbench/landingpage/sheetsdashboard')){
       this.dashboardView = true;
+      this.updateDashbpardBoolen= true
+      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+        this.databaseId = +atob(route.snapshot.params['id1']);
+        this.qrySetId = +atob(route.snapshot.params['id2'])
+        this.dashboardId = +atob(route.snapshot.params['id3'])
+
+        }
     }
     
   }
@@ -234,9 +238,9 @@ export class SheetsdashboardComponent {
   }
   getSavedDashboardData(){
     const obj ={
-      queryset_id:1552,
-      server_id:394,
-      dashboard_name:'Test Dashboard 1',
+      queryset_id:this.qrySetId,
+      server_id:this.databaseId,
+      dashboard_id:this.dashboardId
     }
     this.workbechService.getSavedDashboardData(obj).subscribe({
       next:(data)=>{
@@ -261,8 +265,8 @@ export class SheetsdashboardComponent {
       })
     }else{
     const obj ={
-      queryset_id:1552,
-      server_id:394,
+      queryset_id:this.qrySetId,
+      server_id:this.databaseId,
        sheet_ids:this.sheetsIdArray,
       dashboard_name:this.dashboardName,
       data:this.dashboard
@@ -279,6 +283,45 @@ export class SheetsdashboardComponent {
       },
       error:(error)=>{
         console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
+  }
+  updateDashboard(){
+    this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+    if(this.dashboardName===''){
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: 'Please add Name to Dashboard',
+        width: '400px',
+      })
+    }else{
+    const obj ={
+      queryset_id:this.qrySetId,
+      server_id:this.databaseId,
+       sheet_ids:this.sheetsIdArray,
+      dashboard_name:this.dashboardName,
+      data:this.dashboard
+    }
+    this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
+      next:(data)=>{
+        console.log(data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Congartualtions!',
+          text: 'Dashboard Updated Successfully',
+          width: '400px',
+        })
+      },
+      error:(error)=>{
+        console.log(error)
       }
     })
   }
@@ -287,8 +330,8 @@ export class SheetsdashboardComponent {
     const obj ={
       // server_id:this.databaseId,
       // queryset_id:this.qrySetId
-      server_id:394,
-      queryset_id:1552
+      server_id:this.databaseId,
+      queryset_id:this.qrySetId
     }
     this.workbechService.sheetsDataWithQuerysetId(obj)
     .subscribe({next: (data) => {
@@ -303,7 +346,7 @@ export class SheetsdashboardComponent {
       sheetType:sheet.sheet_type,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
-      chartId:sheet.chartId,
+      chartId:sheet.chart_id,
       data: { title: sheet.sheet_name, content: 'Content of card New' },
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
@@ -357,33 +400,63 @@ export class SheetsdashboardComponent {
   //  })
   // }
   getChartOptionsBasedOnType(sheet:any){
-    if(sheet.chart === 'bar'){
+    if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
       return this.barChartOptions(xaxis,yaxis) 
     }
-    if(sheet.chart === 'AREA_CHARTS'){
+    if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
       let yaxis = sheet.sheet_data?.results?.areaYaxis;
       return this.areaChartOptions(xaxis,yaxis)
     }
-    if(sheet.chart === 'line'){
+    if(sheet.chart_id === 13){
       let xaxis = sheet.sheet_data?.results?.lineXaxis;
       let yaxis = sheet.sheet_data?.results?.lineYaxis;
       return this.lineChartOptions(xaxis,yaxis)
     }
-    if(sheet.chart === 'pie'){
+    if(sheet.chart_id === 24){
       let xaxis = sheet.sheet_data?.results?.pieXaxis;
       let yaxis = sheet.sheet_data?.results?.pieYaxis;
       return this.pieChartOptions(xaxis,yaxis)
     }
     //sidebyside
-    if(sheet.chart === 'STACKED_BAR'){
+    if(sheet.chart_id === 7){
       let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
       let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
-      return this.stackedBarChartOptions(xaxis,yaxis)
+      return this.sidebySideBarChartOptions(xaxis,yaxis)
     }
-
+    if(sheet.chart_id === 5){
+      let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
+      let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
+      return this.stockedBarChartOptions(xaxis,yaxis)
+    }
+    if(sheet.chart_id === 4){
+      let xaxis = sheet.sheet_data?.results?.barLineXaxis;
+      let yaxis = sheet.sheet_data?.results?.barLineYaxis;
+      return this.barLineChartOptions(xaxis,yaxis)
+    }
+    if(sheet.chart_id === 2){
+      let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
+      let yaxis = sheet.sheet_data?.results?.hStockedYaxis;
+      return this.hStockedBarChartOptions(xaxis,yaxis)
+    }
+    if(sheet.chart_id === 3){
+      let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
+      let yaxis = sheet.sheet_data?.results?.hgroupedYaxis;
+      return this.hGroupedChartOptions(xaxis,yaxis)
+    }
+    if(sheet.chart_id === 8){
+      let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
+      let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
+      return this.multiLineChartOptions(xaxis,yaxis)
+    }
+    if(sheet.chart_id === 10){
+      let xaxis = sheet.sheet_data?.results?.donutXaxis;
+      let yaxis = sheet.sheet_data?.results?.donutYaxis;
+      return this.donutChartOptions(xaxis,yaxis)
+    }
+    
   }
 
   getChartData(results: any, chartType: string): any[] | undefined{
@@ -949,7 +1022,7 @@ pieChartOptions(xaxis:any,yaxis:any){
     },
     };
 }
-stackedBarChartOptions(xaxis:any,yaxis:any){
+sidebySideBarChartOptions(xaxis:any,yaxis:any){
   return {
     series: yaxis,
     colors:['#00a5a2','#0dc9c5','#f43f63'],
@@ -994,6 +1067,274 @@ stackedBarChartOptions(xaxis:any,yaxis:any){
     grid: {
       borderColor: "rgba(119, 119, 142, 0.05)",
     },
+  };
+}
+stockedBarChartOptions(xaxis:any,yaxis:any){
+  return {
+    series: yaxis,
+    chart: {
+      type: "bar",
+      height: 350,
+      stacked: true,
+      toolbar: {
+        show: true
+      },
+      zoom: {
+        enabled: true
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: "bottom",
+            offsetX: -10,
+            offsetY: 0
+          }
+        }
+      }
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: false
+      }
+    },
+    xaxis: {
+      type: "category",
+      categories: xaxis[0],
+    },
+    legend: {
+      position: "right",
+      offsetY: 40
+    },
+    fill: {
+      opacity: 1
+    }
+  };
+}
+barLineChartOptions(xaxis:any,yaxis:any){
+    return {
+      series: [
+        {
+          name: yaxis[0]?.name,
+          type: "column",
+          data: yaxis[0]?.data
+        },
+        {
+          name: yaxis[1]?.name,
+          type: "line",
+          data: yaxis[1]?.data,
+        }
+      ],
+      colors:['#00a5a2','#31d1ce'],
+      chart: {
+        height: 350,
+        type: "line"
+      },
+      grid: {
+        borderColor: "rgba(119, 119, 142, 0.05)",
+      },
+      stroke: {
+        width: [0, 4]
+      },
+      title: {
+        text: "",
+        style: {
+          fontSize: "13px",
+          fontWeight: "bold",
+          color: "#8c9097",
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        enabledOnSeries: [1]
+      },
+      labels: xaxis[0],
+      xaxis: {
+        type: ""
+      },
+      yaxis: [
+        {
+          title: {
+            text: "",
+            style: {
+              fontSize: "13px",
+              fontWeight: "bold",
+              color: "#8c9097",
+            },
+          }
+        },
+        {
+          opposite: true,
+          title: {
+            text: "",
+            style: {
+              fontSize: "13px",
+              fontWeight: "bold",
+              color: "#8c9097",
+            },
+          }
+        }
+      ]
+      
+    };
+}
+hStockedBarChartOptions(xaxis:any,yaxis:any){
+    return {
+      series: yaxis,
+      chart: {
+        type: "bar",
+        height: 350,
+        stacked: true,
+        toolbar: {
+          show: true
+        },
+        zoom: {
+          enabled: true
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: "bottom",
+              offsetX: -10,
+              offsetY: 0
+            }
+          }
+        }
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: true
+        }
+      },
+      xaxis: {
+        type: "category",
+        categories: xaxis[0],
+      },
+      legend: {
+        position: "right",
+        offsetY: 40
+      },
+      fill: {
+        opacity: 1
+      }
+    };
+}
+
+hGroupedChartOptions(xaxis:any,yaxis:any){
+  return{
+    series:yaxis,
+    chart: {
+      type: "bar",
+      height: 430
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        dataLabels: {
+          position: "top"
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      offsetX: -6,
+      style: {
+        fontSize: "12px",
+        colors: ["#fff"]
+      }
+    },
+    stroke: {
+      show: true,
+      width: 1,
+      colors: ["#fff"]
+    },
+    xaxis: {
+      categories: xaxis[0]
+    }
+  };
+}
+multiLineChartOptions(xaxis:any,yaxis:any){
+  return {
+    series: yaxis,
+    chart: {
+      height: 350,
+      type: "line"
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      width: 5,
+      curve: "straight",
+      dashArray: [0, 8, 5]
+    },
+    title: {
+      text: "",
+      align: "left"
+    },
+    legend: {
+      tooltipHoverFormatter: function(val:any, opts:any) {
+        return (
+          val +
+          " - <strong>" +
+          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
+          "</strong>"
+        );
+      }
+    },
+    markers: {
+      size: 0,
+      hover: {
+        sizeOffset: 6
+      }
+    },
+    xaxis: {
+      labels: {
+        trim: false
+      },
+      categories: xaxis[0]
+    },
+    tooltip: {
+      y: [
+        {
+          title: {
+            formatter: function(val:any) {
+              return val;
+            }
+          }
+        },
+      ]
+    },
+    grid: {
+      borderColor: "#f1f1f1"
+    }
+  };
+}
+donutChartOptions(xaxis:any,yaxis:any){
+  return {
+    series: yaxis,
+    chart: {
+      type: "donut"
+    },
+    labels: xaxis,
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 100
+          },
+          legend: {
+            position: "bottom"
+          }
+        }
+      }
+    ]
   };
 }
 }
