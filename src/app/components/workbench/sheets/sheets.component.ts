@@ -1376,10 +1376,6 @@ const obj={
 console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-    console.log(this.savePie);
-    console.log(this.retriveDataSheet_id)
-    this.retriveDataSheet_id = '';
-    console.log(this.retriveDataSheet_id)
     if(responce){
       Swal.fire({
         icon: 'success',
