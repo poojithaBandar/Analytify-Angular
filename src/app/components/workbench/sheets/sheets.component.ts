@@ -1198,7 +1198,7 @@ tableMeasures = [] as any;
     this.SheetIndex = event.index;
     this.sheetName = event.tab.textLabel;
     console.log(this.sheetName)
-   // this.sheetRetrive();
+    this.sheetRetrive();
   }
   getChartData(){
     this.sheetEnable = false;
@@ -1800,6 +1800,7 @@ sheetRetrive(){
   )
   }
   openSuperScaledModal(modal: any) {
+    this.filterDataArray = [];
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
