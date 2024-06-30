@@ -175,3 +175,7 @@ span.abc-txt {
   padding: 0;
 }
 .dropdown-menu.cu.show{position:fixed !important; display: flex;flex-direction: column;}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}

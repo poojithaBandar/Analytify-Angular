@@ -17,6 +17,7 @@ import type { EChartsOption } from 'echarts';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import {FormControl} from '@angular/forms';
 import {MatTabsModule} from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,7 +30,7 @@ interface TableRow {
 @Component({
   selector: 'app-sheets',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,
+  imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,
     CdkDropListGroup, CdkDropList, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
@@ -541,7 +542,7 @@ sidebysideBar(){
     },
     yaxis: {
       title: {
-        text: '$ (thousands)',
+        text: '',
       },
     },
     fill: {
@@ -550,7 +551,7 @@ sidebysideBar(){
     tooltip: {
       y: {
         formatter: function (val: string) {
-          return '$ ' + val + ' thousands';
+          return val ;
         },
       },
     },
@@ -1191,10 +1192,45 @@ tableMeasures = [] as any;
     }
     
   }
-  removeTab(index: number) {
-    this.tabs.splice(index, 1);
+  removeTab() {
+    console.log(this.SheetIndex)
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result)=>{
+      if(result.isConfirmed){
+        this.workbechService.sheetDelete(this.databaseId,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+              console.log(data);      
+              if(data){
+                 this.tabs.splice(this.SheetIndex, 1);
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Deleted!',
+                  text: 'Deleted Successfully',
+                  width: '200px',
+                })
+              }
+
+            },
+            error:(error:any)=>{
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '200px',
+              })
+              console.log(error)
+            }
+          } 
+        )
+      }})  
   }
   onChange(event:any){
+    this.retriveDataSheet_id = '';
     this.SheetIndex = event.index;
     this.sheetName = event.tab.textLabel;
     console.log(this.sheetName)
@@ -1202,7 +1238,6 @@ tableMeasures = [] as any;
   }
   getChartData(){
     this.sheetEnable = false;
-    this.retriveDataSheet_id = '';
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
@@ -1324,7 +1359,6 @@ sheetSave(){
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
   }
-console.log("Sheet Save")
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
@@ -1375,6 +1409,7 @@ const obj={
 }
 console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
+  console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
     if(responce){
       Swal.fire({
@@ -1398,6 +1433,7 @@ if(this.retriveDataSheet_id){
 )
 }else{
   this.retriveDataSheet_id = '';
+  console.log("Sheet Save")
   this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
     console.log(responce);
     this.retriveDataSheet_id = responce.sheet_id;
@@ -1455,6 +1491,7 @@ sheetRetrive(){
 }
   this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
         console.log(responce);
+        this.retriveDataSheet_id = responce.sheet_id;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;

@@ -454,9 +454,7 @@
                         (selectedTabChange)="onChange($event);" 
                         (click)="getChartData()">
                         @for(tab of tabs;track tab; let index = $index){
-           <mat-tab  [label]="tab" >
-           
-         
+           <mat-tab  [label]="tab">
           <!--  <br>  <br>
              Contents for {{tab}} tab
          
@@ -504,6 +502,12 @@
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
                                   tabindex="-1" class="nav-link BtnNewStyle" (click)="addSheet()" style="padding: 14px;">
                                     <i class="fa fa-plus-square-o"></i>
+                                </button>
+                            </li>
+                            <li role="presentation" class="nav-item">
+                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
+                                  tabindex="-1" class="nav-link BtnNewStyle" (click)="removeTab()" style="padding: 14px;">
+                                    <i class="fe fe-trash" ></i>
                                 </button>
                             </li>
                         </ul>
@@ -565,16 +569,16 @@
                             <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
@@ -583,7 +587,7 @@
                             <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="StockedBar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>2">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                             <div class="col-3 px-2 mt-2">
@@ -595,7 +599,7 @@
                             <div class="col-3 px-2 mt-2">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t"></a>
                             </div>
                         </div>
