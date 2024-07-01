@@ -53,7 +53,7 @@ button.BtnRowStyle.span-left {
 
 /* width */
 ::-webkit-scrollbar {
-width: 10px;
+width: 5px;
 }
 
 /* Track */
@@ -179,3 +179,6 @@ span.abc-txt {
   pointer-events: none;
   opacity: 0.5;
 }
+.chart-icon:hover{
+  background-color: #e1f0f9;
+ }

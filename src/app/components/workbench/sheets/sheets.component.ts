@@ -22,6 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { NgxColorsModule } from 'ngx-colors';
 interface TableRow {
   [key: string]: any;
 }
@@ -30,7 +31,7 @@ interface TableRow {
 @Component({
   selector: 'app-sheets',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,
+  imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
@@ -107,6 +108,8 @@ export class SheetsComponent {
   sheetfilter_querysets_id = null;
   editFilterId: any;
   isValuePresent: any;
+  color:any;
+  database_name: any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -117,6 +120,13 @@ export class SheetsComponent {
   ngOnInit(): void {
     this.columnsData();
    // this.sheetRetrive();
+  }
+  goToDataSource(){
+    const encodedId = btoa(this.databaseId.toString());
+    this.router.navigate(['/workbench/database-connection/tables/'+encodedId])
+  }
+  goToConnections(){
+    this.router.navigate(['/workbench/work-bench/new-connections'])
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -896,6 +906,7 @@ tableMeasures = [] as any;
     this.workbechService.getColumnsData(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.tableColumnsData = responce;
+          this.database_name = responce[0].database_name;
           this.tableDimentions = responce.dimensions;
           this.tableMeasures = responce.measures;
         },
@@ -1083,9 +1094,14 @@ tableMeasures = [] as any;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
      // this.measureValue = ''; 
+     if(type === ''){
+      this.draggedRowsData[index] = [rows.column,rows.data_type,type];
+      this.dataExtraction();
+     }else{
     this.draggedRowsData[index] = [rows.column,"aggregate",type];
     console.log(this.draggedRowsData);
     this.dataExtraction();
+     }
   }
    drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -1715,6 +1731,7 @@ sheetRetrive(){
   filterName:any
   filterType:any;
   openSuperScaled(modal: any,data:any) {
+    this.filterDataArray = [];
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -1837,7 +1854,6 @@ sheetRetrive(){
   )
   }
   openSuperScaledModal(modal: any) {
-    this.filterDataArray = [];
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -1856,6 +1872,9 @@ gotoDashboard(){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   this.router.navigate(['/workbench/sheets/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+}
+marksColor(color:any){
+console.log(color)
 }
 }
 
