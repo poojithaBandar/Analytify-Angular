@@ -1,0 +1,121 @@
+<app-page-header title="Database" title1="home" activeitem="dashboard"></app-page-header>
+
+
+<div class="main-container container-fluid">
+    <div class="row" class="card" style="padding: 20px;">
+    <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+      <div class="d-flex justify-content-between px-5">
+        <div class="connect-txt">
+          <h4 class="card-title mt-2">Dashboards</h4>
+        </div>
+        <div class="new-data-btn">
+          <div class="input-group">
+            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="dashboardName" (keydown)="getuserDashboardsListput()" aria-describedby="button-addon2" >
+            <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+            
+          </div>
+        </div>
+    </div>
+        <div class="card-body">
+            <div class="table-responsive" style="height: 26rem;">
+                <table class="table border text-nowrap text-md-nowrap mb-0">
+                    <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
+                        <tr>
+                            <th>Title</th>
+                            <th>Created</th>
+                            <th>Last Modified</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(dashboard of savedDashboardList;track dashboard){
+                        <tr>
+                            <td >
+                                <a  style="color: #05aff8;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name | slice:0:15}}</a>
+                               </td>
+                               <td>{{dashboard.created}}</td>
+                            <td>{{dashboard.Modified}}</td>
+                            <td>
+                                
+                               <button type="button" class="btn btn-icon btn-secondary rounded-pill" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"><i class="fa fa-trash-o" data-bs-toggle="tooltip" ngbTooltip="Delete database"></i></button> 
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+                <!-- <div class="">
+                   <ul class="list-group" style="max-height: 409px;overflow-y: scroll;">
+                        <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
+                        @for(database of connectionList;track database){
+                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
+                        }
+                        
+                    </ul>
+                </div> -->
+                <!-- <div class="card-body">
+                    <div class="text-wrap">
+                        <div class="dropdown-samples">
+                            <ul class="dropdown-menu dropdown-scroll">
+                                <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
+                                <li>
+                                    @for(database of connectionList;track database){
+                                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
+                                        }
+                                </li>
+                            </ul>               
+                        </div>
+                    </div>
+                </div> -->
+    </div>
+    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
+                <div class="">
+                    <ul class="list-group">
+                        <li class="list-group-item active">Relational Database</li>
+                        <li class="list-group-item" style="background-color: #e7ffe7;">Oracle</li>
+                        <li class="list-group-item">DB2</li>
+                        <li class="list-group-item">PMySQL</li>
+                        <li class="list-group-item">SQL Server</li>
+                        <li class="list-group-item">Access</li>
+                        <li class="list-group-item" (click)="openPostgreSql()" style="background-color: #e7ffe7;">PostgreSQL</li>
+                        <li class="list-group-item">Sybase</li>
+                        <li class="list-group-item">Informix</li>
+                    </ul>
+                </div>
+    </div> -->
+    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
+            <div class="">
+                <ul class="list-group">
+                    <li class="list-group-item active">Program Data Source&Others</li>
+                    <li class="list-group-item">Java API</li>
+                    <li class="list-group-item">Hibernate</li>
+                    <li class="list-group-item">Webservice Data Source</li>
+                    <li class="list-group-item">SOA Data Source</li>
+                    <li class="list-group-item">Analytics Data Source</li>
+                    <li class="list-group-item">ODBC Data Source</li>
+                    <li class="list-group-item">JNDI Data Source</li>
+                    <li class="list-group-item">SAp Data Source</li>
+                </ul>
+        </div>
+    </div>
+    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
+            <div class="">
+                <ul class="list-group">
+                    <li class="list-group-item active">NoSQL Database</li>
+                    <li class="list-group-item">MongoDB</li>
+                    <li class="list-group-item">SQLite</li>
+                    <li class="list-group-item">Cassandra</li>
+                </ul>
+                <ul class="list-group">
+                    <li class="list-group-item active">Multi-dimensional Database</li>
+                    <li class="list-group-item">SAP HANA</li>
+                    <li class="list-group-item">SAP BW</li>
+                    <li class="list-group-item">SSAS</li>
+                    <li class="list-group-item">EssBase</li>
+                </ul>
+        </div>
+    </div> -->
+       
+    </div>
+  </div>

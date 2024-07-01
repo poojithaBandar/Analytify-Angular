@@ -2,8 +2,8 @@
     <div class="main-demo main-demo-1 overflow-hidden reveal landing-top-header active" id="home" #home >
         <div class="container px-sm-0">
         <div class="row justify-content-center">
-            <div class="col-xl-8 col-lg-6 text-center my-auto animation-zidex pos-relative landing-main-heading">
-                <h1 class="text- fw-bold tx-fixed-white mt-5">A quick and easy way to build your Business with <span class="text-primary">"Insightapps"</span></h1>
+            <div class="col-xl-8 col-lg-6 pb-5 text-center my-auto animation-zidex pos-relative landing-main-heading">
+                <h1 class="text- fw-bold tx-fixed-white mt-0">A quick and easy way to build your Business with <span class="text-primary">"Insightapps"</span></h1>
             </div>
         </div>
         </div>
@@ -144,19 +144,192 @@
    
     <!-- ROW-1 OPEN-->
     <div class="col-lg-12 p-0 mt-3">
-        <div class="d-flex align-items-center justify-content-between  mb-3">
-            <h6 class="fw-bold mb-1"></h6>
+        <div class="d-flex align-items-center justify-content-end  mb-3">
+            <a class="btn btn-blue-light me-3" (click)="dashboardRoute()" ><i class="fa fa-plus"></i> New Dashboard</a> 
+            <a class="btn btn-blue-light me-3" (click)="newConnections()"> Connect To Database</a>
             <div class="view-card">
-                <a class="btn btn-blue-light mb-2 me-3" (click)="dashboardRoute()" ><i class="fa fa-plus"></i> New Dashboard</a> 
-                <a class="btn btn-blue-light mb-2 me-3" (click)="newConnections()"> Connect To Database</a> 
+                <div class="input-group">
+                    <input type="text" class="form-control border-end-0" placeholder="Search ...">
+                    <button type="button"  aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0 ">
+                        <i class="fe fe-search" aria-hidden="true"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
     <div class="row mt-1">
         <div class="col-xl-9">
+           
+
+            <div class="row">
+                <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
+                    <h6 class="fw-bold mb-1">Saved Dashboard</h6>
+                    <div class="view-card">
+                        <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Dashboard</a> -->
+                        @if(!showAllDasboards){
+                            <a class="">
+                                <span class="add-txt text-info me-2" (click)="showAllDasboards=!showAllDasboards">Show Less <i class="fa fa-angle-double-right"> </i></span>
+                            </a>
+                            } @if(showAllDasboards){
+                            <a class="">
+                                <span class="add-txt text-info me-2" (click)="showAllDasboards=!showAllDasboards">View All <i class="fa fa-angle-double-right"> </i></span>
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div *ngFor="let dashboardList of savedDashboardList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div *ngIf="showAllDasboards && i < 3" class="card img-shadow">
+                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                        <div class="card-body p-2 d-flex align-items-center justify-content-between" (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)">
+                          <div class="dashboard-card-title">
+                            <h5 class="card-title fs-14 mb-1"> {{dashboardList.dashboard_name}}</h5>
+                            <p class="card-text fs-11 fw-300 ">Modified on {{dashboardList.Modified}} </p>
+                          </div>
+                          <div class="dashboard-option">
+                            <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                    aria-haspopup="true" aria-expanded="false" class=""><i
+                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                </a>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                    </div>
+                    <div *ngIf="!showAllDasboards" class="card img-shadow">
+                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                        <div class="card-body p-2 d-flex align-items-center justify-content-between" (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)">
+                          <div class="dashboard-card-title">
+                            <h5 class="card-title fs-14 mb-1"> {{dashboardList.dashboard_name}}</h5>
+                            <p class="card-text fs-11 fw-300 ">Modified on {{dashboardList.Modified}} </p>
+                          </div>
+                          <div class="dashboard-option">
+                            <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                    aria-haspopup="true" aria-expanded="false" class=""><i
+                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                </a>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
+                    <h6 class="fw-bold mb-1">Charts</h6>
+                    <div class="view-card">
+                        <!-- <div *ngFor="let data of userSheetsList">
+                            <p>{{data.sheet_type}}</p>
+                        </div> -->
+                        <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Recently Viewed</a> -->
+                        @if(!showAllSheets){
+                        <a class="">
+                            <span class="add-txt text-info me-2" (click)="showAllSheets=!showAllSheets">Show Less <i class="fa fa-angle-double-right"> </i></span>
+                        </a>
+                        } @if(showAllSheets){
+                        <a class="">
+                            <span class="add-txt text-info me-2" (click)="showAllSheets=!showAllSheets">View All <i class="fa fa-angle-double-right"> </i></span>
+                        </a>
+                    }
+                    </div>
+                </div>
+                <div *ngFor="let sheetlist of userSheetsList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div *ngIf="showAllSheets && i < 3" class="card img-shadow">
+                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                          <div class="dashboard-card-title">
+                            <h5 class="card-title fs-14 mb-1"> {{sheetlist.sheet_name}}</h5>
+                            <p class="card-text fs-11 fw-300 ">Modified on {{sheetlist.Modified}} </p>
+                          </div>
+                          <div class="dashboard-option">
+                            <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                    aria-haspopup="true" aria-expanded="false" class=""><i
+                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                </a>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-upload"></i> View Sheet</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-trash"></i> Delete</a>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                    </div>
+                    <div *ngIf="!showAllSheets" class="card img-shadow">
+                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                          <div class="dashboard-card-title">
+                            <h5 class="card-title fs-14 mb-1"> {{sheetlist.sheet_name}}</h5>
+                            <p class="card-text fs-11 fw-300 ">Modified on {{sheetlist.Modified}} </p>
+                          </div>
+                          <div class="dashboard-option">
+                            <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                    aria-haspopup="true" aria-expanded="false" class=""><i
+                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                </a>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-upload"></i> View Sheet</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-trash"></i> Delete</a>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <!-- <div *ngFor="let sheetlist1 of userSheetsList" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+
+                    <div *ngIf="showAllSheets" class="card img-shadow">
+                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                          <div class="dashboard-card-title">
+                            <h5 class="card-title fs-14 mb-1"> {{sheetlist1.sheet_name}}</h5>
+                            <p class="card-text fs-11 fw-300 ">Modified on {{sheetlist1.Modified}} </p>
+                          </div>
+                          <div class="dashboard-option">
+                            <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                    aria-haspopup="true" aria-expanded="false" class=""><i
+                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                </a>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
+                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
+                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                    </div>
+                </div> -->
+                
+            </div>
             <div class="row ">
                 <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
-                    <h6 class="fw-bold mb-1">Recently Viewed</h6>
+                    <h6 class="fw-bold mb-1">Saved Queries</h6>
                     <div class="view-card">
                         <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Recently Viewed</a> -->
                         <a class="">
@@ -237,227 +410,32 @@
                     </div>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
-                    <h6 class="fw-bold mb-1">Saved Dashboard</h6>
-                    <div class="view-card">
-                        <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Dashboard</a> -->
-                        @if(!showAllDasboards){
-                            <a class="">
-                                <span class="add-txt text-info me-2" (click)="showAllDasboards=!showAllDasboards">Show Less <i class="fa fa-angle-double-right"> </i></span>
-                            </a>
-                            } @if(showAllDasboards){
-                            <a class="">
-                                <span class="add-txt text-info me-2" (click)="showAllDasboards=!showAllDasboards">View All <i class="fa fa-angle-double-right"> </i></span>
-                            </a>
-                        }
-                    </div>
-                </div>
-                <div *ngFor="let dashboardList of savedDashboardList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div *ngIf="showAllDasboards && i < 3" class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> {{dashboardList.dashboard_name}}</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified on {{dashboardList.Modified}} </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
-                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                    </div>
-                    <div *ngIf="!showAllDasboards" class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> {{dashboardList.dashboard_name}}</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified on {{dashboardList.Modified}} </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
-                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
-                    <h6 class="fw-bold mb-1">Charts</h6>
-                    <div class="view-card">
-                        <!-- <div *ngFor="let data of userSheetsList">
-                            <p>{{data.sheet_type}}</p>
-                        </div> -->
-                        <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Recently Viewed</a> -->
-                        @if(!showAllSheets){
-                        <a class="">
-                            <span class="add-txt text-info me-2" (click)="showAllSheets=!showAllSheets">Show Less <i class="fa fa-angle-double-right"> </i></span>
-                        </a>
-                        } @if(showAllSheets){
-                        <a class="">
-                            <span class="add-txt text-info me-2" (click)="showAllSheets=!showAllSheets">View All <i class="fa fa-angle-double-right"> </i></span>
-                        </a>
-                    }
-                    </div>
-                </div>
-                <div *ngFor="let sheetlist of userSheetsList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div *ngIf="showAllSheets && i < 3" class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> {{sheetlist.sheet_name}}</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified on {{sheetlist.Modified}} </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
-                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                    </div>
-                    <div *ngIf="!showAllSheets" class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> {{sheetlist.sheet_name}}</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified on {{sheetlist.Modified}} </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
-                                    <a class="dropdown-item" ngbDropdownItem (click)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                    </div>
-                </div>
-                
-                
-                <!-- <div *ngFor="let sheetlist1 of userSheetsList" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-
-                    <div *ngIf="showAllSheets" class="card img-shadow">
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1"> {{sheetlist1.sheet_name}}</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified on {{sheetlist1.Modified}} </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                    </div>
-                </div> -->
-                
-            </div>
-
         </div>
 
         <div class="col-xl-3">
-            <!-- <h6 class="fw-bold mb-3">Search</h6> -->
-            <div class="card mb-1">
-                <div class="card-body p-0">
-                    <div class="d-flex">
-                        <div class="input-group">
-                            <input type="text" class="form-control border-end-0" placeholder="Search ...">
-                            <button type="button"  aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0 ">
-                                <i class="fe fe-search" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Recents</div>
+                <div class="card-header d-flex justify-content-between">
+                    <div class="card-title">Recent Connections</div>
+                    <a class="">
+                        <span class="add-txt text-info me-2" (click)="goToConnections()">View All <i class="fa fa-angle-double-right"> </i></span>
+                    </a>
                 </div>
-                <div class="card-body">
-                    <div class="">
-                        <div class="d-flex overflow-visible align-items-center mt-0">
-                            <a aria-label="anchor" routerLink="/pages/extension/blog-details">
-                                <img  src="./assets/images/Landingpage-images/recently-view/recent-4.jpg" class="avatar avatar-xxl br-5 me-3 h-60 w-70p img-shadow">
-                            </a>
-                            <div class="ps-4 flex-column">
-                                <h6 class="mb-0"><a routerLink="/pages/extension/blog-details">Saved queries</a></h6>
-                            </div>
-                        </div>
-                        <div class="d-flex overflow-visible align-items-center mt-3">
-                            <a aria-label="anchor" routerLink="/pages/extension/blog-details">
-                                <img  src="./assets/images/Landingpage-images/recently-view/recent-3.jpg" class="avatar avatar-xxl br-5 me-3 h-60 w-70p img-shadow">
-                            </a>
-                            <div class="ps-4 flex-column">
-                                <h6 class="mb-0"><a routerLink="/pages/extension/blog-details">Charts</a></h6>
-                            </div>
-                        </div>
-                        <div class="d-flex overflow-visible align-items-center mt-3">
-                            <a aria-label="anchor" routerLink="/pages/extension/blog-details">
-                                <img  src="./assets/images/Landingpage-images/recently-view/recent-2.jpg" class="avatar avatar-xxl br-5 me-3 h-60 w-70p img-shadow">
-                            </a>
-                            <div class="ps-4 flex-column">
-                                <h6 class="mb-0"><a routerLink="/pages/extension/blog-details">Recent charts</a></h6>
-                            </div>
-                        </div>
-                        <div class="d-flex overflow-visible align-items-center mt-3">
-                            <a aria-label="anchor" routerLink="/pages/extension/blog-details">
-                                <img  src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="avatar avatar-xxl br-5 me-3 h-60 w-70p img-shadow">
-                            </a>
-                            <div class="ps-4 flex-column">
-                                <h6 class="mb-0"><a routerLink="/pages/extension/blog-details">Dashboard</a></h6>
-                            </div>
-                        </div>                    
+                <div class="card-body mb-0 h-300 overflow-scroll">
+                    <div class="table-responsive" style="height: 26rem;">
+                        <table class="table border text-nowrap text-md-nowrap mb-0">
+                            <tbody>
+                                @for(database of connectionList;track database){
+                                <tr>
+                                    <td>
+                                        <a  style="color: #05aff8;" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
+                                       </td>
+                                    <td>{{database.server_type}}</td>
+                                    
+                                   
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

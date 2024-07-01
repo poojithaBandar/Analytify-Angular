@@ -117,6 +117,49 @@ export class WorkbenchComponent implements OnInit{
         )
 
     }
+    postgreUpdate(){
+      const obj={
+          "database_type":"postgresql",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "database": this.postGreDatabaseName,
+          "display_name":this.displayName
+      }
+        this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
+              console.log(responce);
+              console.log('tablelist',this.tableList)
+              this.databaseName = responce.database.database_name
+              this.databaseId = responce.database.database_id
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.openPostgreSqlForm = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              // Swal.fire({
+              //   icon:'error',
+              //   title:'error',
+              //   text:error.error.message,
+              //   width:'600px'
+              // })
+
+            }
+          }
+        )
+
+    }
     OracleSignIn(){
       const obj={
           "database_type":"oracle",

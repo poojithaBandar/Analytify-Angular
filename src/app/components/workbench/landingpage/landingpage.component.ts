@@ -14,9 +14,10 @@ import { CommonModule } from '@angular/common';
 })
 
 export class LandingpageComponent implements OnInit {
-
+  searchDbName:any
 userSheetsList :any[] =[];
 savedDashboardList: any[] =[];
+connectionList:any[]=[];
 showAllSheets = true;
 showAllDasboards = true;
 constructor(private router:Router,private workbechService:WorkbenchService){
@@ -25,6 +26,31 @@ constructor(private router:Router,private workbechService:WorkbenchService){
 ngOnInit(){
   this.getuserSheets();
   this.getuserDashboardsList();
+  this.getDbConnectionList();
+}
+getDbConnectionList(){
+  const Obj ={
+    search : this.searchDbName
+  }
+  if(Obj.search == '' || Obj.search == null){
+    delete Obj.search;
+  }
+  this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
+    next:(data)=>{
+      this.connectionList = data.connections
+      console.log('jdhcvjsh',this.connectionList);
+
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
 }
 getuserSheets(){
   this.workbechService.getUserSheetList().subscribe(
@@ -71,13 +97,24 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
 
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedDashboardId])
 }
-  dashboardRoute(){
+viewSheet(serverId:any,querysetId:any,sheetId:any){
+  const encodedServerId = btoa(serverId.toString());
+  const encodedQuerySetId = btoa(querysetId.toString());
+  const encodedSheetId = btoa(sheetId.toString());
+
+  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+}
+
+ dashboardRoute(){
     this.router.navigate(['/workbench/sheetsdashboard'])  
   }
   newConnections(){
-    this.router.navigate(['workbench/work-bench/view-connections']) 
+    this.router.navigate(['workbench/work-bench/new-connections']) 
   }
+  goToConnections(){
+    this.router.navigate(['workbench/work-bench/view-connections']) 
 
+  }
 
   deleteDashboard(serverId:any,qurysetId:any,dashboardId:any){
     Swal.fire({

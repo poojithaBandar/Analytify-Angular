@@ -136,7 +136,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Update</button>
+            <button type="button" class="btn btn-primary" (click)="postgreUpdate()">Update</button>
           </div>
         </div>
       </div>
@@ -154,9 +154,9 @@
         <div class="new-data-btn">
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keydown)="getDbConnectionList()">
-            <button class="btn border me-2" type="button" id="button-addon2"><i class="bi bi-search text-muted"></i></button>
+            <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             
-            <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;"><i class="fa fa-plus"></i> New Database</button>
+            <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Database</button>
           </div>
         </div>
     </div>

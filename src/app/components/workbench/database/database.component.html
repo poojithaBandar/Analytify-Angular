@@ -17,28 +17,15 @@
                 <p class="mb-0">{{databaseName}}</p>
             </div>
             <div class="card mb-0 br-0">
-            <div class="input-group px-1">
+            <!-- <div class="input-group px-1">
                 <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
                 <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
                     <i class="fe fe-search" aria-hidden="true"></i>
                 </button>
+            </div> -->
             </div>
-            </div>
-            <div class="card mb-0  br-0 ds-th">
+            <!-- <div class="card mb-0  br-0 ds-th">
                 <div class="sidebar p-0">
-                    <!-- <div class="input-group" style="width: 100%!important;">
-                        <input type="text" class="form-control border-end-0" placeholder="Search Database Server" [(ngModel)]="searchTables" aria-describedby="button-addon2" (keydown)="filterTables()">
-                        <button class="btn border" type="button" id="button-addon2" (click)="filterTables()"><i class="bi bi-search text-muted"></i></button>
-                    </div> -->
-                    <!-- <div class="input-group me-2" style="padding-left: 2px;">
-                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
-                        <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
-                            <i class="fe fe-search" aria-hidden="true"></i>
-                        </button>
-                    </div> -->
-                    <!-- <div class="search-container">
-                        <input type="text" [(ngModel)]="searchTables" placeholder="Search tables..." (keydown.enter)="filterTables()" />
-                      </div> -->
                     @for(menu of schematableList;track menu){
                     <div  class="menu-item mb-0">
                         
@@ -72,7 +59,75 @@
                 }
                   </div>
                
-            </div>
+            </div> -->
+
+
+            <div class="card mb-0 br-0 pt-2">
+                <div class="card-header p-1 border-bottom-0">
+                    <div class="input-group ">
+                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
+                        <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+                            <i class="fe fe-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-1">
+                  <div
+                    ngbAccordion
+                    [closeOthers]="true"
+                    class="accordion"
+                    id="accordionExample"
+                    >
+                    @for (menu of schematableList;track menu) {
+                      <div
+                        ngbAccordionItem
+                        [collapsed]="menu !== 'First'"
+                        class="accordion-item"
+                        >
+                        <h6 ngbAccordionHeader class="accordion-header" id="headingOne">
+                          <button
+                            ngbAccordionButton
+                            class="accordion-button p-3 fw-500"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne"
+                            aria-expanded="true"
+                            aria-controls="collapseOne"
+                            >
+                            {{ menu.schema}}
+                          </button>
+                        </h6>
+                        <div
+                          ngbAccordionCollapse
+                          id="collapseOne"
+                          class="accordion-collapse collapse show" 
+                          aria-labelledby="headingOne"
+                          data-bs-parent="#accordionExample"
+                           >
+                          <div class="accordion-body p-2  overflow-scroll  database-dropdown " ngbAccordionBody style="height: 436px;">
+                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                            </button> -->
+                            <ng-template>
+                                <div class="sub-menu" cdkDropList
+                                #originList="cdkDropList"
+                                [cdkDropListData]="menu.tables"
+                                [cdkDropListConnectedTo]="[destinationList]"
+                                (cdkDropListDropped)="drop($event)">
+                                  @for(submenu of menu?.tables;track submenu){
+                                  <div  class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
+                                      <i class="fa fa-table" style="padding-right:10px ;"></i>   <span ngbTooltip="{{submenu.table}}">{{ submenu.table | slice:0:20}}</span>
+                                  </div>
+                              }
+                                </div>
+                            </ng-template>
+                          </div>                       
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
         </div>
         <div class="col-xl-10 col-md-12 p-1">
                 <div class="card-body p-0 ">

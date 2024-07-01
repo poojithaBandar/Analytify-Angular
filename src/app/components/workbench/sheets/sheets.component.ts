@@ -122,8 +122,9 @@ export class SheetsComponent {
    // this.sheetRetrive();
   }
   goToDataSource(){
-    const encodedId = btoa(this.databaseId.toString());
-    this.router.navigate(['/workbench/database-connection/tables/'+encodedId])
+    const encodeddbId = btoa(this.databaseId.toString());
+    const encodedqurysetId = btoa(this.qrySetId.toString())
+    this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
   }
   goToConnections(){
     this.router.navigate(['/workbench/work-bench/new-connections'])

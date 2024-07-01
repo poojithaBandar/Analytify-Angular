@@ -47,7 +47,7 @@ type DashboardItem = GridsterItem & {
   standalone: true,
   imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule  ],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule,  ],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })

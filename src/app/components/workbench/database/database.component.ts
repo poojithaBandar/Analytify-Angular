@@ -99,7 +99,17 @@ export class DatabaseComponent {
   columnWithTablesData = [] as any;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
+    if(currentUrl.includes('/workbench/database-connection/tables/')){
      this.databaseId = +atob(route.snapshot.params['id']);
+    }
+     if(currentUrl.includes('/workbench/database-connection/sheets/')){
+     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      this.databaseId = +atob(route.snapshot.params['id1']);
+      this.qurtySetId = +atob(route.snapshot.params['id2']);
+      localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+
+      }
+    }
   }
   ngOnInit(){
     {
@@ -111,12 +121,32 @@ export class DatabaseComponent {
     }
     this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
+    this.getTablesfromPrevious()
   }
   toggleCard() {
     this.isOpen = !this.isOpen;
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
+  }
+  getTablesfromPrevious(){
+    const querysetId = localStorage.getItem( 'QuerySetId' );
+    this.qurtySetId = querysetId
+    if(querysetId !== ''||null){
+    this.workbechService.getTablesfromPrevious(this.databaseId,querysetId).subscribe({next: (data) => {
+      console.log(data);
+      this.relationOfTables= data.dragged_data.relation_tables
+      console.log('tablerelation',this.relationOfTables)
+      this.draggedtables = data.dragged_data.json_data
+      if(this.draggedtables.length > 0){
+        this.joiningTables();
+      }
+  },
+  error:(error)=>{
+   console.log(error);
+  }
+  })
+    }
   }
   getTablesFromConnectedDb(){
      this.workbechService.getTablesFromConnectedDb(this.databaseId).subscribe({next: (responce) => {
@@ -209,10 +239,10 @@ drop(event: CdkDragDrop<string[]>) {
     this.pushToDraggedTables(element)
     console.log('darggedtable',this.draggedtables)
    }
-   if(this.qurtySetId){
+   if(parseInt(this.qurtySetId) !== 0){
     this.joiningTables();
    }
-   else if(!this.qurtySetId){
+   else if(parseInt(this.qurtySetId) === 0){
      this.joiningTablesWithoutQuerySetId()
    }
 }
@@ -270,10 +300,16 @@ getTablerowclms(table:any,schema:any){
 onDeleteItem(index: number) {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
    console.log(this.draggedtables);
-   if(this.draggedtables.length !== 0){
-    this.relationOfTables = this.relationOfTables.splice(index-1,1)
+  //  const schema = this.draggedtables[index].schema
+  //  const tablename = this.draggedtables[index].table
+  //  const tablealias = this.draggedtables[index].alias
+
+
+  //  if(this.draggedtables.length !== 0){
+    const deleteIndex = index - 1
+    this.relationOfTables.splice(deleteIndex,1)
    this.joiningTablesFromDelete();
-   }
+  //  }
 }
 buildCustomRelation(){
   const parts = this.selectedClmnT1.split('(');
@@ -339,7 +375,8 @@ joiningTablesWithoutQuerySetId(){
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:[],
-    joining_conditions:[]
+    joining_conditions:[],
+    dragged_array:this.draggedtables
   }
   this.workbechService.joiningTables(obj)
   .subscribe(
@@ -349,6 +386,7 @@ joiningTablesWithoutQuerySetId(){
         this.relationOfTables = data.table_columns_and_rows?.joining_condition;
         this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
         this.qurtySetId = data?.table_columns_and_rows?.query_set_id
+        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
@@ -375,7 +413,8 @@ joiningTables(){
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:[],
-    joining_conditions:this.relationOfTables
+    joining_conditions:this.relationOfTables,
+    dragged_array:this.draggedtables
   }
   this.workbechService.joiningTables(obj)
   .subscribe(
@@ -433,7 +472,8 @@ joiningTablesFromDelete(){
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:[],
-    joining_conditions:this.relationOfTables
+    joining_conditions:this.relationOfTables,
+    dragged_array:this.draggedtables
   }
   this.workbechService.joiningTables(obj)
   .subscribe(
@@ -443,6 +483,9 @@ joiningTablesFromDelete(){
         this.relationOfTables = data.table_columns_and_rows?.joining_condition;
         this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
         this.qurtySetId = data?.table_columns_and_rows?.query_set_id
+        if(this.qurtySetId === 0){
+          localStorage.setItem('QuerySetId','0')
+        }
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
@@ -871,7 +914,7 @@ getSelectedRowsFromEdit() {
 
 }
 goToConnections(){
-  this.router.navigate(['/workbench/work-bench'])
+  this.router.navigate(['/workbench/work-bench/view-connections'])
 }
 
 goToSheet(){

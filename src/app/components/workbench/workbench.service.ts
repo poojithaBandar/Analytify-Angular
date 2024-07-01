@@ -37,6 +37,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/tables_list/`+this.accessToken+'/'+id)
   }
+  getTablesfromPrevious(dbId:any,querysetId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/retrieve_datasource/`+dbId+'/'+querysetId+'/'+this.accessToken)
+  }
   getSchemaTablesFromConnectedDb(id:any,obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -165,6 +170,11 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/dashboardlist/`+this.accessToken);
+  }
+  getuserDashboardsListput(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/dashboardlist/`+this.accessToken,obj);
   }
   deleteDashboard(serverId:any,querysetId:any,dashboardId:any){
     const currentUser = localStorage.getItem( 'currentUser' );

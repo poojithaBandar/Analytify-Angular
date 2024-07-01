@@ -53,9 +53,10 @@
                     <div class="flex-grow-1">
                         <input  type="text"  placeholder="Title" [(ngModel)]="dashboardName" aria-label="Sheet" class="form-control" >
                         </div>
-                        <button *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">save </button>
-                        <button *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
-
+                        <div class="min-w-fit-content ms-3">
+                            <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">save </button>
+                            <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
+                            </div>
                     <div class="min-w-fit-content ms-3">
                             <a href=""><i class="fa fa-filter p-2"></i> </a>
                             <a href=""><i class="fa fa-edit p-2"></i> </a>
@@ -67,7 +68,7 @@
         </div> 
         
        
-       <div style="max-width: 78vw;min-width: 78vw;height: 100vh;margin: auto 0;">
+       <div style="max-width: 78vw;min-width: 78vw;height: 300vh;margin: auto 0;">
         <div class="options">
           
         </div> 

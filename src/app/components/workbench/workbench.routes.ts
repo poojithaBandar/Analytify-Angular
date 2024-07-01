@@ -31,6 +31,12 @@ export const admin: Routes = [
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
+  path: 'database-connection/sheets/:id1/:id2',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./database/database.component').then((m)=> m.DatabaseComponent)
+},
+{
   path: 'sheets/:id1/:id2',
   canActivate:[authGuard],
   loadComponent: () =>
@@ -61,10 +67,22 @@ export const admin: Routes = [
     import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent)
 },
 {
+  path: 'landingpage/sheets/:id1/:id2/:id3',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
+},
+{
   path: 'landingpage',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./landingpage/landingpage.component').then((m)=> m.LandingpageComponent)
+},
+{
+  path: 'dashboard-page',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./dashboard-page/dashboard-page.component').then((m)=> m.DashboardPageComponent)
 },
  
  ]}
