@@ -115,15 +115,28 @@ export class SheetsComponent {
   database_name: any;
   sidebysideBarColumnData1 = [] as any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
+   
+   if(this.router.url.includes('/workbench/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-    this.databaseId = +atob(route.snapshot.params['id1']);
-    this.qrySetId = +atob(route.snapshot.params['id2'])
-    }
+      this.databaseId = +atob(route.snapshot.params['id1']);
+      this.qrySetId = +atob(route.snapshot.params['id2'])
+      }
+   }
+   if(this.router.url.includes('/workbench/landingpage/sheets/')){
+    console.log("landing page")
+    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']&& route.snapshot.params['id4']) {
+      this.databaseId = +atob(route.snapshot.params['id1']);
+      this.qrySetId = +atob(route.snapshot.params['id2'])
+      this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
+      this.sheetName = atob(route.snapshot.params['id4'])
+      console.log(this.retriveDataSheet_id,this.sheetName,'shetname')
+      }
+   }
   }
 
   ngOnInit(): void {
     this.columnsData();
-   // this.sheetRetrive();
+    this.sheetRetrive();
   }
   goToDataSource(){
     const encodeddbId = btoa(this.databaseId.toString());
@@ -581,7 +594,7 @@ sidebysideBar(){
 flattenDimensions(dimensions: Dimension[]): string[] {
   const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
   return Array.from({ length: numCategories }, (_, index) => {
-    return dimensions.map(dim => dim.values[index] || '').join(' ');
+    return dimensions.map(dim => dim.values[index] || '').join(',');
   });
 }
 stockedBar(){
