@@ -93,7 +93,7 @@ export class DatabaseComponent {
   datasourceFilterId:any;;
   datasourceFilterIdArray:any[] =[];
   selectedRows = [];
-  datasourceQuerysetId = null;
+  datasourceQuerysetId :string | null =null;
   filteredList = [] as any;
   editFilterList = [] as any;
   columnWithTablesData = [] as any;
@@ -954,6 +954,13 @@ goToConnections(){
 goToSheet(){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qurtySetId.toString());
+  // if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
+  //   // Encode 'null' to represent a null value
+  //  const encodedDsQuerySetId = btoa('null');
+  // } else {
+  //   // Convert to string and encode
+  //  const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
+  // }
   this.router.navigate(['/workbench/sheets'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
 }
 
