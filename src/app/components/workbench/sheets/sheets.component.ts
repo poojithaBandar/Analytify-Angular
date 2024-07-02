@@ -1307,6 +1307,9 @@ tableMeasures = [] as any;
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
   // alert("pls saveyour changes")
    // }else{
+    this.sidebysideBarColumnData = [];
+    this.sidebysideBarColumnData1 = [];
+    this.sidebysideBarRowData = [];
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
@@ -1403,27 +1406,27 @@ sheetSave(){
   }
   if(this.sidebyside && this.chartId == 7){
     this.sidebysideBarYaxis = this.sidebysideBarRowData;
-    this.sidebysideBarXaxis = this.sidebysideBarColumnData;
+    this.sidebysideBarXaxis = this.sidebysideBarColumnData1;
   }
   if(this.stocked && this.chartId == 5){
     this.stokedBarYaxis = this.sidebysideBarRowData;
-    this.stokedBarXaxis = this.sidebysideBarColumnData;
+    this.stokedBarXaxis = this.sidebysideBarColumnData1;
   }
   if(this.barLine && this.chartId == 4){
     this.barLineYaxis = this.sidebysideBarRowData;
-    this.barLineXaxis = this.sidebysideBarColumnData;
+    this.barLineXaxis = this.sidebysideBarColumnData1;
   }
   if(this.horizentalStocked && this.chartId == 2){
     this.hStockedYaxis = this.sidebysideBarRowData;
-    this.hStockedXaxis = this.sidebysideBarColumnData;
+    this.hStockedXaxis = this.sidebysideBarColumnData1;
   }
   if(this.grouped && this.chartId == 3){
     this.hgroupedYaxis = this.sidebysideBarRowData;
-    this.hgroupedXaxis = this.sidebysideBarColumnData;
+    this.hgroupedXaxis = this.sidebysideBarColumnData1;
   }
   if(this.multiLine && this.chartId == 8){
     this.multiLineYaxis = this.sidebysideBarRowData;
-    this.multiLineXaxis = this.sidebysideBarColumnData;
+    this.multiLineXaxis = this.sidebysideBarColumnData1;
   }
   if(this.donut && this.chartId == 10){
     this.donutYaxis = this.chartsRowData;
@@ -1661,7 +1664,7 @@ sheetRetrive(){
        }
        if(responce.chart_id == 7){
         this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
-        this.sidebysideBarColumnData = this.sheetResponce.results.sidebysideBarXaxis;
+        this.sidebysideBarColumnData1 = this.sheetResponce.results.sidebysideBarXaxis;
         this.sidebysideBar();
         this.bar = false;
         this.table = false;
@@ -1678,7 +1681,7 @@ sheetRetrive(){
        }
        if(responce.chart_id == 5){
         this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
-        this.sidebysideBarColumnData = this.sheetResponce.results.stokedBarXaxis;
+        this.sidebysideBarColumnData1 = this.sheetResponce.results.stokedBarXaxis;
         this.stockedBar();
         this.bar = false;
         this.table = false;
@@ -1695,7 +1698,7 @@ sheetRetrive(){
        }
        if(responce.chart_id == 4){
         this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
-        this.sidebysideBarColumnData = this.sheetResponce.results.barLineXaxis;
+        this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
         this.barLineChart();
         this.bar = false;
         this.table = false;
@@ -1712,7 +1715,7 @@ sheetRetrive(){
        }
        if(responce.chart_id == 2){
         this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
-        this.sidebysideBarColumnData = this.sheetResponce.results.hStockedXaxis;
+        this.sidebysideBarColumnData1 = this.sheetResponce.results.hStockedXaxis;
         this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
@@ -1729,7 +1732,7 @@ sheetRetrive(){
        }
        if(responce.chart_id == 3){
         this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
-        this.sidebysideBarColumnData = this.sheetResponce.results.hgroupedXaxis;
+        this.sidebysideBarColumnData1 = this.sheetResponce.results.hgroupedXaxis;
         this.hGrouped();
         this.bar = false;
         this.table = false;
@@ -1746,7 +1749,7 @@ sheetRetrive(){
        }
        if(responce.chart_id == 8){
         this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
-        this.sidebysideBarColumnData = this.sheetResponce.results.multiLineXaxis;
+        this.sidebysideBarColumnData1 = this.sheetResponce.results.multiLineXaxis;
         this.multiLineChart();
         this.bar = false;
         this.table = false;
