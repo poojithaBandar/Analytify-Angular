@@ -26,7 +26,10 @@ import { NgxColorsModule } from 'ngx-colors';
 interface TableRow {
   [key: string]: any;
 }
-
+interface Dimension {
+  name: string;
+  values: string[];
+}
 
 @Component({
   selector: 'app-sheets',
@@ -110,6 +113,7 @@ export class SheetsComponent {
   isValuePresent: any;
   color:any;
   database_name: any;
+  sidebysideBarColumnData1 = [] as any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -525,53 +529,64 @@ areaChart(){
   };
 }
 sidebysideBar(){
-  this.chartOptions2 = {
-    series: this.sidebysideBarRowData,
-    colors:['#00a5a2','#0dc9c5','#f43f63'],
-    chart: {
-      type: 'bar',
-      height: 320,
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        // endingShape: "rounded"
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    this.chartOptions2 = {
+      series: this.sidebysideBarRowData,
+      colors:['#00a5a2','#0dc9c5','#f43f63'],
+      chart: {
+        type: 'bar',
+        height: 320,
       },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent'],
-    },
-    xaxis: {
-      categories:this.sidebysideBarColumnData[0],
-      
-    },
-    yaxis: {
-      title: {
-        text: '',
-      },
-    },
-    fill: {
-      opacity: 1,
-    },
-    tooltip: {
-      y: {
-        formatter: function (val: string) {
-          return val ;
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          // endingShape: "rounded"
         },
       },
-    },
-    grid: {
-      borderColor: "rgba(119, 119, 142, 0.05)",
-    },
-  };
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent'],
+      },
+      xaxis: {
+        categories:categories,
+        
+      },
+      yaxis: {
+        title: {
+          text: '',
+        },
+      },
+      fill: {
+        opacity: 1,
+      },
+      tooltip: {
+        y: {
+          formatter: function (val:any) {
+            console.log(val)
+            return val ;
+          },
+        },
+      },
+      grid: {
+        borderColor: "rgba(119, 119, 142, 0.05)",
+      },
+    };
+  }
+flattenDimensions(dimensions: Dimension[]): string[] {
+  const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
+  return Array.from({ length: numCategories }, (_, index) => {
+    return dimensions.map(dim => dim.values[index] || '').join(' ');
+  });
 }
 stockedBar(){
+  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
   this.chartOptions6 = {
     series: this.sidebysideBarRowData,
     chart: {
@@ -604,7 +619,7 @@ stockedBar(){
     },
     xaxis: {
       type: "category",
-      categories: this.sidebysideBarColumnData[0],
+      categories: categories,
     },
     legend: {
       position: "right",
@@ -617,6 +632,8 @@ stockedBar(){
 }
 
 barLineChart(){
+  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+  const categories = this.flattenDimensions(dimensions);
   this.chartOptions5 = {
     series: [
       {
@@ -653,7 +670,7 @@ barLineChart(){
       enabled: true,
       enabledOnSeries: [1]
     },
-    labels: this.sidebysideBarColumnData[0],
+    labels: categories,
     xaxis: {
       type: ""
     },
@@ -684,6 +701,8 @@ barLineChart(){
   };
 }
 horizentalStockedBar(){
+  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+  const categories = this.flattenDimensions(dimensions);
   this.chartOptions7 = {
     series: this.sidebysideBarRowData,
     chart: {
@@ -716,7 +735,7 @@ horizentalStockedBar(){
     },
     xaxis: {
       type: "category",
-      categories: this.sidebysideBarColumnData[0],
+      categories: categories,
     },
     legend: {
       position: "right",
@@ -728,6 +747,8 @@ horizentalStockedBar(){
   };
 }
 hGrouped(){
+  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+  const categories = this.flattenDimensions(dimensions);
   this.chartOptions8 = {
     series: this.sidebysideBarRowData,
     chart: {
@@ -756,11 +777,13 @@ hGrouped(){
       colors: ["#fff"]
     },
     xaxis: {
-      categories: this.sidebysideBarColumnData[0]
+      categories: categories
     }
   };
 }
 multiLineChart(){
+  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+  const categories = this.flattenDimensions(dimensions);
   this.chartOptions9 = {
     series: this.sidebysideBarRowData,
     chart: {
@@ -799,7 +822,7 @@ multiLineChart(){
       labels: {
         trim: false
       },
-      categories: this.sidebysideBarColumnData[0]
+      categories: categories
     },
     tooltip: {
       y: [
@@ -919,6 +942,7 @@ tableMeasures = [] as any;
   }
 
   dataExtraction(){
+    this.sidebysideBarColumnData1 = [];
     this.tablePreviewColumn = [];
     this.tablePreviewRow = [];
     this.tableData = [];
@@ -949,6 +973,11 @@ tableMeasures = [] as any;
               data: res.result_data
             }
             this.sidebysideBarColumnData.push(res.result_data);
+            let obj1={
+              name:res.column,
+              values: res.result_data
+            }
+            this.sidebysideBarColumnData1.push(obj1);
           });
           this.tablePreviewRow.forEach((res:any) => {
             let obj={
@@ -958,6 +987,7 @@ tableMeasures = [] as any;
             this.sidebysideBarRowData.push(obj);
           });
           console.log(this.sidebysideBarColumnData)
+          console.log(this.sidebysideBarColumnData1)
           console.log(this.sidebysideBarRowData);
           let rowCount:any;
          if(this.tablePreviewColumn[0]?.result_data?.length){
@@ -1231,6 +1261,7 @@ tableMeasures = [] as any;
                   text: 'Deleted Successfully',
                   width: '200px',
                 })
+                    this.getChartData();
               }
 
             },
