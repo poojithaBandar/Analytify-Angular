@@ -130,9 +130,9 @@ export class DatabaseComponent {
     menu.expanded = !menu.expanded;
   }
   getTablesfromPrevious(){
-    const querysetId = localStorage.getItem( 'QuerySetId' );
+    const querysetId = localStorage.getItem( 'QuerySetId' ) || 0;
     this.qurtySetId = querysetId
-    if(querysetId !== ''||null){
+    if(querysetId !== 0){
     this.workbechService.getTablesfromPrevious(this.databaseId,querysetId).subscribe({next: (data) => {
       console.log(data);
       this.relationOfTables= data.dragged_data.relation_tables
@@ -353,6 +353,7 @@ executeQuery(){
         this.cutmquryTable = data
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
+        this.qurtySetId = data.query_set_id
         console.log('dkjshd',this.cutmquryTable)
       },
       error:(error:any)=>{
@@ -611,8 +612,8 @@ clearJoinCondns(){
  
   this.selectedJoin ='Condition';
   this.selectedCndn ='Operator';
-  this.selectedClmnT1 = 'Select Column';
-  this.selectedClmnT2 = 'Select Column'
+  this.selectedClmnT1=null
+  this.selectedClmnT2=null;
   this.enableJoinButton();
 }
 
@@ -775,7 +776,12 @@ getDsQuerysetId(){
       next:(data:any) =>{
         console.log(data)
         this.datasourceQuerysetId = data.data.datasource_queryset_id;
+        if(this.tableJoiningUI){
         this.getJoiningTableData();
+        }
+        if(this.customSql){
+          this.getfilteredCustomSqlData();
+        }
         this.getFilteredList();
       },
       error:(error:any)=>{
@@ -914,6 +920,32 @@ getSelectedRowsFromEdit() {
     }
     })
 
+}
+getfilteredCustomSqlData(){
+    const obj ={
+      database_id:this.databaseId,
+      query_id:this.qurtySetId,
+      datasource_queryset_id:this.datasourceQuerysetId
+    }
+    this.workbechService.getTableJoiningData(obj).subscribe(
+      {
+        next:(data:any) =>{
+          console.log('qury_data/tablejoined_data',data)
+          this.cutmquryTable = data;
+          this.custmQryTime = data.query_exection_time;
+          this.custmQryRows = data.no_of_rows;
+        },
+        error:(error:any)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+      })
+  
 }
 goToConnections(){
   this.router.navigate(['/workbench/work-bench/view-connections'])

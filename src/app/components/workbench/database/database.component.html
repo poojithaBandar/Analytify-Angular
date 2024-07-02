@@ -62,7 +62,7 @@
             </div> -->
 
 
-            <div class="card mb-0 br-0 pt-2">
+            <div class="card mb-0 br-0 pt-2" style="height: 539px">
                 <div class="card-header p-1 border-bottom-0">
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keyup)="getSchemaTablesFromConnectedDb()">
@@ -71,7 +71,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body p-1">
+                <!-- <div class="card-body p-1">
                   <div
                     ngbAccordion
                     [closeOthers]="true"
@@ -123,7 +123,54 @@
                       </div>
                     }
                   </div>
-                </div>
+                </div> -->
+
+                <div class="card-body p-1">
+                    <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
+                      <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0" class="accordion-item">
+                        <h6 ngbAccordionHeader class="accordion-header" id="heading{{i}}">
+                          <button
+                            ngbAccordionButton
+                            class="accordion-button p-3 fw-500"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapse"
+                            aria-expanded="true"
+                            aria-controls="collapse"
+                            >
+                            {{ menu.schema }}
+                          </button>
+                        </h6>
+                        <div
+                          ngbAccordionCollapse
+                          id="collapse{{i}}"
+                          class="accordion-collapse collapse" 
+                          [class.show]="i === 0"
+                          aria-labelledby="heading"
+                          data-bs-parent="#accordionExample"
+                           >
+                          <div class="accordion-body p-2 overflow-scroll database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                            </button> -->
+                            <ng-template>
+                              <div class="sub-menu" cdkDropList
+                                #originList="cdkDropList"
+                                [cdkDropListData]="menu.tables"
+                                [cdkDropListConnectedTo]="[destinationList]"
+                                (cdkDropListDropped)="drop($event)">
+                                <div *ngFor="let submenu of menu.tables" class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
+                                  <i class="fa fa-table" style="padding-right:10px;"></i>
+                                  <span ngbTooltip="{{submenu.table}}">{{ submenu.table | slice:0:20}}</span>
+                                </div>
+                              </div>
+                            </ng-template>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
               </div>
         </div>
         <div class="col-xl-10 col-md-12 p-1">
@@ -231,7 +278,7 @@
                                                     </ul>
                                                 </div>
                                                    <div ngbDropdown class="btn-group my-2 dropdown">
-                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false" class="dropdown-toggle btn btn-info-light">{{ selectedClmnT2 ? selectedClmnT2 : 'Select Column' }}
+                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false"  [disabled]="!selectedClmnT1" class="dropdown-toggle btn btn-info-light">{{ selectedClmnT2 ? selectedClmnT2 : 'Select Column' }}
                                                     </button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         @for(table of remainingTables;track table){
@@ -249,7 +296,7 @@
                                                 <button class="btn btn-secondary" (click)="clearJoinCondns()" aria-expanded="false">
                                                     clear
                                                 </button>
-                                                <button class="btn btn-primary" (click)="customTableJoin()" aria-expanded="false">
+                                                <button class="btn btn-primary" [disabled]="!selectedClmnT2" (click)="customTableJoin()" aria-expanded="false">
                                                     Join
                                                 </button>                       
                                              </div>
@@ -400,8 +447,8 @@
                                 <h6>Edit Custom SQL</h6>
                                 <div class="right">
                                     <a class="btn btn-blue-light m-1" (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
-                                    <a *ngIf="cutmquryTable.length" data-bs-effect="effect-super-scaled" data-bs-toggle="modal" class="modal-effect btn btn-primary m-1">
-                                        <i class="fa fa-filter"> Apply Filters</i>
+                                    <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" (click)="openSuperScaled(applyFiltersModal);getFilteredList()" class="modal-effect btn btn-primary m-1">
+                                        <i class="fa fa-filter"></i> Apply Filters
                                     </a>
                                 </div>
                             </div>
@@ -423,9 +470,9 @@
                                 </div>
                                 <div class="card-body d-flex align-items-center justify-content-center p-0">
                                     <!-- @if(cutmquryTable.length){ -->
-                                    <h6 *ngIf="!cutmquryTable.length" class="fs-12 mt-2 mb-0 drag-txt">Table data preview</h6>
+                                    <!-- <h6 *ngIf="!cutmquryTable.length" class="fs-12 mt-2 mb-0 drag-txt">Table data preview</h6> -->
                                     <!-- }@else{ -->
-                                        <div *ngIf="cutmquryTable.length" class="table-responsive" style="overflow-y: scroll;height: 233px;">
+                                        <div *ngIf="cutmquryTable" class="table-responsive" style="overflow-y: scroll;height: 233px;">
                                             <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                 <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
                                                     <tr>
