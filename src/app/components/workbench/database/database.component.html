@@ -65,7 +65,7 @@
             <div class="card mb-0 br-0 pt-2">
                 <div class="card-header p-1 border-bottom-0">
                     <div class="input-group ">
-                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
+                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keyup)="getSchemaTablesFromConnectedDb()">
                         <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
                             <i class="fe fe-search" aria-hidden="true"></i>
                         </button>
@@ -105,9 +105,6 @@
                           data-bs-parent="#accordionExample"
                            >
                           <div class="accordion-body p-2  overflow-scroll  database-dropdown " ngbAccordionBody style="height: 436px;">
-                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
-                                <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
-                            </button> -->
                             <ng-template>
                                 <div class="sub-menu" cdkDropList
                                 #originList="cdkDropList"

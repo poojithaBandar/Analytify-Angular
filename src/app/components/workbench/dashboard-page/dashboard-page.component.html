@@ -10,7 +10,7 @@
         </div>
         <div class="new-data-btn">
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="dashboardName" (keydown)="getuserDashboardsListput()" aria-describedby="button-addon2" >
+            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="dashboardName" (keyup)="getuserDashboardsListput()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             
           </div>
@@ -31,7 +31,7 @@
                         @for(dashboard of savedDashboardList;track dashboard){
                         <tr>
                             <td >
-                                <a  style="color: #05aff8;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name | slice:0:15}}</a>
+                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name | slice:0:15}}</a>
                                </td>
                                <td>{{dashboard.created}}</td>
                             <td>{{dashboard.Modified}}</td>

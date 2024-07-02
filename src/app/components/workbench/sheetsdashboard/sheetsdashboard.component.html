@@ -34,7 +34,7 @@
                                         [cdkDropListConnectedTo]="[destinationList]"
                                         (cdkDropListDropped)="drop($event)">
                                             <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" class="fa fa-table"></i> {{item.data.title | slice:0:15}}</a></li>
+                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-table"></i> {{item.data.title | slice:0:15}}</a></li>
                                             
                                         </ul>
                                     </div>
@@ -100,8 +100,7 @@
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Edit </a>
-                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(item['sheetId'],item.data?.title)"> Edit </a>
                                 <a class="dropdown-item" ngbDropdownItem (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)"> Delete</a>
                             </div>
                         </div>

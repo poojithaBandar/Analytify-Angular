@@ -153,7 +153,7 @@
         </div>
         <div class="new-data-btn">
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keydown)="getDbConnectionList()">
+            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup)="getDbConnectionList()">
             <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             
             <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Database</button>

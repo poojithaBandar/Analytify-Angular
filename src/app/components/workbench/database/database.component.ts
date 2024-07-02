@@ -526,7 +526,9 @@ customTableJoin(){
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
-    joining_conditions:this.relationOfTables
+    joining_conditions:this.relationOfTables,
+    dragged_array:this.draggedtables
+
   }
   this.workbechService.joiningTables(obj)
   .subscribe(

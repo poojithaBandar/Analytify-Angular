@@ -537,7 +537,15 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
    
   }
 
-
+  viewSheet(sheetId:any,sheetname:any){
+    const encodedServerId = btoa(this.databaseId.toString());
+    const encodedQuerySetId = btoa(this.qrySetId.toString());
+    const encodedSheetId = btoa(sheetId.toString());
+    const encodedSheetName = btoa(sheetname);
+  
+    this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
+  }
+  
   changedOptions() {
     if (this.options.api && this.options.api.optionsChanged && this.options.api.resize) {
       this.options.api.optionsChanged();

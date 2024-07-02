@@ -4,11 +4,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,CommonModule],
+  imports: [NgbModule,CommonModule,FormsModule],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
@@ -20,6 +21,7 @@ savedDashboardList: any[] =[];
 connectionList:any[]=[];
 showAllSheets = true;
 showAllDasboards = true;
+wholeSearch:any
 constructor(private router:Router,private workbechService:WorkbenchService){
 }
 
@@ -27,6 +29,10 @@ ngOnInit(){
   this.getuserSheets();
   this.getuserDashboardsList();
   this.getDbConnectionList();
+}
+totalSearch(){
+  this.getuserSheets();
+  this.getuserDashboardsList();
 }
 getDbConnectionList(){
   const Obj ={
@@ -53,7 +59,13 @@ getDbConnectionList(){
   })
 }
 getuserSheets(){
-  this.workbechService.getUserSheetList().subscribe(
+  const Obj ={
+    search:this.wholeSearch
+  }
+  if(Obj.search == '' || Obj.search == null){
+    delete Obj.search;
+  }
+  this.workbechService.getUserSheetListPut(Obj).subscribe(
     {
       next:(data:any) =>{
         this.userSheetsList=data
@@ -72,7 +84,13 @@ getuserSheets(){
     })
 }
 getuserDashboardsList(){
-  this.workbechService.getuserDashboardsList().subscribe(
+  const Obj ={
+    search:this.wholeSearch
+  }
+  if(Obj.search == '' || Obj.search == null){
+    delete Obj.search;
+  }
+  this.workbechService.getuserDashboardsListput(Obj).subscribe(
     {
       next:(data:any) =>{
         this.savedDashboardList=data
@@ -97,12 +115,13 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
 
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedDashboardId])
 }
-viewSheet(serverId:any,querysetId:any,sheetId:any){
+viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
   const encodedServerId = btoa(serverId.toString());
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
+  const encodedSheetName = btoa(sheetname);
 
-  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
 }
 
  dashboardRoute(){
@@ -115,7 +134,10 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
     this.router.navigate(['workbench/work-bench/view-connections']) 
 
   }
-
+  getTablesFromConnectedDb(id:any){
+    const encodedId = btoa(id.toString());
+    this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+  }
   deleteDashboard(serverId:any,qurysetId:any,dashboardId:any){
     Swal.fire({
       title: 'Are you sure?',
