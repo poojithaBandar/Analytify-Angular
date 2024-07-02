@@ -129,7 +129,7 @@
                     <div class="card-body" style="padding: 1px 17px 1px 13px;">
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
-                                <input  type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetName" (keydown)="sheetNameChange(sheetName,$event)">
+                                <input  type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (keydown)="sheetNameChange(sheetTitle,$event)">
                                 
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0">
@@ -515,12 +515,14 @@
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 6</button>
                             </li>-->
+                            <div >
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
+                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id"  data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
                                   tabindex="-1" class="nav-link BtnNewStyle" (click)="addSheet()" style="padding: 14px;">
                                     <i class="fa fa-plus-square-o"></i>
                                 </button>
                             </li>
+                        </div>
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
                                   tabindex="-1" class="nav-link BtnNewStyle" (click)="removeTab()" style="padding: 14px;">

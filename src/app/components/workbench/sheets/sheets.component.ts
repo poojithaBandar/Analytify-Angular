@@ -85,6 +85,7 @@ export class SheetsComponent {
   chartOptions:any;
   chartOptions1:any;
   sheetName = "Sheet 1";
+  sheetTitle = "Sheet 1";
   databaseId:any;
   qrySetId:any;
   chartsEnableDisable = [] as any;
@@ -105,7 +106,6 @@ export class SheetsComponent {
   filterId = [] as any;
   sidebysideBarColumnData = [] as any;
   sidebysideBarRowData = [] as any;
-  sheetEnable = false;
   measureValue:any;
   retriveDataSheet_id: any;
   sheetfilter_querysets_id = null;
@@ -130,6 +130,7 @@ export class SheetsComponent {
       this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
       this.sheetName = atob(route.snapshot.params['id4'])
       console.log(this.retriveDataSheet_id,this.sheetName,'shetname')
+      this.tabs[0] = this.sheetName;
       }
    }
   }
@@ -384,6 +385,8 @@ barChart(){
   };
 }
 pieChart(){
+  console.log(this.pie)
+  console.log(this.chartId)
   this.chartOptions4={
     series: this.chartsRowData,
     chart: {
@@ -607,7 +610,7 @@ stockedBar(){
       height: 350,
       stacked: true,
       toolbar: {
-        show: true
+        show: false
       },
       zoom: {
         enabled: true
@@ -635,7 +638,7 @@ stockedBar(){
       categories: categories,
     },
     legend: {
-      position: "right",
+      position: "bottom",
       offsetY: 40
     },
     fill: {
@@ -1247,7 +1250,6 @@ tableMeasures = [] as any;
   sheetNameChange(name:any,event:any){
     console.log(this.SheetIndex)
     if (event.keyCode === 13) {
-      this.sheetEnable = true;
       this.tabs[this.SheetIndex] = name;
     }
     
@@ -1293,12 +1295,18 @@ tableMeasures = [] as any;
   onChange(event:any){
     this.retriveDataSheet_id = '';
     this.SheetIndex = event.index;
-    this.sheetName = event.tab.textLabel;
+    this.sheetName = event.tab.textLabel
+    this.sheetTitle = event.tab.textLabel;
     console.log(this.sheetName)
-    this.sheetRetrive();
+   // if(!this.sheetTitle){
+      this.sheetRetrive();
+   // }
+    
   }
   getChartData(){
-    this.sheetEnable = false;
+   // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
+  // alert("pls saveyour changes")
+   // }else{
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
@@ -1345,6 +1353,7 @@ tableMeasures = [] as any;
       this.grouped = false;
       this.multiLine = false;
       this.donut = false;
+   // }
   }
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
@@ -1553,6 +1562,9 @@ sheetRetrive(){
   this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.retriveDataSheet_id = responce.sheet_id;
+        this.chartId = responce.chart_id;
+        this.sheetName = responce.sheet_name;
+        this.sheetTitle = responce.sheet_name;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
@@ -1563,7 +1575,7 @@ sheetRetrive(){
         this.draggedRows.forEach((res:any) => {
           this.draggedRowsData.push([res.column,res.data_type,""])
         });
-        if(responce.chart_id == "1"){
+        if(responce.chart_id == 1){
           this.tableData = this.sheetResponce.results.tableData;
           this.displayedColumns = this.sheetResponce.results.tableColumns;
           this.table = true;
@@ -1579,7 +1591,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
         }
-       if(responce.chart_id == "6"){
+       if(responce.chart_id == 6){
         this.chartsRowData = this.sheetResponce.results.barYaxis;
         this.chartsColumnData = this.sheetResponce.results.barXaxis;
        this.barChart();
@@ -1596,10 +1608,9 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "24"){
+       if(responce.chart_id == 24){
         this.chartsRowData = this.sheetResponce.results.pieYaxis;
         this.chartsColumnData = this.sheetResponce.results.pieXaxis;
-        this.pieChart();
         this.bar = false;
         this.table = false;
           this.pie = true;
@@ -1612,8 +1623,9 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.pieChart();
        }
-       if(responce.chart_id == "13"){
+       if(responce.chart_id == 13){
         this.chartsRowData = this.sheetResponce.results.lineYaxis;
         this.chartsColumnData = this.sheetResponce.results.lineXaxis;
         this.lineChart();
@@ -1630,7 +1642,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "17"){
+       if(responce.chart_id == 17){
         this.chartsRowData = this.sheetResponce.results.areaYaxis;
         this.chartsColumnData = this.sheetResponce.results.areaXaxis;
         this.areaChart();
@@ -1647,7 +1659,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "7"){
+       if(responce.chart_id == 7){
         this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
         this.sidebysideBarColumnData = this.sheetResponce.results.sidebysideBarXaxis;
         this.sidebysideBar();
@@ -1664,7 +1676,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "5"){
+       if(responce.chart_id == 5){
         this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
         this.sidebysideBarColumnData = this.sheetResponce.results.stokedBarXaxis;
         this.stockedBar();
@@ -1681,7 +1693,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "4"){
+       if(responce.chart_id == 4){
         this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
         this.sidebysideBarColumnData = this.sheetResponce.results.barLineXaxis;
         this.barLineChart();
@@ -1698,7 +1710,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "2"){
+       if(responce.chart_id == 2){
         this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
         this.sidebysideBarColumnData = this.sheetResponce.results.hStockedXaxis;
         this.horizentalStockedBar();
@@ -1715,7 +1727,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "3"){
+       if(responce.chart_id == 3){
         this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
         this.sidebysideBarColumnData = this.sheetResponce.results.hgroupedXaxis;
         this.hGrouped();
@@ -1732,7 +1744,7 @@ sheetRetrive(){
           this.multiLine = false;
           this.donut = false;
        }
-       if(responce.chart_id == "8"){
+       if(responce.chart_id == 8){
         this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
         this.sidebysideBarColumnData = this.sheetResponce.results.multiLineXaxis;
         this.multiLineChart();
@@ -1749,7 +1761,7 @@ sheetRetrive(){
           this.multiLine = true;
           this.donut = false;
        }
-       if(responce.chart_id == "10"){
+       if(responce.chart_id == 10){
         this.chartsRowData = this.sheetResponce.results.donutYaxis;
         this.chartsColumnData = this.sheetResponce.results.donutXaxis;
         this.donutChart();
