@@ -655,6 +655,7 @@ deleteJoiningRelation(index:number){
     this.displayJoiningCndnsList.splice(index, 1);
     //this.relationOfTables.splice(index,1);
   }
+  this.joiningTables();
   // console.log('removedjoining',this.displayJoiningCndnsList)
 }
 
