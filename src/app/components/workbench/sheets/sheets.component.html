@@ -97,9 +97,9 @@
                           <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
                           </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body" style="height: 500px; overflow: scroll;">
                             @for(data of filterData;track data){
-                            <div class="form-check">
+                            <div class="form-check" >
                                 <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
                                 <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
                             </div>
@@ -517,7 +517,7 @@
                             </li>-->
                             <div >
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id"  data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
+                                <button type="button" ngbnavlink=""  data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
                                   tabindex="-1" class="nav-link BtnNewStyle" (click)="addSheet()" style="padding: 14px;">
                                     <i class="fa fa-plus-square-o"></i>
                                 </button>
@@ -558,7 +558,7 @@
                           <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
                           </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body"  style="height: 500px; overflow: scroll;">
                             @for(data of filterData;track data){
                             <div class="form-check">
                                 <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    

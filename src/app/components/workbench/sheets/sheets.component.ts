@@ -116,6 +116,7 @@ export class SheetsComponent {
   database_name: any;
   sidebysideBarColumnData1 = [] as any;
   filterQuerySetId: any;
+  measureValues = [] as any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
    if(this.router.url.includes('/workbench/sheets/')){
@@ -1159,12 +1160,18 @@ tableMeasures = [] as any;
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
+    console.log(rows)
+    console.log(index)
+    console.log(type)
+    console.log(this.draggedRowsData)
       this.measureValue = ''; 
+      this.measureValues = [];
+      this.measureValues = [rows.column,"aggregate",type]
      if(type === ''){
       this.draggedRowsData[index] = [rows.column,rows.data_type,type];
       this.dataExtraction();
      }else{
-    this.draggedRowsData[index] = [rows.column,"aggregate",type];
+    this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
     this.dataExtraction();
      }
@@ -1324,6 +1331,7 @@ tableMeasures = [] as any;
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
   // alert("pls saveyour changes")
    // }else{
+    this.dimetionMeasure = [];
     this.sidebysideBarColumnData = [];
     this.sidebysideBarColumnData1 = [];
     this.sidebysideBarRowData = [];
@@ -1508,7 +1516,7 @@ if(this.retriveDataSheet_id){
         text: responce.message,
         width: '200px',
       })
-      this.sheetRetrive();
+     // this.sheetRetrive();
     }
   
   },
@@ -1560,6 +1568,9 @@ if(this.retriveDataSheet_id){
     this.multiLineXaxis =[];
     this.donutYaxis =[];
     this.donutXaxis =[];
+    this.measureValues = [];
+    this.draggedRowsData = [];
+    this.draggedColumnsData = [];
   },
   error: (error) => {
     console.log(error);
@@ -1568,6 +1579,9 @@ if(this.retriveDataSheet_id){
       text: error.error.message,
       width: '200px',
     })
+    this.measureValues = [];
+    this.draggedRowsData = [];
+    this.draggedColumnsData = [];
   }
 }
 )
