@@ -84,8 +84,9 @@ export class SheetsComponent {
   public lineChartOptions!: Partial<EChartsOption>;
   chartOptions:any;
   chartOptions1:any;
+  sheetNumber: number = 1;
   sheetName = "Sheet 1";
-  sheetTitle = "Sheet 1";
+  sheetTitle = "Sheet ";
   databaseId:any;
   qrySetId:any;
   chartsEnableDisable = [] as any;
@@ -111,15 +112,33 @@ export class SheetsComponent {
   sheetfilter_querysets_id = null;
   editFilterId: any;
   isValuePresent: any;
-  color:any;
+  color = '#00a5a2';
   database_name: any;
   sidebysideBarColumnData1 = [] as any;
+  filterQuerySetId: any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
    if(this.router.url.includes('/workbench/sheets/')){
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+    if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
-      this.qrySetId = +atob(route.snapshot.params['id2'])
+      this.qrySetId = +atob(route.snapshot.params['id2']);
+      this.filterQuerySetId = atob(route.snapshot.params['id3'])
+      if(this.filterQuerySetId==='null'){
+        console.log('filterqrysetid',this.filterQuerySetId)
+        this.filterQuerySetId = null
+      }
+      else{
+          parseInt(this.filterQuerySetId)
+          console.log(this.filterQuerySetId)
+        }
+      // if(route.snapshot.params['id3']==='null'){
+      //   this.filterQuerySetId = null;
+      // console.log('filterqrysetid',this.filterQuerySetId)
+      // }else{
+      //   this.filterQuerySetId = +atob(route.snapshot.params['id2'])
+      //   console.log('filterqrysetid',this.filterQuerySetId)
+      // }
+      
       }
    }
    if(this.router.url.includes('/workbench/landingpage/sheets/')){
@@ -131,13 +150,14 @@ export class SheetsComponent {
       this.sheetName = atob(route.snapshot.params['id4'])
       console.log(this.retriveDataSheet_id,this.sheetName,'shetname')
       this.tabs[0] = this.sheetName;
+      this.sheetRetrive();
       }
    }
   }
 
   ngOnInit(): void {
     this.columnsData();
-    this.sheetRetrive();
+   this.sheetTitle = this.sheetTitle +this.sheetNumber
   }
   goToDataSource(){
     const encodeddbId = btoa(this.databaseId.toString());
@@ -259,7 +279,7 @@ barChart(){
       },
       height: 385,
       type: 'bar',
-      foreColor: '#9aa0ac',
+      foreColor: this.color,
     },
     grid: {
       show: false,      // you can either change hear to disable all grids
@@ -290,7 +310,7 @@ barChart(){
       offsetY: -20,
       style: {
         fontSize: '12px',
-        colors: ['#9aa0ac'],
+        colors: [this.color],
       },
     },
     fill: {
@@ -306,7 +326,7 @@ barChart(){
         // minHeight: 40,
         hideOverlappingLabels: false,
         style: {
-          colors: '#9aa0ac',
+          colors: this.color,
           
         },
       //   formatter: (value) => {
@@ -323,8 +343,7 @@ barChart(){
         fill: {
           type: 'gradient',
           gradient: {
-            colorFrom: '#D8E3F0',
-            colorTo: '#BED1E6',
+           
             stops: [0, 100],
             opacityFrom: 0.4,
             opacityTo: 0.5,
@@ -337,7 +356,7 @@ barChart(){
       },
 
     },
-
+    colors: [this.color],
     // fill: {
     //   type: 'gradient',
     //   gradient: {
@@ -370,7 +389,7 @@ barChart(){
       offsetY: 10,
       align: 'center',
       style: {
-        color: '#9aa0ac',
+        color: this.color,
       },
     },
     // tooltip: {
@@ -425,7 +444,7 @@ lineChart(){
                 }
               },
         },
-        colors: ['#00a5a2'],
+        colors: [this.color],
         dataLabels: {
             enabled: false
         },
@@ -442,7 +461,7 @@ lineChart(){
             style: {
                 fontSize: '13px',
                 fontWeight: 'bold',
-                color: '#8c9097'
+                color: this.color
             },
         },
         xaxis: {
@@ -450,7 +469,7 @@ lineChart(){
             labels: {
                 show: true,
                 style: {
-                    colors: "#8c9097",
+                    colors: this.color,
                     fontSize: '11px',
                     fontWeight: 600,
                     cssClass: 'apexcharts-xaxis-label',
@@ -461,7 +480,7 @@ lineChart(){
             labels: {
                 show: true,
                 style: {
-                    colors: "#8c9097",
+                    colors: this.color,
                     fontSize: '11px',
                     fontWeight: 600,
                     cssClass: 'apexcharts-yaxis-label',
@@ -498,7 +517,7 @@ areaChart(){
       style: {
         fontSize: "11px",
         fontWeight: "normal",
-        color: "#8c9097",
+        color: this.color,
       },
     },
     grid: {
@@ -511,16 +530,16 @@ areaChart(){
       style: {
         fontSize: "13px",
         fontWeight: "bold",
-        color: "#8c9097",
+        color: this.color,
       },
     },
-    colors: ["#00a5a2"],
+    colors: [this.color],
     xaxis: {
       type: "",
       labels: {
         show: true,
         style: {
-          colors: "#8c9097",
+          colors: this.color,
           fontSize: "11px",
           fontWeight: 600,
           cssClass: "apexcharts-xaxis-label",
@@ -532,7 +551,7 @@ areaChart(){
       labels: {
         show: true,
         style: {
-          colors: "#8c9097",
+          colors: this.color,
           fontSize: "11px",
           fontWeight: 600,
           cssClass: "apexcharts-xaxis-label",
@@ -597,7 +616,7 @@ sidebysideBar(){
 flattenDimensions(dimensions: Dimension[]): string[] {
   const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
   return Array.from({ length: numCategories }, (_, index) => {
-    return dimensions.map(dim => dim.values[index] || '').join(',');
+    return dimensions.map(dim => dim.values[index] || '').join(',  ');
   });
 }
 stockedBar(){
@@ -974,7 +993,7 @@ tableMeasures = [] as any;
           "col":this.draggedColumnsData,
           "row":this.draggedRowsData,
           "filter_id": this.filterId,
-          "datasource_querysetid":null,
+          "datasource_querysetid":this.filterQuerySetId,
           "sheetfilter_querysets_id": this.sheetfilter_querysets_id,
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
@@ -1140,7 +1159,7 @@ tableMeasures = [] as any;
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
-     // this.measureValue = ''; 
+      this.measureValue = ''; 
      if(type === ''){
       this.draggedRowsData[index] = [rows.column,rows.data_type,type];
       this.dataExtraction();
@@ -1233,17 +1252,15 @@ tableMeasures = [] as any;
   }
   tabs = ['Sheet 1'];
   selected = new FormControl(0);
- // tabtitle:string = '';
-
   addSheet() {
-    this.sheetName = '';
+    this.sheetName = ''; this.sheetTitle = '';
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
-      const index = this.tabs.length + 1;
-       this.tabs.push('Sheet ' +index);
-      // this.sheetName = 'Sheet ' +index;
-      // console.log(this.sheetName)
+      this.getChartData();
+     this.sheetNumber+=1;
+       this.tabs.push('Sheet ' +this.sheetNumber);
+       console.log(this.tabs.length)
     }
    
   }
@@ -1432,11 +1449,12 @@ sheetSave(){
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
   }
+  this.tabs[this.SheetIndex] = this.sheetTitle;
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
-  "sheet_name": this.sheetName,
+  "sheet_name": this.sheetTitle,
   "data":{
   "columns": this.draggedColumns,
   "rows": this.draggedRows,
@@ -1807,7 +1825,7 @@ sheetRetrive(){
       "database_id" :this.databaseId,
       "query_set_id":this.qrySetId,
       "type_of_filter" : "sheet",
-      "datasource_queryset_id" :null,
+      "datasource_queryset_id" :this.filterQuerySetId,
       "col_name":this.filterName,
        "data_type":this.filterType,
       // "format_date":""
@@ -1839,7 +1857,7 @@ sheetRetrive(){
     "database_id": this.databaseId,
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
-    "datasource_querysetid" : null,
+    "datasource_querysetid" : this.filterQuerySetId,
     "range_values": [],
     "select_values":this.filterDataArray
 }
@@ -1884,7 +1902,7 @@ sheetRetrive(){
       "database_id": this.databaseId,
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
-      "datasource_querysetid" : null,
+      "datasource_querysetid" : this.filterQuerySetId,
       "range_values": [],
       "select_values":this.filterDataArray
   }
@@ -1935,6 +1953,7 @@ gotoDashboard(){
 }
 marksColor(color:any){
 console.log(color)
+this.color = color;
 }
 }
 

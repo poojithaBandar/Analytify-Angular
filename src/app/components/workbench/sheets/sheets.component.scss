@@ -53,23 +53,23 @@ button.BtnRowStyle.span-left {
 
 /* width */
 ::-webkit-scrollbar {
-width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-background: #f1f1f1; 
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-background: #c0c0c0a8 !important; 
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-background: #000; 
-}
+  width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+  background: #fff !important; 
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+  background: #c0c0c0a8 !important; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+  background: #000; 
+  }
 
 .example-box {
 padding: 3px 13px;
@@ -163,10 +163,10 @@ span.abc-txt {
 ::after {
   display: none;
 }
-.mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+:host ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
   color: #00a5a2 !important;
 }
-.mat-mdc-tab .mdc-tab-indicator__content--underline {
+:host ::ng-deep .mat-mdc-tab .mdc-tab-indicator__content--underline {
   border-color: #00a5a2 !important;
 }
 #donutchart {
@@ -182,3 +182,4 @@ span.abc-txt {
 .chart-icon:hover{
   background-color: #e1f0f9;
  }
+
