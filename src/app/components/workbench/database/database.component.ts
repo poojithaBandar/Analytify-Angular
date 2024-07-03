@@ -511,7 +511,7 @@ customTableJoin(){
 
   console.log('indexoftable1',t1Index);
    console.log('indexoftable2',t2Index);
-  const customJoinCndn = this.selectedAliasT1+'.'+this.selectedClmnT1+' '+this.selectedCndn+' '+this.selectedAliasT2+'.'+this.selectedClmnT2
+  const customJoinCndn = '"'+this.selectedAliasT1+'"."'+this.selectedClmnT1+'" '+this.selectedCndn+' "'+this.selectedAliasT2+'"."'+this.selectedClmnT2+'"'
    const MaxInex = Math.max(t1Index,t2Index);
   console.log('custcon',customJoinCndn, 'maxind',MaxInex)
   if (!this.relationOfTables[MaxInex - 1]) {
@@ -644,7 +644,7 @@ getJoiningTableData(){
 }
 deleteJoiningRelation(index:number){
 
-  const deleteCondtin = this.displayJoiningCndnsList[index][0]
+  const deleteCondtin = this.displayJoiningCndnsList[index]
   console.log(deleteCondtin)
   this.relationOfTables = this.relationOfTables.map((subArray: any[]) =>
     subArray.filter(item => item !== deleteCondtin)
@@ -655,10 +655,34 @@ deleteJoiningRelation(index:number){
     this.displayJoiningCndnsList.splice(index, 1);
     //this.relationOfTables.splice(index,1);
   }
-  this.joiningTables();
+  this.deleteRelation(deleteCondtin)
+  
   // console.log('removedjoining',this.displayJoiningCndnsList)
 }
-
+deleteRelation(deleteCondtin:any){
+  const obj ={
+    conditions_list:this.relationOfTables,
+    delete_condition :deleteCondtin,
+    
+  }
+  this.workbechService.deleteRelation(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+       this.relationOfTables= data.data.conditions_list;
+       this.joiningTables();
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+}
 openSuperScaled(modal: any) {
   this.modalService.open(modal, {
     centered: true,

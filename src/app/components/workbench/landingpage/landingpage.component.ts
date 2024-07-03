@@ -68,7 +68,7 @@ getuserSheets(){
   this.workbechService.getUserSheetListPut(Obj).subscribe(
     {
       next:(data:any) =>{
-        this.userSheetsList=data
+        this.userSheetsList=data.sheets
         console.log(this.userSheetsList)
 
       },

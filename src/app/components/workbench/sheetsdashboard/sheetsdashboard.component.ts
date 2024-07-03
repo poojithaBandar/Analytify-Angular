@@ -61,6 +61,7 @@ export class SheetsdashboardComponent {
  dashboardView = false;
  chartOptionsBar:any;
  dashboardId:any;
+ databaseName:any;
  updateDashbpardBoolen= false;
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router){
@@ -336,7 +337,8 @@ export class SheetsdashboardComponent {
     this.workbechService.sheetsDataWithQuerysetId(obj)
     .subscribe({next: (data) => {
        console.log('sheetData',data)
-       this.sheetData = data,
+       this.sheetData = data.sheets,
+       this.databaseName= data.database_name
     this.dashboardNew = this.sheetData.map((sheet:any) => ({
       id:uuidv4(),
       cols: 2,

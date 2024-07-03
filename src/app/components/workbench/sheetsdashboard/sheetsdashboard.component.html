@@ -21,8 +21,8 @@
                     <div class="panel-body tabs-menu-body p-0">
                         <div class="tab-content">
                             <div class="card mb-0 p-4 br-0" style="box-shadow: none;">
-                                <h6 class="mb-0">Connections</h6>
-                                <p class="mb-0">title</p>
+                                <h6 class="mb-0">Database</h6>
+                                <p class="mb-0">{{databaseName}}</p>
                             </div>
                             <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
                                 <div class="text-wrap">
@@ -92,7 +92,7 @@
             <gridster-item [item]="item" *ngFor="let item of dashboard">
               <div class="card mb-0">
                 <div class="card-header d-flex justify-content-between p-1">
-                    <!-- <h6>{{ item.data?.title }}</h6> -->
+                    <h6>{{ item.data?.title }}</h6>
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -109,7 +109,7 @@
                 <div class="card-body p-1">
     
                 
-                <p class="mb-1">{{ item.data?.content }}</p>
+                <!-- <p class="mb-1">{{ item.data?.content }}</p> -->
                 
                 <!-- <div *ngIf="item.chartOptions">
                      <apx-chart 
