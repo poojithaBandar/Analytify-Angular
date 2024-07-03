@@ -580,7 +580,7 @@
 
 
       <ng-template #applyFiltersModal let-modal>
-        <div class="modal-header">
+        <div class="modal-header p-2 bg-light">
           <h6 class="modal-title">Filters</h6>
           <button
             type="button"
@@ -590,12 +590,15 @@
           >
           </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body p-4">
             <ul class="dropdown-plus-title">
                 @for(data of filteredList;track data){
-                <li class="dropdown-plus-title">
-                    {{data.column_name }} <i class="fa fa-edit" (click)="editFilter(data.filter_id);openSuperScaled(editFilters)" data-bs-toggle="tooltip" ngbTooltip="Edit"></i>
-                    <i class="fa fa-trash" (click)="deleteFilter(data.filter_id)" data-bs-toggle="tooltip" ngbTooltip="Delete"></i>
+                <li class="dropdown-plus-title d-flex justify-content-between ">
+                    {{data.column_name }} 
+                   <div class="filter-child-icon">
+                    <i class="fa fa-edit me-2 text-info" (click)="editFilter(data.filter_id);openSuperScaled(editFilters)" data-bs-toggle="tooltip" ngbTooltip="Edit"></i>
+                    <i class="fa fa-trash text-danger" (click)="deleteFilter(data.filter_id)" data-bs-toggle="tooltip" ngbTooltip="Delete"></i>
+                   </div>
                  </li>
                 }
             </ul>

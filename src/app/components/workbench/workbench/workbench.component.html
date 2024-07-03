@@ -289,7 +289,7 @@
                     <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for postgresql is 5432</span></h6>
                     <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
                     <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
-                    <h6 class="mb-0 dark-gry">Pasword:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                    <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
                   </div>
                </div>
              </div>
@@ -327,7 +327,7 @@
                                   <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
                           </div>
                           <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+                              <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
                               <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
                           </div>
                       </form>

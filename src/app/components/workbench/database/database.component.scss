@@ -255,3 +255,22 @@ span.time {
   position: fixed;
   z-index: 3000000 !important;
 }
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+  background: #fff !important; 
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+  background: #c0c0c0a8 !important; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+  background: #000; 
+  }

@@ -125,25 +125,21 @@ export class WorkbenchComponent implements OnInit{
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "database": this.postGreDatabaseName,
-          "display_name":this.displayName
+          "display_name":this.displayName,
+          database_id:this.databaseId
       }
-        this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
+        this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
               console.log(responce);
-              console.log('tablelist',this.tableList)
-              this.databaseName = responce.database.database_name
-              this.databaseId = responce.database.database_id
+              this.modalService.dismissAll('close');
               if(responce){
                 Swal.fire({
                   icon: 'success',
-                  title: 'Connected',
+                  title: 'Updated Successfully',
                   width: '400px',
                 })
-                this.databaseId=responce.database?.database_id
-                this.modalService.dismissAll();
-                this.openPostgreSqlForm = false;
-                const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+               
               }
+              this.getDbConnectionList();
             },
             error: (error) => {
               console.log(error);
@@ -251,6 +247,7 @@ export class WorkbenchComponent implements OnInit{
     this.PostGrePassword = '';
     this.OracleServiceName = '';
     this.displayName = editData.display_name;
+    this.databaseId=editData.database_id;
 
 
 
@@ -480,7 +477,10 @@ export class WorkbenchComponent implements OnInit{
 
   }
 
-
+  gotoNewConnections(){
+this.openPostgreSqlForm=false;
+this.viewNewDbs=true
+  }
 
   
 }

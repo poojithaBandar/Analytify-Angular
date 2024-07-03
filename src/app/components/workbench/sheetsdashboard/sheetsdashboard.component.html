@@ -11,9 +11,9 @@
                                 <li class="nav-item" role="presentation">
                                     <a href="" id="ngb-nav-0" role="tab" aria-selected="true" aria-disabled="false" class="nav-link active p-2 m-0" aria-controls="ngb-nav-0-panel">Dashboard</a>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <!-- <li class="nav-item" role="presentation">
                                     <a href="" id="ngb-nav-1" role="tab" aria-selected="false" aria-disabled="false" class="nav-link p-2" tabindex="-1">Layout</a>
-                                </li>
+                                </li> -->
                               
                             </ul>
                         </div>
@@ -34,7 +34,7 @@
                                         [cdkDropListConnectedTo]="[destinationList]"
                                         (cdkDropListDropped)="drop($event)">
                                             <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-table"></i> {{item.data.title | slice:0:15}}</a></li>
+                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
                                             
                                         </ul>
                                     </div>
@@ -54,15 +54,15 @@
                         <input  type="text"  placeholder="Title" [(ngModel)]="dashboardName" aria-label="Sheet" class="form-control" >
                         </div>
                         <div class="min-w-fit-content ms-3">
-                            <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">save </button>
+                            <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">Save </button>
                             <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
                             </div>
-                    <div class="min-w-fit-content ms-3">
+                    <!-- <div class="min-w-fit-content ms-3">
                             <a href=""><i class="fa fa-filter p-2"></i> </a>
                             <a href=""><i class="fa fa-edit p-2"></i> </a>
                             <a href=""><i class="fa fa-share p-2"></i></a>
                             <a href=""><i class="fa fa-list p-2"></i></a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div> 
@@ -92,7 +92,7 @@
             <gridster-item [item]="item" *ngFor="let item of dashboard">
               <div class="card mb-0">
                 <div class="card-header d-flex justify-content-between p-1">
-                    <h6>{{ item.data?.title }}</h6>
+                    <!-- <h6>{{ item.data?.title }}</h6> -->
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -100,8 +100,8 @@
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                                <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(item['sheetId'],item.data?.title)"> Edit </a>
-                                <a class="dropdown-item" ngbDropdownItem (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)"> Delete</a>
+                                <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(item['sheetId'],item.data?.title)"> Goto Sheet </a>
+                                <a class="dropdown-item" ngbDropdownItem (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)"> Remove</a>
                             </div>
                         </div>
                       </div>

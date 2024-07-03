@@ -125,7 +125,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
 }
 
  dashboardRoute(){
-    this.router.navigate(['/workbench/sheetsdashboard'])  
+    this.router.navigate(['/workbench/sheets'])  
   }
   newConnections(){
     this.router.navigate(['workbench/work-bench/new-connections']) 
