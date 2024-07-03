@@ -126,6 +126,27 @@
                   [xaxis]="item.chartOptions.xaxis!"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
                   (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div> -->
+                  <div *ngIf="item['chartType'] === 'Table'">
+                    <table>
+                        <thead>
+                          <tr>
+                            @for(column of item.tableData?.headers;track column){
+                            <th>{{ column }}</th>
+                            }
+                          </tr>
+                        </thead>
+                        <tbody>
+                            @for(row of item.tableData?.rows;track row){
+                          <tr>
+                            @for(column of item.tableData?.headers;track column){
+                            <td>{{ row[column] }}</td>
+                            }
+                          </tr>
+                        }
+                        </tbody>
+                      </table>
+                    <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+                    </div>
                   <div *ngIf="item.chartOptions">
                  <div *ngIf="item['chartId'] === 6">
                     <apx-chart 

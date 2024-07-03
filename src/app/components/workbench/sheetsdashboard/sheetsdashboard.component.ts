@@ -67,7 +67,7 @@ export class SheetsdashboardComponent {
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router){
     this.dashboard = [];
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('workbench/sheets/sheetsdashboard')){
+    if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);

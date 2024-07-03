@@ -1963,7 +1963,7 @@ openSuperScalededitFilter(modal: any,data:any) {
 gotoDashboard(){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheets/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
 }
 marksColor(color:any){
 console.log(color)
