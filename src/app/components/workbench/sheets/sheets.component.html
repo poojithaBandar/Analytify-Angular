@@ -199,7 +199,12 @@
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>{{ rows.column }}
+                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>
+                                        @if(rows.type){
+                                            {{ rows.type }} ({{rows.column}})
+                                        }@else{
+                                        {{ rows.column }}
+                                        }
                                         <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
@@ -486,7 +491,7 @@
          }
          </mat-tab-group>
          
-                          <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12">
+                          <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12 " style=" display: contents;">
                              <!--  <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-right">
                                     <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
@@ -517,7 +522,7 @@
                             </li>-->
                             <div >
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink=""  data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
+                                <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
                                   tabindex="-1" class="nav-link BtnNewStyle" (click)="addSheet()" style="padding: 14px;">
                                     <i class="fa fa-plus-square-o"></i>
                                 </button>

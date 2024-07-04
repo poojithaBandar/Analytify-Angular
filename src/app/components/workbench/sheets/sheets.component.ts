@@ -23,6 +23,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { NgxColorsModule } from 'ngx-colors';
+import { CommonModule } from '@angular/common';
 interface TableRow {
   [key: string]: any;
 }
@@ -35,7 +36,7 @@ interface Dimension {
   selector: 'app-sheets',
   standalone: true,
   imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
-    CdkDropListGroup, CdkDropList, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule],
+    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -117,6 +118,7 @@ export class SheetsComponent {
   sidebysideBarColumnData1 = [] as any;
   filterQuerySetId: any;
   measureValues = [] as any;
+  SheetSavePlusEnabled = ['Sheet 1'];
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
    if(this.router.url.includes('/workbench/sheets/')){
@@ -617,7 +619,7 @@ sidebysideBar(){
 flattenDimensions(dimensions: Dimension[]): string[] {
   const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
   return Array.from({ length: numCategories }, (_, index) => {
-    return dimensions.map(dim => dim.values[index] || '').join(',  ');
+    return dimensions.map(dim => dim.values[index] || '').join(',');
   });
 }
 stockedBar(){
@@ -658,7 +660,7 @@ stockedBar(){
       categories: categories,
     },
     legend: {
-      position: "bottom",
+      position: "right",
       offsetY: 40
     },
     fill: {
@@ -1173,6 +1175,9 @@ tableMeasures = [] as any;
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
+  
+    this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type};
+    console.log(this.draggedRows)
     this.dataExtraction();
      }
   }
@@ -1265,11 +1270,10 @@ tableMeasures = [] as any;
        this.tabs.push(this.sheetName);
     }else{
       this.getChartData();
-     this.sheetNumber+=1;
+      this.sheetNumber+=1;
        this.tabs.push('Sheet ' +this.sheetNumber);
-       console.log(this.tabs.length)
+       this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
     }
-   
   }
   sheetNameChange(name:any,event:any){
     console.log(this.SheetIndex)
@@ -1317,11 +1321,15 @@ tableMeasures = [] as any;
       }})  
   }
   onChange(event:any){
-    this.retriveDataSheet_id = '';
+    console.log(event)
+    if(event.index === -1){
+     this.retriveDataSheet_id = 1;
+    }
     this.SheetIndex = event.index;
-    this.sheetName = event.tab.textLabel
-    this.sheetTitle = event.tab.textLabel;
+    this.sheetName = event.tab?.textLabel
+    this.sheetTitle = event.tab?.textLabel;
     console.log(this.sheetName)
+    console.log(this.retriveDataSheet_id);
    // if(!this.sheetTitle){
       this.sheetRetrive();
    // }
@@ -1329,8 +1337,11 @@ tableMeasures = [] as any;
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
-  // alert("pls saveyour changes")
+   //alert("pls save your changes")
    // }else{
+    this.filterData = [];
+    this.filterId = [];
+    this.retriveDataSheet_id = '';
     this.dimetionMeasure = [];
     this.sidebysideBarColumnData = [];
     this.sidebysideBarColumnData1 = [];
@@ -1463,6 +1474,7 @@ const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
   "sheet_name": this.sheetTitle,
+  "filterId":this.filterId,
   "data":{
   "columns": this.draggedColumns,
   "rows": this.draggedRows,
@@ -1532,17 +1544,17 @@ if(this.retriveDataSheet_id){
 )
 }else{
   this.retriveDataSheet_id = '';
-  console.log("Sheet Save")
   this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
     console.log(responce);
-    this.retriveDataSheet_id = responce.sheet_id;
     if(responce){
       Swal.fire({
         icon: 'success',
         text: responce.message,
         width: '200px',
       })
+      this.retriveDataSheet_id = responce.sheet_id;
       this.sheetRetrive();
+      this.SheetSavePlusEnabled.splice(0, 1);
     }
     this.saveTableData= [];
     this.savedisplayedColumns = [];
