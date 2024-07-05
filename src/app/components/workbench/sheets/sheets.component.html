@@ -99,10 +99,12 @@
                         </div>
                         <div class="modal-body" style="height: 500px; overflow: scroll;">
                             @for(data of filterData;track data){
+                                @if(data?data:''){
                             <div class="form-check" >
                                 <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
                                 <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
                             </div>
+                         }
                         }
                         </div>
                         <div class="modal-footer">
@@ -154,13 +156,17 @@
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index)"  cdkDrag >{{ columns.column }}
+                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index)"  cdkDrag >
+                                        {{ columns.column }}
+                                     <!-- <input class="form-control" [(ngModel)]="columns.column" value="" type="text">-->
+
                                         <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
                                                 <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
                                                     <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index)"> Remove</a> 
+                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="renameColumn(index)"> Rename</a> 
                                                 </div>
 
                                             </a>
@@ -210,7 +216,7 @@
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
                                                 <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
-                                                    <a class="btn btn-outline-light mx-0 mb-2" (click)="openSuperScaledModal(aggregateUserModal)" style="text-align: left !important;"> Aggregation</a> 
+                                                    <a class="btn btn-outline-light mx-0 mb-2" (click)="openSuperScaledModal(aggregateUserModal,rows.type)" style="text-align: left !important;"> Aggregation</a> 
                                                     <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedRow(index)"> Remove</a> 
                                                 </div>
 
@@ -549,10 +555,10 @@
                     <div class="card-body p-1">
                         @for(dimen of dimetionMeasure;track dimen;let index = $index){
                         <div class="example-box justify-content-start border-bottom" style="cursor: pointer;"> 
-                           {{dimen.column}}
+                           {{dimen.col_name}}
                            <div class="filter-icons">
                             <i class="fe fe-edit fs-12 text-body-secondary ms-2" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
-                            <i class="fe fe-trash fs-12 text-body-secondary ms-1" (click)="filterDelete(index,dimen.filterId)"></i>
+                            <i class="fe fe-trash fs-12 text-body-secondary ms-1" (click)="filterDelete(index,dimen.filter_id)"></i>
                         </div>
                         </div>
                     }

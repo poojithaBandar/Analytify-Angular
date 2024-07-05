@@ -119,6 +119,7 @@ export class SheetsComponent {
   filterQuerySetId: any;
   measureValues = [] as any;
   SheetSavePlusEnabled = ['Sheet 1'];
+ 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
    if(this.router.url.includes('/workbench/sheets/')){
@@ -1124,7 +1125,6 @@ tableMeasures = [] as any;
     
         this.dataExtraction();
      // }else{
-        console.log("Can't Accept")
      // }
 
    // });
@@ -1162,11 +1162,6 @@ tableMeasures = [] as any;
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
-    console.log(rows)
-    console.log(index)
-    console.log(type)
-    console.log(this.draggedRowsData)
-      this.measureValue = ''; 
       this.measureValues = [];
       this.measureValues = [rows.column,"aggregate",type]
      if(type === ''){
@@ -1202,6 +1197,9 @@ tableMeasures = [] as any;
    this.draggedRows.splice(index, 1);
    this.draggedRowsData.splice(index, 1);
    this.dataExtraction();
+  }
+  renameColumn(index:any){
+
   }
   rightArrow(){
     console.log(this.draggedColumns.length)
@@ -1468,13 +1466,13 @@ sheetSave(){
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
   }
-  this.tabs[this.SheetIndex] = this.sheetTitle;
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
   "sheet_name": this.sheetTitle,
   "filterId":this.filterId,
+  "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "data":{
   "columns": this.draggedColumns,
   "rows": this.draggedRows,
@@ -1522,6 +1520,7 @@ console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
+    this.tabs[this.SheetIndex] = this.sheetTitle;
     if(responce){
       Swal.fire({
         icon: 'success',
@@ -1545,6 +1544,7 @@ if(this.retriveDataSheet_id){
 }else{
   this.retriveDataSheet_id = '';
   this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
+    this.tabs[this.SheetIndex] = this.sheetTitle;
     console.log(responce);
     if(responce){
       Swal.fire({
@@ -1553,7 +1553,7 @@ if(this.retriveDataSheet_id){
         width: '200px',
       })
       this.retriveDataSheet_id = responce.sheet_id;
-      this.sheetRetrive();
+      //this.sheetRetrive();
       this.SheetSavePlusEnabled.splice(0, 1);
     }
     this.saveTableData= [];
@@ -1591,9 +1591,7 @@ if(this.retriveDataSheet_id){
       text: error.error.message,
       width: '200px',
     })
-    this.measureValues = [];
-    this.draggedRowsData = [];
-    this.draggedColumnsData = [];
+   
   }
 }
 )
@@ -1615,6 +1613,7 @@ sheetRetrive(){
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
+        this.dimetionMeasure = responce.filters_data;
         
         this.draggedColumns.forEach((res:any) => {
           this.draggedColumnsData.push([res.column,res.data_type,""])
@@ -1890,8 +1889,7 @@ sheetRetrive(){
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterId.push(responce.filter_id);
-        this.dimetionMeasure.push({"column":this.filterName,"data_type":this.filterType,"filterId":responce.filter_id});
-        console.log(this.dimetionMeasure)
+        this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id});
         this.dataExtraction();
       },
       error: (error) => {
@@ -1934,8 +1932,6 @@ sheetRetrive(){
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
-         // this.dimetionMeasure.push({"column":this.filterName,"data_type":this.filterType,"filterId":responce.filter_id});
-         // console.log(this.dimetionMeasure)
           this.dataExtraction();
         },
         error: (error) => {
@@ -1957,7 +1953,8 @@ sheetRetrive(){
     }
   )
   }
-  openSuperScaledModal(modal: any) {
+  openSuperScaledModal(modal: any,type:any) {
+   // this.measureValue = type;
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -1968,7 +1965,7 @@ openSuperScalededitFilter(modal: any,data:any) {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
   });
-  this.filterName = data.column;
+  this.filterName = data.col_name;
   this.filterType = data.data_type;
   this.filterEditGet();
 }
