@@ -274,3 +274,10 @@ span.time {
   ::-webkit-scrollbar-thumb:hover {
   background: #000; 
   }
+  .custom-table tr {
+    height: 40px; /* Adjust the height as per your requirement */
+  }
+  
+  .custom-table td {
+    padding: 4px 8px 1px 12px; /* Adjust the padding as per your requirement */
+  }

@@ -10,7 +10,7 @@
         </div>
         <div class="new-data-btn">
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="dashboardName" (keyup)="getuserDashboardsListput()" aria-describedby="button-addon2" >
+            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             
           </div>
@@ -28,22 +28,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for(dashboard of savedDashboardList;track dashboard){
-                        <tr>
+                        <tr *ngFor="let dashboard of savedDashboardList | paginate : {
+                            itemsPerPage: itemsPerPage,
+                            currentPage: page,
+                            totalItems: totalItems
+                          }">
                             <td >
                                 <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name | slice:0:15}}</a>
                                </td>
                                <td>{{dashboard.created}}</td>
                             <td>{{dashboard.Modified}}</td>
                             <td>
-                                
-                               <button type="button" class="btn btn-icon btn-secondary rounded-pill" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"><i class="fa fa-trash-o" data-bs-toggle="tooltip" ngbTooltip="Delete database"></i></button> 
+                                <a aria-label="anchor" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                    <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                            </a>
+
                             </td>
                         </tr>
-                    }
+                    
                     </tbody>
                 </table>
             </div>
+            <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeUserDashboardsList((page = $event))"></pagination-controls>
+
         </div>
                 <!-- <div class="">
                    <ul class="list-group" style="max-height: 409px;overflow-y: scroll;">

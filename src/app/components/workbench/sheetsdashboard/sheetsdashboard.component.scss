@@ -132,3 +132,8 @@ gridster-item{
 .sheets-title {
   color: var(--bs-heading-color);
 }
+.sticky-top{
+  position: sticky;
+  top:90px;
+  z-index: 1020;
+}

@@ -6,24 +6,38 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [NgbModule,CommonModule,SharedModule,FormsModule],
+  imports: [NgbModule,CommonModule,SharedModule,FormsModule,NgxPaginationModule],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
 })
 export class DashboardPageComponent implements OnInit{
   savedDashboardList:any[]=[];
   dashboardName :any;
+  itemsPerPage!:number;
+  pageNo = 1;
+  page: number = 1;
+  totalItems:any;
 constructor(private workbechService:WorkbenchService,private router:Router){}
 ngOnInit(){
 this.getuserDashboardsListput();
 }
+pageChangeUserDashboardsList(page:any){
+this.pageNo=page;
+this.getuserDashboardsListput();
+}
+searchDashboarList(){
+  this.pageNo=1;
+  this.getuserDashboardsListput();
+}
 getuserDashboardsListput(){
   const Obj ={
-    search:this.dashboardName
+    search:this.dashboardName,
+    page_no:this.pageNo
   }
   if(Obj.search == '' || Obj.search == null){
     delete Obj.search;
@@ -31,7 +45,9 @@ getuserDashboardsListput(){
   this.workbechService.getuserDashboardsListput(Obj).subscribe(
     {
       next:(data:any) =>{
-        this.savedDashboardList=data
+        this.savedDashboardList=data.sheets
+        this.itemsPerPage = data.items_per_page;
+        this.totalItems = data.total_items;
         console.log('dashboardList',this.savedDashboardList)
 
       },

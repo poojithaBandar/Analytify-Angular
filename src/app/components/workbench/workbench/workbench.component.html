@@ -153,7 +153,7 @@
         </div>
         <div class="new-data-btn">
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup)="getDbConnectionList()">
+            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="getDbConnectionList()">
             <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             
             <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Database</button>
@@ -182,12 +182,26 @@
                             <td>{{database.created_at}}</td>
                             <td>{{database.updated_at}}</td>
                             <td>
-                               <button type="button" class="btn btn-icon btn-primary rounded-pill" style="margin-inline-end: .5rem" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);
-                               "><i class="fa fa-edit" data-bs-toggle="tooltip" ngbTooltip="Edit database"></i></button> 
-                               <button type="button" class="btn btn-icon btn-secondary rounded-pill" (click)="deleteDbConnection(database.database_id)"><i class="fa fa-trash-o" data-bs-toggle="tooltip" ngbTooltip="Delete database"></i></button> 
-                            </td>
+                              <div class="hstack gap-2 fs-1">
+                              <a aria-label="anchor"(click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
+                    class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                    <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
+                               <!-- <button type="button" class="btn btn-icon btn-primary rounded-pill" style="margin-inline-end: .5rem" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);
+                               "><i class="fa fa-edit" data-bs-toggle="tooltip" ngbTooltip="Edit database"></i></button>  -->
+                               <!-- <button type="button" class="btn btn-icon btn-secondary rounded-pill" (click)="deleteDbConnection(database.database_id)"><i class="fa fa-trash-o" data-bs-toggle="tooltip" ngbTooltip="Delete database"></i></button>  -->
+                               <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                        </a>
+                              </div>
+                              </td>
                         </tr>
                     }
+                    <!-- <a aria-label="anchor" href="javascript:void(0);"
+                    class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                    <i class="ri-edit-line"></i></a>
+                    <a aria-label="anchor" href="javascript:void(0);" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light" (click)="click(product.id)">
+                        <i class="ri-delete-bin-7-line"></i>
+                </a> -->
                     </tbody>
                 </table>
             </div>

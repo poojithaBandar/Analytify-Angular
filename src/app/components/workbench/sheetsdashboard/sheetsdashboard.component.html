@@ -1,50 +1,52 @@
 <app-page-header title="Dashboard" title1="home" activeitem="Dashboard"></app-page-header>
 
 <div class="row main-container" >
-    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0">
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0" id="sticky-sidebar">
+      <div class="sticky-top">
         <div class="card mb-0">
-            <div class="card-body p-0">
-                <div class="panel panel-primary">
-                    <div class="tab-menu-heading tab-menu-heading-boxed">
-                        <div class="tabs-menu-boxed">
-                            <ul ngbnav="" class="nav panel-tabs fs-14" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <a href="" id="ngb-nav-0" role="tab" aria-selected="true" aria-disabled="false" class="nav-link active p-2 m-0" aria-controls="ngb-nav-0-panel">Dashboard</a>
-                                </li>
-                                <!-- <li class="nav-item" role="presentation">
-                                    <a href="" id="ngb-nav-1" role="tab" aria-selected="false" aria-disabled="false" class="nav-link p-2" tabindex="-1">Layout</a>
-                                </li> -->
-                              
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel-body tabs-menu-body p-0">
-                        <div class="tab-content">
-                            <div class="card mb-0 p-4 br-0" style="box-shadow: none;">
-                                <h6 class="mb-0">Database</h6>
-                                <p class="mb-0">{{databaseName}}</p>
-                            </div>
-                            <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
-                                <div class="text-wrap">
-                                    <div class="dropdown-samples">
-                                        <ul class="dropdown-menu br-0 draggable-item"
-                                         cdkDropList
-                                         #originList="cdkDropList"
-                                        [cdkDropListData]="dashboardNew"
-                                        [cdkDropListConnectedTo]="[destinationList]"
-                                        (cdkDropListDropped)="drop($event)">
-                                            <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
-                                            
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+          <div class="card-body p-0">
+              <div class="panel panel-primary">
+                  <div class="tab-menu-heading tab-menu-heading-boxed">
+                      <div class="tabs-menu-boxed">
+                          <ul ngbnav="" class="nav panel-tabs fs-14" role="tablist">
+                              <li class="nav-item" role="presentation">
+                                  <a href="" id="ngb-nav-0" role="tab" aria-selected="true" aria-disabled="false" class="nav-link active p-2 m-0" aria-controls="ngb-nav-0-panel">Dashboard</a>
+                              </li>
+                              <!-- <li class="nav-item" role="presentation">
+                                  <a href="" id="ngb-nav-1" role="tab" aria-selected="false" aria-disabled="false" class="nav-link p-2" tabindex="-1">Layout</a>
+                              </li> -->
+                            
+                          </ul>
+                      </div>
+                  </div>
+                  <div class="panel-body tabs-menu-body p-0">
+                      <div class="tab-content">
+                          <div class="card mb-0 p-4 br-0" style="box-shadow: none;">
+                              <h6 class="mb-0">Database</h6>
+                              <p class="mb-0">{{databaseName}}</p>
+                          </div>
+                          <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
+                              <div class="text-wrap">
+                                  <div class="dropdown-samples">
+                                      <ul class="dropdown-menu br-0 draggable-item"
+                                       cdkDropList
+                                       #originList="cdkDropList"
+                                      [cdkDropListData]="dashboardNew"
+                                      [cdkDropListConnectedTo]="[destinationList]"
+                                      (cdkDropListDropped)="drop($event)">
+                                          <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
+                                          <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
+                                          
+                                      </ul>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      </div>
     </div>
     <div class="col-xl-10 col-md-12 p-1 ">
          <div class="card mb-1">

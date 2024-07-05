@@ -197,8 +197,15 @@
                            (cdkDropListDropped)="drop($event)">
                            @for(item of draggedtables;track $index){
                                <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias}}({{item.schema}})
-                                   <i class="mdi mdi-delete" style="color: #db555d;" data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i>
+                                   <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
+
+                                    <a aria-label="anchor" (click)="onDeleteItem($index)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                        </a>
                                </div>
+                               <!-- <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                        </a> -->
                                }
                                @if(!draggedtables.length){
                                <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
@@ -590,8 +597,30 @@
           >
           </button>
         </div>
-        <div class="modal-body p-4">
-            <ul class="dropdown-plus-title">
+        <div class="modal-body p-0">
+            <div class="table-responsive" style="max-height: 210px;">
+                <table class="table table-bordered text-nowrap mb-0 custom-table" >
+                    <tbody>
+                        @for(data of filteredList;track data){
+                         <tr class="border-bottom user-list" >
+                            <td>{{data.column_name }} </td>
+                             <td>
+                                 <div class="hstack justify-content-center fs-1">
+                                     <a aria-label="anchor" (click)="editFilter(data.filter_id);openSuperScaled(editFilters)"
+                                         class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                                         <i class="ri-edit-line"></i></a>
+                                         <a aria-label="anchor" (click)="deleteFilter(data.filter_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light" style="margin-left: 4px;" >
+                                             <i class="ri-delete-bin-7-line"></i>
+                                     </a>
+                                 </div>
+                             </td>
+                         </tr>
+                        }             
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- <ul class="dropdown-plus-title">
                 @for(data of filteredList;track data){
                 <li class="dropdown-plus-title d-flex justify-content-between ">
                     {{data.column_name }} 
@@ -601,7 +630,7 @@
                    </div>
                  </li>
                 }
-            </ul>
+            </ul> -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn ripple btn-primary" (click)="openSuperScaled(content)">Add</button>

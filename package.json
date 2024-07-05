@@ -61,6 +61,7 @@
     "ngx-editor": "^16.0.1",
     "ngx-filepond": "^7.0.3",
     "ngx-owl-carousel-o": "^17.0.0",
+    "ngx-pagination": "^6.0.3",
     "ngx-toastr": "^18.0.0",
     "nouislider": "^15.7.1",
     "npm": "^10.4.0",

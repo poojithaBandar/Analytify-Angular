@@ -55357,3 +55357,22 @@ input[type=range]::-webkit-slider-runnable-track {
 /* end:: quill editor */
 
 /*# sourceMappingURL=style.css.map */
+/* width */
+::-webkit-scrollbar {
+  width: 8px !important;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+  background: #fff !important; 
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+  background: #c0c0c0a8 !important; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+  background: #000; 
+  }
