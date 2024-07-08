@@ -135,14 +135,6 @@ export class SheetsComponent {
           parseInt(this.filterQuerySetId)
           console.log(this.filterQuerySetId)
         }
-      // if(route.snapshot.params['id3']==='null'){
-      //   this.filterQuerySetId = null;
-      // console.log('filterqrysetid',this.filterQuerySetId)
-      // }else{
-      //   this.filterQuerySetId = +atob(route.snapshot.params['id2'])
-      //   console.log('filterqrysetid',this.filterQuerySetId)
-      // }
-      
       }
    }
    if(this.router.url.includes('/workbench/landingpage/sheets/')){
@@ -161,8 +153,30 @@ export class SheetsComponent {
 
   ngOnInit(): void {
     this.columnsData();
-   this.sheetTitle = this.sheetTitle +this.sheetNumber
+    this.sheetTitle = this.sheetTitle +this.sheetNumber;
+    this.getSheetNames();
   }
+ getSheetNames(){
+  const obj={
+    "server_id":this.databaseId,
+    "queryset_id":this.qrySetId,
+}
+  this.workbechService.getSheetNames(obj).subscribe({next: (responce:any) => {
+        console.log(responce);
+        if(responce.data.length>0){
+        this.tabs = responce.data
+        this.sheetTitle = this.tabs[0];
+        this.SheetSavePlusEnabled.splice(0, 1);
+        console.log(this.SheetSavePlusEnabled)
+        this.sheetRetrive();
+  }
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }
+  )
+ }
   goToDataSource(){
     const encodeddbId = btoa(this.databaseId.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString())
@@ -175,100 +189,6 @@ export class SheetsComponent {
     menu.expanded = !menu.expanded;
   }
 
-  private createSvg(): void {
-    this.svg = d3.select("figure#bar")
-    .append("svg")
-    .attr("width", this.width + (this.margin * 2))
-    .attr("height", this.height + (this.margin * 2))
-    .append("g")
-    .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
-}
-
-private drawBars(data: any[]): void {
-  // Create the X-axis band scale
-  console.log(data)
-  const x = d3.scaleBand()
-  .range([0, this.width])
-  .domain(data.map(d => d.col))
-  .padding(0.2);
-
-  // Draw the X-axis on the DOM
-  this.svg.append("g")
-  .attr("transform", "translate(0," + this.height + ")")
-  .call(d3.axisBottom(x))
-  .selectAll("text")
-  .attr("transform", "translate(-10,0)rotate(-45)")
-  .style("text-anchor", "end");
-
-  // Create the Y-axis band scale
-  const y = d3.scaleLinear()
-  .domain([0, 10])
-  .range([this.height, 0]);
-
-  // Draw the Y-axis on the DOM
-  this.svg.append("g")
-  .call(d3.axisLeft(y));
-
-  // Create and fill the bars
-  this.svg.selectAll("bars")
-  .data(data)
-  .enter()
-  .append("rect")
-  .attr("x", (d: any) => x(d.col))
-  .attr("y", (d: any) => y(d.row))
-  .attr("width", x.bandwidth())
-  .attr("height", (d: any) => this.height - y(d.row))
-  .attr("fill", "#d04a35");
-}
-private createSvgPie(): void {
-  this.svg = d3.select("figure#pie")
-  .append("svg")
-  .attr("width", this.widthPie)
-  .attr("height", this.heightPie)
-  .append("g")
-  .attr(
-    "transform",
-    "translate(" + this.widthPie / 2 + "," + this.heightPie / 2 + ")"
-  );
-}
-private createColors(): void {
-  this.colors = d3.scaleOrdinal()
-  .domain(this.chartsData.map((d:any) => d.row.toString()))
-  .range(["#c7d3ec", "#a5b8db", "#879cc4", "#677795", "#5a6782"]);
-}
-private drawChartPie(): void {
-  // Compute the position of each group on the pie:
-  const pie = d3.pie<any>().value((d: any) => Number(d.row));
-
-  // Build the pie chart
-  this.svg
-  .selectAll('pieces')
-  .data(pie(this.chartsData))
-  .enter()
-  .append('path')
-  .attr('d', d3.arc()
-    .innerRadius(0)
-    .outerRadius(this.radius)
-  )
-  .attr('fill', (d: any, i: any) => (this.colors(i)))
-  .attr("stroke", "#121926")
-  .style("stroke-width", "1px");
-
-  // Add labels
-  const labelLocation = d3.arc()
-  .innerRadius(100)
-  .outerRadius(this.radius);
-
-  this.svg
-  .selectAll('pieces')
-  .data(pie(this.chartsData))
-  .enter()
-  .append('text')
-  .text((d: any)=> d.data.col)
-  .attr("transform", (d: any) => "translate(" + labelLocation.centroid(d) + ")")
-  .style("text-anchor", "middle")
-  .style("font-size", 15);
-}
 barChart(){
   this.chartOptions3 = {
     series: [
@@ -408,8 +328,6 @@ barChart(){
   };
 }
 pieChart(){
-  console.log(this.pie)
-  console.log(this.chartId)
   this.chartOptions4={
     series: this.chartsRowData,
     chart: {
@@ -901,64 +819,7 @@ donutChart(){
     ]
   };
 }
-/*private createLineChart(): void {
-  const data = this.chartsData.map((d:any) => ({
-    col: d.col,
-    row: +d.row
-  }));
 
-  const element = document.querySelector('.chart-container');
-
-  if (!element) return;
-
-  const svg = d3.select(element)
-    .append('svg')
-    .attr('width', 600)
-    .attr('height', 400);
-
-  const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-  const width = +svg.attr('width') - margin.left - margin.right;
-  const height = +svg.attr('height') - margin.top - margin.bottom;
-  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
-
-  const x = d3.scalePoint()
-    .domain(data.map((d:any) => d.col))
-    .range([0, width]);
-
-  const y = d3.scaleLinear().range([height, 0]);
-
-  const line = d3.line<{ col: string, row: number }>()
-  .x(d => x(d.col)!)
-  .y(d => y(d.row));
-
-  y.domain([0, d3.max(data, (d:any) => d.row) as any]);
-
-  g.append('g')
-    .attr('transform', `translate(0,${height})`)
-    .call(d3.axisBottom(x));
-
-  g.append('g')
-    .call(d3.axisLeft(y));
-
-  g.append('path')
-    .datum(data)
-    .attr('fill', 'none')
-    .attr('stroke', 'steelblue')
-    .attr('stroke-width', 1.5)
-    .attr('d', line);
-
-  g.selectAll('.dot')
-    .data(data)
-    .enter().append('circle')
-    .attr('cx', (d:any) => {
-      const xValue = x(d.col);
-      if (xValue === undefined) throw new Error("x value is undefined");
-      return xValue;
-    })
-    .attr('cy', (d: any) => y(d.row))
-    .attr('r', 5)
-    .attr('fill', 'steelblue');
-}*/
 tableDimentions = [] as any;
 tableMeasures = [] as any;
   columnsData(){
@@ -1198,8 +1059,9 @@ tableMeasures = [] as any;
    this.draggedRowsData.splice(index, 1);
    this.dataExtraction();
   }
-  renameColumn(index:any){
-
+  renameColumn(index:any,column:any){
+   console.log(index)
+   console.log(column)
   }
   rightArrow(){
     console.log(this.draggedColumns.length)
@@ -1599,6 +1461,8 @@ if(this.retriveDataSheet_id){
 
   }
 sheetRetrive(){
+  this.draggedColumnsData  = [];
+  this.draggedRowsData = [];
   const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
@@ -1607,6 +1471,7 @@ sheetRetrive(){
   this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.retriveDataSheet_id = responce.sheet_id;
+        this.sheetfilter_querysets_id = responce.sheet_filter_quereyset_ids;
         this.chartId = responce.chart_id;
         this.sheetName = responce.sheet_name;
         this.sheetTitle = responce.sheet_name;
@@ -1877,6 +1742,7 @@ sheetRetrive(){
    console.log(this.filterDataArray)
   }
   filterDataPut(){
+   // this.dimetionMeasure = [];
     const obj={
     "filter_id": this.filter_id,
     "database_id": this.databaseId,
@@ -1954,7 +1820,7 @@ sheetRetrive(){
   )
   }
   openSuperScaledModal(modal: any,type:any) {
-   // this.measureValue = type;
+    this.measureValue = type;
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
