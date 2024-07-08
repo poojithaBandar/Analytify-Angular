@@ -76,14 +76,15 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
   },
   error:(error:any)=>{
     console.log(error);
-    if(error){
+    if(error.error.message === 'Account is in In-Active, please Activate your account'){
       Swal.fire({
         icon: 'error',
         title: 'oops!',
         text: error.error.message,
         width: '400px',
       })
-    }
+    }this.router.navigate(['/authentication/email-reactivation'])
+    
   }
 })
 }

@@ -90,13 +90,15 @@ export class DatabaseComponent {
   columnsInFilters = [] as any;
   tableColumnFilter!:boolean;
   columnRowFilter!:any;
-  datasourceFilterId:any;;
+  datasourceFilterId:any;rows: any;
+;
   datasourceFilterIdArray:any[] =[];
   selectedRows = [];
   datasourceQuerysetId :string | null =null;
   filteredList = [] as any;
   editFilterList = [] as any;
   columnWithTablesData = [] as any;
+  isAllSelected: boolean = false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -662,7 +664,7 @@ deleteJoiningRelation(index:number){
 deleteRelation(deleteCondtin:any){
   const obj ={
     conditions_list:this.relationOfTables,
-    delete_condition :deleteCondtin,
+    delete_condition :deleteCondtin[0],
     
   }
   this.workbechService.deleteRelation(obj).subscribe(
@@ -752,7 +754,23 @@ selectedColumnGetRows(col:any,datatype:any){
     }
     })
 }
+updateSelectedRows() {
+  this.selectedRows = this.columnsInFilters
+    .filter((row: { selected: any; }) => row.selected)
+    .map((row: { label: any; }) => row.label);
+  console.log('selected rows', this.selectedRows);
 
+  this.isAllSelected = this.columnsInFilters.every((row: { selected: any; }) => row.selected);
+}
+
+toggleAllRows(event: Event) {
+  const isChecked = (event.target as HTMLInputElement).checked;
+  this.columnsInFilters.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+  this.updateSelectedRows();
+}
+isAnyRowSelected(): boolean {
+  return this.columnsInFilters.some((row: { selected: any; }) => row.selected);
+}
 getSelectedRows() {
   this.selectedRows = this.columnsInFilters
   .filter((row: { selected: any; }) => row.selected)
@@ -909,6 +927,24 @@ deleteFilter(id:any){
   }})
 
 
+}
+
+updateEditSelectedRows() {
+  this.selectedRows = this.editFilterList
+    .filter((row: { selected: any; }) => row.selected)
+    .map((row: { label: any; }) => row.label);
+  console.log('selected rows', this.selectedRows);
+
+  this.isAllSelected = this.editFilterList.every((row: { selected: any; }) => row.selected);
+}
+
+toggleEditAllRows(event: Event) {
+  const isChecked = (event.target as HTMLInputElement).checked;
+  this.editFilterList.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+  this.updateEditSelectedRows();
+}
+isAnyEditRowSelected(): boolean {
+  return this.editFilterList.some((row: { selected: any; }) => row.selected);
 }
 getSelectedRowsFromEdit() {
   this.selectedRows = this.editFilterList

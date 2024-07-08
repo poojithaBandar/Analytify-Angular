@@ -527,20 +527,33 @@
           <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
           </button>
         </div>
-        <div class="modal-body" style="max-height: 350px;overflow-y: scroll;">
-            <ul class="dropdown-plus-title">
-                <!-- @for(table of draggedtables;track table){
-                <li class="dropdown-plus-title">
-                   <h6>{{ table.schema }}.{{ table.alias }}  </h6> 
-              </li> -->
-
+        <div class="modal-body p-0">
+            <!-- <ul class="dropdown-plus-title">
                    @for(column of columnWithTablesData;track column){
                     <input class="custom-control-input" id="customCheck1" type="checkbox">
                 <li><a class="dropdown-item" (click)="selectedColumnGetRows(column.column,column.data_type)">{{ column.column }} ({{column.data_type}})</a></li>
                  }
-            <!-- } -->
-            </ul>
+            </ul> -->
+
+            <div class="table-responsive" style="max-height: 210px;">
+                <table class="table table-bordered text-nowrap mb-0 custom-table" >
+                    @if(columnWithTablesData?.length){
+                    <tbody>
+                        @for(column of columnWithTablesData;track column){
+                         <tr class="border-bottom user-list" >
+                            <td (click)="selectedColumnGetRows(column.column,column.data_type)" style="cursor: pointer;">{{ column.column }} ({{column.data_type}}) </td>
+                         </tr>
+                        }             
+                    </tbody>
+                }@else{
+                    <h6>No data in selected column</h6>
+                }
+                </table>
+            </div>
         </div>
+
+       
+
         <div class="modal-footer">
           <button
             type="button"
@@ -558,8 +571,8 @@
                 <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
                 </button>
               </div>
-              <div class="modal-body" style="max-height: 400px; overflow-y: scroll;">
-                @if(columnsInFilters.length){
+              <div class="modal-body p-0" >
+                <!-- @if(columnsInFilters.length){
                   @for(rows of columnsInFilters;track rows;let i = $index){
                   <div class="form-check">
                       <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
@@ -568,11 +581,46 @@
                 }
                 @else{
                     <h6>No data in selected column</h6>
-                }
+                } -->
               
+
+                <div class="table-responsive" style="max-height: 210px;">
+                    <table class="table table-bordered text-nowrap mb-0 custom-table" >
+                        @if(columnsInFilters?.length){
+                        <tbody>
+                            <tr>
+                                <td>
+                                <div class="form-check">
+                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
+                                </div>
+                                </td>
+                                <td>
+                                    <label for="selectAll" class="form-check-label">Select All</label>
+                                </td>
+                               </tr>
+                            @for(rows of columnsInFilters;track rows;let i = $index){
+                             <tr class="border-bottom user-list" >
+                                <td style="width: 46px;">
+                                    <div class="form-check">
+                                        <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected"(change)="updateSelectedRows()" class="form-check-input">    
+                                    </div>
+                                </td>
+                                <td>
+                                  <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
+                                </td>
+                             </tr>
+                            }             
+                        </tbody>
+                    }@else{
+                        <h6>No data in selected column</h6>
+                    }
+                    </table>
+                </div>
+
               </div>
+              
               <div class="modal-footer">
-                <button type="button" (click)="getSelectedRows()" class="btn ripple btn-primary">Filter Data</button>
+                <button type="button" (click)="getSelectedRows()" [disabled]="!isAnyRowSelected()" class="btn ripple btn-primary">Filter Data</button>
                 <button
                   type="button"
                   class="btn ripple btn-secondary"
@@ -655,15 +703,45 @@
           >
           </button>
         </div>
-        <div class="modal-body">
-            @for(rows of editFilterList;track rows;let i = $index){
+        <div class="modal-body p-0">
+            <!-- @for(rows of editFilterList;track rows;let i = $index){
                 <div class="form-check">
                     <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
                 </div>
-              } 
+              }  -->
+              <div class="table-responsive" style="max-height: 210px;">
+                <table class="table table-bordered text-nowrap mb-0 custom-table" >
+                    <tbody>
+                       <tr>
+                        <td>
+                        <div class="form-check">
+                            <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                        </div>
+                        </td>
+                        <td>
+                            <label for="selectAll" class="form-check-label">Select All</label>
+                        </td>
+                       </tr>
+                        @for(rows of editFilterList;track rows;let i = $index){
+                         <tr class="border-bottom user-list" >
+                           
+                            <td style="width: 46px;">
+                                <div class="form-check">
+                                    <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateEditSelectedRows()" class="form-check-input">    
+                                </div>
+                            </td>
+                            <td>
+                                <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
+                            </td>
+                         </tr>
+                        }             
+                    </tbody>
+                </table>
+            </div>
+
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn ripple btn-primary" (click)="getSelectedRowsFromEdit()">Apply</button>
+          <button type="button" class="btn ripple btn-primary" [disabled]="!isAnyEditRowSelected()" (click)="getSelectedRowsFromEdit()">Apply</button>
           <button
             type="button"
             class="btn ripple btn-secondary"

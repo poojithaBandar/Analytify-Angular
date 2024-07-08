@@ -35,6 +35,11 @@ export const admin: Routes = [
     loadComponent: () =>
       import('./email-activation/email-activation.component').then((m) => m.EmailActivationComponent),
   },
+  {
+    path: 'email-reactivation',
+    loadComponent: () =>
+      import('./email-reactivation/email-reactivation.component').then((m) => m.EmailReactivationComponent),
+  },
 
 ]}
 ];

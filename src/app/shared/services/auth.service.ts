@@ -169,6 +169,10 @@ forgotPassword(data:any){
 resetPassword(token:any,data:any){
   return this.http.put<any>(`${environment.apiUrl}/reset_password/confirm`+'/'+token,data);
 }
+reactivateEmail(data:any){
+  return this.http.post<any>(`${environment.apiUrl}/re_activation`+'/',data);
+
+}
 logOut(){
 localStorage.removeItem('username');
        localStorage.removeItem('currentUser');
