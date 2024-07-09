@@ -119,6 +119,8 @@ export class SheetsComponent {
   filterQuerySetId: any;
   measureValues = [] as any;
   SheetSavePlusEnabled = ['Sheet 1'];
+  oldColumn: any;
+  newColumn: any;
  
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
@@ -1059,10 +1061,6 @@ tableMeasures = [] as any;
    this.draggedRowsData.splice(index, 1);
    this.dataExtraction();
   }
-  renameColumn(index:any,column:any){
-   console.log(index)
-   console.log(column)
-  }
   rightArrow(){
     console.log(this.draggedColumns.length)
     if(this.draggedColumns.length == 6){
@@ -1742,7 +1740,7 @@ sheetRetrive(){
    console.log(this.filterDataArray)
   }
   filterDataPut(){
-   // this.dimetionMeasure = [];
+    this.dimetionMeasure = [];
     const obj={
     "filter_id": this.filter_id,
     "database_id": this.databaseId,
@@ -1844,5 +1842,36 @@ marksColor(color:any){
 console.log(color)
 this.color = color;
 }
+rename(index:any,name:any,event:any){
+  this.oldColumn = '';
+this.oldColumn = name;
+//let rename = this.draggedColumnsData.indexOf((i:any) => i === index);
+//console.log(rename[0])
+let reName=`${this.draggedColumnsData.at(index)}`;
+console.log(reName.split(',')[0])
+}
+renameColumn(index:any,column:any,event:any){
+  this.newColumn = '';
+  this.newColumn = column;
+  if (event.keyCode === 13) {
+  this.renameColumns();
+ }
+}
+renameColumns(){
+  const obj={
+    "database_id":this.databaseId,
+    "queryset_id":this.qrySetId,
+    "old_col_name" :this.oldColumn,
+    "new_col_name":this.newColumn
+}
+  this.workbechService.renameColumn(obj).subscribe({next: (responce:any) => {
+        console.log(responce);
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    }
+  )
+ }
 }
 

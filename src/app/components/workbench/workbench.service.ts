@@ -222,4 +222,9 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/sheetnamelist/`+this.accessToken,obj);
   }
+  renameColumn(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/rename_column/`+this.accessToken,obj);
+  }
 }

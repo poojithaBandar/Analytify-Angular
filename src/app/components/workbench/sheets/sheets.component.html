@@ -159,7 +159,7 @@
                                     <div class="example-box border-end" cdkDrag >
                                       <!--  (cdkDragStarted)="dragStartedColumn(index)"
                                         {{ columns.column }}-->
-                                      <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="renameColumn(index,columns.column)" >
+                                      <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >
 
                                         <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
