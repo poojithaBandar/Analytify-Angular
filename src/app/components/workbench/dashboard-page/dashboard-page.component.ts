@@ -22,6 +22,7 @@ export class DashboardPageComponent implements OnInit{
   pageNo = 1;
   page: number = 1;
   totalItems:any;
+  gridView = false;
 constructor(private workbechService:WorkbenchService,private router:Router){}
 ngOnInit(){
 this.getuserDashboardsListput();

@@ -345,20 +345,25 @@
                 <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
                     <h6 class="fw-bold mb-1">Saved Queries</h6>
                     <div class="view-card">
-                        <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Recently Viewed</a> -->
-                        <a class="">
-                            <span class="add-txt text-info me-2">View All <i class="fa fa-angle-double-right"> </i></span>
-                        </a>
+                        @if(!showAllSavedQueries){
+                            <a class="">
+                                <span class="add-txt text-info me-2" (click)="showAllSavedQueries=!showAllSavedQueries">Show Less <i class="fa fa-angle-double-right"> </i></span>
+                            </a>
+                            } @if(showAllSavedQueries){
+                            <a class="">
+                                <span class="add-txt text-info me-2" (click)="showAllSavedQueries=!showAllSavedQueries">View All <i class="fa fa-angle-double-right"> </i></span>
+                            </a>
+                        }
                     </div>
                 </div>
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-3.jpg" class="card-img-top " alt="img"> -->
+                <div *ngFor="let savedQuery of savedQueryList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div *ngIf="showAllSavedQueries && i < 3" class="card img-shadow">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1">Title</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified 17 days ago </p>
-                          </div>
+                            <div class="dashboard-card-title">
+                                <h5 class="card-title fs-14 mb-1" ngbTooltip="{{savedQuery.custom_query}}" 
+                                style="cursor: pointer;color: #05aff8;"> {{savedQuery.custom_query | slice:0:20}}</h5>
+                                <p class="card-text fs-11 fw-300 ">Modified on {{savedQuery.modified}} </p>
+                              </div>
                           <div class="dashboard-option">
                             <div class="d-flex justify-content-end p-1" ngbDropdown>
                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -366,23 +371,21 @@
                                         class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                 </a>
                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Delete</a>
+                                    <a class="dropdown-item" ngbDropdownItem ><i class="fe fe-upload"></i> View Query</a>
+                                    <a class="dropdown-item" ngbDropdownItem ><i class="fe fe-trash"></i> Delete</a>
                                 </div>
                             </div>
                           </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div class="card img-shadow">
+                    <div *ngIf="!showAllSavedQueries" class="card  img-shadow">
                         <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1">Title</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified 23 days ago </p>
-                          </div>
+                            <div class="dashboard-card-title">
+                                <h5 class="card-title fs-14 mb-1" ngbTooltip="{{savedQuery.custom_query}}" 
+                                style="cursor: pointer;color: #05aff8;"> {{savedQuery.custom_query | slice:0:20}}</h5>
+                                <p class="card-text fs-11 fw-300 ">Modified on {{savedQuery.odified}} </p>
+                              </div>
                           <div class="dashboard-option">
                             <div class="d-flex justify-content-end p-1" ngbDropdown>
                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -390,39 +393,18 @@
                                         class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                 </a>
                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
+                                    <a class="dropdown-item" ngbDropdownItem ><i class="fe fe-upload"></i> View Query</a>
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
+                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+                                    <a class="dropdown-item" ngbDropdownItem ><i class="fe fe-trash"></i> Delete</a>
                                 </div>
                             </div>
                           </div>
                         </div>
+                        
                     </div>
                 </div>
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-5.jpg" class="card-img-top" alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                          <div class="dashboard-card-title">
-                            <h5 class="card-title fs-14 mb-1">Title</h5>
-                            <p class="card-text fs-11 fw-300 ">Modified 22 days ago </p>
-                          </div>
-                          <div class="dashboard-option">
-                            <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                    aria-haspopup="true" aria-expanded="false" class=""><i
-                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                </a>
-                                <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-trash"></i> Delete</a>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
+               
             </div>
         </div>
 
@@ -435,7 +417,7 @@
                     </a>
                 </div>
                 <div class="card-body mb-0 p-0 ">
-                    <div class="table-responsive" style="height: 275px; overflow: hidden;">
+                    <div class="table-responsive" style="height: 290px; overflow: hidden;">
                         <table class="table border text-nowrap text-md-nowrap mb-0">
                             <tbody>
                                 @for(database of connectionList;track database){
@@ -443,7 +425,13 @@
                                     <td>
                                         <a  style="color: #05aff8;" (click)="getTablesFromConnectedDb(database.database_id)" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                        </td>
-                                    <td>{{database.server_type}}</td>
+                                       <td *ngIf="database.server_type === 'POSTGRESQL'">
+                                        <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
+                                    </td>
+                                    <td *ngIf="database.server_type === 'ORACLE'">
+                                      <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
+                                  </td>
+                                    <!-- <td>{{database.server_type}}</td> -->
                                     
                                    
                                 </tr>

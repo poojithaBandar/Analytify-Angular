@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule, PaginatePipe, PaginationControlsComponent } from 'ngx-pagination';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sheets-list-page',
@@ -22,8 +23,8 @@ export class SheetsListPageComponent implements OnInit {
   pageNo = 1;
   page: number = 1;
   totalItems:any;
-
-constructor(private workbechService:WorkbenchService){}
+  gridView = false;
+constructor(private workbechService:WorkbenchService,private router:Router){}
 
 ngOnInit(){
 this.getUserSheetsList();
@@ -66,5 +67,50 @@ getUserSheetsList(){
     }
     })
 }
+viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
+  const encodedServerId = btoa(serverId.toString());
+  const encodedQuerySetId = btoa(querysetId.toString());
+  const encodedSheetId = btoa(sheetId.toString());
+  const encodedSheetName = btoa(sheetname);
 
+  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
+}
+deleteSheet(serverId:any,qurysetId:any,sheetId:any){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result)=>{
+    if(result.isConfirmed){
+      this.workbechService.deleteSheet(serverId,qurysetId,sheetId)
+      .subscribe(
+        {
+          next:(data:any) => {
+            console.log(data);      
+            if(data){
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'Sheet Deleted Successfully',
+                width: '400px',
+              })
+            }
+            this.getUserSheetsList();
+          },
+          error:(error:any)=>{
+            Swal.fire({
+              icon: 'warning',
+              text: error.error.message,
+              width: '300px',
+            })
+            console.log(error)
+          }
+        } 
+      )
+    }})
+}
 }

@@ -92,6 +92,12 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./sheets-list-page/sheets-list-page.component').then((m)=>m.SheetsListPageComponent)
 },
+{
+  path: 'saved-queries',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./saved-queries/saved-queries.component').then((m)=>m.SavedQueriesComponent)
+},
  
  ]}
  ];

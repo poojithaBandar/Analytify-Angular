@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { SharedModule } from '../../../shared/sharedmodule';
 
 @Component({
   selector: 'app-email-reactivation',
   standalone: true,
-  imports: [FormsModule,CommonModule,ReactiveFormsModule],
+  imports: [FormsModule,CommonModule,ReactiveFormsModule,SharedModule],
   templateUrl: './email-reactivation.component.html',
   styleUrl: './email-reactivation.component.scss'
 })

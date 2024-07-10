@@ -513,6 +513,7 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
         chartId:copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
+        tableData:copy.tableData,
         chartData:copy.chartOptions?.chartData || [],
       };
     //   if(element.chartOptions?.chart?.type === 'bar'){

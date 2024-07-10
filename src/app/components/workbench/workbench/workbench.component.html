@@ -151,7 +151,13 @@
         <div class="connect-txt">
           <h4 class="card-title mt-2">Connected Database</h4>
         </div>
-        <div class="new-data-btn">
+        <div class="new-data-btn d-flex text-align-center">
+          <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-1" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-3"><i class="fa fa-th-large"></i></button>
+
+          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-1" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-3"><i class="fa fa-th-large"></i></button>
+
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="getDbConnectionList()">
             <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
@@ -161,6 +167,7 @@
         </div>
     </div>
         <div class="card-body">
+          @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
                     <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
@@ -173,12 +180,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for(database of connectionList;track database){
-                        <tr>
+                        <tr *ngFor="let database of connectionList | paginate : {
+                          itemsPerPage: itemsPerPage,
+                          currentPage: page,
+                          totalItems: totalItems
+                        }">
                             <td (click)="getTablesFromConnectedDb(database.database_id)">
                                 <a  style="color: #05aff8;" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                </td>
-                            <td>{{database.server_type}}</td>
+                            <td *ngIf="database.server_type === 'POSTGRESQL'">
+                              <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
+                          </td>
+                          <td *ngIf="database.server_type === 'ORACLE'">
+                            <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
+                        </td>
                             <td>{{database.created_at}}</td>
                             <td>{{database.updated_at}}</td>
                             <td>
@@ -186,103 +201,88 @@
                               <a aria-label="anchor"(click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
                     class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                     <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
-                               <!-- <button type="button" class="btn btn-icon btn-primary rounded-pill" style="margin-inline-end: .5rem" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);
-                               "><i class="fa fa-edit" data-bs-toggle="tooltip" ngbTooltip="Edit database"></i></button>  -->
-                               <!-- <button type="button" class="btn btn-icon btn-secondary rounded-pill" (click)="deleteDbConnection(database.database_id)"><i class="fa fa-trash-o" data-bs-toggle="tooltip" ngbTooltip="Delete database"></i></button>  -->
                                <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                 <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                         </a>
                               </div>
                               </td>
                         </tr>
-                    }
-                    <!-- <a aria-label="anchor" href="javascript:void(0);"
-                    class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                    <i class="ri-edit-line"></i></a>
-                    <a aria-label="anchor" href="javascript:void(0);" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light" (click)="click(product.id)">
-                        <i class="ri-delete-bin-7-line"></i>
-                </a> -->
+                    
                     </tbody>
                 </table>
             </div>
-        </div>
-                <!-- <div class="">
-                   <ul class="list-group" style="max-height: 409px;overflow-y: scroll;">
-                        <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
-                        @for(database of connectionList;track database){
-                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
-                        }
-                        
-                    </ul>
-                </div> -->
-                <!-- <div class="card-body">
-                    <div class="text-wrap">
-                        <div class="dropdown-samples">
-                            <ul class="dropdown-menu dropdown-scroll">
-                                <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
-                                <li>
-                                    @for(database of connectionList;track database){
-                                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
-                                        }
-                                </li>
-                            </ul>               
-                        </div>
-                    </div>
-                </div> -->
-    </div>
-    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-                <div class="">
-                    <ul class="list-group">
-                        <li class="list-group-item active">Relational Database</li>
-                        <li class="list-group-item" style="background-color: #e7ffe7;">Oracle</li>
-                        <li class="list-group-item">DB2</li>
-                        <li class="list-group-item">PMySQL</li>
-                        <li class="list-group-item">SQL Server</li>
-                        <li class="list-group-item">Access</li>
-                        <li class="list-group-item" (click)="openPostgreSql()" style="background-color: #e7ffe7;">PostgreSQL</li>
-                        <li class="list-group-item">Sybase</li>
-                        <li class="list-group-item">Informix</li>
-                    </ul>
+          }
+          @if(gridView){
+                <div class="row">
+                  @for(database of connectionList;track database){
+                    <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-3">
+                        <div class="card user-card shadow-none">
+                            <div class="user-image">
+                              <div class="card-icon-top">   </div>
+                                <span *ngIf="database.server_type === 'ORACLE'" class="avatar avatar-xl rounded-circle">
+                                  <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt="" class="rounded-circle"></span>
+                                  <span *ngIf="database.server_type === 'POSTGRESQL'" class="avatar avatar-xl rounded-circle">
+                                    <img src="./assets/images/charts/post-tiled-icon.jpg" alt="" class="rounded-circle"></span>
+                            </div>
+                            <div class="card-body p-3 mt-3 text-center">
+                                <p class="text-muted text-center mb-0">Server</p>
+                                <a (click)="getTablesFromConnectedDb(database.database_id)" class="fs-18 fw-bold d-block">{{database.display_name | slice:0:15}}</a>
+                            </div>
+                            <div class=" p-2 text-center">
+                              <div class="row ">
+                                <div class="col-md-6">
+                                  <span class="fw-semibold fs-14">Server Type: </span>
+                                </div>
+                                <div class="col-md-6">
+                                  <span class="fs-15">{{database.server_type}} </span>
+                                </div>
+                              </div>
+                              <div class="row ">
+                                <div class="col-md-6">
+                                    <span class="fw-semibold fs-14">Created on : </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="fs-15">{{database.created_at}}</span>
+                                </div>
+                              </div>     
+                              <div class="row ">
+                                <div class="col-md-6">
+                                  <span class="fw-semibold fs-14">Last Modified : </span>
+                                </div>
+                                <div class="col-md-6">
+                                  <span class="fs-15">{{database.updated_at}}</span>
+                                </div>
+                              </div>                               
+                              </div>
+                                <div class=" text-center p-2 d-flex justify-content-center gap-2 fs-1" >
+                                  <a aria-label="anchor"(click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
+                              class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                              <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
+                                         <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                          <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                                  </a>
+                                </div>
+                          </div>
+                      </div>
+                    }
                 </div>
-    </div> -->
-    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-            <div class="">
-                <ul class="list-group">
-                    <li class="list-group-item active">Program Data Source&Others</li>
-                    <li class="list-group-item">Java API</li>
-                    <li class="list-group-item">Hibernate</li>
-                    <li class="list-group-item">Webservice Data Source</li>
-                    <li class="list-group-item">SOA Data Source</li>
-                    <li class="list-group-item">Analytics Data Source</li>
-                    <li class="list-group-item">ODBC Data Source</li>
-                    <li class="list-group-item">JNDI Data Source</li>
-                    <li class="list-group-item">SAp Data Source</li>
-                </ul>
+          }
+          <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
+
         </div>
     </div>
-    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-            <div class="">
-                <ul class="list-group">
-                    <li class="list-group-item active">NoSQL Database</li>
-                    <li class="list-group-item">MongoDB</li>
-                    <li class="list-group-item">SQLite</li>
-                    <li class="list-group-item">Cassandra</li>
-                </ul>
-                <ul class="list-group">
-                    <li class="list-group-item active">Multi-dimensional Database</li>
-                    <li class="list-group-item">SAP HANA</li>
-                    <li class="list-group-item">SAP BW</li>
-                    <li class="list-group-item">SSAS</li>
-                    <li class="list-group-item">EssBase</li>
-                </ul>
-        </div>
-    </div> -->
-       
     </div>
+
   </div>
+  
+
 
 
 }
+
+
+
+
   <!-- screen3 -->
   @if(openPostgreSqlForm){
     <div class="row main-container" >
@@ -350,6 +350,7 @@
           </div>
       </div>
   </div>
+  
     }
 
 

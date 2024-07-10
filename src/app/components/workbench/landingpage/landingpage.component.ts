@@ -19,8 +19,10 @@ export class LandingpageComponent implements OnInit {
 userSheetsList :any[] =[];
 savedDashboardList: any[] =[];
 connectionList:any[]=[];
+savedQueryList:any[]=[];
 showAllSheets = true;
 showAllDasboards = true;
+showAllSavedQueries = true;
 wholeSearch:any
 constructor(private router:Router,private workbechService:WorkbenchService){
 }
@@ -29,10 +31,12 @@ ngOnInit(){
   this.getuserSheets();
   this.getuserDashboardsList();
   this.getDbConnectionList();
+  this.getSavedQueries();
 }
 totalSearch(){
   this.getuserSheets();
   this.getuserDashboardsList();
+  this.getSavedQueries();
 }
 getDbConnectionList(){
   const Obj ={
@@ -107,6 +111,29 @@ getuserDashboardsList(){
       })
     }
     })
+}
+getSavedQueries(){
+  const Obj ={
+    search : this.wholeSearch,
+  }
+  if(Obj.search == '' || Obj.search == null){
+    delete Obj.search;
+  }
+  this.workbechService.getSavedQueryList(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.savedQueryList = data.sheets
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
 }
 viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   const encodedServerId = btoa(serverId.toString());

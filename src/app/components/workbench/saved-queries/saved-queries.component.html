@@ -1,0 +1,59 @@
+<app-page-header title="Database Connections" title1="home" activeitem="Data Source"></app-page-header>
+
+<div class="main-container container-fluid">
+    <div class="row" class="card" style="padding: 20px;">
+    <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+      <div class="d-flex justify-content-between px-5">
+        <div class="connect-txt">
+          <h4 class="card-title mt-2">Saved Queries</h4>
+        </div>
+        <div class="new-data-btn">
+          <div class="input-group">
+            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="searchName" aria-describedby="button-addon2" (keyup.enter)="getSavedQueries()">
+            <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+          </div>
+        </div>
+    </div>
+        <div class="card-body">
+            <div class="table-responsive" style="height: 26rem;">
+                <table class="table border text-nowrap text-md-nowrap mb-0">
+                    <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
+                        <tr>
+                            <th>Query</th>
+                            <th>Created at</th>
+                            <th>Last Modified</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of savedQueryList | paginate : {
+                            itemsPerPage: itemsPerPage,
+                            currentPage: page,
+                            totalItems: totalItems
+                          }">
+                            <td>
+                                <a  style="color: #05aff8;" ngbTooltip="{{data.custom_query}}"> {{data.custom_query | slice:0:15}}</a>
+                               </td>
+                         
+                            <td>{{data.created}}</td>
+                            <td>{{data.modified}}</td>
+                            <td>
+                              <div class="hstack gap-2 fs-1">
+                              <a aria-label="anchor"
+                    class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                    <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
+                               <a aria-label="anchor"  class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                        </a>
+                              </div>
+                              </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeSavedQueries((page = $event))"></pagination-controls>
+
+        </div>
+    </div>
+    </div>
+  </div>

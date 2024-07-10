@@ -19,10 +19,11 @@ import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule],
+  imports: [RouterModule,NgbModule,SharedModule,FormsModule,CdkDropListGroup, CdkDropList, CdkDrag,GalleryModule,LightboxModule,ToastrModule,CommonModule,NgxPaginationModule],
   templateUrl: './workbench.component.html',
   styleUrl: './workbench.component.scss'
 })
@@ -52,6 +53,12 @@ export class WorkbenchComponent implements OnInit{
   showPassword1 = false;
   toggleClass = "off-line";
   toggleClass1 = "off-line";
+  gridView = false;
+
+  itemsPerPage!:number;
+  pageNo = 1;
+  page: number = 1;
+  totalItems:any;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){ 
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/work-bench/view-connections')){
@@ -299,10 +306,14 @@ export class WorkbenchComponent implements OnInit{
    this.getDbConnectionList();
   }
 
-
+  pageChangegetconnectionList(page:any){
+    this.pageNo=page;
+    this.getDbConnectionList
+  }
   getDbConnectionList(){
     const Obj ={
-      search : this.searchDbName
+      search : this.searchDbName,
+      page_no:this.pageNo
     }
     if(Obj.search == '' || Obj.search == null){
       delete Obj.search;
@@ -310,7 +321,10 @@ export class WorkbenchComponent implements OnInit{
     this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
       next:(data)=>{
         console.log(data);
-        this.connectionList = data.connections
+        this.connectionList = data.sheets;
+        this.itemsPerPage = data.items_per_page;
+        this.totalItems = data.total_items
+        console.log('sheetsList',data)
        },
       error:(error)=>{
         console.log(error);
