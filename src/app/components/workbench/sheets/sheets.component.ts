@@ -121,6 +121,8 @@ export class SheetsComponent {
   SheetSavePlusEnabled = ['Sheet 1'];
   oldColumn: any;
   newColumn: any;
+  selectedTabIndex: any;
+  isAllSelected: boolean = false;
  
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
@@ -1029,11 +1031,15 @@ tableMeasures = [] as any;
       this.measureValues = [rows.column,"aggregate",type]
      if(type === ''){
       this.draggedRowsData[index] = [rows.column,rows.data_type,type];
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type};
+      this.dataExtraction();
+     }else if(type === '-Select-'){
+      this.draggedRowsData[index] = [rows.column,rows.data_type,''];
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:''};
       this.dataExtraction();
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-  
     this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type};
     console.log(this.draggedRows)
     this.dataExtraction();
@@ -1131,6 +1137,7 @@ tableMeasures = [] as any;
       this.sheetNumber+=1;
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+       this.selectedTabIndex = this.SheetIndex + 1;
     }
   }
   sheetNameChange(name:any,event:any){
@@ -1179,6 +1186,7 @@ tableMeasures = [] as any;
       }})  
   }
   onChange(event:any){
+    this.sheetName = '';
     console.log(event)
     if(event.index === -1){
      this.retriveDataSheet_id = 1;
@@ -1441,8 +1449,8 @@ if(this.retriveDataSheet_id){
     this.donutYaxis =[];
     this.donutXaxis =[];
     this.measureValues = [];
-    this.draggedRowsData = [];
-    this.draggedColumnsData = [];
+  //  this.draggedRowsData = [];
+   // this.draggedColumnsData = [];
   },
   error: (error) => {
     console.log(error);
@@ -1461,6 +1469,7 @@ if(this.retriveDataSheet_id){
 sheetRetrive(){
   this.draggedColumnsData  = [];
   this.draggedRowsData = [];
+  this.getChartData();
   const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
@@ -1690,6 +1699,7 @@ sheetRetrive(){
       },
       error: (error) => {
         console.log(error);
+        this.getChartData();
       }
     }
   )
@@ -1728,6 +1738,11 @@ sheetRetrive(){
       }
     }
   )
+  }
+  toggleEditAllRows(event:any){
+    this.isAllSelected = !this.isAllSelected;
+    this.filterData.forEach((element:any) => element['selected'] = this.isAllSelected);
+    console.log(this.filterData)
   }
   filterDataArray = [] as any;
   filterCheck(event:any,data:any){
@@ -1818,7 +1833,12 @@ sheetRetrive(){
   )
   }
   openSuperScaledModal(modal: any,type:any) {
+    if(type === undefined){
+      this.measureValue = '-Select-';
+    }else{
     this.measureValue = type;
+    }
+    console.log(this.measureValue)
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -1850,6 +1870,7 @@ this.oldColumn = name;
 let reName=`${this.draggedColumnsData.at(index)}`;
 console.log(reName.split(',')[0])
 }
+
 renameColumn(index:any,column:any,event:any){
   this.newColumn = '';
   this.newColumn = column;
@@ -1866,6 +1887,7 @@ renameColumns(){
 }
   this.workbechService.renameColumn(obj).subscribe({next: (responce:any) => {
         console.log(responce);
+        this.columnsData();
       },
       error: (error) => {
         console.log(error);

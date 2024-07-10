@@ -97,6 +97,40 @@
                           <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
                           </button>
                         </div>
+                       <!-- <div class="modal-body p-0">
+                              <div class="table-responsive" style="max-height: 400px;">
+                                <table class="table table-bordered text-nowrap mb-0 custom-table" >
+                                    <tbody>
+                                       <tr>
+                                        <td>
+                                        <div class="form-check">
+                                            <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                        </div>
+                                        </td>
+                                        <td>
+                                            <label for="selectAll" class="form-check-label">Select All</label>
+                                        </td>
+                                       </tr>
+                                       @for(data of filterData;track data){
+                                        @if(data?data:''){
+                                         <tr class="border-bottom user-list" >
+                                           
+                                            <td style="width: 46px;">
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                                            </td>
+                                         </tr>
+                                          }
+                                        }             
+                                    </tbody>
+                                </table>
+                            </div>
+                
+                        </div>-->
                         <div class="modal-body" style="height: 500px; overflow: scroll;">
                             @for(data of filterData;track data){
                                 @if(data?data:''){
@@ -156,10 +190,10 @@
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box border-end" cdkDrag >
-                                      <!--  (cdkDragStarted)="dragStartedColumn(index)"
-                                        {{ columns.column }}-->
-                                      <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >
+                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index)" cdkDrag >
+                                       
+                                        {{ columns.column }}
+                                     <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
 
                                         <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -206,11 +240,12 @@
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index)" cdkDrag>
+                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index)"  cdkDrag>
                                         @if(rows.type){
                                             {{ rows.type }} ({{rows.column}})
-                                        }@else{
-                                        {{ rows.column }}
+                                        }@else{   
+                                             {{ rows.column }}
+                                       <!-- <input type="text" class="form-control example-box1 border-end" [(ngModel)]="rows.column" value="" (click)="rename(index,rows.column,$event)" (keydown)="renameColumn(index,rows.column,$event)" >-->
                                         }
                                         <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -237,7 +272,7 @@
                                                    <div class="aggregate-card mt-3">
                                                     <p class="fw-semibold mb-1 ">Aggregate</p>
                                                     <select  class="form-control" [(ngModel)]="measureValue"  (change)="rowMeasuresCount(rows,index,measureValue)">
-                                                        <option [selected] value="">-Select-</option>
+                                                        <option [selected] value="-Select-">-Select-</option>
                                                         <option value="sum">Sum</option>
                                                         <option value="avg">Avg</option>
                                                         <option value="min">Min</option>
@@ -478,10 +513,10 @@
         }      
                  </div>
                     <div class="card-footer d-flex p-2">
-                        <mat-tab-group [selectedIndex]="selected.value"
+                        <mat-tab-group [selectedIndex]="selectedTabIndex"
                         (selectedIndexChange)="selected.setValue($event)"
                         (selectedTabChange)="onChange($event);" 
-                        (click)="getChartData()">
+                        >
                         @for(tab of tabs;track tab; let index = $index){
            <mat-tab  [label]="tab ">
           <!--  <br>  <br>
@@ -612,22 +647,22 @@
                             <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                             </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length !==2">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                             </div>
-                            <div class="col-3 px-2 mt-2">
+                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
                                 <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                             </div>
                             <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
