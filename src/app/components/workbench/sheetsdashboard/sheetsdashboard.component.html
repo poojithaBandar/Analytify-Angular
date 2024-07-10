@@ -82,14 +82,6 @@
             <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
             <!-- <a mat-mini-fab (click)="addItem()" class="btn btn-blue-light mb-0 me-3" ><i class="fa fa-plus"></i> Add</a>  -->
         </div>
-        <!-- <div class="options-header" >
-          <button mat-raised-button color="accent" (click)="pushItem()" class="add-button cols-2">
-            Resize first item and push others
-          </button>
-          <button mat-mini-fab (click)="addItem()" class="add-button cols-2">
-            add
-          </button>
-        </div> -->
         
         
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList" 
@@ -133,24 +125,26 @@
                   (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div> -->
                   <div *ngIf="item['chartType'] === 'Table'">
-                    <table>
-                        <thead>
-                          <tr>
-                            @for(column of item.tableData?.headers;track column){
-                            <th>{{ column }}</th>
-                            }
-                          </tr>
-                        </thead>
-                        <tbody>
-                            @for(row of item.tableData?.rows;track row){
+                      <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
+                        <table class="table border text-nowrap text-md-nowrap mb-0">
+                            <thead>
+                              <tr>
+                                @for(column of item.tableData?.headers;track column){
+                                <th>{{ column }}</th>
+                                }
+                              </tr>
+                            </thead>
+                            <tbody>
+                                 @for(row of item.tableData?.rows;track row){
                           <tr>
                             @for(column of item.tableData?.headers;track column){
                             <td>{{ row[column] }}</td>
                             }
                           </tr>
                         }
-                        </tbody>
-                      </table>
+                            </tbody>
+                        </table>
+                    </div>
                     <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
                     </div>
                   <div *ngIf="item.chartOptions">

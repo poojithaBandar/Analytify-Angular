@@ -1,4 +1,4 @@
-<app-page-header title="Database" title1="home" activeitem="dashboard"></app-page-header>
+<app-page-header title="Dashboard List" title1="home" activeitem="dashboard"></app-page-header>
 
 
 <div class="main-container container-fluid">
@@ -46,10 +46,20 @@
                                <td>{{dashboard.created}}</td>
                             <td>{{dashboard.Modified}}</td>
                             <td>
-                                <a aria-label="anchor" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                    <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                            </a>
-
+                                <div class="hstack gap-2 fs-1">
+                            
+                                    <a aria-label="anchor"
+                                    (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"
+                                        class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                                        <i class="ri-edit-line" ngbTooltip="Edit"></i></a>
+                            
+                                    <a aria-label="anchor"
+                                        (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"
+                                        class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                        <i class="ri-delete-bin-7-line" ngbTooltip="Delete"></i>
+                                    </a>
+                            
+                                </div>
                             </td>
                         </tr>
                     

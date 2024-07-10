@@ -528,12 +528,6 @@
           </button>
         </div>
         <div class="modal-body p-0">
-            <!-- <ul class="dropdown-plus-title">
-                   @for(column of columnWithTablesData;track column){
-                    <input class="custom-control-input" id="customCheck1" type="checkbox">
-                <li><a class="dropdown-item" (click)="selectedColumnGetRows(column.column,column.data_type)">{{ column.column }} ({{column.data_type}})</a></li>
-                 }
-            </ul> -->
 
             <div class="table-responsive" style="max-height: 210px;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table" >
@@ -572,18 +566,6 @@
                 </button>
               </div>
               <div class="modal-body p-0" >
-                <!-- @if(columnsInFilters.length){
-                  @for(rows of columnsInFilters;track rows;let i = $index){
-                  <div class="form-check">
-                      <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
-                  </div>
-                } 
-                }
-                @else{
-                    <h6>No data in selected column</h6>
-                } -->
-              
-
                 <div class="table-responsive" style="max-height: 210px;">
                     <table class="table table-bordered text-nowrap mb-0 custom-table" >
                         @if(columnsInFilters?.length){
@@ -668,17 +650,6 @@
                 </table>
             </div>
 
-            <!-- <ul class="dropdown-plus-title">
-                @for(data of filteredList;track data){
-                <li class="dropdown-plus-title d-flex justify-content-between ">
-                    {{data.column_name }} 
-                   <div class="filter-child-icon">
-                    <i class="fa fa-edit me-2 text-info" (click)="editFilter(data.filter_id);openSuperScaled(editFilters)" data-bs-toggle="tooltip" ngbTooltip="Edit"></i>
-                    <i class="fa fa-trash text-danger" (click)="deleteFilter(data.filter_id)" data-bs-toggle="tooltip" ngbTooltip="Delete"></i>
-                   </div>
-                 </li>
-                }
-            </ul> -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn ripple btn-primary" (click)="openSuperScaled(content)">Add</button>

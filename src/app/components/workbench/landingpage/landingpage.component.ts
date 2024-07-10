@@ -47,7 +47,7 @@ getDbConnectionList(){
   }
   this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
     next:(data)=>{
-      this.connectionList = data.connections
+      this.connectionList = data.sheets
       console.log('jdhcvjsh',this.connectionList);
 
      },
@@ -240,5 +240,18 @@ viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
           } 
         )
       }})
+  }
+
+  viewAllSheets(){
+    this.router.navigate(['/workbench/sheets-dashboard']) 
+
+  }
+  viewAllDashboards(){
+    this.router.navigate(['/workbench/dashboard-page']) 
+
+  }
+  viewAllSavedQueries(){
+    this.router.navigate(['/workbench/saved-queries']) 
+
   }
 }

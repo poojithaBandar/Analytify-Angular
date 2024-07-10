@@ -38,7 +38,9 @@ constructor(private workbechService:WorkbenchService){}
     this.workbechService.getSavedQueryList(Obj).subscribe({
       next:(data)=>{
         console.log(data);
-        this.savedQueryList = data.sheets
+        this.savedQueryList = data.sheets;
+        this.itemsPerPage = data.items_per_page;
+        this.totalItems = data.total_items
        },
       error:(error)=>{
         console.log(error);
