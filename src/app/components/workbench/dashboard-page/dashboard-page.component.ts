@@ -18,7 +18,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 export class DashboardPageComponent implements OnInit{
   savedDashboardList:any[]=[];
   dashboardName :any;
-  itemsPerPage!:number;
+  itemsPerPage!:any;
   pageNo = 1;
   page: number = 1;
   totalItems:any;
@@ -38,10 +38,15 @@ searchDashboarList(){
 getuserDashboardsListput(){
   const Obj ={
     search:this.dashboardName,
-    page_no:this.pageNo
+    page_no:this.pageNo,
+    page_count:this.itemsPerPage
+
   }
   if(Obj.search == '' || Obj.search == null){
     delete Obj.search;
+  }
+  if(Obj.page_count == undefined || Obj.page_count == null){
+    delete Obj.page_count;
   }
   this.workbechService.getuserDashboardsListput(Obj).subscribe(
     {
@@ -107,5 +112,8 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   const encodedDashboardId = btoa(dashboardId.toString());
 
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedDashboardId])
+}
+dashboardRoute(){
+  
 }
 }

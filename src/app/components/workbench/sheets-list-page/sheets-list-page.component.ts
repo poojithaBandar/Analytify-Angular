@@ -19,7 +19,7 @@ export class SheetsListPageComponent implements OnInit {
   sheetName:any;
   savedSheetsList:any[]=[];
 
-  itemsPerPage!:number;
+  itemsPerPage:any;
   pageNo = 1;
   page: number = 1;
   totalItems:any;
@@ -38,13 +38,20 @@ searchUserList(){
   this.pageNo=1
   this.getUserSheetsList();
 }
+onChangeofPagecount(count:any){
+
+}
 getUserSheetsList(){
   const Obj ={
     search:this.sheetName,
-    page_no:this.pageNo
+    page_no:this.pageNo,
+    page_count:this.itemsPerPage
   }
   if(Obj.search == '' || Obj.search == null){
     delete Obj.search;
+  }
+  if(Obj.page_count == undefined || Obj.page_count == null){
+    delete Obj.page_count;
   }
   this.workbechService.getUserSheetListPut(Obj).subscribe(
     {
@@ -76,41 +83,65 @@ viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
   this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
 }
 deleteSheet(serverId:any,qurysetId:any,sheetId:any){
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!'
-  }).then((result)=>{
-    if(result.isConfirmed){
-      this.workbechService.deleteSheet(serverId,qurysetId,sheetId)
-      .subscribe(
-        {
-          next:(data:any) => {
-            console.log(data);      
-            if(data){
-              Swal.fire({
-                icon: 'success',
-                title: 'Deleted!',
-                text: 'Sheet Deleted Successfully',
-                width: '400px',
-              })
-            }
-            this.getUserSheetsList();
-          },
-          error:(error:any)=>{
-            Swal.fire({
-              icon: 'warning',
-              text: error.error.message,
-              width: '300px',
-            })
-            console.log(error)
-          }
-        } 
-      )
-    }})
+  const obj ={
+    sheet_id:sheetId,
+  }
+  this.workbechService.deleteSheetMessage(obj)
+  .subscribe(
+    {
+      next:(data:any) => {
+        console.log(data);      
+        if(data){
+          Swal.fire({
+            title: 'Are you sure?',
+            text: data.message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+          }).then((result)=>{
+            if(result.isConfirmed){
+              this.workbechService.deleteSheet(serverId,qurysetId,sheetId)
+              .subscribe(
+                {
+                  next:(data:any) => {
+                    console.log(data);      
+                    if(data){
+                      Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Sheet Deleted Successfully',
+                        width: '400px',
+                      })
+                    }
+                    this.getUserSheetsList();
+                  },
+                  error:(error:any)=>{
+                    Swal.fire({
+                      icon: 'warning',
+                      text: error.error.message,
+                      width: '300px',
+                    })
+                    console.log(error)
+                  }
+                } 
+              )
+            }})
+        }
+      },
+      error:(error:any)=>{
+        Swal.fire({
+          icon: 'warning',
+          text: error.error.message,
+          width: '300px',
+        })
+        console.log(error)
+      }
+    } 
+  )
+}
+sheetsRoute(){
+  this.router.navigate(['/workbench/sheets'])  
 }
 }

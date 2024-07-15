@@ -145,7 +145,7 @@
     <!-- ROW-1 OPEN-->
     <div class="col-lg-12 p-0 mt-3">
         <div class="d-flex align-items-center justify-content-end  mb-3">
-            <a class="btn btn-blue-light me-3" (click)="dashboardRoute()" ><i class="fa fa-plus"></i> New Chart</a> 
+            <a class="btn btn-blue-light me-3" (click)="sheetsRoute()" ><i class="fa fa-plus"></i> New Chart</a> 
             <a class="btn btn-blue-light me-3" (click)="newConnections()"> Connect To Database</a>
             <div class="view-card">
                 <div class="input-group">
@@ -177,9 +177,9 @@
                         }
                     </div>
                 </div>
-                <div *ngFor="let dashboardList of savedDashboardList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <ng-container *ngFor="let dashboardList of savedDashboardList;let i = index" >
+                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
                     <div *ngIf="showAllDasboards && i < 3" class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
                           <div class="dashboard-card-title">
                             <h5 class="card-title fs-14 mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"
@@ -195,8 +195,7 @@
                                 </a>
                                 <div class="dropdown-menu" ngbDropdownMenu>
                                     <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+
                                     <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
                                 </div>
                             </div>
@@ -204,8 +203,7 @@
                         </div>
                         
                     </div>
-                    <div *ngIf="!showAllDasboards" class="card  img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                    <div *ngIf="!showAllDasboards && i < 11" class="card  img-shadow">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
                           <div class="dashboard-card-title">
                             <h5 class="card-title fs-14 mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"  (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" style="cursor: pointer;color: #05aff8;"> 
@@ -220,8 +218,7 @@
                                 </a>
                                 <div class="dropdown-menu" ngbDropdownMenu>
                                     <a class="dropdown-item" ngbDropdownItem (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-upload"></i> View Dashboard</a>
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-edit"></i> Edit </a> -->
-                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"><i class="fe fe-upload"></i> Export</a> -->
+
                                     <a class="dropdown-item" ngbDropdownItem (click)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"><i class="fe fe-trash"></i> Delete</a>
                                 </div>
                             </div>
@@ -229,18 +226,14 @@
                         </div>       
                     </div>
                 </div>
-               
-                <div  *ngIf="!showAllDasboards && savedDashboardList.length > 9" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                <div class="card  img-shadow">
-                    <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                    <div class="card-body p-2 d-flex align-items-center justify-content-between" >
-                      <div (click)="viewAllDashboards()" class="dashboard-card-title">
-                        <h5 class="card-title fs-14 mb-1" style="cursor: pointer;color: #05aff8;"> 
-                            View All</h5> 
-                        <p class="card-text fs-11 fw-300 ">Click herer to view all dashboards </p>
-                      </div>
-                    </div>       
-                </div>
+                </ng-container>
+                <div  *ngIf="!showAllDasboards && savedDashboardList.length > 10" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div class="p-5 d-flex align-items-center justify-content-start">
+                        <div  class="dashboard-card-title">
+                            <h5 (click)="viewAllDashboards()" class="card-title fs-14 mb-1" style="cursor: pointer;color: #05aff8;border-bottom: 1px solid;"> View All <i class="fa fa-angle-double-right"></i> </h5>
+                            <p class="card-text fs-11 fw-300"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -263,7 +256,8 @@
                     }
                     </div>
                 </div>
-                <div *ngFor="let sheetlist of userSheetsList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <ng-container *ngFor="let sheetlist of userSheetsList;let i = index">
+                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
                     <div *ngIf="showAllSheets && i < 3" class="card  img-shadow">
                         <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
@@ -287,7 +281,7 @@
                         </div>
                         
                     </div>
-                    <div *ngIf="!showAllSheets" class="card  img-shadow">
+                    <div *ngIf="!showAllSheets && i < 11" class="card  img-shadow">
                         <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
                           <div class="dashboard-card-title">
@@ -310,19 +304,16 @@
                         </div>
                         
                     </div>
-                </div>
-                
-                <div *ngIf="!showAllSheets && userSheetsList.length > 9" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                <div  class="card  img-shadow">
-                    <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                    <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                      <div (click)="viewAllSheets()" class="dashboard-card-title">
-                        <h5 class="card-title fs-14 mb-1"
-                         style="cursor: pointer;color: #05aff8;">View All</h5>
-                        <p class="card-text fs-11 fw-300 "> Click here to show all charts </p>
-                      </div>
                     </div>
-                </div>
+                </ng-container>
+                
+                <div *ngIf="!showAllSheets && userSheetsList.length > 10" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                            <div class="p-5 d-flex align-items-center justify-content-start">
+                            <div  class="dashboard-card-title">
+                                <h5 (click)="viewAllSheets()" class="card-title fs-14 mb-1" style="cursor: pointer;color: #05aff8;border-bottom: 1px solid;"> View All <i class="fa fa-angle-double-right"></i> </h5>
+                                <p class="card-text fs-11 fw-300"></p>
+                            </div>
+                        </div>
                 </div>
             </div>
             <div class="row ">
@@ -340,7 +331,8 @@
                         }
                     </div>
                 </div>
-                <div *ngFor="let savedQuery of savedQueryList;let i = index" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <ng-container *ngFor="let savedQuery of savedQueryList;let i = index">
+                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
                     <div *ngIf="showAllSavedQueries && i < 3" class="card img-shadow">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
                             <div class="dashboard-card-title">
@@ -362,7 +354,7 @@
                           </div>
                         </div>
                     </div>
-                    <div *ngIf="!showAllSavedQueries" class="card  img-shadow">
+                    <div *ngIf="!showAllSavedQueries && i < 11" class="card  img-shadow">
                         <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
                             <div class="dashboard-card-title">
@@ -387,18 +379,15 @@
                         </div>
                         
                     </div>
-                </div>
+                    </div>
+                </ng-container>
 
-                <div *ngIf="!showAllSavedQueries && savedQueryList.length > 9" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
-                    <div  class="card  img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
-                        <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                            <div (click)="viewAllSavedQueries()" class="dashboard-card-title">
-                                <h5 class="card-title fs-14 mb-1" style="cursor: pointer;color: #05aff8;"> View All</h5>
-                                <p class="card-text fs-11 fw-300 ">Click here to view all saved queries </p>
-                            </div>
+                <div *ngIf="!showAllSavedQueries && savedQueryList.length > 10" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div class="p-5 d-flex align-items-center justify-content-start">
+                        <div  class="dashboard-card-title">
+                            <h5 (click)="viewAllSavedQueries()" class="card-title fs-14 mb-1" style="cursor: pointer;color: #05aff8;border-bottom: 1px solid;"> View All <i class="fa fa-angle-double-right"></i> </h5>
+                            <p class="card-text fs-11 fw-300"></p>
                         </div>
-                
                     </div>
                 </div>
             </div>

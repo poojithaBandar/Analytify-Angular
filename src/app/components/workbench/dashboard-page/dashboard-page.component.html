@@ -16,9 +16,10 @@
           <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-3"><i class="fa fa-th-large"></i></button>
 
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
+            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            
+            <button type="button" class="btn btn-primary" (click)="dashboardRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Dashboard</button>
+
           </div>
         </div>
     </div>
@@ -68,7 +69,86 @@
             </div>
         }
         @if(gridView){
+
             <div class="row">
+                <div *ngFor="let dashboard of savedDashboardList | paginate : {
+                    itemsPerPage: itemsPerPage,
+                    currentPage: page,
+                    totalItems: totalItems
+                  }" class="col-md-12 col-xl-3">
+                      <div class="card shadow-none">
+                      <div class="card-body card-box-shadow">
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <div class="row border-bottom">
+                                      <div class="col mb-1">
+                                          <div class="d-sm-flex align-items-center">
+                                            <span class="avatar avatar-xl rounded-circle">
+                                                <img src="./assets/images/charts/table-tiled-icon.jpg" alt="" class="rounded-circle"></span>
+                                              <div class="ms-2 mt-sm-0 mt-2">
+                                                <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
+                                                  <h6 class="mb-1">
+                                                      <a ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"  class="float-start">{{dashboard.dashboard_name | slice:0:15}}</a>
+                                                  </h6>
+                                                  
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-auto">
+                                          <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                aria-haspopup="true" aria-expanded="false" class=""><i
+                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                            </a>
+                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                               <a class="dropdown-item" tabindex="0" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">
+                                                      <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
+                                                  <a  class="dropdown-item" tabindex="0" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">
+                                                      <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                            </div>
+                                        </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div  class="col-md-12 mt-2">
+                                <div class="p-2 ">
+                        
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <span class="fw-semibold fs-14">Created by  </span>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <span class="fs-14">{{dashboard.created_by}}</span>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <span class="fw-semibold fs-14">Created on :</span>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <span class="fs-14">{{dashboard.created}}</span>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="fw-semibold fs-14">Last Modified : </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span class="fs-14">{{dashboard.Modified}}</span>
+                                    </div>
+                                </div>
+                              </div>
+                              </div>
+                             
+                          </div>
+                      </div>
+                      </div>
+                    </div>
+          </div>
+
+
+
+            <!-- <div class="row">
                 <div *ngFor="let dashboard of savedDashboardList | paginate : {
                     itemsPerPage: itemsPerPage,
                     currentPage: page,
@@ -84,6 +164,14 @@
                           <a  class="fs-18 fw-bold d-block" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">{{dashboard.dashboard_name | slice:0:15}}</a>
                       </div>
                       <div class=" p-2 text-center">
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <span class="fw-semibold fs-14">Created by : </span>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="fs-15">{{dashboard.created_by}}</span>
+                            </div>
+                          </div>
                         <div class="row">
                           <div class="col-md-6">
                               <span class="fw-semibold fs-14">Created on: </span>
@@ -111,84 +199,21 @@
                           </div>
                     </div>
                 </div>
-              </div>
+              </div> -->
         }
 
 
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeUserDashboardsList((page = $event))"></pagination-controls>
-
-        </div>
-                <!-- <div class="">
-                   <ul class="list-group" style="max-height: 409px;overflow-y: scroll;">
-                        <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
-                        @for(database of connectionList;track database){
-                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
-                        }
-                        
-                    </ul>
-                </div> -->
-                <!-- <div class="card-body">
-                    <div class="text-wrap">
-                        <div class="dropdown-samples">
-                            <ul class="dropdown-menu dropdown-scroll">
-                                <li class="list-group-item active" style="position: sticky;top: 0;">Connected Database</li>
-                                <li>
-                                    @for(database of connectionList;track database){
-                                        <li class="list-group-item" (click)="getTablesFromConnectedDb(database.database_id)">{{database.display_name}}</li>
-                                        }
-                                </li>
-                            </ul>               
-                        </div>
-                    </div>
-                </div> -->
-    </div>
-    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-                <div class="">
-                    <ul class="list-group">
-                        <li class="list-group-item active">Relational Database</li>
-                        <li class="list-group-item" style="background-color: #e7ffe7;">Oracle</li>
-                        <li class="list-group-item">DB2</li>
-                        <li class="list-group-item">PMySQL</li>
-                        <li class="list-group-item">SQL Server</li>
-                        <li class="list-group-item">Access</li>
-                        <li class="list-group-item" (click)="openPostgreSql()" style="background-color: #e7ffe7;">PostgreSQL</li>
-                        <li class="list-group-item">Sybase</li>
-                        <li class="list-group-item">Informix</li>
-                    </ul>
-                </div>
-    </div> -->
-    <!-- <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-            <div class="">
-                <ul class="list-group">
-                    <li class="list-group-item active">Program Data Source&Others</li>
-                    <li class="list-group-item">Java API</li>
-                    <li class="list-group-item">Hibernate</li>
-                    <li class="list-group-item">Webservice Data Source</li>
-                    <li class="list-group-item">SOA Data Source</li>
-                    <li class="list-group-item">Analytics Data Source</li>
-                    <li class="list-group-item">ODBC Data Source</li>
-                    <li class="list-group-item">JNDI Data Source</li>
-                    <li class="list-group-item">SAp Data Source</li>
-                </ul>
+            <div  style="float: right;font-size: 15px; margin-top: -41px;">
+                <label >Items per page:</label>
+                <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getuserDashboardsListput()" class="form-control">
+                      <option  value="12"> 12</option>
+                      <option [disabled]="!(totalItems > 12)" value="24"> 24</option>
+                      <option [disabled]="!(totalItems > 24)" value="48"> 48</option>
+                   
+                </select>
+             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-lg-12 col-xl-3" style="padding: 0px;" id="lists" #lists>
-            <div class="">
-                <ul class="list-group">
-                    <li class="list-group-item active">NoSQL Database</li>
-                    <li class="list-group-item">MongoDB</li>
-                    <li class="list-group-item">SQLite</li>
-                    <li class="list-group-item">Cassandra</li>
-                </ul>
-                <ul class="list-group">
-                    <li class="list-group-item active">Multi-dimensional Database</li>
-                    <li class="list-group-item">SAP HANA</li>
-                    <li class="list-group-item">SAP BW</li>
-                    <li class="list-group-item">SSAS</li>
-                    <li class="list-group-item">EssBase</li>
-                </ul>
-        </div>
-    </div> -->
-       
     </div>
   </div>

@@ -5,3 +5,9 @@
   .table thead th{
     color: #fff;
 }
+.dropdown-toggle::after{
+    display: none;
+}
+a {
+    cursor: pointer;
+}

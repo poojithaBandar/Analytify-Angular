@@ -83,8 +83,15 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
         text: error.error.message,
         width: '400px',
       })
-    }this.router.navigate(['/authentication/email-reactivation'])
-    
+      this.router.navigate(['/authentication/email-reactivation'])
+    }else{
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
   }
 })
 }

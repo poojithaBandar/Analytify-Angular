@@ -10,9 +10,6 @@
           <h4 class="card-title mt-2">Sheets</h4>
         </div>
         <div class="new-data-btn d-flex text-align-center">
-          <!-- <button type="button" class="btn btn-primary me-1 radius-4" (click)="gridView=!gridView" ><i class="fa fa-list"></i></button>
-          <button type="button" class="btn btn-primary me-3 radius-4" (click)="gridView=!gridView" ><i class="fa fa-th-large"></i></button> -->
-
           <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-1" ><i class="fa fa-th-list"></i></button>
           <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-3"><i class="fa fa-th-large"></i></button>
 
@@ -20,9 +17,10 @@
           <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-3"><i class="fa fa-th-large"></i></button>
 
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="sheetName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
+            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="sheetName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            
+            <button type="button" class="btn btn-primary" (click)="sheetsRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Sheet</button>
+
           </div>
         </div>
     </div>
@@ -82,7 +80,7 @@
             </div>
           }
           @if(gridView){
-            <div class="row">
+            <!-- <div class="row">
           <div *ngFor="let sheets of savedSheetsList | paginate : {
             itemsPerPage: itemsPerPage,
             currentPage: page,
@@ -110,6 +108,14 @@
                     <a  class="fs-18 fw-bold d-block" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"  ngbTooltip="{{sheets.sheet_name}}">{{sheets.sheet_name | slice:0:15}}</a>
                 </div>
                 <div class=" p-2 text-center">
+                  <div class="row ">
+                    <div class="col-md-6">
+                        <span class="fw-semibold fs-14">Created by : </span>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="fs-15">{{sheets.created_by}}</span>
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="col-md-6">
                         <span class="fw-semibold fs-14">Created on: </span>
@@ -137,9 +143,109 @@
                     </div>
               </div>
           </div>
-        </div>
+        </div> -->
+
+
+        <div class="row">
+          <div *ngFor="let sheets of savedSheetsList | paginate : {
+            itemsPerPage: itemsPerPage,
+            currentPage: page,
+            totalItems: totalItems
+          }"  class="col-md-12 col-xl-3">
+                <div class="card shadow-none">
+                <div class="card-body card-box-shadow">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row border-bottom">
+                                <div class="col mb-1">
+                                    <div class="d-sm-flex align-items-center">
+                                      <div class="user-image">
+                                          <span class="avatar avatar-xl rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 1" src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 6" src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 17" src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 13" src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 24" src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 7" src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 5" src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 4" src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 2" src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 3" src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 8" src="./assets/images/Tiled view sheet icons/multiline-tiled-icon.jpg" alt="" class="rounded-circle">
+                                            <img *ngIf="sheets.chart_id === 10" src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt="" class="rounded-circle">
+                                          </span>
+                                      </div>
+                                        <div class="ms-2 mt-sm-0 mt-2">
+                                          <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
+                                            <h6 class="mb-1">
+                                                <a (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
+                                            </h6>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                  <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                        aria-haspopup="true" aria-expanded="false" class=""><i
+                                            class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                    </a>
+                                    <div class="dropdown-menu" ngbDropdownMenu>
+                                      <a class="dropdown-item" tabindex="0" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)">
+                                        <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
+                                    <a  class="dropdown-item" tabindex="0" (click)="deleteSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)">
+                                        <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        <div  class="col-md-12 mt-2">
+                          <div class="p-2 ">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="fw-semibold fs-14">Created by  </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="fs-14">{{sheets.created_by}}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="fw-semibold fs-14">Created on :</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="fs-14">{{sheets.created}}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                  <span class="fw-semibold fs-14">Last Modified : </span>
+                              </div>
+                              <div class="col-md-6">
+                                  <span class="fs-14">{{sheets.Modified}}</span>
+                              </div>
+                          </div>
+                        </div>
+                        </div>
+                       
+                    </div>
+                </div>
+                </div>
+              </div>
+            
+    </div>
         }
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetUserSheetsList((page = $event))"></pagination-controls>
+            <div  style="float: right;font-size: 15px; margin-top: -41px;">
+              <label >Items per page:</label>
+              <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getUserSheetsList()" class="form-control cursor">
+                    <option  value="12"> 12</option>
+                    <option [disabled]="!(totalItems > 12)" value="24"> 24</option>
+                    <option [disabled]="!(totalItems > 24)" value="48"> 48</option>
+                 
+              </select>
+           </div>
         </div>
     </div>
     </div>

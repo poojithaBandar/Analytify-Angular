@@ -174,7 +174,8 @@
                         <tr>
                             <th>Database</th>
                             <th>Server</th>
-                            <th>Created at</th>
+                            <th>Created on</th>
+                            <th>Created by</th>
                             <th>Last Modified</th>
                             <th>Actions</th>
                         </tr>
@@ -195,6 +196,7 @@
                             <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
                         </td>
                             <td>{{database.created_at}}</td>
+                            <td>{{database.created_by}}</td>
                             <td>{{database.updated_at}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
@@ -213,7 +215,7 @@
             </div>
           }
           @if(gridView){
-                <div class="row">
+                <!-- <div class="row">
                   @for(database of connectionList;track database){
                     <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-3">
                         <div class="card user-card shadow-none">
@@ -239,12 +241,20 @@
                               </div>
                               <div class="row ">
                                 <div class="col-md-6">
+                                    <span class="fw-semibold fs-14">Created by : </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="fs-15">{{database.created_by}}</span>
+                                </div>
+                              </div>
+                              <div class="row ">
+                                <div class="col-md-6">
                                     <span class="fw-semibold fs-14">Created on : </span>
                                 </div>
                                 <div class="col-md-6">
                                     <span class="fs-15">{{database.created_at}}</span>
                                 </div>
-                              </div>     
+                              </div>      
                               <div class="row ">
                                 <div class="col-md-6">
                                   <span class="fw-semibold fs-14">Last Modified : </span>
@@ -265,10 +275,97 @@
                           </div>
                       </div>
                     }
-                </div>
+                </div> -->
+
+
+
+
+                <div class="row">
+                  @for(database of connectionList;track database){
+                  <div  class="col-md-12 col-xl-3">
+                        <div class="card shadow-none">
+                        <div class="card-body card-box-shadow p-2">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row border-bottom">
+                                        <div class="col mb-1">
+                                            <div class="d-sm-flex align-items-center">
+                                              <span *ngIf="database.server_type === 'ORACLE'" class="avatar avatar-xl rounded-circle">
+                                                <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt="" class="rounded-circle"></span>
+                                                <span *ngIf="database.server_type === 'POSTGRESQL'" class="avatar avatar-xl rounded-circle">
+                                                  <img src="./assets/images/charts/post-tiled-icon.jpg" alt="" class="rounded-circle"></span>
+                                                <div class="ms-2 mt-sm-0 mt-2">
+                                                  <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
+                                                    <h6 class="mb-1">
+                                                        <a (click)="getTablesFromConnectedDb(database.database_id)"  class="float-start">{{database.display_name | slice:0:15}}</a>
+                                                    </h6>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                  aria-haspopup="true" aria-expanded="false" class=""><i
+                                                      class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                              </a>
+                                              <div class="dropdown-menu" ngbDropdownMenu>
+                                                <a class="dropdown-item" tabindex="0" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);">
+                                                  <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
+                                              <a  class="dropdown-item" tabindex="0" (click)="deleteDbConnection(database.database_id)">
+                                                  <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div  class="col-md-12 mt-2">
+                                  <div class="p-2 ">
+                          
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <span class="fw-semibold fs-14">Created by  </span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <span class="fs-14">{{database.created_by}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <span class="fw-semibold fs-14">Created on :</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <span class="fs-14">{{database.created_at}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                          <span class="fw-semibold fs-14">Last Modified : </span>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <span class="fs-14">{{database.updated_at}}</span>
+                                      </div>
+                                  </div>
+                                </div>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+                    }
+            </div>
           }
           <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
-
+          <div  style="float: right;font-size: 15px; margin-top: -41px;">
+            <label >Items per page:</label>
+            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getDbConnectionList()" class="form-control cursor">
+                  <option  value="12"> 12</option>
+                  <option [disabled]="!(totalItems > 12)" value="24"> 24</option>
+                  <option [disabled]="!(totalItems > 24)" value="48"> 48</option>
+               
+            </select>
+         </div>
         </div>
     </div>
     </div>

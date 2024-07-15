@@ -55376,3 +55376,9 @@ input[type=range]::-webkit-slider-runnable-track {
   ::-webkit-scrollbar-thumb:hover {
   background: #000; 
   }
+  .ngx-pagination .current {
+    padding: .1875rem .625rem;
+    background: #00a5a2 !important;
+    color: #fefefe;
+    cursor: default;
+  }

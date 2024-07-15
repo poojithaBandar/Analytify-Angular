@@ -55,7 +55,7 @@ export class WorkbenchComponent implements OnInit{
   toggleClass1 = "off-line";
   gridView = false;
 
-  itemsPerPage!:number;
+  itemsPerPage!:any;
   pageNo = 1;
   page: number = 1;
   totalItems:any;
@@ -203,42 +203,68 @@ export class WorkbenchComponent implements OnInit{
     }
 
     deleteDbConnection(id:any){
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result)=>{
-        if(result.isConfirmed){
-          this.workbechService.deleteDbConnection(id)
-          .subscribe(
-            {
-              next:(data:any) => {
-                console.log(data);      
-                if(data){
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'Deleted!',
-                    text: 'Databse Deleted Successfully',
-                    width: '400px',
-                  })
-                }
-                this.getDbConnectionList();
-              },
-              error:(error:any)=>{
-                Swal.fire({
-                  icon: 'warning',
-                  text: error.error.message,
-                  width: '300px',
-                })
-                console.log(error)
-              }
-            } 
-          )
-        }})
+      const obj ={
+        database_id:id
+      }
+      this.workbechService.deleteDbMsg(obj)
+      .subscribe(
+        {
+          next:(data:any) => {
+            console.log(data);      
+            if(data){
+              Swal.fire({
+                title: 'Are you sure?',
+                text: data.message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result)=>{
+                if(result.isConfirmed){
+                  this.workbechService.deleteDbConnection(id)
+                  .subscribe(
+                    {
+                      next:(data:any) => {
+                        console.log(data);      
+                        if(data){
+                          Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Databse Deleted Successfully',
+                            width: '400px',
+                          })
+                        }
+                        this.getDbConnectionList();
+                      },
+                      error:(error:any)=>{
+                        Swal.fire({
+                          icon: 'warning',
+                          text: error.error.message,
+                          width: '300px',
+                        })
+                        console.log(error)
+                      }
+                    } 
+                  )
+                }})
+            }
+          },
+          error:(error:any)=>{
+            Swal.fire({
+              icon: 'warning',
+              text: error.error.message,
+              width: '300px',
+            })
+            console.log(error)
+          }
+        } 
+      )
+
+
+
+
+
     }
     editDbConnectionModal(OpenmdoModal: any) {
       this.modalService.open(OpenmdoModal);
@@ -313,10 +339,15 @@ export class WorkbenchComponent implements OnInit{
   getDbConnectionList(){
     const Obj ={
       search : this.searchDbName,
-      page_no:this.pageNo
+      page_no:this.pageNo,
+      page_count:this.itemsPerPage
+
     }
     if(Obj.search == '' || Obj.search == null){
       delete Obj.search;
+    }
+    if(Obj.page_count == undefined || Obj.page_count == null){
+      delete Obj.page_count
     }
     this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
       next:(data)=>{

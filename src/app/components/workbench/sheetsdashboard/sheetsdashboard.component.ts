@@ -341,7 +341,7 @@ export class SheetsdashboardComponent {
        this.databaseName= data.database_name
     this.dashboardNew = this.sheetData.map((sheet:any) => ({
       id:uuidv4(),
-      cols: 2,
+      cols: 1,
       rows: 1,
       y: 0,
       x: 0,

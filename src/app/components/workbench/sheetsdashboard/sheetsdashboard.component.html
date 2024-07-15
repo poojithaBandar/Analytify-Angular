@@ -74,7 +74,7 @@
         </div> 
         
        
-       <div style="max-width: 78vw;min-width: 78vw;height: 300vh;margin: auto 0;">
+       <div style="max-width: 78vw;min-width: 78vw;height: 100vh;margin: auto 0;">
         <div class="options">
           
         </div> 
@@ -249,26 +249,6 @@
                     [labels]="item.chartOptions.labels!"
                     [responsive]="item.chartOptions.responsive!"(chartInit)="onChartInit($event, item)" >
                 </apx-chart>
-                  </div>
-                  <div *ngIf="item.tableData">
-                    <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                        <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
-
-                            <!-- <tr>
-                            @for(data of TabledataJoining.column_data;track data){
-                                <th></th>
-                            }
-
-                            </tr> -->
-                    
-                        </thead>
-                        <tbody>
-                            <tr>
-                                
-                            </tr>
-                            
-                        </tbody>
-                    </table>
                   </div>
                 </div>
                 <div class="card-footer p-1">

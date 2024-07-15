@@ -151,7 +151,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
   this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
 }
 
- dashboardRoute(){
+ sheetsRoute(){
     this.router.navigate(['/workbench/sheets'])  
   }
   newConnections(){
@@ -204,42 +204,66 @@ viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
       }})
   }
   deleteSheet(serverId:any,qurysetId:any,sheetId:any){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result)=>{
-      if(result.isConfirmed){
-        this.workbechService.deleteSheet(serverId,qurysetId,sheetId)
-        .subscribe(
-          {
-            next:(data:any) => {
-              console.log(data);      
-              if(data){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Deleted!',
-                  text: 'Sheet Deleted Successfully',
-                  width: '400px',
-                })
-              }
-              this.getuserSheets();
-            },
-            error:(error:any)=>{
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
-              console.log(error)
-            }
-          } 
-        )
-      }})
+    const obj ={
+      sheet_id:sheetId,
+    }
+    this.workbechService.deleteSheetMessage(obj)
+    .subscribe(
+      {
+        next:(data:any) => {
+          console.log(data);      
+          if(data){
+            Swal.fire({
+              title: 'Are you sure?',
+              text: data.message,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+            }).then((result)=>{
+              if(result.isConfirmed){
+                this.workbechService.deleteSheet(serverId,qurysetId,sheetId)
+                .subscribe(
+                  {
+                    next:(data:any) => {
+                      console.log(data);      
+                      if(data){
+                        Swal.fire({
+                          icon: 'success',
+                          title: 'Deleted!',
+                          text: 'Sheet Deleted Successfully',
+                          width: '400px',
+                        })
+                      }
+                      this.getuserSheets();
+                    },
+                    error:(error:any)=>{
+                      Swal.fire({
+                        icon: 'warning',
+                        text: error.error.message,
+                        width: '300px',
+                      })
+                      console.log(error)
+                    }
+                  } 
+                )
+              }})
+          }
+        },
+        error:(error:any)=>{
+          Swal.fire({
+            icon: 'warning',
+            text: error.error.message,
+            width: '300px',
+          })
+          console.log(error)
+        }
+      } 
+    )
+
+
+
   }
 
   viewAllSheets(){

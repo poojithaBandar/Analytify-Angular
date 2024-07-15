@@ -279,3 +279,12 @@ a {
   height: 100px;
   background-color: #86b8b7;
 }
+.card-box-shadow{
+  box-shadow: 5px 10px 10px 5px #0000001a;
+}
+.dropdown-toggle::after{
+  display: none;
+}
+a {
+  cursor: pointer;
+}

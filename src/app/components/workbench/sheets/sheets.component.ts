@@ -187,7 +187,7 @@ export class SheetsComponent {
     this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
   }
   goToConnections(){
-    this.router.navigate(['/workbench/work-bench/new-connections'])
+    this.router.navigate(['/workbench/work-bench/view-connections'])
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
