@@ -9,45 +9,117 @@
       <div class="sticky-top">
         <div class="card mb-0">
           <div class="card-body p-0">
-              <div class="panel panel-primary">
-                  <div class="tab-menu-heading tab-menu-heading-boxed">
-                      <div class="tabs-menu-boxed">
-                          <ul ngbnav="" class="nav panel-tabs fs-14" role="tablist">
-                              <li class="nav-item" role="presentation">
-                                  <a href="" id="ngb-nav-0" role="tab" aria-selected="true" aria-disabled="false" class="nav-link active p-2 m-0" aria-controls="ngb-nav-0-panel">Dashboard</a>
-                              </li>
-                              <!-- <li class="nav-item" role="presentation">
-                                  <a href="" id="ngb-nav-1" role="tab" aria-selected="false" aria-disabled="false" class="nav-link p-2" tabindex="-1">Layout</a>
-                              </li> -->
-                            
-                          </ul>
-                      </div>
-                  </div>
-                  <div class="panel-body tabs-menu-body p-0">
-                      <div class="tab-content">
-                          <div class="card mb-0 p-4 br-0" style="box-shadow: none;">
-                              <h6 class="mb-0">Database</h6>
-                              <p class="mb-0">{{databaseName}}</p>
-                          </div>
-                          <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
-                              <div class="text-wrap">
-                                  <div class="dropdown-samples">
-                                      <ul class="dropdown-menu br-0 draggable-item"
-                                       cdkDropList
-                                       #originList="cdkDropList"
-                                      [cdkDropListData]="dashboardNew"
-                                      [cdkDropListConnectedTo]="[destinationList]"
-                                      (cdkDropListDropped)="drop($event)">
-                                          <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                          <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
-                                          
-                                      </ul>
+            <div class="panel panel-primary ">
+              <div class="card panel panel-primary p-0">
+                <div class="tab-menu-heading tab-menu-heading-boxed">
+                    <div class="tabs-menu-boxed">
+                        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
+
+                            <li [ngbNavItem]="1">
+                                <a ngbNavLink class="p-3">Dashboard</a>
+                                <ng-template ngbNavContent>
+                                    <div class="tab-pane active" id="activetabs">
+                                      <div class="panel-body tabs-menu-body p-0">
+                                        <div class="tab-content">
+                                            <div class="card mb-0 p-4 br-0" style="box-shadow: none;">
+                                                <h6 class="mb-0">Database</h6>
+                                                <p class="mb-0">{{databaseName}}</p>
+                                            </div>
+                                            <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
+                                                <div class="text-wrap">
+                                                    <div class="dropdown-samples">
+                                                        <ul class="dropdown-menu br-0 draggable-item"
+                                                         cdkDropList
+                                                         #originList="cdkDropList"
+                                                        [cdkDropListData]="dashboardNew"
+                                                        [cdkDropListConnectedTo]="[destinationList]"
+                                                        (cdkDropListDropped)="drop($event)">
+                                                            <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
+                                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
+                                                            
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                   </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+                                </ng-template>
+                            </li>
+                            <li [ngbNavItem]="2">
+                                 <a ngbNavLink class="p-3">Filters</a>
+                                    <ng-template ngbNavContent>
+                                        <div class="tab-pane" id="linktabs">
+                                            <div class="card-body p-0">
+                                              <div class="text-wrap">
+                                                  <div class="card-content p-0">
+                                                      <div class=" mt-2 mb-2">
+                                                          <div class="dropdown" ngbDropdown>
+                                                              <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
+                                                                <i class="fa fa-plus"></i> Add/Edit Filters
+                                                              </button>
+                                                              <ul class="dropdown-menu filter-popover" ngbDropdownMenu>
+                                                                <div class="setting-text border-bottom text-center">
+                                                                  <h6>Settings</h6>
+                                                                </div>
+                                                                <div class="form-group p-1 mb-0">
+                                                                  <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                                                  </label>
+                                                                  <input type="text" placeholder="" class="form-control checkbox-color">
+                                                                </div>
+                                                                <div class="form-group p-1">
+                                                                  <label class="form-label">Column <span  class="text-red">*</span>
+                                                                  </label>
+                                                                  <input type="text" placeholder="" class="form-control checkbox-color">
+                                                                </div>
+                                                               
+                                                                  <h6>Apply to Selected worksheets</h6>
+                                                               
+                                                                <div class="form body border p-2">
+                                                                  <div class="form-check">
+                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
+                                                                    <label for="invalidCheck" class="form-check-label"> <h6>Select All</h6> </label>
+                                                                  </div>
+                                                                  <div class="form-check">
+                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
+                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0"> Ali</p> </label>
+                                                                  </div>
+                                                                  <div class="form-check ">
+                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
+                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0">Donut</p> </label>
+                                                                  </div>
+                                                                  <div class="form-check ">
+                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
+                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0">Type wise forms</p> </label>
+                                                                  </div>
+                                                                </div>
+                
+                                                                <div class="p-2">
+                                                                  <button type="button" class="btn ripple btn-primary me-2">Save</button>
+                                                                  <button type="button" class="btn ripple btn-secondary "> Cancel </button>
+                                                              </div>
+                                                              </ul>
+                                                          </div>
+                                                      </div>
+                                                   
+                                                  </div>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </ng-template>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body tabs-menu-body p-1" style="height: 578px;">
+                    <div class="tab-content">
+                        <div [ngbNavOutlet]="nav"></div>
+
+                    </div>
+                </div>
+            </div>
+          </div>
+
           </div>
       </div>
       </div>
@@ -83,10 +155,9 @@
             <!-- <a mat-mini-fab (click)="addItem()" class="btn btn-blue-light mb-0 me-3" ><i class="fa fa-plus"></i> Add</a>  -->
         </div>
         
-        
-        <gridster [options]="options" cdkDropList #destinationList="cdkDropList" 
+        <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
         [cdkDropListData]="dashboard" 
-       (cdkDropListDropped)="drop($event)">
+       (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard">
               <div class="card mb-0">
                 <div class="card-header d-flex justify-content-between p-1">
@@ -259,6 +330,9 @@
               </div>
             </gridster-item>
           </gridster>
+        </div>
+        <div>
+          <img [src]="screenshotSrc" alt="Screenshot">
         </div>
     </div>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -25,6 +25,7 @@ import { debounceTime, fromEvent, map } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { ScreenshotService } from '../../../shared/services/screenshot.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -42,6 +43,11 @@ type DashboardItem = GridsterItem & {
   chartOptions?: ApexOptions,
   initCallback?: (item: GridsterItem, itemComponent: GridsterItemComponent) => void 
 };
+interface Dimension {
+  name: string;
+  values: string[];
+}
+
 @Component({
   selector: 'app-sheetsdashboard',
   standalone: true,
@@ -63,8 +69,9 @@ export class SheetsdashboardComponent {
  dashboardId:any;
  databaseName:any;
  updateDashbpardBoolen= false;
+ active=1;
   public chartOptions!: Partial<ChartOptions>;
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router){
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard')){
@@ -97,9 +104,14 @@ export class SheetsdashboardComponent {
   rowArray = [] as any;
   colArray = [] as any;
   chartOptionsinitialize = false;
+  //@ViewChild('gridster') gridster!: ElementRef;
+
+  screenshotSrc: string | null = null;
+
   itemToPush!: GridsterItemComponent;
   @ViewChildren(GridsterItemComponent) GridsterItemComponent!: QueryList<GridsterItemComponent>;
-  @ViewChild('gridster') gridster!: any; // Adjust the type as needed
+  @ViewChild('gridster') gridster!: ElementRef; // Adjust the type as needed
+
   static itemChange(
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface
@@ -121,7 +133,7 @@ export class SheetsdashboardComponent {
       .subscribe((event) => {
         console.log('resize is finished');
       });
-      window.dispatchEvent(new Event('resize'));
+     window.dispatchEvent(new Event('resize'));
     }
 
   static itemInit(
@@ -178,6 +190,8 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
+      // fixedColWidth: 400,
+      // fixedRowHeight: 400,
       // itemChangeCallback: SheetsdashboardComponent.itemChange,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
@@ -293,6 +307,43 @@ export class SheetsdashboardComponent {
       }
     })
   }
+this.takeScreenshot();
+  }
+  takeScreenshot() {
+    // const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
+    // if (element) {
+    //   this.screenshotService.capture(element).then((imgData) => {
+    //     this.screenshotSrc = imgData;
+    //   }).catch((error) => {
+    //     console.error('Error capturing screenshot:', error);
+    //   });
+    // } else {
+    //   console.error('Gridster element is not defined for screenshot.');
+    // }
+    setTimeout(() => {
+      const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
+
+      window.scrollTo(0, 0); // Scroll to top
+      const clone = element.cloneNode(true) as HTMLElement;
+
+      // Optionally, apply specific styles to the clone
+      clone.style.position = 'absolute';
+      clone.style.left = '0';
+      clone.style.top = '0';
+      clone.style.width = `${clone.scrollWidth}px`;
+      clone.style.height = `${clone.scrollHeight}px`;
+      clone.style.overflow = 'hidden';
+      document.body.appendChild(clone);  
+      if (clone) {
+        this.screenshotService.capture(clone).then((imgData) => {
+          this.screenshotSrc = imgData;
+        }).catch((error) => {
+          console.error('Error capturing screenshot:', error);
+        });
+      } else {
+        console.error('Gridster element is not defined for screenshot.');
+      }
+    }, 1000);
   }
   updateDashboard(){
     this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
@@ -326,6 +377,8 @@ export class SheetsdashboardComponent {
       }
     })
   }
+  this.takeScreenshot();
+
   }
   sheetsDataWithQuerysetId(){
     const obj ={
@@ -401,6 +454,12 @@ export class SheetsdashboardComponent {
   //  }
   //  })
   // }
+  flattenDimensions(dimensions: Dimension[]): string[] {
+    const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
+    return Array.from({ length: numCategories }, (_, index) => {
+      return dimensions.map(dim => dim.values[index] || '').join(',');
+    });
+  }
   getChartOptionsBasedOnType(sheet:any){
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
@@ -431,7 +490,11 @@ export class SheetsdashboardComponent {
     if(sheet.chart_id === 5){
       let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
       let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
-      return this.stockedBarChartOptions(xaxis,yaxis)
+
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+
+      return this.stockedBarChartOptions(categories,yaxis)
     }
     if(sheet.chart_id === 4){
       let xaxis = sheet.sheet_data?.results?.barLineXaxis;
@@ -711,6 +774,11 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
     this.dashboard.forEach(item => {
       this.initializeChart(item);
     });
+    if (this.gridster) {
+      console.log('HEllo element initialized:', this.gridster);
+    } else {
+      console.error('Gridster element not found!');
+    }
   }
   initializeChart(item: DashboardItem): void {
     if (item.chartOptions && item.chartOptions.chart && item.chartOptions.series) {
@@ -1088,7 +1156,7 @@ stockedBarChartOptions(xaxis:any,yaxis:any){
       height: 350,
       stacked: true,
       toolbar: {
-        show: true
+        show: false
       },
       zoom: {
         enabled: true
@@ -1113,7 +1181,7 @@ stockedBarChartOptions(xaxis:any,yaxis:any){
     },
     xaxis: {
       type: "category",
-      categories: xaxis[0],
+      categories: xaxis,
     },
     legend: {
       position: "right",

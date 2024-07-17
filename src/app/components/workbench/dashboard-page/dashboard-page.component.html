@@ -9,15 +9,15 @@
           <h4 class="card-title mt-2">Dashboards</h4>
         </div>
         <div class="new-data-btn d-flex text-align-center">
-            <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-1" ><i class="fa fa-th-list"></i></button>
-          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-3"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
 
-          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-1" ><i class="fa fa-th-list"></i></button>
-          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-3"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
 
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
-            <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+            <button class="btn btn-primary border me-2" (click)="searchDashboarList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             <button type="button" class="btn btn-primary" (click)="dashboardRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Dashboard</button>
 
           </div>
@@ -205,11 +205,10 @@
 
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeUserDashboardsList((page = $event))"></pagination-controls>
             <div  style="float: right;font-size: 15px; margin-top: -41px;">
-                <label >Items per page:</label>
                 <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getuserDashboardsListput()" class="form-control">
-                      <option  value="12"> 12</option>
-                      <option [disabled]="!(totalItems > 12)" value="24"> 24</option>
-                      <option [disabled]="!(totalItems > 24)" value="48"> 48</option>
+                      <option  value="10"> 10</option>
+                      <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                      <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
                    
                 </select>
              </div>

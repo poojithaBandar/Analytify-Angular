@@ -23,7 +23,7 @@ export class SheetsListPageComponent implements OnInit {
   pageNo = 1;
   page: number = 1;
   totalItems:any;
-  gridView = false;
+  gridView = true;
 constructor(private workbechService:WorkbenchService,private router:Router){}
 
 ngOnInit(){

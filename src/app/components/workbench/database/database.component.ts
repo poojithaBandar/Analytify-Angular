@@ -99,11 +99,23 @@ export class DatabaseComponent {
   editFilterList = [] as any;
   columnWithTablesData = [] as any;
   isAllSelected: boolean = false;
+  saveQueryName = '';
+  updateQuery=false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
      this.databaseId = +atob(route.snapshot.params['id']);
     }
+    if(currentUrl.includes('/workbench/database-connection/savedQuery/')){
+      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+        this.databaseId = +atob(route.snapshot.params['id1']);
+        this.qurtySetId = +atob(route.snapshot.params['id2']);
+        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+        }
+      this.customSql=true;
+      this.tableJoiningUI=false;
+      this.updateQuery=true
+     }
      if(currentUrl.includes('/workbench/database-connection/sheets/')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
@@ -112,8 +124,10 @@ export class DatabaseComponent {
 
       }
     }
+
   }
   ngOnInit(){
+    if(!this.updateQuery){
     {
       document.querySelector('html')?.getAttribute('data-toggled') != null
         ? document.querySelector('html')?.removeAttribute('data-toggled')
@@ -123,13 +137,36 @@ export class DatabaseComponent {
     }
     this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
-    this.getTablesfromPrevious()
+    this.getTablesfromPrevious()}
+
+    if(this.updateQuery){
+      this.getSavedQueryData();
+    }
   }
   toggleCard() {
     this.isOpen = !this.isOpen;
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
+  }
+  getSavedQueryData(){
+    const obj ={
+      database_id:this.databaseId,
+      queryset_id:this.qurtySetId
+    }
+    this.workbechService.getSavedQueryData(obj).subscribe({
+      next:(data:any)=>{
+        console.log(data);
+      this.sqlQuery=data.custom_query
+      this.saveQueryName=data.query_name
+      this.cutmquryTable = data
+        this.custmQryTime = data.query_exection_time;
+        this.custmQryRows = data.no_of_rows;
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    })
   }
   getTablesfromPrevious(){
     const querysetId = localStorage.getItem( 'QuerySetId' ) || 0;
@@ -1027,4 +1064,75 @@ goToSheet(){
   }
 }
 
+saveQuery(){
+  if(this.saveQueryName === ''){
+    Swal.fire({
+      icon: 'error',
+      title: 'oops!',
+      text: 'Please enter name to save query',
+      width: '400px',
+    })
+  }else{
+  const obj ={
+    
+    database_id:this.databaseId,
+    query_set_id:this.qurtySetId,
+    query_name:this.saveQueryName,
+    custom_query:this.sqlQuery
+  }
+  this.workbechService.saveQueryName(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        if(data){
+          Swal.fire({
+            icon: 'success',
+            title: 'Done!',
+            text: 'Query Saved Successfully',
+            width: '400px',
+          })
+        }
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+  }
+}
+updateCustmQuery(){
+  if(this.saveQueryName === ''){
+    Swal.fire({
+      icon: 'error',
+      title: 'oops!',
+      text: 'Please enter name to save query',
+      width: '400px',
+    })
+  }else{
+  const obj ={
+    database_id:this.databaseId,
+    queryset_id:this.qurtySetId,
+    query_name:this.saveQueryName,
+    custom_query:this.sqlQuery
+  }
+  this.workbechService.updateCustmQuery(obj).subscribe({
+    next:(data:any)=>{
+      console.log(data);
+    this.sqlQuery=data.custom_query
+    this.saveQueryName=data.query_name
+    this.cutmquryTable = data
+      this.custmQryTime = data.query_exection_time;
+      this.custmQryRows = data.no_of_rows;
+    },
+    error:(error:any)=>{
+      console.log(error)
+    }
+  })
+}
+}
 }

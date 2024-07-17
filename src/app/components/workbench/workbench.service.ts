@@ -47,6 +47,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/retrieve_datasource/`+dbId+'/'+querysetId+'/'+this.accessToken)
   }
+  getSavedQueryData(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/queryfetch/`+this.accessToken,obj)
+  }
   getSchemaTablesFromConnectedDb(id:any,obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -58,14 +63,28 @@ export class WorkbenchService {
     return this.http.post<any>(`${environment.apiUrl}/columnextracting/`+this.accessToken,obj);
   }
   executeQuery(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/custom_query/`+this.accessToken,obj);
   }
-
+  saveQueryName(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/querysetname/`+this.accessToken,obj);
+  }
+  updateCustmQuery(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/custom_query/`+this.accessToken,obj);
+  }
   joiningTables(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/tables_joining/`+this.accessToken,obj);
-
   }
   getTableJoiningData(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/query_data/`+this.accessToken,obj);
   }
   getDataExtraction(obj:any){
@@ -185,6 +204,16 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/sheet_delete_stmt/`+this.accessToken,obj);
+  }
+  deleteSavedQuery(qryId:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.delete<any>(`${environment.apiUrl}/querysetdelete/`+qryId+'/'+this.accessToken);
+  }
+  deleteSavedQueryMessage(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/query_delete_stmt/`+this.accessToken,obj);
   }
   getuserDashboardsList(){
     const currentUser = localStorage.getItem( 'currentUser' );

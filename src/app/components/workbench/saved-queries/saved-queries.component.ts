@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-saved-queries',
@@ -21,7 +22,8 @@ export class SavedQueriesComponent {
   totalItems:any;
   searchName:any;
   savedQueryList:any[]=[];
-constructor(private workbechService:WorkbenchService){}
+  gridView = true;
+constructor(private workbechService:WorkbenchService,private route:Router){}
 
   ngOnInit(){
     this.getSavedQueries();
@@ -53,8 +55,75 @@ constructor(private workbechService:WorkbenchService){}
       }
     }) 
   }
+  deleteSavedQuery(qrysetId:any){
+    const obj ={
+      queryset_id:qrysetId,
+    }
+    this.workbechService.deleteSavedQueryMessage(obj)
+    .subscribe(
+      {
+        next:(data:any) => {
+          console.log(data);      
+          if(data){
+            Swal.fire({
+              title: 'Are you sure?',
+              text: data.message,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+            }).then((result)=>{
+              if(result.isConfirmed){
+                this.workbechService.deleteSavedQuery(qrysetId)
+                .subscribe(
+                  {
+                    next:(data:any) => {
+                      console.log(data);      
+                      if(data){
+                        Swal.fire({
+                          icon: 'success',
+                          title: 'Deleted!',
+                          text: 'Query Deleted Successfully',
+                          width: '400px',
+                        })
+                      }
+                      this.getSavedQueries();
+                    },
+                    error:(error:any)=>{
+                      Swal.fire({
+                        icon: 'warning',
+                        text: error.error.message,
+                        width: '300px',
+                      })
+                      console.log(error)
+                    }
+                  } 
+                )
+              }})
+          }
+        },
+        error:(error:any)=>{
+          Swal.fire({
+            icon: 'warning',
+            text: error.error.message,
+            width: '300px',
+          })
+          console.log(error)
+        }
+      } 
+    )
+
+
+  }
   pageChangeSavedQueries(page:any){
     this.pageNo=page;
     this.getSavedQueries();
+  }
+  gotoSavedQuery(dbId:any,qrySetId:any){
+    const encodedServerId = btoa(dbId.toString());
+    const encodedQuerySetId = btoa(qrySetId.toString());
+
+    this.route.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
   }
 }

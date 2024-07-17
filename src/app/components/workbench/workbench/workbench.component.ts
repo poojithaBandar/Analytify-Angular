@@ -53,13 +53,14 @@ export class WorkbenchComponent implements OnInit{
   showPassword1 = false;
   toggleClass = "off-line";
   toggleClass1 = "off-line";
-  gridView = false;
+  gridView = true;
 
   itemsPerPage!:any;
   pageNo = 1;
   page: number = 1;
   totalItems:any;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){ 
+    localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/work-bench/view-connections')){
       this.databaseconnectionsList= true;   

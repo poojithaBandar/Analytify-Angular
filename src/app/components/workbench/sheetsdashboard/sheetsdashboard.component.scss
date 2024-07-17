@@ -135,5 +135,32 @@ gridster-item{
 .sticky-top{
   position: sticky;
   top:90px;
-  z-index: 1020;
+  z-index: 900;
+}
+.filter-popup-right{
+  position: relative !important;
+    inset: -70px auto auto 128px !important;
+    margin: 0px !important;
+    transform: translate3d(4.16667px, 39.1667px, 0px);
+ }
+
+ .checkbox-color{
+  border: 1px solid #00a5a2;
+ }
+ .dropdown-menu.filter-popover{
+  width: 100%;
+  box-shadow: none;
+  left: 222px !important;
+  padding: 10px;
+}
+
+@media ( 1420px <= width <= 1560px) {
+  .dropdown-menu.filter-popover{
+    left: 191px !important;
+  }
+}
+@media ( 1280px <= width <= 1420px) {
+  .dropdown-menu.filter-popover{
+    left: 167px !important;
+  }
 }

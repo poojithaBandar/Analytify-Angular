@@ -4,3 +4,9 @@
 a {
     cursor: pointer;
 }
+.dropdown-toggle::after{
+    display: none;
+}
+.card-box-shadow{
+    box-shadow: 5px 10px 10px 5px #0000001a;
+  }
