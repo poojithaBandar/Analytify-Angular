@@ -584,141 +584,422 @@
 
              </div>
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 mt-3 p-1">
-                <div class="card mb-1" style=" height: 172px; overflow-y: scroll;">
-                    <div class="card-header justify-content-start align-items-center">
-                        <div class="card-title fs-12">Filters </div>
-                    </div>
-                    <div class="card-body p-1">
-                        @for(dimen of dimetionMeasure;track dimen;let index = $index){
-                        <div class="example-box justify-content-start border-bottom" style="cursor: pointer;"> 
-                           {{dimen.col_name}}
-                           <div class="filter-icons">
-                            <i class="fe fe-edit fs-12 text-body-secondary ms-2" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
-                            <i class="fe fe-trash fs-12 text-body-secondary ms-1" (click)="filterDelete(index,dimen.filter_id)"></i>
-                        </div>
-                        </div>
-                    }
-                    </div>
-                    <ng-template #contentedit let-modal>
-                        <div class="modal-header">
-                          <h6 class="modal-title"> Edit Filter</h6>
-                          <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
-                          </button>
-                        </div>
-                        <div class="modal-body"  style="height: 500px; overflow: scroll;">
-                            @for(data of filterData;track data){
-                            <div class="form-check">
-                                <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
-                                <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
-                            </div>
-                        }
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn ripple btn-primary" (click)="filterDataEditPut()">Apply</button>
-                          <button
-                            type="button"
-                            class="btn ripple btn-secondary"
-                            (click)="modal.close('Save click')"
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </ng-template>
-                </div>
-                <div class="card mb-1" style=" overflow-y: scroll; height: 220px;">
-                    <div class="card-header justify-content-between align-items-center">
-                        <div class="card-title fs-12">Charts </div>
-                    </div>
-                    <div class="card-body" style=" padding: 2px 12px;">
-                        <div class="row"> 
-                           
-                            <div class="col-3 px-2 mt-2">
-                                <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length !==2">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length==1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
-                            </div>
-                            <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card mb-0" style=" height: 222px; overflow-y: scroll;">
-                    <div class="card-header justify-content-between align-items-center">
-                        <div class="card-title fs-12">Marks </div>
-                    </div>
-                    <div class="card-body" style=" padding: 2px 12px;">
-                        <div class="row"> 
-                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                <div class="" ngbDropdown>
+                <div class="card panel panel-primary">
+                    <div class="tab-menu-heading tab-menu-heading-boxed">
+                        <div class="tabs-menu-boxed">
+                            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
 
-                                <ngx-colors 
-                               ngx-colors-trigger 
-                               [(ngModel)]="color"  (click)="marksColor(color)"
-                               [format] = "'hex'"
-                                ></ngx-colors>
-                                  <!--  <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                        aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/color.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                    </a>
-                                    <div class="dropdown-menu p-3" ngbDropdownMenu>
-                                        <h5 class="card-title fs-14 mb-1  border-bottom">Color...</h5>
-                                        <a class="btn btn-blue-light mx-4"> Edit colors</a> 
-                                    </div>-->
-                                    <span class="mark-txt fs-11">Color</span>
-                                </div>
-                                
-                            </div>
-                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                </a>
-                                <span class="mark-txt fs-11">Text</span>
-                            </div>
-                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                <div class="" ngbDropdown>
-                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                        aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/size.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                    </a>
-                                    <div class="dropdown-menu p-3" ngbDropdownMenu>
-                                        <input type="range" class="form-range" id="customRange1">
-                                    </div>
-                                </div>
-                                <span class="mark-txt fs-11">Size</span>
-                            </div>
-                            <div class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                <a href="javascript:void(0);">
-                                    <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                </a>
-                                <span class="mark-txt fs-11">Tooltip</span>
-                            </div>
+                                <li [ngbNavItem]="1">
+                                    <a ngbNavLink class="p-3">Data</a>
+                                    <ng-template ngbNavContent>
+                                        <div class="tab-pane active" id="activetabs">
+                                            <div class="card mb-1 filter-card-height" >
+                                                <div class="card-header justify-content-start align-items-center">
+                                                    <div class="card-title fs-12">Filters </div>
+                                                </div>
+                                                <div class="card-body p-1">
+                                                    @for(dimen of dimetionMeasure;track dimen;let index = $index){
+                                                    <div class="example-box justify-content-start border-bottom" style="cursor: pointer;"> 
+                                                       {{dimen.col_name}}
+                                                       <div class="filter-icons">
+                                                        <i class="fe fe-edit fs-12 text-body-secondary ms-2" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
+                                                        <i class="fe fe-trash fs-12 text-body-secondary ms-1" (click)="filterDelete(index,dimen.filter_id)"></i>
+                                                    </div>
+                                                    </div>
+                                                }
+                                                </div>
+                                                <ng-template #contentedit let-modal>
+                                                    <div class="modal-header">
+                                                      <h6 class="modal-title"> Edit Filter</h6>
+                                                      <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                                                      </button>
+                                                    </div>
+                                                    <div class="modal-body"  style="height: 500px; overflow: scroll;">
+                                                        @for(data of filterData;track data){
+                                                        <div class="form-check">
+                                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                        </div>
+                                                    }
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                      <button type="button" class="btn ripple btn-primary" (click)="filterDataEditPut()">Apply</button>
+                                                      <button
+                                                        type="button"
+                                                        class="btn ripple btn-secondary"
+                                                        (click)="modal.close('Save click')"
+                                                      >
+                                                        Close
+                                                      </button>
+                                                    </div>
+                                                  </ng-template>
+                                            </div>
+                                            <div class="card mb-1 charts-card-height" style=" overflow-y: scroll; height: 220px;">
+                                                <div class="card-header justify-content-between align-items-center">
+                                                    <div class="card-title fs-12">Charts </div>
+                                                </div>
+                                                <div class="card-body" style=" padding: 2px 12px;">
+                                                    <div class="row"> 
+                                                       
+                                                        <div class="col-3 px-2 mt-2">
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>2">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card mb-0 marks-card-height" style=" height: 168px; overflow-y: scroll;">
+                                                <div class="card-header justify-content-between align-items-center">
+                                                    <div class="card-title fs-12">Marks </div>
+                                                </div>
+                                                <div class="card-body" style=" padding: 2px 12px;">
+                                                    <div class="row"> 
+                                                        <div class="col-3 px-2 m-1 border text-center sub-menu-item">
+                                                            <div class="" ngbDropdown>
+                            
+                                                            <ngx-colors 
+                                                           ngx-colors-trigger 
+                                                           [(ngModel)]="color"  (click)="marksColor(color)"
+                                                           [format] = "'hex'"
+                                                            ></ngx-colors>
+                                                              <!--  <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                                    aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/color.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
+                                                                </a>
+                                                                <div class="dropdown-menu p-3" ngbDropdownMenu>
+                                                                    <h5 class="card-title fs-14 mb-1  border-bottom">Color...</h5>
+                                                                    <a class="btn btn-blue-light mx-4"> Edit colors</a> 
+                                                                </div>-->
+                                                                <span class="mark-txt fs-11">Color</span>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        <div class="col-3 px-2 m-1 border text-center sub-menu-item">
+                                                            <a href="javascript:void(0);">
+                                                                <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
+                                                            </a>
+                                                            <span class="mark-txt fs-11">Text</span>
+                                                        </div>
+                                                        <div class="col-3 px-2 m-1 border text-center sub-menu-item">
+                                                            <div class="" ngbDropdown>
+                                                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                                    aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/size.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
+                                                                </a>
+                                                                <div class="dropdown-menu p-3" ngbDropdownMenu>
+                                                                    <input type="range" class="form-range" id="customRange1">
+                                                                </div>
+                                                            </div>
+                                                            <span class="mark-txt fs-11">Size</span>
+                                                        </div>
+                                                        <div class="col-3 px-2 m-1 border text-center sub-menu-item">
+                                                            <a href="javascript:void(0);">
+                                                                <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
+                                                            </a>
+                                                            <span class="mark-txt fs-11">Tooltip</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </li>
+                                <li [ngbNavItem]="2">
+                                     <a ngbNavLink class="p-3">Customize</a>
+                                        <ng-template ngbNavContent>
+                                            <div class="tab-pane" id="linktabs">
+                                                 <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
+                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                          <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button
+                                                              ngbAccordionButton
+                                                              class="accordion-button p-3 fw-500"
+                                                              type="button"
+                                                              data-bs-toggle="collapse"
+                                                              data-bs-target="#collapse"
+                                                              aria-expanded="true"
+                                                              aria-controls="collapse"
+                                                              >
+                                                              Dimension
+                                                            </button>
+                                                            
+                                                          </h6>
+                                                          <div
+                                                            ngbAccordionCollapse
+                                                            id="collapse"
+                                                            class="accordion-collapse collapse" 
+                                                            aria-labelledby="heading"
+                                                            data-bs-parent="#accordionExample"
+                                                             >
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                              <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                                                  <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                                                              </button> -->
+                                                              <ng-template>
+                                                                <div >
+                                                                  <div class="sub-menu-item  p-2" >
+                                                                    <div class="row">
+                                                                        <label class="col-md-4 form-label px-1 fs-14">Font</label>
+                                                                        <div class="col-md-8">
+                                                                            <div class="form-group mb-1">
+                                                                                <select class="form-select form-select select2 fs-14">
+                                                                                    <option value="1">Caliber,9pt</option>
+                                                                                    <option value="2">Two</option>
+                                                                                    <option value="3">Three</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
+                                                                        <div class="col-md-8">
+                                                                            <div class="form-group mb-1">
+                                                                                <select class="form-select form-select select2 fs-14">
+                                                                                    <option value="1">Automatic</option>
+                                                                                    <option value="2">Two</option>
+                                                                                    <option value="3">Three</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
+                                                                        <div class="col-md-8">
+                                                                            <div class="form-group mb-1">
+                                                                                <select class="form-select form-select select2 fs-14">
+                                                                                    <option value="1">123,456</option>
+                                                                                    <option value="2">Two</option>
+                                                                                    <option value="3">Three</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span ngbTooltip=""></span>
+                                                                  </div>
+                                                                </div>
+                                                              </ng-template>
+                                                            </div>
+                                                          </div>
+                                                    </div>
+
+                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                            <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                              <button
+                                                                ngbAccordionButton
+                                                                class="accordion-button p-3 fw-500 border"
+                                                                type="button"
+                                                                data-bs-toggle="collapse"
+                                                                data-bs-target="#collapse"
+                                                                aria-expanded="true"
+                                                                aria-controls="collapse"
+                                                                >
+                                                                Measures
+                                                              </button>
+                                                              
+                                                            </h6>
+                                                            <div
+                                                              ngbAccordionCollapse
+                                                              id="collapse"
+                                                              class="accordion-collapse collapse" 
+                                                              aria-labelledby="heading"
+                                                              data-bs-parent="#accordionExample"
+                                                               >
+                                                              <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                                <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                                                    <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                                                                </button> -->
+                                                                <ng-template>
+                                                                  <div >
+                                                                    <div class="sub-menu-item  p-2" >
+                                                                      <div class="row">
+                                                                          <label class="col-md-4 form-label px-1 fs-14">Font</label>
+                                                                          <div class="col-md-8">
+                                                                              <div class="form-group mb-1">
+                                                                                  <select class="form-select form-select select2 fs-14">
+                                                                                      <option value="1">Caliber,9pt</option>
+                                                                                      <option value="2">Two</option>
+                                                                                      <option value="3">Three</option>
+                                                                                  </select>
+                                                                              </div>
+                                                                          </div>
+                                                                      </div>
+                                                                      <div class="row">
+                                                                          <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
+                                                                          <div class="col-md-8">
+                                                                              <div class="form-group mb-1">
+                                                                                  <select class="form-select form-select select2 fs-14">
+                                                                                      <option value="1">Automatic</option>
+                                                                                      <option value="2">Two</option>
+                                                                                      <option value="3">Three</option>
+                                                                                  </select>
+                                                                              </div>
+                                                                          </div>
+                                                                      </div>
+                                                                      <div class="row">
+                                                                          <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
+                                                                          <div class="col-md-8">
+                                                                              <div class="form-group mb-1">
+                                                                                  <select class="form-select form-select select2 fs-14">
+                                                                                      <option value="1">123,456</option>
+                                                                                      <option value="2">Two</option>
+                                                                                      <option value="3">Three</option>
+                                                                                  </select>
+                                                                              </div>
+                                                                          </div>
+                                                                      </div>
+                                                                      <span ngbTooltip=""></span>
+                                                                    </div>
+                                                                  </div>
+                                                                </ng-template>
+                                                              </div>
+                                                            </div>
+                                                    </div>
+
+                                                    <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Banding </p>
+                                                        </div>
+                                                        <div class="toggle toggle-sm on mb-0">
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                          <button
+                                                            ngbAccordionButton
+                                                            class="accordion-button p-3 fw-500 border"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse"
+                                                            >
+                                                            X-Axis
+                                                          </button>
+                                                          
+                                                        </h6>
+                                                        <div
+                                                          ngbAccordionCollapse
+                                                          id="collapse"
+                                                          class="accordion-collapse collapse" 
+                                                          aria-labelledby="heading"
+                                                          data-bs-parent="#accordionExample"
+                                                           >
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                                                <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                                                            </button> -->
+                                                            <ng-template>
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >X-label </p>
+                                                                    </div>
+                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Grid Line </p>
+                                                                    </div>
+                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-template>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                          <button
+                                                            ngbAccordionButton
+                                                            class="accordion-button p-3 fw-500 border"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse"
+                                                            >
+                                                            Y-Axis
+                                                          </button>
+                                                          
+                                                        </h6>
+                                                        <div
+                                                          ngbAccordionCollapse
+                                                          id="collapse"
+                                                          class="accordion-collapse collapse" 
+                                                          aria-labelledby="heading"
+                                                          data-bs-parent="#accordionExample"
+                                                           >
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                                                <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                                                            </button> -->
+                                                            <ng-template>
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Y-label </p>
+                                                                    </div>
+                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Grid Line </p>
+                                                                    </div>
+                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-template>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body tabs-menu-body p-1" style="height: 578px;">
+                        <div class="tab-content">
+                            <div [ngbNavOutlet]="nav"></div>
+
                         </div>
                     </div>
                 </div>

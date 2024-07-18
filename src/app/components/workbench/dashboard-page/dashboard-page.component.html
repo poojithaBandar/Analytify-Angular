@@ -18,7 +18,7 @@
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchDashboarList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary" (click)="dashboardRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Dashboard</button>
+            <!-- <button type="button" class="btn btn-primary" (click)="dashboardRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Dashboard</button> -->
 
           </div>
         </div>
@@ -76,73 +76,40 @@
                     currentPage: page,
                     totalItems: totalItems
                   }" class="col-md-12 col-xl-3">
-                      <div class="card shadow-none">
-                      <div class="card-body card-box-shadow">
-                          <div class="row">
-                              <div class="col-md-12">
-                                  <div class="row border-bottom">
-                                      <div class="col mb-1">
-                                          <div class="d-sm-flex align-items-center">
-                                            <span class="avatar avatar-xl rounded-circle">
-                                                <img src="./assets/images/charts/table-tiled-icon.jpg" alt="" class="rounded-circle"></span>
-                                              <div class="ms-2 mt-sm-0 mt-2">
-                                                <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
-                                                  <h6 class="mb-1">
-                                                      <a ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"  class="float-start">{{dashboard.dashboard_name | slice:0:15}}</a>
-                                                  </h6>
-                                                  
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="col-auto">
-                                          <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                aria-haspopup="true" aria-expanded="false" class=""><i
-                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                            </a>
-                                            <div class="dropdown-menu" ngbDropdownMenu>
-                                               <a class="dropdown-item" tabindex="0" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">
-                                                      <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
-                                                  <a  class="dropdown-item" tabindex="0" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">
-                                                      <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div  class="col-md-12 mt-2">
-                                <div class="p-2 ">
-                        
-                                  <div class="row">
-                                      <div class="col-md-6">
-                                          <span class="fw-semibold fs-14">Created by  </span>
-                                      </div>
-                                      <div class="col-md-6">
-                                          <span class="fs-14">{{dashboard.created_by}}</span>
-                                      </div>
-                                  </div>
-                                  <div class="row">
-                                      <div class="col-md-6">
-                                          <span class="fw-semibold fs-14">Created on :</span>
-                                      </div>
-                                      <div class="col-md-6">
-                                          <span class="fs-14">{{dashboard.created}}</span>
-                                      </div>
-                                  </div>
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                        <span class="fw-semibold fs-14">Last Modified : </span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span class="fs-14">{{dashboard.Modified}}</span>
-                                    </div>
-                                </div>
-                              </div>
-                              </div>
-                             
-                          </div>
+                  <div class="card  ">
+                    <div class="user-image  card-box-shadow">                        
+                          <img src="./assets/images/icons/sales-analysis.jpg" alt="" class="card-img-top">
+                    </div>
+                    <div class="card-body p-1 mt-1 text-center">
+                        <a  class="fs-18 fw-bold d-block" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">{{dashboard.dashboard_name | slice:0:15}}</a>
+                    </div>
+                    <div class=" p-1 text-center">
+                      <div class="row">
+                        <div class="col-md-6">
+                            <span class="fw-semibold fs-14">Created on: </span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="fs-15">{{dashboard.created}}</span>
+                        </div>
+                      </div>     
+                      <div class="row ">
+                        <div class="col-md-6">
+                          <span class="fw-semibold fs-14">Modified on: </span>
+                        </div>
+                        <div class="col-md-6">
+                          <span class="fs-15">{{dashboard.Modified}}</span>
+                        </div>
+                      </div>                               
                       </div>
-                      </div>
+                        <div class=" text-center p-2">
+                          <a aria-label="anchor"   (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
+                            <i class="ri-edit-line" ng-reflect-ngb-tooltip="Edit"></i>
+                           </a>
+                          <a aria-label="anchor" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                            <i class="ri-delete-bin-7-line" ng-reflect-ngb-tooltip="Delete"></i>
+                           </a>
+                        </div>
+                  </div>
                     </div>
           </div>
 

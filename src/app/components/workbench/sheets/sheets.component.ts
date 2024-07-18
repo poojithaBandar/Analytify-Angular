@@ -123,7 +123,7 @@ export class SheetsComponent {
   newColumn: any;
   selectedTabIndex: any;
   isAllSelected: boolean = false;
- 
+  active=1;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
    if(this.router.url.includes('/workbench/sheets/')){

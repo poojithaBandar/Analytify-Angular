@@ -310,40 +310,39 @@ export class SheetsdashboardComponent {
 this.takeScreenshot();
   }
   takeScreenshot() {
-    // const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
-    // if (element) {
-    //   this.screenshotService.capture(element).then((imgData) => {
-    //     this.screenshotSrc = imgData;
-    //   }).catch((error) => {
-    //     console.error('Error capturing screenshot:', error);
-    //   });
-    // } else {
-    //   console.error('Gridster element is not defined for screenshot.');
-    // }
-    setTimeout(() => {
-      const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
+    const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
+    if (element) {
+      this.screenshotService.capture(element).then((imgData) => {
+        this.screenshotSrc = imgData;
+      }).catch((error) => {
+        console.error('Error capturing screenshot:', error);
+      });
+    } else {
+      console.error('Gridster element is not defined for screenshot.');
+    }
+    // setTimeout(() => {
+    //   const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
 
-      window.scrollTo(0, 0); // Scroll to top
-      const clone = element.cloneNode(true) as HTMLElement;
+    //   window.scrollTo(0, 0); // Scroll to top
+    //   const clone = element.cloneNode(true) as HTMLElement;
 
-      // Optionally, apply specific styles to the clone
-      clone.style.position = 'absolute';
-      clone.style.left = '0';
-      clone.style.top = '0';
-      clone.style.width = `${clone.scrollWidth}px`;
-      clone.style.height = `${clone.scrollHeight}px`;
-      clone.style.overflow = 'hidden';
-      document.body.appendChild(clone);  
-      if (clone) {
-        this.screenshotService.capture(clone).then((imgData) => {
-          this.screenshotSrc = imgData;
-        }).catch((error) => {
-          console.error('Error capturing screenshot:', error);
-        });
-      } else {
-        console.error('Gridster element is not defined for screenshot.');
-      }
-    }, 1000);
+    //   clone.style.position = 'absolute';
+    //   clone.style.left = '0';
+    //   clone.style.top = '0';
+    //   clone.style.width = `${clone.scrollWidth}px`;
+    //   clone.style.height = `${clone.scrollHeight}px`;
+    //   clone.style.overflow = 'hidden';
+    //   document.body.appendChild(clone);  
+    //   if (clone) {
+    //     this.screenshotService.capture(clone).then((imgData) => {
+    //       this.screenshotSrc = imgData;
+    //     }).catch((error) => {
+    //       console.error('Error capturing screenshot:', error);
+    //     });
+    //   } else {
+    //     console.error('Gridster element is not defined for screenshot.');
+    //   }
+    // }, 1000);
   }
   updateDashboard(){
     this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);

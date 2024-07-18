@@ -153,6 +153,9 @@ gridster-item{
   left: 222px !important;
   padding: 10px;
 }
+.card-box-shadow{
+  box-shadow: 5px 10px 10px 5px #0000001a;
+}
 
 @media ( 1420px <= width <= 1560px) {
   .dropdown-menu.filter-popover{

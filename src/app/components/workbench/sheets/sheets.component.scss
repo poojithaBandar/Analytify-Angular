@@ -182,4 +182,15 @@ span.abc-txt {
 .chart-icon:hover{
   background-color: #e1f0f9;
  }
-
+ .filter-card-height{
+  height: 172px; 
+  overflow-y: scroll;
+ }
+ .charts-card-height{
+  overflow-y: scroll; 
+  height: 220px;
+ }
+ .marks-card-height{
+  height: 168px; 
+  overflow-y: scroll;
+ }
