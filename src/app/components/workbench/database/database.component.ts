@@ -114,20 +114,20 @@ export class DatabaseComponent {
         }
       this.customSql=true;
       this.tableJoiningUI=false;
-      this.updateQuery=true
+      this.updateQuery=true;
+      this.getSavedQueryData();
      }
      if(currentUrl.includes('/workbench/database-connection/sheets/')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-
+      this.getTablesfromPrevious();
       }
     }
 
   }
   ngOnInit(){
-    if(!this.updateQuery){
     {
       document.querySelector('html')?.getAttribute('data-toggled') != null
         ? document.querySelector('html')?.removeAttribute('data-toggled')
@@ -135,13 +135,15 @@ export class DatabaseComponent {
             .querySelector('html')
             ?.setAttribute('data-toggled', 'icon-overlay-close');    
     }
+
+    if(!this.updateQuery){
     this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
-    this.getTablesfromPrevious()}
-
-    if(this.updateQuery){
-      this.getSavedQueryData();
-    }
+   // this.getTablesfromPrevious()
+  }
+//  if(this.updateQuery){
+//       this.getSavedQueryData();
+//     }
   }
   toggleCard() {
     this.isOpen = !this.isOpen;

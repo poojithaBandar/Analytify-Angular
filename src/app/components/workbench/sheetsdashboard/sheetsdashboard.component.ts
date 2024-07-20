@@ -23,9 +23,13 @@ import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
 import { debounceTime, fromEvent, map } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ScreenshotService } from '../../../shared/services/screenshot.service';
+import * as htmlToImage from 'html-to-image';
+import { toPng } from 'html-to-image';
+import { style } from 'd3';
+import { OVERFLOW } from 'html2canvas/dist/types/css/property-descriptors/overflow';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -70,6 +74,7 @@ export class SheetsdashboardComponent {
  databaseName:any;
  updateDashbpardBoolen= false;
  active=1;
+ isOverflowHidden = false;
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService){
     this.dashboard = [];
@@ -310,40 +315,67 @@ export class SheetsdashboardComponent {
 this.takeScreenshot();
   }
   takeScreenshot() {
-    const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
-    if (element) {
-      this.screenshotService.capture(element).then((imgData) => {
-        this.screenshotSrc = imgData;
-      }).catch((error) => {
-        console.error('Error capturing screenshot:', error);
+  //   const node = document.querySelector('gridster') as HTMLElement;
+
+  //   // const originalOverflow = element.style.overflow;
+  //   // element.style.overflow = 'hidden';
+  //   const options = {
+  //     width: node.scrollWidth, // width of the canvas element
+  //     height: node.scrollHeight, // height of the canvas element
+  //     style: {
+  //       transform: 'scale(1)',
+  //       transformOrigin: 'top left'
+  //     }
+  //   };
+  //   if (node) {
+  //     htmlToImage.toPng(node,options)
+  //     .then((dataUrl) => {
+  //       this.screenshotSrc = dataUrl;
+  //     })
+  //     .catch((error) => {
+  //       console.error('oops, something went wrong!', error);
+  //     });
+  // }
+  //  else {
+  //     console.error('Gridster element is not defined for screenshot.');
+  //   }
+  // this.startMethod();
+  const element = document.getElementById('capture-element');
+  if (element) {
+    // Select all gridster-items
+    // Hide scrollbars
+    htmlToImage.toPng(element)
+      .then((dataUrl) => {
+        this.screenshotSrc = dataUrl;
+      })
+      .catch((error) => {
+        console.error('oops, something went wrong!', error);
+      })
+      .finally(() => {
+        // Restore original overflow
       });
-    } else {
-      console.error('Gridster element is not defined for screenshot.');
-    }
-    // setTimeout(() => {
-    //   const element = this.gridster?.nativeElement ||  document.querySelector('gridster') as HTMLElement;
-
-    //   window.scrollTo(0, 0); // Scroll to top
-    //   const clone = element.cloneNode(true) as HTMLElement;
-
-    //   clone.style.position = 'absolute';
-    //   clone.style.left = '0';
-    //   clone.style.top = '0';
-    //   clone.style.width = `${clone.scrollWidth}px`;
-    //   clone.style.height = `${clone.scrollHeight}px`;
-    //   clone.style.overflow = 'hidden';
-    //   document.body.appendChild(clone);  
-    //   if (clone) {
-    //     this.screenshotService.capture(clone).then((imgData) => {
-    //       this.screenshotSrc = imgData;
-    //     }).catch((error) => {
-    //       console.error('Error capturing screenshot:', error);
-    //     });
-    //   } else {
-    //     console.error('Gridster element is not defined for screenshot.');
-    //   }
-    // }, 1000);
   }
+   this.endMethod(); 
+  }
+
+  startMethod() {
+    this.isOverflowHidden = true;
+  }
+
+  endMethod() {
+    this.isOverflowHidden = false;
+  }
+  // applyStylesToChildNodes(element: HTMLElement, styleName: string, styleValue: string): void {
+  //   if(element.childNodes){
+  //   element.childNodes[0].childNodes.forEach(child => {
+  //     if (child.nodeType === 1) { // Only element nodes
+  //       const childElement = child as HTMLElement;
+  //       childElement.style.setProperty(styleName, styleValue);
+  //     }
+  //   });
+  // }
+  // }
+
   updateDashboard(){
     this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
@@ -376,8 +408,8 @@ this.takeScreenshot();
       }
     })
   }
+  this.startMethod()
   this.takeScreenshot();
-
   }
   sheetsDataWithQuerysetId(){
     const obj ={
@@ -463,6 +495,7 @@ this.takeScreenshot();
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
+
       return this.barChartOptions(xaxis,yaxis) 
     }
     if(sheet.chart_id === 17){
@@ -484,7 +517,11 @@ this.takeScreenshot();
     if(sheet.chart_id === 7){
       let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
       let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
-      return this.sidebySideBarChartOptions(xaxis,yaxis)
+
+      const dimensions: Dimension[] =xaxis
+      const categories = this.flattenDimensions(dimensions)
+      return this.sidebySideBarChartOptions(categories,yaxis)
+
     }
     if(sheet.chart_id === 5){
       let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
@@ -503,12 +540,19 @@ this.takeScreenshot();
     if(sheet.chart_id === 2){
       let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
       let yaxis = sheet.sheet_data?.results?.hStockedYaxis;
-      return this.hStockedBarChartOptions(xaxis,yaxis)
+
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+      return this.hStockedBarChartOptions(categories,yaxis);
     }
     if(sheet.chart_id === 3){
       let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
       let yaxis = sheet.sheet_data?.results?.hgroupedYaxis;
-      return this.hGroupedChartOptions(xaxis,yaxis)
+
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+
+      return this.hGroupedChartOptions(categories,yaxis)
     }
     if(sheet.chart_id === 8){
       let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
@@ -1101,7 +1145,7 @@ pieChartOptions(xaxis:any,yaxis:any){
     };
 }
 sidebySideBarChartOptions(xaxis:any,yaxis:any){
-  return {
+  return{
     series: yaxis,
     colors:['#00a5a2','#0dc9c5','#f43f63'],
     chart: {
@@ -1124,12 +1168,12 @@ sidebySideBarChartOptions(xaxis:any,yaxis:any){
       colors: ['transparent'],
     },
     xaxis: {
-      categories:xaxis[0],
+      categories:xaxis,
       
     },
     yaxis: {
       title: {
-        text: '$ (thousands)',
+        text: '',
       },
     },
     fill: {
@@ -1137,8 +1181,9 @@ sidebySideBarChartOptions(xaxis:any,yaxis:any){
     },
     tooltip: {
       y: {
-        formatter: function (val: string) {
-          return '$ ' + val + ' thousands';
+        formatter: function (val:any) {
+          console.log(val)
+          return val ;
         },
       },
     },
@@ -1260,52 +1305,52 @@ barLineChartOptions(xaxis:any,yaxis:any){
 }
 hStockedBarChartOptions(xaxis:any,yaxis:any){
     return {
-      series: yaxis,
-      chart: {
-        type: "bar",
-        height: 350,
-        stacked: true,
-        toolbar: {
-          show: true
-        },
-        zoom: {
-          enabled: true
-        }
+    series: yaxis,
+    chart: {
+      type: "bar",
+      height: 350,
+      stacked: true,
+      toolbar: {
+        show: true
       },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: "bottom",
-              offsetX: -10,
-              offsetY: 0
-            }
+      zoom: {
+        enabled: true
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: "bottom",
+            offsetX: -10,
+            offsetY: 0
           }
         }
-      ],
-      plotOptions: {
-        bar: {
-          horizontal: true
-        }
-      },
-      xaxis: {
-        type: "category",
-        categories: xaxis[0],
-      },
-      legend: {
-        position: "right",
-        offsetY: 40
-      },
-      fill: {
-        opacity: 1
       }
-    };
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: true
+      }
+    },
+    xaxis: {
+      type: "category",
+      categories: xaxis,
+    },
+    legend: {
+      position: "right",
+      offsetY: 40
+    },
+    fill: {
+      opacity: 1
+    }
+  }
 }
 
 hGroupedChartOptions(xaxis:any,yaxis:any){
   return{
-    series:yaxis,
+    series: yaxis,
     chart: {
       type: "bar",
       height: 430
@@ -1332,7 +1377,7 @@ hGroupedChartOptions(xaxis:any,yaxis:any){
       colors: ["#fff"]
     },
     xaxis: {
-      categories: xaxis[0]
+      categories: xaxis
     }
   };
 }

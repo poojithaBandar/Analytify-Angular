@@ -126,9 +126,21 @@ button {
 .dropdown-toggle::after{
     display: none;
 }
-gridster-item{
-    overflow: scroll !important;
+.hidden-overflow {
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+
 }
+
+.scroll-overflow {
+  overflow: scroll !important;
+}
+// gridster-item{
+//     overflow: scroll !important;
+// }
+// .hide-scrollbar {
+//   overflow: hidden !important;
+// }
 .sheets-title {
   color: var(--bs-heading-color);
 }
@@ -156,7 +168,13 @@ gridster-item{
 .card-box-shadow{
   box-shadow: 5px 10px 10px 5px #0000001a;
 }
+.card-content{
+  border: none !important;
+}
 
+.hide-scrollbar {
+  overflow: hidden;
+}
 @media ( 1420px <= width <= 1560px) {
   .dropdown-menu.filter-popover{
     left: 191px !important;

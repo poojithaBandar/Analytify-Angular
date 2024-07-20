@@ -171,7 +171,8 @@ export class WorkbenchComponent implements OnInit{
           "port":this.postGrePortName,
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
-          "display_name":this.displayName
+          "display_name":this.displayName,
+
       }
         this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
               console.log(responce);
@@ -187,7 +188,8 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openPostgreSqlForm = false;
-                this.router.navigate(['/workbench/database-connection/tables/'+this.databaseId]);
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -200,9 +202,43 @@ export class WorkbenchComponent implements OnInit{
             }
           }
         )
-
     }
+    mySqlSignIn(){
+      const obj={
+          "database_type":"mysql",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName,
+          "database": this.postGreDatabaseName,
 
+      }
+        this.workbechService.mySqlConnection(obj).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+    }
     deleteDbConnection(id:any){
       const obj ={
         database_id:id

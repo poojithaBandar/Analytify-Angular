@@ -47,21 +47,32 @@
                               <!-- <img *ngIf="sheets.chart_id === 1" src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" class="w-5 h-5 border me-2">
                               <img *ngIf="sheets.chart_id === 1" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2"> -->
 
-                              <img *ngIf="sheets.chart_id === 1" src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 6" src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 17" src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 13" src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 24" src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 7" src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 5" src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 4" src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 2" src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 3" src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 8" src="./assets/images/Tiled view sheet icons/multiline-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-                              <img *ngIf="sheets.chart_id === 10" src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt="" class="w-5 h-5 border me-2">
-
+                              <div class="d-flex">
+                                <div class="imgdf">
+                                  <!-- <span class="avatar bg-light avatar-md mb-1 avatar-radius me-2">
+                                    <img *ngIf="sheets.chart_id === 6" src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="avatar-radius">
+                                </span> -->
+                                <img *ngIf="sheets.chart_id === 1" src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 6" src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 17" src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 13" src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 24" src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 7" src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 5" src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 4" src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 2" src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 3" src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 8" src="./assets/images/Tiled view sheet icons/multiline-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 10" src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt="" class="w-7 h-7 border rounded-3  me-4">
+            
+                              </div>
+                              <div class="content">
+                                <span>Sheet Name : </span>
                                 <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)" > {{sheets.sheet_name | slice:0:15}}</a>
-                               </td>
+                                <p class="mb-0">Created by : {{sheets.created_by}}</p>
+                              </div>
+                          </div>                                  
+                            </td>
                                <td>{{sheets.created}}</td>
                             <td>{{sheets.Modified}}</td>
                             <td>

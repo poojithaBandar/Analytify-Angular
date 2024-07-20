@@ -43,6 +43,7 @@
     "echarts": "^5.5.0",
     "filepond": "^4.31.1",
     "flatpickr": "^4.6.13",
+    "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "i": "^0.3.7",
     "keen-slider": "^6.8.6",

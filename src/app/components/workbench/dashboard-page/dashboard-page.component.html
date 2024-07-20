@@ -42,8 +42,13 @@
                             totalItems: totalItems
                           }">
                             <td >
-                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name | slice:0:15}}</a>
-                               </td>
+                                <!-- <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name | slice:0:15}}</a> -->
+                               
+                                <div class="content">
+                                  <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" > {{dashboard.dashboard_name | slice:0:15}}</a>
+                                  <p class="mb-0">Created by : {{dashboard.created_by}}</p>
+                                </div>
+                              </td>
                                <td>{{dashboard.created}}</td>
                             <td>{{dashboard.Modified}}</td>
                             <td>

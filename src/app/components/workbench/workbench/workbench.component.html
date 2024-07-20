@@ -95,6 +95,53 @@
     </div>
   </ng-template>
 
+  <ng-template #mySql let-modal >
+
+    <div  >
+      <div >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="inputModalLabel">MySQL</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-2">
+                <label for="recipient-name" class="col-form-label">Server:</label>
+                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+              </div>
+              <div class="mb-2">
+                <label for="message-text" class="col-form-label">Port:</label>
+                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521">
+              </div>
+              <div class="mb-2">
+                <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. mysql">
+              </div>
+             
+              <div class="mb-2">
+                <label class="col-form-label">Username:</label>
+                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g.InsightApps">
+              </div>
+              <div class="mb-2">
+                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+              </div>
+              <div class="mb-2">
+                <label class="col-form-label">Password:</label>
+                <input type="text" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"[type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
+            </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+            <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Sign In</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 
   <ng-template #EditDbCon let-modal >
 
@@ -497,7 +544,7 @@
               </div>
               </div> -->
               <div class="database-logo">
-                <div class="imgcard op-4 p-4">
+                <div class="imgcard p-4 "  (click)="Openmdo(mySql)">
                     <img src="./assets/images/Db_server_images/Relational Database/mysql.png" alt="Image" class="card-img"/>                   
                   </div>
                   <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
