@@ -212,6 +212,10 @@
           </div>
         </div>
     </div>
+    <div *ngIf="connectionList.length === 0">
+      Connect to new Database!
+    </div>
+
         <div class="card-body">
           @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
@@ -241,6 +245,10 @@
                           <td *ngIf="database.server_type === 'ORACLE'">
                             <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
                         </td>
+                        <td *ngIf="database.server_type === 'MYSQL'">
+                          <img alt="product" src="./assets/images/icons/MySql-icon1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                        </td>
+
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
                             <td>{{database.updated_at}}</td>
@@ -340,6 +348,8 @@
                                                 <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt="" class="rounded-circle"></span>
                                                 <span *ngIf="database.server_type === 'POSTGRESQL'" class="avatar avatar-xl rounded-circle">
                                                   <img src="./assets/images/charts/post-tiled-icon.jpg" alt="" class="rounded-circle"></span>
+                                                  <span *ngIf="database.server_type === 'MYSQL'" class="avatar avatar-xl rounded-circle">
+                                                    <img src="./assets/images/icons/MySql-icon1.jpg" alt="" class="rounded-circle"></span>
                                                 <div class="ms-2 mt-sm-0 mt-2">
                                                   <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                                                     <h6 class="mb-1">

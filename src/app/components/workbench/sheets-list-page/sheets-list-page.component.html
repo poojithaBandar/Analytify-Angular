@@ -25,6 +25,9 @@
           </div>
         </div>
     </div>
+    <div *ngIf="savedSheetsList.length === 0">
+      No Sheets, Please Create One!
+    </div>
         <div class="card-body">
           @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">

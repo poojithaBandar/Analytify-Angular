@@ -276,4 +276,35 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/rename_column/`+this.accessToken,obj);
   }
+  //image convert
+      blobToFile(theBlob:any){
+      theBlob.lastModifiedDate = new Date();
+      theBlob.name = theBlob.lastModifiedDate.getTime()+'.jpeg';
+      return theBlob;
+      
+     }
+    // convertBase64ToFileObject(dataURI) {
+    //   const byteString = atob(dataURI.split(',')[1]);
+    //   const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    //   const ab = new ArrayBuffer(byteString.length);
+    //   const ia = new Uint8Array(ab);
+    //   for (let i = 0; i < byteString.length; i++) {  ia[i] = byteString.charCodeAt(i);  }
+    //   const blob = new Blob([ab], {type: mimeString});
+    //   return (<File> blob);
+    // }
+
+    base64ToBlob(dataUrl: string): Blob {
+      const byteString = atob(dataUrl.split(',')[1]);
+      const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+    //   for (let i = 0; i < byteString.length; i++) {
+    //     ia[i] = byteString.charCodeAt(i);
+    //   }
+    //   return new Blob([ab], { type: mimeString });
+    // }
+    for (let i = 0; i < byteString.length; i++) {  ia[i] = byteString.charCodeAt(i);  }
+      const blob = new Blob([ab], {type: mimeString});
+      return (<File> blob);
+    }
 }

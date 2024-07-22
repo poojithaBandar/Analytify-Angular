@@ -90,7 +90,8 @@ export class DatabaseComponent {
   columnsInFilters = [] as any;
   tableColumnFilter!:boolean;
   columnRowFilter!:any;
-  datasourceFilterId:any;rows: any;
+  datasourceFilterId:any;
+  rows: any;
 ;
   datasourceFilterIdArray:any[] =[];
   selectedRows = [];
@@ -101,6 +102,9 @@ export class DatabaseComponent {
   isAllSelected: boolean = false;
   saveQueryName = '';
   updateQuery=false;
+  dataType:any;
+  colName:any;
+
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -122,6 +126,16 @@ export class DatabaseComponent {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+
+      this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
+      if(this.datasourceQuerysetId==='null'){
+        console.log('filterqrysetid',this.datasourceQuerysetId)
+        this.datasourceQuerysetId = null
+      }
+      else{
+          parseInt(this.datasourceQuerysetId)
+          console.log(this.datasourceQuerysetId)
+        }
       this.getTablesfromPrevious();
       }
     }
@@ -771,13 +785,15 @@ selectedColumnGetRows(col:any,datatype:any){
     col_name:col,
     data_type:datatype,
   }
+  this.colName = col;
+  this.dataType = datatype;
   this.workbechService.selectedColumnGetRows(obj).subscribe(
     {
       next:(data:any) =>{
         console.log(data)
         this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
-        this.datasourceFilterId=data.filter_id;
-        this.datasourceFilterIdArray.push(data.filter_id);
+        // this.datasourceFilterId=data.filter_id;
+        // this.datasourceFilterIdArray.push(data.filter_id);
         this.tableColumnFilter =false;
         this.columnRowFilter = true;
         console.log('colmnfilterrows',this.columnsInFilters)
@@ -817,13 +833,15 @@ getSelectedRows() {
   console.log('selected rows',this.selectedRows);
 
   const obj = {
-    filter_id:this.datasourceFilterId,
+    filter_id:null,
     database_id:this.databaseId,
     queryset_id:this.qurtySetId,
     type_of_filter:'datasource',
     datasource_querysetid:null,
     select_values:this.selectedRows,
-    range_values:null
+    range_values:null,
+    col_name:this.colName,
+    data_type:this.dataType,
   }
 
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
@@ -831,6 +849,7 @@ getSelectedRows() {
       next:(data:any) =>{
         console.log(data)
         this.datasourceFilterId = data.filter_id;
+         this.datasourceFilterIdArray.push(data.filter_id);
         this.getDsQuerysetId();
         this.modalService.dismissAll('close')
       },
@@ -911,6 +930,8 @@ editFilter(id:any){
       next:(data:any) =>{
         console.log(data)
         this.editFilterList = data.result;
+        this.colName=data.column_name,
+        this.dataType = data.data_type
       },
       error:(error:any)=>{
       console.log(error);
@@ -998,7 +1019,9 @@ getSelectedRowsFromEdit() {
     type_of_filter:'datasource',
     datasource_querysetid:null,
     select_values:this.selectedRows,
-    range_values:null
+    range_values:null,
+    col_name:this.colName,
+    data_type:this.dataType
   }
 
   this.workbechService.getSelectedRowsFilter(obj).subscribe(

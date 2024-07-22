@@ -31,7 +31,7 @@ export const admin: Routes = [
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
-  path: 'database-connection/sheets/:id1/:id2',
+  path: 'database-connection/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)

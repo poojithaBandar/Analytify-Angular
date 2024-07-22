@@ -75,6 +75,8 @@ export class SheetsdashboardComponent {
  updateDashbpardBoolen= false;
  active=1;
  isOverflowHidden = false;
+ imageFile:any;
+ imagename:any
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService){
     this.dashboard = [];
@@ -264,7 +266,7 @@ export class SheetsdashboardComponent {
     }
     this.workbechService.getSavedDashboardData(obj).subscribe({
       next:(data)=>{
-        console.log(data);
+        console.log('savedDashboard',data);
         this.dashboardName=data.dashboard_name
         this.dashboard = data.dashboard_data
       },
@@ -347,6 +349,19 @@ this.takeScreenshot();
     htmlToImage.toPng(element)
       .then((dataUrl) => {
         this.screenshotSrc = dataUrl;
+        console.log('scrnsht',this.screenshotSrc);
+        // Convert base64 to Blob
+        const imageBlob = this.workbechService.base64ToBlob(dataUrl);
+        const imageBlob1 = this.workbechService.blobToFile(imageBlob)
+        // let fileObj:any;
+        // fileObj = this.workbechService.convertBase64ToFileObject(this.screenshotSrc);
+        // fileObj = this.workbechService.blobToFile(fileObj);
+
+         this.imageFile = imageBlob
+         this.imagename = imageBlob1
+         console.log('fileblob',this.imageFile)
+
+        // this.imagename = fileObj.path.name
       })
       .catch((error) => {
         console.error('oops, something went wrong!', error);
@@ -354,8 +369,13 @@ this.takeScreenshot();
       .finally(() => {
         // Restore original overflow
       });
+
+     
+
+      //console.log('converted-image',this.screenshotSrc)
+     
   }
-   this.endMethod(); 
+    this.endMethod(); 
   }
 
   startMethod() {
@@ -377,7 +397,15 @@ this.takeScreenshot();
   // }
 
   updateDashboard(){
-    this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+     this.startMethod();
+     setTimeout(() => {
+
+      this.takeScreenshot();
+        }, 1000);
+
+        setTimeout(() => {
+
+      this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
       Swal.fire({
         icon: 'error',
@@ -386,14 +414,32 @@ this.takeScreenshot();
         width: '400px',
       })
     }else{
-    const obj ={
-      queryset_id:this.qrySetId,
-      server_id:this.databaseId,
-       sheet_ids:this.sheetsIdArray,
-      dashboard_name:this.dashboardName,
-      data:this.dashboard
-    }
-    this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
+    // const obj ={
+    //   queryset_id:this.qrySetId,
+    //   server_id:this.databaseId,
+    //    sheet_ids:this.sheetsIdArray,
+    //   dashboard_name:this.dashboardName,
+    //   data:this.dashboard,
+    //   image_path:this.imagename
+      
+    // }
+
+    var formData:any = new FormData();
+    formData.append("queryset_id",this.qrySetId);
+    formData.append("server_id",this.databaseId);
+    // formData.append("sheet_ids", this.sheetsIdArray);
+    this.sheetsIdArray.forEach((id:any, index:any) => {
+      formData.append(`sheet_ids[${index}]`, id);
+    });
+    formData.append("dashboard_name",this.dashboardName);
+    formData.append("data", JSON.stringify(this.dashboard));
+    formData.append("image_path",this.imageFile,this.imagename.name);
+
+
+
+    //formData.append("path", this.addProductForm.get('path').value, this.imagename);
+
+    this.workbechService.updateDashboard(formData,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
         Swal.fire({
@@ -408,8 +454,10 @@ this.takeScreenshot();
       }
     })
   }
-  this.startMethod()
-  this.takeScreenshot();
+        }, 4000);
+
+
+
   }
   sheetsDataWithQuerysetId(){
     const obj ={

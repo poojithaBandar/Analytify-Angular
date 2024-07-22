@@ -166,16 +166,19 @@
                     <h6 class="fw-bold mb-1">Saved Dashboard</h6>
                     <div class="view-card">
                         <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Dashboard</a> -->
-                        @if(!showAllDasboards){
+                        @if(!showAllDasboards && savedDashboardList.length !== 0){
                             <a class="">
                                 <span class="add-txt text-info card-title me-2 " (click)="showAllDasboards=!showAllDasboards">Show Less <i class="fa fa-angle-double-right"> </i></span>
                             </a>
-                            } @if(showAllDasboards){
+                            } @if(showAllDasboards && savedDashboardList.length !== 0){
                             <a class="">
                                 <span class="add-txt text-info card-title me-2" (click)="showAllDasboards=!showAllDasboards">View More <i class="fa fa-angle-double-right"> </i></span>
                             </a>
                         }
                     </div>
+                </div>
+                <div *ngIf="savedDashboardList.length === 0">
+                    No Dashboard please CREATE ONE!
                 </div>
                 <ng-container *ngFor="let dashboardList of savedDashboardList;let i = index" >
                     <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
@@ -247,16 +250,19 @@
                             <p>{{data.sheet_type}}</p>
                         </div> -->
                         <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Recently Viewed</a> -->
-                        @if(!showAllSheets){
+                        @if(!showAllSheets && userSheetsList.length !==0){
                         <a class="">
                             <span class="add-txt text-info card-title me-2" (click)="showAllSheets=!showAllSheets">Show Less <i class="fa fa-angle-double-right"> </i></span>
                         </a>
-                        } @if(showAllSheets){
+                        } @if(showAllSheets && userSheetsList.length !==0){
                         <a class="">
                             <span class="add-txt text-info card-title me-2" (click)="showAllSheets=!showAllSheets">View More <i class="fa fa-angle-double-right"> </i></span>
                         </a>
                     }
                     </div>
+                </div>
+                <div *ngIf="userSheetsList.length === 0">
+                    No Charts please CREATE ONE!
                 </div>
                 <ng-container *ngFor="let sheetlist of userSheetsList;let i = index">
                     <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
@@ -376,17 +382,21 @@
                 <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
                     <h6 class="fw-bold mb-1">Saved Queries</h6>
                     <div class="view-card">
-                        @if(!showAllSavedQueries){
+                        @if(!showAllSavedQueries && savedQueryList.length !==0){
                             <a class="">
                                 <span class="add-txt text-info card-title me-2" (click)="showAllSavedQueries=!showAllSavedQueries">Show Less <i class="fa fa-angle-double-right"> </i></span>
                             </a>
-                            } @if(showAllSavedQueries){
+                            } @if(showAllSavedQueries && savedQueryList.length !==0){
                             <a class="">
                                 <span class="add-txt text-info card-title me-2" (click)="showAllSavedQueries=!showAllSavedQueries">View More <i class="fa fa-angle-double-right"> </i></span>
                             </a>
                         }
                     </div>
                 </div>
+                <div *ngIf="savedQueryList.length === 0">
+                    No Queries please CREATE ONE!
+                </div>
+
                 <ng-container *ngFor="let savedQuery of savedQueryList;let i = index">
                     <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
                     <div *ngIf="showAllSavedQueries && i < 3" class="card img-shadow">
@@ -513,6 +523,10 @@
                                     <td *ngIf="database.server_type === 'ORACLE'">
                                       <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
                                   </td>
+                                  <td *ngIf="database.server_type === 'MYSQL'">
+                                    <img alt="product" src="./assets/images/icons/MySql-icon1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                </td>
+
                                     <!-- <td>{{database.server_type}}</td> -->
                                     
                                    

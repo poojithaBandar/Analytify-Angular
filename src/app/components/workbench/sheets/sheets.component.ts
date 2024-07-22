@@ -185,6 +185,19 @@ export class SheetsComponent {
     const encodeddbId = btoa(this.databaseId.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString())
     this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+
+
+    if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
+      // Encode 'null' to represent a null value
+     const encodedDsQuerySetId = btoa('null');
+     this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+
+    } else {
+      // Convert to string and encode
+     const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
+     this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+  
+    }
   }
   goToConnections(){
     this.router.navigate(['/workbench/work-bench/view-connections'])
@@ -1137,7 +1150,7 @@ tableMeasures = [] as any;
       this.sheetNumber+=1;
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
-       this.selectedTabIndex = this.SheetIndex + 1;
+       this.selectedTabIndex = this.tabs.length - 1;
     }
   }
   sheetNameChange(name:any,event:any){

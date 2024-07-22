@@ -23,6 +23,9 @@
           </div>
         </div>
     </div>
+    <div *ngIf="savedDashboardList.length === 0">
+      No Dashboards, Please Create One!
+    </div>
         <div class="card-body">
             @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">

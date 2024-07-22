@@ -19,6 +19,9 @@
           </div>
         </div>
     </div>
+    <div *ngIf="savedQueryList.length === 0">
+      No Saved Queries!
+    </div>
         <div class="card-body">
           @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
