@@ -63,6 +63,8 @@ interface Dimension {
   styleUrl: './sheetsdashboard.component.scss'
 })
 export class SheetsdashboardComponent {
+  @ViewChildren("test344")
+  chartstest!: QueryList<ChartComponent>;
  // @HostListener('window:resize', ['$event'])
  qrySetId:any;
  databaseId:any;
@@ -73,6 +75,7 @@ export class SheetsdashboardComponent {
  chartOptionsBar:any;
  dashboardId:any;
  databaseName:any;
+ gridType!: string;
  updateDashbpardBoolen= false;
  active=1;
  isOverflowHidden = false;
@@ -87,6 +90,9 @@ export class SheetsdashboardComponent {
  DahboardListFilters = [] as any;
  storeSelectedColData = [] as any
  colData = [] as any;
+ heightGrid : number = 800;
+ widthGrid : number = 800;
+ gridItemSize : number = 100;
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,private loaderService:LoaderService){
     this.dashboard = [];
@@ -110,10 +116,14 @@ export class SheetsdashboardComponent {
     
   }
   options!: GridsterConfig;
-  dashboard!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+}> = [];
+  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
   }>;
   dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
   }>;
+  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+}>;
   pushNewSheet =[] as any;
   sheetData = [] as any;
   tableHeader:any;
@@ -202,7 +212,7 @@ export class SheetsdashboardComponent {
     //this.getSheetData();
     this.options = {
       gridType: GridType.Fit,
-      compactType: CompactType.None,
+      compactType: CompactType.CompactLeftAndUp,
       displayGrid: DisplayGrid.Always,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
@@ -212,9 +222,10 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      // fixedColWidth: 400,
-      // fixedRowHeight: 400,
-      // itemChangeCallback: SheetsdashboardComponent.itemChange,
+      fixedColWidth: 100,
+      fixedRowHeight: 100,
+      margin : 10,
+      // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
 
@@ -230,7 +241,7 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: true,
-
+        // stop: this.onResizeStop.bind(this)
       }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
@@ -257,6 +268,156 @@ export class SheetsdashboardComponent {
     //   }
     // },
     // ];
+  }
+
+  changeGridType(){
+  if(this.gridType == 'fixed'){
+    this.options = {
+      gridType: GridType.Fit,
+      compactType: CompactType.CompactUpAndLeft,
+      displayGrid: DisplayGrid.Always,
+      initCallback: SheetsdashboardComponent.gridInit,
+      destroyCallback: SheetsdashboardComponent.gridDestroy,
+      gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+      itemValidateCallback: SheetsdashboardComponent.itemValidate,
+      fixedColWidth: 100,
+      fixedRowHeight: 100,
+      margin : 10,
+      outerMarginBottom: 20,
+      // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+      //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+      
+
+      //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+      //   // this.updateSizeOnServer(item, itemComponent);
+      //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+      //   // this.saveItemDimensions(item);
+      // },
+      pushItems: true,
+      draggable: {
+        enabled: true,
+        
+      },
+      resizable: {
+        enabled: true,
+        // stop: this.onResizeStop.bind(this)
+      }
+    };
+  } else {
+    this.options = {
+      gridType: GridType.Fixed,
+      compactType: CompactType.CompactUpAndLeft,
+      displayGrid: DisplayGrid.Always,
+      initCallback: SheetsdashboardComponent.gridInit,
+      destroyCallback: SheetsdashboardComponent.gridDestroy,
+      gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+      itemValidateCallback: SheetsdashboardComponent.itemValidate,
+      fixedColWidth: 100,
+      fixedRowHeight: 100,
+      margin : 10,
+      // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+      //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+      
+
+      //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+      //   // this.updateSizeOnServer(item, itemComponent);
+      //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+      //   // this.saveItemDimensions(item);
+      // },
+      pushItems: true,
+      draggable: {
+        enabled: true,
+        
+      },
+      resizable: {
+        enabled: true,
+        // stop: this.onResizeStop.bind(this)
+      }
+    };
+  }
+}
+  changeGridItemSize(){
+    if(this.gridType == 'fixed'){
+      this.options = {
+        gridType: GridType.Fit,
+        compactType: CompactType.CompactUpAndLeft,
+        displayGrid: DisplayGrid.Always,
+        initCallback: SheetsdashboardComponent.gridInit,
+        destroyCallback: SheetsdashboardComponent.gridDestroy,
+        gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemResizeCallback: SheetsdashboardComponent.itemResize,
+        itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+        itemValidateCallback: SheetsdashboardComponent.itemValidate,
+        fixedColWidth: this.gridItemSize,
+        fixedRowHeight: this.gridItemSize,
+        margin : 10,
+        // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+        //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+        
+  
+        //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+        //   // this.updateSizeOnServer(item, itemComponent);
+        //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+        //   // this.saveItemDimensions(item);
+        // },
+        pushItems: true,
+        draggable: {
+          enabled: true,
+          
+        },
+        resizable: {
+          enabled: true,
+          // stop: this.onResizeStop.bind(this)
+        }
+      };
+    } else {
+      this.options = {
+        gridType: GridType.Fixed,
+        compactType: CompactType.CompactUpAndLeft,
+        displayGrid: DisplayGrid.Always,
+        initCallback: SheetsdashboardComponent.gridInit,
+        destroyCallback: SheetsdashboardComponent.gridDestroy,
+        gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemResizeCallback: SheetsdashboardComponent.itemResize,
+        itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+        itemValidateCallback: SheetsdashboardComponent.itemValidate,
+        fixedColWidth: this.gridItemSize,
+        fixedRowHeight: this.gridItemSize,
+        margin : 10,
+        // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+        //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+        
+  
+        //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+        //   // this.updateSizeOnServer(item, itemComponent);
+        //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+        //   // this.saveItemDimensions(item);
+        // },
+        pushItems: true,
+        draggable: {
+          enabled: true,
+          
+        },
+        resizable: {
+          enabled: true,
+          // stop: this.onResizeStop.bind(this)
+        }
+      };
+    }
+
+    // window.dispatchEvent(new Event('resize'));
   }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {
@@ -471,8 +632,8 @@ this.takeScreenshot();
       id:uuidv4(),
       cols: 1,
       rows: 1,
-      y: 0,
-      x: 0,
+      y: 10,
+      x: 10,
       sheetType:sheet.sheet_type,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
@@ -490,7 +651,20 @@ this.takeScreenshot();
       }
        : undefined
     }));
-    console.log('dashboardNew',this.dashboardNew)
+    let mapper = [0];
+        this.testData = mapper.map((sheet:any) => ({
+      id:uuidv4(),
+      cols: 1,
+      rows: 1,
+      y: 10,
+      x: 10,
+      sheetType:111,
+      sheetId:111,
+      chartType:'Tags',
+      chartId:111,
+      data: { title: 'Tags', content: 'Content of card New' },
+    }));
+    console.log('testData',this.testData)
       },
     error:(error)=>{
     console.log(error);
@@ -631,7 +805,87 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
       rows: tableData.results.tableData
     };
   }
-  drop(event: CdkDragDrop<DashboardItem[]>) {
+
+  onDrag(event: any, item: any){
+    let data = JSON.stringify(item);
+        event.dataTransfer.setData('item', data);
+  }
+
+  
+  dropToAddIntoNestedGridster(event: { preventDefault: () => void; stopPropagation: () => void; }, parent: any): void {
+    event.preventDefault();
+    event.stopPropagation();
+    // this.setupDesignerItemToAdd(event, parent);
+}
+
+allowDrop(ev : any): void {
+  ev.preventDefault();
+}
+  drop(event: any) {
+    if(this.colArray.length >0 && this.rowArray.length>0){
+      this.colArray = [];
+      this.rowArray = [];
+    }
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      console.log('Transfering item to new container')
+      console.log('Transferring item to new container');
+      
+      let item: any = event.previousContainer.data[event.previousIndex];
+      console.log('Original item:', JSON.stringify(item));
+      
+      // Creating a deep copy of the item
+      let copy: any = JSON.parse(JSON.stringify(item));
+      console.log('Copy of item:', JSON.stringify(copy));
+      
+      // Initialize an empty object to hold the copied attributes
+      let element: DashboardItem = {
+        id:copy.id,
+        x:10,
+        y: 20,
+        rows: 1,
+        cols:1,
+        data: copy.data,
+        sheetType:copy.sheetType,
+        sheetId:copy.sheetId,
+        chartType:copy.chartType,
+        chartId:copy.chartId,
+        chartOptions: copy.chartOptions,
+        chartInstance: copy.chartInstance,
+        tableData:copy.tableData,
+        chartData:copy.chartOptions?.chartData || [],
+      };
+    //   if(element.chartOptions?.chart?.type === 'bar'){
+    //      element['chartData'].forEach((item: { name: any; value: any; }) => {
+    //       this.colArray.push(item.name);
+    //       this.rowArray.push(item.value);        
+    //       // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
+
+    //     });      
+    //   }
+    //   if(element.chartOptions?.chart?.type === 'line'){
+    //     this.colArray = element['chartData'][0].xAis
+    //     this.rowArray = element['chartData'][0].yAxis
+    //     console.log('linedata',this.colArray,this.rowArray)
+    //     // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
+
+    //  }
+    //  console.log(this.rowArray);
+     //this.getChartOptions(element.chartOptions?.chart?.type || 'bar');
+    //  if(event.event.target.offsetParent.id == 'cdk-drop-list-0'){
+      this.dashboard.push(element);
+    //  } else {
+    //   this.nestedDashboard.push(element);
+    //  }
+     
+    //  this.initializeChartData(element);  // Initialize chart after adding
+     console.log('draggedDashboard',this.dashboard)
+    }
+   
+  }
+
+  dropNested(event: CdkDragDrop<DashboardItem[]>,nestedItem : DashboardItem){
     if(this.colArray.length >0 && this.rowArray.length>0){
       this.colArray = [];
       this.rowArray = [];
@@ -666,29 +920,13 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
         tableData:copy.tableData,
         chartData:copy.chartOptions?.chartData || [],
       };
-    //   if(element.chartOptions?.chart?.type === 'bar'){
-    //      element['chartData'].forEach((item: { name: any; value: any; }) => {
-    //       this.colArray.push(item.name);
-    //       this.rowArray.push(item.value);        
-    //       // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
 
-    //     });      
-    //   }
-    //   if(element.chartOptions?.chart?.type === 'line'){
-    //     this.colArray = element['chartData'][0].xAis
-    //     this.rowArray = element['chartData'][0].yAxis
-    //     console.log('linedata',this.colArray,this.rowArray)
-    //     // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
-
-    //  }
-    //  console.log(this.rowArray);
-     //this.getChartOptions(element.chartOptions?.chart?.type || 'bar');
-     this.dashboard.push(element);
+     this.nestedDashboard.push(element);
     //  this.initializeChartData(element);  // Initialize chart after adding
      console.log('draggedDashboard',this.dashboard)
-    }
-   
   }
+}
+
 
   viewSheet(sheetId:any,sheetname:any){
     const encodedServerId = btoa(this.databaseId.toString());
@@ -710,6 +948,11 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
     $event.preventDefault();
     $event.stopPropagation();
     this.dashboard.splice(this.dashboard.indexOf(item), 1);
+  }
+  removeNestedItem($event:any, item:any) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.dashboard.splice(this.nestedDashboard.indexOf(item), 1);
   }
 
   // addItem() {
@@ -816,10 +1059,10 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
   //   // Handle resize stop event here
   //   //this.updateChartDimensions(item);
   // }
-  onResizeStop(item: DashboardItem, event:any): void {
+  onResizeStop(item: DashboardItem, gridSterItem : GridsterItemComponentInterface ,event:any): void {
     const itemComponent  = event.itemComponent as GridsterItemComponent;
-    if(itemComponent){
-    this.updateChartDimensions(item, itemComponent);
+    if(gridSterItem){
+    this.updateChartDimensions(item, itemComponent,gridSterItem);
     }else{
       console.error('item not available')
     }
@@ -827,16 +1070,37 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
   updateSizeOnServer(item:any, itemComponent:any){
 
   }
-  updateChartDimensions(item: DashboardItem, itemComponent: GridsterItemComponent): void {
-    if (item['chartInstance'] && itemComponent) {
+  updateChartDimensions(item: DashboardItem, itemComponent: GridsterItemComponent , gridSterItem: GridsterItemComponentInterface): void {
+    const chartElement = document.getElementById('test344') as any;
+    // if (chartElement) {
+    //   chartElement.chartObj.updateOptions({
+    //     chart: {
+    //       height: gridSterItem.el.clientHeight
+    //     }
+    //   });
+    // }
+    item.chartOptions!.chart = {
+      // ...item.chartOptions!.chart,
+      // width: itemComponent.width,
+      height: gridSterItem.el.clientHeight,
+      type:item.chartOptions?.chart?.type || 'bar'
+    };
+    if (item['chartOptions'] && itemComponent) {
       item.chartOptions!.chart = {
         ...item.chartOptions!.chart,
         width: itemComponent.width,
-        height: itemComponent.height,
+        height: gridSterItem.el.clientHeight,
         type:item.chartOptions?.chart?.type || 'bar'
       };
       item['chartInstance'].updateOptions(item.chartOptions, true);
     }
+    this.chartstest.forEach((chart, index) => {
+      if (index === 0) {
+        chart.updateOptions(item.chartOptions);
+      } else if (index === 1) {
+        chart.updateOptions(item.chartOptions);
+      }
+    });
   }
   getItemComponent(item: DashboardItem): GridsterItemComponent | undefined {
     return this.GridsterItemComponent.find(cmp => cmp.item === item);
@@ -874,7 +1138,7 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
         chart: {
           ...item.chartOptions.chart,
           type: item.chartOptions.chart.type || 'bar',
-          height: 300
+          height: 500
         },
         series: item.chartOptions.series,
         xaxis: item.chartOptions.xaxis,
@@ -903,7 +1167,7 @@ barChartOptions(xaxis:any,yaxis:any){
       toolbar: {
         show: false
       },
-      height: 385,
+      height: 500,
       type: 'bar',
       foreColor: '#9aa0ac',
     },
@@ -1528,6 +1792,10 @@ getColumnsForFilter(){
       })
     }
   })
+}
+
+ResetDashboard(){
+  this.dashboard =[];
 }
 updateSelectedRows(){
   this.selectedRows = this.sheetsFilterNames

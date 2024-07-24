@@ -35,7 +35,20 @@
                                                         [cdkDropListConnectedTo]="[destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
                                                             <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
+                                                            <li *ngFor="let item of dashboardNew"><a draggable="true"
+                                                           class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i>1 {{item.data.title | slice:0:15}}2</a></li>
+
+                                                            
+                                                        </ul>
+                                                        <ul class="dropdown-menu br-0 draggable-item"
+                                                         cdkDropList
+                                                         #originList="cdkDropList"
+                                                        [cdkDropListData]="testData"
+                                                        [cdkDropListConnectedTo]="[destinationList]"
+                                                        (cdkDropListDropped)="drop($event)">
+                                                            <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
+                                                            <li *ngFor="let item of testData"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i>1 {{item.data.title | slice:0:15}}2</a></li>
+
                                                             
                                                         </ul>
                                                     </div>
@@ -213,14 +226,34 @@
                 </div>
             </div>
         </div> 
-        
-       
-       <div style="max-width: 78vw;min-width: 78vw;height: 100vh;margin: auto 0;" id="capture-element">
+        <div class="col-lg-12 col-md-12" style="display: flex;">
+          <button type="button" class="btn ripple btn-primary me-2" (click)="ResetDashboard();">clear</button>
+          H <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="heightGrid" aria-label="Sheet" >
+          W <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="widthGrid" aria-label="Sheet" >
+          G           W <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="gridItemSize"  (change)="changeGridItemSize()" aria-label="Sheet" >
+          <div class="col-lg-3 col-md-3">
+            <select  class="form-control" [(ngModel)]="gridType"  (change)="changeGridType()">
+            <option value="fixed">Fixed</option>
+            <option value="scroll">Scroll</option>
+          </select>
+        </div>
+        </div>
+    
+       <!-- <div style="margin: auto 0;overflow: scroll;" [style.height.px]="heightGrid" [style.width.px]="widthGrid" > -->
+        <div style="margin: auto 0;height: 100%;" >
+        <div class="options">
+          
+        </div> 
+        <div class="d-flex align-items-center justify-content-start  mt-3">
+            <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
+            <!-- <a mat-mini-fab (click)="addItem()" class="btn btn-blue-light mb-0 me-3" ><i class="fa fa-plus"></i> Add</a>  -->
+        </div>
+        <div  id="capture-element" style="margin: 0;overflow: scroll;"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
-        [cdkDropListData]="dashboard" 
+        [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" >
-              <div class="card mb-0">
+              <div class="card mb-0" style="height: 100%;overflow: scroll;">
                 <div class="card-header d-flex justify-content-between p-1">
                     <h6>{{ item.data?.title }}</h6>
                     <div class="dashboard-option">
@@ -236,7 +269,139 @@
                         </div>
                       </div>
                 </div>
-                <div class="card-body p-1">                
+                <div class="card-body p-1">
+    
+                  <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
+                    <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
+                    [cdkDropListData]="nestedDashboard" style="margin: 0px;"
+                   (cdkDropListDropped)="dropNested($event,item)" #gridster>
+                   <gridster-item [item]="nestedItem" *ngFor="let nestedItem of nestedDashboard">
+                    <div class="card-header d-flex justify-content-between p-1" style="overflow: scroll;">
+                      <h6>{{ nestedItem.data?.title }}</h6>
+                      <div class="dashboard-option">
+                          <div class=" p-1" ngbDropdown>
+                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                  aria-haspopup="true" aria-expanded="false" class=""><i
+                                      class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                              </a>
+                              <div class="dropdown-menu" ngbDropdownMenu>
+                                  <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(item['sheetId'],item.data?.title)"> Goto Sheet </a>
+                                  <a class="dropdown-item" ngbDropdownItem (mousedown)="removeNestedItem($event, nestedItem)" (touchstart)="removeNestedItem($event, nestedItem)"> Remove</a>
+                              </div>
+                          </div>
+                        </div>
+                  </div>
+                    <div *ngIf="nestedItem.chartOptions">
+                      <div *ngIf="nestedItem['chartId'] === 6">
+                        
+                         <apx-chart #test344 id="test344"
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"[colors]="nestedItem.chartOptions.colors!"  [grid]="nestedItem.chartOptions.grid!"
+                        (chartInit)="onChartInit($event, nestedItem)">
+                      </apx-chart> 
+                       </div>
+                      <!-- <app-charts-store [chartData]="nestedItem.chartOptions"></app-charts-store> -->
+                      </div>
+                      <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 17">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!" [stroke]="nestedItem.chartOptions.stroke!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!" [yaxis]="nestedItem.chartOptions.yaxis!"
+                         [labels]="nestedItem.chartOptions.labels!" [legend]="nestedItem.chartOptions.legend!"  [grid]="nestedItem.chartOptions.grid!"
+                         [title]="nestedItem.chartOptions.title!" [subtitle]="nestedItem.chartOptions.subtitle!"[colors]="nestedItem.chartOptions.colors!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 13">
+                         <apx-chart [series]="nestedItem.chartOptions.series! || []" [chart]="nestedItem.chartOptions.chart!"
+                             [xaxis]="nestedItem.chartOptions.xaxis!" [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                             [grid]="nestedItem.chartOptions.grid!" [stroke]="nestedItem.chartOptions.stroke!"
+                             [title]="nestedItem.chartOptions.title!" [colors]="nestedItem.chartOptions.colors!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 24">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!" [legend]="nestedItem.chartOptions.legend!"
+                         [labels]="nestedItem.chartOptions.labels!" [responsive]="nestedItem.chartOptions.responsive!" [colors]="nestedItem.chartOptions.colors!" [dataLabels]="nestedItem.chartOptions.dataLabels!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 7">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!"
+                             [dataLabels]="nestedItem.chartOptions.dataLabels!" [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                             [yaxis]="nestedItem.chartOptions.yaxis!" [legend]="nestedItem.chartOptions.legend!" [fill]="nestedItem.chartOptions.fill!"
+                             [stroke]="nestedItem.chartOptions.stroke!" [tooltip]="nestedItem.chartOptions.tooltip!" [colors]="nestedItem.chartOptions.colors!" [grid]="nestedItem.chartOptions.grid!" 
+                             [xaxis]="nestedItem.chartOptions.xaxis!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 5">
+                         <apx-chart
+                           [series]="nestedItem.chartOptions.series!"
+                           [chart]="nestedItem.chartOptions.chart!"
+                           [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                           [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                           [responsive]="nestedItem.chartOptions.responsive!"
+                           [xaxis]="nestedItem.chartOptions.xaxis!"
+                           [legend]="nestedItem.chartOptions.legend!"
+                           [fill]="nestedItem.chartOptions.fill!" (chartInit)="onChartInit($event, nestedItem)"
+                         ></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 4">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!"
+                             [yaxis]="nestedItem.chartOptions.yaxis!" [xaxis]="nestedItem.chartOptions.xaxis!" [labels]="nestedItem.chartOptions.labels!"
+                             [stroke]="nestedItem.chartOptions.stroke!" [title]="nestedItem.chartOptions.title!"  [grid]="nestedItem.chartOptions.grid!"
+                             [dataLabels]="nestedItem.chartOptions.dataLabels!" [fill]="nestedItem.chartOptions.fill!"
+                             [tooltip]="nestedItem.chartOptions.tooltip!"[colors]="nestedItem.chartOptions.colors!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 2">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                         [responsive]="nestedItem.chartOptions.responsive!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"
+                         [legend]="nestedItem.chartOptions.legend!"
+                         [fill]="nestedItem.chartOptions.fill!"
+                         (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 3">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                         [responsive]="nestedItem.chartOptions.responsive!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"
+                         [legend]="nestedItem.chartOptions.legend!"
+                         [fill]="nestedItem.chartOptions.fill!" (chartInit)="onChartInit($event, nestedItem)"
+                       ></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 8">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"
+                         [stroke]="nestedItem.chartOptions.stroke!"
+                         [tooltip]="nestedItem.chartOptions.tooltip!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [legend]="nestedItem.chartOptions.legend!"
+                         [markers]="nestedItem.chartOptions.markers!"
+                         [grid]="nestedItem.chartOptions.grid!"
+                         [yaxis]="nestedItem.chartOptions.yaxis!"
+                         [title]="nestedItem.chartOptions.title!" (chartInit)="onChartInit($event, nestedItem)"
+                       ></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 10">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [labels]="nestedItem.chartOptions.labels!"
+                         [responsive]="nestedItem.chartOptions.responsive!"(chartInit)="onChartInit($event, nestedItem)" >
+                      </apx-chart>
+                       </div>
+                   </gridster-item>
+                  </gridster>
+                  <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+                  </div>
+                
+                <!-- <p class="mb-1">{{ item.data?.content }}</p> -->
+                
                 <!-- <div *ngIf="item.chartOptions">
                      <apx-chart 
                     [series]="item.chartOptions.series!" 
@@ -277,7 +442,8 @@
                     </div>
                   <div *ngIf="item.chartOptions">
                  <div *ngIf="item['chartId'] === 6">
-                    <apx-chart 
+                   
+                    <apx-chart #test344 id="test344"
                     [series]="item.chartOptions.series!"
                     [chart]="item.chartOptions.chart!"
                     [dataLabels]="item.chartOptions.dataLabels!"
@@ -387,6 +553,7 @@
               </div>
             </gridster-item>
           </gridster>
+          </div>
         </div>
         <div>
           <img [src]="screenshotSrc" alt="Screenshot">
