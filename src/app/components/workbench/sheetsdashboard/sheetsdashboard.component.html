@@ -54,62 +54,99 @@
                                               <div class="text-wrap">
                                                   <div class="card-content p-0">
                                                       <div class=" mt-2 mb-2">
-                                                          <div class="dropdown" ngbDropdown>
-                                                              <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
+                                                          <div class="dropdown" ngbDropdown [autoClose]="'outside'" #mainDropdown="ngbDropdown">
+                                                              <button class="btn btn-primary dropdown-toggle" (click)="getColumnsForFilter()" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
                                                                 <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
-                                                              <ul class="dropdown-menu filter-popover" ngbDropdownMenu>
+                                                              <ul class="dropdown-menu filter-popover" aria-labelledby="applyfilters" ngbDropdownMenu>
                                                                 <div class="setting-text border-bottom text-center">
-                                                                  <h6>Settings</h6>
+                                                                  <h6>Add Filters</h6>
                                                                 </div>
                                                                 <div class="form-group p-1 mb-0">
                                                                   <label class="form-label">Filter Name <span  class="text-red">*</span>
                                                                   </label>
-                                                                  <input type="text" placeholder="" class="form-control checkbox-color">
+                                                                  <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
                                                                 </div>
                                                                 <div class="form-group p-1">
-                                                                  <label class="form-label">Column <span  class="text-red">*</span>
-                                                                  </label>
-                                                                  <input type="text" placeholder="" class="form-control checkbox-color">
+                                                      
+                                                                  <div ngbDropdown class="btn-group my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
+                                                                    <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" style="width: 237px;" class="dropdown-toggle btn btn-info-light">{{selectClmn ? selectClmn:'Select Column'}}</button>
+                                                                    <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width: 237px;max-height: 240px;overflow-y: scroll;">
+                                                                      @for(colData of columnFilterNames;track colData){
+                                                                        <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmn = colData.column_name;closeColumnsDropdown(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
+                                                                      }
+                                                                    </ul>
                                                                 </div>
-                                                               
+                                                                </div>
                                                                   <h6>Apply to Selected worksheets</h6>
                                                                
                                                                 <div class="form body border p-2">
-                                                                  <div class="form-check">
+                                                                  <!-- <div class="form-check">
                                                                     <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
                                                                     <label for="invalidCheck" class="form-check-label"> <h6>Select All</h6> </label>
-                                                                  </div>
+                                                                  </div> -->
                                                                   <div class="form-check">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0"> Ali</p> </label>
+
+                                                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
+                                                                    <label for="selectAll" class="form-check-label">Select All</label>
+                                                                    </div>
+                                                                  @for(rows of sheetsFilterNames;track rows;let i = $index){
+                                                                   
+
+                                                                  <div class="form-check">
+                                                                    <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
+                                                                    <label for="invalidCheck" class="form-check-label"> <h6>{{rows.label.name}}</h6> </label>
                                                                   </div>
-                                                                  <div class="form-check ">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0">Donut</p> </label>
-                                                                  </div>
-                                                                  <div class="form-check ">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0">Type wise forms</p> </label>
-                                                                  </div>
+                                                                }
                                                                 </div>
                 
                                                                 <div class="p-2">
-                                                                  <button type="button" class="btn ripple btn-primary me-2">Save</button>
-                                                                  <button type="button" class="btn ripple btn-secondary "> Cancel </button>
+                                                                  <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData()" class="btn ripple btn-primary me-2">Save</button>
+                                                                  <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';closeMainDropdown(mainDropdown)"> Cancel </button>
                                                               </div>
                                                               </ul>
+                                                              <div style="height: 500px;overflow-y: scroll;">
+                                                                @for(filterList of DahboardListFilters;track filterList){
                                                               <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
-                                                                <p class="text-center mb-0">Sub-Category</p>
-                                                                <div class="form-group mb-1">
-                                                                    <select class="form-select form-select select2 fs-14">
-                                                                        <option value="1" ng-reflect-value="1">(All)</option>
-                                                                        <option value="2" ng-reflect-value="2">Two</option>
-                                                                        <option value="3" ng-reflect-value="3">Three</option>
-                                                                    </select>
+                                                                <p class="text-center mb-0">{{filterList.filter_name}}</p>
+                                          
+                                                                <div ngbDropdown class="btn-group my-2 dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
+                                                                  <button type="button" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" style="width: 237px;" class="dropdown-toggle btn btn-info-light">Select Column</button>
+                                                                  <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu" style="background-color: #ffffff;width: 237px;max-height: 240px;overflow-y: scroll;">
+                                                                    <div class="form-check">
+
+                                                                      <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllColumns($event,filterList)" class="form-check-input">
+                                                                      <label for="selectAll" class="form-check-label">Select All</label>
+                                                                      </div>
+                                                                    @for(col of filterList.colData;track col;let i = $index){
+                                                                     
+                                                                      <div class="form-check">
+                                                                        <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
+                                                                        <label for="invalidCheck" class="form-check-label"> <h6>{{col.label}}</h6> </label>
+                                                                      </div>
+                                                                  }
+                                                                  <div class="p-2">
+                                                                    <button type="button"  (click)="closeMainDropdown(nestedDropdown1)" class="btn ripple btn-primary me-2">OK</button>
                                                                 </div>
+                                                                  </ul>
                                                               </div>
-                                                              <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
+                                                                <!-- <div class="dropdown">
+                                                                  <button class="btn btn-secondary dropdown-toggle" type="button" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList)" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    Select 
+                                                                  </button>
+                                                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                    @for(col of filterList.colData;track col;let i = $index){
+                                                                      <div class="form-check">
+                                                                        <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected"  class="form-check-input"> 
+                                                                        <label for="invalidCheck" class="form-check-label"> <h6>{{col.label}}</h6> </label>
+                                                                      </div>
+                                                                  }
+                                                                  </div>
+                                                                </div> -->
+                                                              </div>
+                                                            }
+                                                          </div>
+                                                              <!-- <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
                                                                 <p class="text-center mb-0">Category</p>
                                                                 <div class="form-group mb-1">
                                                                     <select class="form-select form-select select2 fs-14">
@@ -128,7 +165,7 @@
                                                                         <option value="3" ng-reflect-value="3">Three</option>
                                                                     </select>
                                                                 </div>
-                                                              </div>
+                                                              </div> -->
                                                           </div>
                                                       </div>
                                                    
@@ -163,7 +200,7 @@
                         </div>
                         <div class="min-w-fit-content ms-3">
                             <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">Save </button>
-                            <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
+                            <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="takeScreenshot()">Update </button>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
 
                             </div>
@@ -352,7 +389,7 @@
           </gridster>
         </div>
         <div>
-          <!-- <img [src]="screenshotSrc" alt="Screenshot"> -->
+          <img [src]="screenshotSrc" alt="Screenshot">
         </div>
     </div>
 </div>
