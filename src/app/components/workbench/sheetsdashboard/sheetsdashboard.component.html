@@ -36,7 +36,7 @@
                                                         (cdkDropListDropped)="drop($event)">
                                                             <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
                                                             <li *ngFor="let item of dashboardNew"><a draggable="true"
-                                                           class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i>1 {{item.data.title | slice:0:15}}2</a></li>
+                                                           class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
 
                                                             
                                                         </ul>
@@ -47,7 +47,7 @@
                                                         [cdkDropListConnectedTo]="[destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
                                                             <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                                            <li *ngFor="let item of testData"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i>1 {{item.data.title | slice:0:15}}2</a></li>
+                                                            <li *ngFor="let item of testData"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
 
                                                             
                                                         </ul>
@@ -59,6 +59,71 @@
                                   </div>
                                 </ng-template>
                             </li>
+                            <ng-template #dashboardFilters>
+                              <div class="card-body p-0">
+                                <div class="text-wrap">
+                                  <div class="row">
+                                  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 "style="border-right: 1px solid #f3f6f9;">
+                                    <button type="button"  style="width: 225px;border: 1px solid #edebeb;" class="btn ">Filter1
+                                      <a style="color: red;"><i style="float: right;padding-top: 3px;" class="ri-delete-bin-7-line"></i></a>
+                                    </button>
+
+                                    </div>
+                                  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 " >
+                                    <div class="card-content p-0">
+                                        <div class=" mt-2 mb-2">
+                                          <ul class="d filter-popover" aria-labelledby="applyfilters" >
+                                            <div class="setting-text border-bottom text-center">
+                                              <h6>Add Filters</h6>
+                                            </div>
+                                            <div class="form-group p-1 mb-0">
+                                              <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                              </label>
+                                              <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
+                                            </div>
+                                            <div class="form-group p-1">
+                                  
+                                              <div ngbDropdown class="btn-group my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
+                                                <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" style="width: 225px;" class="dropdown-toggle btn btn-info-light">{{selectClmn ? selectClmn:'Select Column'}}</button>
+                                                <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width: 220px;max-height: 240px;overflow-y: scroll;">
+                                                  @for(colData of columnFilterNames;track colData){
+                                                    <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmn = colData.column_name;closeColumnsDropdown(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
+                                                  }
+                                                </ul>
+                                            </div>
+                                            </div>
+                                              <h6>Apply to Selected worksheets</h6>
+                                           
+                                            <div class="form body border p-2">
+
+                                              <div class="form-check">
+
+                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
+                                                <label for="selectAll" class="form-check-label">Select All</label>
+                                                </div>
+                                              @for(rows of sheetsFilterNames;track rows;let i = $index){
+                                               
+
+                                              <div class="form-check">
+                                                <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
+                                                <label for="invalidCheck" class="form-check-label"> <h6>{{rows.label.name}}</h6> </label>
+                                              </div>
+                                            }
+                                            </div>
+
+                                            <div class="p-2">
+                                              <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData()" class="btn ripple btn-primary me-2">Save</button>
+                                              <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName=''"> Cancel </button>
+                                          </div>
+                                          </ul>
+                                        </div>
+                                     
+                                    </div>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                            </ng-template>
                             <li [ngbNavItem]="2">
                                  <a ngbNavLink class="p-3">Filters</a>
                                     <ng-template ngbNavContent>
@@ -68,10 +133,10 @@
                                                   <div class="card-content p-0">
                                                       <div class=" mt-2 mb-2">
                                                           <div class="dropdown" ngbDropdown [autoClose]="'outside'" #mainDropdown="ngbDropdown">
-                                                              <button class="btn btn-primary dropdown-toggle" (click)="getColumnsForFilter()" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
+                                                              <button class="btn btn-primary dropdown-toggle" (click)="getColumnsForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
                                                                 <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
-                                                              <ul class="dropdown-menu filter-popover" aria-labelledby="applyfilters" ngbDropdownMenu>
+                                                              <!-- <ul class="dropdown-menu filter-popover" aria-labelledby="applyfilters" ngbDropdownMenu>
                                                                 <div class="setting-text border-bottom text-center">
                                                                   <h6>Add Filters</h6>
                                                                 </div>
@@ -94,10 +159,7 @@
                                                                   <h6>Apply to Selected worksheets</h6>
                                                                
                                                                 <div class="form body border p-2">
-                                                                  <!-- <div class="form-check">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <h6>Select All</h6> </label>
-                                                                  </div> -->
+
                                                                   <div class="form-check">
 
                                                                     <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
@@ -117,7 +179,7 @@
                                                                   <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData()" class="btn ripple btn-primary me-2">Save</button>
                                                                   <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';closeMainDropdown(mainDropdown)"> Cancel </button>
                                                               </div>
-                                                              </ul>
+                                                              </ul> -->
                                                               <div style="height: 500px;overflow-y: scroll;">
                                                                 @for(filterList of DahboardListFilters;track filterList){
                                                               <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
@@ -139,7 +201,7 @@
                                                                       </div>
                                                                   }
                                                                   <div class="p-2">
-                                                                    <button type="button"  (click)="closeMainDropdown(nestedDropdown1)" class="btn ripple btn-primary me-2">OK</button>
+                                                                    <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">OK</button>
                                                                 </div>
                                                                   </ul>
                                                               </div>
@@ -197,6 +259,7 @@
 
                     </div>
                 </div>
+                <button (click)="getFilteredData()">Apply filters</button>
             </div>
           </div>
 
@@ -252,8 +315,8 @@
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
-            <gridster-item [item]="item" *ngFor="let item of dashboard" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" >
-              <div class="card mb-0" style="height: 100%;overflow: scroll;">
+            <gridster-item [item]="item" *ngFor="let item of dashboard"  >
+              <div class="card mb-0" style="height: 100%;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
                 <div class="card-header d-flex justify-content-between p-1">
                     <h6>{{ item.data?.title }}</h6>
                     <div class="dashboard-option">

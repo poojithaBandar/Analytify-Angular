@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { NgbDropdown, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
   GridType,
@@ -31,6 +31,7 @@ import { toPng } from 'html-to-image';
 import { style } from 'd3';
 import { OVERFLOW } from 'html2canvas/dist/types/css/property-descriptors/overflow';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { arrow } from '@popperjs/core';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -93,8 +94,15 @@ export class SheetsdashboardComponent {
  heightGrid : number = 800;
  widthGrid : number = 800;
  gridItemSize : number = 100;
+ dataArray = [] as any;
+ keysArray = [] as any;
+ tablePreviewRow = [] as any;
+ tablePreviewColumn =[] as any;
+ filteredColumnData = [] as any;
+ filteredRowData = [] as any
   public chartOptions!: Partial<ChartOptions>;
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,private loaderService:LoaderService){
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
+    private loaderService:LoaderService,private modalService: NgbModal){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard')){
@@ -1770,6 +1778,14 @@ donutChartOptions(xaxis:any,yaxis:any){
 }
 
 
+//filters
+openSuperScaled(modal: any) {
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+
+}
 
 getColumnsForFilter(){
   const obj ={
@@ -1821,7 +1837,8 @@ closeColumnsDropdown(colName:any,colDatatype:any, dropdown: NgbDropdown) {
   this.selectdColmnDtype=colDatatype
 
 }
-closeMainDropdown(dropdown: NgbDropdown){
+closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
+  localStorage.setItem(id, JSON.stringify(colData));
   dropdown.close();
 }
 
@@ -1881,7 +1898,10 @@ getDashboardFilterredList(){
     }
   })
 }
-getColDataFromFilterId(id:any,colData:any){
+getColDataFromFilterId(id:string,colData:any){
+  if(localStorage.getItem(id)){
+    colData['colData']= JSON.parse(localStorage.getItem(id)!);
+  } else {
   const Obj ={
     id:id
   }
@@ -1890,6 +1910,7 @@ getColDataFromFilterId(id:any,colData:any){
       console.log(data);
       // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
       colData['colData']= data.col_data.map((item: any) => ({ label: item, selected: false }))
+      localStorage.setItem(id, JSON.stringify(colData['colData']));
       console.log('coldata',this.colData)
     },
     error:(error)=>{
@@ -1903,6 +1924,7 @@ getColDataFromFilterId(id:any,colData:any){
     }
   })
 }
+}
 updateSelectedColmns(filterList:any,col: any){
   if(!this.storeSelectedColData["test"]){
     this.storeSelectedColData["test"]={};
@@ -1911,21 +1933,111 @@ updateSelectedColmns(filterList:any,col: any){
     this.storeSelectedColData["test"][filterList.dashboard_filter_id]=[];
   }
   let array = this.storeSelectedColData["test"][filterList.dashboard_filter_id];
-  if(!array){
-    array =[];
+  if(col.selected){
+    array.push(col.label);
+  } else {
+    let indexVar = array.indexOf(col.label);
+    array.splice(indexVar,1);
   }
-array.push(col.label);
+
 this.storeSelectedColData["test"][filterList.dashboard_filter_id] =array ;
-  this.selectedRows = filterList.colData
-  .filter((row: { selected: any; }) => row.selected)
-  .map((row: { label: any; }) => row.label);
+  // this.selectedRows = filterList.colData
+  // .filter((row: { selected: any; }) => row.selected)
+  // .map((row: { label: any; }) => row.label);
 console.log('selected Data', this.storeSelectedColData);
 this.isAllSelected = filterList.colData.every((row: { selected: any; }) => row.selected);
+// this.extractKeysAndData()
 }
-toggleAllColumns(event: Event,filterList:any) {
-  const isChecked = (event.target as HTMLInputElement).checked;
-  filterList.colData.forEach((row: { selected: boolean; }) => row.selected = isChecked);
-  this.updateSelectedColmns(filterList,filterList.colData);
+  toggleAllColumns(event: Event, filterList: any) {
+    let array: any[] = [];
+    const isChecked = (event.target as HTMLInputElement).checked;
+    filterList.colData.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+    // this.updateSelectedColmns(filterList,filterList.colData);
+    if (isChecked) {
+      if (!this.storeSelectedColData["test"]) {
+        this.storeSelectedColData["test"] = {};
+      }
+      if (!this.storeSelectedColData["test"][filterList.dashboard_filter_id]) {
+        this.storeSelectedColData["test"][filterList.dashboard_filter_id] = [];
+      }
+      array = [];
+      filterList.colData.forEach((col: any) => {
+        if (col.selected) {
+          array.push(col.label);
+        }
+      });
+    } else {
+      array = [];
+    }
+
+    this.storeSelectedColData["test"][filterList.dashboard_filter_id] = array;
+    console.log('selected Data', this.storeSelectedColData);
+  }
+extractKeysAndData(): void {
+  if (this.storeSelectedColData && this.storeSelectedColData.test) {
+    this.extractKeysAndData1(this.storeSelectedColData.test);
+    console.log('Keys Array:', this.keysArray);
+    console.log('Data Array:', this.dataArray);
+  } else {
+    console.error('storeSelectedColData.test is not defined:', this.storeSelectedColData.test);
+  }
+}
+extractKeysAndData1(inputData: any): void {
+  const keys = Object.keys(inputData);
+  console.log('Extracted Keys:', keys);  // Debug: Log extracted keys
+
+  this.keysArray = keys;
+  this.dataArray = keys.map(key => inputData[key]);
+  console.log('Extracted Data Array:', this.dataArray);  // Debug: Log extracted data array
+}
+getFilteredData(){
+  this.extractKeysAndData();
+  const Obj ={
+    id:this.keysArray,
+    input_list:this.dataArray
+  }
+  this.workbechService.getFilteredData(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.tablePreviewColumn = data.columns;
+      this.tablePreviewRow = data.rows;
+      console.log(this.tablePreviewColumn);
+      console.log(this.tablePreviewRow);
+
+      data.forEach((item: any) => {
+      item.columns.forEach((res:any) => {      
+        let obj1={
+          name:res.column,
+          values: res.result
+        }
+        this.filteredColumnData.push(obj1);
+        console.log('filtercolumn',this.filteredColumnData)
+      });
+      item.rows.forEach((res:any) => {
+        let obj={
+          name: res.column,
+          data: res.result
+        }
+        this.filteredRowData.push(obj);
+        console.log('filterowData',this.filteredRowData)
+      });
+      this.dashboard.forEach((item1:any) => {
+        if(item1.sheetId == item.sheet_id){
+          item1.chartOptions.xaxis.categories = this.filteredColumnData
+        }
+      })
+    });
+      },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
 }
 }
 

@@ -1744,7 +1744,7 @@ sheetRetrive(){
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterData = responce.col_data;
-        this.filter_id = responce.filter_id;
+        //this.filter_id = responce.filter_id;
       },
       error: (error) => {
         console.log(error);
@@ -1770,17 +1770,20 @@ sheetRetrive(){
   filterDataPut(){
     this.dimetionMeasure = [];
     const obj={
-    "filter_id": this.filter_id,
+    //"filter_id": this.filter_id,
     "database_id": this.databaseId,
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
     "range_values": [],
-    "select_values":this.filterDataArray
+    "select_values":this.filterDataArray,
+    "col_name":this.filterName,
+       "data_type":this.filterType,
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterId.push(responce.filter_id);
+        this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id});
         this.dataExtraction();
       },
@@ -1800,6 +1803,8 @@ sheetRetrive(){
   this.workbechService.filterEditPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filter_id = responce.filter_id;
+        this.filterName=responce.column_name;
+        this.filterType=responce.data_type;
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
         });
@@ -1820,7 +1825,10 @@ sheetRetrive(){
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
       "range_values": [],
-      "select_values":this.filterDataArray
+      "select_values":this.filterDataArray,
+      "col_name":this.filterName,
+      "data_type":this.filterType
+
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
