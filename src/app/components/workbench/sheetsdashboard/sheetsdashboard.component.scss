@@ -175,8 +175,17 @@ button {
 .hide-scrollbar {
   overflow: hidden;
 }
-
-
+.filterColumnbtn{
+  width: 100%;
+    margin-top: 0px;
+    padding: 3px 6px;
+    text-align: left;
+    font-size: 12px;
+}
+.fa-angle-down{
+  float: right;
+    font-size: 16px;
+}
 @media ( 1420px <= width <= 1560px) {
   .dropdown-menu.filter-popover{
     left: 191px !important;

@@ -460,6 +460,7 @@ export class SheetsdashboardComponent {
     })
   }
   saveDashboard(){
+    this.takeScreenshot();
     // localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
     this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
@@ -480,6 +481,7 @@ export class SheetsdashboardComponent {
     this.workbechService.saveDashboard(obj).subscribe({
       next:(data)=>{
         console.log(data);
+        this.dashboardId=data.dashboard_id
         Swal.fire({
           icon: 'success',
           title: 'Congartualtions!',
@@ -498,33 +500,8 @@ export class SheetsdashboardComponent {
       }
     })
   }
-this.takeScreenshot();
   }
   takeScreenshot() {
-  //   const node = document.querySelector('gridster') as HTMLElement;
-
-  //   // const originalOverflow = element.style.overflow;
-  //   // element.style.overflow = 'hidden';
-  //   const options = {
-  //     width: node.scrollWidth, // width of the canvas element
-  //     height: node.scrollHeight, // height of the canvas element
-  //     style: {
-  //       transform: 'scale(1)',
-  //       transformOrigin: 'top left'
-  //     }
-  //   };
-  //   if (node) {
-  //     htmlToImage.toPng(node,options)
-  //     .then((dataUrl) => {
-  //       this.screenshotSrc = dataUrl;
-  //     })
-  //     .catch((error) => {
-  //       console.error('oops, something went wrong!', error);
-  //     });
-  // }
-  //  else {
-  //     console.error('Gridster element is not defined for screenshot.');
-  //   }
    this.startMethod();
    this.loaderService.show();
    setTimeout(() => {
@@ -552,7 +529,6 @@ this.takeScreenshot();
         console.error('oops, something went wrong!', error);
       })
       .finally(() => {
-        this.updateDashboard();
         this.saveDashboardimage();
       });
       //console.log('converted-image',this.screenshotSrc)
@@ -589,6 +565,7 @@ this.takeScreenshot();
     })
   }
   updateDashboard(){
+    this.takeScreenshot();
       this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
       Swal.fire({
@@ -1838,7 +1815,7 @@ closeColumnsDropdown(colName:any,colDatatype:any, dropdown: NgbDropdown) {
 
 }
 closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
-  localStorage.setItem(id, JSON.stringify(colData));
+  localStorage.setItem('filterid', JSON.stringify(colData));
   dropdown.close();
 }
 
@@ -1899,8 +1876,8 @@ getDashboardFilterredList(){
   })
 }
 getColDataFromFilterId(id:string,colData:any){
-  if(localStorage.getItem(id)){
-    colData['colData']= JSON.parse(localStorage.getItem(id)!);
+  if(localStorage.getItem('filterid')){
+    colData['colData']= JSON.parse(localStorage.getItem('filterid')!);
   } else {
   const Obj ={
     id:id
@@ -1910,7 +1887,7 @@ getColDataFromFilterId(id:string,colData:any){
       console.log(data);
       // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
       colData['colData']= data.col_data.map((item: any) => ({ label: item, selected: false }))
-      localStorage.setItem(id, JSON.stringify(colData['colData']));
+      localStorage.setItem('filterid', JSON.stringify(colData['colData']));
       console.log('coldata',this.colData)
     },
     error:(error)=>{
@@ -1941,12 +1918,8 @@ updateSelectedColmns(filterList:any,col: any){
   }
 
 this.storeSelectedColData["test"][filterList.dashboard_filter_id] =array ;
-  // this.selectedRows = filterList.colData
-  // .filter((row: { selected: any; }) => row.selected)
-  // .map((row: { label: any; }) => row.label);
 console.log('selected Data', this.storeSelectedColData);
 this.isAllSelected = filterList.colData.every((row: { selected: any; }) => row.selected);
-// this.extractKeysAndData()
 }
   toggleAllColumns(event: Event, filterList: any) {
     let array: any[] = [];
@@ -2003,7 +1976,7 @@ getFilteredData(){
       this.tablePreviewRow = data.rows;
       console.log(this.tablePreviewColumn);
       console.log(this.tablePreviewRow);
-
+      localStorage.removeItem('filterid')
       data.forEach((item: any) => {
       item.columns.forEach((res:any) => {      
         let obj1={
@@ -2023,7 +1996,16 @@ getFilteredData(){
       });
       this.dashboard.forEach((item1:any) => {
         if(item1.sheetId == item.sheet_id){
-          item1.chartOptions.xaxis.categories = this.filteredColumnData
+          item1.chartOptions.xaxis.categories = this.filteredColumnData;
+          item1.chartOptions.series = this.filteredRowData;
+          // if(item.chart_id == '6'){
+          //   this.barChartOptions(this.filteredColumnData,this.filteredRowData)
+              this.initializeChart(item1);
+          // }
+          // if(item.chart_id == '2'){
+
+          // }
+
         }
       })
     });
@@ -2039,6 +2021,11 @@ getFilteredData(){
     }
   })
 }
+closeFilterModal(){
+  this.modalService.dismissAll('close')
+}
+
+
 }
 
 // export interface CustomGridsterItem extends GridsterItem {

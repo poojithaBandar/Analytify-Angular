@@ -392,6 +392,9 @@ buildCustomRelation(){
 }
 clrQuery(){
   this.sqlQuery = ''
+  this.cutmquryTable=[];
+  this.custmQryTime='';
+  this.custmQryRows='';
 }
 executeQuery(){
   const obj ={

@@ -335,8 +335,11 @@
 
 
                 <div class="row">
-                  @for(database of connectionList;track database){
-                  <div  class="col-md-12 col-xl-3">
+                  <div *ngFor="let database of connectionList | paginate : {
+                    itemsPerPage: itemsPerPage,
+                    currentPage: page,
+                    totalItems: totalItems
+                  }"  class="col-md-12 col-xl-3">
                         <div class="card shadow-none">
                         <div class="card-body card-box-shadow p-2">
                             <div class="row">
@@ -350,6 +353,8 @@
                                                   <img src="./assets/images/charts/post-tiled-icon.jpg" alt="" class="rounded-circle"></span>
                                                   <span *ngIf="database.server_type === 'MYSQL'" class="avatar avatar-xl rounded-circle">
                                                     <img src="./assets/images/icons/MySql-icon1.jpg" alt="" class="rounded-circle"></span>
+                                                    <span *ngIf="database.server_type === 'MicrosoftSqlserver'" class="avatar avatar-xl rounded-circle">
+                                                      <img src="./assets/images/Db_server_images/Relational Database/sql server.png" alt="" class="rounded-circle"></span>
                                                 <div class="ms-2 mt-sm-0 mt-2">
                                                   <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                                                     <h6 class="mb-1">
@@ -409,12 +414,11 @@
                         </div>
                         </div>
                       </div>
-                    }
+                    
             </div>
           }
           <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
           <div  style="float: right;font-size: 15px; margin-top: -41px;">
-            <label >Items per page:</label>
             <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getDbConnectionList()" class="form-control cursor">
                   <option  value="10"> 10</option>
                   <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
@@ -505,7 +509,343 @@
   </div>
   
     }
-
+    @if(openMySqlForm){
+      <div class="row main-container" >
+        <div class="row">
+            <div class="col-md-12 col-xl-6 p-1 mb-0">
+               <div class="card">
+                 <div class="card-header">
+                   <div class="card-body d-flex align-items-center justify-content-center">
+                      <img src="./assets/images/Db_server_images/Relational Database/mysql.png" alt="Image" class="w-200"/>
+                   </div>
+                 </div>
+                 <div class="card-body post-bg">
+                    <div class="post-txt">
+                      <span class="light-gry-txt">MYSQL is a free open-source Relational Database Management system ideal for both small and large application.
+                        It is very fast, reliable ,scalable and easy to use.
+                      </span>
+                      <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
+                      <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for MySQL is 3306</span></h6>
+                      <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
+                      <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
+                      <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                    </div>
+                 </div>
+               </div>
+            </div>
+            <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Connect To MYSQL</h4>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                </div>
+                                <div class="form-group">
+                                    <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Mysql">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                </div>
+                                <div class="mb-2">
+                                  <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                  <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                    <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                    <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Sign In</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+      }
+      @if(openOracleForm){
+        <div class="row main-container" >
+          <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                 <div class="card">
+                   <div class="card-header">
+                     <div class="card-body d-flex align-items-center justify-content-center">
+                        <img src="./assets/images/Db_server_images/Relational Database/Oracle_logo.png" alt="Image" class="w-200"/>
+                     </div>
+                   </div>
+                   <div class="card-body post-bg">
+                      <div class="post-txt">
+                        <span class="light-gry-txt">
+                        </span>
+                        <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
+                        <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for MySQL is 1521</span></h6>
+                        <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
+                        <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
+                        <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                      </div>
+                   </div>
+                 </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                  <div class="card">
+                      <div class="card-header">
+                          <h4 class="card-title">Connect To MYSQL</h4>
+                      </div>
+                      <div class="card-body">
+                          <form>
+                                  <div class="form-group">
+                                      <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                      <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                      <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1521">
+                                  </div>
+                                  <div class="form-group">
+                                      <label class="col-form-label">SERVICE NAME:<span class="text-danger ms-1" >*</span></label>
+                                      <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Mysql">
+                                  </div>
+                                  <div class="form-group">
+                                      <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                      <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                  </div>
+                                  <div class="mb-2">
+                                    <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                  </div>
+                                  <div class="form-group">
+                                      <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                      <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                      <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Sign In</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+        } 
+        @if(openMicrosoftSqlServerForm){
+          <div class="row main-container" >
+            <div class="row">
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                   <div class="card">
+                     <div class="card-header">
+                       <div class="card-body d-flex align-items-center justify-content-center">
+                          <img src="./assets/images/Db_server_images/Relational Database/sql server.png" alt="Image" class="w-200"/>
+                       </div>
+                     </div>
+                     <div class="card-body post-bg">
+                        <div class="post-txt">
+                          <span class="light-gry-txt">Microsoft SQL Server is a relational database management system (RDBMS) that supports a wide variety of transaction processing,
+                            business intelligence (BI) and data analytics applications in corporate IT environments.
+                          </span>
+                          <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
+                          <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for SQL server is 1433</span></h6>
+                          <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
+                          <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
+                          <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                        </div>
+                     </div>
+                   </div>
+                </div>
+                <div class="col-md-12 col-xl-6 p-1 mb-0">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Connect to MICROSOFT SQL Server</h4>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1433">
+                                    </div>
+                                    <div class="form-group">
+                                      <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                      <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Mysql">
+                                  </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                    </div>
+                                    <div class="mb-2">
+                                      <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                      <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                        <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                        <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()">Sign In</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+          } 
+          @if(ibmDb2Form){
+            <div class="row main-container" >
+              <div class="row">
+                  <div class="col-md-12 col-xl-6 p-1 mb-0">
+                     <div class="card">
+                       <div class="card-header">
+                         <div class="card-body d-flex align-items-center justify-content-center">
+                            <img src="./assets/images/Db_server_images/Relational Database/ibmdb2.png" alt="Image" class="w-200"/>
+                         </div>
+                       </div>
+                       <div class="card-body post-bg">
+                          <div class="post-txt">
+                            <span class="light-gry-txt">IbmDb2
+                            </span>
+                            <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
+                            <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for SQL server is 1433</span></h6>
+                            <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
+                            <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
+                            <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                          </div>
+                       </div>
+                     </div>
+                  </div>
+                  <div class="col-md-12 col-xl-6 p-1 mb-0">
+                      <div class="card">
+                          <div class="card-header">
+                              <h4 class="card-title">Connect to MICROSOFT SQL Server</h4>
+                          </div>
+                          <div class="card-body">
+                              <form>
+                                      <div class="form-group">
+                                          <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1433">
+                                      </div>
+                                      <div class="form-group">
+                                        <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Mysql">
+                                    </div>
+                                      <div class="form-group">
+                                          <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                      </div>
+                                      <div class="mb-2">
+                                        <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                      </div>
+                                      <div class="form-group">
+                                          <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                          <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                          <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" (click)="ibmDb2SignIn()" >Close</button>
+                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Sign In</button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+            } 
+          @if(openMongoDbForm){
+            <div class="row main-container" >
+              <div class="row">
+                  <div class="col-md-12 col-xl-6 p-1 mb-0">
+                     <div class="card">
+                       <div class="card-header">
+                         <div class="card-body d-flex align-items-center justify-content-center">
+                            <img src="./assets/images/Db_server_images/No Sql Database/MongoDB_Logo.png" alt="Image" class="w-200"/>
+                         </div>
+                       </div>
+                       <div class="card-body post-bg">
+                          <div class="post-txt">
+                            <span class="light-gry-txt">MongoDb
+                            </span>
+                            <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
+                            <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for SQL server is 1433</span></h6>
+                            <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
+                            <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
+                            <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                          </div>
+                       </div>
+                     </div>
+                  </div>
+                  <div class="col-md-12 col-xl-6 p-1 mb-0">
+                      <div class="card">
+                          <div class="card-header">
+                              <h4 class="card-title">Connect to MICROSOFT SQL Server</h4>
+                          </div>
+                          <div class="card-body">
+                              <form>
+                                      <div class="form-group">
+                                          <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1433">
+                                      </div>
+                                      <div class="form-group">
+                                        <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Mysql">
+                                    </div>
+                                      <div class="form-group">
+                                          <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                      </div>
+                                      <div class="mb-2">
+                                        <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                      </div>
+                                      <div class="form-group">
+                                          <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                          <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                          <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Sign In</button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+            } 
 
     <!-- screen4Tables -->
 
@@ -538,7 +878,7 @@
                     </div>
                 </div> -->
                 <div class="database-logo">
-                <div class="imgcard op-4">
+                <div class="imgcard op-4" (click)="openIbmDb2()">
                     <img src="./assets/images/Db_server_images/Relational Database/ibmdb2.png" alt="Image" class="card-img"/>
                 </div>
                 <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -554,7 +894,7 @@
               </div>
               </div> -->
               <div class="database-logo">
-                <div class="imgcard p-4 "  (click)="Openmdo(mySql)">
+                <div class="imgcard p-4 "  (click)="openMySql()">
                     <img src="./assets/images/Db_server_images/Relational Database/mysql.png" alt="Image" class="card-img"/>                   
                   </div>
                   <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -562,7 +902,7 @@
                 </div>
               </div>
               <div class="database-logo">
-                <div class="imgcard p-4" (click)="Openmdo(oracle)">
+                <div class="imgcard p-4" (click)="openOracle()">
                     <img src="./assets/images/Db_server_images/Relational Database/Oracle_logo.png"  alt="Image" class="card-img"/>
                 </div>
                 <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -578,29 +918,29 @@
               </div>
               </div>
               <div class="database-logo">
-                <div class="imgcard op-4 p-4">
+                <div class="imgcard p-4" (click)="openMicrosoftSqlServer()">
                     <img src="./assets/images/Db_server_images/Relational Database/sql server.png" alt="Image" class="card-img"/>
                 </div>
                 <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                   <span style=" width: 8rem;">Microsoft SQL SERVER</span>
               </div>
               </div>
-              <div class="database-logo">
+              <!-- <div class="database-logo">
                 <div class="imgcard op-4 p-4">
                     <img src="./assets/images/Db_server_images/Relational Database/microsoft-access.png" alt="Image" class="card-img"/>
                 </div>
                 <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                   <span style=" width: 8rem;">Microsoft Access</span>
               </div>
-              </div>
-              <div class="database-logo">
+              </div> -->
+              <!-- <div class="database-logo">
                 <div class="imgcard op-4 p-4">
                     <img src="./assets/images/Db_server_images/Relational Database/SyBase-logo.png" alt="Image" class="card-img"/>
                 </div>
                 <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                   <span style=" width: 8rem;">SYBASE</span>
               </div>
-              </div>
+              </div> -->
             </div>
             </div>
             <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Big Data Platform</h6>
@@ -627,7 +967,7 @@
                 <div class="imgcard op-4 p-4">
                     <img src="./assets/images/Db_server_images/No Sql Database/sqlite.png" alt="Image" class="card-img"/>
                 </div>
-                <div class="imgcard op-4 p-4">
+                <div class="imgcard p-4" (click)="openMOngoDb()">
                     <img src="./assets/images/Db_server_images/No Sql Database/MongoDB_Logo.png" alt="Image" class="card-img"/>
                 </div>
                
