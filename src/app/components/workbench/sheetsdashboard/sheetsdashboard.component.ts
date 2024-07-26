@@ -551,12 +551,12 @@ export class SheetsdashboardComponent {
     this.workbechService.saveDAshboardimage(formData).subscribe({
       next:(data)=>{
         console.log(data);
-        Swal.fire({
-          icon: 'success',
-          title: 'Congartualtions!',
-          text: 'Dashboard Updated Successfully',
-          width: '400px',
-        })
+        // Swal.fire({
+        //   icon: 'success',
+        //   title: 'Congartualtions!',
+        //   text: 'Dashboard Updated Successfully',
+        //   width: '400px',
+        // })
         this.endMethod(); 
       },
       error:(error)=>{
@@ -1079,13 +1079,13 @@ allowDrop(ev : any): void {
       };
       item['chartInstance'].updateOptions(item.chartOptions, true);
     }
-    this.chartstest.forEach((chart, index) => {
-      if (index === 0) {
-        chart.updateOptions(item.chartOptions);
-      } else if (index === 1) {
-        chart.updateOptions(item.chartOptions);
-      }
-    });
+    // this.chartstest.forEach((chart, index) => {
+    //   if (index === 0) {
+    //     chart.updateOptions(item.chartOptions);
+    //   } else if (index === 1) {
+    //     chart.updateOptions(item.chartOptions);
+    //   }
+    // });
   }
   getItemComponent(item: DashboardItem): GridsterItemComponent | undefined {
     return this.GridsterItemComponent.find(cmp => cmp.item === item);
@@ -1126,10 +1126,24 @@ allowDrop(ev : any): void {
           height: 500
         },
         series: item.chartOptions.series,
-        xaxis: item.chartOptions.xaxis,
+        xaxis: {
+          ...item.chartOptions.xaxis,
+          categories: item.chartOptions.xaxis?.categories
+        }
       };
-          item['chartInstance'] = new ApexCharts(document.querySelector("#chart"), options);
-    item['chartInstance'].render();
+    //       item['chartInstance'] = new ApexCharts(document.querySelector("#chart"), options);
+    // item['chartInstance'].render();
+    var chartOrigin = document.querySelector("#chart");
+    if(chartOrigin){
+      var chart = new ApexCharts(document.querySelector("#chart"),options);
+      // chartOrigin.updateOptions(options);
+      chart.render();
+    }
+    // if(this.chartstest){
+    //   this.chartstest['_results'][0].updateOptions(options);
+    //   // this.chartstest['_results'][0].render();
+    //   // this.chartstest./
+    // }
     // item['chartInstance'] = new ApexCharts(document.querySelector("#chart-" + item['id']), item.chartOptions);
     // item['chartInstance'].render();
   }  
@@ -1815,7 +1829,7 @@ closeColumnsDropdown(colName:any,colDatatype:any, dropdown: NgbDropdown) {
 
 }
 closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
-  localStorage.setItem('filterid', JSON.stringify(colData));
+  localStorage.setItem(id, JSON.stringify(colData));
   dropdown.close();
 }
 
@@ -1887,7 +1901,7 @@ getColDataFromFilterId(id:string,colData:any){
       console.log(data);
       // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
       colData['colData']= data.col_data.map((item: any) => ({ label: item, selected: false }))
-      localStorage.setItem('filterid', JSON.stringify(colData['colData']));
+      localStorage.setItem(id, JSON.stringify(colData['colData']));
       console.log('coldata',this.colData)
     },
     error:(error)=>{
@@ -1976,7 +1990,7 @@ getFilteredData(){
       this.tablePreviewRow = data.rows;
       console.log(this.tablePreviewColumn);
       console.log(this.tablePreviewRow);
-      localStorage.removeItem('filterid')
+      // localStorage.removeItem('filterid')
       data.forEach((item: any) => {
       item.columns.forEach((res:any) => {      
         let obj1={
@@ -1996,16 +2010,23 @@ getFilteredData(){
       });
       this.dashboard.forEach((item1:any) => {
         if(item1.sheetId == item.sheet_id){
-          item1.chartOptions.xaxis.categories = this.filteredColumnData;
+          if(item.chart_id == '6'){
+          item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
           item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '24'){
+            item1.chartOptions.labels = this.filteredColumnData[0].values;
+          item1.chartOptions.series = this.filteredRowData[0].data;
+          }
           // if(item.chart_id == '6'){
           //   this.barChartOptions(this.filteredColumnData,this.filteredRowData)
               this.initializeChart(item1);
+              this.filteredColumnData =[]
+              this.filteredRowData=[]
           // }
           // if(item.chart_id == '2'){
-
           // }
-
+          console.log('filtered dashboard-data',item1)
         }
       })
     });

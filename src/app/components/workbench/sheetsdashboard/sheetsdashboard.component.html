@@ -262,7 +262,7 @@
                         </div>
                         <div class="min-w-fit-content ms-3">
                             <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">Save </button>
-                            <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="takeScreenshot()">Update </button>
+                            <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
 
                             </div>
@@ -343,7 +343,7 @@
                     <div *ngIf="nestedItem.chartOptions">
                       <div *ngIf="nestedItem['chartId'] === 6">
                         
-                         <apx-chart #test344 id="test344"
+                         <apx-chart #test3 id="test3"
                          [series]="nestedItem.chartOptions.series!"
                          [chart]="nestedItem.chartOptions.chart!"
                          [dataLabels]="nestedItem.chartOptions.dataLabels!"

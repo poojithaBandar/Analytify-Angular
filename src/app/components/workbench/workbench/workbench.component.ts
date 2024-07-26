@@ -41,6 +41,7 @@ export class WorkbenchComponent implements OnInit{
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openMongoDbForm = false;
+  sqlLiteForm = false;
   openTablesUI = false;
   ibmDb2Form = false;
   databaseName:any;
@@ -64,6 +65,7 @@ export class WorkbenchComponent implements OnInit{
   pageNo = 1;
   page: number = 1;
   totalItems:any;
+  fileData:any;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
@@ -81,6 +83,7 @@ export class WorkbenchComponent implements OnInit{
     PostGrePassword = '';
     OracleServiceName = '';
     displayName ='';
+    path='';
 
     openPostgreSql(){
     this.openPostgreSqlForm=true;
@@ -379,6 +382,50 @@ export class WorkbenchComponent implements OnInit{
           }
         )
     }
+
+    opensqlLite(){
+      this.sqlLiteForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
+    uploadfile(event:any){
+      const file:File = event.target.files[0];
+      this.fileData = file
+    }
+    sqLiteSignIn(){
+      const formData: FormData = new FormData();
+      formData.append('path', this.fileData,this.fileData.name); 
+      formData.append('database_type','sqlite');
+      formData.append('display_name',this.displayName);
+
+        this.workbechService.DbConnection(formData).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.ibmDb2Form = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+    }
+
+
     deleteDbConnection(id:any){
       const obj ={
         database_id:id
@@ -534,7 +581,10 @@ export class WorkbenchComponent implements OnInit{
   this.viewNewDbs=true;
   this.openMySqlForm=false;
   this.openOracleForm = false;
+  this.openMongoDbForm = false;
   this.openMicrosoftSqlServerForm = false;
+  this.ibmDb2Form= false;
+  this.sqlLiteForm = false;
 
   this.postGreServerName = '';
   this.postGrePortName = '';

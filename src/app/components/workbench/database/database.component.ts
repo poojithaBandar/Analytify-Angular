@@ -543,7 +543,8 @@ joiningTablesFromDelete(){
         this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
         this.qurtySetId = data?.table_columns_and_rows?.query_set_id
         if(this.qurtySetId === 0){
-          localStorage.setItem('QuerySetId','0')
+          localStorage.setItem('QuerySetId','0');
+          this.datasourceQuerysetId = null;
         }
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
@@ -971,9 +972,13 @@ deleteFilter(id:any){
             text: ' Filter Removed Successfully',
             width: '400px',
           })
+
         }
         console.log('filter ids',this.datasourceFilterIdArray)
         this.datasourceFilterIdArray = this.datasourceFilterIdArray.filter(item => item !== id);
+        if(this.datasourceFilterIdArray.length === 0){
+          this.datasourceFilterId = null;
+        }
         this.getDsQuerysetId()
         this.getFilteredList();
       },
