@@ -60,6 +60,9 @@ export class SheetsComponent {
   displayedColumns: string[] = [];
   chartEnable = true;
   dimensionExpand = false;
+  chartSuggestions: any = null;
+  errorMessage : any;
+  userPrompt: string = '';	
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -1916,5 +1919,92 @@ renameColumns(){
     }
   )
  }
+ getChartSuggestions() {
+  
+  const obj ={
+    id:this.qrySetId
+  }
+
+  this.workbechService.getServerTablesList(obj).subscribe(
+    data => {
+      console.log(data)
+      if (Array.isArray(data.data)) {
+        // Handle the case where data.data is an array
+        console.log(data.data.length);
+        this.chartSuggestions = data.data;
+        this.errorMessage = '';
+      } else if (typeof data.data === 'string') {
+        // Handle the case where data.data is a message
+        console.log('Message:', data.data);
+        // Optionally handle the message case, for example by showing it to the user
+        this.chartSuggestions = [];
+        this.errorMessage = data.data;
+      } else {
+        // Handle unexpected data format
+        console.error('Unexpected data format:', data.data);
+        this.chartSuggestions = [];
+        this.errorMessage = 'Unexpected data format';
+      }
+
+    },
+    error => {
+      console.log("Error",error.message)
+      this.chartSuggestions = null;
+      this.errorMessage = 'Error fetching chart suggestions';
+      console.error(error);
+    }
+  );
+}
+fetchChartData(chartData: any){
+  this.databaseId = chartData.database_id;
+          this.qrySetId = chartData.queryset_id;
+          this.draggedColumnsData = chartData.col;
+          this.draggedRowsData = chartData.row;
+          this.draggedColumns = chartData.columns;
+          this.draggedRows = chartData.rows;
+          this.filterId =[];
+          this.filterQuerySetId = null,
+          this.sheetfilter_querysets_id = null;
+          
+          console.log("This is ChaetData",chartData)
+          this.sheetTitle = chartData.chart_title
+          if (chartData.chart_type==="Bar Chart"){
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6);
+          }else if (chartData.chart_type==="Pie Chart"){
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24);
+          }else if (chartData.chart_type==="Line Chart"){
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13);
+          }else if (chartData.chart_type==="Area Chart"){
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17);
+          }
+          this.dataExtraction();
 }
 
+sendPrompt() {
+  if (this.userPrompt.trim()) {
+    const obj ={
+      id:this.qrySetId,
+      prompt:this.userPrompt.trim()
+    }
+    this.workbechService.getServerTablesList(obj).subscribe(
+      data => {
+        if (Array.isArray(data.data)) {
+          this.chartSuggestions = data.data;
+          this.errorMessage = '';
+        } else if (typeof data.data === 'string') {
+          this.chartSuggestions = [];
+          this.errorMessage = data.data;
+        } else {
+          this.chartSuggestions = [];
+          this.errorMessage = 'Unexpected data format';
+        }
+      },
+      error => {
+        this.chartSuggestions = null;
+        this.errorMessage = 'Error sending prompt';
+        console.error(error);
+      }
+    );
+  }
+}
+}

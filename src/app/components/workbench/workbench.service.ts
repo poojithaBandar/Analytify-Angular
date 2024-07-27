@@ -308,6 +308,10 @@ getFilteredData(obj:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/dashboard_filtered_data/`+this.accessToken,obj); 
 }
+
+getServerTablesList(obj:any){
+  return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`,obj);
+}
   //image convert
       blobToFile(theBlob:any){
       theBlob.lastModifiedDate = new Date();

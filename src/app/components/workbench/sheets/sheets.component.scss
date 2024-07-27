@@ -194,3 +194,48 @@ span.abc-txt {
   height: 168px; 
   overflow-y: scroll;
  }
+
+ .copilot-button {
+  background-color: white; /* Button background color */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  // padding: 10px 15px; /* Padding */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-width: thick;
+  display: flex; /* Flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  transition: transform 0.2s; /* Animation effect */
+}
+
+.chart-suggestions {
+  display: grid;
+}
+
+.copilot-button:hover {
+  transform: scale(1.05); /* Scale effect on hover */
+}
+
+.copilot-icon {
+  width: 20px; /* Icon width */
+  height: 20px; /* Icon height */
+  margin-right: 8px; /* Space between icon and text */
+}
+
+.inp{
+  bottom: 5px;
+  position: absolute;
+}
+
+.inp-btn{
+  margin: 10px 0px;
+
+}
+
+.inp-send{
+  border-radius: 0px 5px 5px 0px;
+}
+.error-mgs{
+  background-color: #f4f2f4;
+  padding: 10px;
+}

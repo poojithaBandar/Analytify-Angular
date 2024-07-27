@@ -993,6 +993,35 @@
                                             </div>
                                         </ng-template>
                                 </li>
+
+                                <li [ngbNavItem]="3">
+                                    <a ngbNavLink class="p-3">
+                                      <button class="copilot-button" (click)="getChartSuggestions()">
+                                        <img src="./assets/images/copilot.png" alt="Copilot" class="copilot-icon" />
+                                      </button>
+                                    </a>
+                                    <ng-template ngbNavContent>
+                                      <div class="tab-pane" id="linktabs">
+                                        <div class="copilot-container">
+                                          <h5>InsightApps Copilot</h5>
+                                          <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-3">
+                                            <button *ngFor="let chart of chartSuggestions" type="button" class="btn ripple btn-primary inp-btn" (click)="fetchChartData(chart)">
+                                              {{ chart.chart_title }}
+                                            </button>
+                                          </div>
+                                          <div *ngIf="!chartSuggestions || chartSuggestions.length === 0">
+                                            <p class="error-mgs" *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                          </div>
+                                          <div class="input-group mt-3 inp">
+                                            <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
+                                            <div class="input-group-append">
+                                              <button class="btn btn-primary inp-send" (click)="sendPrompt()">></button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-template>
+                                  </li>
                             </ul>
                         </div>
                     </div>
