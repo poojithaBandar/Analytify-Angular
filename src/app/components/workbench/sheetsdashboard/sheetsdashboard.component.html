@@ -35,7 +35,7 @@
                                                         [cdkDropListConnectedTo]="[destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
                                                             <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                                            <li *ngFor="let item of dashboardNew"><a draggable="true"
+                                                            <li *ngFor="let item of dashboardNew" ><a draggable="true" [ngClass]="{ 'sheet-bold': item['selectedSheet']}"
                                                            class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
 
                                                             
@@ -54,7 +54,49 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <div class="card mb-0 p-4 br-0 " >
+                                              <h6 class="mb-0">Size</h6>
+                                             <div class="custom-size-card d-flex justify-conent-between">
+                                                <p class="mb-0 custom-size-txt">Custom size (1500 * 1400)</p>
+                                              
+                                                <div class="col-auto p-0">
+                                                  <div class="d-flex justify-content-end p-1 dropdown" ngbDropdown>
+                                                    <a  href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
+                                                      <i  class="fa fa-caret-down ms-1 size-icon"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu size-dropdown" ngbDropdownMenu>
+                                                        <h6 class="mb-0">Size</h6>
+                                                        <div class="form-group mb-1">
+                                                          <select class="form-select form-select select2 fs-14">
+                                                              <option value="1">Custom size (1500 * 1400)</option>
+                                                              <option value="2">Custom size (1200 * 1100)</option>
+                                                              <option value="3">Custom size (1500 * 1400)</option>
+                                                        
+                                                          </select>
+                                                      </div>
+                                                      <div class="col-lg-12 col-md-12">
+                                                        <select  class="form-control" [(ngModel)]="gridType"  (change)="changeGridType()">
+                                                        <option value="fixed">Fixed</option>
+                                                        <option value="scroll">Scroll</option>
+                                                      </select>
+                                                    </div>
+                                                     
+                                                       <div class="row">
+                                                        <div class="col-6">
+                                                          <label for="input-rounded-pill" class="form-label">Width</label>
+                                                          <input  type="number" name="number" [(ngModel)]="widthGrid" class="form-control">
+                                                        </div>
+                                                        <div class="col-6">
+                                                          <label for="input-rounded-pill" class="form-label">Height </label>
+                                                          <input  type="number" name="number" [(ngModel)]="heightGrid" class="form-control">
+                                                        </div>
+                                                       </div>
+                                                     </div>
+                                                 </div>
+                                              </div>
+                                             </div>
+                                          </div>
+                                          </div>
                                     </div>
                                   </div>
                                 </ng-template>
@@ -262,7 +304,8 @@
                         </div>
                         <div class="min-w-fit-content ms-3">
                             <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">Save </button>
-                            <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
+                            <button  [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
+                            <button type="button" class="btn btn-primary mt-0" (click)="clearDashboard();">clear</button>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
 
                             </div>
@@ -275,24 +318,12 @@
                 </div>
             </div>
         </div> 
-        <div class="col-lg-12 col-md-12" style="display: flex;">
-          <button type="button" class="btn ripple btn-primary me-2" (click)="ResetDashboard();">clear</button>
-          H <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="heightGrid" aria-label="Sheet" >
-          W <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="widthGrid" aria-label="Sheet" >
-          G           W <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="gridItemSize"  (change)="changeGridItemSize()" aria-label="Sheet" >
-          <div class="col-lg-3 col-md-3">
-            <select  class="form-control" [(ngModel)]="gridType"  (change)="changeGridType()">
-            <option value="fixed">Fixed</option>
-            <option value="scroll">Scroll</option>
-          </select>
-        </div>
-        </div>
+        <!-- <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="gridItemSize"  (change)="changeGridItemSize()" aria-label="Sheet" > -->
+
     
        <!-- <div style="margin: auto 0;overflow: scroll;" [style.height.px]="heightGrid" [style.width.px]="widthGrid" > -->
         <div style="margin: auto 0;height: 100%;" >
-        <div class="options">
-          
-        </div> 
+         
         <div class="d-flex align-items-center justify-content-start  mt-3">
             <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
             <!-- <a mat-mini-fab (click)="addItem()" class="btn btn-blue-light mb-0 me-3" ><i class="fa fa-plus"></i> Add</a>  -->

@@ -99,7 +99,8 @@ export class SheetsdashboardComponent {
  tablePreviewRow = [] as any;
  tablePreviewColumn =[] as any;
  filteredColumnData = [] as any;
- filteredRowData = [] as any
+ filteredRowData = [] as any;
+ disableDashboardUpdate: boolean = false;
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService: NgbModal){
@@ -212,7 +213,7 @@ export class SheetsdashboardComponent {
       this.sheetsDataWithQuerysetId();
     }
     if(this.dashboardView){
-      this.getSavedDashboardData();
+      // this.getSavedDashboardData();
       this.sheetsDataWithQuerysetId();
       this.getDashboardFilterredList();
     }
@@ -452,13 +453,25 @@ export class SheetsdashboardComponent {
       next:(data)=>{
         console.log('savedDashboard',data);
         this.dashboardName=data.dashboard_name
-        this.dashboard = data.dashboard_data
+        this.dashboard = data.dashboard_data;
+        this.setSelectedSheetData();
       },
       error:(error)=>{
         console.log(error)
       }
     })
   }
+
+  setSelectedSheetData() {
+    this.dashboardNew = this.dashboardNew.map(target => {
+      const source = this.dashboard.find(source => source['sheetId'] === target['sheetId']);
+      if (source) {
+        return { ...target, selectedSheet: source['selectedSheet'] };
+      }
+      return target;
+    });
+  }
+
   saveDashboard(){
     this.takeScreenshot();
     // localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
@@ -624,6 +637,7 @@ export class SheetsdashboardComponent {
       chartType:sheet.chart,
       chartId:sheet.chart_id,
       data: { title: sheet.sheet_name, content: 'Content of card New' },
+      selectedSheet : sheet.selectedSheet,
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
         ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
@@ -636,6 +650,9 @@ export class SheetsdashboardComponent {
       }
        : undefined
     }));
+      if (this.dashboardView) {
+        this.getSavedDashboardData();
+      }
     let mapper = [0];
         this.testData = mapper.map((sheet:any) => ({
       id:uuidv4(),
@@ -848,6 +865,7 @@ allowDrop(ev : any): void {
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
         tableData:copy.tableData,
+        selectedSheet : true,
         chartData:copy.chartOptions?.chartData || [],
       };
     //   if(element.chartOptions?.chart?.type === 'bar'){
@@ -868,7 +886,12 @@ allowDrop(ev : any): void {
     //  console.log(this.rowArray);
      //this.getChartOptions(element.chartOptions?.chart?.type || 'bar');
     //  if(event.event.target.offsetParent.id == 'cdk-drop-list-0'){
-      this.dashboard.push(element);
+      const index = this.findSheetIndex(copy.sheetId);
+      if (index == -1) {
+        this.disableDashboardUpdate = false;
+        this.setDashboardNewSheets(copy.sheetId, true);
+        this.dashboard.push(element);
+      }
     //  } else {
     //   this.nestedDashboard.push(element);
     //  }
@@ -877,6 +900,15 @@ allowDrop(ev : any): void {
      console.log('draggedDashboard',this.dashboard)
     }
    
+  }
+
+  setDashboardNewSheets(sheetId: number, selectedSheet: boolean) {
+    this.dashboardNew = this.dashboardNew.map(sheet => {
+      if (sheet['sheetId'] === sheetId) {
+        return { ...sheet, selectedSheet: selectedSheet };
+      }
+      return sheet;
+    });
   }
 
   dropNested(event: CdkDragDrop<DashboardItem[]>,nestedItem : DashboardItem){
@@ -942,6 +974,7 @@ allowDrop(ev : any): void {
     $event.preventDefault();
     $event.stopPropagation();
     this.dashboard.splice(this.dashboard.indexOf(item), 1);
+    this.setDashboardNewSheets(item.sheetId, false);
   }
   removeNestedItem($event:any, item:any) {
     $event.preventDefault();
@@ -949,6 +982,30 @@ allowDrop(ev : any): void {
     this.dashboard.splice(this.nestedDashboard.indexOf(item), 1);
   }
 
+  resetDashboard() {
+    this.dashboard = [];
+    this.disableDashboardUpdate = true;
+    this.dashboardNew.forEach(sheet => {
+      sheet['selectedSheet'] = false;
+    })
+  }
+
+  clearDashboard(){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      width: '300px',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Clear it!'
+    }).then((result)=>{
+      if(result.isConfirmed){
+       this.resetDashboard();
+      }})
+  }
+ 
   // addItem() {
   //   this.dashboard.push({x: 0, y: 0, cols: 1, rows: 1,data: { title: 'New Card', content: 'New card content' }, 
   //   chartOptions: this.getChartOptions('bar')});
@@ -2125,6 +2182,11 @@ getFilteredData(){
 closeFilterModal(){
   this.modalService.dismissAll('close')
 }
+
+  findSheetIndex(sheetID: number): number {
+    return this.dashboard.findIndex(sheet => sheet['sheetId'] === sheetID);
+  }
+
 deleteDashboardFilter(id:any){
   const Obj ={
     id:id
