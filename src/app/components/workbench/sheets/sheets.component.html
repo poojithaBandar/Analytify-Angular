@@ -165,8 +165,24 @@
                     <div class="card-body" style="padding: 1px 17px 1px 13px;">
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
-                                <input  type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (keydown)="sheetNameChange(sheetTitle,$event)">
-                                
+                                <!-- <input id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" (keydown)="sheetNameChange(sheetTitle,$event)"> -->
+                                <div class="title-container">
+                                    <span id="htmlContent">{{sheetTagName}}</span>
+                                    <span class="title-editor" (click)="toggleEditor()">
+                                        <i class="bi bi-pen"></i>
+                                    </span>
+                                </div> 
+                                <div *ngIf="editor" class="popup">
+                                    <div class="popup-content">
+                                    <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"
+                                        (keydown)="sheetNameChange(sheetTitle, $event)">
+                                    </ckeditor>
+                                    <div class="buttons">
+                                        <button class="close-button ck-button" (click)="toggleEditor()">Close</button>
+                                        <button class="update-button ck-button" (click)="updateSheetName()">Update</button>
+                                    </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0" [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
                                 <button class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
@@ -190,7 +206,7 @@
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index)" cdkDrag >
+                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
                                        
                                         {{ columns.column }}
                                      <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
@@ -200,7 +216,7 @@
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
                                                 <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
-                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index)"> Remove</a> 
+                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index,columns.column)"> Remove</a> 
                                                     
                                                 </div>
 
@@ -358,8 +374,8 @@
                                       </tr>
                                     </thead>
                                     <tbody>
-                                        @for(row of tableData;track row){
-                                      <tr>
+                                        @for(row of tableData;track row;let i = $index){
+                                      <tr [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''">
                                         @for(column of displayedColumns;track column){
                                         <td>{{ row[column] }}</td>
                                         }
@@ -374,20 +390,26 @@
 
               <div class="card-body">
                 <div id="bar-chart">
-                    <apx-chart
+                    <apx-chart #barChart 
                     [series]="chartOptions3.series"
-                    [chart]="chartOptions3.chart"
-                    [dataLabels]="chartOptions3.dataLabels"
+                    [chart]="chartOptions3.chart" 
+                    [title]="chartOptions3.title"
+                    [xaxis]="chartOptions3.xaxis"
+                    [yaxis]="chartOptions3.yaxis"
+                    [grid]="chartOptions3.grid"
                     [plotOptions]="chartOptions3.plotOptions"
-                    [xaxis]="chartOptions3.xaxis"[colors]="chartOptions3.colors"  [grid]="chartOptions3.grid"
-                  ></apx-chart>
+                    [dataLabels]="chartOptions3.dataLabels"
+                    [fill]="chartOptions3.fill"
+                    [colors]="chartOptions3.colors">
+                    </apx-chart>
                 </div>
             </div>
               }
               @if(area && chartId){
                 <div class="card-body">
                     <div id="area-chart">
-                        <apx-chart [series]="chartOptions1.series" [chart]="chartOptions1.chart"
+                        <apx-chart #areaChart
+                        [series]="chartOptions1.series" [chart]="chartOptions1.chart"
                         [xaxis]="chartOptions1.xaxis" [stroke]="chartOptions1.stroke"
                         [dataLabels]="chartOptions1.dataLabels" [yaxis]="chartOptions1.yaxis"
                         [labels]="chartOptions1.labels" [legend]="chartOptions1.legend"  [grid]="chartOptions1.grid"
@@ -398,7 +420,8 @@
               @if(line && chartId){
                 <div class="card-body">
                     <div id="line-chart">
-                        <apx-chart [series]="chartOptions.series || []" [chart]="chartOptions.chart"
+                        <apx-chart #lineChart
+                        [series]="chartOptions.series || []" [chart]="chartOptions.chart"
                         [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels"
                         [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
                         [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
@@ -410,7 +433,8 @@
              <figure id="pie"></figure>-->
              <div class="card-body">
                 <div id="pie-basic">
-                    <apx-chart [series]="chartOptions4.series" [chart]="chartOptions4.chart" [legend]="chartOptions4.legend"
+                    <apx-chart #piechart
+                    [series]="chartOptions4.series" [chart]="chartOptions4.chart" [legend]="chartOptions4.legend"
                     [labels]="chartOptions4.labels" [responsive]="chartOptions4.responsive" [colors]="chartOptions4.colors" [dataLabels]="chartOptions4.dataLabels"></apx-chart>
                 </div>
             </div>
@@ -420,7 +444,8 @@
               @if(sidebyside && chartId){
                 <div class="card-body">
                     <div id="column-chart">
-                        <apx-chart [series]="chartOptions2.series" [chart]="chartOptions2.chart"
+                        <apx-chart #sidebyside
+                        [series]="chartOptions2.series" [chart]="chartOptions2.chart"
                         [dataLabels]="chartOptions2.dataLabels" [plotOptions]="chartOptions2.plotOptions"
                         [yaxis]="chartOptions2.yaxis" [legend]="chartOptions2.legend" [fill]="chartOptions2.fill"
                         [stroke]="chartOptions2.stroke" [tooltip]="chartOptions2.tooltip" [colors]="chartOptions2.colors" [grid]="chartOptions2.grid"
@@ -430,7 +455,7 @@
               }
               @if(stocked){
                 <div id="chart">
-                    <apx-chart
+                    <apx-chart #stocked
                       [series]="chartOptions6.series"
                       [chart]="chartOptions6.chart"
                       [dataLabels]="chartOptions6.dataLabels"
@@ -445,7 +470,8 @@
              @if(barLine){
                 <div class="card-body">
                     <div id="mixed-linecolumn">
-                        <apx-chart [series]="chartOptions5.series" [chart]="chartOptions5.chart"
+                        <apx-chart #barline
+                        [series]="chartOptions5.series" [chart]="chartOptions5.chart"
                         [yaxis]="chartOptions5.yaxis" [xaxis]="chartOptions5.xaxis" [labels]="chartOptions5.labels"
                         [stroke]="chartOptions5.stroke" [title]="chartOptions5.title"  [grid]="chartOptions5.grid"
                         [dataLabels]="chartOptions5.dataLabels" [fill]="chartOptions5.fill"
@@ -455,7 +481,7 @@
              }
              @if(horizentalStocked){
                 <div id="chart">
-                    <apx-chart
+                    <apx-chart #horizentalstocked
                       [series]="chartOptions7.series"
                       [chart]="chartOptions7.chart"
                       [dataLabels]="chartOptions7.dataLabels"
@@ -469,7 +495,7 @@
               }
               @if(grouped){
                 <div id="chart">
-                    <apx-chart
+                    <apx-chart #grouped
                       [series]="chartOptions8.series"
                       [chart]="chartOptions8.chart"
                       [dataLabels]="chartOptions8.dataLabels"
@@ -483,7 +509,7 @@
               }
               @if(multiLine){
                 <div id="chart">
-                    <apx-chart
+                    <apx-chart #multiline
                     [series]="chartOptions9.series"
                     [chart]="chartOptions9.chart"
                     [xaxis]="chartOptions9.xaxis"
@@ -500,7 +526,7 @@
               }
               @if(donut){
                 <div id="donutchart">
-                <apx-chart
+                <apx-chart #donutchart
                     [series]="chartOptions10.series"
                     [chart]="chartOptions10.chart"
                     [labels]="chartOptions10.labels"
@@ -739,7 +765,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -772,10 +798,11 @@
                                                                         <label class="col-md-4 form-label px-1 fs-14">Font</label>
                                                                         <div class="col-md-8">
                                                                             <div class="form-group mb-1">
-                                                                                <select class="form-select form-select select2 fs-14">
-                                                                                    <option value="1">Caliber,9pt</option>
-                                                                                    <option value="2">Two</option>
-                                                                                    <option value="3">Three</option>
+                                                                                <select class="form-select form-select select2 fs-14" (change)="fontChange($event,'dimension')">
+                                                                                    <option value="calibri" style="font-family: Calibri, sans-serif; font-size: 12px;">Calibri, Bold, 12px</option>
+                                                                                    <option value="arial" style="font-family: Arial, sans-serif; font-size: 14px;">Arial, Bold, 14px</option>
+                                                                                    <option value="times" style="font-family: Times New Roman, serif; font-size: 16px;">Times New Roman, Bold, 16px</option>
+                                                                                    <option value="verdana" style="font-family: Verdana, sans-serif; font-size: 12pt;">Verdana, Bold, 12px</option>
                                                                                 </select>
                                                                             </div>
                                                                         </div>
@@ -784,22 +811,10 @@
                                                                         <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                         <div class="col-md-8">
                                                                             <div class="form-group mb-1">
-                                                                                <select class="form-select form-select select2 fs-14">
-                                                                                    <option value="1">Automatic</option>
-                                                                                    <option value="2">Two</option>
-                                                                                    <option value="3">Three</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row">
-                                                                        <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
-                                                                        <div class="col-md-8">
-                                                                            <div class="form-group mb-1">
-                                                                                <select class="form-select form-select select2 fs-14">
-                                                                                    <option value="1">123,456</option>
-                                                                                    <option value="2">Two</option>
-                                                                                    <option value="3">Three</option>
+                                                                                <select class="form-select form-select select2 fs-14" (change)="allignmentChange($event,'dimension')">
+                                                                                    <option value="center">center</option>
+                                                                                    <option value="left">left</option>
+                                                                                    <option value="right">right</option>
                                                                                 </select>
                                                                             </div>
                                                                         </div>
@@ -812,7 +827,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut)" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -845,10 +860,11 @@
                                                                           <label class="col-md-4 form-label px-1 fs-14">Font</label>
                                                                           <div class="col-md-8">
                                                                               <div class="form-group mb-1">
-                                                                                  <select class="form-select form-select select2 fs-14">
-                                                                                      <option value="1">Caliber,9pt</option>
-                                                                                      <option value="2">Two</option>
-                                                                                      <option value="3">Three</option>
+                                                                                 <select class="form-select form-select select2 fs-14" (change)="fontChange($event,'measures')">
+                                                                                    <option value="calibri" style="font-family: Calibri, sans-serif; font-size: 12px;">Calibri, Bold, 12px</option>
+                                                                                    <option value="arial" style="font-family: Arial, sans-serif; font-size: 14px;">Arial, Bold, 14px</option>
+                                                                                    <option value="times" style="font-family: Times New Roman, serif; font-size: 16px;">Times New Roman, Bold, 16px</option>
+                                                                                    <option value="verdana" style="font-family: Verdana, sans-serif; font-size: 12pt;">Verdana, Bold, 12px</option>
                                                                                   </select>
                                                                               </div>
                                                                           </div>
@@ -857,10 +873,10 @@
                                                                           <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                           <div class="col-md-8">
                                                                               <div class="form-group mb-1">
-                                                                                  <select class="form-select form-select select2 fs-14">
-                                                                                      <option value="1">Automatic</option>
-                                                                                      <option value="2">Two</option>
-                                                                                      <option value="3">Three</option>
+                                                                                 <select class="form-select form-select select2 fs-14" (change)="allignmentChange($event,'measures')">
+                                                                                    <option value="center">center</option>
+                                                                                    <option value="up">up</option>
+                                                                                    <option value="down">down</option>
                                                                                   </select>
                                                                               </div>
                                                                           </div>
@@ -869,14 +885,39 @@
                                                                           <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
                                                                           <div class="col-md-8">
                                                                               <div class="form-group mb-1">
-                                                                                  <select class="form-select form-select select2 fs-14">
-                                                                                      <option value="1">123,456</option>
-                                                                                      <option value="2">Two</option>
-                                                                                      <option value="3">Three</option>
-                                                                                  </select>
+                                                                                <select class="form-select form-select select2 fs-14" (change)="numberPopupTrigger()">
+                                                                                    <option value="1">123.456</option>
+                                                                                    <option value="2">Number(custom)</option>
+                                                                                </select>
                                                                               </div>
                                                                           </div>
                                                                       </div>
+                                                                      @if(numberPopup){
+                                                                        <div class="number-formatting number-popup popup-content">
+                                                                            <label for="decimal-places">Decimal places:</label>
+                                                                            <input type="number" id="decimal-places" [(ngModel)]="decimalPlaces" min="0">
+                                                                            
+                                                                            <label for="display-units">Display Units:</label>
+                                                                            <select id="display-units" [(ngModel)]="displayUnits">
+                                                                              <option value="none">None</option>
+                                                                              <option value="K">Thousands (K)</option>
+                                                                              <option value="M">Millions (M)</option>
+                                                                              <option value="B">Billions (B)</option>
+                                                                              <option value="G">Billions (G)</option>
+                                                                            </select>
+                                                                            
+                                                                            <label for="prefix">Prefix:</label>
+                                                                            <input type="text" id="prefix" [(ngModel)]="prefix">
+                                                                            
+                                                                            <label for="suffix">Suffix:</label>
+                                                                            <input type="text" id="suffix" [(ngModel)]="suffix">
+                                                                            
+                                                                            <div class="buttons">
+                                                                                <button class="close-button ck-button" (click)="numberPopupTrigger()">Close</button>
+                                                                                <button class="update-button ck-button" (click)="updateChart()">Update</button>
+                                                                            </div>
+                                                                          </div>
+                                                                      }
                                                                       <span ngbTooltip=""></span>
                                                                     </div>
                                                                   </div>
@@ -885,16 +926,19 @@
                                                             </div>
                                                     </div>
 
-                                                    <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="(table && chartId)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Banding </p>
                                                         </div>
-                                                        <div class="toggle toggle-sm on mb-0">
+                                                        <div *ngIf="bandingSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('banding')">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!bandingSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('banding')">
                                                             <span></span>
                                                         </div>
                                                     </div>
 
-                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -925,7 +969,10 @@
                                                                     <div class=""> 
                                                                         <p >X-label </p>
                                                                     </div>
-                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                    <div *ngIf="xLabelSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('xlabel')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!xLabelSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('xlabel')">
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
@@ -933,7 +980,10 @@
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
-                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                    <div *ngIf="xGridSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('xgrid')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!xGridSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('xgrid')">
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
@@ -942,7 +992,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div  ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -973,7 +1023,10 @@
                                                                     <div class=""> 
                                                                         <p >Y-label </p>
                                                                     </div>
-                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                    <div *ngIf="yLabelSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('ylabel')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!yLabelSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('ylabel')">
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
@@ -981,12 +1034,26 @@
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
-                                                                    <div class="toggle toggle-sm on mb-0">
+                                                                    <div *ngIf="yGridSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('ygrid')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!yGridSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('ygrid')">
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
                                                             </ng-template>
                                                           </div>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="((pie && chartId) || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Legends </p>
+                                                        </div>
+                                                        <div *ngIf="legendSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('legend')">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!legendSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('legend')">
+                                                            <span></span>
                                                         </div>
                                                     </div>
                                                 </div>
