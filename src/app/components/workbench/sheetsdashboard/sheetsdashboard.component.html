@@ -69,8 +69,8 @@
                                 <div class="text-wrap">
                                   <div class="row">
                                   <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 "style="border-right: 1px solid #f3f6f9;">
-                                    <button type="button"  style="border: 1px solid #edebeb;width: 100%;" class="btn text-left">Filter1
-                                      <a style="color: red;"><i style="float: right;padding-top: 3px;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
+                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;" class="btn text-left">{{filterList.filter_name}}
+                                      <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id)" style="color: red;"><i style="float: right;padding-top: 3px;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
                                     </button>
 
                                     </div>

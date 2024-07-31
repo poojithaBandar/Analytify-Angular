@@ -1,0 +1,264 @@
+<app-page-header title="Roles List" title1="home" activeitem="Roles List"></app-page-header>
+
+<div class="main-container container-fluid">
+
+    <div class="row" class="card" style="padding: 20px;">
+    <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+      <div class="d-flex justify-content-between px-5">
+        <div class="connect-txt">
+          <h4 class="card-title mt-2">Roles</h4>
+        </div>
+        <div class="new-data-btn d-flex text-align-center">
+          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
+
+          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
+
+
+          <div class="input-group">
+            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="roleName" (keyup.enter)="searchRoleList()" aria-describedby="button-addon2" >
+            <button class="btn btn-primary border me-2" (click)="searchRoleList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+            <button type="button" class="btn btn-primary" (click)="addRolesModal(addrole);getPrevilagesList()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add Role</button>
+
+          </div>
+        </div>
+    </div>
+    <!-- <div *ngIf="savedUsersList.length === 0">
+      No User, Please Create One!
+    </div> -->
+        <div class="card-body">
+          @if(!gridView){
+            <div class="table-responsive" style="height: 26rem;">
+                <table class="table border text-nowrap text-md-nowrap mb-0">
+                    <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
+                        <tr>
+                            <th>Name</th>
+                            <th>Created</th>
+                            <th>Last Modified</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngFor="let roles of savedRolesList paginate : {
+                        itemsPerPage: itemsPerPage,
+                        currentPage: page,
+                        totalItems: totalItems
+                      }">
+                        <tr>
+                            <!-- <td>
+                              <div class="d-flex">
+                           
+                              <div class="content">
+                                <span>Sheet Name : </span>
+                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)" > {{sheets.sheet_name | slice:0:15}}</a>
+                                <p class="mb-0">Created by : {{sheets.created_by}}</p>
+                              </div>
+                          </div>                                  
+                            </td> -->
+                               <td>{{roles.role}}</td>
+                            <td>{{roles.created_at | date}}</td>
+                            <td>{{roles.updated_at | date}}</td>
+
+                            <td>
+                              <div class="hstack gap-2 fs-1">
+                              <a aria-label="anchor"
+                              class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                              <i class="ri-edit-line" ngbTooltip="Edit"></i></a>
+
+                            <a aria-label="anchor"   class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                        </a>
+                        </div>
+                              </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+          }
+          @if(gridView){
+        <!-- <div class="row">
+          <div *ngFor="let sheets of savedSheetsList | paginate : {
+            itemsPerPage: itemsPerPage,
+            currentPage: page,
+            totalItems: totalItems
+          }"  class="col-md-12 col-xl-3">
+                <div class="card shadow-none">
+                <div class="card-body card-box-shadow">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row border-bottom">
+                                <div class="col mb-1">
+                                    <div class="d-sm-flex align-items-center">
+                                      <div class="user-image">
+                                        
+                                      </div>
+                                        <div class="ms-2 mt-sm-0 mt-2">
+                                            <h6 class="mb-1">
+                                                <a (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
+                                            </h6>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                  <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                        aria-haspopup="true" aria-expanded="false" class=""><i
+                                            class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                    </a>
+                                    <div class="dropdown-menu" ngbDropdownMenu>
+                                      <a class="dropdown-item" tabindex="0" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)">
+                                        <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
+                                    <a  class="dropdown-item btn btn-secondary-light" tabindex="0" (click)="deleteSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)">
+                                        <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        <div  class="col-md-12 mt-2">
+                          <div class="p-2 ">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="fw-semibold fs-14">Created by  </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="fs-14">{{sheets.created_by}}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <span class="fw-semibold fs-14">Created on :</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="fs-14">{{sheets.created}}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                  <span class="fw-semibold fs-14">Last Modified : </span>
+                              </div>
+                              <div class="col-md-6">
+                                  <span class="fs-14">{{sheets.Modified}}</span>
+                              </div>
+                          </div>
+                        </div>
+                        </div>
+                       
+                    </div>
+                </div>
+                </div>
+              </div>
+            
+    </div> -->
+        }
+            <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetRolesList((page = $event))"></pagination-controls>
+            <div  style="float: right;font-size: 15px; margin-top: -41px;">
+              <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getSavedRolesList()" class="form-control" style="cursor: pointer;">
+                    <option  value="10"> 10</option>
+                    <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                    <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
+                 
+              </select>
+           </div>
+        </div>
+    </div>
+    </div>
+  </div>
+
+  <ng-template #addrole let-modal >
+    <div  >
+      <div >
+        <div class="modal-content modal-large" >
+          <div class="modal-header justify-conent-between">
+            <h1 class="modal-title fs-5" id="inputModalLabel">Add Role</h1>
+            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button> -->
+            <div class="add-role-save-btn">
+              <button type="button" class="btn btn-primary" (click)="addRoles()" style="border-radius: 4px 4px 4px 4px;">
+                Save <i class="fa fa-file-text-o"></i> 
+              </button>
+              <a (click)="modal.close('cross click')"><i class="fa fa-arrow-left p-3 bg-light rounded-2 ms-1"></i></a>
+            </div>
+          </div>
+          <div class="modal-body">
+           
+            <div class="row  p-1">
+              <div class="col-md-2 border p-0">
+                <div class=" p-1 border-bottom">
+                  <div class="card-body">
+                    <h6>Name</h6>
+                  </div>
+                  <div class="card-body">
+                    <h6>Permission</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-10 border p-1">
+                <div class="flex-grow-1">
+                    <input  type="text" [(ngModel)]="roleTitle"  placeholder="Title" aria-label="Sheet" class="form-control" >
+                </div>
+                <div class="row m-1">
+                <div class="col-md-6 p-0 border" style="max-width: 48%;">
+                  <div class="permission-text bg-light p-3 mb-1">
+                    <h6 class="mb-0">Available Permission <i class="fa fa-question-circle" aria-hidden="true"></i></h6>
+                  </div>
+                  <div class="Permission-filter-search">
+                    <div class="input-group">
+                      <input type="text" [(ngModel)]="searchPrevilage" (keydown.enter)="getPrevilagesList()" class="form-control border-end-0"  placeholder="Filter">
+                      <button type="button"  (click)="getPrevilagesList()"  aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0 ">
+                          <i class="fe fe-search" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- <div class="Permission-body-text"> -->
+                    <select [formControl]="selectControl" multiple class="Permission-body-text">
+                        <option *ngFor="let previlages of  previlagesList" [value]="previlages.id">
+                          {{ previlages.previlage }}
+                        </option>
+                      </select>
+                  <!-- </div> -->
+                  <div (click)="selectAllAndMove()" class="choose-all text-center border " style="cursor: pointer;">
+                    <h6>Choose All <i class="fa fa-chevron-circle-right mt-2" aria-hidden="true"></i></h6>
+                  </div>
+                </div>
+                <div class="col-md-1 add-icons" style="max-width: 49px;">
+                 <div class="p-2 bg-light rounded-5">
+                    <a (click)=moveSelectedItems()><i  class="fa fa-arrow-circle-right"></i></a> <br>
+                    <a (click)="moveBackSelectedItems()"><i  class="fa fa-arrow-circle-left"></i></a>
+                  </div>
+                </div>
+                <div class="col-md-5 border p-0 " style="flex: 0 0 46.666667%;  max-width: 58.666667%;">
+                  <div class="permission-text bg-light p-3">
+                    <h6 class="mb-0">Chosen Permission <i class="fa fa-question-circle" aria-hidden="true"></i></h6>
+                  </div>
+                  <div class="Permission-filter-search">
+                    <div class="input-group">
+                      <input type="text" [(ngModel)]="searchSelectedPrevilage" (input)="searchInSelectedArray()" class="form-control border-end-0"  placeholder="Filter">
+                      <button type="button" (click)="searchInSelectedArray()"  aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0 ">
+                          <i class="fe fe-search" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- <div class="Permission-body-text"> -->
+                    <select [formControl]="selectControlSelected" multiple class="Permission-body-text">
+                        <option *ngFor="let previlages of selectedArray" [value]="previlages.id">
+                          {{ previlages.previlage }}
+                        </option>
+                      </select>
+                  <!-- </div> -->
+                  <div (click)="removeAllSelected()" class="choose-all text-center border " style="cursor: pointer;">
+                    <h6> <i class="fa fa-chevron-circle-left mt-2" aria-hidden="true"> Remove All</i></h6>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+            <button type="button" class="btn btn-primary" (click)="getSelectedRoles()">save</button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </ng-template>

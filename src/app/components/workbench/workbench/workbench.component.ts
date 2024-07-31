@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -28,6 +28,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
   styleUrl: './workbench.component.scss'
 })
 export class WorkbenchComponent implements OnInit{
+  @ViewChild('fileInput') fileInput:any;
+  
   tableList = [] as any;
   dragedTableName: any;
   databaseconnectionsList!:boolean;
@@ -425,7 +427,84 @@ export class WorkbenchComponent implements OnInit{
         )
     }
 
+    triggerFileUpload() {
+      this.fileInput.nativeElement.click();
+    }
 
+    uploadfileCsv(event:any){
+      const file:File = event.target.files[0];
+      this.fileData = file;
+      if(this.fileData){
+        this.csvUpload();
+      }
+
+    }
+    csvUpload(){
+    const formData: FormData = new FormData();
+      formData.append('file_path', this.fileData,this.fileData.name); 
+      formData.append('file_type','csv');
+      this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              Swal.fire({
+                icon: 'success',
+                title: 'Connected',
+                width: '400px',
+              })
+              // this.databaseId=responce.database?.database_id
+             
+              // const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+            }
+          },
+          error: (error) => {
+            console.log(error);
+            Swal.fire({
+              icon: 'warning',
+              text: error.error.message,
+              width: '300px',
+            })
+          }
+        }
+      )
+    }
+    uploadfileExcel(event:any){
+      const file:File = event.target.files[0];
+      this.fileData = file;
+      if(this.fileData){
+        this.excelUpload();
+      }
+
+    }
+    excelUpload(){
+      const formData: FormData = new FormData();
+        formData.append('file_path', this.fileData,this.fileData.name); 
+        formData.append('file_type','excel');
+        this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                // this.databaseId=responce.database?.database_id
+               
+                // const encodedId = btoa(this.databaseId.toString());
+                // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+      }
     deleteDbConnection(id:any){
       const obj ={
         database_id:id

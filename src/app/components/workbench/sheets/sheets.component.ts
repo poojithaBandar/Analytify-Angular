@@ -907,7 +907,7 @@ tableMeasures = [] as any;
             this.sidebysideBarRowData.push(obj);
           });
           console.log(this.sidebysideBarColumnData)
-          console.log(this.sidebysideBarColumnData1)
+          console.log('sidebysideBarColumnData1this',this.sidebysideBarColumnData1)
           console.log(this.sidebysideBarRowData);
           let rowCount:any;
          if(this.tablePreviewColumn[0]?.result_data?.length){

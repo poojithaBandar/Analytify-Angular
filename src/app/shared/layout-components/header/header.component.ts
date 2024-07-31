@@ -296,5 +296,12 @@ collapse: any;
     .querySelector('.header-search')
     ?.classList.toggle('searchdrop');
   }
+
+  routeToUserDashboard(){
+    this.router.navigate(['/workbench/list-users/dashboard'])
+  }
+  routeToRolesDashboard(){
+    this.router.navigate(['/workbench/roles-list/dashboard'])
+  }
 }
 

@@ -104,6 +104,18 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./saved-queries/saved-queries.component').then((m)=>m.SavedQueriesComponent)
 },
+{
+  path: 'list-users/dashboard',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
+},
+{
+  path: 'roles-list/dashboard',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
+},
  
  ]}
  ];

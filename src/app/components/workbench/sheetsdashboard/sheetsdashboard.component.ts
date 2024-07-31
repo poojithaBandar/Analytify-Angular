@@ -738,7 +738,12 @@ export class SheetsdashboardComponent {
     if(sheet.chart_id === 4){
       let xaxis = sheet.sheet_data?.results?.barLineXaxis;
       let yaxis = sheet.sheet_data?.results?.barLineYaxis;
-      return this.barLineChartOptions(xaxis,yaxis)
+      console.log('barlinexaxis',xaxis)
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+      console.log('barlinecategories',categories)
+
+      return this.barLineChartOptions(categories,yaxis)
     }
     if(sheet.chart_id === 2){
       let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
@@ -760,7 +765,11 @@ export class SheetsdashboardComponent {
     if(sheet.chart_id === 8){
       let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
       let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
-      return this.multiLineChartOptions(xaxis,yaxis)
+
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+
+      return this.multiLineChartOptions(categories,yaxis)
     }
     if(sheet.chart_id === 10){
       let xaxis = sheet.sheet_data?.results?.donutXaxis;
@@ -1117,6 +1126,12 @@ allowDrop(ev : any): void {
     }
   }
   initializeChart(item: DashboardItem): void {
+    const chartElement = document.querySelector("#chart"); // Adjust selector if necessary
+
+    if (item['chartInstance']) {
+        item['chartInstance'].destroy(); // Destroy the existing chart instance
+        item['chartInstance'] = null;
+    }
     if (item.chartOptions && item.chartOptions.chart && item.chartOptions.series) {
       const options: ApexOptions = {
         ...item.chartOptions,
@@ -1131,14 +1146,32 @@ allowDrop(ev : any): void {
           categories: item.chartOptions.xaxis?.categories
         }
       };
+      console.log('Chart options before updating/rendering:', options);
+
     //       item['chartInstance'] = new ApexCharts(document.querySelector("#chart"), options);
     // item['chartInstance'].render();
-    var chartOrigin = document.querySelector("#chart");
-    if(chartOrigin){
-      var chart = new ApexCharts(document.querySelector("#chart"),options);
-      // chartOrigin.updateOptions(options);
-      chart.render();
-    }
+
+
+    // var chartOrigin = document.querySelector("#chart");
+    // if(chartOrigin){
+    //   var chart = new ApexCharts(document.querySelector("#chart"),options);
+    //   // chartOrigin.updateOptions(options);
+    //   chart.render();
+    // }
+
+
+    if (item['chartInstance']) {
+      // Update the existing chart instance with new options
+      item['chartInstance'].updateOptions(options, true);
+  } else {
+      // Create a new chart instance if it doesn't exist
+      const chartOrigin = document.querySelector("#chart");
+      if (chartOrigin) {
+          item['chartInstance'] = new ApexCharts(chartOrigin, options);
+          item['chartInstance'].render();
+      }
+  }
+
     // if(this.chartstest){
     //   this.chartstest['_results'][0].updateOptions(options);
     //   // this.chartstest['_results'][0].render();
@@ -1580,7 +1613,7 @@ barLineChartOptions(xaxis:any,yaxis:any){
         enabled: true,
         enabledOnSeries: [1]
       },
-      labels: xaxis[0],
+      labels: xaxis,
       xaxis: {
         type: ""
       },
@@ -1727,7 +1760,7 @@ multiLineChartOptions(xaxis:any,yaxis:any){
       labels: {
         trim: false
       },
-      categories: xaxis[0]
+      categories: xaxis
     },
     tooltip: {
       y: [
@@ -2010,22 +2043,69 @@ getFilteredData(){
       });
       this.dashboard.forEach((item1:any) => {
         if(item1.sheetId == item.sheet_id){
-          if(item.chart_id == '6'){
+          if(item.chart_id == '6'){//bar
           item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
           item1.chartOptions.series = this.filteredRowData;
           }
-          if(item.chart_id == '24'){
+          if(item.chart_id == '24'){//pie
             item1.chartOptions.labels = this.filteredColumnData[0].values;
           item1.chartOptions.series = this.filteredRowData[0].data;
           }
-          // if(item.chart_id == '6'){
-          //   this.barChartOptions(this.filteredColumnData,this.filteredRowData)
+          if(item.chart_id == '13'){//line
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+          item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '17'){//area
+            item1.chartOptions.labels = this.filteredColumnData[0].values;
+          item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '7'){//sidebyside
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '2'){//hstacked
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '5'){//stacked
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '4'){//barline
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.label = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '3'){//hgrouped
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+            
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '8'){//multiline
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+            
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+
               this.initializeChart(item1);
               this.filteredColumnData =[]
               this.filteredRowData=[]
-          // }
-          // if(item.chart_id == '2'){
-          // }
+
           console.log('filtered dashboard-data',item1)
         }
       })
@@ -2045,7 +2125,27 @@ getFilteredData(){
 closeFilterModal(){
   this.modalService.dismissAll('close')
 }
-
+deleteDashboardFilter(id:any){
+  const Obj ={
+    id:id
+  }
+  this.workbechService.deleteDashbaordFilter(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
+     
+    },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
 
 }
 

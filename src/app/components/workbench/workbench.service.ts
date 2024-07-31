@@ -24,6 +24,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/database_connection/`+this.accessToken,obj);
   }
+  DbConnectionFiles(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/upload_file/`+this.accessToken,obj);
+  }
   // getTableData(obj:any){
   //   const currentUser = localStorage.getItem( 'currentUser' );
   //   console.log(JSON.parse( currentUser!))
@@ -308,10 +313,36 @@ getFilteredData(obj:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/dashboard_filtered_data/`+this.accessToken,obj); 
 }
+<<<<<<< Updated upstream
 
 getServerTablesList(obj:any){
   return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`,obj);
 }
+=======
+deleteDashbaordFilter(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.delete<any>(`${environment.apiUrl}/dashboard_filtered_save/`+this.accessToken); 
+}
+
+//roles
+getSavedRolesList(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/role/`+this.accessToken,obj); 
+}
+getPrevilagesList(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/previlages_list/`+this.accessToken,obj); 
+}
+addPrevilage(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/role/`+this.accessToken,obj); 
+}
+
+>>>>>>> Stashed changes
   //image convert
       blobToFile(theBlob:any){
       theBlob.lastModifiedDate = new Date();

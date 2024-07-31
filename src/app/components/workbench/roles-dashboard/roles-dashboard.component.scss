@@ -1,0 +1,26 @@
+.modal-large{
+    width: 1200px !important;
+      position: relative;
+      right: 310px;
+  }
+  .Permission-body-text {
+    padding: 10px;
+    height: 300px;  
+    overflow-y: scroll;
+    width: 100%;
+  }
+  .add-icons{
+    display: flex;
+    align-content: space-around;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .img-shadow {
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.16);
+  }
+  a {
+    cursor: pointer;
+  }
+  .swal2-popup.swal2-modal.swal2-icon-error.swal2-show{
+    z-index: 999999 !important;
+  }
