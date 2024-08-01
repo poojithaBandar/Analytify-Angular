@@ -63,6 +63,9 @@ export class SheetsComponent {
   displayedColumns: string[] = [];
   chartEnable = true;
   dimensionExpand = false;
+  chartSuggestions: any = null;
+  errorMessage : any;
+  userPrompt: string = '';	
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -1229,7 +1232,7 @@ tableMeasures = [] as any;
             this.sidebysideBarRowData.push(obj);
           });
           console.log(this.sidebysideBarColumnData)
-          console.log(this.sidebysideBarColumnData1)
+          console.log('sidebysideBarColumnData1this',this.sidebysideBarColumnData1)
           console.log(this.sidebysideBarRowData);
           let rowCount:any;
          if(this.tablePreviewColumn[0]?.result_data?.length){
@@ -2092,7 +2095,7 @@ sheetRetrive(){
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterData = responce.col_data;
-        this.filter_id = responce.filter_id;
+        //this.filter_id = responce.filter_id;
       },
       error: (error) => {
         console.log(error);
@@ -2118,17 +2121,20 @@ sheetRetrive(){
   filterDataPut(){
     this.dimetionMeasure = [];
     const obj={
-    "filter_id": this.filter_id,
+    //"filter_id": this.filter_id,
     "database_id": this.databaseId,
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
     "range_values": [],
-    "select_values":this.filterDataArray
+    "select_values":this.filterDataArray,
+    "col_name":this.filterName,
+       "data_type":this.filterType,
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterId.push(responce.filter_id);
+        this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id});
         this.dataExtraction();
       },
@@ -2148,6 +2154,8 @@ sheetRetrive(){
   this.workbechService.filterEditPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filter_id = responce.filter_id;
+        this.filterName=responce.column_name;
+        this.filterType=responce.data_type;
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
         });
@@ -2168,7 +2176,10 @@ sheetRetrive(){
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
       "range_values": [],
-      "select_values":this.filterDataArray
+      "select_values":this.filterDataArray,
+      "col_name":this.filterName,
+      "data_type":this.filterType
+
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -3644,5 +3655,94 @@ renameColumns(){
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;
   }
+
+ getChartSuggestions() {
+  
+  const obj ={
+    id:this.qrySetId
+  }
+
+  this.workbechService.getServerTablesList(obj).subscribe(
+    data => {
+      console.log(data)
+      if (Array.isArray(data.data)) {
+        // Handle the case where data.data is an array
+        console.log(data.data.length);
+        this.chartSuggestions = data.data;
+        this.errorMessage = '';
+      } else if (typeof data.data === 'string') {
+        // Handle the case where data.data is a message
+        console.log('Message:', data.data);
+        // Optionally handle the message case, for example by showing it to the user
+        this.chartSuggestions = [];
+        this.errorMessage = data.data;
+      } else {
+        // Handle unexpected data format
+        console.error('Unexpected data format:', data.data);
+        this.chartSuggestions = [];
+        this.errorMessage = 'Unexpected data format';
+      }
+
+    },
+    error => {
+      console.log("Error",error.message)
+      this.chartSuggestions = null;
+      this.errorMessage = 'Error fetching chart suggestions';
+      console.error(error);
+    }
+  );
+}
+fetchChartData(chartData: any){
+  this.databaseId = chartData.database_id;
+          this.qrySetId = chartData.queryset_id;
+          this.draggedColumnsData = chartData.col;
+          this.draggedRowsData = chartData.row;
+          this.draggedColumns = chartData.columns;
+          this.draggedRows = chartData.rows;
+          this.filterId =[];
+          this.filterQuerySetId = null,
+          this.sheetfilter_querysets_id = null;
+          
+          console.log("This is ChaetData",chartData)
+          this.sheetTitle = chartData.chart_title
+          if (chartData.chart_type==="Bar Chart"){
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6);
+          }else if (chartData.chart_type==="Pie Chart"){
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24);
+          }else if (chartData.chart_type==="Line Chart"){
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13);
+          }else if (chartData.chart_type==="Area Chart"){
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17);
+          }
+          this.dataExtraction();
+
 }
 
+sendPrompt() {
+  if (this.userPrompt.trim()) {
+    const obj ={
+      id:this.qrySetId,
+      prompt:this.userPrompt.trim()
+    }
+    this.workbechService.getServerTablesList(obj).subscribe(
+      data => {
+        if (Array.isArray(data.data)) {
+          this.chartSuggestions = data.data;
+          this.errorMessage = '';
+        } else if (typeof data.data === 'string') {
+          this.chartSuggestions = [];
+          this.errorMessage = data.data;
+        } else {
+          this.chartSuggestions = [];
+          this.errorMessage = 'Unexpected data format';
+        }
+      },
+      error => {
+        this.chartSuggestions = null;
+        this.errorMessage = 'Error sending prompt';
+        console.error(error);
+      }
+    );
+  }
+}
+}

@@ -85,8 +85,8 @@
                     totalItems: totalItems
                   }" class="col-md-12 col-xl-3">
                   <div class="card  ">
-                    <div class="user-image  card-box-shadow">                        
-                          <img src="./assets/images/icons/sales-analysis.jpg" alt="" class="card-img-top">
+                    <div class="user-image card-box-shadow">                        
+                          <img src="{{dashboard.dashboard_image}}" alt="" class="card-img-top" style="height: 140px;">
                     </div>
                     <div class="card-body p-1 mt-1 text-center">
                         <a  class="fs-18 fw-bold d-block" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">{{dashboard.dashboard_name | slice:0:15}}</a>

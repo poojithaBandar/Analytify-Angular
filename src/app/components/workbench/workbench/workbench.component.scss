@@ -288,3 +288,52 @@ a {
 a {
   cursor: pointer;
 }
+// for 90% Resolution //
+@media ( 1420px <= width <= 1560px) {
+   
+  a.float-start {
+    font-size: 13px;
+}
+.fs-14 {
+  font-size: 13px !important;
+}
+.avatar-xl {
+  width: 3rem;
+  height: 3rem;
+  line-height: 3rem;
+  font-size: 0.25rem;
+}
+  .page-title{
+    font-size: 14px;
+  }
+  .table tbody td {
+    border-color: var(--default-border);
+    font-size: 13px;
+}
+}
+
+  // for 100% Resolution //
+  @media ( 1280px <= width <= 1420px) {
+    .page-title{
+      font-size: 12px;
+    }
+    .card-title{
+      font-size: 13px;
+    }
+    a.float-start {
+      font-size: 13px;
+  }
+  .fs-14 {
+    font-size: 12px !important;
+  }
+  .avatar-xl {
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 0.25rem;
+  }
+  .table tbody td {
+    border-color: var(--default-border);
+    font-size: 13px;
+}
+  }

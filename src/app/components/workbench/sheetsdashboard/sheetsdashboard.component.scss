@@ -175,11 +175,56 @@ button {
 .hide-scrollbar {
   overflow: hidden;
 }
+.filterColumnbtn{
+  width: 100%;
+    margin-top: 0px;
+    padding: 3px 6px;
+    text-align: left;
+    font-size: 12px;
+}
+.fa-angle-down{
+  float: right;
+    font-size: 16px;
+}
 @media ( 1420px <= width <= 1560px) {
   .dropdown-menu.filter-popover{
     left: 191px !important;
   }
 }
+@media ( 1280px <= width <= 1420px) {
+  .dropdown-menu.filter-popover{
+    left: 167px !important;
+  }
+}
+
+.custom-size-txt {
+  font-size: 13px;
+  text-decoration: underline;
+  line-height: 2;
+}
+.size-dropdown {
+  min-width: 250px;
+  padding: 10px;
+  box-shadow: 5px 10px 10px 5px rgba(0, 0, 0, 0.1019607843) ;
+}
+.sheet-bold{
+  opacity: 0.5;
+}
+
+// for 90% Resolution //
+@media ( 1420px <= width <= 1560px) {
+  .dropdown-menu.filter-popover{
+    left: 191px !important;
+  }
+  .app-sidebar .side-menu__label{
+    font-size: 12px;
+  }
+  .app-sidebar .main-sidebar-header{
+    width: 10.9rem;
+  }
+}
+
+// for 100% Resolution //
 @media ( 1280px <= width <= 1420px) {
   .dropdown-menu.filter-popover{
     left: 167px !important;

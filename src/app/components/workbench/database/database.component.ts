@@ -72,6 +72,7 @@ export class DatabaseComponent {
   displayJoiningCndnsList =[] as any;
   joinTypes = [] as any;
   databaseId:any;  
+  fileId:any;
   sqlQuery ='';
   cutmquryTable = [] as any;
   TabledataJoining = [] as any;
@@ -104,12 +105,19 @@ export class DatabaseComponent {
   updateQuery=false;
   dataType:any;
   colName:any;
+  fromDatabasId = false;
+  fromFileId = false;
 
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
-     this.databaseId = +atob(route.snapshot.params['id']);
+      this.fromDatabasId=true
+      this.databaseId = +atob(route.snapshot.params['id']);
     }
+    if(currentUrl.includes('/workbench/database-connection/files/tables/')){
+      this.fromFileId=true;
+      this.fileId = +atob(route.snapshot.params['id']);
+     }
     if(currentUrl.includes('/workbench/database-connection/savedQuery/')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -151,8 +159,13 @@ export class DatabaseComponent {
     }
 
     if(!this.updateQuery){
-    this.getTablesFromConnectedDb();
+      if(this.fromDatabasId){
+    // this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
+      }
+      if(this.fromFileId){
+        this.getTablesFromFileId()
+      }
    // this.getTablesfromPrevious()
   }
 //  if(this.updateQuery){
@@ -203,23 +216,26 @@ export class DatabaseComponent {
   })
     }
   }
-  getTablesFromConnectedDb(){
-     this.workbechService.getTablesFromConnectedDb(this.databaseId).subscribe({next: (responce) => {
-    if(Array.isArray(responce.data)){
-      this.tableList= responce.data
-    }
-    else{
-    this.tableList = this.combineArrays(responce.data)
-    }
-    console.log('tablelist',this.tableList)
-    // this.databaseName = responce.database.database_name
-    this.databaseId = responce.database.database_id
-  },
-  error:(error)=>{
-    console.log(error);
+  getTablesFromFileId(){
+
   }
-})
-}
+//   getTablesFromConnectedDb(){
+//      this.workbechService.getTablesFromConnectedDb(this.databaseId).subscribe({next: (responce) => {
+//     if(Array.isArray(responce.data)){
+//       this.tableList= responce.data
+//     }
+//     else{
+//     this.tableList = this.combineArrays(responce.data)
+//     }
+//     console.log('tablelist',this.tableList)
+//     // this.databaseName = responce.database.database_name
+//     this.databaseId = responce.database.database_id
+//   },
+//   error:(error)=>{
+//     console.log(error);
+//   }
+// })
+// }
 getSchemaTablesFromConnectedDb(){
   const obj ={
     search:this.searchTables
@@ -261,15 +277,15 @@ filterTables(){
   }
 }
 
-private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
-  let result: any[] = [];
-for (const obj of arraysOfObjects) {
-  if (Array.isArray(obj.data)) {
-    result = result.concat(obj.data);
-  }
-}
-return result;
-}
+// private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
+//   let result: any[] = [];
+// for (const obj of arraysOfObjects) {
+//   if (Array.isArray(obj.data)) {
+//     result = result.concat(obj.data);
+//   }
+// }
+// return result;
+// }
 drop(event: CdkDragDrop<string[]>) {
   if (event.previousContainer === event.container) {
     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -392,6 +408,9 @@ buildCustomRelation(){
 }
 clrQuery(){
   this.sqlQuery = ''
+  this.cutmquryTable=[];
+  this.custmQryTime='';
+  this.custmQryRows='';
 }
 executeQuery(){
   const obj ={
@@ -540,7 +559,8 @@ joiningTablesFromDelete(){
         this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
         this.qurtySetId = data?.table_columns_and_rows?.query_set_id
         if(this.qurtySetId === 0){
-          localStorage.setItem('QuerySetId','0')
+          localStorage.setItem('QuerySetId','0');
+          this.datasourceQuerysetId = null;
         }
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
@@ -968,9 +988,13 @@ deleteFilter(id:any){
             text: ' Filter Removed Successfully',
             width: '400px',
           })
+
         }
         console.log('filter ids',this.datasourceFilterIdArray)
         this.datasourceFilterIdArray = this.datasourceFilterIdArray.filter(item => item !== id);
+        if(this.datasourceFilterIdArray.length === 0){
+          this.datasourceFilterId = null;
+        }
         this.getDsQuerysetId()
         this.getFilteredList();
       },

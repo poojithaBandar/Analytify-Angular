@@ -469,7 +469,7 @@
                             <div class="modal-footer border-0">
                                 <button *ngIf="!updateQuery" aria-expanded="false" class="btn btn-primary" (click)="updateCustmQuery()"> Save Query </button>
                                 <button *ngIf="updateQuery" aria-expanded="false" class="btn btn-primary" (click)="saveQuery()"> Update Query </button>
-                                <button aria-expanded="false" class="btn btn-primary" (click)="executeQuery()"> Run Query </button>
+                                <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length" (click)="executeQuery()"> Run Query </button>
                                 <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query </button>
                             </div>
                         </div>

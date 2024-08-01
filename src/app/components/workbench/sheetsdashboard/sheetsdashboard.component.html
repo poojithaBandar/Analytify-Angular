@@ -35,17 +35,142 @@
                                                         [cdkDropListConnectedTo]="[destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
                                                             <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
-                                                            <li *ngFor="let item of dashboardNew"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
+                                                            <li *ngFor="let item of dashboardNew" ><a draggable="true" [ngClass]="{ 'sheet-bold': item['selectedSheet']}"
+                                                           class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
+
+                                                            
+                                                        </ul>
+                                                        <ul class="dropdown-menu br-0 draggable-item"
+                                                         cdkDropList
+                                                         #originList="cdkDropList"
+                                                        [cdkDropListData]="testData"
+                                                        [cdkDropListConnectedTo]="[destinationList]"
+                                                        (cdkDropListDropped)="drop($event)">
+                                                            <li><h6 class="dropdown-header sheets-title px-4">Sheets</h6></li>
+                                                            <li *ngFor="let item of testData"><a class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip"  ngbTooltip="{{item.data.title}}" (click)="viewSheet(item['sheetId'],item.data?.title)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}</a></li>
+
                                                             
                                                         </ul>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <div class="card mb-0 p-4 br-0 " >
+                                              <h6 class="mb-0">Size</h6>
+                                             <div class="custom-size-card d-flex justify-conent-between">
+                                                <p class="mb-0 custom-size-txt">Custom size (1500 * 1400)</p>
+                                              
+                                                <div class="col-auto p-0">
+                                                  <div class="d-flex justify-content-end p-1 dropdown" ngbDropdown>
+                                                    <a  href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
+                                                      <i  class="fa fa-caret-down ms-1 size-icon"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu size-dropdown" ngbDropdownMenu>
+                                                        <h6 class="mb-0">Size</h6>
+                                                        <div class="form-group mb-1">
+                                                          <select class="form-select form-select select2 fs-14">
+                                                              <option value="1">Custom size (1500 * 1400)</option>
+                                                              <option value="2">Custom size (1200 * 1100)</option>
+                                                              <option value="3">Custom size (1500 * 1400)</option>
+                                                        
+                                                          </select>
+                                                      </div>
+                                                      <div class="col-lg-12 col-md-12">
+                                                        <select  class="form-control" [(ngModel)]="gridType"  (change)="changeGridType()">
+                                                        <option value="fixed">Fixed</option>
+                                                        <option value="scroll">Scroll</option>
+                                                      </select>
+                                                    </div>
+                                                     
+                                                       <div class="row">
+                                                        <div class="col-6">
+                                                          <label for="input-rounded-pill" class="form-label">Width</label>
+                                                          <input  type="number" name="number" [(ngModel)]="widthGrid" class="form-control">
+                                                        </div>
+                                                        <div class="col-6">
+                                                          <label for="input-rounded-pill" class="form-label">Height </label>
+                                                          <input  type="number" name="number" [(ngModel)]="heightGrid" class="form-control">
+                                                        </div>
+                                                       </div>
+                                                     </div>
+                                                 </div>
+                                              </div>
+                                             </div>
+                                          </div>
+                                          </div>
                                     </div>
                                   </div>
                                 </ng-template>
                             </li>
+                            <ng-template #dashboardFilters let-modal>
+                              <div class="modal-header">
+                                <h6 class="modal-title">Filters</h6>
+                                <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="text-wrap">
+                                  <div class="row">
+                                  <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 "style="border-right: 1px solid #f3f6f9;">
+                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;" class="btn text-left">{{filterList.filter_name}}
+                                      <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id)" style="color: red;"><i style="float: right;padding-top: 3px;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
+                                    </button>
+
+                                    </div>
+                                  <div class="col-xxl-7 col-xl-7 col-lg-7 col-md-6 " >
+                                    <div class="card-content p-0">
+                                        <div class=" mt-2 mb-2">
+                                          <ul class="d filter-popover" aria-labelledby="applyfilters" >
+                                            <div class="setting-text border-bottom text-center">
+                                              <h6>Add Filters</h6>
+                                            </div>
+                                            <div class="form-group p-1 mb-0">
+                                              <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                              </label>
+                                              <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
+                                            </div>
+                                            <div class="form-group p-1">
+                                  
+                                              <div ngbDropdown class="my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
+                                                <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">{{selectClmn ? selectClmn:'Select Column'}} <i class="fa fa-angle-down"></i></button>
+                                                <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width:100%;max-height: 240px;overflow-y: auto;padding:6px">
+                                                  @for(colData of columnFilterNames;track colData){
+                                                    <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmn = colData.column_name;closeColumnsDropdown(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
+                                                  }
+                                                </ul>
+                                            </div>
+                                            </div>
+                                              <h6>Apply to Selected worksheets</h6>
+                                           
+                                            <div class="form body border p-2">
+
+                                              <div class="form-check">
+
+                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
+                                                <label for="selectAll" class="form-check-label">Select All</label>
+                                                </div>
+                                              @for(rows of sheetsFilterNames;track rows;let i = $index){
+                                               
+
+                                              <div class="form-check">
+                                                <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
+                                                <label for="invalidCheck" class="form-check-label fs-14"> <h6>{{rows.label.name}}</h6> </label>
+                                              </div>
+                                            }
+                                            </div>
+
+                                            <div class="p-2">
+                                              <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData()" class="btn ripple btn-primary me-2">Save</button>
+                                              <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';closeFilterModal()"> Cancel </button>
+                                          </div>
+                                          </ul>
+                                        </div>
+                                     
+                                    </div>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                            </ng-template>
                             <li [ngbNavItem]="2">
                                  <a ngbNavLink class="p-3">Filters</a>
                                     <ng-template ngbNavContent>
@@ -54,81 +179,97 @@
                                               <div class="text-wrap">
                                                   <div class="card-content p-0">
                                                       <div class=" mt-2 mb-2">
-                                                          <div class="dropdown" ngbDropdown>
-                                                              <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
+                                                          <div class="dropdown" ngbDropdown [autoClose]="'outside'" #mainDropdown="ngbDropdown">
+                                                              <button class="btn btn-primary dropdown-toggle" (click)="getColumnsForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
                                                                 <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
-                                                              <ul class="dropdown-menu filter-popover" ngbDropdownMenu>
+                                                              <!-- <ul class="dropdown-menu filter-popover" aria-labelledby="applyfilters" ngbDropdownMenu>
                                                                 <div class="setting-text border-bottom text-center">
-                                                                  <h6>Settings</h6>
+                                                                  <h6>Add Filters</h6>
                                                                 </div>
                                                                 <div class="form-group p-1 mb-0">
                                                                   <label class="form-label">Filter Name <span  class="text-red">*</span>
                                                                   </label>
-                                                                  <input type="text" placeholder="" class="form-control checkbox-color">
+                                                                  <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
                                                                 </div>
                                                                 <div class="form-group p-1">
-                                                                  <label class="form-label">Column <span  class="text-red">*</span>
-                                                                  </label>
-                                                                  <input type="text" placeholder="" class="form-control checkbox-color">
+                                                      
+                                                                  <div ngbDropdown class="btn-group my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
+                                                                    <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" style="width: 237px;" class="dropdown-toggle btn btn-info-light">{{selectClmn ? selectClmn:'Select Column'}}</button>
+                                                                    <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width: 237px;max-height: 240px;overflow-y: scroll;">
+                                                                      @for(colData of columnFilterNames;track colData){
+                                                                        <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmn = colData.column_name;closeColumnsDropdown(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
+                                                                      }
+                                                                    </ul>
                                                                 </div>
-                                                               
+                                                                </div>
                                                                   <h6>Apply to Selected worksheets</h6>
                                                                
                                                                 <div class="form body border p-2">
+
                                                                   <div class="form-check">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <h6>Select All</h6> </label>
-                                                                  </div>
+
+                                                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
+                                                                    <label for="selectAll" class="form-check-label">Select All</label>
+                                                                    </div>
+                                                                  @for(rows of sheetsFilterNames;track rows;let i = $index){
+                                                                   
+
                                                                   <div class="form-check">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0"> Ali</p> </label>
+                                                                    <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
+                                                                    <label for="invalidCheck" class="form-check-label"> <h6>{{rows.label.name}}</h6> </label>
                                                                   </div>
-                                                                  <div class="form-check ">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0">Donut</p> </label>
-                                                                  </div>
-                                                                  <div class="form-check ">
-                                                                    <input type="checkbox" value="" id="invalidCheck" required="" class="form-check-input checkbox-color">
-                                                                    <label for="invalidCheck" class="form-check-label"> <p class="mb-0">Type wise forms</p> </label>
-                                                                  </div>
+                                                                }
                                                                 </div>
                 
                                                                 <div class="p-2">
-                                                                  <button type="button" class="btn ripple btn-primary me-2">Save</button>
-                                                                  <button type="button" class="btn ripple btn-secondary "> Cancel </button>
+                                                                  <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData()" class="btn ripple btn-primary me-2">Save</button>
+                                                                  <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';closeMainDropdown(mainDropdown)"> Cancel </button>
                                                               </div>
-                                                              </ul>
+                                                              </ul> -->
+                                                              <div style="height: 500px;overflow-y: auto;">
+                                                                @for(filterList of DahboardListFilters;track filterList){
                                                               <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
-                                                                <p class="text-center mb-0">Sub-Category</p>
-                                                                <div class="form-group mb-1">
-                                                                    <select class="form-select form-select select2 fs-14">
-                                                                        <option value="1" ng-reflect-value="1">(All)</option>
-                                                                        <option value="2" ng-reflect-value="2">Two</option>
-                                                                        <option value="3" ng-reflect-value="3">Three</option>
-                                                                    </select>
+                                                                <p class="text-center mb-0">{{filterList.filter_name}}</p>
+                                          
+                                                                <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
+                                                                  <button type="button" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">Select Column <i class="fa fa-angle-down" ></i></button>
+                                                                  <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;background-color: #ffffff;max-height: 240px;overflow-y: auto;">
+                                                                    <div class="form-check">
+
+                                                                      <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllColumns($event,filterList)" class="form-check-input">
+                                                                      <label for="selectAll" class="form-check-label">Select All</label>
+                                                                      </div>
+                                                                    @for(col of filterList.colData;track col;let i = $index){
+                                                                     
+                                                                      <div class="form-check">
+                                                                        <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
+                                                                        <label for="invalidCheck" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
+                                                                      </div>
+                                                                  }
+                                                                  <div class="p-2">
+                                                                    <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">Save</button>
                                                                 </div>
+                                                                  </ul>
+
                                                               </div>
-                                                              <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
-                                                                <p class="text-center mb-0">Category</p>
-                                                                <div class="form-group mb-1">
-                                                                    <select class="form-select form-select select2 fs-14">
-                                                                        <option value="1" ng-reflect-value="1">(All)</option>
-                                                                        <option value="2" ng-reflect-value="2">Two</option>
-                                                                        <option value="3" ng-reflect-value="3">Three</option>
-                                                                    </select>
-                                                                </div>
+                                                                <!-- <div class="dropdown">
+                                                                  <button class="btn btn-secondary dropdown-toggle" type="button" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList)" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    Select 
+                                                                  </button>
+                                                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                    @for(col of filterList.colData;track col;let i = $index){
+                                                                      <div class="form-check">
+                                                                        <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected"  class="form-check-input"> 
+                                                                        <label for="invalidCheck" class="form-check-label"> <h6>{{col.label}}</h6> </label>
+                                                                      </div>
+                                                                  }
+                                                                  </div>
+                                                                </div> -->
                                                               </div>
-                                                              <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
-                                                                <p class="text-center mb-0">Segment 1</p>
-                                                                <div class="form-group mb-1">
-                                                                    <select class="form-select form-select select2 fs-14">
-                                                                        <option value="1" ng-reflect-value="1">Consumer</option>
-                                                                        <option value="2" ng-reflect-value="2">Two</option>
-                                                                        <option value="3" ng-reflect-value="3">Three</option>
-                                                                    </select>
-                                                                </div>
-                                                              </div>
+                                                            }
+                                                            <button style="float: right;" class="btn ripple btn-primary" (click)="getFilteredData()">Apply filters</button>
+                                                          </div>
                                                           </div>
                                                       </div>
                                                    
@@ -163,7 +304,8 @@
                         </div>
                         <div class="min-w-fit-content ms-3">
                             <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">Save </button>
-                            <button class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
+                            <button  [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
+                            <button type="button" class="btn btn-primary mt-0" (click)="clearDashboard();">clear</button>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
 
                             </div>
@@ -176,14 +318,22 @@
                 </div>
             </div>
         </div> 
-        
-       
-       <div style="max-width: 78vw;min-width: 78vw;height: 100vh;margin: auto 0;" id="capture-element">
+        <!-- <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="gridItemSize"  (change)="changeGridItemSize()" aria-label="Sheet" > -->
+
+    
+       <!-- <div style="margin: auto 0;overflow: scroll;" [style.height.px]="heightGrid" [style.width.px]="widthGrid" > -->
+        <div style="margin: auto 0;height: 100%;" >
+         
+        <div class="d-flex align-items-center justify-content-start  mt-3">
+            <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
+            <!-- <a mat-mini-fab (click)="addItem()" class="btn btn-blue-light mb-0 me-3" ><i class="fa fa-plus"></i> Add</a>  -->
+        </div>
+        <div  id="capture-element" style="margin: 0;overflow: scroll;"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
-        [cdkDropListData]="dashboard" 
+        [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
-            <gridster-item [item]="item" *ngFor="let item of dashboard" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" >
-              <div class="card mb-0">
+            <gridster-item [item]="item" *ngFor="let item of dashboard"  >
+              <div class="card mb-0" style="height: 100%;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
                 <div class="card-header d-flex justify-content-between p-1">
                     <h6>{{ item.data?.title }}</h6>
                     <div class="dashboard-option">
@@ -199,7 +349,139 @@
                         </div>
                       </div>
                 </div>
-                <div class="card-body p-1">                
+                <div class="card-body p-1">
+    
+                  <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
+                    <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
+                    [cdkDropListData]="nestedDashboard" style="margin: 0px;"
+                   (cdkDropListDropped)="dropNested($event,item)" #gridster>
+                   <gridster-item [item]="nestedItem" *ngFor="let nestedItem of nestedDashboard">
+                    <div class="card-header d-flex justify-content-between p-1" style="overflow: scroll;">
+                      <h6>{{ nestedItem.data?.title }}</h6>
+                      <div class="dashboard-option">
+                          <div class=" p-1" ngbDropdown>
+                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                  aria-haspopup="true" aria-expanded="false" class=""><i
+                                      class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                              </a>
+                              <div class="dropdown-menu" ngbDropdownMenu>
+                                  <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(item['sheetId'],item.data?.title)"> Goto Sheet </a>
+                                  <a class="dropdown-item" ngbDropdownItem (mousedown)="removeNestedItem($event, nestedItem)" (touchstart)="removeNestedItem($event, nestedItem)"> Remove</a>
+                              </div>
+                          </div>
+                        </div>
+                  </div>
+                    <div *ngIf="nestedItem.chartOptions">
+                      <div *ngIf="nestedItem['chartId'] === 6">
+                        
+                         <apx-chart #test3 id="test3"
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"[colors]="nestedItem.chartOptions.colors!"  [grid]="nestedItem.chartOptions.grid!"
+                        (chartInit)="onChartInit($event, nestedItem)">
+                      </apx-chart> 
+                       </div>
+                      <!-- <app-charts-store [chartData]="nestedItem.chartOptions"></app-charts-store> -->
+                      </div>
+                      <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 17">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!" [stroke]="nestedItem.chartOptions.stroke!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!" [yaxis]="nestedItem.chartOptions.yaxis!"
+                         [labels]="nestedItem.chartOptions.labels!" [legend]="nestedItem.chartOptions.legend!"  [grid]="nestedItem.chartOptions.grid!"
+                         [title]="nestedItem.chartOptions.title!" [subtitle]="nestedItem.chartOptions.subtitle!"[colors]="nestedItem.chartOptions.colors!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 13">
+                         <apx-chart [series]="nestedItem.chartOptions.series! || []" [chart]="nestedItem.chartOptions.chart!"
+                             [xaxis]="nestedItem.chartOptions.xaxis!" [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                             [grid]="nestedItem.chartOptions.grid!" [stroke]="nestedItem.chartOptions.stroke!"
+                             [title]="nestedItem.chartOptions.title!" [colors]="nestedItem.chartOptions.colors!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 24">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!" [legend]="nestedItem.chartOptions.legend!"
+                         [labels]="nestedItem.chartOptions.labels!" [responsive]="nestedItem.chartOptions.responsive!" [colors]="nestedItem.chartOptions.colors!" [dataLabels]="nestedItem.chartOptions.dataLabels!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 7">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!"
+                             [dataLabels]="nestedItem.chartOptions.dataLabels!" [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                             [yaxis]="nestedItem.chartOptions.yaxis!" [legend]="nestedItem.chartOptions.legend!" [fill]="nestedItem.chartOptions.fill!"
+                             [stroke]="nestedItem.chartOptions.stroke!" [tooltip]="nestedItem.chartOptions.tooltip!" [colors]="nestedItem.chartOptions.colors!" [grid]="nestedItem.chartOptions.grid!" 
+                             [xaxis]="nestedItem.chartOptions.xaxis!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 5">
+                         <apx-chart
+                           [series]="nestedItem.chartOptions.series!"
+                           [chart]="nestedItem.chartOptions.chart!"
+                           [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                           [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                           [responsive]="nestedItem.chartOptions.responsive!"
+                           [xaxis]="nestedItem.chartOptions.xaxis!"
+                           [legend]="nestedItem.chartOptions.legend!"
+                           [fill]="nestedItem.chartOptions.fill!" (chartInit)="onChartInit($event, nestedItem)"
+                         ></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 4">
+                         <apx-chart [series]="nestedItem.chartOptions.series!" [chart]="nestedItem.chartOptions.chart!"
+                             [yaxis]="nestedItem.chartOptions.yaxis!" [xaxis]="nestedItem.chartOptions.xaxis!" [labels]="nestedItem.chartOptions.labels!"
+                             [stroke]="nestedItem.chartOptions.stroke!" [title]="nestedItem.chartOptions.title!"  [grid]="nestedItem.chartOptions.grid!"
+                             [dataLabels]="nestedItem.chartOptions.dataLabels!" [fill]="nestedItem.chartOptions.fill!"
+                             [tooltip]="nestedItem.chartOptions.tooltip!"[colors]="nestedItem.chartOptions.colors!" (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 2">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                         [responsive]="nestedItem.chartOptions.responsive!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"
+                         [legend]="nestedItem.chartOptions.legend!"
+                         [fill]="nestedItem.chartOptions.fill!"
+                         (chartInit)="onChartInit($event, nestedItem)"></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 3">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [plotOptions]="nestedItem.chartOptions.plotOptions!"
+                         [responsive]="nestedItem.chartOptions.responsive!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"
+                         [legend]="nestedItem.chartOptions.legend!"
+                         [fill]="nestedItem.chartOptions.fill!" (chartInit)="onChartInit($event, nestedItem)"
+                       ></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 8">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [xaxis]="nestedItem.chartOptions.xaxis!"
+                         [stroke]="nestedItem.chartOptions.stroke!"
+                         [tooltip]="nestedItem.chartOptions.tooltip!"
+                         [dataLabels]="nestedItem.chartOptions.dataLabels!"
+                         [legend]="nestedItem.chartOptions.legend!"
+                         [markers]="nestedItem.chartOptions.markers!"
+                         [grid]="nestedItem.chartOptions.grid!"
+                         [yaxis]="nestedItem.chartOptions.yaxis!"
+                         [title]="nestedItem.chartOptions.title!" (chartInit)="onChartInit($event, nestedItem)"
+                       ></apx-chart>
+                       </div>
+                       <div *ngIf="nestedItem.chartOptions && nestedItem['chartId'] === 10">
+                         <apx-chart
+                         [series]="nestedItem.chartOptions.series!"
+                         [chart]="nestedItem.chartOptions.chart!"
+                         [labels]="nestedItem.chartOptions.labels!"
+                         [responsive]="nestedItem.chartOptions.responsive!"(chartInit)="onChartInit($event, nestedItem)" >
+                      </apx-chart>
+                       </div>
+                   </gridster-item>
+                  </gridster>
+                  <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+                  </div>
+                
+                <!-- <p class="mb-1">{{ item.data?.content }}</p> -->
+                
                 <!-- <div *ngIf="item.chartOptions">
                      <apx-chart 
                     [series]="item.chartOptions.series!" 
@@ -240,7 +522,8 @@
                     </div>
                   <div *ngIf="item.chartOptions">
                  <div *ngIf="item['chartId'] === 6">
-                    <apx-chart 
+                   
+                    <apx-chart #test344 id="test344"
                     [series]="item.chartOptions.series!"
                     [chart]="item.chartOptions.chart!"
                     [dataLabels]="item.chartOptions.dataLabels!"
@@ -350,9 +633,10 @@
               </div>
             </gridster-item>
           </gridster>
+          </div>
         </div>
         <div>
-          <!-- <img [src]="screenshotSrc" alt="Screenshot"> -->
+          <img [src]="screenshotSrc" alt="Screenshot">
         </div>
     </div>
 </div>

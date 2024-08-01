@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
   GridType,
@@ -30,6 +30,8 @@ import * as htmlToImage from 'html-to-image';
 import { toPng } from 'html-to-image';
 import { style } from 'd3';
 import { OVERFLOW } from 'html2canvas/dist/types/css/property-descriptors/overflow';
+import { LoaderService } from '../../../shared/services/loader.service';
+import { arrow } from '@popperjs/core';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -62,6 +64,8 @@ interface Dimension {
   styleUrl: './sheetsdashboard.component.scss'
 })
 export class SheetsdashboardComponent {
+  @ViewChildren("test344")
+  chartstest!: QueryList<ChartComponent>;
  // @HostListener('window:resize', ['$event'])
  qrySetId:any;
  databaseId:any;
@@ -72,13 +76,34 @@ export class SheetsdashboardComponent {
  chartOptionsBar:any;
  dashboardId:any;
  databaseName:any;
+ gridType!: string;
  updateDashbpardBoolen= false;
  active=1;
  isOverflowHidden = false;
  imageFile:any;
  imagename:any
+ sheetsFilterNames = [] as any;
+ columnFilterNames = [] as any;
+ selectClmn:any;
+ selectdColmnDtype:any;
+ filterName = '';
+ dashboardFilterId:any;
+ DahboardListFilters = [] as any;
+ storeSelectedColData = [] as any
+ colData = [] as any;
+ heightGrid : number = 800;
+ widthGrid : number = 800;
+ gridItemSize : number = 100;
+ dataArray = [] as any;
+ keysArray = [] as any;
+ tablePreviewRow = [] as any;
+ tablePreviewColumn =[] as any;
+ filteredColumnData = [] as any;
+ filteredRowData = [] as any;
+ disableDashboardUpdate: boolean = false;
   public chartOptions!: Partial<ChartOptions>;
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService){
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
+    private loaderService:LoaderService,private modalService: NgbModal){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard')){
@@ -100,16 +125,23 @@ export class SheetsdashboardComponent {
     
   }
   options!: GridsterConfig;
-  dashboard!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+}> = [];
+  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
   }>;
   dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
   }>;
+  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+}>;
   pushNewSheet =[] as any;
   sheetData = [] as any;
   tableHeader:any;
   tableRows:any;
   rowArray = [] as any;
   colArray = [] as any;
+  selectedRows = [];
+  isAllSelected: boolean = false;
+
   chartOptionsinitialize = false;
   //@ViewChild('gridster') gridster!: ElementRef;
 
@@ -118,6 +150,8 @@ export class SheetsdashboardComponent {
   itemToPush!: GridsterItemComponent;
   @ViewChildren(GridsterItemComponent) GridsterItemComponent!: QueryList<GridsterItemComponent>;
   @ViewChild('gridster') gridster!: ElementRef; // Adjust the type as needed
+  @ViewChild('nestedDropdown', { static: true }) nestedDropdown: NgbDropdown | undefined;
+
 
   static itemChange(
     item: GridsterItem,
@@ -179,15 +213,15 @@ export class SheetsdashboardComponent {
       this.sheetsDataWithQuerysetId();
     }
     if(this.dashboardView){
-      this.getSavedDashboardData();
+      // this.getSavedDashboardData();
       this.sheetsDataWithQuerysetId();
-
+      this.getDashboardFilterredList();
     }
    
     //this.getSheetData();
     this.options = {
       gridType: GridType.Fit,
-      compactType: CompactType.None,
+      compactType: CompactType.CompactLeftAndUp,
       displayGrid: DisplayGrid.Always,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
@@ -197,9 +231,10 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      // fixedColWidth: 400,
-      // fixedRowHeight: 400,
-      // itemChangeCallback: SheetsdashboardComponent.itemChange,
+      fixedColWidth: 100,
+      fixedRowHeight: 100,
+      margin : 10,
+      // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
 
@@ -215,7 +250,7 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: true,
-
+        // stop: this.onResizeStop.bind(this)
       }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
@@ -243,6 +278,156 @@ export class SheetsdashboardComponent {
     // },
     // ];
   }
+
+  changeGridType(){
+  if(this.gridType == 'fixed'){
+    this.options = {
+      gridType: GridType.Fit,
+      compactType: CompactType.CompactUpAndLeft,
+      displayGrid: DisplayGrid.Always,
+      initCallback: SheetsdashboardComponent.gridInit,
+      destroyCallback: SheetsdashboardComponent.gridDestroy,
+      gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+      itemValidateCallback: SheetsdashboardComponent.itemValidate,
+      fixedColWidth: 100,
+      fixedRowHeight: 100,
+      margin : 10,
+      outerMarginBottom: 20,
+      // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+      //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+      
+
+      //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+      //   // this.updateSizeOnServer(item, itemComponent);
+      //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+      //   // this.saveItemDimensions(item);
+      // },
+      pushItems: true,
+      draggable: {
+        enabled: true,
+        
+      },
+      resizable: {
+        enabled: true,
+        // stop: this.onResizeStop.bind(this)
+      }
+    };
+  } else {
+    this.options = {
+      gridType: GridType.Fixed,
+      compactType: CompactType.CompactUpAndLeft,
+      displayGrid: DisplayGrid.Always,
+      initCallback: SheetsdashboardComponent.gridInit,
+      destroyCallback: SheetsdashboardComponent.gridDestroy,
+      gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+      itemValidateCallback: SheetsdashboardComponent.itemValidate,
+      fixedColWidth: 100,
+      fixedRowHeight: 100,
+      margin : 10,
+      // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+      //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+      
+
+      //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+      //   // this.updateSizeOnServer(item, itemComponent);
+      //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+      //   // this.saveItemDimensions(item);
+      // },
+      pushItems: true,
+      draggable: {
+        enabled: true,
+        
+      },
+      resizable: {
+        enabled: true,
+        // stop: this.onResizeStop.bind(this)
+      }
+    };
+  }
+}
+  changeGridItemSize(){
+    if(this.gridType == 'fixed'){
+      this.options = {
+        gridType: GridType.Fit,
+        compactType: CompactType.CompactUpAndLeft,
+        displayGrid: DisplayGrid.Always,
+        initCallback: SheetsdashboardComponent.gridInit,
+        destroyCallback: SheetsdashboardComponent.gridDestroy,
+        gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemResizeCallback: SheetsdashboardComponent.itemResize,
+        itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+        itemValidateCallback: SheetsdashboardComponent.itemValidate,
+        fixedColWidth: this.gridItemSize,
+        fixedRowHeight: this.gridItemSize,
+        margin : 10,
+        // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+        //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+        
+  
+        //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+        //   // this.updateSizeOnServer(item, itemComponent);
+        //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+        //   // this.saveItemDimensions(item);
+        // },
+        pushItems: true,
+        draggable: {
+          enabled: true,
+          
+        },
+        resizable: {
+          enabled: true,
+          // stop: this.onResizeStop.bind(this)
+        }
+      };
+    } else {
+      this.options = {
+        gridType: GridType.Fixed,
+        compactType: CompactType.CompactUpAndLeft,
+        displayGrid: DisplayGrid.Always,
+        initCallback: SheetsdashboardComponent.gridInit,
+        destroyCallback: SheetsdashboardComponent.gridDestroy,
+        gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
+        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemResizeCallback: SheetsdashboardComponent.itemResize,
+        itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
+        itemValidateCallback: SheetsdashboardComponent.itemValidate,
+        fixedColWidth: this.gridItemSize,
+        fixedRowHeight: this.gridItemSize,
+        margin : 10,
+        // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
+        //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
+        
+  
+        //  itemResizeCallback: (item: GridsterItem, itemComponent: GridsterItemComponentInterface) => {
+        //   // this.updateSizeOnServer(item, itemComponent);
+        //   // this.updateChartDimensions(item,itemComponent as GridsterItemComponent)
+        //   // this.saveItemDimensions(item);
+        // },
+        pushItems: true,
+        draggable: {
+          enabled: true,
+          
+        },
+        resizable: {
+          enabled: true,
+          // stop: this.onResizeStop.bind(this)
+        }
+      };
+    }
+
+    // window.dispatchEvent(new Event('resize'));
+  }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {
       chart: {
@@ -268,14 +453,27 @@ export class SheetsdashboardComponent {
       next:(data)=>{
         console.log('savedDashboard',data);
         this.dashboardName=data.dashboard_name
-        this.dashboard = data.dashboard_data
+        this.dashboard = data.dashboard_data;
+        this.setSelectedSheetData();
       },
       error:(error)=>{
         console.log(error)
       }
     })
   }
+
+  setSelectedSheetData() {
+    this.dashboardNew = this.dashboardNew.map(target => {
+      const source = this.dashboard.find(source => source['sheetId'] === target['sheetId']);
+      if (source) {
+        return { ...target, selectedSheet: source['selectedSheet'] };
+      }
+      return target;
+    });
+  }
+
   saveDashboard(){
+    this.takeScreenshot();
     // localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
     this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
@@ -296,6 +494,7 @@ export class SheetsdashboardComponent {
     this.workbechService.saveDashboard(obj).subscribe({
       next:(data)=>{
         console.log(data);
+        this.dashboardId=data.dashboard_id
         Swal.fire({
           icon: 'success',
           title: 'Congartualtions!',
@@ -314,34 +513,11 @@ export class SheetsdashboardComponent {
       }
     })
   }
-this.takeScreenshot();
   }
   takeScreenshot() {
-  //   const node = document.querySelector('gridster') as HTMLElement;
-
-  //   // const originalOverflow = element.style.overflow;
-  //   // element.style.overflow = 'hidden';
-  //   const options = {
-  //     width: node.scrollWidth, // width of the canvas element
-  //     height: node.scrollHeight, // height of the canvas element
-  //     style: {
-  //       transform: 'scale(1)',
-  //       transformOrigin: 'top left'
-  //     }
-  //   };
-  //   if (node) {
-  //     htmlToImage.toPng(node,options)
-  //     .then((dataUrl) => {
-  //       this.screenshotSrc = dataUrl;
-  //     })
-  //     .catch((error) => {
-  //       console.error('oops, something went wrong!', error);
-  //     });
-  // }
-  //  else {
-  //     console.error('Gridster element is not defined for screenshot.');
-  //   }
-  // this.startMethod();
+   this.startMethod();
+   this.loaderService.show();
+   setTimeout(() => {
   const element = document.getElementById('capture-element');
   if (element) {
     // Select all gridster-items
@@ -359,23 +535,18 @@ this.takeScreenshot();
 
          this.imageFile = imageBlob
          this.imagename = imageBlob1
-         console.log('fileblob',this.imageFile)
-
-        // this.imagename = fileObj.path.name
+         console.log('fileblob',this.imageFile);
+         this.loaderService.hide();
       })
       .catch((error) => {
         console.error('oops, something went wrong!', error);
       })
       .finally(() => {
-        // Restore original overflow
+        this.saveDashboardimage();
       });
-
-     
-
       //console.log('converted-image',this.screenshotSrc)
      
-  }
-    this.endMethod(); 
+  }}, 1000);
   }
 
   startMethod() {
@@ -385,26 +556,29 @@ this.takeScreenshot();
   endMethod() {
     this.isOverflowHidden = false;
   }
-  // applyStylesToChildNodes(element: HTMLElement, styleName: string, styleValue: string): void {
-  //   if(element.childNodes){
-  //   element.childNodes[0].childNodes.forEach(child => {
-  //     if (child.nodeType === 1) { // Only element nodes
-  //       const childElement = child as HTMLElement;
-  //       childElement.style.setProperty(styleName, styleValue);
-  //     }
-  //   });
-  // }
-  // }
+  saveDashboardimage(){
+    var formData:any = new FormData();
+    formData.append("dashboard_id",this.dashboardId);
+    formData.append("imagepath",this.imageFile,this.imagename.name);
 
+    this.workbechService.saveDAshboardimage(formData).subscribe({
+      next:(data)=>{
+        console.log(data);
+        // Swal.fire({
+        //   icon: 'success',
+        //   title: 'Congartualtions!',
+        //   text: 'Dashboard Updated Successfully',
+        //   width: '400px',
+        // })
+        this.endMethod(); 
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
   updateDashboard(){
-     this.startMethod();
-     setTimeout(() => {
-
-      this.takeScreenshot();
-        }, 1000);
-
-        setTimeout(() => {
-
+    this.takeScreenshot();
       this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
       Swal.fire({
@@ -414,32 +588,15 @@ this.takeScreenshot();
         width: '400px',
       })
     }else{
-    // const obj ={
-    //   queryset_id:this.qrySetId,
-    //   server_id:this.databaseId,
-    //    sheet_ids:this.sheetsIdArray,
-    //   dashboard_name:this.dashboardName,
-    //   data:this.dashboard,
-    //   image_path:this.imagename
+    const obj ={
+      queryset_id:this.qrySetId,
+      server_id:this.databaseId,
+       sheet_ids:this.sheetsIdArray,
+      dashboard_name:this.dashboardName,
+      data:this.dashboard,
       
-    // }
-
-    var formData:any = new FormData();
-    formData.append("queryset_id",this.qrySetId);
-    formData.append("server_id",this.databaseId);
-    // formData.append("sheet_ids", this.sheetsIdArray);
-    this.sheetsIdArray.forEach((id:any, index:any) => {
-      formData.append(`sheet_ids[${index}]`, id);
-    });
-    formData.append("dashboard_name",this.dashboardName);
-    formData.append("data", JSON.stringify(this.dashboard));
-    formData.append("image_path",this.imageFile,this.imagename.name);
-
-
-
-    //formData.append("path", this.addProductForm.get('path').value, this.imagename);
-
-    this.workbechService.updateDashboard(formData,this.dashboardId).subscribe({
+    }
+    this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
         Swal.fire({
@@ -448,17 +605,15 @@ this.takeScreenshot();
           text: 'Dashboard Updated Successfully',
           width: '400px',
         })
+        this.endMethod(); 
       },
       error:(error)=>{
         console.log(error)
       }
     })
   }
-        }, 4000);
-
-
-
   }
+
   sheetsDataWithQuerysetId(){
     const obj ={
       // server_id:this.databaseId,
@@ -475,13 +630,14 @@ this.takeScreenshot();
       id:uuidv4(),
       cols: 1,
       rows: 1,
-      y: 0,
-      x: 0,
+      y: 10,
+      x: 10,
       sheetType:sheet.sheet_type,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
       data: { title: sheet.sheet_name, content: 'Content of card New' },
+      selectedSheet : sheet.selectedSheet,
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
         ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
@@ -494,7 +650,23 @@ this.takeScreenshot();
       }
        : undefined
     }));
-    console.log('dashboardNew',this.dashboardNew)
+      if (this.dashboardView) {
+        this.getSavedDashboardData();
+      }
+    let mapper = [0];
+        this.testData = mapper.map((sheet:any) => ({
+      id:uuidv4(),
+      cols: 1,
+      rows: 1,
+      y: 10,
+      x: 10,
+      sheetType:111,
+      sheetId:111,
+      chartType:'Tags',
+      chartId:111,
+      data: { title: 'Tags', content: 'Content of card New' },
+    }));
+    console.log('testData',this.testData)
       },
     error:(error)=>{
     console.log(error);
@@ -583,7 +755,12 @@ this.takeScreenshot();
     if(sheet.chart_id === 4){
       let xaxis = sheet.sheet_data?.results?.barLineXaxis;
       let yaxis = sheet.sheet_data?.results?.barLineYaxis;
-      return this.barLineChartOptions(xaxis,yaxis)
+      console.log('barlinexaxis',xaxis)
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+      console.log('barlinecategories',categories)
+
+      return this.barLineChartOptions(categories,yaxis)
     }
     if(sheet.chart_id === 2){
       let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
@@ -605,7 +782,11 @@ this.takeScreenshot();
     if(sheet.chart_id === 8){
       let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
       let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
-      return this.multiLineChartOptions(xaxis,yaxis)
+
+      const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+
+      return this.multiLineChartOptions(categories,yaxis)
     }
     if(sheet.chart_id === 10){
       let xaxis = sheet.sheet_data?.results?.donutXaxis;
@@ -635,7 +816,102 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
       rows: tableData.results.tableData
     };
   }
-  drop(event: CdkDragDrop<DashboardItem[]>) {
+
+  onDrag(event: any, item: any){
+    let data = JSON.stringify(item);
+        event.dataTransfer.setData('item', data);
+  }
+
+  
+  dropToAddIntoNestedGridster(event: { preventDefault: () => void; stopPropagation: () => void; }, parent: any): void {
+    event.preventDefault();
+    event.stopPropagation();
+    // this.setupDesignerItemToAdd(event, parent);
+}
+
+allowDrop(ev : any): void {
+  ev.preventDefault();
+}
+  drop(event: any) {
+    if(this.colArray.length >0 && this.rowArray.length>0){
+      this.colArray = [];
+      this.rowArray = [];
+    }
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      console.log('Transfering item to new container')
+      console.log('Transferring item to new container');
+      
+      let item: any = event.previousContainer.data[event.previousIndex];
+      console.log('Original item:', JSON.stringify(item));
+      
+      // Creating a deep copy of the item
+      let copy: any = JSON.parse(JSON.stringify(item));
+      console.log('Copy of item:', JSON.stringify(copy));
+      
+      // Initialize an empty object to hold the copied attributes
+      let element: DashboardItem = {
+        id:copy.id,
+        x:10,
+        y: 20,
+        rows: 1,
+        cols:1,
+        data: copy.data,
+        sheetType:copy.sheetType,
+        sheetId:copy.sheetId,
+        chartType:copy.chartType,
+        chartId:copy.chartId,
+        chartOptions: copy.chartOptions,
+        chartInstance: copy.chartInstance,
+        tableData:copy.tableData,
+        selectedSheet : true,
+        chartData:copy.chartOptions?.chartData || [],
+      };
+    //   if(element.chartOptions?.chart?.type === 'bar'){
+    //      element['chartData'].forEach((item: { name: any; value: any; }) => {
+    //       this.colArray.push(item.name);
+    //       this.rowArray.push(item.value);        
+    //       // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
+
+    //     });      
+    //   }
+    //   if(element.chartOptions?.chart?.type === 'line'){
+    //     this.colArray = element['chartData'][0].xAis
+    //     this.rowArray = element['chartData'][0].yAxis
+    //     console.log('linedata',this.colArray,this.rowArray)
+    //     // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
+
+    //  }
+    //  console.log(this.rowArray);
+     //this.getChartOptions(element.chartOptions?.chart?.type || 'bar');
+    //  if(event.event.target.offsetParent.id == 'cdk-drop-list-0'){
+      const index = this.findSheetIndex(copy.sheetId);
+      if (index == -1) {
+        this.disableDashboardUpdate = false;
+        this.setDashboardNewSheets(copy.sheetId, true);
+        this.dashboard.push(element);
+      }
+    //  } else {
+    //   this.nestedDashboard.push(element);
+    //  }
+     
+    //  this.initializeChartData(element);  // Initialize chart after adding
+     console.log('draggedDashboard',this.dashboard)
+    }
+   
+  }
+
+  setDashboardNewSheets(sheetId: number, selectedSheet: boolean) {
+    this.dashboardNew = this.dashboardNew.map(sheet => {
+      if (sheet['sheetId'] === sheetId) {
+        return { ...sheet, selectedSheet: selectedSheet };
+      }
+      return sheet;
+    });
+  }
+
+  dropNested(event: CdkDragDrop<DashboardItem[]>,nestedItem : DashboardItem){
     if(this.colArray.length >0 && this.rowArray.length>0){
       this.colArray = [];
       this.rowArray = [];
@@ -670,29 +946,13 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
         tableData:copy.tableData,
         chartData:copy.chartOptions?.chartData || [],
       };
-    //   if(element.chartOptions?.chart?.type === 'bar'){
-    //      element['chartData'].forEach((item: { name: any; value: any; }) => {
-    //       this.colArray.push(item.name);
-    //       this.rowArray.push(item.value);        
-    //       // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
 
-    //     });      
-    //   }
-    //   if(element.chartOptions?.chart?.type === 'line'){
-    //     this.colArray = element['chartData'][0].xAis
-    //     this.rowArray = element['chartData'][0].yAxis
-    //     console.log('linedata',this.colArray,this.rowArray)
-    //     // this.getChartOptions(element.chartOptions?.chart?.type || 'bar',this.colArray,this.rowArray);
-
-    //  }
-    //  console.log(this.rowArray);
-     //this.getChartOptions(element.chartOptions?.chart?.type || 'bar');
-     this.dashboard.push(element);
+     this.nestedDashboard.push(element);
     //  this.initializeChartData(element);  // Initialize chart after adding
      console.log('draggedDashboard',this.dashboard)
-    }
-   
   }
+}
+
 
   viewSheet(sheetId:any,sheetname:any){
     const encodedServerId = btoa(this.databaseId.toString());
@@ -714,8 +974,38 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
     $event.preventDefault();
     $event.stopPropagation();
     this.dashboard.splice(this.dashboard.indexOf(item), 1);
+    this.setDashboardNewSheets(item.sheetId, false);
+  }
+  removeNestedItem($event:any, item:any) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.dashboard.splice(this.nestedDashboard.indexOf(item), 1);
   }
 
+  resetDashboard() {
+    this.dashboard = [];
+    this.disableDashboardUpdate = true;
+    this.dashboardNew.forEach(sheet => {
+      sheet['selectedSheet'] = false;
+    })
+  }
+
+  clearDashboard(){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      width: '300px',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Clear it!'
+    }).then((result)=>{
+      if(result.isConfirmed){
+       this.resetDashboard();
+      }})
+  }
+ 
   // addItem() {
   //   this.dashboard.push({x: 0, y: 0, cols: 1, rows: 1,data: { title: 'New Card', content: 'New card content' }, 
   //   chartOptions: this.getChartOptions('bar')});
@@ -820,10 +1110,10 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
   //   // Handle resize stop event here
   //   //this.updateChartDimensions(item);
   // }
-  onResizeStop(item: DashboardItem, event:any): void {
+  onResizeStop(item: DashboardItem, gridSterItem : GridsterItemComponentInterface ,event:any): void {
     const itemComponent  = event.itemComponent as GridsterItemComponent;
-    if(itemComponent){
-    this.updateChartDimensions(item, itemComponent);
+    if(gridSterItem){
+    this.updateChartDimensions(item, itemComponent,gridSterItem);
     }else{
       console.error('item not available')
     }
@@ -831,16 +1121,37 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
   updateSizeOnServer(item:any, itemComponent:any){
 
   }
-  updateChartDimensions(item: DashboardItem, itemComponent: GridsterItemComponent): void {
-    if (item['chartInstance'] && itemComponent) {
+  updateChartDimensions(item: DashboardItem, itemComponent: GridsterItemComponent , gridSterItem: GridsterItemComponentInterface): void {
+    const chartElement = document.getElementById('test344') as any;
+    // if (chartElement) {
+    //   chartElement.chartObj.updateOptions({
+    //     chart: {
+    //       height: gridSterItem.el.clientHeight
+    //     }
+    //   });
+    // }
+    item.chartOptions!.chart = {
+      // ...item.chartOptions!.chart,
+      // width: itemComponent.width,
+      height: gridSterItem.el.clientHeight,
+      type:item.chartOptions?.chart?.type || 'bar'
+    };
+    if (item['chartOptions'] && itemComponent) {
       item.chartOptions!.chart = {
         ...item.chartOptions!.chart,
         width: itemComponent.width,
-        height: itemComponent.height,
+        height: gridSterItem.el.clientHeight,
         type:item.chartOptions?.chart?.type || 'bar'
       };
       item['chartInstance'].updateOptions(item.chartOptions, true);
     }
+    // this.chartstest.forEach((chart, index) => {
+    //   if (index === 0) {
+    //     chart.updateOptions(item.chartOptions);
+    //   } else if (index === 1) {
+    //     chart.updateOptions(item.chartOptions);
+    //   }
+    // });
   }
   getItemComponent(item: DashboardItem): GridsterItemComponent | undefined {
     return this.GridsterItemComponent.find(cmp => cmp.item === item);
@@ -872,19 +1183,57 @@ getTableData(tableData: any): { headers: any[], rows: any[] } {
     }
   }
   initializeChart(item: DashboardItem): void {
+    const chartElement = document.querySelector("#chart"); // Adjust selector if necessary
+
+    if (item['chartInstance']) {
+        item['chartInstance'].destroy(); // Destroy the existing chart instance
+        item['chartInstance'] = null;
+    }
     if (item.chartOptions && item.chartOptions.chart && item.chartOptions.series) {
       const options: ApexOptions = {
         ...item.chartOptions,
         chart: {
           ...item.chartOptions.chart,
           type: item.chartOptions.chart.type || 'bar',
-          height: 300
+          height: 500
         },
         series: item.chartOptions.series,
-        xaxis: item.chartOptions.xaxis,
+        xaxis: {
+          ...item.chartOptions.xaxis,
+          categories: item.chartOptions.xaxis?.categories
+        }
       };
-          item['chartInstance'] = new ApexCharts(document.querySelector("#chart"), options);
-    item['chartInstance'].render();
+      console.log('Chart options before updating/rendering:', options);
+
+    //       item['chartInstance'] = new ApexCharts(document.querySelector("#chart"), options);
+    // item['chartInstance'].render();
+
+
+    // var chartOrigin = document.querySelector("#chart");
+    // if(chartOrigin){
+    //   var chart = new ApexCharts(document.querySelector("#chart"),options);
+    //   // chartOrigin.updateOptions(options);
+    //   chart.render();
+    // }
+
+
+    if (item['chartInstance']) {
+      // Update the existing chart instance with new options
+      item['chartInstance'].updateOptions(options, true);
+  } else {
+      // Create a new chart instance if it doesn't exist
+      const chartOrigin = document.querySelector("#chart");
+      if (chartOrigin) {
+          item['chartInstance'] = new ApexCharts(chartOrigin, options);
+          item['chartInstance'].render();
+      }
+  }
+
+    // if(this.chartstest){
+    //   this.chartstest['_results'][0].updateOptions(options);
+    //   // this.chartstest['_results'][0].render();
+    //   // this.chartstest./
+    // }
     // item['chartInstance'] = new ApexCharts(document.querySelector("#chart-" + item['id']), item.chartOptions);
     // item['chartInstance'].render();
   }  
@@ -907,7 +1256,7 @@ barChartOptions(xaxis:any,yaxis:any){
       toolbar: {
         show: false
       },
-      height: 385,
+      height: 500,
       type: 'bar',
       foreColor: '#9aa0ac',
     },
@@ -1321,7 +1670,7 @@ barLineChartOptions(xaxis:any,yaxis:any){
         enabled: true,
         enabledOnSeries: [1]
       },
-      labels: xaxis[0],
+      labels: xaxis,
       xaxis: {
         type: ""
       },
@@ -1468,7 +1817,7 @@ multiLineChartOptions(xaxis:any,yaxis:any){
       labels: {
         trim: false
       },
-      categories: xaxis[0]
+      categories: xaxis
     },
     tooltip: {
       y: [
@@ -1508,7 +1857,360 @@ donutChartOptions(xaxis:any,yaxis:any){
     ]
   };
 }
+
+
+//filters
+openSuperScaled(modal: any) {
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+
 }
+
+getColumnsForFilter(){
+  const obj ={
+    dashboard_id:this.dashboardId
+  }
+  this.workbechService.getColumnsInDashboardFilter(obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.columnFilterNames=data.response_data?.columns;
+      this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
+
+    },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+
+ResetDashboard(){
+  this.dashboard =[];
+}
+updateSelectedRows(){
+  this.selectedRows = this.sheetsFilterNames
+  .filter((row: { selected: any; }) => row.selected)
+  .map((row: { label: any; }) => row.label.id);
+console.log('selected rows', this.selectedRows);
+
+this.isAllSelected = this.sheetsFilterNames.every((row: { selected: any; }) => row.selected);
+}
+
+toggleAllRows(event: Event) {
+  const isChecked = (event.target as HTMLInputElement).checked;
+  this.sheetsFilterNames.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+  this.updateSelectedRows();
+}
+isAnyRowSelected(): boolean {
+  return this.sheetsFilterNames.some((row: { selected: any; }) => row.selected);
+}
+
+closeColumnsDropdown(colName:any,colDatatype:any, dropdown: NgbDropdown) {
+  dropdown.close();
+  this.selectClmn=colName,
+  this.selectdColmnDtype=colDatatype
+
+}
+closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
+  localStorage.setItem(id, JSON.stringify(colData));
+  dropdown.close();
+}
+
+getSelectedData(){
+
+if(this.filterName === ''){
+  Swal.fire({
+    icon: 'error',
+    title: 'oops!',
+    text: 'Please add name to Filter',
+    width: '400px',
+})
+}else{
+  const Obj ={
+    dashboard_id:this.dashboardId,
+    filter_name:this.filterName,
+    column:this.selectClmn,
+    sheets:this.selectedRows,
+    datatype:this.selectdColmnDtype
+  }
+  this.workbechService.selectedDatafromFilter(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.dashboardFilterId = data.dashboard_filter_id
+      this.getDashboardFilterredList()
+    },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+}
+
+getDashboardFilterredList(){
+  const Obj ={
+    dashboard_id:this.dashboardId
+  }
+  this.workbechService.getDashboardFilterredList(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.DahboardListFilters = data
+    },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+getColDataFromFilterId(id:string,colData:any){
+  if(localStorage.getItem('filterid')){
+    colData['colData']= JSON.parse(localStorage.getItem('filterid')!);
+  } else {
+  const Obj ={
+    id:id
+  }
+  this.workbechService.getColDataFromFilterId(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
+      colData['colData']= data.col_data.map((item: any) => ({ label: item, selected: false }))
+      localStorage.setItem(id, JSON.stringify(colData['colData']));
+      console.log('coldata',this.colData)
+    },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+}
+updateSelectedColmns(filterList:any,col: any){
+  if(!this.storeSelectedColData["test"]){
+    this.storeSelectedColData["test"]={};
+  } 
+  if(!this.storeSelectedColData["test"][filterList.dashboard_filter_id]){
+    this.storeSelectedColData["test"][filterList.dashboard_filter_id]=[];
+  }
+  let array = this.storeSelectedColData["test"][filterList.dashboard_filter_id];
+  if(col.selected){
+    array.push(col.label);
+  } else {
+    let indexVar = array.indexOf(col.label);
+    array.splice(indexVar,1);
+  }
+
+this.storeSelectedColData["test"][filterList.dashboard_filter_id] =array ;
+console.log('selected Data', this.storeSelectedColData);
+this.isAllSelected = filterList.colData.every((row: { selected: any; }) => row.selected);
+}
+  toggleAllColumns(event: Event, filterList: any) {
+    let array: any[] = [];
+    const isChecked = (event.target as HTMLInputElement).checked;
+    filterList.colData.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+    // this.updateSelectedColmns(filterList,filterList.colData);
+    if (isChecked) {
+      if (!this.storeSelectedColData["test"]) {
+        this.storeSelectedColData["test"] = {};
+      }
+      if (!this.storeSelectedColData["test"][filterList.dashboard_filter_id]) {
+        this.storeSelectedColData["test"][filterList.dashboard_filter_id] = [];
+      }
+      array = [];
+      filterList.colData.forEach((col: any) => {
+        if (col.selected) {
+          array.push(col.label);
+        }
+      });
+    } else {
+      array = [];
+    }
+
+    this.storeSelectedColData["test"][filterList.dashboard_filter_id] = array;
+    console.log('selected Data', this.storeSelectedColData);
+  }
+extractKeysAndData(): void {
+  if (this.storeSelectedColData && this.storeSelectedColData.test) {
+    this.extractKeysAndData1(this.storeSelectedColData.test);
+    console.log('Keys Array:', this.keysArray);
+    console.log('Data Array:', this.dataArray);
+  } else {
+    console.error('storeSelectedColData.test is not defined:', this.storeSelectedColData.test);
+  }
+}
+extractKeysAndData1(inputData: any): void {
+  const keys = Object.keys(inputData);
+  console.log('Extracted Keys:', keys);  // Debug: Log extracted keys
+
+  this.keysArray = keys;
+  this.dataArray = keys.map(key => inputData[key]);
+  console.log('Extracted Data Array:', this.dataArray);  // Debug: Log extracted data array
+}
+getFilteredData(){
+  this.extractKeysAndData();
+  const Obj ={
+    id:this.keysArray,
+    input_list:this.dataArray
+  }
+  this.workbechService.getFilteredData(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.tablePreviewColumn = data.columns;
+      this.tablePreviewRow = data.rows;
+      console.log(this.tablePreviewColumn);
+      console.log(this.tablePreviewRow);
+      // localStorage.removeItem('filterid')
+      data.forEach((item: any) => {
+      item.columns.forEach((res:any) => {      
+        let obj1={
+          name:res.column,
+          values: res.result
+        }
+        this.filteredColumnData.push(obj1);
+        console.log('filtercolumn',this.filteredColumnData)
+      });
+      item.rows.forEach((res:any) => {
+        let obj={
+          name: res.column,
+          data: res.result
+        }
+        this.filteredRowData.push(obj);
+        console.log('filterowData',this.filteredRowData)
+      });
+      this.dashboard.forEach((item1:any) => {
+        if(item1.sheetId == item.sheet_id){
+          if(item.chart_id == '6'){//bar
+          item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+          item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '24'){//pie
+            item1.chartOptions.labels = this.filteredColumnData[0].values;
+          item1.chartOptions.series = this.filteredRowData[0].data;
+          }
+          if(item.chart_id == '13'){//line
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+          item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '17'){//area
+            item1.chartOptions.labels = this.filteredColumnData[0].values;
+          item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '7'){//sidebyside
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '2'){//hstacked
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '5'){//stacked
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '4'){//barline
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+
+            item1.chartOptions.label = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '3'){//hgrouped
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+            
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+          if(item.chart_id == '8'){//multiline
+            const dimensions: Dimension[] = this.filteredColumnData
+            const categories = this.flattenDimensions(dimensions)
+            
+            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            item1.chartOptions.series = this.filteredRowData;
+          }
+
+              this.initializeChart(item1);
+              this.filteredColumnData =[]
+              this.filteredRowData=[]
+
+          console.log('filtered dashboard-data',item1)
+        }
+      })
+    });
+      },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+closeFilterModal(){
+  this.modalService.dismissAll('close')
+}
+
+  findSheetIndex(sheetID: number): number {
+    return this.dashboard.findIndex(sheet => sheet['sheetId'] === sheetID);
+  }
+
+deleteDashboardFilter(id:any){
+  const Obj ={
+    id:id
+  }
+  this.workbechService.deleteDashbaordFilter(Obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
+     
+    },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+
+}
+
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
 //   content: string;

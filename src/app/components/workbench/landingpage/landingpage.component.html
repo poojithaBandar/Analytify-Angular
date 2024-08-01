@@ -181,9 +181,9 @@
                     No Dashboard please CREATE ONE!
                 </div>
                 <ng-container *ngFor="let dashboardList of savedDashboardList;let i = index" >
-                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                     <div *ngIf="showAllDasboards && i < 3" class="card img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                        <img src="{{dashboardList.dashboard_image}}" class="card-img-top " alt="img">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
                           <div class="dashboard-card-title">
                             <h5 class="card-title   mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"
@@ -208,7 +208,7 @@
                         
                     </div>
                     <div *ngIf="!showAllDasboards && i < 11" class="card  img-shadow">
-                        <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
+                        <img src="{{dashboardList.dashboard_image}}" class="card-img-top" alt="img">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
                           <div class="dashboard-card-title">
                             <h5 class="card-title   mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"  (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" style="cursor: pointer;color: #05aff8;"> 
@@ -232,7 +232,7 @@
                     </div>
                 </div>
                 </ng-container>
-                <div  *ngIf="!showAllDasboards && savedDashboardList.length > 10" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <div  *ngIf="!showAllDasboards && savedDashboardList.length > 10" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                     <div class="p-5 d-flex align-items-center justify-content-start">
                         <div  class="dashboard-card-title">
                             <h5 (click)="viewAllDashboards()" class="card-title   mb-1" style="cursor: pointer;color: #05aff8;border-bottom: 1px solid;"> View All <i class="fa fa-angle-double-right"></i> </h5>
@@ -265,7 +265,7 @@
                     No Charts please CREATE ONE!
                 </div>
                 <ng-container *ngFor="let sheetlist of userSheetsList;let i = index">
-                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                     <div *ngIf="showAllSheets && i < 3" class="card  img-shadow">
                         <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
@@ -369,7 +369,7 @@
                     </div>
                 </ng-container>
                 
-                <div *ngIf="!showAllSheets && userSheetsList.length > 10" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <div *ngIf="!showAllSheets && userSheetsList.length > 10" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                             <div class="p-5 d-flex align-items-center justify-content-start">
                             <div  class="dashboard-card-title">
                                 <h5 (click)="viewAllSheets()" class="card-title   mb-1" style="cursor: pointer;color: #05aff8;border-bottom: 1px solid;"> View All <i class="fa fa-angle-double-right"></i> </h5>
@@ -398,7 +398,7 @@
                 </div>
 
                 <ng-container *ngFor="let savedQuery of savedQueryList;let i = index">
-                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                    <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                     <div *ngIf="showAllSavedQueries && i < 3" class="card img-shadow">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
                             <div class="dashboard-card-title">
@@ -448,7 +448,7 @@
                     </div>
                 </ng-container>
 
-                <div *ngIf="!showAllSavedQueries && savedQueryList.length > 10" class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <div *ngIf="!showAllSavedQueries && savedQueryList.length > 10" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                     <div class="p-5 d-flex align-items-center justify-content-start">
                         <div  class="dashboard-card-title">
                             <h5 (click)="viewAllSavedQueries()" class="card-title   mb-1" style="cursor: pointer;color: #05aff8;border-bottom: 1px solid;"> View All <i class="fa fa-angle-double-right"></i> </h5>
@@ -475,7 +475,7 @@
                         </div>
                     </div>
                 </div>
-                <div  class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <div  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                         <div class=" p-2 ">
                             <div class="card overflow-hidden img-shadow mb-0">
                                 <img src="./assets/images/icons/sales-analysis.jpg" alt="img" class="card-img-top">
@@ -485,7 +485,7 @@
                             </div>
                         </div>
                 </div>
-                <div  class="col-xxl-3 col-xl-3 col-lg-6 col-md-6">
+                <div  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                     <div class=" p-2 ">
                         <div class="card overflow-hidden img-shadow mb-0">
                             <img src="./assets/images/icons/profit-analysis.jpg" alt="img" class="card-img-top">
@@ -525,6 +525,15 @@
                                   </td>
                                   <td *ngIf="database.server_type === 'MYSQL'">
                                     <img alt="product" src="./assets/images/icons/MySql-icon1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                </td>
+                                <td *ngIf="database.server_type === 'MONGODB'">
+                                    <img alt="product" src="./assets/images/icons/mongodb-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                </td>
+                                <td *ngIf="database.server_type === 'MICROSOFTSQLSERVER'">
+                                    <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                </td>
+                                <td *ngIf="database.server_type === 'SQLITE'">
+                                    <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                                 </td>
 
                                     <!-- <td>{{database.server_type}}</td> -->

@@ -19,10 +19,15 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/database_connection/`+this.accessToken,obj);
   }
-  mySqlConnection(obj:any){
+  DbConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/database_connection/`+this.accessToken,obj);
+  }
+  DbConnectionFiles(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/upload_file/`+this.accessToken,obj);
   }
   // getTableData(obj:any){
   //   const currentUser = localStorage.getItem( 'currentUser' );
@@ -150,6 +155,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/dashboardupdate/`+dashboardId+'/'+this.accessToken,obj);
   }
+  saveDAshboardimage(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dashboardimage/`+this.accessToken,obj);
+  }
   getSavedDashboardData(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -276,6 +286,65 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/rename_column/`+this.accessToken,obj);
   }
+
+//Dashboard Filters
+getColumnsInDashboardFilter(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_column_preview/`+this.accessToken,obj);  
+}
+selectedDatafromFilter(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_save/`+this.accessToken,obj);  
+}
+getColDataFromFilterId(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_columndata_preview/`+this.accessToken,obj); 
+}
+getDashboardFilterredList(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_list/`+this.accessToken,obj); 
+}
+getFilteredData(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_filtered_data/`+this.accessToken,obj); 
+}
+
+getServerTablesList(obj:any){
+  return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`,obj);
+}
+deleteDashbaordFilter(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.delete<any>(`${environment.apiUrl}/dashboard_filtered_save/`+this.accessToken); 
+}
+
+//roles
+getSavedRolesList(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/roleslist/`+this.accessToken,obj); 
+}
+getPrevilagesList(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/previlages_list/`+this.accessToken,obj); 
+}
+addPrevilage(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/role/`+this.accessToken,obj); 
+}
+//users
+getUserList(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/getusersroles/`+this.accessToken,obj); 
+}
   //image convert
       blobToFile(theBlob:any){
       theBlob.lastModifiedDate = new Date();
@@ -307,4 +376,8 @@ export class WorkbenchService {
       const blob = new Blob([ab], {type: mimeString});
       return (<File> blob);
     }
+
+
+
+
 }

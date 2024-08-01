@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -28,6 +28,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
   styleUrl: './workbench.component.scss'
 })
 export class WorkbenchComponent implements OnInit{
+  @ViewChild('fileInput') fileInput:any;
+  
   tableList = [] as any;
   dragedTableName: any;
   databaseconnectionsList!:boolean;
@@ -36,8 +38,15 @@ export class WorkbenchComponent implements OnInit{
   getTableRows = [] as any;
   relationOfTables = [] as any;
   databaseId:any;
+  fileId:any;
   openPostgreSqlForm= false;
+  openMySqlForm = false;
+  openOracleForm = false;
+  openMicrosoftSqlServerForm = false;
+  openMongoDbForm = false;
+  sqlLiteForm = false;
   openTablesUI = false;
+  ibmDb2Form = false;
   databaseName:any;
   tableName:any;
   selectedClmnT1:any;
@@ -59,6 +68,7 @@ export class WorkbenchComponent implements OnInit{
   pageNo = 1;
   page: number = 1;
   totalItems:any;
+  fileData:any;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
@@ -76,6 +86,7 @@ export class WorkbenchComponent implements OnInit{
     PostGrePassword = '';
     OracleServiceName = '';
     displayName ='';
+    path='';
 
     openPostgreSql(){
     this.openPostgreSqlForm=true;
@@ -104,7 +115,6 @@ export class WorkbenchComponent implements OnInit{
                   width: '400px',
                 })
                 this.databaseId=responce.database?.database_id
-                this.modalService.dismissAll();
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
                 this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
@@ -164,6 +174,13 @@ export class WorkbenchComponent implements OnInit{
         )
 
     }
+    openOracle(){
+      this.openOracleForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
+
+
     OracleSignIn(){
       const obj={
           "database_type":"oracle",
@@ -187,7 +204,7 @@ export class WorkbenchComponent implements OnInit{
                 })
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
-                this.openPostgreSqlForm = false;
+                this.openOracleForm = false;
                 const encodedId = btoa(this.databaseId.toString());
                 this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
               }
@@ -202,6 +219,11 @@ export class WorkbenchComponent implements OnInit{
             }
           }
         )
+    }
+    openMySql(){
+      this.openMySqlForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
     }
     mySqlSignIn(){
       const obj={
@@ -214,7 +236,7 @@ export class WorkbenchComponent implements OnInit{
           "database": this.postGreDatabaseName,
 
       }
-        this.workbechService.mySqlConnection(obj).subscribe({next: (responce) => {
+        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
                 Swal.fire({
@@ -224,6 +246,7 @@ export class WorkbenchComponent implements OnInit{
                 })
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
+                this.openMySqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
                 this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
               }
@@ -239,6 +262,250 @@ export class WorkbenchComponent implements OnInit{
           }
         )
     }
+    openMicrosoftSqlServer(){
+      this.openMicrosoftSqlServerForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
+    microsoftSqlSignIn(){
+      const obj={
+          "database_type":"microsoftsqlserver",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName,
+          "database": this.postGreDatabaseName,
+      }
+        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.openMicrosoftSqlServerForm = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+    }
+    openMOngoDb(){
+      this.openMongoDbForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
+    mongoDbSignIn(){
+      const obj={
+          "database_type":"mongodb",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName,
+          "database": this.postGreDatabaseName,
+      }
+        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.openMongoDbForm = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+    }
+    openIbmDb2(){
+      this.ibmDb2Form=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
+    ibmDb2SignIn(){
+      const obj={
+          "database_type":"ibmdb2",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName,
+          "database": this.postGreDatabaseName,
+      }
+        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.ibmDb2Form = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+    }
+
+    opensqlLite(){
+      this.sqlLiteForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
+    uploadfile(event:any){
+      const file:File = event.target.files[0];
+      this.fileData = file
+    }
+    sqLiteSignIn(){
+      const formData: FormData = new FormData();
+      formData.append('path', this.fileData,this.fileData.name); 
+      formData.append('database_type','sqlite');
+      formData.append('display_name',this.displayName);
+
+        this.workbechService.DbConnection(formData).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.ibmDb2Form = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+    }
+
+    triggerFileUpload() {
+      this.fileInput.nativeElement.click();
+    }
+
+    uploadfileCsv(event:any){
+      const file:File = event.target.files[0];
+      this.fileData = file;
+      if(this.fileData){
+        this.csvUpload();
+      }
+
+    }
+    csvUpload(){
+    const formData: FormData = new FormData();
+      formData.append('file_path', this.fileData,this.fileData.name); 
+      formData.append('file_type','csv');
+      this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              Swal.fire({
+                icon: 'success',
+                title: 'Connected',
+                width: '400px',
+              })
+              // this.databaseId=responce.database?.database_id
+             
+              // const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+            }
+          },
+          error: (error) => {
+            console.log(error);
+            Swal.fire({
+              icon: 'warning',
+              text: error.error.message,
+              width: '300px',
+            })
+          }
+        }
+      )
+    }
+    uploadfileExcel(event:any){
+      const file:File = event.target.files[0];
+      this.fileData = file;
+      if(this.fileData){
+        this.excelUpload();
+      }
+
+    }
+    excelUpload(){
+      const formData: FormData = new FormData();
+        formData.append('file_path', this.fileData,this.fileData.name); 
+        formData.append('file_type','excel');
+        this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.fileId=responce.file_id
+               
+                const encodedId = btoa(this.fileId.toString());
+                this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+      }
     deleteDbConnection(id:any){
       const obj ={
         database_id:id
@@ -318,35 +585,8 @@ export class WorkbenchComponent implements OnInit{
     this.OracleServiceName = '';
     this.displayName = editData.display_name;
     this.databaseId=editData.database_id;
-
-
-
     }
-    private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
-      let result: any[] = [];
-    for (const obj of arraysOfObjects) {
-      if (Array.isArray(obj.data)) {
-        result = result.concat(obj.data);
-      }
-    }
-    return result;
-    }
-    // dragItem(item:any){
-    //   this.dragedTableName = item;
-    //   const obj={
-    //     "db_url":"postgresql://postgres:Welcome!234@e-commerce.cj3oddyv0bsk.us-west-1.rds.amazonaws.com/HMS_Production",
-    //     "tables":this.dragedTableName
-    // }
-    //   this.workbechService.getTableData(obj).subscribe({next: (responce:any) => {
-    //         console.log(responce);
-    //        // this.tablePreview = responce;
-    //       },
-    //       error: (error) => {
-    //         console.log(error);
-    //       }
-    //     }
-    //   )
-    // }
+
     Openmdo(OpenmdoModal: any) {
       this.modalService.open(OpenmdoModal);
     }
@@ -371,7 +611,7 @@ export class WorkbenchComponent implements OnInit{
 
   pageChangegetconnectionList(page:any){
     this.pageNo=page;
-    this.getDbConnectionList
+    this.getDbConnectionList();
   }
   getDbConnectionList(){
     const Obj ={
@@ -392,7 +632,7 @@ export class WorkbenchComponent implements OnInit{
         this.connectionList = data.sheets;
         this.itemsPerPage = data.items_per_page;
         this.totalItems = data.total_items
-        console.log('sheetsList',data)
+        console.log('connectionlist',data)
        },
       error:(error)=>{
         console.log(error);
@@ -408,160 +648,31 @@ export class WorkbenchComponent implements OnInit{
   getTablesFromConnectedDb(id:any){
     const encodedId = btoa(id.toString());
     this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
-    //     this.workbechService.getTablesFromConnectedDb(id).subscribe({next: (responce) => {
-
-//     if(Array.isArray(responce.data)){
-//       this.tableList= responce.data
-//     }
-//     else{
-//     this.tableList = this.combineArrays(responce.data)
-//     }
-//     console.log('tablelist',this.tableList)
-//     this.databaseName = responce.database.database_name
-//     this.databaseId = responce.database.database_id
-//     if(responce){
-//       this.databaseconnectionsList= false
-//       this.openTablesUI = true;
-//     }
-//   },
-//   error:(error)=>{
-//     console.log(error);
-//   }
-// })
-}
-  // drop(event: CdkDragDrop<string[]>) {
-  //   if (event?.previousContainer === event?.container) {
-  //     moveItemInArray(event?.container?.data, event?.previousIndex, event?.currentIndex);
-  //   } else {
-  //     event.previousContainer.data,
-  //     event.container.data,
-  //     event.previousIndex,
-  //     event.currentIndex
-  //   }
-  // }
-
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      console.log('Transfering item to new container')
-      // transferArrayItem(event.previousContainer.data,
-      //                   event.container.data,
-      //                   event.previousIndex,
-      //                   event.currentIndex);
-      //                   console.log('previouscont:'+event.previousContainer.data,
-      //                   'eventcont:'+event.container.data)
-      //                  console.log(event.previousContainer.data,'inex:'+event.currentIndex)
-
-
-      let item: any = event.previousContainer.data[event.previousIndex];
-      console.log('item' + JSON.stringify(item));
-      let copy: any = JSON.parse(JSON.stringify(item));
-
-      console.log('copy' + JSON.stringify(copy));
-      let element: any = {};
-      for (let attr in copy) {
-        console.log('attr' + attr);
-        if (attr == 'title') {
-          element[attr] = copy[attr];
-        } else {
-          element[attr] = copy[attr];
-        }
-      }
-      this.draggedtables.splice(event.currentIndex, 0, element);
-      console.log('darggedtable',this.draggedtables)
-     }
-     this.getTableData();
-     if(this.draggedtables.length > 1){
-      const obj ={
-        database_id : this.databaseId,
-        tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]]
-      }
-      this.workbechService.tableRelation(obj)
-      .subscribe(
-        {
-          next:(data:any) =>{
-            console.log(data)
-            this.relationOfTables = data[2]?.relation?.condition
-            console.log('relation',this.relationOfTables)
-          },
-          error:(error:any)=>{
-          console.log(error)
-        }
-        })
-     }
-  }
-  getTablerowclms(table:any,schema:any){
-    const obj ={
-      database_id:this.databaseId,
-      tables:[[schema,table]]
-    }
-    this.workbechService.getTableData(obj).subscribe({
-      next:(data:any)=>{
-        console.log(data);
-        this.getTableColumns = data.column_data;
-        this.getTableRows = data.row_data;
-        this.tableName = data?.column_data[0]?.table
-      },
-      error:(error:any)=>{
-        console.log(error)
-      }
-    })
-  }
-  getTableData(){
-    const obj ={
-      database_id:this.databaseId,
-      tables:[[this.draggedtables[0].schema,this.draggedtables[0].table]]
-    }
-    this.workbechService.getTableData(obj).subscribe({
-      next:(data:any)=>{
-        console.log(data);
-        this.getTableColumns = data.column_data;
-        this.getTableRows = data.row_data;
-        this.tableName = data?.column_data[0]?.table
-
-      },
-      error:(error:any)=>{
-        console.log(error)
-      }
-    })
-
     
-  }
+}
 
   onDeleteItem(index: number) {
      this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
      console.log(this.draggedtables)
   }
 
-  buildCustomRelation(){
-    const parts = this.selectedClmnT1.split('(');
-    this.selectedClmnT1 = parts[0].trim()
-    const parst = this.selectedClmnT2.split('(');
-    this.selectedClmnT2 = parst[0].trim()
-    const obj ={
-      database_id:this.databaseId,
-      tables : [[this.draggedtables[0].schema,this.draggedtables[0].table],[this.draggedtables[1].schema,this.draggedtables[1].table]],
-      condition:[[this.draggedtables[0].schema+'.'+this.draggedtables[0].table+'.'+this.selectedClmnT1 +'=' +this.draggedtables[1].schema+'.'+this.draggedtables[1].table+'.'+this.selectedClmnT2]]
-    }
-    this.workbechService.tableRelation(obj)
-      .subscribe(
-        {
-          next:(data:any) =>{
-            console.log(data)
-            this.relationOfTables = data[2]?.relation?.condition
-            console.log('relation',this.relationOfTables)
-          },
-          error:(error:any)=>{
-          console.log(error)
-        }
-        })
-
-  }
-
   gotoNewConnections(){
-this.openPostgreSqlForm=false;
-this.viewNewDbs=true
+  this.openPostgreSqlForm=false;
+  this.viewNewDbs=true;
+  this.openMySqlForm=false;
+  this.openOracleForm = false;
+  this.openMongoDbForm = false;
+  this.openMicrosoftSqlServerForm = false;
+  this.ibmDb2Form= false;
+  this.sqlLiteForm = false;
+
+  this.postGreServerName = '';
+  this.postGrePortName = '';
+  this.postGreDatabaseName = '';
+  this.postGreUserName = '';
+  this.PostGrePassword = '';
+  this.OracleServiceName = '';
+  this.displayName ='';
   }
 
   
