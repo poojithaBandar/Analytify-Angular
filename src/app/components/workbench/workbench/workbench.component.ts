@@ -38,6 +38,7 @@ export class WorkbenchComponent implements OnInit{
   getTableRows = [] as any;
   relationOfTables = [] as any;
   databaseId:any;
+  fileId:any;
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openOracleForm = false;
@@ -488,10 +489,10 @@ export class WorkbenchComponent implements OnInit{
                   title: 'Connected',
                   width: '400px',
                 })
-                // this.databaseId=responce.database?.database_id
+                this.fileId=responce.file_id
                
-                // const encodedId = btoa(this.databaseId.toString());
-                // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                const encodedId = btoa(this.fileId.toString());
+                this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
               }
             },
             error: (error) => {

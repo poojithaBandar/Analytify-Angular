@@ -169,220 +169,86 @@
   </div>
 
   <ng-template #Adduser let-modal >
-    <div >
-      <div >
-	   <div class="modal-content modal-large" >
-          <div class="modal-header justify-conent-between">
-            <h1 class="modal-title fs-5" id="inputModalLabel">Add User 2</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
-          </div>
-          <div class="modal-body p-2">
-            <div class="row  px-3">
-              <div class="col-md-2 border p-2">
-                <label for="input-label" class="form-label"><h6>First Name</h6></label>
-              </div>
-              <div class="col-md-10 border p-2">
-                <input type="text" id="input-text" placeholder="First Name" class="form-control">
-                <label for="input-label" class="form-label">Write the user first name or names</label>
-              </div>
+    <div class="modal-content modal-large" >
+        <div class="modal-header justify-conent-between">
+          <h1 class="modal-title fs-5" id="inputModalLabel">Add User</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
+        </div>
+        <div class="modal-body">
+         
+          <div class="row  p-1">
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">First Name</label>
             </div>
-            <div ngbAccordion [closeOthers]="true" class="accordion mt-2" id="accordionExample">
-              <div  ngbAccordionItem  class="accordion-item mb-2 " style="border: none;">
-                  <h6 ngbAccordionHeader class="accordion-header" id="heading">
-                    <button
-                      ngbAccordionButton
-                      class="accordion-button p-3 fw-500 border"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapse"
-                      aria-expanded="true"
-                      aria-controls="collapse"
-                      >
-                      User info
-                    </button>
-                    
-                  </h6>
-                  <div
-                    ngbAccordionCollapse
-                    id="collapse"
-                    class="accordion-collapse collapse" 
-                    aria-labelledby="heading"
-                    data-bs-parent="#accordionExample"
-                     >
-                    <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style=" height: auto; max-height: 350px;">
-                      <ng-template>
-                        <div class="row px-3">
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">User Name</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">Akshay</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Is Active?</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">True</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Role</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">[Team member]</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Login Count</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">4</label>
-                          </div>
-                        </div>
-                      </ng-template>
-                    </div>
-                  </div>
-              </div>
+            <div class="col-md-10 border p-2">
+              <input type="text" id="input-text" placeholder="First Name" class="form-control">
+              <label for="input-label" class="form-label">Write the user first name or names</label>
             </div>
 
-            <div ngbAccordion [closeOthers]="true" class="accordion mt-2" id="accordionExample">
-              <div  ngbAccordionItem  class="accordion-item mb-2 " style="border: none;">
-                  <h6 ngbAccordionHeader class="accordion-header" id="heading">
-                    <button
-                      ngbAccordionButton
-                      class="accordion-button p-3 fw-500 border"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapse"
-                      aria-expanded="true"
-                      aria-controls="collapse"
-                      >
-                      Personal info
-                    </button>
-                    
-                  </h6>
-                  <div
-                    ngbAccordionCollapse
-                    id="collapse"
-                    class="accordion-collapse collapse" 
-                    aria-labelledby="heading"
-                    data-bs-parent="#accordionExample"
-                     >
-                    <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style=" height: auto; max-height: 350px;">
-                      <ng-template>
-                        <div class="row px-3">
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">User Name</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">Akshay</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Last Name</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">Kumar</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Email</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">pakshaystratapps.com</label>
-                          </div>
-                        </div>
-                      </ng-template>
-                    </div>
-                  </div>
-              </div>
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">Last Name</label>
+            </div>
+            <div class="col-md-10 border p-2">
+              <input type="text" id="input-text" placeholder="Last Name" class="form-control">
+              <label for="input-label" class="form-label">Write the user last name </label>
             </div>
 
-            <div ngbAccordion [closeOthers]="true" class="accordion mt-2" id="accordionExample">
-              <div  ngbAccordionItem  class="accordion-item mb-2 " style="border: none;">
-                  <h6 ngbAccordionHeader class="accordion-header" id="heading">
-                    <button
-                      ngbAccordionButton
-                      class="accordion-button p-3 fw-500 border"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapse"
-                      aria-expanded="true"
-                      aria-controls="collapse"
-                      >
-                      Audit info
-                    </button>
-                    
-                  </h6>
-                  <div
-                    ngbAccordionCollapse
-                    id="collapse"
-                    class="accordion-collapse collapse" 
-                    aria-labelledby="heading"
-                    data-bs-parent="#accordionExample"
-                     >
-                    <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style=" height: auto; max-height: 350px;">
-                      <ng-template>
-                        <div class="row px-3">
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Last login</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">2024-07-30 12:38:17.217573</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Failed login count</h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">0</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Created on </h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">2024-07-30 12:38:17.2175</label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Created by </h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">admin </label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Changed on </h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">024-07-30 12:38:17.217 </label>
-                          </div>
-
-                          <div class="col-md-2 border p-2">
-                            <label for="input-label" class="form-label"><h6 class="mb-0">Changed by </h6></label>
-                          </div>
-                          <div class="col-md-10 border p-2">
-                            <label for="input-label" class="form-label">admin </label>
-                          </div>
-                        </div>
-                      </ng-template>
-                    </div>
-                  </div>
-              </div>
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">User Name</label>
+            </div>
+            <div class="col-md-10 border p-2">
+              <input type="text" id="input-text" placeholder="User Name" class="form-control">
+              <label for="input-label" class="form-label">User name valid for authentication on DB or LDAP, unused for OID auth </label>
             </div>
 
-            <div class="justify-conent-between p-2">
-              <div class="add-role-save-btn">
-                <button type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;">
-                   <i class="fa fa-lock" aria-hidden="true"></i> Reset Password
-                </button>
-                <a><i class="fa fa-arrow-left p-3 bg-light rounded-2 ms-1"></i></a>
-              </div>
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">Is Active?</label>
+            </div>
+            <div class="col-md-10 border p-2">
+              <input type="checkbox" id="exampleCheck1" class="form-check-input">
+              <label for="input-label" class="form-label">It's not a good policy to remove a user, just make it inactive </label>
+            </div>
+
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">Email</label>
+            </div>
+            <div class="col-md-10 border p-2">
+              <input type="text" id="input-text" placeholder="Email" class="form-control">
+              <label for="input-label" class="form-label">The user's email, this will also be used for OID auth </label>
+            </div>
+
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">Role</label>
+            </div>
+            <div class="col-md-10 border p-2">
+              <input type="text" id="input-text" placeholder="Select Value" class="form-control">
+              <label for="input-label" class="form-label">The user role on the application, this will associate with a list of Permission </label>
+            </div>
+
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">Password</label>
+            </div>
+            <div class="col-md-10 border p-2">
+              <input type="password" id="input-text" placeholder="Password" class="form-control">
+              <label for="input-label" class="form-label">The user's password for authentication </label>
+            </div>
+            <div class="col-md-2 border p-2">
+              <label for="input-label" class="form-label">Confirm Password</label>
+            </div>
+            <div class="col-md-10 border p-2">
+              <input type="password" id="input-text" placeholder="Confirm Password" class="form-control">
+              <label for="input-label" class="form-label">Please rewrite the user's password to Confirm </label>
             </div>
           </div>
-        </div> 	
-   </div>
- </div>
+          <div class="justify-conent-between">
+            <div class="add-role-save-btn">
+              <button type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;">
+                Save <i class="fa fa-file-text-o"></i> 
+              </button>
+              <a><i class="fa fa-arrow-left p-3 bg-light rounded-2 ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
 </ng-template>

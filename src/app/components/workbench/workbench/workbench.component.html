@@ -206,7 +206,7 @@
           <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="getDbConnectionList()">
-            <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+            <button class="btn btn-primary border me-2" type="button" (click)="getDbConnectionList()" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             
             <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Database</button>
           </div>

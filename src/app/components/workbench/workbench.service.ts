@@ -327,7 +327,7 @@ deleteDashbaordFilter(obj:any){
 getSavedRolesList(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];
-  return this.http.put<any>(`${environment.apiUrl}/role/`+this.accessToken,obj); 
+  return this.http.put<any>(`${environment.apiUrl}/roleslist/`+this.accessToken,obj); 
 }
 getPrevilagesList(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
@@ -339,7 +339,12 @@ addPrevilage(obj:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/role/`+this.accessToken,obj); 
 }
-
+//users
+getUserList(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/getusersroles/`+this.accessToken,obj); 
+}
   //image convert
       blobToFile(theBlob:any){
       theBlob.lastModifiedDate = new Date();

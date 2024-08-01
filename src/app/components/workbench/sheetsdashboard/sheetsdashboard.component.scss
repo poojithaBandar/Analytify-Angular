@@ -210,3 +210,23 @@ button {
 .sheet-bold{
   opacity: 0.5;
 }
+
+// for 90% Resolution //
+@media ( 1420px <= width <= 1560px) {
+  .dropdown-menu.filter-popover{
+    left: 191px !important;
+  }
+  .app-sidebar .side-menu__label{
+    font-size: 12px;
+  }
+  .app-sidebar .main-sidebar-header{
+    width: 10.9rem;
+  }
+}
+
+// for 100% Resolution //
+@media ( 1280px <= width <= 1420px) {
+  .dropdown-menu.filter-popover{
+    left: 167px !important;
+  }
+}

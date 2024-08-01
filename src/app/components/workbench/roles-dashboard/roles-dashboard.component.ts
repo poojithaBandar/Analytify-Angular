@@ -60,7 +60,9 @@ getSavedRolesList(){
   this.workbechService.getSavedRolesList(obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.savedRolesList=data
+      this.savedRolesList=data.sheets;
+      this.itemsPerPage = data.items_per_page;
+      this.totalItems = data.total_items
      },
     error:(error)=>{
       console.log(error);
@@ -142,6 +144,8 @@ moveBackSelectedItems() {
 
       // remve from selctdarray
       this.selectedArray = this.selectedArray.filter((item: { id: number; }) => item.id !== id);
+      this.originalSelectedArray = [...this.selectedArray];
+
     }
   });
 
@@ -153,6 +157,7 @@ removeAllSelected() {
   this.selectedArray = [];
   this.selectControlSelected.setValue([]);
   this.getPrevilagesList();
+  this.originalSelectedArray=[]
 }
 
 searchInSelectedArray() {
@@ -195,6 +200,7 @@ if(this.roleTitle === ''){
         text: data.message,
         width: '400px',
       })
+      this.getSavedRolesList();
      },
     error:(error)=>{
       console.log(error);
