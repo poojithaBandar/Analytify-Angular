@@ -195,6 +195,111 @@ span.abc-txt {
   overflow-y: scroll;
  }
 
+ .popup {
+  position: fixed;
+  top: 23%;
+  left: 67%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 7px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.popup-content {
+  position: relative;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ck-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.close-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.update-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.title-container{
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  width: 100%; 
+  height: 30px;
+}
+
+#htmlContent{
+  flex: 1;
+}
+
+.title-editor{
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.even-row {
+  background-color:  #ffffff;
+}
+.odd-row {
+  background-color: #d4d3d2;
+}
+
+.number-popup{
+  position: fixed;
+  top: 69%;
+  left: 92.5%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  // height: 150px;
+  padding: 7px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.number-formatting {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 200px;
+}
+
+.number-formatting label {
+  display: block;
+  margin-top: 10px;
+}
+
+.number-formatting input,
+.number-formatting select {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+}
+.title-container{
+  >.p{
+    margin: 0px  !important;
+  }
+}
+.span#htmlContent > *{
+    margin:0px !important;
+
  .copilot-button {
   background-color: white; /* Button background color */
   color: white; /* Text color */
@@ -238,4 +343,5 @@ span.abc-txt {
 .error-mgs{
   background-color: #f4f2f4;
   padding: 10px;
+
 }

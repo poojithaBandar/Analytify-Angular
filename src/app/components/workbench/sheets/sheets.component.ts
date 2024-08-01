@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,ViewChild } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -14,7 +14,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import * as d3 from 'd3';
 import type { EChartsOption } from 'echarts';
-import { NgApexchartsModule } from 'ng-apexcharts';
+import { NgApexchartsModule,ChartComponent } from 'ng-apexcharts';
 import {FormControl} from '@angular/forms';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { NgxColorsModule } from 'ngx-colors';
 import { CommonModule } from '@angular/common';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading } from 'ckeditor5';
+import 'ckeditor5/ckeditor5.css';
 interface TableRow {
   [key: string]: any;
 }
@@ -36,7 +39,7 @@ interface Dimension {
   selector: 'app-sheets',
   standalone: true,
   imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
-    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule],
+    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -91,6 +94,7 @@ export class SheetsComponent {
   sheetNumber: number = 1;
   sheetName = "Sheet 1";
   sheetTitle = "Sheet ";
+  sheetTagName = "";
   databaseId:any;
   qrySetId:any;
   chartsEnableDisable = [] as any;
@@ -127,6 +131,33 @@ export class SheetsComponent {
   selectedTabIndex: any;
   isAllSelected: boolean = false;
   active=1;
+
+  Editor = ClassicEditor;
+  editor : boolean = false;
+  bandingSwitch: boolean = false; 
+  legendSwitch: boolean = false;
+  xLabelSwitch: boolean = false;
+  yLabelSwitch: boolean = false;
+  xGridSwitch: boolean = false; 
+  yGridSwitch: boolean = false;
+  numberPopup : boolean = false;
+  decimalPlaces: number = 2;
+  displayUnits: string = 'none';
+  prefix: string = '';
+  suffix: string = '';
+
+  @ViewChild('barChart') barchart!: ChartComponent;
+  @ViewChild('areaChart') areachart!: ChartComponent;
+  @ViewChild('lineChart') linechart!: ChartComponent;
+  @ViewChild('sidebyside') sidebysideChart!: ChartComponent;
+  @ViewChild('stocked') stockedChart!: ChartComponent;
+  @ViewChild('barline') barlineChart!: ChartComponent;
+  @ViewChild('horizentalstocked') horizontolstockedChart!: ChartComponent;
+  @ViewChild('grouped') groupedChart!: ChartComponent;
+  @ViewChild('multiline') multilineChart!: ChartComponent;
+  @ViewChild('piechart') piechart!: ChartComponent;
+  @ViewChild('donutchart') donutchart!: ChartComponent;
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
    if(this.router.url.includes('/workbench/sheets/')){
@@ -153,7 +184,7 @@ export class SheetsComponent {
       this.sheetName = atob(route.snapshot.params['id4'])
       console.log(this.retriveDataSheet_id,this.sheetName,'shetname')
       this.tabs[0] = this.sheetName;
-      this.sheetRetrive();
+      // this.sheetRetrive();
       }
    }
   }
@@ -209,636 +240,930 @@ export class SheetsComponent {
     menu.expanded = !menu.expanded;
   }
 
-barChart(){
-  this.chartOptions3 = {
-    series: [
-      {
-        name: '',
-        data: this.chartsRowData,
-      },
-    ],
-    chart: {
-      toolbar: {
-        show: false
-      },
-      height: 385,
-      type: 'bar',
-      foreColor: this.color,
-    },
-    grid: {
-      show: false,      // you can either change hear to disable all grids
-      xaxis: {
-        lines: {
-          show: false  //or just here to disable only x axis grids
-         }
-       },  
-      yaxis: {
-        lines: { 
-          show: false  //or just here to disable only y axis
-         }
-       },   
-    },
-    plotOptions: {
-      bar: {
-        dataLabels: {
-          hideOverflowingLabels:false,
-          position: 'top', // top, center, bottom
+  barChart(){
+    this.chartOptions3 = {
+      series: [
+        {
+          name: "",
+          data: this.chartsRowData 
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
         },
+        height: 385,
+        type: 'bar',
+        foreColor: this.color,
       },
-    },
-    dataLabels: {
-      enabled: true,
-      formatter: function (val: number) {
-        return val + '';
-      },
-      offsetY: -20,
-      style: {
-        fontSize: '12px',
-        colors: [this.color],
-      },
-    },
-    fill: {
-      type: 'gradient',
-    },
-    xaxis: {
-      categories: this.chartsColumnData,
-      position: 'bottom',
-      labels: {
-        rotate:0,
-        // offsetY: 0,
-        trim: true,
-        // minHeight: 40,
-        hideOverlappingLabels: false,
+      title: {
+        text: "",
+        offsetY: 10,
+        align: 'center',
         style: {
-          colors: this.color,
-          
+          color: this.color,
         },
-      //   formatter: (value) => {
-      //     return (value && value.split(' ')[1][1] === '0' ? value : '');
-      // }
       },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      crosshairs: {
-        fill: {
-          type: 'gradient',
-          gradient: {
-           
-            stops: [0, 100],
-            opacityFrom: 0.4,
-            opacityTo: 0.5,
+      xaxis: {
+        categories: this.chartsColumnData,
+        position: 'bottom',
+        labels: {
+          show: true,
+          trim: true,
+          hideOverlappingLabels: false,
+          style: {
+            colors: this.color,
+            fontSize: '12px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 12,
+        },
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        crosshairs: {
+          fill: {
+            type: 'gradient',
+            gradient: {
+              stops: [0, 100],
+              opacityFrom: 0.4,
+              opacityTo: 0.5,
+            },
           },
         },
-      },
-      tooltip: {
-        enabled: false,
-        offsetY: -35,
-      },
-
-    },
-    colors: [this.color],
-    // fill: {
-    //   type: 'gradient',
-    //   gradient: {
-    //     shade: 'light',
-    //     type: 'horizontal',
-    //     shadeIntensity: 0.25,
-    //     gradientToColors: undefined,
-    //     inverseColors: true,
-    //     opacityFrom: 1,
-    //     opacityTo: 1,
-    //     stops: [50, 0, 100, 100],
-    //   },
-    // },
-    yaxis: {
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      labels: {
-        show: false,
-        formatter: function (val: number) {
-          return val + '$';
+        tooltip: {
+          enabled: false,
+          offsetY: -35,
         },
       },
-    },
-    title: {
-      text: '',
-      offsetY: 10,
-      align: 'center',
-      style: {
-        color: this.color,
+      yaxis:{
+        show: true,
+        labels: {
+          show: true,
+          style: {
+            colors: [],
+            fontSize: '12px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 12,
+          },
+          formatter: this.formatNumber.bind(this)
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
       },
-    },
-    // tooltip: {
-    //   theme: 'dark',
-    //   marker: {
-    //     show: true,
-    //   },
-    //   x: {
-    //     show: true,
-    //   },
-    // },
-  };
-}
-pieChart(){
-  this.chartOptions4={
-    series: this.chartsRowData,
-    chart: {
-        height: 300,
-        type: 'pie',
-    },
-    colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
-    labels: this.chartsColumnData,
-    legend: {
-        position: "bottom"
-    },
-    dataLabels: {
-        dropShadow: {
-            enabled: false
-        }
-    },
-    };
-}
-lineChart(){
-  this.chartOptions={
-    series: [{
-        name: "",
-        data: this.chartsRowData
-    }],
-   
-        chart: {
-            height: 200,
-            type: 'line',
-            reponsive: true,
-            zoom: {
-                enabled: false
-            },
-            events: {
-                mounted: (chart:any) => {
-                  chart.windowResizeHandler();
-                }
-              },
-        },
-        colors: [this.color],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'straight',
-            width: 3,
-        },
-        grid: {
-          borderColor: "rgba(119, 119, 142, 0.05)",
-        },
-        title: {
-            text: '',
-            align: 'left',
-            style: {
-                fontSize: '13px',
-                fontWeight: 'bold',
-                color: this.color
-            },
-        },
+      grid: {
+        show: true,
         xaxis: {
-            categories: this.chartsColumnData,
-            labels: {
-                show: true,
-                style: {
-                    colors: this.color,
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    cssClass: 'apexcharts-xaxis-label',
-                },
-            }
+          lines: {
+            show: false
+          }
         },
         yaxis: {
-            labels: {
-                show: true,
-                style: {
-                    colors: this.color,
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    cssClass: 'apexcharts-yaxis-label',
-                },
-            }
-        }
-    
-}
-}
-areaChart(){
-  this.chartOptions1 = {
-    series: [
-      {
-        name: "",
-        data: this.chartsRowData,
-      },
-    ],
-    chart: {
-      type: "area",
-      height: 200,
-      zoom: {
-        enabled: false,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "straight",
-    },
-    subtitle: {
-      text: "",
-      align: "left",
-      style: {
-        fontSize: "11px",
-        fontWeight: "normal",
-        color: this.color,
-      },
-    },
-    grid: {
-      borderColor: "rgba(119, 119, 142, 0.05)",
-    },
-    labels: this.chartsColumnData,
-    title: {
-      text: "",
-      align: "left",
-      style: {
-        fontSize: "13px",
-        fontWeight: "bold",
-        color: this.color,
-      },
-    },
-    colors: [this.color],
-    xaxis: {
-      type: "",
-      labels: {
-        show: true,
-        style: {
-          colors: this.color,
-          fontSize: "11px",
-          fontWeight: 600,
-          cssClass: "apexcharts-xaxis-label",
+          lines: {
+            show: false
+          }
         },
-      },
-    },
-    yaxis: {
-      opposite: true,
-      labels: {
-        show: true,
-        style: {
-          colors: this.color,
-          fontSize: "11px",
-          fontWeight: 600,
-          cssClass: "apexcharts-xaxis-label",
-        },
-      },
-    },
-    legend: {
-      horizontalAlign: "left",
-    },
-  };
-}
-sidebysideBar(){
-    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-    const categories = this.flattenDimensions(dimensions);
-    this.chartOptions2 = {
-      series: this.sidebysideBarRowData,
-      colors:['#00a5a2','#0dc9c5','#f43f63'],
-      chart: {
-        type: 'bar',
-        height: 320,
       },
       plotOptions: {
         bar: {
-          horizontal: false,
-          columnWidth: '55%',
-          // endingShape: "rounded"
+          dataLabels: {
+            hideOverflowingLabels:false,
+            position: 'top',
+          },
         },
       },
       dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: ['transparent'],
-      },
-      xaxis: {
-        categories:categories,
-        
-      },
-      yaxis: {
-        title: {
-          text: '',
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: [this.color],
         },
       },
       fill: {
-        opacity: 1,
+        type: 'gradient',
       },
-      tooltip: {
-        y: {
-          formatter: function (val:any) {
-            console.log(val)
-            return val ;
+      colors: [this.color]
+    };
+    this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+    this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+  }
+  pieChart(){
+    this.chartOptions4={
+      series: this.chartsRowData,
+      chart: {
+          height: 300,
+          type: 'pie',
+      },
+      colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+      labels: this.chartsColumnData,
+      legend: {
+          show: true,
+          position: "bottom"
+      },
+      dataLabels: {
+          dropShadow: {
+              enabled: false
+          }
+      },
+      };
+      this.legendSwitch = this.chartOptions4.legend.show;
+  }
+  lineChart(){
+    this.chartOptions={
+      series: [{
+          name: "",
+          data: this.chartsRowData
+      }],
+     
+          chart: {
+              height: 200,
+              type: 'line',
+              reponsive: true,
+              zoom: {
+                  enabled: false
+              },
+              events: {
+                  mounted: (chart:any) => {
+                    chart.windowResizeHandler();
+                  }
+                },
           },
+          colors: [this.color],
+          dataLabels: {
+            enabled: true,
+            formatter: this.formatNumber.bind(this),
+            offsetY: -20,
+            style: {
+              fontSize: '12px',
+              colors: [this.color],
+            },
+          },
+          stroke: {
+              curve: 'straight',
+              width: 3,
+          },
+          grid: {
+            borderColor: "rgba(119, 119, 142, 0.05)",
+            show: true,
+            xaxis: {
+              lines: {
+                show: false
+              }
+            },
+            yaxis: {
+              lines: {
+                show: false
+              }
+            },
+          },
+          title: {
+              text: '',
+              align: 'left',
+              style: {
+                  fontSize: '13px',
+                  fontWeight: 'bold',
+                  color: this.color
+              },
+          },
+          xaxis: {
+              categories: this.chartsColumnData,
+              labels: {
+                  show: true,
+                  hideOverlappingLabels: false,
+                  trim: true,
+                  style: {
+                    colors: this.color,
+                    fontSize: '12px',
+                    fontFamily: 'Helvetica, Arial, sans-serif',
+                    fontWeight: 12,
+                  },
+              }
+          },
+          yaxis: {
+              labels: {
+                  show: true,
+                  style: {
+                      colors: this.color,
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cssClass: 'apexcharts-yaxis-label',
+                  },
+                  formatter: this.formatNumber.bind(this)
+              }
+          }
+      
+  }
+    this.xLabelSwitch = this.chartOptions.xaxis.labels.show;
+    this.yLabelSwitch = this.chartOptions.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
+  }
+  areaChart(){
+    this.chartOptions1 = {
+      series: [
+        {
+          name: "",
+          data: this.chartsRowData,
+        },
+      ],
+      chart: {
+        type: "area",
+        height: 200,
+        zoom: {
+          enabled: false,
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: [this.color],
+        },
+      },
+      stroke: {
+        curve: "straight",
+      },
+      subtitle: {
+        text: "",
+        align: "left",
+        style: {
+          fontSize: "11px",
+          fontWeight: "normal",
+          color: this.color,
         },
       },
       grid: {
         borderColor: "rgba(119, 119, 142, 0.05)",
-      },
-    };
-  }
-flattenDimensions(dimensions: Dimension[]): string[] {
-  const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
-  return Array.from({ length: numCategories }, (_, index) => {
-    return dimensions.map(dim => dim.values[index] || '').join(',');
-  });
-}
-stockedBar(){
-  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-    const categories = this.flattenDimensions(dimensions);
-  this.chartOptions6 = {
-    series: this.sidebysideBarRowData,
-    chart: {
-      type: "bar",
-      height: 350,
-      stacked: true,
-      toolbar: {
-        show: false
-      },
-      zoom: {
-        enabled: true
-      }
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            position: "bottom",
-            offsetX: -10,
-            offsetY: 0
-          }
-        }
-      }
-    ],
-    plotOptions: {
-      bar: {
-        horizontal: false
-      }
-    },
-    xaxis: {
-      type: "category",
-      categories: categories,
-    },
-    legend: {
-      position: "right",
-      offsetY: 40
-    },
-    fill: {
-      opacity: 1
-    }
-  };
-}
-
-barLineChart(){
-  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-  const categories = this.flattenDimensions(dimensions);
-  this.chartOptions5 = {
-    series: [
-      {
-        name: this.sidebysideBarRowData[0]?.name,
-        type: "column",
-        data: this.sidebysideBarRowData[0]?.data
-      },
-      {
-        name: this.sidebysideBarRowData[1]?.name,
-        type: "line",
-        data: this.sidebysideBarRowData[1]?.data,
-      }
-    ],
-    colors:['#00a5a2','#31d1ce'],
-    chart: {
-      height: 350,
-      type: "line"
-    },
-    grid: {
-      borderColor: "rgba(119, 119, 142, 0.05)",
-    },
-    stroke: {
-      width: [0, 4]
-    },
-    title: {
-      text: "",
-      style: {
-        fontSize: "13px",
-        fontWeight: "bold",
-        color: "#8c9097",
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      enabledOnSeries: [1]
-    },
-    labels: categories,
-    xaxis: {
-      type: ""
-    },
-    yaxis: [
-      {
-        title: {
-          text: "",
-          style: {
-            fontSize: "13px",
-            fontWeight: "bold",
-            color: "#8c9097",
-          },
-        }
-      },
-      {
-        opposite: true,
-        title: {
-          text: "",
-          style: {
-            fontSize: "13px",
-            fontWeight: "bold",
-            color: "#8c9097",
-          },
-        }
-      }
-    ]
-    
-  };
-}
-horizentalStockedBar(){
-  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-  const categories = this.flattenDimensions(dimensions);
-  this.chartOptions7 = {
-    series: this.sidebysideBarRowData,
-    chart: {
-      type: "bar",
-      height: 350,
-      stacked: true,
-      toolbar: {
-        show: true
-      },
-      zoom: {
-        enabled: true
-      }
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            position: "bottom",
-            offsetX: -10,
-            offsetY: 0
-          }
-        }
-      }
-    ],
-    plotOptions: {
-      bar: {
-        horizontal: true
-      }
-    },
-    xaxis: {
-      type: "category",
-      categories: categories,
-    },
-    legend: {
-      position: "right",
-      offsetY: 40
-    },
-    fill: {
-      opacity: 1
-    }
-  };
-}
-hGrouped(){
-  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-  const categories = this.flattenDimensions(dimensions);
-  this.chartOptions8 = {
-    series: this.sidebysideBarRowData,
-    chart: {
-      type: "bar",
-      height: 430
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        dataLabels: {
-          position: "top"
-        }
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      offsetX: -6,
-      style: {
-        fontSize: "12px",
-        colors: ["#fff"]
-      }
-    },
-    stroke: {
-      show: true,
-      width: 1,
-      colors: ["#fff"]
-    },
-    xaxis: {
-      categories: categories
-    }
-  };
-}
-multiLineChart(){
-  const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-  const categories = this.flattenDimensions(dimensions);
-  this.chartOptions9 = {
-    series: this.sidebysideBarRowData,
-    chart: {
-      height: 350,
-      type: "line"
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      width: 5,
-      curve: "straight",
-      dashArray: [0, 8, 5]
-    },
-    title: {
-      text: "",
-      align: "left"
-    },
-    legend: {
-      tooltipHoverFormatter: function(val:any, opts:any) {
-        return (
-          val +
-          " - <strong>" +
-          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
-          "</strong>"
-        );
-      }
-    },
-    markers: {
-      size: 0,
-      hover: {
-        sizeOffset: 6
-      }
-    },
-    xaxis: {
-      labels: {
-        trim: false
-      },
-      categories: categories
-    },
-    tooltip: {
-      y: [
-        {
-          title: {
-            formatter: function(val:any) {
-              return val;
-            }
+        show: true,
+        xaxis: {
+          lines: {
+            show: false
           }
         },
-      ]
-    },
-    grid: {
-      borderColor: "#f1f1f1"
-    }
-  };
-}
-donutChart(){
-  this.chartOptions10 = {
-    series: this.chartsRowData,
-    chart: {
-      type: "donut"
-    },
-    labels: this.chartsColumnData,
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 100
+        yaxis: {
+          lines: {
+            show: false
+          }
+        },
+      },
+      labels: this.chartsColumnData,
+      title: {
+        text: "",
+        align: "left",
+        style: {
+          fontSize: "13px",
+          fontWeight: "bold",
+          color: this.color,
+        },
+      },
+      colors: [this.color],
+      xaxis: {
+        type: "",
+        labels: {
+          show: true,
+          style: {
+            colors: this.color,
+            fontSize: "11px",
+            fontWeight: 600,
+            cssClass: "apexcharts-xaxis-label",
           },
-          legend: {
-            position: "bottom"
+        },
+      },
+      yaxis: {
+        opposite: true,
+        labels: {
+          show: true,
+          style: {
+            colors: this.color,
+            fontSize: "11px",
+            fontWeight: 600,
+            cssClass: "apexcharts-xaxis-label",
+          },
+          formatter: this.formatNumber.bind(this)
+        },
+      },
+      legend: {
+        horizontalAlign: "left",
+      },
+    };
+    this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
+    this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
+  }
+  sidebysideBar(){
+      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const categories = this.flattenDimensions(dimensions);
+      this.chartOptions2 = {
+        series: this.sidebysideBarRowData,
+        colors:['#00a5a2','#0dc9c5','#f43f63'],
+        chart: {
+          type: 'bar',
+          height: 320,
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%',
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: this.formatNumber.bind(this),
+          offsetY: -20,
+          style: {
+            fontSize: '12px',
+            colors: ['#f43f63'],
+          },
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent'],
+        },
+        xaxis: {
+          categories:categories,
+          labels: {
+            show: true,
+            style: {
+              colors: this.color,
+              fontSize: "11px",
+              fontWeight: 600,
+              cssClass: "apexcharts-xaxis-label",
+            },
+          },
+        },
+        yaxis: {
+          title: {
+            text: '',
+          },
+          labels: {
+            show: true,
+            style: {
+              colors: this.color,
+              fontSize: "11px",
+              fontWeight: 600,
+              cssClass: "apexcharts-xaxis-label",
+            },
+            formatter: this.formatNumber.bind(this)
+          },
+        },
+        fill: {
+          opacity: 1,
+        },
+        tooltip: {
+          y: {
+            formatter: function (val:any) {
+              console.log(val)
+              return val ;
+            },
+          },
+        },
+        grid: {
+          borderColor: "rgba(119, 119, 142, 0.05)",
+          show: true,
+        xaxis: {
+          lines: {
+            show: false
+          }
+        },
+        yaxis: {
+          lines: {
+            show: false
+          }
+        },
+        },
+      };
+    this.xLabelSwitch = this.chartOptions2.xaxis.labels.show;
+    this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions2.grid.yaxis.lines.show;
+    }
+  flattenDimensions(dimensions: Dimension[]): string[] {
+    const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
+    return Array.from({ length: numCategories }, (_, index) => {
+      return dimensions.map(dim => dim.values[index] || '').join(',');
+    });
+  }
+  stockedBar(){
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const categories = this.flattenDimensions(dimensions);
+    this.chartOptions6 = {
+      series: this.sidebysideBarRowData,
+      chart: {
+        type: "bar",
+        height: 350,
+        stacked: true,
+        toolbar: {
+          show: false
+        },
+        zoom: {
+          enabled: true
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: "bottom",
+              offsetX: -10,
+              offsetY: 0
+            }
           }
         }
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: false
+        }
+      },
+      xaxis: {
+        type: "category",
+        categories: categories,
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+      },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+          formatter: this.formatNumber.bind(this)
       }
-    ]
-  };
-}
+      },
+      legend: {
+        position: "right",
+        offsetY: 40
+      },
+      fill: {
+        opacity: 1
+      },
+      grid: {
+        show: true,
+        xaxis: {
+          lines: {
+            show: false
+          }
+        },
+        yaxis: {
+          lines: {
+            show: false
+          }
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: [this.color],
+        },
+      }
+    };
+    this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+    // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+  }
+  
+  barLineChart(){
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    this.chartOptions5 = {
+      series: [
+        {
+          name: this.sidebysideBarRowData[0]?.name,
+          type: "column",
+          data: this.sidebysideBarRowData[0]?.data
+        },
+        {
+          name: this.sidebysideBarRowData[1]?.name,
+          type: "line",
+          data: this.sidebysideBarRowData[1]?.data,
+        }
+      ],
+      colors:['#00a5a2','#31d1ce'],
+      chart: {
+        height: 350,
+        type: "line"
+      },
+      grid: {
+        show : true,
+        xaxis: {
+          lines: {
+              show: false
+          }
+      },   
+      yaxis: {
+          lines: {
+              show: false
+          }
+      }, 
+      },
+      stroke: {
+        width: [0, 4]
+      },
+      title: {
+        text: "",
+        style: {
+          fontSize: "13px",
+          fontWeight: "bold",
+          color: "#8c9097",
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: [this.color],
+        },
+      },
+      labels: categories,
+      xaxis: {
+        type: "",
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+      }},
+      yaxis: [
+        {
+          show : true,
+          title: {
+            text: "",
+            style: {
+              fontSize: "13px",
+              fontWeight: "bold",
+              color: "#8c9097",
+            },
+          },
+          labels: {
+            show: true,
+            style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+            },
+            formatter: this.formatNumber.bind(this)
+          }
+        },
+        {
+          show : true,
+          opposite: true,
+          title: {
+            text: "",
+            style: {
+              fontSize: "13px",
+              fontWeight: "bold",
+              color: "#8c9097",
+            },
+          },
+          labels: {
+            show: true,
+            style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+            },
+            formatter: this.formatNumber.bind(this)
+          }
+        }
+      ]
+      
+    };
+    this.xLabelSwitch = this.chartOptions5.xaxis.labels.show;
+    // this.yLabelSwitch = this.chartOptions5.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions5.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
+  }
+  horizentalStockedBar(){
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    this.chartOptions7 = {
+      series: this.sidebysideBarRowData,
+      chart: {
+        type: "bar",
+        height: 350,
+        stacked: true,
+        toolbar: {
+          show: true
+        },
+        zoom: {
+          enabled: true
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: "bottom",
+              offsetX: -10,
+              offsetY: 0
+            }
+          }
+        }
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: true
+        }
+      },
+      xaxis: {
+        type: "category",
+        categories: categories,
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+          formatter: this.formatNumber.bind(this)
+        }
+      },
+      yaxis : {
+        show : true,
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+        }
+      },
+      legend: {
+        position: "right",
+        offsetY: 40
+      },
+      fill: {
+        opacity: 1
+      },
+      grid: {
+        show: true,
+        xaxis: {
+            lines: {
+                show: false
+            }
+        },   
+        yaxis: {
+            lines: {
+                show: false
+            }
+        },  
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: [this.color],
+        },
+      }
+    };
+    this.xLabelSwitch = this.chartOptions7.xaxis.labels.show;
+    this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions7.grid.yaxis.lines.show;
+  }
+  hGrouped(){
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    this.chartOptions8 = {
+      series: this.sidebysideBarRowData,
+      chart: {
+        type: "bar",
+        height: 430
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          dataLabels: {
+            position: "top"
+          }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        offsetY: -6,
+        style: {
+          fontSize: '12px',
+          colors: ["#fff"],
+        },
+      },
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ["#fff"]
+      },
+      xaxis: {
+        categories: categories,
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+          formatter: this.formatNumber.bind(this)
+          },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+            show: true,
+            style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+            },
+        },
+    },
+    grid: {
+      show: true,
+      xaxis: {
+          lines: {
+              show: false
+          }
+      },   
+      yaxis: {
+          lines: {
+              show: true
+          }
+      },  
+      },  
+    };
+    this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
+    this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
+  }
+  multiLineChart(){
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    this.chartOptions9 = {
+      series: this.sidebysideBarRowData,
+      chart: {
+        height: 350,
+        type: "line"
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: this.formatNumber.bind(this),
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: [this.color],
+        },
+      },
+      stroke: {
+        width: 5,
+        curve: "straight",
+        dashArray: [0, 8, 5]
+      },
+      title: {
+        text: "",
+        align: "left"
+      },
+      legend: {
+        tooltipHoverFormatter: function(val:any, opts:any) {
+          return (
+            val +
+            " - <strong>" +
+            opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
+            "</strong>"
+          );
+        }
+      },
+      markers: {
+        size: 0,
+        hover: {
+          sizeOffset: 6
+        }
+      },
+      xaxis: {
+        categories: categories,
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+        },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+          show: true,
+          style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12
+          },
+          formatter: this.formatNumber.bind(this)
+        },
+      },
+      tooltip: {
+        y: [
+          {
+            title: {
+              formatter: function(val:any) {
+                return val;
+              }
+            }
+          },
+        ]
+      },
+      grid: {
+        show: true,
+        xaxis: {
+            lines: {
+                show: false
+            }
+        },   
+        yaxis: {
+            lines: {
+                show: false
+            }
+        }, 
+      } 
+    };
+    this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+    // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+  }
+  donutChart(){
+    this.chartOptions10 = {
+      series: this.chartsRowData,
+      chart: {
+        type: "donut"
+      },
+      labels: this.chartsColumnData,
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 100
+            },
+            legend: {
+              position: "bottom"
+            }
+          }
+        }
+      ],
+      legend: {
+        show: true,
+    },
+    };
+    this.legendSwitch = this.chartOptions10.legend.show;
+  }
 
 tableDimentions = [] as any;
 tableMeasures = [] as any;
@@ -1073,9 +1398,19 @@ tableMeasures = [] as any;
       );
     }
   }
-  dragStartedColumn(index:any){
+  dragStartedColumn(index:any,column:any){
+    console.log(this.draggedColumns);
+    console.log(this.draggedColumnsData);
+    console.log(index);
     this.draggedColumns.splice(index, 1);
-   this.draggedColumnsData.splice(index, 1);
+    (this.draggedColumnsData as any[]).forEach((data,index)=>{
+      (data as any[]).forEach((aa)=>{ 
+        if(column === aa){
+          console.log(aa);
+          this.draggedColumnsData.splice(index, 1);
+        }
+      } );
+    });   
    this.dataExtraction();
   }
   dragStartedRow(index:any){
@@ -1355,6 +1690,7 @@ const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
   "sheet_name": this.sheetTitle,
+  "sheet_tag_name": this.sheetTagName,
   "filterId":this.filterId,
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "data":{
@@ -1502,6 +1838,18 @@ sheetRetrive(){
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
         this.dimetionMeasure = responce.filters_data;
+        if(!responce.sheet_tag_name){
+          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          inputElement.innerHTML = responce.sheet_name;
+          this.sheetTagName = responce.sheet_name;
+        }
+        else{
+          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          inputElement.innerHTML = responce.sheet_tag_name;
+          inputElement.style.paddingTop = '1.5%';
+          this.sheetTagName = responce.sheet_tag_name;
+        }
+        this.displayUnits = 'none';
         
         this.draggedColumns.forEach((res:any) => {
           this.draggedColumnsData.push([res.column,res.data_type,""])
@@ -1919,6 +2267,1395 @@ renameColumns(){
     }
   )
  }
+
+  editorConfig = {
+    fontFamily: {
+      options: [
+        'default',
+        'Arial, Helvetica, sans-serif',
+        'Georgia, serif',
+        'Impact, Charcoal, sans-serif',
+        'Tahoma, Geneva, sans-serif',
+        'Times New Roman, Times, serif',
+        'Trebuchet MS, Helvetica, sans-serif',
+        'Verdana, Geneva, sans-serif',
+        'Courier New, Courier, monospace',
+        'Lucida Sans Unicode, Lucida Grande, sans-serif',
+        'Comic Sans MS, Comic Sans, cursive',
+        'Palatino Linotype, Book Antiqua, Palatino, serif',
+        'Arial Black, Gadget, sans-serif'
+      ],
+      supportAllValues: true
+    },
+    fontSize: {
+      options: [9, 11, 13, 'default', 17, 19, 21]
+    },
+    toolbar: ['undo', 'redo', '|', 'selectAll', '|', 'heading', '|', 'bold', 'italic', 'underline',
+      '|', 'removeformat', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'alignment'],
+    plugins: [
+      Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Underline, RemoveFormat, SelectAll, Heading],
+  };
+
+  toggleEditor() {
+    this.editor = !this.editor;
+  }
+  updateSheetName() {
+    const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+    if (inputElement) {
+      inputElement.innerHTML = this.sheetTagName;
+      inputElement.style.paddingTop = '1.5%';
+    }
+  }
+  fontChange(event : any, section : any){
+    if (section === 'dimension') {
+      if (event.target.value === 'arial') {
+        if (this.barchart) {
+          this.chartOptions3.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions3.xaxis.labels.style.fontSize = '12px';
+        }
+        else if (this.areachart) {
+          this.chartOptions1.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions1.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.linechart){
+          this.chartOptions.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions2.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions6.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions5.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions7.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions8.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions9.xaxis.labels.style.fontSize = '12px';
+        }
+      }
+      if (event.target.value === 'calibri') {
+        if (this.barchart) {
+          this.chartOptions3.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions3.xaxis.labels.style.fontSize = '14px';
+        }
+        else if (this.areachart) {
+          this.chartOptions1.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions1.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.linechart){
+          this.chartOptions.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions2.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions6.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions5.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions7.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions8.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions9.xaxis.labels.style.fontSize = '14px';
+        }
+      }
+      if (event.target.value === 'times') {
+        if (this.barchart) {
+          this.chartOptions3.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions3.xaxis.labels.style.fontSize = '16px';
+        }
+        else if (this.areachart) {
+          this.chartOptions1.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions1.xaxis.labels.style.fontSize = '16px';
+        }
+        else if(this.linechart){
+          this.chartOptions.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions.xaxis.labels.style.fontSize = '16px';
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions2.xaxis.labels.style.fontSize = '16px';
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions6.xaxis.labels.style.fontSize = '16px';
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions5.xaxis.labels.style.fontSize = '16px';
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions7.xaxis.labels.style.fontSize = '16px';
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions8.xaxis.labels.style.fontSize = '16px';
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions9.xaxis.labels.style.fontSize = '16px';
+        }
+      }
+      if (event.target.value === 'verdana') {
+        if (this.barchart) {
+          this.chartOptions3.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions3.xaxis.labels.style.fontSize = '12px';
+        }
+        else if (this.areachart) {
+          this.chartOptions1.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions1.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.linechart){
+          this.chartOptions.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions2.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions6.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions5.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions7.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions8.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
+          this.chartOptions9.xaxis.labels.style.fontSize = '12px';
+        }
+      }
+    }
+    else{
+      if(event.target.value === 'arial'){
+        if (this.barchart) {
+          if(this.chartOptions3.yaxis.length >0){
+            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions3.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions3.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if (this.areachart){
+          if(this.chartOptions1.yaxis.length >0){
+            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions1.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions1.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.linechart){
+          if(this.chartOptions.yaxis.length >0){
+            (this.chartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.sidebysideChart){
+          if(this.chartOptions2.yaxis.length >0){
+            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions2.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions2.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.stockedChart){
+          if(this.chartOptions6.yaxis.length >0){
+            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions6.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions6.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.barlineChart){
+          if(this.chartOptions5.yaxis.length >0){
+            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions5.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions5.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.horizontolstockedChart){
+          if(this.chartOptions7.yaxis.length >0){
+            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions7.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions7.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.groupedChart){
+          if(this.chartOptions8.yaxis.length >0){
+            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions8.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions8.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.multilineChart){
+          if(this.chartOptions9.yaxis.length >0){
+            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions9.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions9.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+      }
+      if(event.target.value === 'calibri'){
+        if(this.barchart){
+          if(this.chartOptions3.yaxis.length >0){
+            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions3.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions3.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.areachart){
+          if(this.chartOptions1.yaxis.length >0){
+            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions1.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions1.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.linechart){
+          if(this.chartOptions.yaxis.length >0){
+            (this.chartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.sidebysideChart){
+          if(this.chartOptions2.yaxis.length >0){
+            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions2.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions2.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.stockedChart){
+          if(this.chartOptions6.yaxis.length >0){
+            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions6.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions6.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.barlineChart){
+          if(this.chartOptions5.yaxis.length >0){
+            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions5.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions5.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.horizontolstockedChart){
+          if(this.chartOptions7.yaxis.length >0){
+            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions7.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions7.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.groupedChart){
+          if(this.chartOptions8.yaxis.length >0){
+            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions8.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions8.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.multilineChart){
+          if(this.chartOptions9.yaxis.length >0){
+            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.chartOptions9.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions9.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+      }
+      if(event.target.value === 'times'){
+        if(this.barchart){
+          if(this.chartOptions3.yaxis.length >0){
+            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions3.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions3.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.areachart){
+          if(this.chartOptions1.yaxis.length >0){
+            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions1.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions1.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.linechart){
+          if(this.chartOptions.yaxis.length >0){
+            (this.chartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.sidebysideChart){
+          if(this.chartOptions2.yaxis.length >0){
+            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions2.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions2.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.stockedChart){
+          if(this.chartOptions6.yaxis.length >0){
+            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions6.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions6.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.barlineChart){
+          if(this.chartOptions5.yaxis.length >0){
+            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions5.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions5.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.horizontolstockedChart){
+          if(this.chartOptions7.yaxis.length >0){
+            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions7.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions7.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.groupedChart){
+          if(this.chartOptions8.yaxis.length >0){
+            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions8.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions8.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+        else if(this.multilineChart){
+          if(this.chartOptions9.yaxis.length >0){
+            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.chartOptions9.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions9.yaxis.labels.style.fontSize = '16px';
+          }
+        }
+      }
+      if(event.target.value === 'verdana'){
+        if(this.barchart){
+          if(this.chartOptions3.yaxis.length >0){
+            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions3.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions3.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.areachart){
+          if(this.chartOptions1.yaxis.length >0){
+            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions1.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions1.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.linechart){
+          if(this.chartOptions.yaxis.length >0){
+            (this.chartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.sidebysideChart){
+          if(this.chartOptions2.yaxis.length >0){
+            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions2.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions2.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.stockedChart){
+          if(this.chartOptions6.yaxis.length >0){
+            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions6.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions6.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.barlineChart){
+          if(this.chartOptions5.yaxis.length >0){
+            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions5.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions5.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.horizontolstockedChart){
+          if(this.chartOptions7.yaxis.length >0){
+            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions7.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions7.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.groupedChart){
+          if(this.chartOptions8.yaxis.length >0){
+            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions8.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions8.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+        else if(this.multilineChart){
+          if(this.chartOptions9.yaxis.length >0){
+            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.chartOptions9.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
+            this.chartOptions9.yaxis.labels.style.fontSize = '12px';
+          }
+        }
+      }
+    }
+    
+    console.log(this.chartOptions3);
+    this.updateChart();
+  }
+  allignmentChange(event: any, section: any) {
+    if (section === 'dimension') {
+      if (event.target.value === 'center') {
+        if(this.barchart){
+          this.chartOptions3.xaxis.labels.offsetX = 0;
+        }
+        else if(this.areachart){
+          this.chartOptions1.xaxis.labels.offsetX = 0;
+        }
+        else if(this.linechart){
+          this.chartOptions.xaxis.labels.offsetX = 0;
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.xaxis.labels.offsetX = 0;
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.xaxis.labels.offsetX = 0;
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.xaxis.labels.offsetX = 0;
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.xaxis.labels.offsetX = 0;
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.xaxis.labels.offsetX = 0;
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.xaxis.labels.offsetX = 0;
+        }
+
+      }
+      if (event.target.value === 'left') {
+        if(this.barchart){
+          this.chartOptions3.xaxis.labels.offsetX = -10;
+        }
+        else if(this.areachart){
+          this.chartOptions1.xaxis.labels.offsetX = -10;
+        }
+        else if(this.linechart){
+          this.chartOptions.xaxis.labels.offsetX = -10;
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.xaxis.labels.offsetX = -10;
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.xaxis.labels.offsetX = -10;
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.xaxis.labels.offsetX = -10;
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.xaxis.labels.offsetX = -10;
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.xaxis.labels.offsetX = -10;
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.xaxis.labels.offsetX = -10;
+        }
+      }
+      if (event.target.value === 'right') {
+        if(this.barchart){
+          this.chartOptions3.xaxis.labels.offsetX = 10;
+        }
+        else if(this.areachart){
+          this.chartOptions1.xaxis.labels.offsetX = 10;
+        }
+        else if(this.linechart){
+          this.chartOptions.xaxis.labels.offsetX = 10;
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.xaxis.labels.offsetX = 10;
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.xaxis.labels.offsetX = 10;
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.xaxis.labels.offsetX = 10;
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.xaxis.labels.offsetX = 10;
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.xaxis.labels.offsetX = 10;
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.xaxis.labels.offsetX = 10;
+        }
+      }
+    }
+    else {
+      if (event.target.value === 'center') {
+        if(this.barchart){
+          if (this.chartOptions3.yaxis.length > 0) {
+            (this.chartOptions3.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions3.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.areachart){
+          if (this.chartOptions1.yaxis.length > 0) {
+            (this.chartOptions1.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions1.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.linechart){
+          if (this.chartOptions.yaxis.length > 0) {
+            (this.chartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.sidebysideChart){
+          if (this.chartOptions2.yaxis.length > 0) {
+            (this.chartOptions2.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions2.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.stockedChart){
+          if (this.chartOptions6.yaxis.length > 0) {
+            (this.chartOptions6.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions6.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.barlineChart){
+          if (this.chartOptions5.yaxis.length > 0) {
+            (this.chartOptions5.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions5.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.horizontolstockedChart){
+          if (this.chartOptions7.yaxis.length > 0) {
+            (this.chartOptions7.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions7.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.groupedChart){
+          if (this.chartOptions8.yaxis.length > 0) {
+            (this.chartOptions8.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions8.yaxis.labels.offsetY = 0;
+          }
+        }
+        else if(this.multilineChart){
+          if (this.chartOptions9.yaxis.length > 0) {
+            (this.chartOptions9.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.chartOptions9.yaxis.labels.offsetY = 0;
+          }
+        }
+      }
+      if (event.target.value === 'up') {
+        if(this.barchart){
+          if (this.chartOptions3.yaxis.length > 0) {
+            (this.chartOptions3.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions3.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.areachart){
+          if (this.chartOptions1.yaxis.length > 0) {
+            (this.chartOptions1.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions1.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.linechart){
+          if (this.chartOptions.yaxis.length > 0) {
+            (this.chartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.sidebysideChart){
+          if (this.chartOptions2.yaxis.length > 0) {
+            (this.chartOptions2.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions2.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.stockedChart){
+          if (this.chartOptions6.yaxis.length > 0) {
+            (this.chartOptions6.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions6.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.barlineChart){
+          if (this.chartOptions5.yaxis.length > 0) {
+            (this.chartOptions5.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions5.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.horizontolstockedChart){
+          if (this.chartOptions7.yaxis.length > 0) {
+            (this.chartOptions7.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions7.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.groupedChart){
+          if (this.chartOptions8.yaxis.length > 0) {
+            (this.chartOptions8.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions8.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.multilineChart){
+          if (this.chartOptions9.yaxis.length > 0) {
+            (this.chartOptions9.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.chartOptions9.yaxis.labels.offsetY = -10;
+          }
+        }
+      }
+      if (event.target.value === 'down') {
+        if(this.barchart){
+          if (this.chartOptions3.yaxis.length > 0) {
+            (this.chartOptions3.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions3.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.areachart){
+          if (this.chartOptions1.yaxis.length > 0) {
+            (this.chartOptions1.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions1.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.linechart){
+          if (this.chartOptions.yaxis.length > 0) {
+            (this.chartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.sidebysideChart){
+          if (this.chartOptions2.yaxis.length > 0) {
+            (this.chartOptions2.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions2.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.stockedChart){
+          if (this.chartOptions6.yaxis.length > 0) {
+            (this.chartOptions6.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions6.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.barlineChart){
+          if (this.chartOptions5.yaxis.length > 0) {
+            (this.chartOptions5.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions5.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.horizontolstockedChart){
+          if (this.chartOptions7.yaxis.length > 0) {
+            (this.chartOptions7.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions7.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.groupedChart){
+          if (this.chartOptions8.yaxis.length > 0) {
+            (this.chartOptions8.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions8.yaxis.labels.offsetY = 10;
+          }
+        }
+        else if(this.multilineChart){
+          if (this.chartOptions9.yaxis.length > 0) {
+            (this.chartOptions9.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.chartOptions9.yaxis.labels.offsetY = 10;
+          }
+        }
+      }
+    }
+    this.updateChart();
+  }
+  updateChart() {
+    if (this.barchart) {
+      this.barchart.updateOptions(this.chartOptions3);
+      console.log(this.chartOptions3);
+    }
+    else if(this.areachart){
+      this.areachart.updateOptions(this.chartOptions1);
+      console.log(this.chartOptions1);
+    }
+    else if(this.linechart){
+      this.linechart.updateOptions(this.chartOptions);
+      console.log(this.chartOptions);
+    }
+    else if(this.sidebysideChart){
+      this.sidebysideChart.updateOptions(this.chartOptions2);
+      console.log(this.chartOptions2);
+    }
+    else if(this.stockedChart){
+      this.stockedChart.updateOptions(this.chartOptions6);
+      console.log(this.chartOptions6);
+    }
+    else if(this.barlineChart){
+      this.barlineChart.updateOptions(this.chartOptions5);
+      console.log(this.chartOptions5);
+    }
+    else if(this.horizontolstockedChart){
+      this.horizontolstockedChart.updateOptions(this.chartOptions7);
+      console.log(this.chartOptions7);
+    }
+    else if(this.groupedChart){
+      this.groupedChart.updateOptions(this.chartOptions8);
+      console.log(this.chartOptions8);
+    }
+    else if(this.multilineChart){
+      this.multilineChart.updateOptions(this.chartOptions9);
+      console.log(this.chartOptions9);
+    }
+    else if(this.piechart){
+      this.piechart.updateOptions(this.chartOptions4);
+      console.log(this.chartOptions4);
+    }
+    else if(this.donutchart){
+      this.donutchart.updateOptions(this.chartOptions10);
+      console.log(this.chartOptions10);
+    }
+  }
+  toggleSwitch(type : string) {
+    if(type === 'banding'){
+      this.bandingSwitch = !this.bandingSwitch;
+    }
+    else if(type === 'xlabel'){
+      this.xLabelSwitch = !this.xLabelSwitch;
+      if(this.barchart){
+        this.chartOptions3.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.areachart){
+        this.chartOptions1.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.linechart){
+        this.chartOptions.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.xaxis.labels.show = this.xLabelSwitch;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.xaxis.labels.show = this.xLabelSwitch;
+      }
+    }
+    else if(type === 'ylabel'){
+      this.yLabelSwitch = !this.yLabelSwitch;
+      if(this.barchart){
+        if(this.chartOptions3.yaxis.length >0){
+          (this.chartOptions3.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions3.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.areachart){
+        if(this.chartOptions1.yaxis.length >0){
+          (this.chartOptions1.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions1.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.linechart){
+        if(this.chartOptions.yaxis.length >0){
+          (this.chartOptions.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.sidebysideChart){
+        if(this.chartOptions2.yaxis.length >0){
+          (this.chartOptions2.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions2.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.stockedChart){
+        if(this.chartOptions6.yaxis.length >0){
+          (this.chartOptions6.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions6.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.barlineChart){
+        if(this.chartOptions5.yaxis.length >0){
+          (this.chartOptions5.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions5.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.horizontolstockedChart){
+        if(this.chartOptions7.yaxis.length >0){
+          (this.chartOptions7.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions7.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.groupedChart){
+        if(this.chartOptions8.yaxis.length >0){
+          (this.chartOptions8.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions8.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+      else if(this.multilineChart){
+        if(this.chartOptions9.yaxis.length >0){
+          (this.chartOptions9.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.chartOptions9.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
+    }
+    else if(type === 'xgrid'){
+      this.xGridSwitch = !this.xGridSwitch;
+      if(this.barchart){
+        this.chartOptions3.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.areachart){
+        this.chartOptions1.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.linechart){
+        this.chartOptions.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+    }
+    else if(type === 'ygrid'){
+      this.yGridSwitch = !this.yGridSwitch;
+      if(this.barchart){
+        this.chartOptions3.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.areachart){
+        this.chartOptions1.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.linechart){
+        this.chartOptions.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+    }
+    else if(type === 'legend'){
+      this.legendSwitch = !this.legendSwitch;
+      if(this.piechart){
+        this.chartOptions4.legend.show = this.legendSwitch;
+      }
+      else if(this.donutchart){
+        this.chartOptions10.legend.show = this.legendSwitch;
+      }
+    }
+    this.updateChart();
+  }
+  formatNumber(value: number): string {
+    let formattedNumber = value+'';
+
+    if (this.displayUnits !== 'none') {
+      switch (this.displayUnits) {
+        case 'K':
+          formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
+          break;
+        case 'M':
+          formattedNumber = (value / 1_000_000).toFixed(this.decimalPlaces) + 'M';
+          break;
+        case 'B':
+          formattedNumber = (value / 1_000_000_000).toFixed(this.decimalPlaces) + 'B';
+          break;
+        case 'G':
+          formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
+          break;
+      }
+    }
+
+    return this.prefix + formattedNumber + this.suffix;
+  }
+  numberPopupTrigger(){
+    this.numberPopup = !this.numberPopup;
+  }
+
  getChartSuggestions() {
   
   const obj ={
@@ -1978,6 +3715,7 @@ fetchChartData(chartData: any){
             this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17);
           }
           this.dataExtraction();
+
 }
 
 sendPrompt() {
