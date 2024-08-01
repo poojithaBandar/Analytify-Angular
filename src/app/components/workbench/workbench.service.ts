@@ -29,6 +29,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/upload_file/`+this.accessToken,obj);
   }
+  getTablesFromFileId(id:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/get_file/`+id+'/'+this.accessToken);
+  }
   // getTableData(obj:any){
   //   const currentUser = localStorage.getItem( 'currentUser' );
   //   console.log(JSON.parse( currentUser!))
@@ -339,11 +344,37 @@ addPrevilage(obj:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/role/`+this.accessToken,obj); 
 }
+deleteRole(id:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.delete<any>(`${environment.apiUrl}/deleterole/`+id+'/'+this.accessToken); 
+}
+getRoleIdDetails(id:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.get<any>(`${environment.apiUrl}/roledetails/`+id+'/'+this.accessToken); 
+}
+
 //users
 getUserList(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.put<any>(`${environment.apiUrl}/getusersroles/`+this.accessToken,obj); 
+}
+getAddedRolesList(){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.get<any>(`${environment.apiUrl}/roleslist/`+this.accessToken); 
+}
+addUserwithRoles(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/adduser/`+this.accessToken,obj); 
+}
+deleteUser(id:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.delete<any>(`${environment.apiUrl}/deleteuser/`+id+'/'+this.accessToken); 
 }
   //image convert
       blobToFile(theBlob:any){
