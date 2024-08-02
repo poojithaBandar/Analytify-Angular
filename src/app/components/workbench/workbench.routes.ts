@@ -24,6 +24,7 @@ export const admin: Routes = [
 //   loadComponent: () =>
 //     import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
 // },
+
 {
   path: 'database-connection/tables/:id',
   canActivate:[authGuard],
@@ -49,7 +50,13 @@ export const admin: Routes = [
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
-  path: 'sheets/:id1/:id2/:id3',
+  path: 'sheets/fileId/:id1/:id2/:id3',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
+},
+{
+  path: 'sheets/dbId/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)

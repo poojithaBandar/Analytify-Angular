@@ -116,6 +116,7 @@ export class SheetsComponent {
   sheetTitle = "Sheet ";
   sheetTagName = "";
   databaseId:any;
+  fileId:any;
   qrySetId:any;
   chartsEnableDisable = [] as any;
   chartId = 1;
@@ -157,7 +158,7 @@ export class SheetsComponent {
   selectedTabIndex: any;
   isAllSelected: boolean = false;
   active=1;
-
+  fromFileId=false;
   Editor = ClassicEditor;
   editor : boolean = false;
   bandingSwitch: boolean = false; 
@@ -188,35 +189,38 @@ export class SheetsComponent {
   labelAlignment : HorizontalAlign = 'left';
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
-   
-   if(this.router.url.includes('/workbench/sheets/')){
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
-      this.databaseId = +atob(route.snapshot.params['id1']);
-      this.qrySetId = +atob(route.snapshot.params['id2']);
-      this.filterQuerySetId = atob(route.snapshot.params['id3'])
-      if(this.filterQuerySetId==='null'){
-        console.log('filterqrysetid',this.filterQuerySetId)
-        this.filterQuerySetId = null
-      }
-      else{
-          parseInt(this.filterQuerySetId)
-          console.log(this.filterQuerySetId)
+    if(this.router.url.includes('/workbench/sheets/dbId')){
+      if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
+        this.databaseId = +atob(route.snapshot.params['id1']);
+        this.qrySetId = +atob(route.snapshot.params['id2']);
+        this.filterQuerySetId = atob(route.snapshot.params['id3'])
+        if(this.filterQuerySetId==='null'){
+          console.log('filterqrysetid',this.filterQuerySetId)
+          this.filterQuerySetId = null
         }
-      }
-   }
-   if(this.router.url.includes('/workbench/landingpage/sheets/')){
-    console.log("landing page")
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']&& route.snapshot.params['id4']) {
-      this.databaseId = +atob(route.snapshot.params['id1']);
-      this.qrySetId = +atob(route.snapshot.params['id2'])
-      this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
-      this.sheetName = atob(route.snapshot.params['id4'])
-      console.log(this.retriveDataSheet_id,this.sheetName,'shetname')
-      this.tabs[0] = this.sheetName;
-      // this.sheetRetrive();
-      }
-   }
+        else{
+            parseInt(this.filterQuerySetId)
+            console.log(this.filterQuerySetId)
+          }
+        }
+     }
+     if(this.router.url.includes('/workbench/sheets/fileId')){
+      if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
+        this.fileId = +atob(route.snapshot.params['id1']);
+        this.qrySetId = +atob(route.snapshot.params['id2']);
+        this.filterQuerySetId = atob(route.snapshot.params['id3'])
+        this.fromFileId = true;
+        if(this.filterQuerySetId==='null'){
+          console.log('filterqrysetid',this.filterQuerySetId)
+          this.filterQuerySetId = null
+        }
+        else{
+            parseInt(this.filterQuerySetId)
+            console.log(this.filterQuerySetId)
+          }
+        }      
   }
+}
 
   ngOnInit(): void {
     this.columnsData();
@@ -227,6 +231,10 @@ export class SheetsComponent {
   const obj={
     "server_id":this.databaseId,
     "queryset_id":this.qrySetId,
+}as any;
+if(this.fromFileId){
+  delete obj.server_id;
+  obj.file_id=this.fileId;
 }
   this.workbechService.getSheetNames(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -1650,6 +1658,10 @@ tableMeasures = [] as any;
     const obj={
       "db_id":this.databaseId,
       "queryset_id":this.qrySetId,
+  }as any;
+  if(this.fromFileId){
+    delete obj.db_id;
+    obj.file_id=this.fileId;
   }
     this.workbechService.getColumnsData(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -1685,6 +1697,10 @@ tableMeasures = [] as any;
           "filter_id": this.filterId,
           "datasource_querysetid":this.filterQuerySetId,
           "sheetfilter_querysets_id": this.sheetfilter_querysets_id,
+      }as any;
+      if(this.fromFileId){
+        delete obj.database_id;
+        obj.file_id=this.fileId;
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -2365,7 +2381,12 @@ sheetRetrive(){
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
   "sheet_name": this.sheetName,
+}as any;
+if(this.fromFileId){
+  delete obj.server_id;
+  obj.file_id=this.fileId;
 }
+
   this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.retriveDataSheet_id = responce.sheet_id;
@@ -2698,6 +2719,10 @@ sheetRetrive(){
       "col_name":this.filterName,
        "data_type":this.filterType,
       // "format_date":""
+}as any;
+if(this.fromFileId){
+  delete obj.database_id;
+  obj.file_id=this.fileId;
 }
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2737,6 +2762,10 @@ sheetRetrive(){
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
        "data_type":this.filterType,
+}as any;
+if(this.fromFileId){
+  delete obj.database_id;
+  obj.file_id=this.fileId;
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2757,6 +2786,10 @@ sheetRetrive(){
       "type_filter":"chartfilter",
       "database_id" :this.databaseId,
       "filter_id" :this.filter_id
+}as any;
+if(this.fromFileId){
+  delete obj.database_id;
+  obj.file_id=this.fileId;
 }
   this.workbechService.filterEditPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2787,6 +2820,10 @@ sheetRetrive(){
       "col_name":this.filterName,
       "data_type":this.filterType
 
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id;
+    obj.file_id=this.fileId;
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -2799,7 +2836,7 @@ sheetRetrive(){
     )
   }
   filterDelete(index:any,filterId:any){
-  this.workbechService.filterDelete(this.databaseId,filterId).subscribe({next: (responce:any) => {
+  this.workbechService.filterDelete(filterId).subscribe({next: (responce:any) => {
         this.dimetionMeasure.splice(index, 1);
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);

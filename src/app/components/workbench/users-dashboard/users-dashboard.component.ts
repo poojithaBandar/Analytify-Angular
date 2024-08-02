@@ -23,7 +23,7 @@ export class UsersDashboardComponent {
   page: number = 1;
   totalItems:any;
   savedUsersList =[] as any;
-  userAddedRolesList =[] as any
+  userAddedRolesList =[] as any;
   searchUser :any
   addUserForm:FormGroup;
   confirmPasswordError = false;

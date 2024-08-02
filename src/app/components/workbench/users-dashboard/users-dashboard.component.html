@@ -86,81 +86,81 @@
             </div>
           }
           @if(gridView){
-        <!-- <div class="row">
-          <div *ngFor="let sheets of savedSheetsList | paginate : {
-            itemsPerPage: itemsPerPage,
-            currentPage: page,
-            totalItems: totalItems
-          }"  class="col-md-12 col-xl-3">
-                <div class="card shadow-none">
-                <div class="card-body card-box-shadow">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row border-bottom">
-                                <div class="col mb-1">
-                                    <div class="d-sm-flex align-items-center">
-                                      <div class="user-image">
-                                        
+            <div class="row">
+                <div *ngFor="let users of savedUsersList  | paginate : {
+                  itemsPerPage: itemsPerPage,
+                  currentPage: page,
+                  totalItems: totalItems
+                }" class="col-md-12 col-xl-3">
+                      <div class="card shadow-none">
+                      <div class="card-body card-box-shadow">
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <div class="row border-bottom">
+                                      <div class="col mb-1">
+                                          <div class="d-sm-flex align-items-center">
+                                            <!-- <span class="avatar avatar-xl rounded-circle">
+                                                <img src="./assets/images/charts/table-tiled-icon.jpg" alt="" class="rounded-circle"></span> -->
+                                              <div class="ms-2 mt-sm-0 mt-2">
+                                                <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
+                                                  <h6 class="mb-1">
+                                                      <a ngbTooltip="{{users.username}}"  class="float-start"> {{users.username | slice:0:15}}</a>
+                                                  </h6>
+                                                  
+                                              </div>
+                                          </div>
                                       </div>
-                                        <div class="ms-2 mt-sm-0 mt-2">
-                                            <h6 class="mb-1">
-                                                <a (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
-                                            </h6>
-                                            
+                                      <div class="col-auto">
+                                          <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                            <a  data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                aria-haspopup="true" aria-expanded="false" class=""><i
+                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                            </a>
+                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                               <a class="dropdown-item" tabindex="0" >
+                                                      <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
+                                                  <a  class="dropdown-item  btn btn-secondary-light" tabindex="0" (click)="deleteUser(users.user_id)">
+                                                      <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                            </div>
                                         </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div  class="col-md-12 mt-2">
+                                <div class="p-2 ">
+                        
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <span class="fw-semibold fs-14">Created by  </span>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <span class="fs-14">{{users.created_by}}</span>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <span class="fw-semibold fs-14">Created on :</span>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <span class="fs-14">{{users.created_at}}</span>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="fw-semibold fs-14">Last Modified : </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span class="fs-14">{{users.updated_at}}</span>
                                     </div>
                                 </div>
-                                <div class="col-auto">
-                                  <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                        aria-haspopup="true" aria-expanded="false" class=""><i
-                                            class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                    </a>
-                                    <div class="dropdown-menu" ngbDropdownMenu>
-                                      <a class="dropdown-item" tabindex="0" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)">
-                                        <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
-                                    <a  class="dropdown-item btn btn-secondary-light" tabindex="0" (click)="deleteSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)">
-                                        <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
-                                    </div>
-                                </div>
                               </div>
-                            </div>
-                        </div>
-                        <div  class="col-md-12 mt-2">
-                          <div class="p-2 ">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created by  </span>
-                                </div>
-                                <div class="col-md-6">
-                                    <span class="fs-14">{{sheets.created_by}}</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created on :</span>
-                                </div>
-                                <div class="col-md-6">
-                                    <span class="fs-14">{{sheets.created}}</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-md-6">
-                                  <span class="fw-semibold fs-14">Last Modified : </span>
                               </div>
-                              <div class="col-md-6">
-                                  <span class="fs-14">{{sheets.Modified}}</span>
-                              </div>
+                             
                           </div>
-                        </div>
-                        </div>
-                       
+                      </div>
+                      </div>
                     </div>
-                </div>
-                </div>
-              </div>
-            
-    </div> -->
+          </div>
         }
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetUserList((page = $event))"></pagination-controls>
             <div  style="float: right;font-size: 15px; margin-top: -41px;">

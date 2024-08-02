@@ -1031,7 +1031,7 @@ deleteFilter(id:any){
     confirmButtonText: 'Yes, delete it!'
   }).then((result)=>{
     if(result.isConfirmed){
-  this.workbechService.deleteFilter(this.databaseId,id).subscribe(
+  this.workbechService.deleteFilter(id).subscribe(
     {
       next:(data:any) =>{
         console.log(data)
@@ -1156,18 +1156,32 @@ goToConnections(){
 }
 
 goToSheet(){
+  if(this.fromFileId){
+    const encodedFileId = btoa(this.fileId.toString());
+    const encodedQuerySetId = btoa(this.qurtySetId.toString()); 
+    if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
+      // Encode 'null' to represent a null value
+     const encodedDsQuerySetId = btoa('null');
+     this.router.navigate(['/workbench/sheets/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+    } else {
+      // Convert to string and encode
+     const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
+     this.router.navigate(['/workbench/sheets/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+    }
+  }else if(this.fromDatabasId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
-  const encodedQuerySetId = btoa(this.qurtySetId.toString());
+  const encodedQuerySetId = btoa(this.qurtySetId.toString()); 
   if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
     // Encode 'null' to represent a null value
    const encodedDsQuerySetId = btoa('null');
-   this.router.navigate(['/workbench/sheets'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+   this.router.navigate(['/workbench/sheets/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
   } else {
     // Convert to string and encode
    const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-   this.router.navigate(['/workbench/sheets'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
-
+   this.router.navigate(['/workbench/sheets/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
   }
+  }
+  
 }
 
 saveQuery(){
@@ -1241,4 +1255,5 @@ updateCustmQuery(){
   })
 }
 }
+
 }

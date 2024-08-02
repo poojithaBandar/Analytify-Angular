@@ -15,8 +15,8 @@ import Swal from 'sweetalert2';
   styleUrl: './roles-dashboard.component.scss'
 })
 export class RolesDashboardComponent {
-  gridView = false;
-  roleName='';
+  gridView = true;
+  roleName:any;
   itemsPerPage:any;
   pageNo = 1;
   page: number = 1;
@@ -31,8 +31,10 @@ export class RolesDashboardComponent {
   searchrole:any;
   searchSelectedPrevilage:any;
   roleTitle='';
+  roleId:any;
   selectedIds = [] as any;
   updateRole = false;
+  assaignedUsers =[] as any;
 constructor(public modalService:NgbModal,private workbechService:WorkbenchService){
 
 }
@@ -46,14 +48,16 @@ addRolesModal(OpenmdoModal: any) {
   this.modalService.open(OpenmdoModal);
 }
 searchRoleList(){
-
+  this.pageNo=1;
+  this.getSavedRolesList();
 } 
 pageChangegetRolesList(page:any){
-
+this.pageNo=page;
+this.getSavedRolesList();
 }
 getSavedRolesList(){
   const obj ={
-     search:this.searchrole
+     search:this.roleName
   }
   if(obj.search ===''||obj.search === null){
     delete obj.search
@@ -258,9 +262,11 @@ getRoleIdDetails(id:any){
   this.workbechService.getRoleIdDetails(id).subscribe({
     next:(data)=>{
       console.log(data);
+      this.roleId=id;
       this.roleTitle = data.role_name;
       this.selectedArray = data.previlages;
-      this.removeIdsFromprevilageList();
+      this.assaignedUsers = data.users
+      this.removeIdsFromprevilageListOnEdit();
       this.updateRole = true
      },
     error:(error)=>{
@@ -274,15 +280,40 @@ getRoleIdDetails(id:any){
     }
   }) 
 }
-removeIdsFromprevilageList(){
+removeIdsFromprevilageListOnEdit(){
   if(this.previlagesList){
     const selectedIds:any = this.selectedArray.map((item: { id: any; }) => item.id);
-
   this. previlagesList = this. previlagesList.filter((item: { id: any; }) => !selectedIds.includes(item.id));
-
   }
+  this.originalSelectedArray = [...this.selectedArray];
+
 }
 editRoles(){
-
+  const obj ={
+    role:this.roleTitle,
+    previlage_list:this.getOriginalSelectedIds()
+  }
+  this.workbechService.editRoleDetails(this.roleId,obj).subscribe({
+    next:(data)=>{
+      this.modalService.dismissAll();
+      console.log(data);
+      Swal.fire({
+        icon: 'success',
+        title: 'Done!',
+        text: data.message,
+        width: '400px',
+      })
+     },
+    error:(error)=>{
+      this.modalService.dismissAll();
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
 }
 }

@@ -185,10 +185,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/get_datasource/`+this.accessToken,obj);
   }
-  filterDelete(databaseId:any,filterId:any){
+  filterDelete(filterId:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.delete<any>(`${environment.apiUrl}/filter_delete/`+databaseId+"/"+filterId+"/sheet/"+this.accessToken);
+    return this.http.delete<any>(`${environment.apiUrl}/filter_delete/`+filterId+"/sheet/"+this.accessToken);
   }
   selectedColumnGetRows(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -260,10 +260,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/get_datasource/`+this.accessToken,obj);
   }
-  deleteFilter(dbId:any,filterId:any){
+  deleteFilter(filterId:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.delete<any>(`${environment.apiUrl}/filter_delete/`+dbId+'/'+filterId+'/'+'datasource'+'/'+this.accessToken);
+    return this.http.delete<any>(`${environment.apiUrl}/filter_delete/`+filterId+'/'+'datasource'+'/'+this.accessToken);
   }
   callColumnWithTable(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -354,7 +354,11 @@ getRoleIdDetails(id:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.get<any>(`${environment.apiUrl}/roledetails/`+id+'/'+this.accessToken); 
 }
-
+editRoleDetails(id:any,obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/editroles/`+id+'/'+this.accessToken,obj); 
+}
 //users
 getUserList(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
