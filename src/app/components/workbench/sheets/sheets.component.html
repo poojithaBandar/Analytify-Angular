@@ -357,6 +357,15 @@
             </div>
                     
             <div class="card mb-0" style="height: 488px; overflow-y: scroll;">
+                @if(!table){
+                <div class="col-lg-3 col-md-3">
+                    <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
+                        (change)="changeChartPlugin()">
+                        <option value="apex">Apex</option>
+                        <option value="echart">EChart</option>
+                    </select>
+                </div>
+                }
                  <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center;">
                     @for(tab of tabs;track tab; let index = $index){
                        
@@ -384,6 +393,7 @@
                                     </tbody>
                                   </table>
                                 }
+                                @if(isApexCharts){
               @if(bar && chartId){
               <!--<h6>Bar Chart</h6>
               <figure id="bar"></figure>-->
@@ -534,6 +544,50 @@
                 </apx-chart>
                   </div>
               }
+            } @else {
+            @if(bar && chartId){         
+            <div class="card-body">
+                <div id="bar-chart">
+                    <div id="echartsBar" echarts [options]="eBarChartOptions" class="echart-charts"></div>
+                </div>
+            </div>
+            }
+            @if(area && chartId){
+            <div class="card-body">
+                <div id="bar-chart">
+                    <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
+                </div>
+            </div>
+            }
+            @if(line && chartId){
+            <div class="card-body">
+                <div id="bar-chart">
+                    <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
+                </div>
+            </div>
+            }
+            @if(pie && chartId){
+            <div class="card-body">
+                <div id="bar-chart">
+                    <div id="echartsBar" echarts [options]="ePieChartOptions" class="echart-charts"></div>
+                </div>
+            </div>
+            }
+            @if(barLine && chartId){
+                <div class="card-body">
+                    <div id="bar-chart">
+                        <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
+                    </div>
+                </div>
+                }
+            @if(radar && chartId){
+                <div class="card-body">
+                    <div id="bar-chart">
+                        <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
+                    </div>
+                </div>
+                }
+            }
             </div>
         }
         }      
@@ -668,40 +722,43 @@
                                                     <div class="row"> 
                                                        
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2">
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,12)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -717,7 +774,7 @@
                             
                                                             <ngx-colors 
                                                            ngx-colors-trigger 
-                                                           [(ngModel)]="color"  (click)="marksColor(color)"
+                                                           [(ngModel)]="color"  (change)="marksColor($event,4)"
                                                            [format] = "'hex'"
                                                             ></ngx-colors>
                                                               <!--  <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -808,10 +865,64 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="row">
+                                                                        <label class="col-md-4 form-label px-1 fs-14">Font-Size</label>
+                                                                        <div class="col-md-8">
+                                                                            <div class="form-group mb-1">
+                                                                                <select [(ngModel)]="xLabelFontSize" (change)="changeAlignment()" class="form-select form-select select2 fs-14">
+                                                                                    <option value="9">9</option>
+                                                                                    <option value="10">10</option>
+                                                                                    <option value="11">11</option>
+                                                                                    <option value="12">12</option>
+                                                                                    <option value="14">14</option>
+                                                                                    <option value="16">16</option>
+                                                                                    <option value="18">18</option>
+                                                                                    <option value="20">20</option>
+                                                                                    <option value="22">22</option>
+                                                                                    <option value="24">24</option>
+                                                                                    <option value="26">26</option>
+                                                                                    <option value="28">28</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <label class="col-md-5 form-label px-1 fs-14">Font-Family</label>
+                                                                        <div class="col-md-7">
+                                                                            <div class="form-group mb-1">
+                                                                                <select [(ngModel)]="xLabelFontFamily" (change)="changeAlignment()" class="form-select form-select select2 fs-14" >
+                                                                                    <option value="Algerian">Algerian</option>
+                                                                                    <option value="Arial">Arial</option>
+                                                                                    <option value="Bahnschrift">Bahnschrift</option>
+                                                                                    <option value="italic">Italic</option>
+                                                                                    <option value="sans-serif">Sans Serif</option>
+                                                                                    <option value="Calibri">Calibri</option>
+                            
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <label class="col-md-5 form-label px-1 fs-14">Font-Weight</label>
+                                                                        <div class="col-md-7">
+                                                                            <div class="form-group mb-1">
+                                                                                <select  [(ngModel)]="xlabelFontWeight" (change)="changeAlignment()" class="form-select form-select select2 fs-14">
+                                                                                    <option value="100">100</option>
+                                                                                    <option value="200">200</option>
+                                                                                    <option value="300">400</option>
+                                                                                    <option value="400">500</option>
+                                                                                    <option value="500">600</option>
+                                                                                    <option value="600">700</option>
+                                                                                    <option value="700">800</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
                                                                         <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                         <div class="col-md-8">
                                                                             <div class="form-group mb-1">
-                                                                                <select class="form-select form-select select2 fs-14" (change)="allignmentChange($event,'dimension')">
+                                                                                <select class="form-select form-select select2 fs-14"  [(ngModel)]="labelAlignment" (change)="allignmentChange($event,'dimension');changeAlignment()">
                                                                                     <option value="center">center</option>
                                                                                     <option value="left">left</option>
                                                                                     <option value="right">right</option>
@@ -937,7 +1048,57 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-
+                                                    <div class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Zoom </p>
+                                                        </div>
+                                                        <div *ngIf="isZoom" class="toggle toggle-sm on mb-0" (click)="enableZoom()">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!isZoom" class="toggle toggle-sm off mb-0" (click)="enableZoom()">
+                                                            <span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >X-label Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="xLabelColor"  (change)="marksColor($event,5)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>  
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >X-Grid Line Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="xGridColor"  (change)="marksColor($event,1)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Y-Grid Line Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="yGridColor"  (change)="marksColor($event,3)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Y-label Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="yLabelColor"  (change)="marksColor($event,2)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>
                                                     <div *ngIf="!((table && chartId) || (pie && chartId) || donut)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
@@ -976,6 +1137,7 @@
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
+
                                                                 <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
@@ -987,6 +1149,7 @@
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
+                                                           
                                                             </ng-template>
                                                           </div>
                                                         </div>
@@ -1030,6 +1193,7 @@
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
+ 
                                                                 <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
@@ -1041,6 +1205,7 @@
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
+     
                                                             </ng-template>
                                                           </div>
                                                         </div>

@@ -27,6 +27,9 @@ import { CommonModule } from '@angular/common';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
+import * as echarts from 'echarts';
+import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
+declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
 }
@@ -38,7 +41,13 @@ interface Dimension {
 @Component({
   selector: 'app-sheets',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
+  providers: [
+    {
+      provide: NGX_ECHARTS_CONFIG,
+      useFactory: () => ({ echarts: echarts }),
+    },
+  ],
+  imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
@@ -65,7 +74,18 @@ export class SheetsComponent {
   dimensionExpand = false;
   chartSuggestions: any = null;
   errorMessage : any;
-  userPrompt: string = '';	
+  userPrompt: string = '';
+  selectedChartPlugin : string = 'apex'	
+  isApexCharts : boolean = true;
+  isEChatrts : boolean = false;
+  isZoom : boolean = false;
+  xLabelFontSize : number = 12;
+  xLabelFontFamily : string = 'sans-serif';
+  xlabelFontWeight : number = 400;
+  xLabelColor : string = '#00a5a2';
+  xGridColor : string = '#00a5a2';
+  yLabelColor : string = '#00a5a2';
+  yGridColor : string = '#00a5a2';
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -110,6 +130,12 @@ export class SheetsComponent {
   chartOptions8:any;
   chartOptions9:any;
   chartOptions10:any;
+  eBarChartOptions: any;
+  eAreaChartOptions: any;
+  eLineChartOptions: any;
+  ePieChartOptions: any;
+  eBarLineChartOptions: any;
+  eRadarChartOptions: any;
   dimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
@@ -157,6 +183,9 @@ export class SheetsComponent {
   @ViewChild('multiline') multilineChart!: ChartComponent;
   @ViewChild('piechart') piechart!: ChartComponent;
   @ViewChild('donutchart') donutchart!: ChartComponent;
+  radar: boolean = false;
+  radarRowData: any = [];
+  labelAlignment : HorizontalAlign = 'left';
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
    
@@ -240,125 +269,224 @@ export class SheetsComponent {
     menu.expanded = !menu.expanded;
   }
 
-  barChart(){
-    this.chartOptions3 = {
-      series: [
-        {
-          name: "",
-          data: this.chartsRowData 
-        }
-      ],
-      chart: {
-        toolbar: {
-          show: false
+  barChart() {
+    if (this.isApexCharts) {
+      this.chartOptions3 = {
+        series: [
+          {
+            name: "",
+            data: this.chartsRowData
+          }
+        ],
+        chart: {
+          toolbar: {
+            show: false
+          },
+          height: 385,
+          type: 'bar',
+          foreColor: this.color,
         },
-        height: 385,
-        type: 'bar',
-        foreColor: this.color,
-      },
-      title: {
-        text: "",
-        offsetY: 10,
-        align: 'center',
-        style: {
-          color: this.color,
-        },
-      },
-      xaxis: {
-        categories: this.chartsColumnData,
-        position: 'bottom',
-        labels: {
-          show: true,
-          trim: true,
-          hideOverlappingLabels: false,
+        title: {
+          text: "",
+          offsetY: 10,
+          align: 'center',
           style: {
-            colors: this.color,
-            fontSize: '12px',
-            fontFamily: 'Helvetica, Arial, sans-serif',
-            fontWeight: 12,
+            color: this.color,
+          },
         },
+        xaxis: {
+          categories: this.chartsColumnData,
+          position: 'bottom',
+          labels: {
+            show: true,
+            trim: true,
+            hideOverlappingLabels: false,
+            style: {
+              colors: this.color,
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12,
+            },
+          },
+          axisBorder: {
+            show: false,
+          },
+          axisTicks: {
+            show: false,
+          },
+          crosshairs: {
+            fill: {
+              type: 'gradient',
+              gradient: {
+                stops: [0, 100],
+                opacityFrom: 0.4,
+                opacityTo: 0.5,
+              },
+            },
+          },
+          tooltip: {
+            enabled: false,
+            offsetY: -35,
+          },
         },
-        axisBorder: {
-          show: false,
+        yaxis: {
+          show: true,
+          labels: {
+            show: true,
+            style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12,
+            },
+            formatter: this.formatNumber.bind(this)
+          },
+          axisBorder: {
+            show: false,
+          },
+          axisTicks: {
+            show: false,
+          },
         },
-        axisTicks: {
-          show: false,
+        grid: {
+          show: true,
+          xaxis: {
+            lines: {
+              show: false
+            }
+          },
+          yaxis: {
+            lines: {
+              show: false
+            }
+          },
         },
-        crosshairs: {
-          fill: {
-            type: 'gradient',
-            gradient: {
-              stops: [0, 100],
-              opacityFrom: 0.4,
-              opacityTo: 0.5,
+        plotOptions: {
+          bar: {
+            dataLabels: {
+              hideOverflowingLabels: false,
+              position: 'top',
             },
           },
         },
-        tooltip: {
-          enabled: false,
-          offsetY: -35,
-        },
-      },
-      yaxis:{
-        show: true,
-        labels: {
-          show: true,
+        dataLabels: {
+          enabled: true,
+          formatter: this.formatNumber.bind(this),
+          offsetY: -20,
           style: {
-            colors: [],
             fontSize: '12px',
-            fontFamily: 'Helvetica, Arial, sans-serif',
-            fontWeight: 12,
-          },
-          formatter: this.formatNumber.bind(this)
-        },
-        axisBorder: {
-          show: false,
-        },
-        axisTicks: {
-          show: false,
-        },
-      },
-      grid: {
-        show: true,
-        xaxis: {
-          lines: {
-            show: false
-          }
-        },
-        yaxis: {
-          lines: {
-            show: false
-          }
-        },
-      },
-      plotOptions: {
-        bar: {
-          dataLabels: {
-            hideOverflowingLabels:false,
-            position: 'top',
+            colors: [this.color],
           },
         },
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: this.formatNumber.bind(this),
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: [this.color],
+        fill: {
+          type: 'gradient',
         },
-      },
-      fill: {
-        type: 'gradient',
-      },
-      colors: [this.color]
-    };
-    this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
-    this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+        colors: [this.color]
+      };
+      this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+      this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
+      this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
+      this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+    } else {
+      this.eBarChartOptions = {
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        toolbox: {
+          feature: {
+            magicType: { show: true, type: ['line'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+        },
+        axisPointer: {
+          type: 'none'
+        },
+        dataZoom: [
+          {
+            show: this.isZoom,
+            type: 'slider'
+          },
+
+        ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '13%',
+          containLabel: true,
+        },
+        xAxis: {
+          type: 'category',
+          data: this.chartsColumnData,
+          splitLine: {
+            lineStyle: {
+              color: this.xGridColor
+            }, show: this.xGridSwitch
+          },
+          axisLine: {
+            lineStyle: {
+              color: this.xLabelColor,
+            },
+          },
+          axisLabel: {
+            show: this.xLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+            align: this.labelAlignment// Hide xAxis labels
+          }
+        },
+        toggleGridLines: true,
+        yAxis: {
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: this.yLabelColor
+            }
+          },
+          axisLabel: {
+            show: this.yLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+            // formatter: function (value: number) {
+            //   return (value * 1) + 'k'; 
+            // }
+          },
+          splitLine: {
+            lineStyle: {
+              color: this.yGridColor
+            },
+            show: this.yGridSwitch
+          }
+        },
+        // itemStyle: {borderWidth : '50px' },
+        series: [
+          {
+            itemStyle: {
+              borderRadius: 5
+            },
+            label: { show: true },
+            type: 'bar',
+            barWidth: '60%',
+            data: this.chartsRowData
+            // data: this.chartsRowData.map((value: any, index: number) => ({
+            //   value,
+            //   itemStyle: { borderWidth: '50px' }
+            // })),
+          },
+        ],
+        color: this.color
+
+      };
+    }
   }
   pieChart(){
+    if(this.isApexCharts){
     this.chartOptions4={
       series: this.chartsRowData,
       chart: {
@@ -378,8 +506,42 @@ export class SheetsComponent {
       },
       };
       this.legendSwitch = this.chartOptions4.legend.show;
+    } else {
+      let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
+        value: value,
+        name: this.chartsColumnData[index]
+      }));
+      this.ePieChartOptions = {
+        title: {
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'horizontal',
+          left: 'left'
+        },
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: '50%',
+            data: combinedArray,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      };
+    }
   }
   lineChart(){
+    if(this.isApexCharts){
     this.chartOptions={
       series: [{
           name: "",
@@ -468,8 +630,94 @@ export class SheetsComponent {
     this.yLabelSwitch = this.chartOptions.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions.grid.xaxis.lines.show;
     this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
+} else {
+  this.eLineChartOptions = {
+    legend: {
+      orient: 'vertical',
+      left: 'left'
+    },
+    toolbox: {
+      feature: {
+        magicType: { show: true, type: ['line'] },
+        restore: { show: true },
+        saveAsImage: { show: true }
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+    },
+    axisPointer: {
+      type: 'none'
+    },
+    dataZoom: [
+      {
+        show: this.isZoom,
+        type: 'slider'
+      },
+
+    ],
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '13%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'category',
+      data: this.chartsColumnData,
+      splitLine: {
+        lineStyle: {
+          color: this.xGridColor
+        }, show: this.xGridSwitch
+      },
+      axisLine: {
+        lineStyle: {
+          color: this.xLabelColor,
+        },
+      },
+      axisLabel: {
+        show: this.xLabelSwitch,
+        fontFamily: this.xLabelFontFamily,
+        fontSize: this.xLabelFontSize,
+        fontWeight: this.xlabelFontWeight,
+        align: this.labelAlignment// Hide xAxis labels
+      }
+    },
+    toggleGridLines: true,
+    yAxis: {
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: this.yLabelColor
+        }
+      },
+      axisLabel: {
+        show: this.yLabelSwitch,
+        fontFamily: this.xLabelFontFamily,
+        fontSize: this.xLabelFontSize,
+        fontWeight: this.xlabelFontWeight,
+      },
+      splitLine: {
+        lineStyle: {
+          color: this.yGridColor
+        },
+        show: this.yGridSwitch
+      }
+    },
+    series: [
+      {
+        label: { show: true },
+        type: 'line',
+        data: this.chartsRowData
+      },
+    ],
+    color: this.color
+
+  };
+}
   }
   areaChart(){
+    if(this.isApexCharts){
     this.chartOptions1 = {
       series: [
         {
@@ -563,6 +811,94 @@ export class SheetsComponent {
     this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
     this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
+  } else {
+    this.eAreaChartOptions =  {
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      toolbox: {
+        feature: {
+          magicType: { show: true, type: ['line'] },
+          restore: { show: true },
+          saveAsImage: { show: true }
+        }
+      },
+      tooltip: {
+        trigger: 'axis',
+      },
+      axisPointer: {
+        type: 'none'
+      },
+      dataZoom: [
+        {
+          show: this.isZoom,
+          type: 'slider'
+        },
+  
+      ],
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '13%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: this.chartsColumnData,
+        splitLine: {
+          lineStyle: {
+            color: this.xGridColor
+          }, show: this.xGridSwitch
+        },
+        axisLine: {
+          lineStyle: {
+            color: this.xLabelColor,
+          },
+        },
+        axisLabel: {
+          show: this.xLabelSwitch,
+          fontFamily: this.xLabelFontFamily,
+          fontSize: this.xLabelFontSize,
+          fontWeight: this.xlabelFontWeight,
+          align: this.labelAlignment// Hide xAxis labels
+        }
+      },
+      toggleGridLines: true,
+      yAxis: {
+        type: 'value',
+        axisLine: {
+          lineStyle: {
+            color: this.yLabelColor
+          }
+        },
+        axisLabel: {
+          show: this.yLabelSwitch,
+          fontFamily: this.xLabelFontFamily,
+          fontSize: this.xLabelFontSize,
+          fontWeight: this.xlabelFontWeight,
+
+        },
+        splitLine: {
+          lineStyle: {
+            color: this.yGridColor
+          },
+          show: this.yGridSwitch
+        }
+      },
+      series: [
+        {
+          label: { show: true },
+          type: 'line',
+          data: this.chartsRowData,
+          areaStyle: {}
+        },
+      ],
+      color: this.color
+  
+    };
+  }
   }
   sidebysideBar(){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
@@ -747,15 +1083,16 @@ export class SheetsComponent {
         },
       }
     };
-    this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+    this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
     // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+    this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
   }
   
   barLineChart(){
     const dimensions: Dimension[] = this.sidebysideBarColumnData1;
     const categories = this.flattenDimensions(dimensions);
+    if(this.isApexCharts){
     this.chartOptions5 = {
       series: [
         {
@@ -870,6 +1207,148 @@ export class SheetsComponent {
     // this.yLabelSwitch = this.chartOptions5.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions5.grid.xaxis.lines.show;
     this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
+  } else {
+    this.eBarLineChartOptions = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          crossStyle: {
+            color: '#999'
+          }, label: {
+            backgroundColor: '#283b56'
+          }
+        }
+      },
+      dataZoom: {
+        show: true,
+        start: 0,
+        end: 100
+      },
+      toolbox: {
+        feature: {
+          dataView: { show: true, readOnly: false },
+          magicType: { show: true, type: ['line', 'bar','stack'] },
+          restore: { show: true },
+          saveAsImage: { show: true }
+        }
+      },
+      legend: {
+       
+      },
+      xAxis: [
+        {
+          type: 'category',
+          data: categories,
+          axisPointer: {
+            type: 'shadow'
+          }
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          name: 'Bar'
+        },
+        {
+          type: 'value',
+          name: 'Line'
+        }
+      ],
+      // yAxis: {
+      //       type: 'value',
+      //       axisLine: {
+      //           lineStyle: {
+      //               color: "#8c9097"
+      //           }
+      //       },
+      //       // splitLine: {
+      //       //     lineStyle: {
+      //       //         color: "rgba(142, 156, 173,0.1)"
+      //       //     }
+      //       // }
+      //   },
+      // yAxis: [
+      //   {
+      //     type: 'value',
+      //     name: 'Precipitation',
+      //     min: 0,
+      //     max: 250,
+      //     interval: 50,
+      //     axisLabel: {
+      //       formatter: '{value} ml'
+      //     }
+      //   }
+      // ],
+      series: [
+        {
+          name: this.sidebysideBarRowData[0]?.name,
+          type: 'bar',
+          // xAxisIndex: 1,
+          yAxisIndex: 1,
+          // tooltip: {
+          //   valueFormatter: function (value) {
+          //     return value + ' ml';
+          //   }
+          // },
+          data: this.sidebysideBarRowData[0]?.data
+        },
+  
+        {
+          name: this.sidebysideBarRowData[1]?.name,
+          type: 'line',
+          // xAxisIndex: 1,
+          yAxisIndex: 1,
+          // tooltip: {
+          //   valueFormatter: function (value) {
+          //     return value + ' °C';
+          //   }
+          // },
+          lineStyle: {
+            color: "red" },
+          data: this.sidebysideBarRowData[1]?.data
+        }
+      ]
+    };
+  }
+  }
+  radarChart(){
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+  const categories = this.flattenDimensions(dimensions);
+  let radarArray = categories.map((value : any, index :number) => ({
+    name: categories[index]
+  }));
+  let legendArray = this.radarRowData.map((data:any)=>({
+    name : data.name
+  }));
+    this.eRadarChartOptions =  {
+      backgroundColor: '#161627',
+      tooltip:{trigger:"item"},
+      legend: {
+        data: legendArray
+      },
+      dataZoom: {
+        show: true,
+        
+      },
+      axisName: {
+        color: 'rgb(238, 197, 102)'
+      },
+      radar: {
+        // shape: 'circle',
+        indicator: 
+        radarArray
+        
+      },
+      series: [
+        {
+          name: 'Budget vs spending',
+          type: 'radar',
+          data: this.radarRowData,
+          
+        }
+      ]
+    }
   }
   horizentalStockedBar(){
     const dimensions: Dimension[] = this.sidebysideBarColumnData1;
@@ -1133,10 +1612,10 @@ export class SheetsComponent {
         }, 
       } 
     };
-    this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+    this.xLabelSwitch = this.chartOptions9.xaxis.labels.show;
     // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+    this.xGridSwitch = this.chartOptions9.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions9.grid.yaxis.lines.show;
   }
   donutChart(){
     this.chartOptions10 = {
@@ -1197,6 +1676,7 @@ tableMeasures = [] as any;
     this.chartsRowData = [];
     this.sidebysideBarColumnData = [];
     this.sidebysideBarRowData = [];
+    this.radarRowData = [];
       const obj={
           "database_id":this.databaseId,
           "queryset_id":this.qrySetId,
@@ -1230,6 +1710,13 @@ tableMeasures = [] as any;
               data: res.result_data
             }
             this.sidebysideBarRowData.push(obj);
+          });
+          this.tablePreviewRow.forEach((res:any) => {
+            let obj={
+              name: res.col,
+              value: res.result_data
+            }
+            this.radarRowData.push(obj);
           });
           console.log(this.sidebysideBarColumnData)
           console.log('sidebysideBarColumnData1this',this.sidebysideBarColumnData1)
@@ -1289,6 +1776,7 @@ tableMeasures = [] as any;
         this.hGrouped();
         this.multiLineChart();
         this.donutChart();
+        this.radarChart();
       }
         },
         error: (error) => {
@@ -1443,7 +1931,7 @@ tableMeasures = [] as any;
   multiLine = false;
   donut = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -1457,6 +1945,7 @@ tableMeasures = [] as any;
     this.multiLine = multiLine;
     this.donut = donut;
     this.chartId = chartId;
+    this.radar = radar;
     this.dataExtraction();
   }
   enableDisableCharts(){
@@ -1609,6 +2098,7 @@ tableMeasures = [] as any;
       this.grouped = false;
       this.multiLine = false;
       this.donut = false;
+      this.radar = false;
    // }
   }
   saveTableData = [] as any;
@@ -1637,6 +2127,7 @@ tableMeasures = [] as any;
   donutXaxis = [] as any;
 
 sheetSave(){
+  let savedChartOptions ;
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
    this.savedisplayedColumns = this.displayedColumns;
@@ -1644,18 +2135,38 @@ sheetSave(){
   if(this.bar && this.chartId == 6){
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData;
+    if(this.isApexCharts) {
+      savedChartOptions = this.chartOptions3;
+    } else {
+      savedChartOptions = this.eBarChartOptions;
+    }
   }
   if(this.pie && this.chartId == 24){
     this.savePie = this.chartsRowData;
-    this.pieXaxis = this.chartsColumnData
+    this.pieXaxis = this.chartsColumnData;
+    if(this.isApexCharts) {
+      savedChartOptions = this.chartOptions4;
+    } else {
+      savedChartOptions = this.ePieChartOptions;
+    }
   }
   if(this.line && this.chartId == 13){
     this.lineYaxis = this.chartsRowData;
     this.lineXaxis = this.chartsColumnData;
+    if(this.isApexCharts) {
+      savedChartOptions = this.chartOptions;
+    } else {
+      savedChartOptions = this.eLineChartOptions;
+    }
   }
   if(this.area && this.chartId == 17){
     this.areaYaxis = this.chartsRowData;
     this.areaXaxis = this.chartsColumnData;
+    if(this.isApexCharts) {
+      savedChartOptions = this.chartOptions1;
+    } else {
+      savedChartOptions = this.eAreaChartOptions;
+    }
   }
   if(this.sidebyside && this.chartId == 7){
     this.sidebysideBarYaxis = this.sidebysideBarRowData;
@@ -1668,6 +2179,11 @@ sheetSave(){
   if(this.barLine && this.chartId == 4){
     this.barLineYaxis = this.sidebysideBarRowData;
     this.barLineXaxis = this.sidebysideBarColumnData1;
+    if(this.isApexCharts) {
+      savedChartOptions = this.chartOptions5;
+    } else {
+      savedChartOptions = this.eBarLineChartOptions;
+    }
   }
   if(this.horizentalStocked && this.chartId == 2){
     this.hStockedYaxis = this.sidebysideBarRowData;
@@ -1684,6 +2200,25 @@ sheetSave(){
   if(this.donut && this.chartId == 10){
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
+  }
+  if(this.radar && this.chartId == 12){
+    this.barLineXaxis = this.sidebysideBarColumnData1;
+      savedChartOptions = this.eRadarChartOptions;
+  }
+  let customizeObject = {
+    isZoom : this.isZoom,
+    xGridColor : this.xGridColor,
+    xGridSwitch : this.xGridSwitch,
+    xLabelSwitch : this.xLabelSwitch,
+    xLabelColor : this.xLabelColor,
+    yLabelSwitch : this.yLabelSwitch,
+    yGridColor : this.yGridColor,
+    yGridSwitch : this.yGridSwitch,
+    yLabelColor : this.yLabelColor,
+    xLabelFontFamily : this.xLabelFontFamily,
+    xLabelFontSize : this.xLabelFontSize,
+    xlabelFontWeight : this.xlabelFontWeight,
+    labelAlignment : this.labelAlignment
   }
 const obj={
   "chart_id": this.chartId,
@@ -1734,6 +2269,10 @@ const obj={
       "donutYaxis": this.donutYaxis,
       "donutXaxis": this.donutXaxis,
   },
+  "isApexChart" : this.isApexCharts,
+  "isEChart" : this.isEChatrts,
+  "savedChartOptions" : savedChartOptions,
+  "customizeOptions" : customizeObject
 }
 }
 console.log(this.retriveDataSheet_id)
@@ -1838,6 +2377,14 @@ sheetRetrive(){
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
         this.dimetionMeasure = responce.filters_data;
+        this.isEChatrts = this.sheetResponce.isEChart;
+        this.isApexCharts = this.sheetResponce.isApexChart;
+        if(this.isEChatrts){
+          this.selectedChartPlugin = 'echart';
+        } else {
+          this.isApexCharts = true;
+          this.selectedChartPlugin = 'apex';
+        }
         if(!responce.sheet_tag_name){
           const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
           inputElement.innerHTML = responce.sheet_name;
@@ -1872,11 +2419,17 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
         }
        if(responce.chart_id == 6){
         this.chartsRowData = this.sheetResponce.results.barYaxis;
         this.chartsColumnData = this.sheetResponce.results.barXaxis;
        this.barChart();
+       if(this.isApexCharts){
+          
+       } else {
+         this.eBarChartOptions = this.sheetResponce.savedChartOptions;
+       }
         this.bar = true;
         this.table = false;
           this.pie = false;
@@ -1889,6 +2442,7 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
        }
        if(responce.chart_id == 24){
         this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -1905,7 +2459,13 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
           this.pieChart();
+          if(this.isApexCharts){
+          
+          } else {
+            this.ePieChartOptions = this.sheetResponce.savedChartOptions;
+          }
        }
        if(responce.chart_id == 13){
         this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -1923,6 +2483,12 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
+          if(this.isApexCharts){
+          
+          } else {
+            this.eLineChartOptions = this.sheetResponce.savedChartOptions;
+          }
        }
        if(responce.chart_id == 17){
         this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -1940,6 +2506,12 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
+          if(this.isApexCharts){
+          
+          } else {
+            this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
+          }
        }
        if(responce.chart_id == 7){
         this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -1957,6 +2529,7 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
        }
        if(responce.chart_id == 5){
         this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -1974,6 +2547,7 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
        }
        if(responce.chart_id == 4){
         this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
@@ -1991,6 +2565,34 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
+          if(this.isApexCharts){
+          
+          } else {
+            this.eBarLineChartOptions = this.sheetResponce.savedChartOptions;
+          }
+       }
+       if(responce.chart_id == 12){
+        this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
+        this.radarChart();
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = true;
+          if(this.isApexCharts){
+          
+          } else {
+            this.eRadarChartOptions = this.sheetResponce.savedChartOptions;
+          }
        }
        if(responce.chart_id == 2){
         this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
@@ -2008,6 +2610,7 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
        }
        if(responce.chart_id == 3){
         this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
@@ -2025,6 +2628,7 @@ sheetRetrive(){
           this.grouped = true;
           this.multiLine = false;
           this.donut = false;
+          this.radar = false;
        }
        if(responce.chart_id == 8){
         this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
@@ -2042,6 +2646,7 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = true;
           this.donut = false;
+          this.radar = false;
        }
        if(responce.chart_id == 10){
         this.chartsRowData = this.sheetResponce.results.donutYaxis;
@@ -2059,7 +2664,9 @@ sheetRetrive(){
           this.grouped = false;
           this.multiLine = false;
           this.donut = true;
+          this.radar = false;
        }
+       this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
       error: (error) => {
         console.log(error);
@@ -2230,10 +2837,7 @@ gotoDashboard(){
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
 }
-marksColor(color:any){
-console.log(color)
-this.color = color;
-}
+
 rename(index:any,name:any,event:any){
   this.oldColumn = '';
 this.oldColumn = name;
@@ -3438,6 +4042,7 @@ renameColumns(){
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
+      if(this.isApexCharts){
       if(this.barchart){
         this.chartOptions3.xaxis.labels.show = this.xLabelSwitch;
       }
@@ -3465,9 +4070,13 @@ renameColumns(){
       else if(this.multilineChart){
         this.chartOptions9.xaxis.labels.show = this.xLabelSwitch;
       }
+    } else {
+      this.changeAlignment();
+    }
     }
     else if(type === 'ylabel'){
       this.yLabelSwitch = !this.yLabelSwitch;
+      if(this.isApexCharts){
       if(this.barchart){
         if(this.chartOptions3.yaxis.length >0){
           (this.chartOptions3.yaxis as any[]).forEach((data)=>{
@@ -3558,9 +4167,13 @@ renameColumns(){
           this.chartOptions9.yaxis.labels.show = this.yLabelSwitch;
         }
       }
+    } else {
+      this.changeAlignment();
+    }
     }
     else if(type === 'xgrid'){
       this.xGridSwitch = !this.xGridSwitch;
+      if(this.isApexCharts){
       if(this.barchart){
         this.chartOptions3.grid.xaxis.lines.show = this.xGridSwitch;
       }
@@ -3588,9 +4201,13 @@ renameColumns(){
       else if(this.multilineChart){
         this.chartOptions9.grid.xaxis.lines.show = this.xGridSwitch;
       }
+    } else {
+      this.changeAlignment();
+    }
     }
     else if(type === 'ygrid'){
       this.yGridSwitch = !this.yGridSwitch;
+      if(this.isApexCharts){
       if(this.barchart){
         this.chartOptions3.grid.yaxis.lines.show = this.yGridSwitch;
       }
@@ -3618,6 +4235,9 @@ renameColumns(){
       else if(this.multilineChart){
         this.chartOptions9.grid.yaxis.lines.show = this.yGridSwitch;
       }
+    } else {
+      this.changeAlignment();
+    }
     }
     else if(type === 'legend'){
       this.legendSwitch = !this.legendSwitch;
@@ -3630,6 +4250,38 @@ renameColumns(){
     }
     this.updateChart();
   }
+  enableZoom(){
+    this.isZoom = !this.isZoom;
+    if(this.bar){
+      this.barChart();
+    }
+    else if(this.area){
+      this.areaChart();
+    }
+    else if(this.line){
+      this.lineChart();
+    }
+    else if(this.barLine){
+      this.barLineChart();
+    }
+  }
+
+  changeAlignment(){
+
+    if(this.bar){
+      this.barChart();
+    }
+    else if(this.area){
+      this.areaChart();
+    }
+    else if(this.line){
+      this.lineChart();
+    }
+    else if(this.barLine){
+      this.barLineChart();
+    }
+  }
+
   formatNumber(value: number): string {
     let formattedNumber = value+'';
 
@@ -3706,17 +4358,63 @@ fetchChartData(chartData: any){
           console.log("This is ChaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type==="Bar Chart"){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type==="Pie Chart"){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type==="Line Chart"){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type==="Area Chart"){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,17);
           }
           this.dataExtraction();
 
 }
+
+  changeChartPlugin() {
+    if (this.selectedChartPlugin == 'apex') {
+      this.isApexCharts = true;
+      this.isEChatrts = false;
+    } else {
+      this.isApexCharts = false;
+      this.isEChatrts = true;
+    }
+    this.reAssignChartData();
+  }
+  reAssignChartData() {
+    this.barChart();
+    this.pieChart();
+    this.lineChart();
+    this.areaChart();
+    this.barLineChart();
+    this.radarChart();
+  }
+  marksColor(color: any, colorCase: number) {
+    console.log(color)
+    switch (colorCase) {
+      case 1: this.xGridColor = color; break;
+      case 2: this.yLabelColor = color; break;
+      case 3: this.yGridColor = color; break;
+      case 4: this.color = color; break;
+      case 5: this.xLabelColor = color; break;
+    }
+    this.reAssignChartData();
+  }
+
+  setCustomizeOptions(data: any) {
+    this.isZoom = data.isZoom;
+    this.xGridColor = data.xGridColor;
+    this.xGridSwitch = data.xGridSwitch;
+    this.xLabelSwitch = data.xLabelSwitch;
+    this.xLabelColor = data.xLabelColor;
+    this.yLabelSwitch = data.yLabelSwitch;
+    this.yGridColor = data.yGridColor;
+    this.yGridSwitch = data.yGridSwitch;
+    this.yLabelColor = data.yLabelColor;
+    this.xLabelFontFamily = data.xLabelFontFamily;
+    this.xLabelFontSize = data.xLabelFontSize;
+    this.xlabelFontWeight = data.xlabelFontWeight;
+    this.labelAlignment = data.labelAlignment;
+  }
 
 sendPrompt() {
   if (this.userPrompt.trim()) {
