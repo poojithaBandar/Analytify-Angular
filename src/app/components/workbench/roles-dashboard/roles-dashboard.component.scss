@@ -2,13 +2,15 @@
     width: 1200px !important;
       position: relative;
       right: 310px;
-      border-radius: 30px;
+      border-radius: 15px;
   }
   .Permission-body-text {
     padding: 10px;
     height: 300px;  
     overflow-y: scroll;
     width: 100%;
+    border: none;
+    outline: none;
   }
   .add-icons{
     display: flex;

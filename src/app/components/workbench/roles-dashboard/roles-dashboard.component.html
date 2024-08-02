@@ -39,7 +39,7 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody *ngFor="let roles of savedRolesList paginate : {
+                    <tbody *ngFor="let roles of savedRolesList | paginate : {
                         itemsPerPage: itemsPerPage,
                         currentPage: page,
                         totalItems: totalItems
@@ -61,11 +61,11 @@
 
                             <td>
                               <div class="hstack gap-2 fs-1">
-                              <a aria-label="anchor"
+                              <a aria-label="anchor" (click)="addRolesModal(addrole);getPrevilagesList();getRoleIdDetails(roles.role_id)"
                               class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                               <i class="ri-edit-line" ngbTooltip="Edit"></i></a>
 
-                            <a aria-label="anchor"   class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                            <a aria-label="anchor" (click)="deleteRole(roles.role_id)"  class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                 <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                         </a>
                         </div>
@@ -174,15 +174,18 @@
             <h1 class="modal-title fs-5" id="inputModalLabel">Add Role</h1>
             <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button> -->
             <div class="add-role-save-btn">
-              <button type="button" class="btn btn-primary" (click)="addRoles()" style="border-radius: 4px 4px 4px 4px;">
+              <button *ngIf="!updateRole" type="button" class="btn btn-primary" (click)="addRoles()" style="border-radius: 4px 4px 4px 4px;">
                 Save <i class="fa fa-file-text-o"></i> 
+              </button>
+              <button *ngIf="updateRole" type="button" class="btn btn-primary" (click)="editRoles()" style="border-radius: 4px 4px 4px 4px;">
+                Update <i class="fa fa-file-text-o"></i> 
               </button>
               <a (click)="modal.close('cross click')"><i class="fa fa-arrow-left p-3 bg-light rounded-2 ms-1"></i></a>
             </div>
           </div>
           <div class="modal-body">
            
-            <div class="row  p-1">
+            <div class="row  px-1">
               <div class="col-md-2 border p-0">
                 <div class=" p-1 border-bottom">
                   <div class="card-body">
@@ -195,11 +198,11 @@
               </div>
               <div class="col-md-10 border p-1">
                 <div class="flex-grow-1">
-                    <input  type="text" [(ngModel)]="roleTitle"  placeholder="Title" aria-label="Sheet" class="form-control" >
+                    <input  type="text" [(ngModel)]="roleTitle"  placeholder="Title" aria-label="Sheet" class="form-control">
                 </div>
                 <div class="row m-1">
                 <div class="col-md-6 p-0 border" style="max-width: 48%;">
-                  <div class="permission-text bg-light p-3 mb-1">
+                  <div class="permission-text bg-light p-3 ">
                     <h6 class="mb-0">Available Permission <i class="fa fa-question-circle" aria-hidden="true"></i></h6>
                   </div>
                   <div class="Permission-filter-search">
@@ -253,6 +256,20 @@
               </div>
               </div>
             </div>
+            <div class="row px-1">
+                <div class="col-md-2 border p-0">
+                  <div class=" p-1 ">
+                    <div class="card-body p-1">
+                      <h6>User</h6>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-10 border p-1">
+                  <div class="flex-grow-1">
+                    <input  type="text" [(ngModel)]="roleTitle"  placeholder="Title" aria-label="Sheet" class="form-control" >
+                </div>
+                </div>
+              </div>
           </div>
           <!-- <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>

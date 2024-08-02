@@ -360,16 +360,16 @@
                                             <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                             }@else{
                                              <div class="table-responsive" style="overflow-y: scroll;height: 233px;" [class.table-left]="draggedtables.length > 1" [class.table-right]="draggedtables.length === 1">
-                                            <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                                <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                 <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
                                                     <tr>
                                                         @for(data of TabledataJoining.column_data;track data){
                                                         <th>{{data}}</th>
                                                         }
                                                     </tr>
-                                            
                                                 </thead>
                                                 <tbody>
+
                                                     @for(rowss of TabledataJoining.row_data;track rowss;){
                                                     <tr>
                                                         @for(rowdata of rowss;track rowdata;let i = $index){
@@ -461,12 +461,12 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="card-body ">
+                            <div class="card-body p-2">
                                 <!-- <h6 class="fs-12 mt-2 mb-0 drag-txt">Enter your query here</h6> -->
-                                <textarea [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here" style="outline: none;border: none;width: 100%;"></textarea>
+                                <textarea class="query-text" [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here" style="outline: none;border: none;width: 100%;"></textarea>
 
                             </div>
-                            <div class="modal-footer border-0">
+                            <div class="modal-footer p-1 me-4 border-0">
                                 <button *ngIf="!updateQuery" aria-expanded="false" class="btn btn-primary" (click)="updateCustmQuery()"> Save Query </button>
                                 <button *ngIf="updateQuery" aria-expanded="false" class="btn btn-primary" (click)="saveQuery()"> Update Query </button>
                                 <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length" (click)="executeQuery()"> Run Query </button>

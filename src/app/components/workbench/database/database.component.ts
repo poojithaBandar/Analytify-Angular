@@ -164,7 +164,7 @@ export class DatabaseComponent {
     this.getSchemaTablesFromConnectedDb();
       }
       if(this.fromFileId){
-        this.getTablesFromFileId()
+        this.getTablesFromFileId();
       }
    // this.getTablesfromPrevious()
   }
@@ -217,6 +217,19 @@ export class DatabaseComponent {
     }
   }
   getTablesFromFileId(){
+    this.workbechService.getTablesFromFileId(this.fileId)
+    .subscribe({next: (data) => {
+      this.schematableList= data?.data?.schemas;
+      // console.log('filteredscemas',this.filteredSchematableList)
+          this.databaseName = data.filename;
+          //  this.hostName = data.database.hostname;
+       console.log(data)
+   
+   },
+   error:(error)=>{
+    console.log(error);
+   }
+   })
 
   }
 //   getTablesFromConnectedDb(){
@@ -245,7 +258,8 @@ getSchemaTablesFromConnectedDb(){
   }
   this.workbechService.getSchemaTablesFromConnectedDb(this.databaseId,obj).subscribe({next: (data) => {
    this.schematableList= data?.data?.schemas;
-   this.filteredSchematableList = this.schematableList?.data?.schemas
+  //  this.filteredSchematableList = this.schematableList?.data?.schemas
+   console.log('filteredscemas',this.filteredSchematableList)
        this.databaseName = data.database.database;
         this.hostName = data.database.hostname;
     console.log(data)
@@ -277,15 +291,15 @@ filterTables(){
   }
 }
 
-// private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
-//   let result: any[] = [];
-// for (const obj of arraysOfObjects) {
-//   if (Array.isArray(obj.data)) {
-//     result = result.concat(obj.data);
-//   }
-// }
-// return result;
-// }
+private combineArrays(arraysOfObjects: { data: any[] }[]): any[]{
+  let result: any[] = [];
+for (const obj of arraysOfObjects) {
+  if (Array.isArray(obj.data)) {
+    result = result.concat(obj.data);
+  }
+}
+return result;
+}
 drop(event: CdkDragDrop<string[]>) {
   if (event.previousContainer === event.container) {
     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -451,7 +465,11 @@ joiningTablesWithoutQuerySetId(){
     joining_tables: schemaTablePairs,
     join_type:[],
     joining_conditions:[],
-    dragged_array:this.draggedtables
+    dragged_array:this.draggedtables,
+  } as any
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.workbechService.joiningTables(obj)
   .subscribe(
@@ -490,6 +508,10 @@ joiningTables(){
     join_type:[],
     joining_conditions:this.relationOfTables,
     dragged_array:this.draggedtables
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id;
+    obj.file_id=this.fileId
   }
   this.workbechService.joiningTables(obj)
   .subscribe(
@@ -549,6 +571,10 @@ joiningTablesFromDelete(){
     join_type:[],
     joining_conditions:this.relationOfTables,
     dragged_array:this.draggedtables
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id;
+    obj.file_id=this.fileId
   }
   this.workbechService.joiningTables(obj)
   .subscribe(
@@ -697,6 +723,10 @@ getJoiningTableData(){
     database_id:this.databaseId,
     query_id:this.qurtySetId,
     datasource_queryset_id:this.datasourceQuerysetId
+  } as any
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id=this.fileId
   }
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
@@ -778,6 +808,10 @@ callColumnWithTable(){
     database_id:this.databaseId,
     query_set_id :this.qurtySetId,
     type_of_filter:'datasource'
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.workbechService.callColumnWithTable(obj).subscribe(
     {
@@ -804,6 +838,10 @@ selectedColumnGetRows(col:any,datatype:any){
     type_of_filter:'datasource',
     col_name:col,
     data_type:datatype,
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.colName = col;
   this.dataType = datatype;
@@ -862,6 +900,10 @@ getSelectedRows() {
     range_values:null,
     col_name:this.colName,
     data_type:this.dataType,
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
 
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
@@ -891,6 +933,10 @@ getDsQuerysetId(){
     queryset_id:this.qurtySetId,
     filter_id:this.datasourceFilterIdArray,
     database_id:this.databaseId
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.workbechService.getDsQuerysetId(obj).subscribe(
     {
@@ -921,6 +967,10 @@ getFilteredList(){
     query_set_id:this.qurtySetId,
     database_id:this.databaseId,
     type_of_filter:'datasource'
+  }as any
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.workbechService.getFilteredList(obj).subscribe(
     {
@@ -944,6 +994,10 @@ editFilter(id:any){
     type_filter:'datasource',
     database_id:this.databaseId,
     filter_id:id
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.workbechService.editFilter(obj).subscribe(
     {
@@ -1046,8 +1100,11 @@ getSelectedRowsFromEdit() {
     range_values:null,
     col_name:this.colName,
     data_type:this.dataType
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
-
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
     {
       next:(data:any) =>{

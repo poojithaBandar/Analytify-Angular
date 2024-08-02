@@ -44,15 +44,20 @@
                             currentPage: page,
                             totalItems: totalItems
                           }">
-                            <td >
-                                <!-- <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name | slice:0:15}}</a> -->
-                               
+                            <td>
+                              <div class="d-flex">
+                                <div class="imgdf">
+                                  <img src="{{dashboard.dashboard_image}}" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                </div>
                                 <div class="content">
-                                  <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" > {{dashboard.dashboard_name | slice:0:15}}</a>
+                                  <a style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}"
+                                    (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">
+                                    {{dashboard.dashboard_name | slice:0:15}}</a>
                                   <p class="mb-0">Created by : {{dashboard.created_by}}</p>
                                 </div>
-                              </td>
-                               <td>{{dashboard.created}}</td>
+                              </div>
+                            </td>
+                            <td>{{dashboard.created}}</td>
                             <td>{{dashboard.Modified}}</td>
                             <td>
                                 <div class="hstack gap-2 fs-1">

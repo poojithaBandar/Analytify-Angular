@@ -32,13 +32,14 @@ export class RolesDashboardComponent {
   searchSelectedPrevilage:any;
   roleTitle='';
   selectedIds = [] as any;
+  updateRole = false;
 constructor(public modalService:NgbModal,private workbechService:WorkbenchService){
 
 }
 
 
 ngOnInit(){
-  this.getSavedRolesList()
+  this.getSavedRolesList();
 }
 
 addRolesModal(OpenmdoModal: any) {
@@ -74,6 +75,7 @@ getSavedRolesList(){
       })
     }
   }) 
+  this.updateRole = false;
 }
 getPrevilagesList(){
   const obj ={
@@ -213,6 +215,74 @@ if(this.roleTitle === ''){
     }
   }) 
 }
+}
+deleteRole(id:any){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result)=>{
+    if(result.isConfirmed){
+      this.workbechService.deleteRole(id)
+      .subscribe(
+        {
+          next:(data:any) => {
+            console.log(data);      
+            if(data){
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'Role Deleted Successfully',
+                width: '400px',
+              })
+            }
+            this.getSavedRolesList();
+          },
+          error:(error:any)=>{
+            Swal.fire({
+              icon: 'warning',
+              text: error.error.message,
+              width: '300px',
+            })
+            console.log(error)
+          }
+        } 
+      )
+    }})
+}
+getRoleIdDetails(id:any){
+  this.workbechService.getRoleIdDetails(id).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.roleTitle = data.role_name;
+      this.selectedArray = data.previlages;
+      this.removeIdsFromprevilageList();
+      this.updateRole = true
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
+}
+removeIdsFromprevilageList(){
+  if(this.previlagesList){
+    const selectedIds:any = this.selectedArray.map((item: { id: any; }) => item.id);
+
+  this. previlagesList = this. previlagesList.filter((item: { id: any; }) => !selectedIds.includes(item.id));
+
+  }
+}
+editRoles(){
 
 }
 }

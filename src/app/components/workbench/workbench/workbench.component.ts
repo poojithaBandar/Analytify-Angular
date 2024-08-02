@@ -29,6 +29,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 })
 export class WorkbenchComponent implements OnInit{
   @ViewChild('fileInput') fileInput:any;
+  @ViewChild('fileInput1') fileInput1:any;
+
   
   tableList = [] as any;
   dragedTableName: any;
@@ -428,8 +430,12 @@ export class WorkbenchComponent implements OnInit{
         )
     }
 
-    triggerFileUpload() {
+    triggerFileUpload(value:any) {
+      if(value === 'csv'){
       this.fileInput.nativeElement.click();
+      }else if(value === 'excel'){
+        this.fileInput1.nativeElement.click();
+      }
     }
 
     uploadfileCsv(event:any){
