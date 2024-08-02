@@ -795,7 +795,16 @@ openSuperScaled(modal: any) {
   });
   this.tableColumnFilter = true;
   this.columnRowFilter = false;
+}
+openSuperScaledGetColunmns(modal: any){
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+  this.tableColumnFilter = true;
+  this.columnRowFilter = false;
   this.callColumnWithTable();
+
 }
 openRowsData(modal: any) {
   this.modalService.open(modal, {

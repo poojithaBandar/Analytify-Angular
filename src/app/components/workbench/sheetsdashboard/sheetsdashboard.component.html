@@ -501,7 +501,7 @@
           }
           </div>
         
-        <div  id="capture-element" style="margin: 0;overflow: scroll;"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
+        <div  id="capture-element" style="margin: 0;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>

@@ -220,6 +220,18 @@ export class SheetsComponent {
           }
         }      
   }
+  if(this.router.url.includes('/workbench/landingpage/sheets/')){
+    console.log("landing page")
+    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']&& route.snapshot.params['id4']) {
+      this.databaseId = +atob(route.snapshot.params['id1']);
+      this.qrySetId = +atob(route.snapshot.params['id2'])
+      this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
+      this.sheetName = atob(route.snapshot.params['id4'])
+      console.log(this.retriveDataSheet_id,this.sheetName,'shetname')
+      this.tabs[0] = this.sheetName;
+      // this.sheetRetrive();
+      }
+   }
 }
 
   ngOnInit(): void {
