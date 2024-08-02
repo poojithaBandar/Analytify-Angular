@@ -32,6 +32,7 @@ import { style } from 'd3';
 import { OVERFLOW } from 'html2canvas/dist/types/css/property-descriptors/overflow';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { arrow } from '@popperjs/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -59,7 +60,7 @@ interface Dimension {
   standalone: true,
   imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule,  ],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule ],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -101,6 +102,11 @@ export class SheetsdashboardComponent {
  filteredColumnData = [] as any;
  filteredRowData = [] as any;
  disableDashboardUpdate: boolean = false;
+ sheetTabs : any[] = [];
+ selectedTabIndex : number = 0;
+ selectedTab : any = {};
+ displayTabs : boolean = false;
+
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService: NgbModal){
@@ -129,6 +135,8 @@ export class SheetsdashboardComponent {
 }> = [];
   dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
   }>;
+  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+}> = [];
   dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
   }>;
   testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
@@ -594,6 +602,7 @@ export class SheetsdashboardComponent {
        sheet_ids:this.sheetsIdArray,
       dashboard_name:this.dashboardName,
       data:this.dashboard,
+      sheetTabs : this.sheetTabs
       
     }
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
@@ -970,10 +979,15 @@ allowDrop(ev : any): void {
     }
   }
 
-  removeItem($event:any, item:any) {
+  removeItem($event:any, item:any, tabSheet : boolean) {
     $event.preventDefault();
     $event.stopPropagation();
-    this.dashboard.splice(this.dashboard.indexOf(item), 1);
+    if(tabSheet){
+      this.dashboardTest.splice(this.dashboardTest.indexOf(item), 1);
+      this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+    } else {
+      this.dashboard.splice(this.dashboard.indexOf(item), 1);
+    }
     this.setDashboardNewSheets(item.sheetId, false);
   }
   removeNestedItem($event:any, item:any) {
@@ -2208,6 +2222,62 @@ deleteDashboardFilter(id:any){
     }
   })
 }
+
+dropTest2(event: any) {
+  if(this.colArray.length >0 && this.rowArray.length>0){
+    this.colArray = [];
+    this.rowArray = [];
+  }
+  if (event.previousContainer === event.container) {
+    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+  } else {
+    console.log('Transfering item to new container')
+    console.log('Transferring item to new container');
+    
+    let item: any = event.previousContainer.data[event.previousIndex];
+    console.log('Original item:', JSON.stringify(item));
+    
+    // Creating a deep copy of the item
+    let copy: any = JSON.parse(JSON.stringify(item));
+    console.log('Copy of item:', JSON.stringify(copy));
+    
+    // Initialize an empty object to hold the copied attributes
+    let element: DashboardItem = {
+      id:copy.id,
+      x:copy.x,
+        y: copy.y,
+      rows: 1,
+      cols:1,
+      data: copy.data,
+      sheetType:copy.sheetType,
+      sheetId:copy.sheetId,
+      chartType:copy.chartType,
+      chartId:copy.chartId,
+      chartOptions: copy.chartOptions,
+      chartInstance: copy.chartInstance,
+      tableData:copy.tableData,
+      chartData:copy.chartOptions?.chartData || [],
+    };
+    this.dashboardTest.push(element);
+    this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+  }
+ 
+}
+
+  selectedSheetTab(event: any) {
+    this.selectedTabIndex = event.index;
+    this.dashboardTest = this.sheetTabs[this.selectedTabIndex].dashboard;
+  }
+
+  addTabs() {
+    this.displayTabs = true;
+    let id = uuidv4();
+    this.selectedTab = { id: id };
+    this.selectedTabIndex = this.sheetTabs.length;
+    let name = this.selectedTabIndex > 0 ? "Sheet Title " + this.selectedTabIndex : "Sheet Title";
+    this.sheetTabs.push({ id: id, name: name, dashboard: [] });
+    this.dashboardTest = [];
+  }
 
 }
 
