@@ -187,6 +187,7 @@ export class SheetsComponent {
   radar: boolean = false;
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
+  backgroundColor: string = '#fff';
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
@@ -409,6 +410,7 @@ if(this.fromFileId){
       this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
     } else {
       this.eBarChartOptions = {
+        backgroundColor: this.backgroundColor,
         legend: {
           orient: 'vertical',
           left: 'left'
@@ -532,6 +534,7 @@ if(this.fromFileId){
         name: this.chartsColumnData[index]
       }));
       this.ePieChartOptions = {
+        backgroundColor: this.backgroundColor,
         title: {
           left: 'center'
         },
@@ -652,6 +655,7 @@ if(this.fromFileId){
     this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
 } else {
   this.eLineChartOptions = {
+    backgroundColor: this.backgroundColor,
     legend: {
       orient: 'vertical',
       left: 'left'
@@ -833,6 +837,7 @@ if(this.fromFileId){
     this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
   } else {
     this.eAreaChartOptions =  {
+      backgroundColor: this.backgroundColor,
       legend: {
         orient: 'vertical',
         left: 'left'
@@ -1229,6 +1234,7 @@ if(this.fromFileId){
     this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
   } else {
     this.eBarLineChartOptions = {
+      backgroundColor: this.backgroundColor,
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -1247,7 +1253,6 @@ if(this.fromFileId){
       },
       toolbox: {
         feature: {
-          dataView: { show: true, readOnly: false },
           magicType: { show: true, type: ['line', 'bar','stack'] },
           restore: { show: true },
           saveAsImage: { show: true }
@@ -1342,7 +1347,7 @@ if(this.fromFileId){
     name : data.name
   }));
     this.eRadarChartOptions =  {
-      backgroundColor: '#161627',
+      backgroundColor: this.backgroundColor,
       tooltip:{trigger:"item"},
       legend: {
         data: legendArray
@@ -4445,6 +4450,7 @@ fetchChartData(chartData: any){
       case 3: this.yGridColor = color; break;
       case 4: this.color = color; break;
       case 5: this.xLabelColor = color; break;
+      case 6: this.backgroundColor = color; break;
     }
     this.reAssignChartData();
   }

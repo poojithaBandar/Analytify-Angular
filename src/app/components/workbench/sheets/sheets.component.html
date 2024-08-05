@@ -1061,6 +1061,16 @@
                                                     </div>
                                                     <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
+                                                            <p >background Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="backgroundColor"  (change)="marksColor($event,6)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>  
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
                                                             <p >X-label Color </p>
                                                         </div>
                                                         <ngx-colors 
@@ -1081,21 +1091,21 @@
                                                     </div>
                                                     <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
-                                                            <p >Y-Grid Line Color </p>
-                                                        </div>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="yGridColor"  (change)="marksColor($event,3)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div>
-                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
                                                             <p >Y-label Color </p>
                                                         </div>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="yLabelColor"  (change)="marksColor($event,2)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Y-Grid Line Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="yGridColor"  (change)="marksColor($event,3)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>

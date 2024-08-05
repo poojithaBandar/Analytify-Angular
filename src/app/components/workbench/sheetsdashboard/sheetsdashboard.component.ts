@@ -287,8 +287,8 @@ export class SheetsdashboardComponent {
     // ];
   }
 
-  changeGridType(){
-  if(this.gridType == 'fixed'){
+  changeGridType(gridType : string){
+  if(gridType == 'fixed'){
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactUpAndLeft,
