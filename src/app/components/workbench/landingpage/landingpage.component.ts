@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -16,7 +17,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 })
 
 export class LandingpageComponent implements OnInit {
-  searchDbName:any
+searchDbName:any
 userSheetsList :any[] =[];
 savedDashboardList: any[] =[];
 connectionList:any[]=[];
@@ -25,8 +26,12 @@ showAllSheets = true;
 showAllDasboards = true;
 showAllSavedQueries = true;
 wholeSearch:any
-constructor(private router:Router,private workbechService:WorkbenchService){
+viewDatabbses = false;
+viewSheets = false;
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService){
   localStorage.setItem('QuerySetId', '0');
+  this.viewDatabbses=this.templateService.viewDashboard();
+  this.viewSheets = this.templateService.viewSheets()
 }
 
 ngOnInit(){

@@ -35,6 +35,7 @@ export class RolesDashboardComponent {
   selectedIds = [] as any;
   updateRole = false;
   assaignedUsers =[] as any;
+  addRoleDiv = false;
 constructor(public modalService:NgbModal,private workbechService:WorkbenchService){
 
 }
@@ -44,9 +45,13 @@ ngOnInit(){
   this.getSavedRolesList();
 }
 
-addRolesModal(OpenmdoModal: any) {
-  this.modalService.open(OpenmdoModal);
+// addRolesModal(OpenmdoModal: any) {
+//   this.modalService.open(OpenmdoModal);
+// }
+addRolesDivOpen(){
+this.addRoleDiv = true;
 }
+
 searchRoleList(){
   this.pageNo=1;
   this.getSavedRolesList();
@@ -199,7 +204,7 @@ if(this.roleTitle === ''){
   this.workbechService.addPrevilage(Obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.modalService.dismissAll()
+      this.addRoleDiv = false;
       Swal.fire({
         icon: 'success',
         title: 'Done!',

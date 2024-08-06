@@ -134,7 +134,7 @@ export class DatabaseComponent {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-
+      this.fromDatabasId= true;
       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
       if(this.datasourceQuerysetId==='null'){
         console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -182,6 +182,10 @@ export class DatabaseComponent {
     const obj ={
       database_id:this.databaseId,
       queryset_id:this.qurtySetId
+    }as any
+    if(this.fromFileId){
+      delete obj.database_id
+      obj.file_id = this.fileId
     }
     this.workbechService.getSavedQueryData(obj).subscribe({
       next:(data:any)=>{
@@ -430,6 +434,10 @@ executeQuery(){
   const obj ={
     database_id: this.databaseId,
     custom_query: this.sqlQuery
+  }as any
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.workbechService.executeQuery(obj)
   .subscribe(
@@ -1248,6 +1256,10 @@ updateCustmQuery(){
     queryset_id:this.qurtySetId,
     query_name:this.saveQueryName,
     custom_query:this.sqlQuery
+  }as any
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
   }
   this.workbechService.updateCustmQuery(obj).subscribe({
     next:(data:any)=>{

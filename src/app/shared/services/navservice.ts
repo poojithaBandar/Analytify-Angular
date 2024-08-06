@@ -2,6 +2,7 @@ import { Injectable, OnDestroy} from '@angular/core';
 import { Subject, BehaviorSubject, fromEvent } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ViewTemplateDrivenService } from '../../components/workbench/view-template-driven.service';
 
 // Menu
 export interface Menu {
@@ -53,7 +54,7 @@ export class NavService implements OnDestroy {
   public fullScreen = false;
   active: any;
 
-  constructor(private router: Router) {
+  constructor(private router: Router,private viewTemplate:ViewTemplateDrivenService) {
     this.setScreenWidth(window.innerWidth);
     fromEvent(window, 'resize')
       .pipe(debounceTime(1000), takeUntil(this.unsubscriber))
@@ -308,7 +309,6 @@ export class NavService implements OnDestroy {
       type: 'link',
       nochild: true,
     },
-
     {
       title: 'Data Source',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
