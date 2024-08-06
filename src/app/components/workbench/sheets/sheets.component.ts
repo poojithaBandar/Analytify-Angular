@@ -29,6 +29,7 @@ import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font
 import 'ckeditor5/ckeditor5.css';
 import * as echarts from 'echarts';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -48,7 +49,7 @@ interface Dimension {
     },
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
-    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule],
+    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,InsightsButtonComponent],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })

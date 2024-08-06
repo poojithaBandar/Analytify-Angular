@@ -145,8 +145,10 @@
     <!-- ROW-1 OPEN-->
     <div class="col-lg-12 p-0 mt-3">
         <div class="d-flex align-items-center justify-content-end  mb-3">
-            <a class="btn btn-blue-light me-3" (click)="sheetsRoute()" ><i class="fa fa-plus"></i> New Chart</a> 
-            <a class="btn btn-blue-light me-3" (click)="newConnections()"> Connect To Database</a>
+            <app-insights-button [buttonName]="' New Chart'" [classesList]="'btn btn-blue-light me-3'" [previledgeId]="17" [isBtn]="true"
+            (btnClickEvent)="sheetsRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
+            <app-insights-button [buttonName]="'Connect To Database'" [classesList]="'btn btn-blue-light me-3'" [isIcon]="false" [previledgeId]="1" [isBtn]="true"
+            (btnClickEvent)="newConnections()"></app-insights-button>
             <div class="view-card">
                 <div class="input-group">
                     <input type="text" class="form-control border-end-0" [(ngModel)]="wholeSearch" (keyup)="totalSearch()" placeholder="Search ...">
@@ -309,7 +311,10 @@
                                 </a>
                                 <div class="dropdown-menu" ngbDropdownMenu>
                                     <a class="dropdown-item" ngbDropdownItem (click)="viewSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id,sheetlist.sheet_name)"><i class="fe fe-upload"></i> View Sheet</a>
-                                    <a class="dropdown-item  btn btn-secondary-light" ngbDropdownItem (click)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"><i class="fe fe-trash"></i> Delete</a>
+                                    <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
+                                  [previledgeId]="19" [isBtn]="false" [buttonName]="' Delete'"
+                                  (btnClickEvent)="deleteSheet(sheetlist.server_id,sheetlist.queryset_id,sheetlist.sheet_id)"
+                                  [faIconList]="'fe fe-trash'" [isIcon]="true"></app-insights-button>
                                 </div>
                             </div>
                           </div>

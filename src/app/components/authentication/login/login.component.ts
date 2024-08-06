@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 import Swal from 'sweetalert2';
+import { RolespriviledgesService } from '../../workbench/rolespriviledges.service';
 
 @Component({
   selector: 'app-login',
@@ -40,7 +41,7 @@ toggleVisibility1() {
 }
   constructor(
     @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,    private router: Router,
-    private renderer: Renderer2,private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService
+    private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]],
@@ -70,6 +71,9 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     const userName = { userName: data.username};
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
+    if(data.previlages){
+      this.rolesService.setRoleBasedPreviledges(data.previlages);
+    }
     if(data.accessToken){
       this.router.navigate(['workbench/landingpage'])
     }

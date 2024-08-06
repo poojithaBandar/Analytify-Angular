@@ -5,11 +5,12 @@ import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,CommonModule,FormsModule],
+  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })

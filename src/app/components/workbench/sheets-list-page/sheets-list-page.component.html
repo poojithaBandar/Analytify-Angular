@@ -80,14 +80,16 @@
                             <td>{{sheets.Modified}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
-                              <a aria-label="anchor"(click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)" 
-                              class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                              <i class="ri-edit-line" ngbTooltip="Edit"></i></a>
-
-                            <a aria-label="anchor"  (click)="deleteSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                        </a>
-                        </div>
+                                <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
+                                  [previledgeId]="18" [isBtn]="false"
+                                  (btnClickEvent)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"
+                                  [toolTip]="'Edit'" [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
+                                <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
+                                  [previledgeId]="19" [isBtn]="false" [toolTip]="'Delete database'"
+                                  (btnClickEvent)="deleteSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)"
+                                  [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
+                              
+                              </div>
                               </td>
                         </tr>
                     </tbody>
@@ -206,10 +208,13 @@
                                             class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                     </a>
                                     <div class="dropdown-menu" ngbDropdownMenu>
-                                      <a class="dropdown-item" tabindex="0" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)">
-                                        <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
-                                    <a  class="dropdown-item btn btn-secondary-light" tabindex="0" (click)="deleteSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)">
-                                        <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                      <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="18" [isBtn]="false"
+                                        [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"
+                                        [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                                      <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'"
+                                        [previledgeId]="19" [isBtn]="false" [tabIndex]="0"
+                                        (btnClickEvent)="deleteSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)"
+                                        [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                     </div>
                                 </div>
                               </div>

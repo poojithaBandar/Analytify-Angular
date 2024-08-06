@@ -7,11 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule, PaginatePipe, PaginationControlsComponent } from 'ngx-pagination';
 import { Router } from '@angular/router';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 
 @Component({
   selector: 'app-sheets-list-page',
   standalone: true,
-  imports: [SharedModule,CommonModule,FormsModule,NgbModule,NgxPaginationModule],
+  imports: [SharedModule,CommonModule,FormsModule,NgbModule,NgxPaginationModule,InsightsButtonComponent],
   templateUrl: './sheets-list-page.component.html',
   styleUrl: './sheets-list-page.component.scss'
 })
