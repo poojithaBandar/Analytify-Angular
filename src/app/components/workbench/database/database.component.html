@@ -184,7 +184,9 @@
                                     <i class="fa fa-filter"></i> Apply Filters
                                 </a>
                                 }
-                                <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a>
+                                <app-insights-button [buttonName]="'New Custom SQL'" [classesList]="'btn btn-blue-light m-1'" [previledgeId]="54" [isBtn]="true"
+                                                (btnClickEvent)="customSql=true;tableJoiningUI=false" [isIcon]="false"></app-insights-button>
+                                <!-- <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a> -->
                             </div>
                         </div>
                         <div class="d-flex">
@@ -388,7 +390,8 @@
                                             <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{qryTime}}s</span> Rows effected:{{qryRows}}</span>
                                             }
                                             @if(qurtySetId && qurtySetId){
-                                            <button aria-expanded="false" class="btn btn-primary" (click)="goToSheet()"> Go to sheet </button>
+                                            <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'" [previledgeId]="17" [isBtn]="true"
+                                                (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
                                             }
                                         </div>
                                     </div>
@@ -467,8 +470,10 @@
 
                             </div>
                             <div class="modal-footer p-1 me-4 border-0">
-                                <button *ngIf="!updateQuery" aria-expanded="false" class="btn btn-primary" (click)="saveQuery()"> Save Query </button>
-                                <button *ngIf="updateQuery" aria-expanded="false" class="btn btn-primary" (click)="updateCustmQuery()"> Update Query </button>
+                                <app-insights-button *ngIf="!updateQuery" [buttonName]="' Save Query '" [classesList]="'btn btn-primary'"
+                                    [previledgeId]="51" [isBtn]="true" (btnClickEvent)="saveQuery()" [isIcon]="false"></app-insights-button>
+                                <app-insights-button *ngIf="updateQuery" [buttonName]="' Update Query '" [classesList]="'btn btn-primary'"
+                                    [previledgeId]="52" [isBtn]="true" (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
                                 <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length" (click)="executeQuery()"> Run Query </button>
                                 <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query </button>
                             </div>
@@ -512,7 +517,8 @@
                                         <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{custmQryTime}} </span>,Rows effected:{{custmQryRows}}</span>
                                     }
                                     @if(qurtySetId && qurtySetId){
-                                        <button aria-expanded="false" class="btn btn-primary" (click)="goToSheet()"> Go to sheet </button>
+                                        <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'" [previledgeId]="17" [isBtn]="true"
+                                                (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
                                     }
                                 </div>
                             </div>

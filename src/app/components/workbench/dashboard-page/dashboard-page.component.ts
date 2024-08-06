@@ -7,11 +7,12 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [NgbModule,CommonModule,SharedModule,FormsModule,NgxPaginationModule],
+  imports: [NgbModule,CommonModule,SharedModule,FormsModule,NgxPaginationModule,InsightsButtonComponent],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
 })

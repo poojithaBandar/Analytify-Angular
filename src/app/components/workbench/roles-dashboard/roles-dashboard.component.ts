@@ -6,11 +6,12 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 
 @Component({
   selector: 'app-roles-dashboard',
   standalone: true,
-  imports: [SharedModule,CommonModule,FormsModule,NgbModule,NgxPaginationModule,ReactiveFormsModule],
+  imports: [SharedModule,CommonModule,FormsModule,NgbModule,NgxPaginationModule,ReactiveFormsModule,InsightsButtonComponent],
   templateUrl: './roles-dashboard.component.html',
   styleUrl: './roles-dashboard.component.scss'
 })

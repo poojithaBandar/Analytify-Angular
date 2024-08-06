@@ -1,6 +1,6 @@
 <app-page-header title="Users List" title1="home" activeitem="Users List"></app-page-header>
 
-<div class="main-container container-fluid">
+<div *ngIf="!addUserDivForm" class="main-container container-fluid">
 
     <div class="row" class="card" style="padding: 20px;">
     <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
@@ -19,7 +19,7 @@
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="userName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchUserList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary" (click)="addUserModal(Adduser)" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add User</button>
+            <button type="button" class="btn btn-primary" (click)="addUserDiv()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add User</button>
 
           </div>
         </div>
@@ -71,13 +71,12 @@
                             <td>{{users.updated_at | date}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
-                              <a aria-label="anchor"
-                              class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                              <i class="ri-edit-line" ngbTooltip="Edit"></i></a>
-
-                            <a aria-label="anchor" (click)="deleteUser(users.user_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                        </a>
+                                <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
+                                  [previledgeId]="61" [isBtn]="false" [toolTip]="'Edit'" (btnClickEvent)="getUserIdDetails(users.user_id);"
+                                  [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
+                                <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
+                                  [previledgeId]="63" [isBtn]="false" [toolTip]="' Delete'" (btnClickEvent)="deleteUser(users.user_id)"
+                                  [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
                         </div>
                               </td>
                         </tr>
@@ -117,10 +116,14 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                             <div class="dropdown-menu" ngbDropdownMenu>
-                                               <a class="dropdown-item" tabindex="0" >
-                                                      <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
-                                                  <a  class="dropdown-item  btn btn-secondary-light" tabindex="0" (click)="deleteUser(users.user_id)">
-                                                      <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                              <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="61" [isBtn]="false"
+                                              [buttonName]="' Edit'" [tabIndex]="0"
+                                              (btnClickEvent)="getUserIdDetails(users.user_id)"
+                                              [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                                          <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="63" [isBtn]="false"
+                                              [buttonName]="' Delete'" [tabIndex]="0"
+                                              (btnClickEvent)="deleteUser(users.user_id)"
+                                              [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                             </div>
                                         </div>
                                       </div>
@@ -180,7 +183,9 @@
     <div class="modal-content modal-large">
         <form [formGroup]="addUserForm">
             <div class="modal-header justify-conent-between">
-                <h1 class="modal-title fs-5" id="inputModalLabel">Add User</h1>
+                <h1 *ngIf="!userEditHidePassword" class="modal-title fs-5" id="inputModalLabel">Add User</h1>
+                <h1 *ngIf="userEditHidePassword" class="modal-title fs-5" id="inputModalLabel">Edit User</h1>
+
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                     (click)="modal.close('cross click')"></button>
             </div>
@@ -255,7 +260,178 @@
                             associate with a list of Permission </label>
                     </div>
 
+                    <!-- <div *ngIf="!userEditHidePassword">    -->
+                     <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">Password</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                        <input type="password" id="input-text" formControlName="password" placeholder="Password" class="form-control"  [type]="showPassword ? 'text' : 'password'" autocomplete="off">
+                        <button class="btn btn-light" (click)="toggleVisibility()" type="button" id="button-addon2">
+                            <i class="ri-eye-{{toggleClass}} align-middle"></i></button>
+                            @if(requiredValid){
+                        <div class="invalid-feedback" style="display: block !important;">
+                            <div id="validation-rules" class="mt-3"  >
+                              <!-- minlength -->
+                              <div class="pwd_character" [ngClass]="{ 'text-success': minLengthValid, 'text-danger': !minLengthValid }">
+                                <i [attr.class]="minLengthValid ? 'bi-check-square-fill' : 'bi-x-square'"></i>
+                                Must be at least 8 characters long
+                              </div>
+                
+                              <!-- requires digit -->
+                              <div class="pwd_character" [ngClass]="{ 'text-success': requiresDigitValid, 'text-danger': !requiresDigitValid }">
+                                <i [attr.class]="requiresDigitValid ? 'bi-check-square-fill' : 'bi-x-square'"></i>
+                                Must contain at least 1 digit
+                              </div>
+                
+                              <!-- requires uppercase -->
+                              <div class="pwd_character" [ngClass]="{ 'text-success': requiresUppercaseValid, 'text-danger': !requiresUppercaseValid }">
+                                <i [attr.class]="requiresUppercaseValid ? 'bi-check-square-fill' : 'bi-x-square'"></i>
+                                Must contain at least 1 uppercase character
+                              </div>
+                
+                              <!-- requires lowercase -->
+                              <div class="pwd_character" [ngClass]="{ 'text-success': requiresLowercaseValid, 'text-danger': !requiresLowercaseValid }">
+                                <i [attr.class]="requiresLowercaseValid ? 'bi-check-square-fill' : 'bi-x-square'"></i>
+                                Must contain at least 1 lowercase character
+                              </div>
+                
+                              <!-- requires special characters -->
+                              <div class="pwd_character" [ngClass]="{ 'text-success': requiresSpecialCharsValid, 'text-danger': !requiresSpecialCharsValid }">
+                                <i [attr.class]="requiresSpecialCharsValid ? 'bi-check-square-fill' : 'bi-x-square'"></i>
+                                Must contain at least 1 special character
+                              </div>
+                            </div>                         
+                          </div>
+                        }
+                        @else{
+                            <label for="input-label" class="form-label">The user's password for authentication </label>
+                        }
+                    </div>
                     <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">Confirm Password</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                        <input type="password" id="input-text" placeholder="Confirm Password" formControlName="conformpassword" class="form-control" [type]="showPassword1 ? 'text' : 'password'" autocomplete="off">
+                        <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
+                        @if(confirmPasswordError){
+                            <div class="text-danger">Password Didn't match</div>
+                        }@else{
+                        <label for="input-label" class="form-label">Please rewrite the user's password to Confirm
+                        </label>}
+                    </div>
+                <!-- </div> -->
+                </div>
+                <div class="justify-conent-between">
+                    <div class="add-role-save-btn" style="float: right;">
+                        <button type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!addUserForm.valid">
+                            Save <i class="fa fa-file-text-o"></i>
+                        </button>
+                        <!-- <a><i class="fa fa-arrow-left p-3 bg-light rounded-2 ms-1"></i></a> -->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+
+<div *ngIf="addUserDivForm" class="main-container container-fluid">
+
+  <div class="row" class="card" style="padding: 20px;">
+    <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
+        <form [formGroup]="addUserForm">
+            <div class="modal-header justify-conent-between">
+              <h1 *ngIf="!userEditHidePassword" class="modal-title fs-5" id="inputModalLabel">Add User</h1>
+              <h1 *ngIf="userEditHidePassword" class="modal-title fs-5" id="inputModalLabel">Edit User</h1>            
+            </div>
+            <div class="modal-body">
+                <div class="row  p-1">
+                    <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">First Name</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                        <input type="text" id="input-text"  formControlName="firstname" placeholder="First Name" class="form-control">
+                        @if(addUserForm.get('firstname')?.errors && addUserForm.get('firstname')?.touched){
+                            <div class="text-danger">firstname required</div>
+                          }
+                        @else{<label for="input-label" class="form-label">Write the user first name or names</label>}
+
+                    </div>
+
+                    <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">Last Name</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                        <input type="text" id="input-text" formControlName="lastname" placeholder="Last Name" class="form-control">
+                        @if(addUserForm.get('lastname')?.errors && addUserForm.get('lastname')?.touched){
+                            <div class="text-danger">lastname required</div>
+                          }
+                        @else{<label for="input-label" class="form-label">Write the user last name </label>}
+                    </div>
+
+                    <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">User Name</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                        <input type="text" id="input-text" formControlName="username" placeholder="User Name" class="form-control">
+                        @if(addUserForm.get('username')?.errors && addUserForm.get('username')?.touched){
+                            <div class="text-danger">username required</div>
+                          }
+                        @else{<label for="input-label" class="form-label">User name valid for authentication on DB or LDAP,
+                            unused for OID auth </label>}
+                    </div>
+
+                    <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">Is Active?</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                        <input type="checkbox" id="exampleCheck1" formControlName="is_active" class="form-check-input" [checked]="true">
+                        <label for="input-label" class="form-label">It's not a good policy to remove a user, just make
+                            it inactive </label>
+                    </div>
+
+                    <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">Email</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                        <input type="text" id="input-text" placeholder="Email" formControlName="email" class="form-control">
+                        @if(addUserForm.get('email')?.errors && addUserForm.get('email')?.touched){
+                            <div class="text-danger">Email required</div>
+                          }
+                        @else{<label for="input-label" class="form-label">The user's email, this will also be used for OID
+                            auth </label>}
+                    </div>
+
+                    <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">Select Role</label>
+                    </div>
+                    <div class="col-md-10 border p-2">
+                       
+                      <div class="col-md-2 border p-2">
+                        <label for="input-label" class="form-label">Select Role</label>
+                      </div>
+                      <input type="checkbox" id="selectAll" (change)="toggleSelectAll()" />
+                      <label for="selectAll" class="form-label">Select all roles</label>
+                      <div class="col-md-10 border p-2">
+                        <div formArrayName="role">
+                          <div *ngFor="let role of userAddedRolesList; let i = index">
+                            <label>
+                              <input type="checkbox" [formControlName]="i" (change)="onCheckboxChange()" />
+                              {{ role }}
+                            </label>
+                          </div>
+                        </div>
+                        <label for="input-label" class="form-label">
+                          The user role on the application, this will associate with a list of Permission
+                        </label>
+                      </div>
+
+                        <!-- <label for="input-label" class="form-label">The user role on the application, this will
+                            associate with a list of Permission </label> -->
+                    </div>
+
+                    <div *ngIf="!userEditHidePassword">   
+                     <div class="col-md-2 border p-2">
                         <label for="input-label" class="form-label">Password</label>
                     </div>
                     <div class="col-md-10 border p-2">
@@ -314,15 +490,22 @@
                         </label>}
                     </div>
                 </div>
+                </div>
                 <div class="justify-conent-between">
                     <div class="add-role-save-btn" style="float: right;">
-                        <button type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!addUserForm.valid">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeAddUserForm()">Close</button>
+                        <button *ngIf="!userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!addUserForm.valid">
                             Save <i class="fa fa-file-text-o"></i>
                         </button>
+                        <button *ngIf="userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="editUser()" >
+                          Update <i class="fa fa-file-text-o"></i>
+                      </button>
                         <!-- <a><i class="fa fa-arrow-left p-3 bg-light rounded-2 ms-1"></i></a> -->
                     </div>
                 </div>
             </div>
         </form>
+
     </div>
-</ng-template>
+  </div>
+</div>

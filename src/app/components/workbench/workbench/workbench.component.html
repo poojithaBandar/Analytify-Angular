@@ -940,8 +940,10 @@
                         <button class="btn border" type="button" id="button-addon2"><i class="bi bi-search text-muted"></i></button>
                         
                     </div>
-                    <button type="button" class="btn btn-primary" (click)="viewNewDbs=false;databaseconnectionsList=true;" style="position: absolute;top: 0;right: 0;">
-                        <i class="fa fa-eye"></i> View Connected Database</button>
+                    <app-insights-button [buttonName]="' View Connected Database'" [classesList]="'btn btn-primary'" [isIcon]="true"
+                      [previledgeId]="4" [faIconList]="'fa fa-eye'" [isBtn]="true" style="position: absolute;top: 0;right: 0;"
+                      (btnClickEvent)="viewNewDbs=false;databaseconnectionsList=true;"></app-insights-button>
+
                 </div>
             </div>
             <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;">Relational Database</h6>

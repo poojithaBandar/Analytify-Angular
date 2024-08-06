@@ -62,16 +62,14 @@
                             <td>
                                 <div class="hstack gap-2 fs-1">
                             
-                                    <a aria-label="anchor"
-                                    (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"
-                                        class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                                        <i class="ri-edit-line" ngbTooltip="Edit"></i></a>
-                            
-                                    <a aria-label="anchor"
-                                        (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"
-                                        class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                        <i class="ri-delete-bin-7-line" ngbTooltip="Delete"></i>
-                                    </a>
+                                  <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2'"
+                                  [previledgeId]="37" [isBtn]="false"
+                                  (btnClickEvent)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" [toolTip]="'Edit'"
+                                  [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
+                                <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
+                                  [previledgeId]="35" [isBtn]="false" [toolTip]="'Delete'"
+                                  (btnClickEvent)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"
+                                  [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
                             
                                 </div>
                             </td>
@@ -115,12 +113,14 @@
                       </div>                               
                       </div>
                         <div class=" text-center p-2">
-                          <a aria-label="anchor"   (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
-                            <i class="ri-edit-line" ng-reflect-ngb-tooltip="Edit"></i>
-                           </a>
-                          <a aria-label="anchor" (click)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                            <i class="ri-delete-bin-7-line" ng-reflect-ngb-tooltip="Delete"></i>
-                           </a>
+                          <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2'"
+                            [previledgeId]="37" [isBtn]="false"
+                            (btnClickEvent)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" [toolTip]="'Edit'"
+                            [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
+                          <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
+                            [previledgeId]="35" [isBtn]="false" [toolTip]="'Delete'"
+                            (btnClickEvent)="deleteDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"
+                            [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
                         </div>
                   </div>
                     </div>

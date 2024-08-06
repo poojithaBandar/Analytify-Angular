@@ -17,11 +17,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule],
+  imports: [SharedModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   animations:[
@@ -134,7 +135,7 @@ export class DatabaseComponent {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-
+      this.fromDatabasId=true
       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
       if(this.datasourceQuerysetId==='null'){
         console.log('filterqrysetid',this.datasourceQuerysetId)

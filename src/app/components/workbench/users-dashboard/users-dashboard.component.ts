@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { PasswordValidators } from '../../../shared/password-validator';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 
 @Component({
   selector: 'app-users-dashboard',
   standalone: true,
-  imports: [SharedModule,CommonModule,FormsModule,NgbModule,NgxPaginationModule,ReactiveFormsModule],
+  imports: [SharedModule,CommonModule,FormsModule,NgbModule,NgxPaginationModule,ReactiveFormsModule,InsightsButtonComponent],
   templateUrl: './users-dashboard.component.html',
   styleUrl: './users-dashboard.component.scss'
 })
@@ -27,12 +28,18 @@ export class UsersDashboardComponent {
   searchUser :any
   addUserForm:FormGroup;
   confirmPasswordError = false;
+  userEditHidePassword = false;
+  addUserDivForm = false;
+  allSelected = false;
+  userId:any;
+  @ViewChild('Adduser') Adduser : any;
+
   constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder){
     this.addUserForm = this.formBuilder.group({
       username: ['', Validators.required],
       firstname:['', Validators.required],
       lastname:['', Validators.required],
-      role:['',Validators.required],
+      role: this.formBuilder.array([]),
       is_active:[''],
       email:['',[Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')],],
       password: ['', [Validators.required, Validators.compose([
@@ -57,6 +64,9 @@ export class UsersDashboardComponent {
 
   ngOnInit(){
     this.getUserList()
+  }
+  get role(): FormArray {
+    return this.addUserForm .get('role') as FormArray;
   }
   get f() {
     return this.addUserForm.controls;
@@ -155,9 +165,65 @@ toggleClass1 = "off-line";
     }) 
   }
 
-  addUserModal(OpenmdoModal: any) {
-    this.modalService.open(OpenmdoModal);
+  // addUserModal(OpenmdoModal: any) {
+  //   this.addUserForm.reset();
+  //   this.modalService.open(OpenmdoModal);
+  //   this.getAddedRolesList();
+  //   this.userEditHidePassword= false;
+  // }
+
+  addUserDiv() {
+    this.addUserDivForm = true;
+    this.addUserForm.reset();
     this.getAddedRolesList();
+    this.userEditHidePassword = false;
+  }
+  closeAddUserForm(){
+    this.addUserDivForm = false;
+  }
+
+  setRoles() {
+    const rolesArray = this.addUserForm.get('role') as FormArray;
+    rolesArray.clear(); // Clear the FormArray
+
+    this.userAddedRolesList.forEach(() => {
+      rolesArray.push(this.formBuilder.control(false)); // Add a control for each role
+    });
+
+    rolesArray.valueChanges.subscribe(values => {
+      this.allSelected = values.every((val: boolean) => val === true);
+    });
+  }
+
+  toggleSelectAll() {
+    const rolesArray = this.addUserForm.get('role') as FormArray;
+    const shouldSelectAll = !this.allSelected;
+
+    rolesArray.controls.forEach((control, index) => {
+      control.setValue(shouldSelectAll ? this.userAddedRolesList[index] : false);
+    });
+
+    this.allSelected = shouldSelectAll;
+    this.getSelectedRoles();
+
+  }
+
+  onCheckboxChange() {
+    const rolesArray = this.addUserForm.get('role') as FormArray;
+    if (rolesArray && rolesArray instanceof FormArray) {
+      const allSelected = rolesArray.controls.every(control => control.value);
+      this.allSelected = allSelected;
+    }
+    // this.getSelectedRoles();
+  }
+  getSelectedRoles() {
+    const rolesArray = this.addUserForm.get('role') as FormArray;
+    // Filter to get only the selected roles
+    const selectedRoles = this.userAddedRolesList
+        .filter((role: any, index: number) => rolesArray.at(index).value)
+        .map((role: any) => role); // This will give you the actual role names instead of true/false
+    console.log('Selected roles:', selectedRoles);
+    return selectedRoles;
   }
 
 getAddedRolesList(){
@@ -165,6 +231,7 @@ getAddedRolesList(){
     next:(data)=>{
       console.log(data);
       this.userAddedRolesList=data;
+      this.setRoles();
      },
     error:(error)=>{
       console.log(error);
@@ -179,10 +246,16 @@ getAddedRolesList(){
 }
 
 addUser(){
-  this.workbechService.addUserwithRoles(this.addUserForm.value).subscribe({
+  const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+  const userData = {
+      ...this.addUserForm.value,
+      role: selectedRoles // Replace the roles array with the selected roles
+  };
+    this.workbechService.addUserwithRoles(userData  ).subscribe({
     next:(data)=>{
       console.log(data);
-      this.modalService.dismissAll();
+      this.addUserDivForm = false;
+
       Swal.fire({
         icon: 'success',
         title: 'Done!',
@@ -241,4 +314,86 @@ deleteUser(id:any){
     }})
 }
 
+
+getUserIdDetails(id:any){
+  this.userId = id;
+  this.userEditHidePassword = true;
+  this.addUserDivForm = true;
+  this.workbechService.getUserIdDetails(id)
+  .subscribe(
+    {
+      next:(data:any) => {
+        console.log(data); 
+        this.addUserForm.patchValue({
+          firstname:data.firstname,
+          lastname:data.lastname,
+          username:data.username,
+          email:data.email,
+          is_active:data.is_active,
+        })     
+        this.userAddedRolesList = data.role;
+        this.setRoles();
+        this.patchRoles(data.role);
+      },
+      error:(error:any)=>{
+        Swal.fire({
+          icon: 'warning',
+          text: error.error.message,
+          width: '300px',
+        })
+        console.log(error)
+      }
+    } 
+  )
+}
+patchRoles(selectedRoles: string[]) {
+  const rolesArray = this.addUserForm.get('role') as FormArray;
+
+  if (rolesArray && rolesArray instanceof FormArray) {
+    rolesArray.clear(); // Clear the current FormArray
+
+    // Add only the selected roles
+    selectedRoles.forEach((role) => {
+      if (this.userAddedRolesList.includes(role)) {
+        rolesArray.push(this.formBuilder.control(true));
+      }
+    });
+
+    // Sync the 'allSelected' flag based on whether all roles are selected
+    this.allSelected = selectedRoles.length === this.userAddedRolesList.length;
+  }
+}
+
+editUser(){
+  const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+  const userData = {
+      ...this.addUserForm.value,
+      role: selectedRoles // Replace the roles array with the selected roles
+  };
+  delete userData.password;
+    delete userData.conformpassword;
+    this.workbechService.editUser(this.userId,userData).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.addUserDivForm = false;
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Done!',
+        text: data.message,
+        width: '400px',
+      })
+      this.getUserList();
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
+}
 }

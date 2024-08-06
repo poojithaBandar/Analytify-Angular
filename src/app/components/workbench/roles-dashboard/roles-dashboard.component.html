@@ -19,8 +19,9 @@
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="roleName" (keyup.enter)="searchRoleList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchRoleList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary" (click)="addRolesModal(addrole);getPrevilagesList()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add Role</button>
-
+            <app-insights-button [classesList]="'btn btn-primary'" [buttonName]="' Add Role'" [previledgeId]="56" [isBtn]="true"
+              (btnClickEvent)="addRolesModal(addrole);getPrevilagesList();" [faIconList]="'fa fa-plus'" [isIcon]="true">
+            </app-insights-button>
           </div>
         </div>
     </div>
@@ -61,13 +62,14 @@
 
                             <td>
                               <div class="hstack gap-2 fs-1">
-                              <a aria-label="anchor" (click)="addRolesModal(addrole);getPrevilagesList();getRoleIdDetails(roles.role_id)"
-                              class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                              <i class="ri-edit-line" ngbTooltip="Edit"></i></a>
-
-                            <a aria-label="anchor" (click)="deleteRole(roles.role_id)"  class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                        </a>
+                                <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'" [previledgeId]="58" [isBtn]="false"
+                                    [toolTip]="'Edit'"
+                                    (btnClickEvent)="addRolesModal(addrole);getPrevilagesList();getRoleIdDetails(roles.role_id)"
+                                    [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
+                                    <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'" [previledgeId]="58" [isBtn]="false"
+                                    [toolTip]="' Delete Role'"
+                                    (btnClickEvent)="deleteRole(roles.role_id)"
+                                    [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
                         </div>
                               </td>
                         </tr>
@@ -107,10 +109,14 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                             <div class="dropdown-menu" ngbDropdownMenu>
-                                               <a class="dropdown-item" tabindex="0" (click)="addRolesModal(addrole);getPrevilagesList();getRoleIdDetails(roles.role_id)">
-                                                      <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
-                                                  <a  class="dropdown-item  btn btn-secondary-light" tabindex="0" (click)="deleteRole(roles.role_id)">
-                                                      <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
+                                              <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="54" [isBtn]="false"
+                                              [buttonName]="' Edit'" [tabIndex]="0"
+                                              (btnClickEvent)="addRolesModal(addrole);getPrevilagesList();getRoleIdDetails(roles.role_id)"
+                                              [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                                          <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="53" [isBtn]="false"
+                                              [buttonName]="' Delete Role'" [tabIndex]="0"
+                                              (btnClickEvent)="deleteRole(roles.role_id)"
+                                              [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                             </div>
                                         </div>
                                       </div>

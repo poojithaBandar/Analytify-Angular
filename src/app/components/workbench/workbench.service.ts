@@ -380,6 +380,17 @@ deleteUser(id:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.delete<any>(`${environment.apiUrl}/deleteuser/`+id+'/'+this.accessToken); 
 }
+
+  getUserIdDetails(id: any) {
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/userdetails/` + id + '/' + this.accessToken);
+  }
+  editUser(id: any, obj: any) {
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/edituser/` + id + '/' + this.accessToken, obj);
+  }
   //image convert
       blobToFile(theBlob:any){
       theBlob.lastModifiedDate = new Date();
