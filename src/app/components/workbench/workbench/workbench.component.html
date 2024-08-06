@@ -1113,7 +1113,7 @@
                 <div class="database-logo">
                   <div class="imgcard p-4" (click)="triggerFileUpload('csv')">
                     <img src="./assets/images/Db_server_images/File Source/csv.png" alt="Image" class="card-img" />
-                    <input type="file" (change)="uploadfileCsv($event)" #fileInput style="display: none;" />
+                    <input type="file" (change)="uploadfileCsv($event)" accept=".csv" #fileInput style="display: none;" />
                   </div>
                   <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                     <span style=" width: 8rem;">CSV File</span>
@@ -1122,7 +1122,7 @@
                 <div class="database-logo">
                   <div class="imgcard  p-4" (click)="triggerFileUpload('excel')">
                     <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img" />
-                    <input type="file" (change)="uploadfileExcel($event)" #fileInput1 style="display: none;" accept="xlsx,xls" />
+                    <input type="file" (change)="uploadfileExcel($event)" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
                   </div>
                   <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                     <span style=" width: 8rem;">Excel File</span>

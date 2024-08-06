@@ -1,0 +1,23 @@
+import { Injectable } from '@angular/core';
+import { RolespriviledgesService } from './rolespriviledges.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ViewTemplateDrivenService {
+// viewDashboard = false;
+// viewSheets = false;
+// viewSavedQueries = false;
+// viewDbs = false;
+
+  constructor(private rolesprevilgeService:RolespriviledgesService) { }
+
+viewDashboard(){
+return this.rolesprevilgeService.userHasPriviledge(4);
+}
+viewSheets(){
+  return this.rolesprevilgeService.userHasPriviledge(20);
+}
+
+
+}

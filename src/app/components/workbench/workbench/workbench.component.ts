@@ -459,10 +459,10 @@ export class WorkbenchComponent implements OnInit{
                 title: 'Connected',
                 width: '400px',
               })
-              // this.databaseId=responce.database?.database_id
-             
-              // const encodedId = btoa(this.databaseId.toString());
-              // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+
+              this.fileId=responce.file_id
+              const encodedId = btoa(this.fileId.toString());
+              this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
             }
           },
           error: (error) => {

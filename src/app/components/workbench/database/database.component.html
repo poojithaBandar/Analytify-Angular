@@ -345,8 +345,8 @@
                                 </div>
 
                             </div>
-                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
-                                    <div class="card br-0 joining-T-H right-card" [class.expanded]="!isOpen">
+                                <div [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
+                                    <div class="card br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''" [class.expanded]="!isOpen">
                                         <div class="card-header d-flex align-items-center">
                                             @if(draggedtables.length > 1){
                                             @if(!isOpen){
