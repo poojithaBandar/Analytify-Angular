@@ -258,8 +258,10 @@ export class SheetsComponent {
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
+    this.sheetRetrive();
   }
  getSheetNames(){
+  this.tabs = [];
   const obj={
     "server_id":this.databaseId,
     "queryset_id":this.qrySetId,
@@ -283,7 +285,7 @@ if(this.fromFileId){
         // this.sheetTitle = this.tabs[0];
         this.SheetSavePlusEnabled.splice(0, 1);
         console.log(this.SheetSavePlusEnabled)
-        this.sheetRetrive();
+        // this.sheetRetrive();
   }
       },
       error: (error) => {
@@ -2126,7 +2128,7 @@ tableMeasures = [] as any;
        this.tabs.push(this.sheetName);
     }else{
       this.getChartData();
-      this.sheetNumber+=4;
+      this.sheetNumber+=1;
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
        this.selectedTabIndex = this.tabs.length - 1;
@@ -2522,14 +2524,15 @@ console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-    // this.tabs[this.SheetIndex] = this.sheetTitle;
+    this.tabs[this.SheetIndex] = this.sheetTitle;
     if(responce){
       Swal.fire({
         icon: 'success',
         text: responce.message,
         width: '200px',
       })
-     // this.sheetRetrive();
+      this.getSheetNames();
+     this.sheetRetrive();
     }
   
   },
@@ -2546,7 +2549,7 @@ if(this.retriveDataSheet_id){
 }else{
   this.retriveDataSheet_id = '';
   this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
-    // this.tabs[this.SheetIndex] = this.sheetTitle;
+    this.tabs[this.SheetIndex] = this.sheetTitle;
     console.log(responce);
     if(responce){
       Swal.fire({
@@ -2555,7 +2558,8 @@ if(this.retriveDataSheet_id){
         width: '200px',
       })
       this.retriveDataSheet_id = responce.sheet_id;
-      //this.sheetRetrive();
+      this.getSheetNames();
+      this.sheetRetrive();
       this.SheetSavePlusEnabled.splice(0, 1);
     }
     this.saveTableData= [];
@@ -2601,8 +2605,6 @@ if(this.retriveDataSheet_id){
 
   }
 sheetRetrive(){
-  this.draggedColumnsData  = [];
-  this.draggedRowsData = [];
   this.getChartData();
   console.log(this.tabs);
   const obj={
