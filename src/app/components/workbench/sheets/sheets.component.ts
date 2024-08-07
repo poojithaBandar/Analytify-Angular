@@ -160,6 +160,9 @@ export class SheetsComponent {
   isAllSelected: boolean = false;
   active=1;
   fromFileId=false;
+  sheetsDashboard : boolean = false;
+  sheetList : any [] = [];
+  dashboardId : any;
   Editor = ClassicEditor;
   editor : boolean = false;
   bandingSwitch: boolean = false; 
@@ -196,6 +199,10 @@ export class SheetsComponent {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
         this.filterQuerySetId = atob(route.snapshot.params['id3'])
+        if(this.tabs.length<1){
+          this.tabs[0] = this.sheetName;
+          this.sheetTagName = this.sheetName;
+        }
         if(this.filterQuerySetId==='null'){
           console.log('filterqrysetid',this.filterQuerySetId)
           this.filterQuerySetId = null
@@ -224,16 +231,27 @@ export class SheetsComponent {
   }
   if(this.router.url.includes('/workbench/landingpage/sheets/')){
     console.log("landing page")
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']&& route.snapshot.params['id4']) {
+    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
       this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
-      this.sheetName = atob(route.snapshot.params['id4'])
-      console.log(this.retriveDataSheet_id,this.sheetName,'shetname')
-      this.tabs[0] = this.sheetName;
+      console.log(this.retriveDataSheet_id);
+      //this.tabs[0] = this.sheetName;
       // this.sheetRetrive();
       }
    }
+   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/')){
+    this.sheetsDashboard = true;
+    console.log("landing page")
+    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
+      this.databaseId = +atob(route.snapshot.params['id1']);
+      this.qrySetId = +atob(route.snapshot.params['id2']);
+      this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
+      this.dashboardId = +atob(route.snapshot.params['id4']);
+      console.log(this.retriveDataSheet_id)
+      // this.sheetRetrive();
+      }
+   } 
 }
 
   ngOnInit(): void {
@@ -253,8 +271,16 @@ if(this.fromFileId){
   this.workbechService.getSheetNames(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         if(responce.data.length>0){
-        this.tabs = responce.data
-        this.sheetTitle = this.tabs[0];
+          this.sheetList = responce.data;
+          (responce.data as any[]).forEach((sheet,index)=>{
+            this.tabs.push(sheet.sheet_name);
+            if(sheet.id === this.retriveDataSheet_id){
+              this.selectedTabIndex = index;
+            }
+          });
+          console.log(this.tabs);
+          
+        // this.sheetTitle = this.tabs[0];
         this.SheetSavePlusEnabled.splice(0, 1);
         console.log(this.SheetSavePlusEnabled)
         this.sheetRetrive();
@@ -293,122 +319,145 @@ if(this.fromFileId){
 
   barChart() {
     if (this.isApexCharts) {
-      this.chartOptions3 = {
-        series: [
-          {
-            name: "",
-            data: this.chartsRowData
-          }
-        ],
-        chart: {
-          toolbar: {
-            show: false
+      if(!this.barOptions){
+        this.chartOptions3 = {
+          series: [
+            {
+              name: "",
+              data: this.chartsRowData 
+            }
+          ],
+          chart: {
+            toolbar: {
+              show: true
+            },
+            type: 'bar',
+            height: 320,
+            foreColor: this.color,
+            zoom: {
+              enabled: true,
+              type: 'x',
+              autoScaleYaxis: false,
+              zoomedArea: {
+                fill: {
+                  color: '#90CAF9',
+                  opacity: 0.4
+                },
+                stroke: {
+                  color: '#0D47A1',
+                  opacity: 0.4,
+                  width: 1
+                }
+              }
+            }
           },
-          height: 385,
-          type: 'bar',
-          foreColor: this.color,
-        },
-        title: {
-          text: "",
-          offsetY: 10,
-          align: 'center',
-          style: {
-            color: this.color,
-          },
-        },
-        xaxis: {
-          categories: this.chartsColumnData,
-          position: 'bottom',
-          labels: {
-            show: true,
-            trim: true,
-            hideOverlappingLabels: false,
+          title: {
+            text: "",
+            offsetY: 10,
+            align: 'center',
             style: {
-              colors: this.color,
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12,
+              color: this.color,
             },
           },
-          axisBorder: {
-            show: false,
+          xaxis: {
+            categories: this.chartsColumnData,
+            position: 'bottom',
+            labels: {
+              show: true,
+              trim: true,
+              hideOverlappingLabels: false,
+              style: {
+                colors: this.color,
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12,
+            },
+            },
+            axisBorder: {
+              show: false,
+            },
+            axisTicks: {
+              show: false,
+            },
+            crosshairs: {
+              fill: {
+                type: 'gradient',
+                gradient: {
+                  stops: [0, 100],
+                  opacityFrom: 0.4,
+                  opacityTo: 0.5,
+                },
+              },
+            },
+            tooltip: {
+              enabled: false,
+              offsetY: -35,
+            },
           },
-          axisTicks: {
-            show: false,
+          yaxis:{
+            show: true,
+            labels: {
+              show: true,
+              style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12,
+              },
+              formatter: this.formatNumber.bind(this)
+            },
+            axisBorder: {
+              show: false,
+            },
+            axisTicks: {
+              show: false,
+            },
           },
-          crosshairs: {
-            fill: {
-              type: 'gradient',
-              gradient: {
-                stops: [0, 100],
-                opacityFrom: 0.4,
-                opacityTo: 0.5,
+          grid: {
+            show: true,
+            xaxis: {
+              lines: {
+                show: false
+              }
+            },
+            yaxis: {
+              lines: {
+                show: false
+              }
+            },
+          },
+          plotOptions: {
+            bar: {
+              dataLabels: {
+                hideOverflowingLabels:false,
+                position: 'top',
               },
             },
           },
-          tooltip: {
-            enabled: false,
-            offsetY: -35,
-          },
-        },
-        yaxis: {
-          show: true,
-          labels: {
-            show: true,
+          dataLabels: {
+            enabled: true,
+            formatter: this.formatNumber.bind(this),
+            offsetY: -20,
             style: {
-              colors: [],
               fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12,
-            },
-            formatter: this.formatNumber.bind(this)
-          },
-          axisBorder: {
-            show: false,
-          },
-          axisTicks: {
-            show: false,
-          },
-        },
-        grid: {
-          show: true,
-          xaxis: {
-            lines: {
-              show: false
-            }
-          },
-          yaxis: {
-            lines: {
-              show: false
-            }
-          },
-        },
-        plotOptions: {
-          bar: {
-            dataLabels: {
-              hideOverflowingLabels: false,
-              position: 'top',
+              colors: [this.color],
             },
           },
-        },
-        dataLabels: {
-          enabled: true,
-          formatter: this.formatNumber.bind(this),
-          offsetY: -20,
-          style: {
-            fontSize: '12px',
-            colors: [this.color],
+          fill: {
+            type: 'gradient',
           },
-        },
-        fill: {
-          type: 'gradient',
-        },
-        colors: [this.color]
-      };
-      this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
-      this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
-      this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
-      this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+          colors: [this.color]
+        };
+      }
+      else{
+        this.barOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        this.chartOptions3 = this.barOptions;
+        this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+        // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
+        this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
+        this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+        console.log(this.chartOptions3);
+      }  
     } else {
       this.eBarChartOptions = {
         backgroundColor: this.backgroundColor,
@@ -510,24 +559,29 @@ if(this.fromFileId){
   }
   pieChart(){
     if(this.isApexCharts){
-    this.chartOptions4={
-      series: this.chartsRowData,
-      chart: {
-          height: 300,
-          type: 'pie',
-      },
-      colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
-      labels: this.chartsColumnData,
-      legend: {
-          show: true,
-          position: "bottom"
-      },
-      dataLabels: {
-          dropShadow: {
-              enabled: false
-          }
-      },
-      };
+      if(!this.pieOptions){
+        this.chartOptions4={
+          series: this.chartsRowData, 
+          chart: { 
+              height: 300,
+              type: 'pie',
+          },
+          colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+          labels: this.chartsColumnData,
+          legend: {
+              show: true,
+              position: "bottom"
+          },
+          dataLabels: {
+              dropShadow: {
+                  enabled: false
+              }
+          },
+          };
+      }
+      else{
+        this.chartOptions4= this.pieOptions;
+      }
       this.legendSwitch = this.chartOptions4.legend.show;
     } else {
       let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
@@ -566,94 +620,97 @@ if(this.fromFileId){
   }
   lineChart(){
     if(this.isApexCharts){
-    this.chartOptions={
-      series: [{
-          name: "",
-          data: this.chartsRowData
-      }],
-     
-          chart: {
-              height: 200,
-              type: 'line',
-              reponsive: true,
-              zoom: {
-                  enabled: false
+      if(!this.lineOptions){
+        this.chartOptions={
+          series: [{
+              name: "",
+              data: this.chartsRowData
+          }],
+              chart: {
+                  height: 200,
+                  type: 'line',
+                  reponsive: true,
+                  zoom: {
+                      enabled: false
+                  },
+                  events: {
+                      mounted: (chart:any) => {
+                        chart.windowResizeHandler();
+                      }
+                    },
               },
-              events: {
-                  mounted: (chart:any) => {
-                    chart.windowResizeHandler();
+              colors: [this.color],
+              dataLabels: {
+                enabled: true,
+                formatter: this.formatNumber.bind(this),
+                offsetY: -20,
+                style: {
+                  fontSize: '12px',
+                  colors: [this.color],
+                },
+              },
+              stroke: {
+                  curve: 'straight',
+                  width: 3,
+              },
+              grid: {
+                borderColor: "rgba(119, 119, 142, 0.05)",
+                show: true,
+                xaxis: {
+                  lines: {
+                    show: false
                   }
                 },
-          },
-          colors: [this.color],
-          dataLabels: {
-            enabled: true,
-            formatter: this.formatNumber.bind(this),
-            offsetY: -20,
-            style: {
-              fontSize: '12px',
-              colors: [this.color],
-            },
-          },
-          stroke: {
-              curve: 'straight',
-              width: 3,
-          },
-          grid: {
-            borderColor: "rgba(119, 119, 142, 0.05)",
-            show: true,
-            xaxis: {
-              lines: {
-                show: false
-              }
-            },
-            yaxis: {
-              lines: {
-                show: false
-              }
-            },
-          },
-          title: {
-              text: '',
-              align: 'left',
-              style: {
-                  fontSize: '13px',
-                  fontWeight: 'bold',
-                  color: this.color
+                yaxis: {
+                  lines: {
+                    show: false
+                  }
+                },
               },
-          },
-          xaxis: {
-              categories: this.chartsColumnData,
-              labels: {
-                  show: true,
-                  hideOverlappingLabels: false,
-                  trim: true,
+              title: {
+                  text: '',
+                  align: 'left',
                   style: {
-                    colors: this.color,
-                    fontSize: '12px',
-                    fontFamily: 'Helvetica, Arial, sans-serif',
-                    fontWeight: 12,
+                      fontSize: '13px',
+                      fontWeight: 'bold',
+                      color: this.color
                   },
+              },
+              xaxis: {
+                  categories: this.chartsColumnData,
+                  labels: {
+                      show: true,
+                      hideOverlappingLabels: false,
+                      trim: true,
+                      style: {
+                        colors: this.color,
+                        fontSize: '12px',
+                        fontFamily: 'Helvetica, Arial, sans-serif',
+                        fontWeight: 12,
+                      },
+                  }
+              },
+              yaxis: {
+                  labels: {
+                      show: true,
+                      style: {
+                          colors: this.color,
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cssClass: 'apexcharts-yaxis-label',
+                      },
+                      formatter: this.formatNumber.bind(this)
+                  }
               }
-          },
-          yaxis: {
-              labels: {
-                  show: true,
-                  style: {
-                      colors: this.color,
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      cssClass: 'apexcharts-yaxis-label',
-                  },
-                  formatter: this.formatNumber.bind(this)
-              }
-          }
-      
-  }
-    this.xLabelSwitch = this.chartOptions.xaxis.labels.show;
-    this.yLabelSwitch = this.chartOptions.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
+        }
+      }
+      else{
+        this.chartOptions= this.lineOptions;
+      }
+      this.xLabelSwitch = this.chartOptions.xaxis.labels.show;
+      // this.yLabelSwitch = this.chartOptions.yaxis.labels.show;
+      this.xGridSwitch = this.chartOptions.grid.xaxis.lines.show;
+      this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
 } else {
   this.eLineChartOptions = {
     backgroundColor: this.backgroundColor,
@@ -743,99 +800,104 @@ if(this.fromFileId){
   }
   areaChart(){
     if(this.isApexCharts){
-    this.chartOptions1 = {
-      series: [
-        {
-          name: "",
-          data: this.chartsRowData,
-        },
-      ],
-      chart: {
-        type: "area",
-        height: 200,
-        zoom: {
-          enabled: false,
-        },
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: this.formatNumber.bind(this),
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
+      if(!this.areaOptions){
+        this.chartOptions1 = {
+          series: [
+            {
+              name: "",
+              data: this.chartsRowData,
+            },
+          ],
+          chart: {
+            type: "area",
+            height: 200,
+            zoom: {
+              enabled: false,
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: this.formatNumber.bind(this),
+            offsetY: -20,
+            style: {
+              fontSize: '12px',
+              colors: [this.color],
+            },
+          },
+          stroke: {
+            curve: "straight",
+          },
+          subtitle: {
+            text: "",
+            align: "left",
+            style: {
+              fontSize: "11px",
+              fontWeight: "normal",
+              color: this.color,
+            },
+          },
+          grid: {
+            borderColor: "rgba(119, 119, 142, 0.05)",
+            show: true,
+            xaxis: {
+              lines: {
+                show: false
+              }
+            },
+            yaxis: {
+              lines: {
+                show: false
+              }
+            },
+          },
+          labels: this.chartsColumnData,
+          title: {
+            text: "",
+            align: "left",
+            style: {
+              fontSize: "13px",
+              fontWeight: "bold",
+              color: this.color,
+            },
+          },
           colors: [this.color],
-        },
-      },
-      stroke: {
-        curve: "straight",
-      },
-      subtitle: {
-        text: "",
-        align: "left",
-        style: {
-          fontSize: "11px",
-          fontWeight: "normal",
-          color: this.color,
-        },
-      },
-      grid: {
-        borderColor: "rgba(119, 119, 142, 0.05)",
-        show: true,
-        xaxis: {
-          lines: {
-            show: false
-          }
-        },
-        yaxis: {
-          lines: {
-            show: false
-          }
-        },
-      },
-      labels: this.chartsColumnData,
-      title: {
-        text: "",
-        align: "left",
-        style: {
-          fontSize: "13px",
-          fontWeight: "bold",
-          color: this.color,
-        },
-      },
-      colors: [this.color],
-      xaxis: {
-        type: "",
-        labels: {
-          show: true,
-          style: {
-            colors: this.color,
-            fontSize: "11px",
-            fontWeight: 600,
-            cssClass: "apexcharts-xaxis-label",
+          xaxis: {
+            type: "",
+            labels: {
+              show: true,
+              style: {
+                colors: this.color,
+                fontSize: "11px",
+                fontWeight: 600,
+                cssClass: "apexcharts-xaxis-label",
+              },
+            },
           },
-        },
-      },
-      yaxis: {
-        opposite: true,
-        labels: {
-          show: true,
-          style: {
-            colors: this.color,
-            fontSize: "11px",
-            fontWeight: 600,
-            cssClass: "apexcharts-xaxis-label",
+          yaxis: {
+            opposite: true,
+            labels: {
+              show: true,
+              style: {
+                colors: this.color,
+                fontSize: "11px",
+                fontWeight: 600,
+                cssClass: "apexcharts-xaxis-label",
+              },
+              formatter: this.formatNumber.bind(this)
+            },
           },
-          formatter: this.formatNumber.bind(this)
-        },
-      },
-      legend: {
-        horizontalAlign: "left",
-      },
-    };
-    this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
-    this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
+          legend: {
+            horizontalAlign: "left",
+          },
+        };
+      }
+      else{
+        this.chartOptions1= this.areaOptions;
+      }
+      this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
+      this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
+      this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
+      this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
   } else {
     this.eAreaChartOptions =  {
       backgroundColor: this.backgroundColor,
@@ -929,86 +991,91 @@ if(this.fromFileId){
   sidebysideBar(){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
-      this.chartOptions2 = {
-        series: this.sidebysideBarRowData,
-        colors:['#00a5a2','#0dc9c5','#f43f63'],
-        chart: {
-          type: 'bar',
-          height: 320,
-        },
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: '55%',
+      if(!this.sidebysideBarOptions){
+        this.chartOptions2 = {
+          series: this.sidebysideBarRowData,
+          colors:['#00a5a2','#0dc9c5','#f43f63'],
+          chart: {
+            type: 'bar',
+            height: 320,
           },
-        },
-        dataLabels: {
-          enabled: true,
-          formatter: this.formatNumber.bind(this),
-          offsetY: -20,
-          style: {
-            fontSize: '12px',
-            colors: ['#f43f63'],
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              columnWidth: '55%',
+            },
           },
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ['transparent'],
-        },
-        xaxis: {
-          categories:categories,
-          labels: {
-            show: true,
+          dataLabels: {
+            enabled: true,
+            formatter: this.formatNumber.bind(this),
+            offsetY: -20,
             style: {
-              colors: this.color,
-              fontSize: "11px",
-              fontWeight: 600,
-              cssClass: "apexcharts-xaxis-label",
+              fontSize: '12px',
+              colors: ['#f43f63'],
             },
           },
-        },
-        yaxis: {
-          title: {
-            text: '',
-          },
-          labels: {
+          stroke: {
             show: true,
-            style: {
-              colors: this.color,
-              fontSize: "11px",
-              fontWeight: 600,
-              cssClass: "apexcharts-xaxis-label",
-            },
-            formatter: this.formatNumber.bind(this)
+            width: 2,
+            colors: ['transparent'],
           },
-        },
-        fill: {
-          opacity: 1,
-        },
-        tooltip: {
-          y: {
-            formatter: function (val:any) {
-              console.log(val)
-              return val ;
+          xaxis: {
+            categories:categories,
+            labels: {
+              show: true,
+              style: {
+                colors: this.color,
+                fontSize: "11px",
+                fontWeight: 600,
+                cssClass: "apexcharts-xaxis-label",
+              },
             },
           },
-        },
-        grid: {
-          borderColor: "rgba(119, 119, 142, 0.05)",
-          show: true,
-        xaxis: {
-          lines: {
-            show: false
-          }
-        },
-        yaxis: {
-          lines: {
-            show: false
-          }
-        },
-        },
-      };
+          yaxis: {
+            title: {
+              text: '',
+            },
+            labels: {
+              show: true,
+              style: {
+                colors: this.color,
+                fontSize: "11px",
+                fontWeight: 600,
+                cssClass: "apexcharts-xaxis-label",
+              },
+              formatter: this.formatNumber.bind(this)
+            },
+          },
+          fill: {
+            opacity: 1,
+          },
+          tooltip: {
+            y: {
+              formatter: function (val:any) {
+                console.log(val)
+                return val ;
+              },
+            },
+          },
+          grid: {
+            borderColor: "rgba(119, 119, 142, 0.05)",
+            show: true,
+          xaxis: {
+            lines: {
+              show: false
+            }
+          },
+          yaxis: {
+            lines: {
+              show: false
+            }
+          },
+          },
+        };
+      }
+      else{
+        this.chartOptions2= this.sidebysideBarOptions;
+      }
     this.xLabelSwitch = this.chartOptions2.xaxis.labels.show;
     this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
@@ -1023,216 +1090,227 @@ if(this.fromFileId){
   stockedBar(){
     const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
-    this.chartOptions6 = {
-      series: this.sidebysideBarRowData,
-      chart: {
-        type: "bar",
-        height: 350,
-        stacked: true,
-        toolbar: {
-          show: false
-        },
-        zoom: {
-          enabled: true
-        }
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: "bottom",
-              offsetX: -10,
-              offsetY: 0
+      if(!this.stokedOptions){
+        this.chartOptions6 = {
+          series: this.sidebysideBarRowData,
+          chart: {
+            type: "bar",
+            height: 350,
+            stacked: true,
+            toolbar: {
+              show: false
+            },
+            zoom: {
+              enabled: true
             }
-          }
-        }
-      ],
-      plotOptions: {
-        bar: {
-          horizontal: false
-        }
-      },
-      xaxis: {
-        type: "category",
-        categories: categories,
-        labels: {
-          show: true,
-          style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
           },
-      },
-      },
-      yaxis: {
-        show: true,
-        labels: {
-          show: true,
-          style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
+          responsive: [
+            {
+              breakpoint: 480,
+              options: {
+                legend: {
+                  position: "bottom",
+                  offsetX: -10,
+                  offsetY: 0
+                }
+  
+              }
+            }
+          ],
+          plotOptions: {
+            bar: {
+              horizontal: false
+            }
           },
-          formatter: this.formatNumber.bind(this)
-      }
-      },
-      legend: {
-        position: "right",
-        offsetY: 40
-      },
-      fill: {
-        opacity: 1
-      },
-      grid: {
-        show: true,
-        xaxis: {
-          lines: {
-            show: false
+          xaxis: {
+            type: "category",
+            categories: categories,
+            labels: {
+              show: true,
+              style: {
+                  colors: [],
+                  fontSize: '12px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 12
+              },
+          },
+          },
+          yaxis: {
+            show: true,
+            labels: {
+              show: true,
+              style: {
+                  colors: [],
+                  fontSize: '12px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 12
+              },
+              formatter: this.formatNumber.bind(this)
           }
-        },
-        yaxis: {
-          lines: {
-            show: false
+          },
+          legend: {
+            position: "right",
+            offsetY: 40
+          },
+          fill: {
+            opacity: 1
+          },
+          grid: {
+            show: true,
+            xaxis: {
+              lines: {
+                show: false
+              }
+            },
+            yaxis: {
+              lines: {  
+                show: false
+              }
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: this.formatNumber.bind(this),
+            offsetY: -20,
+            style: {
+              fontSize: '12px',
+              colors: [this.color],
+            },
           }
-        },
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: this.formatNumber.bind(this),
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: [this.color],
-        },
+        };
       }
-    };
-    this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
-    // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
+      else{
+        this.chartOptions6= this.stokedOptions;
+      }
+      this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
+      // this.yLabelSwitch = this.chartOptions6.yaxis.labels.show;
+      this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
+      this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
   }
   
   barLineChart(){
     const dimensions: Dimension[] = this.sidebysideBarColumnData1;
     const categories = this.flattenDimensions(dimensions);
     if(this.isApexCharts){
-    this.chartOptions5 = {
-      series: [
-        {
-          name: this.sidebysideBarRowData[0]?.name,
-          type: "column",
-          data: this.sidebysideBarRowData[0]?.data
-        },
-        {
-          name: this.sidebysideBarRowData[1]?.name,
-          type: "line",
-          data: this.sidebysideBarRowData[1]?.data,
-        }
-      ],
-      colors:['#00a5a2','#31d1ce'],
-      chart: {
-        height: 350,
-        type: "line"
-      },
-      grid: {
-        show : true,
-        xaxis: {
-          lines: {
-              show: false
-          }
-      },   
-      yaxis: {
-          lines: {
-              show: false
-          }
-      }, 
-      },
-      stroke: {
-        width: [0, 4]
-      },
-      title: {
-        text: "",
-        style: {
-          fontSize: "13px",
-          fontWeight: "bold",
-          color: "#8c9097",
-        },
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: this.formatNumber.bind(this),
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: [this.color],
-        },
-      },
-      labels: categories,
-      xaxis: {
-        type: "",
-        labels: {
-          show: true,
-          style: {
-              colors: [],
+      if(!this.barLineOptions){
+        this.chartOptions5 = {
+          series: [
+            {
+              name: this.sidebysideBarRowData[0]?.name,
+              type: "column",
+              data: this.sidebysideBarRowData[0]?.data
+            },
+            {
+              name: this.sidebysideBarRowData[1]?.name,
+              type: "line",
+              data: this.sidebysideBarRowData[1]?.data,
+            }
+          ],
+          colors:['#00a5a2','#31d1ce'],
+          chart: {
+            height: 350,
+            type: "line"
+          },
+          grid: {
+            show : true,
+            xaxis: {
+              lines: {
+                  show: false
+              }
+          },   
+          yaxis: {
+              lines: {
+                  show: false
+              }
+          }, 
+          },
+          stroke: {
+            width: [0, 4]
+          },
+          title: {
+            text: "",
+            style: {
+              fontSize: "13px",
+              fontWeight: "bold",
+              color: "#8c9097",
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: this.formatNumber.bind(this),
+            offsetY: -20,
+            style: {
               fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
-          },
-      }},
-      yaxis: [
-        {
-          show : true,
-          title: {
-            text: "",
-            style: {
-              fontSize: "13px",
-              fontWeight: "bold",
-              color: "#8c9097",
+              colors: [this.color],
             },
           },
-          labels: {
-            show: true,
-            style: {
-                colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+          labels: categories,
+          xaxis: {
+            type: "",
+            labels: {
+              show: true,
+              style: {
+                  colors: [],
+                  fontSize: '12px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 12
+              },
+          }},
+          yaxis: [
+            {
+              show : true,
+              title: {
+                text: "",
+                style: {
+                  fontSize: "13px",
+                  fontWeight: "bold",
+                  color: "#8c9097",
+                },
+              },
+              labels: {
+                show: true,
+                style: {
+                    colors: [],
+                    fontSize: '12px',
+                    fontFamily: 'Helvetica, Arial, sans-serif',
+                    fontWeight: 12
+                },
+                formatter: this.formatNumber.bind(this)
+              }
             },
-            formatter: this.formatNumber.bind(this)
-          }
-        },
-        {
-          show : true,
-          opposite: true,
-          title: {
-            text: "",
-            style: {
-              fontSize: "13px",
-              fontWeight: "bold",
-              color: "#8c9097",
-            },
-          },
-          labels: {
-            show: true,
-            style: {
-                colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
-            },
-            formatter: this.formatNumber.bind(this)
-          }
-        }
-      ]
-      
-    };
-    this.xLabelSwitch = this.chartOptions5.xaxis.labels.show;
-    // this.yLabelSwitch = this.chartOptions5.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions5.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
+            {
+              show : true,
+              opposite: true,
+              title: {
+                text: "",
+                style: {
+                  fontSize: "13px",
+                  fontWeight: "bold",
+                  color: "#8c9097",
+                },
+              },
+              labels: {
+                show: true,
+                style: {
+                    colors: [],
+                    fontSize: '12px',
+                    fontFamily: 'Helvetica, Arial, sans-serif',
+                    fontWeight: 12
+                },
+                formatter: this.formatNumber.bind(this)
+              }
+            }
+          ]
+          
+        };
+      }
+      else{
+        this.chartOptions5 = this.barLineOptions;
+      }
+      this.xLabelSwitch = this.chartOptions5.xaxis.labels.show;
+      // this.yLabelSwitch = this.chartOptions5.yaxis.labels.show;
+      this.xGridSwitch = this.chartOptions5.grid.xaxis.lines.show;
+      this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
   } else {
     this.eBarLineChartOptions = {
       backgroundColor: this.backgroundColor,
@@ -1379,92 +1457,97 @@ if(this.fromFileId){
   horizentalStockedBar(){
     const dimensions: Dimension[] = this.sidebysideBarColumnData1;
     const categories = this.flattenDimensions(dimensions);
-    this.chartOptions7 = {
-      series: this.sidebysideBarRowData,
-      chart: {
-        type: "bar",
-        height: 350,
-        stacked: true,
-        toolbar: {
-          show: true
+    if(!this.hStockedOptions){
+      this.chartOptions7 = {
+        series: this.sidebysideBarRowData,
+        chart: {
+          type: "bar",
+          height: 350,
+          stacked: true,
+          toolbar: {
+            show: true
+          },
+          zoom: {
+            enabled: true
+          }
         },
-        zoom: {
-          enabled: true
-        }
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: "bottom",
-              offsetX: -10,
-              offsetY: 0
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: "bottom",
+                offsetX: -10,
+                offsetY: 0
+              }
             }
           }
-        }
-      ],
-      plotOptions: {
-        bar: {
-          horizontal: true
-        }
-      },
-      xaxis: {
-        type: "category",
-        categories: categories,
-        labels: {
-          show: true,
-          style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
-          },
-          formatter: this.formatNumber.bind(this)
-        }
-      },
-      yaxis : {
-        show : true,
-        labels: {
-          show: true,
-          style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
-          },
-        }
-      },
-      legend: {
-        position: "right",
-        offsetY: 40
-      },
-      fill: {
-        opacity: 1
-      },
-      grid: {
-        show: true,
-        xaxis: {
-            lines: {
-                show: false
-            }
-        },   
-        yaxis: {
-            lines: {
-                show: false
-            }
-        },  
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: this.formatNumber.bind(this),
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: [this.color],
+        ],
+        plotOptions: {
+          bar: {
+            horizontal: true
+          }
         },
-      }
-    };
+        xaxis: {
+          type: "category",
+          categories: categories,
+          labels: {
+            show: true,
+            style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+            },
+            formatter: this.formatNumber.bind(this)
+          }
+        },
+        yaxis : {
+          show : true,
+          labels: {
+            show: true,
+            style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+            },
+          }
+        },
+        legend: {
+          position: "right",
+          offsetY: 40
+        },
+        fill: {
+          opacity: 1
+        },
+        grid: {
+          show: true,
+          xaxis: {
+              lines: {
+                  show: false
+              }
+          },   
+          yaxis: {
+              lines: {
+                  show: false
+              }
+          },  
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: this.formatNumber.bind(this),
+          offsetY: -20,
+          style: {
+            fontSize: '12px',
+            colors: [this.color],
+          },
+        }
+      };
+    }
+    else{
+      this.chartOptions7 = this.hStockedOptions;
+    }
     this.xLabelSwitch = this.chartOptions7.xaxis.labels.show;
     this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
@@ -1473,50 +1556,38 @@ if(this.fromFileId){
   hGrouped(){
     const dimensions: Dimension[] = this.sidebysideBarColumnData1;
     const categories = this.flattenDimensions(dimensions);
-    this.chartOptions8 = {
-      series: this.sidebysideBarRowData,
-      chart: {
-        type: "bar",
-        height: 430
-      },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-          dataLabels: {
-            position: "top"
-          }
-        }
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: this.formatNumber.bind(this),
-        offsetY: -6,
-        style: {
-          fontSize: '12px',
-          colors: ["#fff"],
+    if(!this.hgroupedOptions){
+      this.chartOptions8 = {
+        series: this.sidebysideBarRowData,
+        chart: {
+          type: "bar",
+          height: 430
         },
-      },
-      stroke: {
-        show: true,
-        width: 1,
-        colors: ["#fff"]
-      },
-      xaxis: {
-        categories: categories,
-        labels: {
-          show: true,
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            dataLabels: {
+              position: "top"
+            }
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: this.formatNumber.bind(this),
+          offsetY: -6,
           style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
+            fontSize: '12px',
+            colors: ["#fff"],
           },
-          formatter: this.formatNumber.bind(this)
-          },
-      },
-      yaxis: {
-        show: true,
-        labels: {
+        },
+        stroke: {
+          show: true,
+          width: 1,
+          colors: ["#fff"]
+        },
+        xaxis: {
+          categories: categories,
+          labels: {
             show: true,
             style: {
                 colors: [],
@@ -1524,105 +1595,20 @@ if(this.fromFileId){
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 12
             },
+            formatter: this.formatNumber.bind(this)
+            },
         },
-    },
-    grid: {
-      show: true,
-      xaxis: {
-          lines: {
-              show: false
-          }
-      },   
-      yaxis: {
-          lines: {
-              show: true
-          }
-      },  
-      },  
-    };
-    this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
-    this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
-    this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
-    this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
-  }
-  multiLineChart(){
-    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-    const categories = this.flattenDimensions(dimensions);
-    this.chartOptions9 = {
-      series: this.sidebysideBarRowData,
-      chart: {
-        height: 350,
-        type: "line"
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: this.formatNumber.bind(this),
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: [this.color],
-        },
-      },
-      stroke: {
-        width: 5,
-        curve: "straight",
-        dashArray: [0, 8, 5]
-      },
-      title: {
-        text: "",
-        align: "left"
-      },
-      legend: {
-        tooltipHoverFormatter: function(val:any, opts:any) {
-          return (
-            val +
-            " - <strong>" +
-            opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
-            "</strong>"
-          );
-        }
-      },
-      markers: {
-        size: 0,
-        hover: {
-          sizeOffset: 6
-        }
-      },
-      xaxis: {
-        categories: categories,
-        labels: {
+        yaxis: {
           show: true,
-          style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
+          labels: {
+              show: true,
+              style: {
+                  colors: [],
+                  fontSize: '12px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 12
+              },
           },
-        },
-      },
-      yaxis: {
-        show: true,
-        labels: {
-          show: true,
-          style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12
-          },
-          formatter: this.formatNumber.bind(this)
-        },
-      },
-      tooltip: {
-        y: [
-          {
-            title: {
-              formatter: function(val:any) {
-                return val;
-              }
-            }
-          },
-        ]
       },
       grid: {
         show: true,
@@ -1633,40 +1619,152 @@ if(this.fromFileId){
         },   
         yaxis: {
             lines: {
-                show: false
+                show: true
             }
-        }, 
-      } 
-    };
+        },  
+        },  
+      };
+    }
+    else{
+      this.chartOptions8 = this.hgroupedOptions;
+    }
+    this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
+    this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
+    this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
+    this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
+  }
+  multiLineChart(){
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    if(!this.multiLineOptions){
+      this.chartOptions9 = {
+        series: this.sidebysideBarRowData,
+        chart: {
+          height: 350,
+          type: "line"
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: this.formatNumber.bind(this),
+          offsetY: -20,
+          style: {
+            fontSize: '12px',
+            colors: [this.color],
+          },
+        },
+        stroke: {
+          width: 5,
+          curve: "straight",
+          dashArray: [0, 8, 5]
+        },
+        title: {
+          text: "",
+          align: "left"
+        },
+        legend: {
+          tooltipHoverFormatter: function(val:any, opts:any) {
+            return (
+              val +
+              " - <strong>" +
+              opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
+              "</strong>"
+            );
+          }
+        },
+        markers: {
+          size: 0,
+          hover: {
+            sizeOffset: 6
+          }
+        },
+        xaxis: {
+          categories: categories,
+          labels: {
+            show: true,
+            style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+            },
+          },
+        },
+        yaxis: {
+          show: true,
+          labels: {
+            show: true,
+            style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+            },
+            formatter: this.formatNumber.bind(this)
+          },
+        },
+        tooltip: {
+          y: [
+            {
+              title: {
+                formatter: function(val:any) {
+                  return val;
+                }
+              }
+            },
+          ]
+        },
+        grid: {
+          show: true,
+          xaxis: {
+              lines: {
+                  show: false
+              }
+          },   
+          yaxis: {
+              lines: {
+                  show: false
+              }
+          }, 
+        } 
+      };
+    }
+    else{
+      this.chartOptions9 = this.multiLineOptions;
+    }
     this.xLabelSwitch = this.chartOptions9.xaxis.labels.show;
-    // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
+    // this.yLabelSwitch = this.chartOptions9.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions9.grid.xaxis.lines.show;
     this.yGridSwitch = this.chartOptions9.grid.yaxis.lines.show;
   }
   donutChart(){
-    this.chartOptions10 = {
-      series: this.chartsRowData,
-      chart: {
-        type: "donut"
-      },
-      labels: this.chartsColumnData,
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 100
-            },
-            legend: {
-              position: "bottom"
+    if(!this.donutOptions){
+      this.chartOptions10 = {
+        series: this.chartsRowData,
+        chart: {
+          type: "donut"
+        },
+        labels: this.chartsColumnData,
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 100
+              },
+              legend: {
+                position: "bottom"
+              }
             }
           }
-        }
-      ],
-      legend: {
-        show: true,
-    },
-    };
+        ],
+        legend: {
+          show: true,
+      },
+      };
+    }
+    else{
+      this.chartOptions10 = this.donutOptions;
+    }
     this.legendSwitch = this.chartOptions10.legend.show;
   }
 
@@ -1722,6 +1820,18 @@ tableMeasures = [] as any;
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
           console.log(responce);
+          const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
+          const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
+          responce.data.col = (responce.data.col as any[]).sort((a, b) => {
+            const indexA = columnIndexMap.get(a.column) ?? -1;
+            const indexB = columnIndexMap.get(b.column) ?? -1;
+            return indexA - indexB;
+          });
+          responce.data.row = (responce.data.row as any[]).sort((a, b) => {
+            const indexA = rowIndexMap.get(a.col) ?? -1;
+            const indexB = rowIndexMap.get(b.col) ?? -1;
+            return indexA - indexB;
+          });
           this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id;
           this.tablePreviewColumn = responce.data.col;
           this.tablePreviewRow = responce.data.row;
@@ -1935,9 +2045,16 @@ tableMeasures = [] as any;
     });   
    this.dataExtraction();
   }
-  dragStartedRow(index:any){
-   this.draggedRows.splice(index, 1);
-   this.draggedRowsData.splice(index, 1);
+  dragStartedRow(index:any,column:any){
+    this.draggedRows.splice(index, 1);
+    (this.draggedRowsData as any[]).forEach((data,index)=>{
+     (data as any[]).forEach((aa)=>{ 
+       if(column === aa){
+         console.log(aa);
+         this.draggedRowsData.splice(index, 1);
+       }
+     } );
+   });   
    this.dataExtraction();
   }
   rightArrow(){
@@ -2000,18 +2117,20 @@ tableMeasures = [] as any;
       }
     )
   }
-  tabs = ['Sheet 1'];
+  tabs : any [] = [];
   selected = new FormControl(0);
   addSheet() {
+    this.retriveDataSheet_id = '';
     this.sheetName = ''; this.sheetTitle = '';
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
       this.getChartData();
-      this.sheetNumber+=1;
+      this.sheetNumber+=4;
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
        this.selectedTabIndex = this.tabs.length - 1;
+       this.sheetTagName = 'Sheet ' +this.sheetNumber;
     }
   }
   sheetNameChange(name:any,event:any){
@@ -2023,41 +2142,63 @@ tableMeasures = [] as any;
   }
   removeTab() {
     console.log(this.SheetIndex)
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result)=>{
-      if(result.isConfirmed){
-        this.workbechService.sheetDelete(this.databaseId,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
-              console.log(data);      
-              if(data){
-                 this.tabs.splice(this.SheetIndex, 1);
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Deleted!',
-                  text: 'Deleted Successfully',
-                  width: '200px',
-                })
-                    this.getChartData();
+    const obj = {
+      sheet_id: this.retriveDataSheet_id,
+    }
+    this.workbechService.deleteSheetMessage(obj)
+      .subscribe(
+        {
+          next: (data: any) => {
+            console.log(data);
+            Swal.fire({
+              title: 'Are you sure?',
+              text: data.message,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                const idToPass = this.fromFileId ? this.fileId : this.databaseId;
+                this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                // this.workbechService.deleteSheet(this.databaseId, this.qrySetId, this.retriveDataSheet_id).subscribe({
+                //   next: (data: any) => {
+                    console.log(data);
+                    if (data) {
+                      this.tabs.splice(this.SheetIndex, 1);
+                      Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Deleted Successfully',
+                        width: '200px',
+                      })
+                      this.getChartData();
+                    }
+                  },
+                  error: (error: any) => {
+                    Swal.fire({
+                      icon: 'warning',
+                      text: error.error.message,
+                      width: '200px',
+                    })
+                    console.log(error)
+                  }
+                }
+                )
               }
-
-            },
-            error:(error:any)=>{
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '200px',
-              })
-              console.log(error)
-            }
-          } 
-        )
-      }})  
+            })
+          },
+          error: (error: any) => {
+            Swal.fire({
+              icon: 'warning',
+              text: error.error.message,
+              width: '300px',
+            })
+            console.log(error)
+          }
+        }
+      )
   }
   onChange(event:any){
     this.sheetName = '';
@@ -2068,6 +2209,19 @@ tableMeasures = [] as any;
     this.SheetIndex = event.index;
     this.sheetName = event.tab?.textLabel
     this.sheetTitle = event.tab?.textLabel;
+    this.sheetList.some((sheet)=>{
+      if(sheet.sheet_name === this.sheetName){
+        this.retriveDataSheet_id = sheet.id;
+        return true;
+      }
+      else{
+        this.retriveDataSheet_id = '';
+        return false;
+      }
+    });
+    const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+    inputElement.innerHTML = event.tab?.textLabel;
+    this.sheetTagName = event.tab?.textLabel;
     console.log(this.sheetName)
     console.log(this.retriveDataSheet_id);
    // if(!this.sheetTitle){
@@ -2081,7 +2235,11 @@ tableMeasures = [] as any;
    // }else{
     this.filterData = [];
     this.filterId = [];
-    this.retriveDataSheet_id = '';
+    this.draggedColumns =[];
+    this.draggedColumnsData =[];
+    this.draggedRows = [];
+    this.draggedRowsData = [];
+    // this.retriveDataSheet_id = '';
     this.dimetionMeasure = [];
     this.sidebysideBarColumnData = [];
     this.sidebysideBarColumnData1 = [];
@@ -2133,44 +2291,70 @@ tableMeasures = [] as any;
       this.multiLine = false;
       this.donut = false;
       this.radar = false;
+      this.banding = false;
+      this.barOptions = undefined;
+      this.lineOptions = undefined;
+      this.areaOptions = undefined;
+      this.pieOptions = undefined;
+      this.sidebysideBarOptions = undefined;
+      this.stokedOptions = undefined;
+      this.barLineOptions = undefined;
+      this.hStockedOptions = undefined;
+      this.hgroupedOptions = undefined;
+      this.multiLineOptions = undefined;
+      this.donutOptions = undefined;
    // }
   }
   saveTableData = [] as any;
   savedisplayedColumns = [] as any;
+  banding : boolean = false;
   saveBar = [] as any;
   savePie = [] as any;
   lineYaxis = [] as any;
   lineXaxis = [] as any;
+  lineOptions : any = undefined;
   areaYaxis = [] as any;
   areaXaxis = [] as any;
+  areaOptions : any = undefined;
   barXaxis = [] as any;
+  barOptions : any = undefined;
   pieXaxis = [] as any;
+  pieOptions : any = undefined;
   sidebysideBarYaxis = [] as any;
   sidebysideBarXaxis = [] as any;
+  sidebysideBarOptions : any = undefined;
   stokedBarYaxis = [] as any;
   stokedBarXaxis = [] as any;
+  stokedOptions : any = undefined;
   barLineYaxis = [] as any;
   barLineXaxis = [] as any;
+  barLineOptions : any = undefined;
   hStockedYaxis = [] as any;
   hStockedXaxis = [] as any;
+  hStockedOptions : any = undefined;
   hgroupedYaxis = [] as any;
   hgroupedXaxis = [] as any;
+  hgroupedOptions : any = undefined;
   multiLineYaxis = [] as any;
   multiLineXaxis = [] as any;
+  multiLineOptions : any = undefined;
   donutYaxis = [] as any;
   donutXaxis = [] as any;
+  donutOptions : any = undefined;
 
 sheetSave(){
   let savedChartOptions ;
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
    this.savedisplayedColumns = this.displayedColumns;
+   this.banding = this.bandingSwitch;
   }
   if(this.bar && this.chartId == 6){
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData;
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions3;
+      this.barOptions = this.chartOptions3;
     } else {
       savedChartOptions = this.eBarChartOptions;
     }
@@ -2180,6 +2364,7 @@ sheetSave(){
     this.pieXaxis = this.chartsColumnData;
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions4;
+      this.pieOptions = this.chartOptions4;
     } else {
       savedChartOptions = this.ePieChartOptions;
     }
@@ -2189,6 +2374,7 @@ sheetSave(){
     this.lineXaxis = this.chartsColumnData;
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions;
+      this.lineOptions = this.chartOptions;
     } else {
       savedChartOptions = this.eLineChartOptions;
     }
@@ -2198,6 +2384,7 @@ sheetSave(){
     this.areaXaxis = this.chartsColumnData;
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions1;
+      this.areaOptions = this.chartOptions1;
     } else {
       savedChartOptions = this.eAreaChartOptions;
     }
@@ -2205,16 +2392,19 @@ sheetSave(){
   if(this.sidebyside && this.chartId == 7){
     this.sidebysideBarYaxis = this.sidebysideBarRowData;
     this.sidebysideBarXaxis = this.sidebysideBarColumnData1;
+    this.sidebysideBarOptions = this.chartOptions2;
   }
   if(this.stocked && this.chartId == 5){
     this.stokedBarYaxis = this.sidebysideBarRowData;
     this.stokedBarXaxis = this.sidebysideBarColumnData1;
+    this.stokedOptions = this.chartOptions6;
   }
   if(this.barLine && this.chartId == 4){
     this.barLineYaxis = this.sidebysideBarRowData;
     this.barLineXaxis = this.sidebysideBarColumnData1;
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions5;
+      this.barLineOptions = this.chartOptions5;
     } else {
       savedChartOptions = this.eBarLineChartOptions;
     }
@@ -2222,18 +2412,22 @@ sheetSave(){
   if(this.horizentalStocked && this.chartId == 2){
     this.hStockedYaxis = this.sidebysideBarRowData;
     this.hStockedXaxis = this.sidebysideBarColumnData1;
+    this.hStockedOptions = this.chartOptions7;
   }
   if(this.grouped && this.chartId == 3){
     this.hgroupedYaxis = this.sidebysideBarRowData;
     this.hgroupedXaxis = this.sidebysideBarColumnData1;
+    this.hgroupedOptions = this.chartOptions8;
   }
   if(this.multiLine && this.chartId == 8){
     this.multiLineYaxis = this.sidebysideBarRowData;
     this.multiLineXaxis = this.sidebysideBarColumnData1;
+    this.multiLineOptions = this.chartOptions9;
   }
   if(this.donut && this.chartId == 10){
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
+    this.donutOptions = this.chartOptions10;
   }
   if(this.radar && this.chartId == 12){
     this.barLineXaxis = this.sidebysideBarColumnData1;
@@ -2268,52 +2462,67 @@ const obj={
   "results": {
     "tableData":this.saveTableData,
     "tableColumns":this.savedisplayedColumns,
+    "banding":this.banding,
 
     "barYaxis":this.saveBar,
     "barXaxis":this.barXaxis,
-   
+   "barOptions":this.barOptions,
+
     "pieYaxis":this.savePie,
     "pieXaxis":this.pieXaxis,
+    "pieOptions":this.pieOptions,
 
     "lineYaxis":this.lineYaxis,
     "lineXaxis": this.lineXaxis,
+    "lineOptions":this.lineOptions,
 
     "areaYaxis":this.areaYaxis,
     "areaXaxis":this.areaXaxis,
+    "areaOptions":this.areaOptions,
 
-  
       "sidebysideBarYaxis": this.sidebysideBarYaxis,
       "sidebysideBarXaxis": this.sidebysideBarXaxis,
+      "sidebysideBarOptions":this.sidebysideBarOptions,
    
       "stokedBarYaxis": this.stokedBarYaxis,
       "stokedBarXaxis": this.stokedBarXaxis,
+      "stokedOptions":this.stokedOptions,
   
       "barLineYaxis":this.barLineYaxis,
       "barLineXaxis":this.barLineXaxis,
+      "barLineOptions":this.barLineOptions,
 
       "hStockedYaxis": this.hStockedYaxis,
       "hStockedXaxis": this.hStockedXaxis,
+      "hStockedOptions":this.hStockedOptions,
 
       "hgroupedYaxis": this.hgroupedYaxis,
       "hgroupedXaxis": this.hgroupedXaxis,
+      "hgroupedOptions":this.hgroupedOptions,
 
       "multiLineYaxis":this.multiLineYaxis,
       "multiLineXaxis": this.multiLineXaxis,
+      "multiLineOptions":this.multiLineOptions,
 
       "donutYaxis": this.donutYaxis,
       "donutXaxis": this.donutXaxis,
+      "donutOptions":this.donutOptions
   },
   "isApexChart" : this.isApexCharts,
   "isEChart" : this.isEChatrts,
   "savedChartOptions" : savedChartOptions,
   "customizeOptions" : customizeObject
 }
+}as any;
+if(this.fromFileId){
+  delete obj.server_id;
+  obj.file_id=this.fileId; 
 }
 console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-    this.tabs[this.SheetIndex] = this.sheetTitle;
+    // this.tabs[this.SheetIndex] = this.sheetTitle;
     if(responce){
       Swal.fire({
         icon: 'success',
@@ -2337,7 +2546,7 @@ if(this.retriveDataSheet_id){
 }else{
   this.retriveDataSheet_id = '';
   this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
-    this.tabs[this.SheetIndex] = this.sheetTitle;
+    // this.tabs[this.SheetIndex] = this.sheetTitle;
     console.log(responce);
     if(responce){
       Swal.fire({
@@ -2395,18 +2604,18 @@ sheetRetrive(){
   this.draggedColumnsData  = [];
   this.draggedRowsData = [];
   this.getChartData();
+  console.log(this.tabs);
   const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
-  "sheet_name": this.sheetName,
 }as any;
 if(this.fromFileId){
   delete obj.server_id;
   obj.file_id=this.fileId;
 }
 
-  this.workbechService.sheetGet(obj).subscribe({next: (responce:any) => {
-        console.log(responce);
+this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
+          console.log(responce);
         this.retriveDataSheet_id = responce.sheet_id;
         this.sheetfilter_querysets_id = responce.sheet_filter_quereyset_ids;
         this.chartId = responce.chart_id;
@@ -2446,6 +2655,7 @@ if(this.fromFileId){
         if(responce.chart_id == 1){
           this.tableData = this.sheetResponce.results.tableData;
           this.displayedColumns = this.sheetResponce.results.tableColumns;
+          this.bandingSwitch = this.sheetResponce.results.banding;
           this.table = true;
           this.bar = false;
           this.pie = false;
@@ -2463,12 +2673,12 @@ if(this.fromFileId){
        if(responce.chart_id == 6){
         this.chartsRowData = this.sheetResponce.results.barYaxis;
         this.chartsColumnData = this.sheetResponce.results.barXaxis;
-       this.barChart();
        if(this.isApexCharts){
-          
+        this.barOptions = this.sheetResponce.results.barOptions;
        } else {
          this.eBarChartOptions = this.sheetResponce.savedChartOptions;
        }
+       this.barChart();
         this.bar = true;
         this.table = false;
           this.pie = false;
@@ -2486,6 +2696,12 @@ if(this.fromFileId){
        if(responce.chart_id == 24){
         this.chartsRowData = this.sheetResponce.results.pieYaxis;
         this.chartsColumnData = this.sheetResponce.results.pieXaxis;
+        if(this.isApexCharts){
+          this.pieOptions = this.sheetResponce.results.pieOptions;
+        } else {
+          this.ePieChartOptions = this.sheetResponce.savedChartOptions;
+        }
+        this.pieChart();
         this.bar = false;
         this.table = false;
           this.pie = true;
@@ -2499,16 +2715,15 @@ if(this.fromFileId){
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
-          this.pieChart();
-          if(this.isApexCharts){
-          
-          } else {
-            this.ePieChartOptions = this.sheetResponce.savedChartOptions;
-          }
        }
        if(responce.chart_id == 13){
         this.chartsRowData = this.sheetResponce.results.lineYaxis;
         this.chartsColumnData = this.sheetResponce.results.lineXaxis;
+        if(this.isApexCharts){
+          this.lineOptions = this.sheetResponce.results.lineOptions;
+        } else {
+          this.eLineChartOptions = this.sheetResponce.savedChartOptions;
+        }
         this.lineChart();
         this.bar = false;
         this.table = false;
@@ -2523,15 +2738,15 @@ if(this.fromFileId){
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
-          if(this.isApexCharts){
-          
-          } else {
-            this.eLineChartOptions = this.sheetResponce.savedChartOptions;
-          }
        }
        if(responce.chart_id == 17){
         this.chartsRowData = this.sheetResponce.results.areaYaxis;
         this.chartsColumnData = this.sheetResponce.results.areaXaxis;
+        if(this.isApexCharts){
+          this.areaOptions = this.sheetResponce.results.areaOptions;
+        } else {
+          this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
+        }
         this.areaChart();
         this.bar = false;
         this.table = false;
@@ -2546,15 +2761,11 @@ if(this.fromFileId){
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
-          if(this.isApexCharts){
-          
-          } else {
-            this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
-          }
        }
        if(responce.chart_id == 7){
         this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
         this.sidebysideBarColumnData1 = this.sheetResponce.results.sidebysideBarXaxis;
+        this.sidebysideBarOptions = this.sheetResponce.results.sidebysideBarOptions;
         this.sidebysideBar();
         this.bar = false;
         this.table = false;
@@ -2573,6 +2784,7 @@ if(this.fromFileId){
        if(responce.chart_id == 5){
         this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
         this.sidebysideBarColumnData1 = this.sheetResponce.results.stokedBarXaxis;
+        this.stokedOptions = this.sheetResponce.results.stokedOptions;
         this.stockedBar();
         this.bar = false;
         this.table = false;
@@ -2591,6 +2803,11 @@ if(this.fromFileId){
        if(responce.chart_id == 4){
         this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
         this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
+        if(this.isApexCharts){
+          this.barLineOptions = this.sheetResponce.results.barLineOptions;
+        } else {
+          this.eBarLineChartOptions = this.sheetResponce.savedChartOptions;
+        }
         this.barLineChart();
         this.bar = false;
         this.table = false;
@@ -2605,11 +2822,6 @@ if(this.fromFileId){
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
-          if(this.isApexCharts){
-          
-          } else {
-            this.eBarLineChartOptions = this.sheetResponce.savedChartOptions;
-          }
        }
        if(responce.chart_id == 12){
         this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
@@ -2636,6 +2848,7 @@ if(this.fromFileId){
        if(responce.chart_id == 2){
         this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
         this.sidebysideBarColumnData1 = this.sheetResponce.results.hStockedXaxis;
+        this.hStockedOptions = this.sheetResponce.results.hStockedOptions;
         this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
@@ -2654,6 +2867,7 @@ if(this.fromFileId){
        if(responce.chart_id == 3){
         this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
         this.sidebysideBarColumnData1 = this.sheetResponce.results.hgroupedXaxis;
+        this.hgroupedOptions = this.sheetResponce.results.hgroupedOptions;
         this.hGrouped();
         this.bar = false;
         this.table = false;
@@ -2672,6 +2886,7 @@ if(this.fromFileId){
        if(responce.chart_id == 8){
         this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
         this.sidebysideBarColumnData1 = this.sheetResponce.results.multiLineXaxis;
+        this.multiLineOptions = this.sheetResponce.results.multiLineOptions;
         this.multiLineChart();
         this.bar = false;
         this.table = false;
@@ -2690,6 +2905,7 @@ if(this.fromFileId){
        if(responce.chart_id == 10){
         this.chartsRowData = this.sheetResponce.results.donutYaxis;
         this.chartsColumnData = this.sheetResponce.results.donutXaxis;
+        this.donutOptions = this.sheetResponce.results.donutOptions;
         this.donutChart();
         this.bar = false;
         this.table = false;
@@ -2892,7 +3108,46 @@ gotoDashboard(){
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
 }
-
+viewDashboard(){
+  const encodedDatabaseId = btoa(this.databaseId.toString());
+  const encodedQuerySetId = btoa(this.qrySetId.toString());
+  const encodedDashboardId = btoa(this.dashboardId.toString());
+  this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+}
+marksColor2(color:any){
+console.log(this.sidebysideBarRowData);
+console.log(color)
+if(this.barchart){
+  this.chartOptions3.colors = color;
+}
+else if(this.areachart){
+  this.chartOptions1.colors = color;
+}
+else if(this.linechart){
+  this.chartOptions.colors = color;
+}
+else if(this.sidebysideChart){
+  if(this.sidebysideBarRowData){
+  }
+  this.chartOptions2.colors = color;
+}
+else if(this.stockedChart){
+  this.chartOptions6.colors = color;
+}
+else if(this.barlineChart){
+  this.chartOptions5.colors = color;
+}
+else if(this.horizontolstockedChart){
+  this.chartOptions7.colors = color;
+}
+else if(this.groupedChart){
+  this.chartOptions8.colors = color;
+}
+else if(this.multilineChart){
+  this.chartOptions9.colors = color;
+}
+this.updateChart();
+}
 rename(index:any,name:any,event:any){
   this.oldColumn = '';
 this.oldColumn = name;
@@ -2964,6 +3219,9 @@ renameColumns(){
       inputElement.innerHTML = this.sheetTagName;
       inputElement.style.paddingTop = '1.5%';
     }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.sheetTagName, 'text/html');
+    this.sheetTitle = doc.body.textContent+'';
   }
   fontChange(event : any, section : any){
     if (section === 'dimension') {
@@ -4394,7 +4652,7 @@ renameColumns(){
     error => {
       console.log("Error",error.message)
       this.chartSuggestions = null;
-      this.errorMessage = 'Error fetching chart suggestions';
+      this.errorMessage = `We're experiencing a <b>'data-ruption'</b>! Please reconnect to the database and try again.`;
       console.error(error);
     }
   );

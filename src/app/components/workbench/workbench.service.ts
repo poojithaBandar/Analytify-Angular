@@ -130,15 +130,15 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/sheetupdate/`+id+"/"+this.accessToken,obj);
   }
-  sheetDelete(serverId:any,querysetId:any,sheetId:any){
+  // sheetDelete(serverId:any,querysetId:any,sheetId:any){
+  //   const currentUser = localStorage.getItem( 'currentUser' );
+  //   this.accessToken = JSON.parse( currentUser! )['Token'];
+  //   return this.http.delete<any>(`${environment.apiUrl}/sheetdelete/`+serverId+"/"+querysetId+"/"+sheetId+"/"+this.accessToken);
+  // }
+  sheetGet(obj:any,sheet_id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.delete<any>(`${environment.apiUrl}/sheetdelete/`+serverId+"/"+querysetId+"/"+sheetId+"/"+this.accessToken);
-  }
-  sheetGet(obj:any){
-    const currentUser = localStorage.getItem( 'currentUser' );
-    this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/sheetretrieve/`+this.accessToken,obj);
+    return this.http.post<any>(`${environment.apiUrl}/sheetretrieve/`+sheet_id+'/'+this.accessToken,obj);
   }
   getSheetData(){
     const currentUser = localStorage.getItem( 'currentUser' );

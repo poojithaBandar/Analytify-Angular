@@ -169,9 +169,9 @@
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
                                 <!-- <input id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" (keydown)="sheetNameChange(sheetTitle,$event)"> -->
                                 <div class="title-container">
-                                    <span id="htmlContent">{{sheetTagName}}</span>
+                                    <span id="htmlContent" [innerHtml]="sheetTagName"></span>
                                     <span class="title-editor" (click)="toggleEditor()">
-                                        <i class="bi bi-pen"></i>
+                                        <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
                                     </span>
                                 </div> 
                                 <div *ngIf="editor" class="popup">
@@ -180,14 +180,15 @@
                                         (keydown)="sheetNameChange(sheetTitle, $event)">
                                     </ckeditor>
                                     <div class="buttons">
-                                        <button class="close-button ck-button" (click)="toggleEditor()">Close</button>
-                                        <button class="update-button ck-button" (click)="updateSheetName()">Update</button>
+                                        <button class="btn btn-danger" (click)="toggleEditor()">Close</button>
+                                        <button class="btn btn-primary" (click)="updateSheetName()">Update</button>
                                     </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0" [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                <button class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
+                                <button *ngIf="!retriveDataSheet_id" class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
+                                <button *ngIf="retriveDataSheet_id" class="btn btn-primary w-100" (click)="sheetSave()">update </button>
                             </div>
                         </div>
                     </div>
@@ -258,7 +259,7 @@
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index)"  cdkDrag>
+                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.type){
                                             {{ rows.type }} ({{rows.column}})
                                         }@else{   
@@ -271,7 +272,7 @@
                                                 
                                                 <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
                                                     <a class="btn btn-outline-light mx-0 mb-2" (click)="openSuperScaledModal(aggregateUserModal,rows.type)" style="text-align: left !important;"> Aggregation</a> 
-                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedRow(index)"> Remove</a> 
+                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedRow(index,rows.column)"> Remove</a> 
                                                 </div>
 
                                             </a>
@@ -401,7 +402,7 @@
               <figure id="bar"></figure>-->
 
               <div class="card-body">
-                <div id="bar-chart">
+                <div id="bar-chart" class="chartfit">
                     <apx-chart #barChart 
                     [series]="chartOptions3.series"
                     [chart]="chartOptions3.chart" 
@@ -659,8 +660,8 @@
                                 </button>
                             </li>
                         </ul>
-                        <div  style="display: flex;justify-content: center;"><button (click)="gotoDashboard()" class="nav-link BtnNewStyle px-2">Goto Dashboard</button></div>
-                   </div>
+                        <div *ngIf="!sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="gotoDashboard()" class="nav-link BtnNewStyle px-2">Goto Dashboard</button></div>
+                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="viewDashboard()" class="nav-link BtnNewStyle px-2">view Dashboard</button></div>                   </div>
                   
                 </div>
 
@@ -776,7 +777,7 @@
                             
                                                             <ngx-colors 
                                                            ngx-colors-trigger 
-                                                           [(ngModel)]="color"  (change)="marksColor($event,4)"
+                                                           [(ngModel)]="color"  (ngModelChange)="marksColor2($event)"
                                                            [format] = "'hex'"
                                                             ></ngx-colors>
                                                               <!--  <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -1026,8 +1027,8 @@
                                                                             <input type="text" id="suffix" [(ngModel)]="suffix">
                                                                             
                                                                             <div class="buttons">
-                                                                                <button class="close-button ck-button" (click)="numberPopupTrigger()">Close</button>
-                                                                                <button class="update-button ck-button" (click)="updateChart()">Update</button>
+                                                                                <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
+                                                                                <button class="btn btn-primary" (click)="updateChart()">Update</button>
                                                                             </div>
                                                                           </div>
                                                                       }
@@ -1253,8 +1254,9 @@
                                               {{ chart.chart_title }}
                                             </button>
                                           </div>
-                                          <div *ngIf="!chartSuggestions || chartSuggestions.length === 0">
-                                            <p class="error-mgs" *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                          <div class="error-mgs"  *ngIf="!chartSuggestions || chartSuggestions.length === 0">
+                                            <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                            <a (click)="goToConnections()" style="cursor: pointer;"><span class="add-txt text-info">Add</span></a>
                                           </div>
                                           <div class="input-group mt-3 inp">
                                             <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">

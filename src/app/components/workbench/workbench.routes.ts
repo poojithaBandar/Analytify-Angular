@@ -88,7 +88,7 @@ export const admin: Routes = [
   pathMatch: 'full',
 },
 {
-  path: 'landingpage/sheets/:id1/:id2/:id3/:id4',
+  path: 'landingpage/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
@@ -129,7 +129,12 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
 },
- 
+{
+  path: 'sheetsdashboard/sheets/:id1/:id2/:id3/:id4',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
+},
  ]}
  ];
 

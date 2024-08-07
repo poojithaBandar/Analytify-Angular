@@ -75,13 +75,12 @@ getUserSheetsList(){
     }
     })
 }
-viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
+viewSheet(serverId:any,querysetId:any,sheetId:any){
   const encodedServerId = btoa(serverId.toString());
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
-  const encodedSheetName = btoa(sheetname);
 
-  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
+  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 }
 deleteSheet(serverId:any,qurysetId:any,sheetId:any){
   const obj ={

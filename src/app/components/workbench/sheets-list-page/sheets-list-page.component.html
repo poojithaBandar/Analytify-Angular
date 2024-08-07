@@ -71,18 +71,18 @@
                               </div>
                               <div class="content">
                                 <span>Sheet Name : </span>
-                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)" > {{sheets.sheet_name | slice:0:15}}</a>
+                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
                                 <p class="mb-0">Created by : {{sheets.created_by}}</p>
                               </div>
                           </div>                                  
                             </td>
-                               <td>{{sheets.created}}</td>
+                               <td>{{sheets.created}}</td>  
                             <td>{{sheets.Modified}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
                                   [previledgeId]="18" [isBtn]="false"
-                                  (btnClickEvent)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"
+                                  (btnClickEvent)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)"
                                   [toolTip]="'Edit'" [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
                                   [previledgeId]="19" [isBtn]="false" [toolTip]="'Delete database'"
@@ -195,7 +195,7 @@
                                         <div class="ms-2 mt-sm-0 mt-2">
                                           <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                                             <h6 class="mb-1">
-                                                <a (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
+                                                <a (click)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
                                             </h6>
                                             
                                         </div>
@@ -209,7 +209,7 @@
                                     </a>
                                     <div class="dropdown-menu" ngbDropdownMenu>
                                       <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="18" [isBtn]="false"
-                                        [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id,sheets.sheet_name)"
+                                        [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.server_id,sheets.queryset_id,sheets.sheet_id)"
                                         [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                       <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'"
                                         [previledgeId]="19" [isBtn]="false" [tabIndex]="0"

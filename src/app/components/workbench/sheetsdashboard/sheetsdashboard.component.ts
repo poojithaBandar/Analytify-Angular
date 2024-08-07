@@ -33,6 +33,9 @@ import { OVERFLOW } from 'html2canvas/dist/types/css/property-descriptors/overfl
 import { LoaderService } from '../../../shared/services/loader.service';
 import { arrow } from '@popperjs/core';
 import { MatTabsModule } from '@angular/material/tabs';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading } from 'ckeditor5';
+import 'ckeditor5/ckeditor5.css';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -60,7 +63,7 @@ interface Dimension {
   standalone: true,
   imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule ],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule ],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -71,6 +74,7 @@ export class SheetsdashboardComponent {
  qrySetId:any;
  databaseId:any;
  dashboardName = '';
+ dashboardTagName = '';
  sheetsIdArray = [] as any;
  sheetsNewDashboard=false;
  dashboardView = false;
@@ -109,7 +113,7 @@ export class SheetsdashboardComponent {
 
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService: NgbModal){
+    private loaderService:LoaderService,private modalService:NgbModal){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard')){
@@ -462,6 +466,18 @@ export class SheetsdashboardComponent {
         console.log('savedDashboard',data);
         this.dashboardName=data.dashboard_name
         this.dashboard = data.dashboard_data;
+        if(!data.dashboard_tag_name){
+          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          inputElement.innerHTML = data.dashboard_name;
+          this.dashboardTagName = data.dashboard_name;
+        }
+        else{
+          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          inputElement.innerHTML = data.dashboard_tag_name;
+          inputElement.style.paddingTop = '1.5%';
+          this.dashboardTagName = data.dashboard_tag_name;
+        }
+        console.log(this.dashboard);
         this.setSelectedSheetData();
       },
       error:(error)=>{
@@ -497,6 +513,7 @@ export class SheetsdashboardComponent {
       server_id:this.databaseId,
        sheet_ids:this.sheetsIdArray,
       dashboard_name:this.dashboardName,
+      dashboard_tag_name:this.dashboardTagName,
       data:this.dashboard
     }
     this.workbechService.saveDashboard(obj).subscribe({
@@ -601,6 +618,7 @@ export class SheetsdashboardComponent {
       server_id:this.databaseId,
        sheet_ids:this.sheetsIdArray,
       dashboard_name:this.dashboardName,
+      dashboard_tag_name:this.dashboardTagName,
       data:this.dashboard,
       sheetTabs : this.sheetTabs
       
@@ -645,7 +663,7 @@ export class SheetsdashboardComponent {
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
-      data: { title: sheet.sheet_name, content: 'Content of card New' },
+      data: { title: sheet.sheet_name, content: 'Content of card  New', sheetTagName: sheet.sheet_tag_name?sheet.sheet_tag_name:sheet.sheet_name },
       selectedSheet : sheet.selectedSheet,
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
@@ -963,13 +981,13 @@ allowDrop(ev : any): void {
 }
 
 
-  viewSheet(sheetId:any,sheetname:any){
+  viewSheet(sheetId:any){
     const encodedServerId = btoa(this.databaseId.toString());
     const encodedQuerySetId = btoa(this.qrySetId.toString());
     const encodedSheetId = btoa(sheetId.toString());
-    const encodedSheetName = btoa(sheetname);
-  
-    this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
+    const encodedDashboardId = btoa(this.dashboardId.toString());
+
+    this.router.navigate(['/workbench/sheetsdashboard/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
   }
   
   changedOptions() {
@@ -2278,7 +2296,49 @@ dropTest2(event: any) {
     this.sheetTabs.push({ id: id, name: name, dashboard: [] });
     this.dashboardTest = [];
   }
-
+  Editor = ClassicEditor;
+  editor : boolean = false;
+  editorConfig = {
+    fontFamily: {
+      options: [
+        'default',
+        'Arial, Helvetica, sans-serif',
+        'Georgia, serif',
+        'Impact, Charcoal, sans-serif',
+        'Tahoma, Geneva, sans-serif',
+        'Times New Roman, Times, serif',
+        'Trebuchet MS, Helvetica, sans-serif',
+        'Verdana, Geneva, sans-serif',
+        'Courier New, Courier, monospace',
+        'Lucida Sans Unicode, Lucida Grande, sans-serif',
+        'Comic Sans MS, Comic Sans, cursive',
+        'Palatino Linotype, Book Antiqua, Palatino, serif',
+        'Arial Black, Gadget, sans-serif'
+      ],
+      supportAllValues: true
+    },
+    fontSize: {
+      options: [9, 11, 13, 'default', 17, 19, 21]
+    },
+    toolbar: ['undo', 'redo', '|', 'selectAll', '|', 'heading', '|', 'bold', 'italic', 'underline', 
+      '|', 'removeformat', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'alignment'],
+    plugins: [
+      Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Underline, RemoveFormat, SelectAll, Heading],
+  };
+  
+  toggleEditor() {
+    this.editor = !this.editor;
+  }
+  updateSheetName() {
+    const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+    if (inputElement) {
+      inputElement.innerHTML = this.dashboardTagName;
+      inputElement.style.paddingTop = '1.5%';
+    }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
+    this.dashboardName = doc.body.textContent+'';
+}
 }
 
 // export interface CustomGridsterItem extends GridsterItem {

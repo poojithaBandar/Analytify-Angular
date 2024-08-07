@@ -238,3 +238,46 @@ button.BtnNewStyle {
   border: 1px solid #0000003b;
 }
 
+.popup {
+  position: fixed;
+  top: 34%;
+  left: 72%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  // height: 150px;
+  padding: 7px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.popup-content {
+  position: relative;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.title-container{
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  width: 100%; 
+  height: 30px;
+  border: 1px solid gainsboro;
+  border-radius: 6px;
+}
+
+#htmlContent{
+  flex: 1;
+  padding-left: 4px;
+}
+
+.title-editor{
+  cursor: pointer;
+}
