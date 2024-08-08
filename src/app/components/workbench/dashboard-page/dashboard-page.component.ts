@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [NgbModule,CommonModule,SharedModule,FormsModule,NgxPaginationModule,InsightsButtonComponent],
+  imports: [NgbModule,CommonModule,SharedModule,FormsModule,NgxPaginationModule,InsightsButtonComponent,NgSelectModule],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
 })
@@ -26,7 +27,15 @@ export class DashboardPageComponent implements OnInit{
   totalItems:any;
   gridView = true;
   viewDashboardList = false;
-constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService){
+  dashboardId:any;
+  dashboardPropertyTitle:any;
+  roleDetails = [] as any;
+  selectedRoleIds = [] as any;
+  selectedUserIds = [] as any;
+  usersOnSelectedRole = [] as any;
+  @ViewChild('propertiesModal') propertiesModal : any;
+
+constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private modalService:NgbModal){
   this.viewDashboardList=this.templateViewService.viewDashboard()
 }
 ngOnInit(){
@@ -122,5 +131,91 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
 }
 dashboardRoute(){
 
+}
+
+
+
+viewPropertiesTab(name:any,dashboardId:any){
+  this.modalService.open(this.propertiesModal);
+  this.getRoleDetailsDshboard();
+  this.dashboardPropertyTitle = name;
+  this.dashboardId = dashboardId
+
+}
+onRolesChange(selected: string[]) {
+  console.log(selected);
+  this.selectedRoleIds = selected
+  // You can store or process the selected values here
+}
+getRoleDetailsDshboard(){
+this.workbechService.getRoleDetailsDshboard().subscribe({
+  next:(data)=>{
+    console.log('dashboardroledetails',data);
+    this.roleDetails = data;
+    // this.getUsersforRole();
+   },
+  error:(error)=>{
+    console.log(error);
+    Swal.fire({
+      icon: 'error',
+      title: 'oops!',
+      text: error.error.message,
+      width: '400px',
+    })
+  }
+}) 
+}
+getUsersforRole(){
+const obj ={
+  role_ids:this.selectedRoleIds
+}
+this.workbechService.getUsersOnRole(obj).subscribe({
+  next:(data)=>{
+    this.usersOnSelectedRole = data
+    console.log('usersOnselecetdRoles',data);
+   },
+  error:(error)=>{
+    console.log(error);
+    Swal.fire({
+      icon: 'error',
+      title: 'oops!',
+      text: error.error.message,
+      width: '400px',
+    })
+  }
+})
+}
+getSelectedUsers(selected: string[]){
+console.log(selected)
+this.selectedUserIds = selected
+}
+
+saveDashboardProperties(){
+const obj ={
+  dashboard_id:this.dashboardId,
+  role_ids:this.selectedRoleIds,
+  user_ids:this.selectedUserIds
+}
+this.workbechService.saveDashboardProperties(obj).subscribe({
+  next:(data)=>{
+    console.log('properties save',data);
+    this.modalService.dismissAll();
+    Swal.fire({
+      icon: 'success',
+      title: 'Done!',
+      text: data.message,
+      width: '400px',
+    })
+   },
+  error:(error)=>{
+    console.log(error);
+    Swal.fire({
+      icon: 'error',
+      title: 'oops!',
+      text: error.error.message,
+      width: '400px',
+    })
+  }
+})
 }
 }

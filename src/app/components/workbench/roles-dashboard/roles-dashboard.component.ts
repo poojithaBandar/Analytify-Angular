@@ -60,6 +60,11 @@ addRolesDivOpen(){
 // this.addRoleDiv = true;
 this.router.navigate(['/workbench/dashboard/role-add'])
 }
+updateRolesDivOpen(){
+  // this.addRoleDiv = true;
+  this.router.navigate(['/workbench/dashboard/role-add']);
+  this.updateRole = true;
+  }
 
 searchRoleList(){
   this.pageNo=1;

@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent],
+  imports: [NgbModule,CommonModule,FormsModule,InsightsButtonComponent,NgSelectModule],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
@@ -30,8 +31,15 @@ viewDatabbses = false;
 viewSheets = false;
 viewDashboardList = false;
 viewCustomSql = false;
+roleDetails = [] as any;
+selectedRoleIds = [] as any;
+usersOnSelectedRole =[] as any;
+selectedUserIds = [] as any;
+dashboardPropertyTitle :any;
+dashboardId :any
+@ViewChild('propertiesModal') propertiesModal : any;
 
-constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService){
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal){
   localStorage.setItem('QuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
   this.viewSheets = this.templateService.viewSheets();
@@ -164,12 +172,22 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
 
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedDashboardId])
 }
-viewSheet(serverId:any,querysetId:any,sheetId:any){
-  const encodedServerId = btoa(serverId.toString());
+viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
-  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+  if (serverId === null ) {
+    const encodedFileId = btoa(fileId.toString());
+    this.router.navigate(['/workbench/landingpage/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+
+  }
+
+  if(fileId === null){
+    const encodedServerId = btoa(serverId.toString());
+    this.router.navigate(['/workbench/landingpage/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+
+  }
+ 
 }
 
  sheetsRoute(){
@@ -224,7 +242,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
         )
       }})
   }
-  deleteSheet(serverId:any,qurysetId:any,sheetId:any){
+  deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
     const obj ={
       sheet_id:sheetId,
     }
@@ -244,7 +262,8 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
               confirmButtonText: 'Yes, delete it!'
             }).then((result)=>{
               if(result.isConfirmed){
-                this.workbechService.deleteSheet(serverId,qurysetId,sheetId)
+                const idToPass = fileId == null ? serverId : fileId;
+                this.workbechService.deleteSheet(idToPass,qurysetId,sheetId)
                 .subscribe(
                   {
                     next:(data:any) => {
@@ -365,4 +384,89 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
 
     this.router.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
   }
+
+
+  viewPropertiesTab(name :any,dashboardId:any){
+  this.modalService.open(this.propertiesModal);
+  this.getRoleDetailsDshboard();
+  this.dashboardPropertyTitle = name;
+  this.dashboardId = dashboardId
+
+  }
+  onRolesChange(selected: string[]) {
+    console.log(selected);
+    this.selectedRoleIds = selected
+    // You can store or process the selected values here
+}
+getRoleDetailsDshboard(){
+  this.workbechService.getRoleDetailsDshboard().subscribe({
+    next:(data)=>{
+      console.log('dashboardroledetails',data);
+      this.roleDetails = data;
+      // this.getUsersforRole();
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
+}
+getUsersforRole(){
+  const obj ={
+    role_ids:this.selectedRoleIds
+  }
+  this.workbechService.getUsersOnRole(obj).subscribe({
+    next:(data)=>{
+      this.usersOnSelectedRole = data
+      console.log('usersOnselecetdRoles',data);
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+getSelectedUsers(selected: string[]){
+console.log(selected)
+this.selectedUserIds = selected
+}
+
+saveDashboardProperties(){
+  const obj ={
+    dashboard_id:this.dashboardId,
+    role_ids:this.selectedRoleIds,
+    user_ids:this.selectedUserIds
+  }
+  this.workbechService.saveDashboardProperties(obj).subscribe({
+    next:(data)=>{
+      console.log('properties save',data);
+      this.modalService.dismissAll();
+      Swal.fire({
+        icon: 'success',
+        title: 'Done!',
+        text: data.message,
+        width: '400px',
+      })
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
 }

@@ -81,14 +81,27 @@ getUserSheetsList(){
     }
     })
 }
-viewSheet(serverId:any,querysetId:any,sheetId:any){
-  const encodedServerId = btoa(serverId.toString());
+viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
+  // const encodedServerId = btoa(serverId.toString());
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
-  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+
+  if (serverId === null ) {
+    const encodedFileId = btoa(fileId.toString());
+    this.router.navigate(['/workbench/landingpage/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+
+  }
+
+  if(fileId === null){
+    const encodedServerId = btoa(serverId.toString());
+    this.router.navigate(['/workbench/landingpage/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+
+  }
+
+  // this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 }
-deleteSheet(serverId:any,qurysetId:any,sheetId:any){
+deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
   const obj ={
     sheet_id:sheetId,
   }
@@ -108,7 +121,9 @@ deleteSheet(serverId:any,qurysetId:any,sheetId:any){
             confirmButtonText: 'Yes, delete it!'
           }).then((result)=>{
             if(result.isConfirmed){
-              this.workbechService.deleteSheet(serverId,qurysetId,sheetId)
+              const idToPass = fileId == null ? serverId : fileId;
+
+              this.workbechService.deleteSheet(idToPass,qurysetId,sheetId)
               .subscribe(
                 {
                   next:(data:any) => {
