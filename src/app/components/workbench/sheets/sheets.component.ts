@@ -1,4 +1,4 @@
-import { Component,ViewChild } from '@angular/core';
+import { Component,ViewChild,NgZone } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -193,7 +193,7 @@ export class SheetsComponent {
   labelAlignment : HorizontalAlign = 'left';
   backgroundColor: string = '#fff';
 
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router){   
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -4732,31 +4732,63 @@ fetchChartData(chartData: any){
     this.labelAlignment = data.labelAlignment;
   }
 
-sendPrompt() {
-  if (this.userPrompt.trim()) {
-    const obj ={
-      id:this.qrySetId,
-      prompt:this.userPrompt.trim()
-    }
-    this.workbechService.getServerTablesList(obj).subscribe(
-      data => {
-        if (Array.isArray(data.data)) {
-          this.chartSuggestions = data.data;
-          this.errorMessage = '';
-        } else if (typeof data.data === 'string') {
-          this.chartSuggestions = [];
-          this.errorMessage = data.data;
-        } else {
-          this.chartSuggestions = [];
-          this.errorMessage = 'Unexpected data format';
+  sendPrompt() {
+    if (this.userPrompt.trim()) {
+      const obj = {
+        id: this.qrySetId,
+        prompt: this.userPrompt.trim()
+      };
+      this.workbechService.getServerTablesList(obj).subscribe(
+        data => {
+          this.zone.run(() => {
+            if (Array.isArray(data.data)) {
+              this.chartSuggestions = data.data;
+              this.errorMessage = '';
+            } else if (typeof data.data === 'string') {
+              this.chartSuggestions = [];
+              this.errorMessage = data.data;
+            } else {
+              this.chartSuggestions = [];
+              this.errorMessage = 'Unexpected data format';
+            }
+          });
+        },
+        error => {
+          this.zone.run(() => {
+            this.chartSuggestions = null;
+            this.errorMessage = 'Error sending prompt';
+            console.error(error);
+          });
         }
-      },
-      error => {
-        this.chartSuggestions = null;
-        this.errorMessage = 'Error sending prompt';
-        console.error(error);
-      }
-    );
+      );
+    }
   }
-}
+  
+  startVoiceRecognition() {
+    const recognition = new (window as any).webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+  
+    recognition.start();
+  
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      this.zone.run(() => {
+        this.userPrompt = transcript;
+        this.sendPrompt();
+      });
+    };
+  
+    recognition.onerror = (event: any) => {
+      console.error('Voice recognition error', event);
+      this.zone.run(() => {
+        this.errorMessage = 'Voice recognition error';
+      });
+    };
+  
+    recognition.onend = () => {
+      console.log('Voice recognition ended');
+    };
+  }
 }
