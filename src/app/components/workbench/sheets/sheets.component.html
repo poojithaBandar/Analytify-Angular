@@ -187,8 +187,12 @@
                                 </div>
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0" [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                <button *ngIf="!retriveDataSheet_id" class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
-                                <button *ngIf="retriveDataSheet_id" class="btn btn-primary w-100" (click)="sheetSave()">update </button>
+                                <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
+                                <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
+                                <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary w-100'" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
+                                (btnClickEvent)="sheetSave()"></app-insights-button>
+                                <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary w-100'" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
+                                (btnClickEvent)="sheetSave()"></app-insights-button>
                             </div>
                         </div>
                     </div>

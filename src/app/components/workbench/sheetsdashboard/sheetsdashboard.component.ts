@@ -11,7 +11,7 @@ import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, Gridst
 } from 'angular-gridster2';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { EChartsOption } from 'echarts';
+import { EChartsOption, number } from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { ApexOptions, ChartComponent, ChartType, NgApexchartsModule } from 'ng-apexcharts';
 import ApexCharts from 'apexcharts';
@@ -36,6 +36,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
+import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -63,7 +66,7 @@ interface Dimension {
   standalone: true,
   imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule ],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -71,11 +74,18 @@ export class SheetsdashboardComponent {
   @ViewChildren("test344")
   chartstest!: QueryList<ChartComponent>;
  // @HostListener('window:resize', ['$event'])
+ itemsPerPage:any;
+ pageNo = 1;
+ page: number = 1;
+ totalItems:any;
  qrySetId:any;
  databaseId:any;
  dashboardName = '';
  dashboardTagName = '';
+ panelscheckbox=[] as any;
+ isSheetsView : boolean = false;
  sheetsIdArray = [] as any;
+ sheetIdsDataSet = [] as any;
  sheetsNewDashboard=false;
  dashboardView = false;
  chartOptionsBar:any;
@@ -110,11 +120,13 @@ export class SheetsdashboardComponent {
  selectedTabIndex : number = 0;
  selectedTab : any = {};
  displayTabs : boolean = false;
+ editDashboard : boolean = false;
 
   public chartOptions!: Partial<ChartOptions>;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService){
     this.dashboard = [];
+    this.editDashboard = this.viewTemplateService.editDashboard();
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard')){
       this.sheetsNewDashboard = true;
@@ -257,11 +269,11 @@ export class SheetsdashboardComponent {
       // },
       pushItems: true,
       draggable: {
-        enabled: true,
+        enabled: this.editDashboard,
         
       },
       resizable: {
-        enabled: true,
+        enabled: this.editDashboard,
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -464,7 +476,11 @@ export class SheetsdashboardComponent {
     this.workbechService.getSavedDashboardData(obj).subscribe({
       next:(data)=>{
         console.log('savedDashboard',data);
-        this.dashboardName=data.dashboard_name
+        this.dashboardName=data.dashboard_name;
+        this.heightGrid = data.height;
+        this.widthGrid = data.width;
+        this.gridType = data.gridType;
+        this.changeGridType(this.gridType);
         this.dashboard = data.dashboard_data;
         if(!data.dashboard_tag_name){
           const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
@@ -509,9 +525,13 @@ export class SheetsdashboardComponent {
       })
     }else{
     const obj ={
-      queryset_id:this.qrySetId,
-      server_id:this.databaseId,
+      dashboard_type : this.gridType,
+      height: this.heightGrid,
+      width: this.widthGrid,
+      queryset_id:[this.qrySetId],
+      server_id:[this.databaseId],
        sheet_ids:this.sheetsIdArray,
+       dashboard_sheets_list:this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
       data:this.dashboard
@@ -614,11 +634,15 @@ export class SheetsdashboardComponent {
       })
     }else{
     const obj ={
-      queryset_id:this.qrySetId,
-      server_id:this.databaseId,
-       sheet_ids:this.sheetsIdArray,
+      dashboard_type : this.gridType,
+      height: this.heightGrid,
+      width: this.widthGrid,
+      queryset_id:[this.qrySetId],
+      server_id:[this.databaseId],
+      sheet_ids:this.sheetsIdArray,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
+      dashboard_sheets_list:this.sheetIdsDataSet,
       data:this.dashboard,
       sheetTabs : this.sheetTabs
       
@@ -643,10 +667,7 @@ export class SheetsdashboardComponent {
 
   sheetsDataWithQuerysetId(){
     const obj ={
-      // server_id:this.databaseId,
-      // queryset_id:this.qrySetId
-      server_id:this.databaseId,
-      queryset_id:this.qrySetId
+      sheetIds:this.sheetIdsDataSet,
     }
     this.workbechService.sheetsDataWithQuerysetId(obj)
     .subscribe({next: (data) => {
@@ -2339,6 +2360,95 @@ dropTest2(event: any) {
     const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
     this.dashboardName = doc.body.textContent+'';
 }
+
+  addSheetIds(data:any,panel : any){
+    data.is_selected = !data.is_selected;
+    if(data.is_selected){
+      this.sheetIdsDataSet.push(data.sheet_id);
+    } else {
+      const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === data.sheetId);
+        if (indexToRemove !== -1) {
+          this.sheetIdsDataSet.splice(indexToRemove, 1);
+          panel.is_selected = false;
+        }
+    }
+    
+  }
+
+  loadDashboard(){
+    let obj = {sheet_ids: this.sheetIdsDataSet};
+    this.workbechService.sheetRetrivelBasedOnIds(obj).subscribe({
+      next:(data)=>{
+        console.log('savedDashboard',data);
+      let sheetArray = data.map((sheet:any)=>sheet.sheets[0]);
+      this.dashboardNew = sheetArray.map((sheet:any) => ({
+        id:uuidv4(),
+        cols: 1,
+        rows: 1,
+        y: 10,
+        x: 10,
+        sheetType:sheet.sheet_type,
+        sheetId:sheet.sheet_id,
+        chartType:sheet.chart,
+        chartId:sheet.chart_id,
+        data: { title: sheet.sheet_name, content: 'Content of card New' },
+        selectedSheet : sheet.selectedSheet,
+        chartOptions: sheet.sheet_type === 'Chart' ? {
+          // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
+          ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
+          // chart: { type: sheet.chart, height: 300 },
+          //chartData:this.getChartData(sheet.sheet_data.results, sheet.chart)
+        } : undefined,
+        tableData: sheet.sheet_type === 'Table' ? {
+         ... this.getTableData(sheet.sheet_data)
+  
+        }
+         : undefined
+      }));
+       this.isSheetsView = false;
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+
+  pageChangegetUserSheetsList(page:any){
+    this.pageNo=page;
+    this.fetchSheetsList();
+    }
+
+  fetchSheetsList(){
+    const obj ={
+      sheet_ids : this.sheetIdsDataSet,
+      page_no : this.pageNo
+    }
+    this.workbechService.fetchSheetsList(obj).subscribe({
+      next:(data)=>{
+        console.log('savedDashboard',data);
+       this.panelscheckbox = data.sheets;
+       this.totalItems = data.total_items;
+       this.itemsPerPage = data.items_per_page;
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+  checkAllChilds(panel: any){
+    panel.sheet_data.forEach((sheet : any) =>{
+      sheet.is_selected = !panel.is_selected;
+      if(sheet.is_selected){
+        this.sheetIdsDataSet.push(sheet.sheet_id);
+      } else {
+        const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === sheet.sheetId);
+        if (indexToRemove !== -1) {
+          this.sheetIdsDataSet.splice(indexToRemove, 1);
+        }
+      }
+    })
+  }
+
 }
 
 // export interface CustomGridsterItem extends GridsterItem {

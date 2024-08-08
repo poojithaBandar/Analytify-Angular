@@ -177,7 +177,9 @@
                 <div class="card-body p-0 ">
                     <div class="col-xl-12 col-md-12 p-0">
                         <div class="card-header d-flex align-items-center justify-content-between">
-                            <label></label>
+                            <div class="flex-grow-1 ">
+                                <input  type="text" [(ngModel)]="saveQueryName" placeholder="Title" aria-label="Sheet" class="form-control" >
+                            </div>
                             <div class="right">
                                 @if(draggedtables.length){
                                 <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" (click)="openSuperScaled(applyFiltersModal);getFilteredList()" class="modal-effect btn btn-primary m-1">

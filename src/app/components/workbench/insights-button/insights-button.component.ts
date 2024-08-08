@@ -19,6 +19,7 @@ export class InsightsButtonComponent {
   @Input() faIconList! : string;
   @Input() tabIndex! : number;
   @Input()  previledgeId! : number;
+  @Input()  previledgeIdsList! : number[];
   @Input() isBtn! : boolean
   @Input() toolTip! : string;
   @Output() btnClickEvent: EventEmitter<any>;
@@ -28,7 +29,11 @@ export class InsightsButtonComponent {
   }
 
   ngOnInit(){
-    this.displayButton = this.rolesPrevilidgesService.userHasPriviledge(this.previledgeId);
+    if(this.previledgeIdsList && this.previledgeIdsList.length > 0) {
+      this.displayButton = this.rolesPrevilidgesService.isAnyNumberPresent(this.previledgeIdsList);
+    } else {
+      this.displayButton = this.rolesPrevilidgesService.userHasPriviledge(this.previledgeId);
+    }
   }
 
   onBtnClick(){

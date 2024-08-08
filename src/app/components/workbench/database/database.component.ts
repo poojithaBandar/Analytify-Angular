@@ -1180,11 +1180,27 @@ goToSheet(){
     if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/workbench/sheets/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+     let payload = {database_id:this.databaseId,query_set_id:this.qurtySetId,query_name:this.saveQueryName}
+     this.workbechService.updateQuerySetTitle(payload).subscribe({
+      next:(data:any)=>{
+        this.router.navigate(['/workbench/sheets/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    });
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-     this.router.navigate(['/workbench/sheets/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+     let payload = {database_id:this.databaseId,query_set_id:this.qurtySetId,query_name:this.saveQueryName}
+     this.workbechService.updateQuerySetTitle(payload).subscribe({
+      next:(data:any)=>{
+        this.router.navigate(['/workbench/sheets/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    });
     }
   }else if(this.fromDatabasId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
@@ -1192,11 +1208,27 @@ goToSheet(){
   if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
     // Encode 'null' to represent a null value
    const encodedDsQuerySetId = btoa('null');
-   this.router.navigate(['/workbench/sheets/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+   let payload = {database_id:this.databaseId,query_set_id:this.qurtySetId,query_name:this.saveQueryName}
+     this.workbechService.updateQuerySetTitle(payload).subscribe({
+      next:(data:any)=>{
+        this.router.navigate(['/workbench/sheets/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+      },
+      error:(error:any)=>{
+        console.log(error)
+      }
+    });
   } else {
     // Convert to string and encode
    const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-   this.router.navigate(['/workbench/sheets/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+   let payload = {database_id:this.databaseId,query_set_id:this.qurtySetId,query_name:this.saveQueryName}
+   this.workbechService.updateQuerySetTitle(payload).subscribe({
+    next:(data:any)=>{
+      this.router.navigate(['/workbench/sheets/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId+'/'+encodedDsQuerySetId])
+    },
+    error:(error:any)=>{
+      console.log(error)
+    }
+  });
   }
   }
   

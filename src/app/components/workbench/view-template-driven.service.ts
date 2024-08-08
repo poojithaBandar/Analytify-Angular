@@ -24,5 +24,8 @@ viewDashboard(){
 viewCustomSql(){
   return this.rolesprevilgeService.userHasPriviledge(54);
 }
+editDashboard(){
+  return this.rolesprevilgeService.userHasPriviledge(37);
+}
 
 }

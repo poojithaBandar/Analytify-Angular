@@ -13,6 +13,25 @@ export class RolespriviledgesService {
     localStorage.setItem("previledges",encryptPreviledgesData);
   }
 
+  isAnyNumberPresent(arr1: number[]): boolean {
+    try {
+      if(this.currentUserPreviledgeIds && this.currentUserPreviledgeIds.length){
+        return arr1.some(num => this.currentUserPreviledgeIds.includes(num));
+      } 
+      const encryptPreviledgesData = localStorage.getItem("previledges");
+      if(encryptPreviledgesData){
+        let data = atob(encryptPreviledgesData);
+        this.currentUserPreviledgeIds = JSON.parse(data);
+        return arr1.some(num => this.currentUserPreviledgeIds.includes(num));
+      } else {
+        this.authService.logOut();
+      }
+    } catch (error) {
+      this.authService.logOut();
+    }
+    return false;
+  }
+
   userHasPriviledge(previledgeId : number) {
     try {
       if(this.currentUserPreviledgeIds && this.currentUserPreviledgeIds.length){
