@@ -7,6 +7,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
 
 @Component({
   selector: 'app-saved-queries',
@@ -23,10 +24,15 @@ export class SavedQueriesComponent {
   searchName:any;
   savedQueryList:any[]=[];
   gridView = true;
-constructor(private workbechService:WorkbenchService,private route:Router){}
+  viewSavedQueries = false;
+constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService){
+  this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
+}
 
   ngOnInit(){
+    if(this.viewSavedQueries){
     this.getSavedQueries();
+    }
   }
 
   getSavedQueries(){

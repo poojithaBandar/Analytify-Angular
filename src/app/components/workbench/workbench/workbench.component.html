@@ -214,11 +214,14 @@
           </div>
         </div>
     </div>
-    <div *ngIf="connectionList?.length === 0">
+    <div *ngIf="viewDatasourceList && connectionList?.length === 0">
       Connect to new Database!
     </div>
+    <div *ngIf="!viewDatasourceList">
+      you don't have permission to view!
+    </div>
 
-        <div class="card-body">
+        <div *ngIf="viewDatasourceList" class="card-body">
           @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
@@ -280,71 +283,6 @@
             </div>
           }
           @if(gridView){
-                <!-- <div class="row">
-                  @for(database of connectionList;track database){
-                    <div class="col-md-12 col-lg-12 col-xl-6 col-xxl-3">
-                        <div class="card user-card shadow-none">
-                            <div class="user-image">
-                              <div class="card-icon-top">   </div>
-                                <span *ngIf="database.server_type === 'ORACLE'" class="avatar avatar-xl rounded-circle">
-                                  <img src="./assets/images/charts/oracle-tiled-icon.jpg" alt="" class="rounded-circle"></span>
-                                  <span *ngIf="database.server_type === 'POSTGRESQL'" class="avatar avatar-xl rounded-circle">
-                                    <img src="./assets/images/charts/post-tiled-icon.jpg" alt="" class="rounded-circle"></span>
-                            </div>
-                            <div class="card-body p-3 mt-3 text-center">
-                                <p class="text-muted text-center mb-0">Server</p>
-                                <a (click)="getTablesFromConnectedDb(database.database_id)" class="fs-18 fw-bold d-block">{{database.display_name | slice:0:15}}</a>
-                            </div>
-                            <div class=" p-2 text-center">
-                              <div class="row ">
-                                <div class="col-md-6">
-                                  <span class="fw-semibold fs-14">Server Type: </span>
-                                </div>
-                                <div class="col-md-6">
-                                  <span class="fs-15">{{database.server_type}} </span>
-                                </div>
-                              </div>
-                              <div class="row ">
-                                <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created by : </span>
-                                </div>
-                                <div class="col-md-6">
-                                    <span class="fs-15">{{database.created_by}}</span>
-                                </div>
-                              </div>
-                              <div class="row ">
-                                <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created on : </span>
-                                </div>
-                                <div class="col-md-6">
-                                    <span class="fs-15">{{database.created_at}}</span>
-                                </div>
-                              </div>      
-                              <div class="row ">
-                                <div class="col-md-6">
-                                  <span class="fw-semibold fs-14">Last Modified : </span>
-                                </div>
-                                <div class="col-md-6">
-                                  <span class="fs-15">{{database.updated_at}}</span>
-                                </div>
-                              </div>                               
-                              </div>
-                                <div class=" text-center p-2 d-flex justify-content-center gap-2 fs-1" >
-                                  <a aria-label="anchor"(click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
-                              class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                              <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
-                                         <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                          <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                                  </a>
-                                </div>
-                          </div>
-                      </div>
-                    }
-                </div> -->
-
-
-
-
                 <div class="row">
                   <div *ngFor="let database of connectionList | paginate : {
                     itemsPerPage: itemsPerPage,

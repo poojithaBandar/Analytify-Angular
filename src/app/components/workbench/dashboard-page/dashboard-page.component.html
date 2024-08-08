@@ -23,10 +23,13 @@
           </div>
         </div>
     </div>
-    <div *ngIf="savedDashboardList.length === 0">
+    <div *ngIf="viewDashboardList && savedDashboardList.length === 0">
       No Dashboards, Please Create One!
     </div>
-        <div class="card-body">
+    <div *ngIf="!viewDashboardList">
+     You don't have permission to view 
+    </div>
+        <div *ngIf="viewDashboardList" class="card-body">
             @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">

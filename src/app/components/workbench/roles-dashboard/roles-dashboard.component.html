@@ -20,7 +20,7 @@
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="roleName" (keyup.enter)="searchRoleList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchRoleList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             <app-insights-button [classesList]="'btn btn-primary'" [buttonName]="' Add Role'" [previledgeId]="56" [isBtn]="true"
-              (btnClickEvent)="addRolesDivOpen();getPrevilagesList()" [faIconList]="'fa fa-plus'" [isIcon]="true">
+              (btnClickEvent)="addRolesDivOpen();" [faIconList]="'fa fa-plus'" [isIcon]="true">
             </app-insights-button>
           </div>
         </div>

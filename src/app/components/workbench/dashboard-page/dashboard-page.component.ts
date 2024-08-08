@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -24,9 +25,14 @@ export class DashboardPageComponent implements OnInit{
   page: number = 1;
   totalItems:any;
   gridView = true;
-constructor(private workbechService:WorkbenchService,private router:Router){}
+  viewDashboardList = false;
+constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService){
+  this.viewDashboardList=this.templateViewService.viewDashboard()
+}
 ngOnInit(){
-this.getuserDashboardsListput();
+  if(this.viewDashboardList){
+  this.getuserDashboardsListput();
+  }
 }
 pageChangeUserDashboardsList(page:any){
 this.pageNo=page;

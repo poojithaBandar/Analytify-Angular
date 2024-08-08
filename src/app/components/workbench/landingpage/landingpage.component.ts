@@ -28,17 +28,27 @@ showAllSavedQueries = true;
 wholeSearch:any
 viewDatabbses = false;
 viewSheets = false;
+viewDashboardList = false;
+viewCustomSql = false;
+
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService){
   localStorage.setItem('QuerySetId', '0');
-  this.viewDatabbses=this.templateService.viewDashboard();
-  this.viewSheets = this.templateService.viewSheets()
+  this.viewDatabbses=this.templateService.viewDtabase();
+  this.viewSheets = this.templateService.viewSheets();
+  this.viewDashboardList = this.templateService.viewDashboard();
+  this.viewCustomSql = this.templateService.viewCustomSql();
 }
 
 ngOnInit(){
-  this.getuserSheets();
-  this.getuserDashboardsList();
-  this.getDbConnectionList();
+  if(this.viewDatabbses){
+    this.getDbConnectionList();
+  }if(this.viewSheets){
+    this.getuserSheets();
+  }if(this.viewDashboardList){
+    this.getuserDashboardsList();
+  }if(this.viewCustomSql){
   this.getSavedQueries();
+  }
 }
 totalSearch(){
   this.getuserSheets();
@@ -154,13 +164,12 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
 
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedDashboardId])
 }
-viewSheet(serverId:any,querysetId:any,sheetId:any,sheetname:any){
+viewSheet(serverId:any,querysetId:any,sheetId:any){
   const encodedServerId = btoa(serverId.toString());
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
-  const encodedSheetName = btoa(sheetname);
 
-  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedSheetName])
+  this.router.navigate(['/workbench/landingpage/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 }
 
  sheetsRoute(){

@@ -4,6 +4,7 @@ import { Subscription, fromEvent } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { checkHoriMenu,switcherArrowFn} from './sidebar';
+import { ViewTemplateDrivenService } from '../../../components/workbench/view-template-driven.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,7 +14,11 @@ import { checkHoriMenu,switcherArrowFn} from './sidebar';
 export class SidebarComponent{
   // Addding sticky-pin
   scrolled = false;
-
+  viewHome = false;
+  viewSheets = false;
+  viewSavedQueries = false;
+  viewDashboard = false;
+  viewDataSource = false;
   @HostListener('window:scroll', [])
   onWindowScroll() {
 
@@ -68,7 +73,8 @@ export class SidebarComponent{
     private sanitizer: DomSanitizer,
     public router: Router,
     public renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private viewTemplateService:ViewTemplateDrivenService
   ) {
     this.screenWidth = window.innerWidth;
 
@@ -76,6 +82,12 @@ export class SidebarComponent{
       .querySelector('html')
       ?.setAttribute('data-vertical-style', 'overlay');
     document.querySelector('html')?.setAttribute('data-nav-layout', 'vertical');
+
+    this.viewDashboard = this.viewTemplateService.viewDashboard();
+    this.viewSheets = this.viewTemplateService.viewSheets();
+    this.viewDataSource = this.viewTemplateService.viewDtabase();
+    this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
+
   }
   clickAction(item:any){
     console.log('kjrvgug',item)
@@ -98,8 +110,27 @@ export class SidebarComponent{
       }
     };
     this.menuResizeFn();
+
     this.menuitemsSubscribe$ = this.navServices.items.subscribe((items) => {
-      this.menuItems = items;
+      // this.menuItems = items;
+      this.menuItems = items.filter(item => {
+        if (item.title === 'Home') {
+          return true;
+        }
+        if (item.title === 'Dashboard' && this.viewDashboard) {
+          return true;
+        }
+        if (item.title === 'Saved Queries' && this.viewSavedQueries) {
+          return true;
+        }
+        if (item.title === 'Sheets' && this.viewSheets) {
+          return true;
+        }
+        if (item.title === 'Data Source' && this.viewDataSource) { 
+          return true;
+        }
+      })
+
     })
     this.ParentActive();
     this.router.events.subscribe((event) => {

@@ -25,10 +25,13 @@
           </div>
         </div>
     </div>
-    <div *ngIf="savedSheetsList.length === 0">
+    <div *ngIf="viewSheetList && savedSheetsList.length === 0">
       No Sheets, Please Create One!
     </div>
-        <div class="card-body">
+    <div *ngIf="!viewSheetList">
+      You don't have permission to view!
+    </div>
+        <div *ngIf="viewSheetList" class="card-body">
           @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">

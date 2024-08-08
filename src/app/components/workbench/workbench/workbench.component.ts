@@ -21,6 +21,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
 @Component({
   selector: 'app-workbench',
   standalone: true,
@@ -72,7 +73,8 @@ export class WorkbenchComponent implements OnInit{
   page: number = 1;
   totalItems:any;
   fileData:any;
-  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService){ 
+  viewDatasourceList = false;
+  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private viewTemplateService:ViewTemplateDrivenService){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/work-bench/view-connections')){
@@ -81,6 +83,7 @@ export class WorkbenchComponent implements OnInit{
     if(currentUrl.includes('workbench/work-bench/new-connections')){
       this.viewNewDbs = true;
     }
+    this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
     postGreServerName = '';
     postGrePortName = '';
@@ -613,7 +616,9 @@ export class WorkbenchComponent implements OnInit{
             .querySelector('html')
             ?.setAttribute('data-toggled', 'icon-overlay-close');    
     }
+    if(this.viewDatasourceList){
    this.getDbConnectionList();
+    }
   }
 
   pageChangegetconnectionList(page:any){

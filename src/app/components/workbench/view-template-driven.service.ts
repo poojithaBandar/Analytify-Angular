@@ -12,12 +12,17 @@ export class ViewTemplateDrivenService {
 
   constructor(private rolesprevilgeService:RolespriviledgesService) { }
 
-viewDashboard(){
+viewDtabase(){
 return this.rolesprevilgeService.userHasPriviledge(4);
 }
 viewSheets(){
   return this.rolesprevilgeService.userHasPriviledge(20);
 }
-
+viewDashboard(){
+  return this.rolesprevilgeService.userHasPriviledge(36);
+}
+viewCustomSql(){
+  return this.rolesprevilgeService.userHasPriviledge(54);
+}
 
 }

@@ -1,3 +1,4 @@
+
 <app-page-header title="Users List" title1="home" activeitem="Users List"></app-page-header>
 
 <div *ngIf="!addUserDivForm" class="main-container container-fluid">
@@ -20,7 +21,6 @@
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="userName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchUserList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             <button type="button" class="btn btn-primary" (click)="addUserDiv()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add User</button>
-
           </div>
         </div>
     </div>
@@ -405,14 +405,14 @@
                     <div class="col-md-2 border p-2">
                         <label for="input-label" class="form-label">Select Role</label>
                     </div>
-                    <div class="col-md-10 border p-2">
+                    <div *ngIf="userAddedRolesList.length" class="col-md-10 border p-2">
                        
                       <div class="col-md-2 border p-2">
                         <label for="input-label" class="form-label">Select Role</label>
                       </div>
                       <input type="checkbox" id="selectAll" (change)="toggleSelectAll()" />
                       <label for="selectAll" class="form-label">Select all roles</label>
-                      <div class="col-md-10 border p-2">
+                      <div  class="col-md-10 border p-2">
                         <div formArrayName="role">
                           <div *ngFor="let role of userAddedRolesList; let i = index">
                             <label>
@@ -425,9 +425,12 @@
                           The user role on the application, this will associate with a list of Permission
                         </label>
                       </div>
-
+                    
                         <!-- <label for="input-label" class="form-label">The user role on the application, this will
                             associate with a list of Permission </label> -->
+                    </div>
+                    <div *ngIf="!userAddedRolesList.length">
+                      No Roles Available To Assaign Please<a style="cursor: pointer;color: #05aff8;" (click)="gotoAddRole()"> Add One</a>
                     </div>
 
                     <div *ngIf="!userEditHidePassword">   

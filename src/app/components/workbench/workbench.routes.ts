@@ -124,7 +124,19 @@ export const admin: Routes = [
     import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
 },
 {
+  path: 'dashboard/user-add',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
+},
+{
   path: 'roles-list/dashboard',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
+},
+{
+  path: 'dashboard/role-add',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)

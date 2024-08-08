@@ -7,6 +7,7 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-roles-dashboard',
@@ -37,8 +38,14 @@ export class RolesDashboardComponent {
   updateRole = false;
   assaignedUsers =[] as any;
   addRoleDiv = false;
-constructor(public modalService:NgbModal,private workbechService:WorkbenchService){
-
+constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private router:Router){
+  if(this.router.url.includes('/workbench/dashboard/role-add')){
+    this.addRoleDiv = true;
+    this.getPrevilagesList();
+  }
+  if(this.router.url.includes('/workbench/roles-list/dashboard')){
+    this.addRoleDiv = false;
+  }
 }
 
 
@@ -50,7 +57,8 @@ ngOnInit(){
 //   this.modalService.open(OpenmdoModal);
 // }
 addRolesDivOpen(){
-this.addRoleDiv = true;
+// this.addRoleDiv = true;
+this.router.navigate(['/workbench/dashboard/role-add'])
 }
 
 searchRoleList(){
@@ -97,7 +105,8 @@ getPrevilagesList(){
   this.workbechService.getPrevilagesList(obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this. previlagesList=data
+      this. previlagesList=data;
+      this.removeIdsFromprevilageListOnEdit();
      },
     error:(error)=>{
       console.log(error);

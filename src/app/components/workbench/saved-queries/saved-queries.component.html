@@ -19,10 +19,13 @@
           </div>
         </div>
     </div>
-    <div *ngIf="savedQueryList.length === 0">
+    <div *ngIf="viewSavedQueries && savedQueryList.length === 0">
       No Saved Queries!
     </div>
-        <div class="card-body">
+    <div *ngIf="!viewSavedQueries">
+      You don't have permission to view!
+    </div>
+        <div *ngIf="viewSavedQueries" class="card-body">
           @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">

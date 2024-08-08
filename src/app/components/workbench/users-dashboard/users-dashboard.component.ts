@@ -8,6 +8,7 @@ import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { PasswordValidators } from '../../../shared/password-validator';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users-dashboard',
@@ -34,7 +35,7 @@ export class UsersDashboardComponent {
   userId:any;
   @ViewChild('Adduser') Adduser : any;
 
-  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder){
+  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,private router:Router){
     this.addUserForm = this.formBuilder.group({
       username: ['', Validators.required],
       firstname:['', Validators.required],
@@ -60,6 +61,12 @@ export class UsersDashboardComponent {
         ])]],
       conformpassword: ['', Validators.required],
     })
+    if(this.router.url.includes('/workbenchdashboard/user-add')){
+      this.addUserDiv();
+    }
+    if(this.router.url.includes('/workbenchdashboard/roles-list/dashboard')){
+      this.addUserDivForm= false;
+    }
   }
 
   ngOnInit(){
@@ -177,6 +184,10 @@ toggleClass1 = "off-line";
     this.addUserForm.reset();
     this.getAddedRolesList();
     this.userEditHidePassword = false;
+    const rolesArray = this.addUserForm.get('role') as FormArray;
+    if (rolesArray && rolesArray instanceof FormArray) {
+      rolesArray.clear(); // Clear the current FormArray
+      }
   }
   closeAddUserForm(){
     this.addUserDivForm = false;
@@ -225,7 +236,9 @@ toggleClass1 = "off-line";
     console.log('Selected roles:', selectedRoles);
     return selectedRoles;
   }
-
+  gotoAddRole(){
+    this.router.navigate(['/workbench/dashboard/role-add'])
+  }
 getAddedRolesList(){
   this.workbechService.getAddedRolesList().subscribe({
     next:(data)=>{

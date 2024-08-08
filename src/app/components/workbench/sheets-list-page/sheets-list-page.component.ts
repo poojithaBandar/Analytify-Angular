@@ -8,6 +8,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule, PaginatePipe, PaginationControlsComponent } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
 
 @Component({
   selector: 'app-sheets-list-page',
@@ -25,11 +26,16 @@ export class SheetsListPageComponent implements OnInit {
   page: number = 1;
   totalItems:any;
   gridView = true;
-constructor(private workbechService:WorkbenchService,private router:Router){}
-
-ngOnInit(){
-this.getUserSheetsList();
+  viewSheetList = false;
+constructor(private workbechService:WorkbenchService,private router:Router,private viewTemplateService:ViewTemplateDrivenService){
+  this.viewSheetList = this.viewTemplateService.viewSheets()
 }
+
+  ngOnInit() {
+    if (this.viewSheetList) {
+      this.getUserSheetsList();
+    }
+  }
 
 pageChangegetUserSheetsList(page:any){
 this.pageNo=page;
