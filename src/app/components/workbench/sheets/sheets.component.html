@@ -1244,34 +1244,77 @@
                                 </li>
 
                                 <li [ngbNavItem]="3">
-                                    <a ngbNavLink class="p-3">
-                                      <button class="copilot-button" (click)="getChartSuggestions()">
-                                        <img src="./assets/images/copilot.png" alt="Copilot" class="copilot-icon" />
-                                      </button>
+                                    <a ngbNavLink class="p-3" (click)="getChartSuggestions()">
+                                        <button class="copilot-button">
+                                            <img src="./assets/images/copilot.gif" alt="Copilot" class="copilot-icon" />
+                                        </button>
                                     </a>
                                     <ng-template ngbNavContent>
-                                      <div class="tab-pane" id="linktabs">
-                                        <div class="copilot-container">
-                                          <h5>InsightApps Copilot</h5>
-                                          <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-3">
-                                            <button *ngFor="let chart of chartSuggestions" type="button" class="btn ripple btn-primary inp-btn" (click)="fetchChartData(chart)">
-                                              {{ chart.chart_title }}
-                                            </button>
-                                          </div>
-                                          <div class="error-mgs"  *ngIf="!chartSuggestions || chartSuggestions.length === 0">
-                                            <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
-                                            <a (click)="goToConnections()" style="cursor: pointer;"><span class="add-txt text-info">Add</span></a>
-                                          </div>
-                                          <div class="input-group mt-3 inp">
-                                            <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
-                                            <div class="input-group-append">
-                                              <button class="btn btn-primary inp-send" (click)="sendPrompt()">></button>
+                                        <div class="tab-pane" id="linktabs">
+                                            <div class="copilot-container">
+                                                <h5>InsightApps Copilot</h5>
+                                                <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-3">
+                                                    <button *ngFor="let chart of chartSuggestions" type="button"
+                                                        class="btn ripple btn-primary inp-btn d-flex align-items-center"
+                                                        (click)="fetchChartData(chart)">
+                                                        <span class="avatar avatar-xl rounded-circle-copilot mr-2">
+                                                            <img *ngIf="chart.chart_id === 1"
+                                                                src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 6"
+                                                                src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 17"
+                                                                src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 13"
+                                                                src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 24"
+                                                                src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 7"
+                                                                src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 5"
+                                                                src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 4"
+                                                                src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 2"
+                                                                src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 3"
+                                                                src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 8"
+                                                                src="./assets/images/Tiled view sheet icons/multiline-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                            <img *ngIf="chart.chart_id === 10"
+                                                                src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt=""
+                                                                class="rounded-circle-copilot">
+                                                        </span>
+                                                        <span>{{ chart.chart_title }}</span>
+                                                    </button>
+                                                </div>
+                                                <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
+                                                    <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
+                                                    <a *ngIf="!qrySetId" (click)="goToConnections()" style="cursor: pointer;"><span
+                                                            class="add-txt text-info">Add</span></a>
+                                                </div>
+                                                <div class="input-group mt-3 inp">
+                                                    <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
+                                                    <div class="input-group-append">
+                                                        <button (click)="startVoiceRecognition()" style="height: 33px; width:33px"> <img
+                                                                src="./assets/images/microphone.svg" alt="Micro Phone" /> </button>
+                                                        <button class="btn btn-primary inp-send" (click)="sendPrompt()">></button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                          </div>
                                         </div>
-                                      </div>
                                     </ng-template>
-                                  </li>
+                                </li>
                             </ul>
                         </div>
                     </div>
