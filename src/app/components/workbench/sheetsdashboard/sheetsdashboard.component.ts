@@ -2471,11 +2471,20 @@ dropTest2(event: any) {
     }
 
   fetchSheetsList(){
-    const obj ={
-      sheet_ids : this.sheetIdsDataSet,
-      page_no : this.pageNo,
-      search : this.searchSheets
+    let obj;
+    if( this.searchSheets && this.searchSheets.trim() != '' && this.searchSheets.length > 0){
+      obj ={
+        sheet_ids : this.sheetIdsDataSet,
+        page_no : this.pageNo,
+        search : this.searchSheets
+      }
+    } else {
+      obj ={
+        sheet_ids : this.sheetIdsDataSet,
+        page_no : this.pageNo,
+      }
     }
+
     this.workbechService.fetchSheetsList(obj).subscribe({
       next:(data)=>{
         console.log('savedDashboard',data);
