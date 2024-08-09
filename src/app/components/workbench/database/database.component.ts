@@ -400,6 +400,7 @@ onDeleteItem(index: number) {
     const deleteIndex = index - 1
     this.relationOfTables.splice(deleteIndex,1)
    this.joiningTablesFromDelete();
+   this.isOpen = false;
   //  }
 }
 buildCustomRelation(){
@@ -641,6 +642,10 @@ customTableJoin(){
     joining_conditions:this.relationOfTables,
     dragged_array:this.draggedtables
 
+  }as any;
+  if(this.fromFileId){
+   delete obj.database_id;
+   obj.file_id = this.fileId
   }
   this.workbechService.joiningTables(obj)
   .subscribe(
@@ -1181,7 +1186,7 @@ markDirty(){
 }
 
   goToSheet() {
-    if (this.saveQueryName === '') {
+    if (this.saveQueryName === '' || this.saveQueryName == null || this.saveQueryName == undefined) {
       Swal.fire({
         icon: 'error',
         title: 'oops!',

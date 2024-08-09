@@ -37,6 +37,7 @@ usersOnSelectedRole =[] as any;
 selectedUserIds = [] as any;
 dashboardPropertyTitle :any;
 dashboardId :any
+previousroleDetails = [] as any;
 @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal){
@@ -390,7 +391,8 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.modalService.open(this.propertiesModal);
   this.getRoleDetailsDshboard();
   this.dashboardPropertyTitle = name;
-  this.dashboardId = dashboardId
+  this.dashboardId = dashboardId;
+  this.getAddedDashboardProperties();
 
   }
   onRolesChange(selected: number[]) {
@@ -399,6 +401,23 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     console.log(this.selectedRoleIds);
 
     // You can store or process the selected values here
+}
+getAddedDashboardProperties(){
+  this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
+    next:(data)=>{
+      this.previousroleDetails = data.roles;
+
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
 }
 getRoleDetailsDshboard(){
   this.workbechService.getRoleDetailsDshboard().subscribe({

@@ -80,6 +80,7 @@ export class SheetsdashboardComponent {
  totalItems:any;
  qrySetId:any;
  databaseId:any;
+ fileId:any;
  dashboardName = '';
  dashboardTagName = '';
  panelscheckbox=[] as any;
@@ -121,7 +122,7 @@ export class SheetsdashboardComponent {
  selectedTab : any = {};
  displayTabs : boolean = false;
  editDashboard : boolean = false;
-
+ fromFileId = false;
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -129,11 +130,19 @@ export class SheetsdashboardComponent {
     this.dashboard = [];
     this.editDashboard = this.viewTemplateService.editDashboard();
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard')){
+    if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard/dbId')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
-        this.qrySetId = +atob(route.snapshot.params['id2'])
+        this.qrySetId = +atob(route.snapshot.params['id2']);
+        }
+    }
+    else if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard/fileId')){
+      this.sheetsNewDashboard = true;
+      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+        this.fileId = +atob(route.snapshot.params['id1']);
+        this.qrySetId = +atob(route.snapshot.params['id2']);
+        this.fromFileId = true;
         }
     }else if(currentUrl.includes('workbench/landingpage/sheetsdashboard')){
       this.dashboardView = true;
@@ -237,10 +246,14 @@ export class SheetsdashboardComponent {
 
   
   ngOnInit() {  
-    if(this.sheetsNewDashboard){
-      this.sheetsDataWithQuerysetId();
+    if(this.fileId || this.databaseId){
+      this.sheetsDataWithQuerysetIdTest();
     }
+    // if(this.sheetsNewDashboard){
+    //   this.sheetsDataWithQuerysetId();
+    // }
     if(this.dashboardView){
+
       this.getSavedDashboardData();
       // this.sheetsDataWithQuerysetId();
       this.getDashboardFilterredList();
@@ -337,11 +350,11 @@ export class SheetsdashboardComponent {
       // },
       pushItems: true,
       draggable: {
-        enabled: true,
+        enabled: this.editDashboard,
         
       },
       resizable: {
-        enabled: true,
+        enabled: this.editDashboard,
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -373,11 +386,11 @@ export class SheetsdashboardComponent {
       // },
       pushItems: true,
       draggable: {
-        enabled: true,
+        enabled: this.editDashboard,
         
       },
       resizable: {
-        enabled: true,
+        enabled: this.editDashboard,
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -411,11 +424,11 @@ export class SheetsdashboardComponent {
         // },
         pushItems: true,
         draggable: {
-          enabled: true,
+          enabled: this.editDashboard,
           
         },
         resizable: {
-          enabled: true,
+          enabled: this.editDashboard,
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -446,11 +459,11 @@ export class SheetsdashboardComponent {
         // },
         pushItems: true,
         draggable: {
-          enabled: true,
+          enabled: this.editDashboard,
           
         },
         resizable: {
-          enabled: true,
+          enabled: this.editDashboard,
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -581,6 +594,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
       data:this.dashboard
+    }as any;
+    if(this.fromFileId){
+      delete obj.server_id;
+      obj.file_id = [this.fileId]
     }
     this.workbechService.saveDashboard(obj).subscribe({
       next:(data)=>{
@@ -711,6 +728,55 @@ selected_sheet_ids :this.sheetIdsDataSet,
   }
   }
 
+  sheetsDataWithQuerysetIdTest(){
+    let obj ;
+    if(this.fileId){
+      obj ={
+        file_id:this.fileId,
+        queryset_id:this.qrySetId
+      }
+    } else {
+      obj ={
+        server_id:this.databaseId,
+      queryset_id:this.qrySetId
+      }
+    }
+  
+    this.workbechService.sheetsDataWithQuerysetId(obj)
+    .subscribe({next: (data) => {
+       console.log('sheetData',data)
+       this.sheetData = data.sheets,
+       this.databaseName= data.database_name
+    this.dashboardNew = this.sheetData.map((sheet:any) => ({
+      id:uuidv4(),
+      cols: 1,
+      rows: 1,
+      y: 0,
+      x: 0,
+      sheetType:sheet.sheet_type,
+      sheetId:sheet.sheet_id,
+      chartType:sheet.chart,
+      chartId:sheet.chart_id,
+      data: { title: sheet.sheet_name, content: 'Content of card New' },
+      chartOptions: sheet.sheet_type === 'Chart' ? {
+        // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
+        ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
+        // chart: { type: sheet.chart, height: 300 },
+        //chartData:this.getChartData(sheet.sheet_data.results, sheet.chart)
+      } : undefined,
+      tableData: sheet.sheet_type === 'Table' ? {
+       ... this.getTableData(sheet.sheet_data)
+
+      }
+       : undefined
+    }));
+    console.log('dashboardNew',this.dashboardNew)
+      },
+    error:(error)=>{
+    console.log(error);
+   }
+   })
+  }
   sheetsDataWithQuerysetId(){
     const obj ={
       sheetIds:this.sheetIdsDataSet,

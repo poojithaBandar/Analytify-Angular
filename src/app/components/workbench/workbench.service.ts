@@ -425,7 +425,11 @@ deleteUser(id:any){
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/dashboard_prop_update/`+this.accessToken,obj); 
   }
-  
+  getAddedDashboardProperties(id:any){
+    const currentUser = localStorage.getItem('currentUser');
+    this.accessToken = JSON.parse(currentUser!)['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/dashboard_properties/`+id+'/'+ this.accessToken);
+  }
   //image convert
       blobToFile(theBlob:any){
       theBlob.lastModifiedDate = new Date();

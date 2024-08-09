@@ -611,8 +611,8 @@
           <div class="">
             
                <p class="fw-semibold mb-2 mt-3">Roles</p>
-               <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Roles">
-                   <ng-option *ngFor="let role of roleDetails" value="{{role.id}}" selected>{{role.role}}</ng-option>
+               <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)" [closeOnSelect]="false"  [multiple]="true" placeholder="Select Roles">
+                <ng-option *ngFor="let role of roleDetails" value="{{role.id}}" selected>{{role.role}}</ng-option>
                    
                </ng-select>
           </div>

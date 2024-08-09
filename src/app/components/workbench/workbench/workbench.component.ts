@@ -657,10 +657,15 @@ export class WorkbenchComponent implements OnInit{
       }
     })
   }
-  getTablesFromConnectedDb(id:any){
-    const encodedId = btoa(id.toString());
-    this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
-    
+  getTablesFromConnectedDb(dbId:any,fileId:any){
+    if(dbId === null){
+    const encodedId = btoa(fileId.toString());
+    this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
+    }
+    if(fileId === null){
+      const encodedId = btoa(dbId.toString());
+      this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+      }
 }
 
   onDeleteItem(index: number) {

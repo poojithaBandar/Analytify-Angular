@@ -241,7 +241,7 @@
                           currentPage: page,
                           totalItems: totalItems
                         }">
-                            <td (click)="getTablesFromConnectedDb(database.database_id)">
+                            <td (click)="getTablesFromConnectedDb(database.database_id,database.file_id)">
                                 <a  style="color: #05aff8;" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                </td>
                             <td *ngIf="database.server_type === 'POSTGRESQL'">
@@ -261,6 +261,12 @@
                       </td>
                       <td *ngIf="database.server_type === 'SQLITE'">
                           <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'EXCEL'">
+                        <img alt="product" src="./assets/images/icons/excel-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'CSV'">
+                        <img alt="product" src="./assets/images/icons/csv-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
 
                             <td>{{database.created_at}}</td>
@@ -308,10 +314,14 @@
                                                         <img src="./assets/images/icons/sqlite-icon.jpg" alt="" class="rounded-circle"></span>
                                                         <span *ngIf="database.server_type === 'MONGODB'" class="avatar avatar-xl rounded-circle">
                                                           <img src="./assets/images/icons/mongodb-icon.jpg" alt="" class="rounded-circle"></span>
+                                                          <span *ngIf="database.server_type === 'EXCEL'" class="avatar avatar-xl rounded-circle">
+                                                            <img src="./assets/images/icons/excel-icon.jpg" alt="" class="rounded-circle"></span>
+                                                            <span *ngIf="database.server_type === 'CSV'" class="avatar avatar-xl rounded-circle">
+                                                              <img src="./assets/images/icons/csv-icon.jpg" alt="" class="rounded-circle"></span>
                                                 <div class="ms-2 mt-sm-0 mt-2">
                                                   <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                                                     <h6 class="mb-1">
-                                                        <a (click)="getTablesFromConnectedDb(database.database_id)"  class="float-start">{{database.display_name | slice:0:15}}</a>
+                                                        <a (click)="getTablesFromConnectedDb(database.database_id,database.file_id)"  class="float-start">{{database.display_name | slice:0:15}}</a>
                                                     </h6>
                                                     
                                                 </div>

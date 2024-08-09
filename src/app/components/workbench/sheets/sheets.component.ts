@@ -199,10 +199,8 @@ export class SheetsComponent {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
         this.filterQuerySetId = atob(route.snapshot.params['id3'])
-        if(this.tabs.length<1){
           this.tabs[0] = this.sheetName;
           this.sheetTagName = this.sheetName;
-        }
         if(this.filterQuerySetId==='null'){
           console.log('filterqrysetid',this.filterQuerySetId)
           this.filterQuerySetId = null
@@ -217,7 +215,9 @@ export class SheetsComponent {
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.fileId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
-        this.filterQuerySetId = atob(route.snapshot.params['id3'])
+        this.filterQuerySetId = atob(route.snapshot.params['id3']);
+        this.tabs[0] = this.sheetName;
+        this.sheetTagName = this.sheetName;
         this.fromFileId = true;
         if(this.filterQuerySetId==='null'){
           console.log('filterqrysetid',this.filterQuerySetId)
@@ -3131,9 +3131,16 @@ openSuperScalededitFilter(modal: any,data:any) {
   this.filterEditGet();
 }
 gotoDashboard(){
+  if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  }
+if(this.fromFileId){
+  const encodedFileId = btoa(this.fileId.toString())
+  const encodedQuerySetId = btoa(this.qrySetId.toString());
+  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
+}
 }
 viewDashboard(){
   const encodedDatabaseId = btoa(this.databaseId.toString());
