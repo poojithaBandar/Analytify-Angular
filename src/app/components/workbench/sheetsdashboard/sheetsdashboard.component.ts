@@ -91,7 +91,7 @@ export class SheetsdashboardComponent {
  chartOptionsBar:any;
  dashboardId:any;
  databaseName:any;
- gridType!: string;
+ gridType: string = 'fixed';
  updateDashbpardBoolen= false;
  active=1;
  isOverflowHidden = false;
@@ -123,6 +123,7 @@ export class SheetsdashboardComponent {
  editDashboard : boolean = false;
 
   public chartOptions!: Partial<ChartOptions>;
+  searchSheets!: string;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService){
     this.dashboard = [];
@@ -951,6 +952,8 @@ allowDrop(ev : any): void {
         sheetType:copy.sheetType,
         sheetId:copy.sheetId,
         chartType:copy.chartType,
+        databaseId : copy.databaseId,
+        qrySetId : copy.qrySetId,
         chartId:copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
@@ -1031,6 +1034,8 @@ allowDrop(ev : any): void {
         sheetId:copy.sheetId,
         chartType:copy.chartType,
         chartId:copy.chartId,
+        databaseId : copy.databaseId,
+    qrySetId : copy.qrySetId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
         tableData:copy.tableData,
@@ -1044,7 +1049,10 @@ allowDrop(ev : any): void {
 }
 
 
-  viewSheet(sheetId:any){
+  viewSheet(sheetdata:any){
+    let sheetId = sheetdata.sheetId;
+    this.databaseId = sheetdata.databaseId;
+    this.qrySetId = sheetdata.qrySetId;
     const encodedServerId = btoa(this.databaseId.toString());
     const encodedQuerySetId = btoa(this.qrySetId.toString());
     const encodedSheetId = btoa(sheetId.toString());
@@ -1061,8 +1069,8 @@ allowDrop(ev : any): void {
   }
 
   removeItem($event:any, item:any, tabSheet : boolean) {
-    $event.preventDefault();
-    $event.stopPropagation();
+    // $event.preventDefault();
+    // $event.stopPropagation();
     if(tabSheet){
       this.dashboardTest.splice(this.dashboardTest.indexOf(item), 1);
       this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
@@ -2433,6 +2441,8 @@ dropTest2(event: any) {
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
         chartId:sheet.chart_id,
+        databaseId : sheet.server_id,
+        qrySetId : sheet.queryset_id,
         data: { title: sheet.sheet_name, content: 'Content of card New' },
         selectedSheet : sheet.selectedSheet,
         chartOptions: sheet.sheet_type === 'Chart' ? {
@@ -2463,7 +2473,8 @@ dropTest2(event: any) {
   fetchSheetsList(){
     const obj ={
       sheet_ids : this.sheetIdsDataSet,
-      page_no : this.pageNo
+      page_no : this.pageNo,
+      search : this.searchSheets
     }
     this.workbechService.fetchSheetsList(obj).subscribe({
       next:(data)=>{
