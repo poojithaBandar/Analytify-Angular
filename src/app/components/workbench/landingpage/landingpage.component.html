@@ -147,6 +147,8 @@
         <div class="landing-connect-search mb-3 ">
             <app-insights-button [buttonName]="' New Chart'" [classesList]="'btn btn-blue-light me-3'" [previledgeId]="17" [isBtn]="true"
             (btnClickEvent)="sheetsRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
+            <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-blue-light me-3'" [previledgeId]="17" [isBtn]="true"
+            (btnClickEvent)="loadNewDashboard()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
             <app-insights-button [buttonName]="'Connect To Database'" [classesList]="'btn btn-blue-light me-3'" [isIcon]="false" [previledgeId]="1" [isBtn]="true"
             (btnClickEvent)="newConnections()"></app-insights-button>
             <div class="view-card">

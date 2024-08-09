@@ -86,6 +86,12 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
   pathMatch: 'full',
+},{
+  path: 'landingpage/sheetsdashboard/:id1',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
+  pathMatch: 'full',
 },
 {
   path: 'landingpage/sheets/:id1/:id2/:id3',

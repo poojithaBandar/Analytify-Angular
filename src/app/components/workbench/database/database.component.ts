@@ -745,6 +745,7 @@ getJoiningTableData(){
         this.TabledataJoining = data;
         this.qryTime = data.query_exection_time;
         this.qryRows = data.no_of_rows;
+        this.saveQueryName = data.queryset_name;
       },
       error:(error:any)=>{
       console.log(error);
@@ -1157,6 +1158,7 @@ getfilteredCustomSqlData(){
           this.cutmquryTable = data;
           this.custmQryTime = data.query_exection_time;
           this.custmQryRows = data.no_of_rows;
+          this.saveQueryName = data.queryset_name;
         },
         error:(error:any)=>{
         console.log(error);

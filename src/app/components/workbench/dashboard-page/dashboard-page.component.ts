@@ -127,7 +127,7 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedDashboardId = btoa(dashboardId.toString());
 
-  this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedDashboardId])
+  this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
 }
 dashboardRoute(){
 

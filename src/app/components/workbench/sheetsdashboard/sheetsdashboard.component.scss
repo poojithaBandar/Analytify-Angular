@@ -116,9 +116,6 @@ apx-chart {
   height: 100%;
 }
 
-button {
-  margin-top: 10px;
-}
 .dropdown-menu{
     min-width:auto;
     box-shadow:none;
@@ -280,4 +277,8 @@ button.BtnNewStyle {
 
 .title-editor{
   cursor: pointer;
+}
+.check-box-line-height {
+  line-height: 1;
+  margin-bottom: 10px;
 }

@@ -67,7 +67,7 @@
                                                   <div class="accordion-body"  ngbAccordionBody>
                                                     @for (nestedpanel of panel.sheet_data; track nestedpanel) {
                                                       @if(nestedpanel?.sheet_name){
-                                                      <div class="checkbox-name" (click)="addSheetIds(nestedpanel,panel);" >
+                                                      <div class="checkbox-name check-box-line-height" (click)="addSheetIds(nestedpanel,panel);" >
                                                         <input type="checkbox" value="{{nestedpanel.sheetId}}" id="checkbox1" [(ngModel)]="nestedpanel.is_selected" class="form-check-input me-2 mt-0">{{nestedpanel?.sheet_name}}
                                                       </div>
                                                     }

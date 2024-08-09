@@ -170,7 +170,7 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedDashboardId = btoa(dashboardId.toString());
 
-  this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedDashboardId])
+  this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
 }
 viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   const encodedQuerySetId = btoa(querysetId.toString());
@@ -443,6 +443,10 @@ this.selectedUserIds = selected.map(value => Number(value));
 console.log(this.selectedUserIds)
 
 // this.selectedUserIds = selected
+}
+
+loadNewDashboard(){
+this.router.navigate(['/workbench/sheetsdashboard'])
 }
 
 saveDashboardProperties(){

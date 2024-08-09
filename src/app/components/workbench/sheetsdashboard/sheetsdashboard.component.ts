@@ -138,12 +138,15 @@ export class SheetsdashboardComponent {
     }else if(currentUrl.includes('workbench/landingpage/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-        this.databaseId = +atob(route.snapshot.params['id1']);
-        this.qrySetId = +atob(route.snapshot.params['id2'])
-        this.dashboardId = +atob(route.snapshot.params['id3'])
+      if (route.snapshot.params['id1']) {
+        // this.databaseId = +atob(route.snapshot.params['id1']);
+        // this.qrySetId = +atob(route.snapshot.params['id2'])
+        this.dashboardId = +atob(route.snapshot.params['id1'])
 
         }
+      }
+        else if(currentUrl.includes('workbench/sheetsdashboard')){
+          this.sheetsNewDashboard = true;
     }
     
   }
@@ -2416,7 +2419,7 @@ dropTest2(event: any) {
     if(data.is_selected){
       this.sheetIdsDataSet.push(data.sheet_id);
     } else {
-      const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === data.sheetId);
+      const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === data.sheet_id);
         if (indexToRemove !== -1) {
           this.sheetIdsDataSet.splice(indexToRemove, 1);
           panel.is_selected = false;
@@ -2457,6 +2460,7 @@ dropTest2(event: any) {
         }
          : undefined
       }));
+      this.setSelectedSheetData();
        this.isSheetsView = false;
       },
       error:(error)=>{
