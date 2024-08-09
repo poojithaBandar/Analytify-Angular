@@ -7,7 +7,7 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-roles-dashboard',
@@ -38,10 +38,21 @@ export class RolesDashboardComponent {
   updateRole = false;
   assaignedUsers =[] as any;
   addRoleDiv = false;
-constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private router:Router){
+constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute){
   if(this.router.url.includes('/workbench/dashboard/role-add')){
     this.addRoleDiv = true;
     this.getPrevilagesList();
+  }
+  if(this.router.url.includes('/workbench/dashboard/role-edit')){
+    // this.addRoleDiv = true;
+    // this.getPrevilagesList();
+    if (route.snapshot.params['id1'] ) {
+      const roleId = +atob(route.snapshot.params['id1']);
+      this.addRoleDiv = true;
+      this.updateRole = true;
+      this.getPrevilagesList();
+      this.getRoleIdDetails(roleId);
+    }
   }
   if(this.router.url.includes('/workbench/roles-list/dashboard')){
     this.addRoleDiv = false;
@@ -60,10 +71,11 @@ addRolesDivOpen(){
 // this.addRoleDiv = true;
 this.router.navigate(['/workbench/dashboard/role-add'])
 }
-updateRolesDivOpen(){
+updateRolesDivOpen(id:any){
+  const encodedRoleId = btoa(id.toString());
   // this.addRoleDiv = true;
-  this.router.navigate(['/workbench/dashboard/role-add']);
-  this.updateRole = true;
+  this.router.navigate(['/workbench/dashboard/role-edit/'+encodedRoleId]);
+  // this.updateRole = true;
   }
 
 searchRoleList(){
@@ -335,5 +347,8 @@ editRoles(){
       })
     }
   }) 
+}
+viewSavedRoles(){
+  this.router.navigate(['/workbench/roles-list/dashboard'])
 }
 }

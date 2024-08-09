@@ -393,9 +393,11 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.dashboardId = dashboardId
 
   }
-  onRolesChange(selected: string[]) {
-    console.log(selected);
-    this.selectedRoleIds = selected
+  onRolesChange(selected: number[]) {
+    // this.selectedRoleIds = selected
+    this.selectedRoleIds = selected.map(value => Number(value));
+    console.log(this.selectedRoleIds);
+
     // You can store or process the selected values here
 }
 getRoleDetailsDshboard(){
@@ -436,9 +438,11 @@ getUsersforRole(){
     }
   })
 }
-getSelectedUsers(selected: string[]){
-console.log(selected)
-this.selectedUserIds = selected
+getSelectedUsers(selected: number[]){
+this.selectedUserIds = selected.map(value => Number(value));
+console.log(this.selectedUserIds)
+
+// this.selectedUserIds = selected
 }
 
 saveDashboardProperties(){

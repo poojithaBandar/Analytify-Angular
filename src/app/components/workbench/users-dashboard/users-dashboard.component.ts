@@ -268,7 +268,6 @@ addUser(){
     next:(data)=>{
       console.log(data);
       this.addUserDivForm = false;
-
       Swal.fire({
         icon: 'success',
         title: 'Done!',
@@ -389,7 +388,6 @@ editUser(){
     next:(data)=>{
       console.log(data);
       this.addUserDivForm = false;
-
       Swal.fire({
         icon: 'success',
         title: 'Done!',

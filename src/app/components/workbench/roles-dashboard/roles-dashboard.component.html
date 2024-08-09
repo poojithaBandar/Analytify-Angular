@@ -64,7 +64,7 @@
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'" [previledgeId]="58" [isBtn]="false"
                                     [toolTip]="'Edit'"
-                                    (btnClickEvent)="updateRolesDivOpen();getPrevilagesList();getRoleIdDetails(roles.role_id)"
+                                    (btnClickEvent)="updateRolesDivOpen(roles.role_id);getPrevilagesList();getRoleIdDetails(roles.role_id)"
                                     [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
                                     <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'" [previledgeId]="57" [isBtn]="false"
                                     [toolTip]="' Delete Role'"
@@ -111,7 +111,7 @@
                                             <div class="dropdown-menu" ngbDropdownMenu>
                                               <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="58" [isBtn]="false"
                                               [buttonName]="' Edit'" [tabIndex]="0"
-                                              (btnClickEvent)="addRolesDivOpen();getPrevilagesList();getRoleIdDetails(roles.role_id)"
+                                              (btnClickEvent)="updateRolesDivOpen(roles.role_id);getPrevilagesList();getRoleIdDetails(roles.role_id)"
                                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                           <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="57" [isBtn]="false"
                                               [buttonName]="' Delete Role'" [tabIndex]="0"
@@ -172,125 +172,6 @@
     </div>
   </div>
 
-  <ng-template #addrole let-modal >
-    <div  >
-      <div >
-        <div class="modal-content modal-large" >
-          <div class="modal-header justify-conent-between">
-            <h1 *ngIf="!updateRole" class="modal-title fs-5" id="inputModalLabel">Add Role</h1>
-            <h1 *ngIf="updateRole" class="modal-title fs-5" id="inputModalLabel">Update Role</h1>
-
-            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button> -->
-            <div class="add-role-save-btn">
-              <button *ngIf="!updateRole" type="button" class="btn btn-primary" (click)="addRoles()" style="border-radius: 4px 4px 4px 4px;">
-                Save <i class="fa fa-file-text-o"></i> 
-              </button>
-              <button *ngIf="updateRole" type="button" class="btn btn-primary" (click)="editRoles()" style="border-radius: 4px 4px 4px 4px;">
-                Update <i class="fa fa-file-text-o"></i> 
-              </button>
-              <a (click)="modal.close('cross click')"><i class="fa fa-arrow-left p-3 bg-light rounded-2 ms-1"></i></a>
-            </div>
-          </div>
-          <div class="modal-body">
-           
-            <div class="row  px-1">
-              <div class="col-md-2 border p-0">
-                <div class=" p-1 border-bottom">
-                  <div class="card-body">
-                    <h6>Name</h6>
-                  </div>
-                  <div class="card-body">
-                    <h6>Permission</h6>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-10 border p-1">
-                <div class="flex-grow-1">
-                    <input  type="text" [(ngModel)]="roleTitle"  placeholder="Title" aria-label="Sheet" class="form-control">
-                </div>
-                <div class="row m-1">
-                <div class="col-md-6 p-0 border" style="max-width: 48%;">
-                  <div class="permission-text bg-light p-3 ">
-                    <h6 class="mb-0">Available Permission <i class="fa fa-question-circle" aria-hidden="true"></i></h6>
-                  </div>
-                  <div class="Permission-filter-search">
-                    <div class="input-group">
-                      <input type="text" [(ngModel)]="searchPrevilage" (keydown.enter)="getPrevilagesList()" class="form-control border-end-0"  placeholder="Filter">
-                      <button type="button"  (click)="getPrevilagesList()"  aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0 ">
-                          <i class="fe fe-search" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <!-- <div class="Permission-body-text"> -->
-                    <select [formControl]="selectControl" multiple class="Permission-body-text">
-                        <option *ngFor="let previlages of  previlagesList" [value]="previlages.id">
-                          {{ previlages.previlage }}
-                        </option>
-                      </select>
-                  <!-- </div> -->
-                  <div (click)="selectAllAndMove()" class="choose-all text-center border " style="cursor: pointer;">
-                    <h6>Choose All <i class="fa fa-chevron-circle-right mt-2" aria-hidden="true"></i></h6>
-                  </div>
-                </div>
-                <div class="col-md-1 add-icons" style="max-width: 49px;">
-                 <div class="p-2 bg-light rounded-5">
-                    <a (click)=moveSelectedItems()><i  class="fa fa-arrow-circle-right"></i></a> <br>
-                    <a (click)="moveBackSelectedItems()"><i  class="fa fa-arrow-circle-left"></i></a>
-                  </div>
-                </div>
-                <div class="col-md-5 border p-0 " style="flex: 0 0 46.666667%;  max-width: 58.666667%;">
-                  <div class="permission-text bg-light p-3">
-                    <h6 class="mb-0">Chosen Permission <i class="fa fa-question-circle" aria-hidden="true"></i></h6>
-                  </div>
-                  <div class="Permission-filter-search">
-                    <div class="input-group">
-                      <input type="text" [(ngModel)]="searchSelectedPrevilage" (input)="searchInSelectedArray()" class="form-control border-end-0"  placeholder="Filter">
-                      <button type="button" (click)="searchInSelectedArray()"  aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0 ">
-                          <i class="fe fe-search" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <!-- <div class="Permission-body-text"> -->
-                    <select [formControl]="selectControlSelected" multiple class="Permission-body-text">
-                        <option *ngFor="let previlages of selectedArray" [value]="previlages.id">
-                          {{ previlages.previlage }}
-                        </option>
-                      </select>
-                  <!-- </div> -->
-                  <div (click)="removeAllSelected()" class="choose-all text-center border " style="cursor: pointer;">
-                    <h6> <i class="fa fa-chevron-circle-left mt-2" aria-hidden="true"> Remove All</i></h6>
-                  </div>
-                </div>
-              </div>
-              </div>
-            </div>
-            <div *ngIf="updateRole" class="row px-1">
-                <div class="col-md-2 border p-0">
-                  <div class=" p-1 ">
-                    <div class="card-body p-1">
-                      <h6>User Assaigned:</h6>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-10 border p-1">
-                    <div class="user-close-btn">
-                      <div *ngFor="let users of assaignedUsers" class="user-value">
-                          <span aria-hidden="true" class="ng-value-icon left me-1">{{users}}</span>
-                          <!-- <span class="ng-value-label">X</span>  -->
-                      </div>
-                    </div>
-                </div>
-              </div>
-          </div>
-          <!-- <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="getSelectedRoles()">save</button>
-          </div> -->
-        </div>
-      </div>
-    </div>
-  </ng-template>
-
   <div *ngIf="addRoleDiv" class="main-container container-fluid">
   
     <div class="row" class="card" style="padding: 20px;">
@@ -301,11 +182,8 @@
 
             <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button> -->
             <div class="add-role-save-btn">
-              <button *ngIf="!updateRole" type="button" class="btn btn-primary" (click)="addRoles()" style="border-radius: 4px 4px 4px 4px;">
-                Save <i class="fa fa-file-text-o"></i> 
-              </button>
-              <button *ngIf="updateRole" type="button" class="btn btn-primary" (click)="editRoles()" style="border-radius: 4px 4px 4px 4px;">
-                Update <i class="fa fa-file-text-o"></i> 
+              <button type="button" class="btn btn-primary" (click)="viewSavedRoles()" style="border-radius: 4px 4px 4px 4px;">
+                View Saved Roles
               </button>
             </div>
           </div>
@@ -400,10 +278,14 @@
                 </div>
               </div>
           </div>
-          <!-- <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="getSelectedRoles()">save</button>
-          </div> -->
+          <div class="modal-footer">
+              <button *ngIf="!updateRole" type="button" class="btn btn-primary" (click)="addRoles()" style="border-radius: 4px 4px 4px 4px;">
+                Save <i class="fa fa-file-text-o"></i> 
+              </button>
+              <button *ngIf="updateRole" type="button" class="btn btn-primary" (click)="editRoles()" style="border-radius: 4px 4px 4px 4px;">
+                Update <i class="fa fa-file-text-o"></i> 
+              </button>
+          </div>
       </div>
     </div>
   </div>
