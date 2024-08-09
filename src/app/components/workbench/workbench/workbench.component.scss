@@ -294,6 +294,9 @@ a {
   a.float-start {
     font-size: 13px;
 }
+.card-title{
+  font-size: 13px;
+}
 .fs-14 {
   font-size: 13px !important;
 }
@@ -310,6 +313,12 @@ a {
     border-color: var(--default-border);
     font-size: 13px;
 }
+  .btn, .button-slide-out__above{
+    font-size: 10px;
+  }
+  .logo-txt {
+    font-size: 11px;
+  }
 }
 
   // for 100% Resolution //
@@ -318,7 +327,7 @@ a {
       font-size: 12px;
     }
     .card-title{
-      font-size: 13px;
+      font-size: 12px;
     }
     a.float-start {
       font-size: 13px;
@@ -335,5 +344,35 @@ a {
   .table tbody td {
     border-color: var(--default-border);
     font-size: 13px;
-}
   }
+  .btn, .button-slide-out__above{
+    font-size: 10px;
+  }
+  .logo-txt {
+    font-size: 10px;
+  }
+  }
+
+   // for 110% Resolution //
+   @media ( 1163px <= width <= 1279px) {
+    .page-title{
+      font-size: 13px;
+    }
+    .card-title{
+      font-size: 10px;
+    }
+    
+  }
+
+   // for 125% Resolution //
+   @media ( 1024px <= width <= 1163px) {
+    .page-title{
+      font-size: 13px;
+    }
+    .card-title{
+      font-size: 10px;
+    }
+    
+  }
+
+

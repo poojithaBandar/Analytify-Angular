@@ -1,79 +1,79 @@
-@if(isSheetsView && panelscheckbox?.length > 0){
 
-  <div class="app-content page-header">
-    <button type="button" [disabled]="sheetIdsDataSet.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2">Move To Dashboard</button>
-
-  <div
-                                  ngbAccordion
-                                  [closeOthers]="false"
-                                  class="accordion"
-                                  id="accordionExample"
-                                  >
-                                  <!-- <div  > -->
-                                  <!-- @for (panel of panelscheckbox; track panel) { -->
-                                    <div *ngFor="let panel of panelscheckbox | paginate : {
-                                      itemsPerPage: itemsPerPage,
-                                      currentPage: page,
-                                      totalItems: totalItems
-                                    }"
-                                      ngbAccordionItem
-                                      [collapsed]="true"
-                                      class="accordion-item"
-                                      >
-                                      <h2 ngbAccordionHeader class="accordion-header" id="headingOne">
-                                        <button
-                                          ngbAccordionButton
-                                          class="accordion-button"
-                                          type="button"
-                                          data-bs-toggle="collapse"
-                                          data-bs-target="#collapseOne"
-                                          aria-expanded="true"
-                                          aria-controls="collapseOne"
-                                          >
-                                          <input class="form-check-input me-2 mt-0" name="checkbox1" (click)="checkAllChilds(panel)" [(ngModel)]="panel.is_selected"
-                                            type="checkbox" value="" id="checkbox1" >
-                                          {{ panel.queryset_name }}
-                                        </button>
-                                      </h2>
-                                      <div
-                                        ngbAccordionCollapse
-                                        id="collapseOne"
-                                        class="accordion-collapse collapse show"
-                                        aria-labelledby="headingOne"
-                                        data-bs-parent="#accordionExample"
-                                        >
-                                        <div class="accordion-body"  ngbAccordionBody>
-                                          @for (nestedpanel of panel.sheet_data; track nestedpanel) {
-                                            @if(nestedpanel?.sheet_name){
-                                            <div class="checkbox-name" (click)="addSheetIds(nestedpanel,panel);" >
-                                              <input type="checkbox" value="{{nestedpanel.sheetId}}" id="checkbox1" [(ngModel)]="nestedpanel.is_selected" class="form-check-input me-2 mt-0">{{nestedpanel?.sheet_name}}
-                                            </div>
-                                          }
-                                          }
-                                        </div>
-                                      </div>
-                                    </div>
-                                  <!-- } -->
-                                  <!-- </div> -->
-                                </div>
-                                </div>
-                                <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetUserSheetsList((page = $event))"></pagination-controls>
-            <div  style="float: right;font-size: 15px; margin-top: -41px;">
-              <select  [(ngModel)]="itemsPerPage" (ngModelChange)="fetchSheetsList()" class="form-control" style="cursor: pointer;">
-                    <option  value="10"> 10</option>
-                    <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
-                    <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
-                 
-              </select>
-           </div>
-}
-@else{
 <div *ngIf="dashboardView">
 <app-page-header title="Dashboard" title1="home" activeitem="Dashboard"></app-page-header>
 </div>
 <div *ngIf="sheetsNewDashboard">
   <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/workbench/sheets" activeitem="Dashboard"></app-page-header>
   </div>
+  @if(isSheetsView && panelscheckbox?.length > 0){
+
+    <div class="app-content page-header">
+      <button type="button" [disabled]="sheetIdsDataSet.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2">Move To Dashboard</button>
+  
+    <div
+                                    ngbAccordion
+                                    [closeOthers]="false"
+                                    class="accordion"
+                                    id="accordionExample"
+                                    >
+                                    <!-- <div  > -->
+                                    <!-- @for (panel of panelscheckbox; track panel) { -->
+                                      <div *ngFor="let panel of panelscheckbox | paginate : {
+                                        itemsPerPage: itemsPerPage,
+                                        currentPage: page,
+                                        totalItems: totalItems
+                                      }"
+                                        ngbAccordionItem
+                                        [collapsed]="true"
+                                        class="accordion-item"
+                                        >
+                                        <h2 ngbAccordionHeader class="accordion-header" id="headingOne">
+                                          <button
+                                            ngbAccordionButton
+                                            class="accordion-button"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne"
+                                            aria-expanded="true"
+                                            aria-controls="collapseOne"
+                                            >
+                                            <input class="form-check-input me-2 mt-0" name="checkbox1" (click)="checkAllChilds(panel)" [(ngModel)]="panel.is_selected"
+                                              type="checkbox" value="" id="checkbox1" >
+                                            {{ panel.queryset_name }}
+                                          </button>
+                                        </h2>
+                                        <div
+                                          ngbAccordionCollapse
+                                          id="collapseOne"
+                                          class="accordion-collapse collapse show"
+                                          aria-labelledby="headingOne"
+                                          data-bs-parent="#accordionExample"
+                                          >
+                                          <div class="accordion-body"  ngbAccordionBody>
+                                            @for (nestedpanel of panel.sheet_data; track nestedpanel) {
+                                              @if(nestedpanel?.sheet_name){
+                                              <div class="checkbox-name" (click)="addSheetIds(nestedpanel,panel);" >
+                                                <input type="checkbox" value="{{nestedpanel.sheetId}}" id="checkbox1" [(ngModel)]="nestedpanel.is_selected" class="form-check-input me-2 mt-0">{{nestedpanel?.sheet_name}}
+                                              </div>
+                                            }
+                                            }
+                                          </div>
+                                        </div>
+                                      </div>
+                                    <!-- } -->
+                                    <!-- </div> -->
+                                  </div>
+                                  </div>
+                                  <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetUserSheetsList((page = $event))"></pagination-controls>
+              <div  style="float: right;font-size: 15px; margin-top: -41px;">
+                <select  [(ngModel)]="itemsPerPage" (ngModelChange)="fetchSheetsList()" class="form-control" style="cursor: pointer;">
+                      <option  value="10"> 10</option>
+                      <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                      <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
+                   
+                </select>
+             </div>
+  } @else {
 <div class="row main-container" >
     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0" id="sticky-sidebar">
       <div class="sticky-top">
@@ -903,7 +903,7 @@
         </div>
     </div>
 </div>
-}
+  }
 
 
 

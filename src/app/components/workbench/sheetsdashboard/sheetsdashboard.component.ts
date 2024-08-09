@@ -499,6 +499,7 @@ export class SheetsdashboardComponent {
         }
          : undefined
       }));
+      this.setSelectedSheetData();
        this.isSheetsView = false;
       },
       error:(error)=>{
@@ -536,7 +537,6 @@ export class SheetsdashboardComponent {
         console.log(this.dashboard);
         let obj = {sheet_ids: this.sheetIdsDataSet};
         this.fetchSheetsDataBasedOnSheetIds(obj);
-        this.setSelectedSheetData();
       },
       error:(error)=>{
         console.log(error)
