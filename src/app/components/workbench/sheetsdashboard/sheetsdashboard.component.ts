@@ -237,8 +237,8 @@ export class SheetsdashboardComponent {
       this.sheetsDataWithQuerysetId();
     }
     if(this.dashboardView){
-      // this.getSavedDashboardData();
-      this.sheetsDataWithQuerysetId();
+      this.getSavedDashboardData();
+      // this.sheetsDataWithQuerysetId();
       this.getDashboardFilterredList();
     }
    
@@ -304,7 +304,8 @@ export class SheetsdashboardComponent {
   }
 
   changeGridType(gridType : string){
-  if(gridType == 'fixed'){
+  if(gridType.toLocaleLowerCase() == 'fixed'){
+    this.gridType = 'fixed';
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactUpAndLeft,
@@ -341,6 +342,7 @@ export class SheetsdashboardComponent {
       }
     };
   } else {
+    this.gridType = 'scroll'
     this.options = {
       gridType: GridType.Fixed,
       compactType: CompactType.CompactUpAndLeft,
@@ -467,6 +469,43 @@ export class SheetsdashboardComponent {
       }
     };
   }
+
+  fetchSheetsDataBasedOnSheetIds(obj:any){
+    this.workbechService.sheetRetrivelBasedOnIds(obj).subscribe({
+      next:(data)=>{
+        console.log('savedDashboard',data);
+      let sheetArray = data.map((sheet:any)=>sheet.sheets[0]);
+      this.dashboardNew = sheetArray.map((sheet:any) => ({
+        id:uuidv4(),
+        cols: 1,
+        rows: 1,
+        y: 10,
+        x: 10,
+        sheetType:sheet.sheet_type,
+        sheetId:sheet.sheet_id,
+        chartType:sheet.chart,
+        chartId:sheet.chart_id,
+        data: { title: sheet.sheet_name, content: 'Content of card New' },
+        selectedSheet : sheet.selectedSheet,
+        chartOptions: sheet.sheet_type === 'Chart' ? {
+          // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
+          ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
+          // chart: { type: sheet.chart, height: 300 },
+          //chartData:this.getChartData(sheet.sheet_data.results, sheet.chart)
+        } : undefined,
+        tableData: sheet.sheet_type === 'Table' ? {
+         ... this.getTableData(sheet.sheet_data)
+  
+        }
+         : undefined
+      }));
+       this.isSheetsView = false;
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
   getSavedDashboardData(){
     const obj ={
       queryset_id:this.qrySetId,
@@ -479,9 +518,10 @@ export class SheetsdashboardComponent {
         this.dashboardName=data.dashboard_name;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
-        this.gridType = data.gridType;
+        this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.dashboard = data.dashboard_data;
+        this.sheetIdsDataSet = data.selected_sheet_ids;
         if(!data.dashboard_tag_name){
           const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
           inputElement.innerHTML = data.dashboard_name;
@@ -494,6 +534,8 @@ export class SheetsdashboardComponent {
           this.dashboardTagName = data.dashboard_tag_name;
         }
         console.log(this.dashboard);
+        let obj = {sheet_ids: this.sheetIdsDataSet};
+        this.fetchSheetsDataBasedOnSheetIds(obj);
         this.setSelectedSheetData();
       },
       error:(error)=>{
@@ -525,13 +567,13 @@ export class SheetsdashboardComponent {
       })
     }else{
     const obj ={
-      dashboard_type : this.gridType,
+      grid : this.gridType,
       height: this.heightGrid,
       width: this.widthGrid,
       queryset_id:[this.qrySetId],
       server_id:[this.databaseId],
        sheet_ids:this.sheetsIdArray,
-       dashboard_sheets_list:this.sheetIdsDataSet,
+selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
       data:this.dashboard
@@ -634,7 +676,7 @@ export class SheetsdashboardComponent {
       })
     }else{
     const obj ={
-      dashboard_type : this.gridType,
+      grid : this.gridType,
       height: this.heightGrid,
       width: this.widthGrid,
       queryset_id:[this.qrySetId],
@@ -642,7 +684,7 @@ export class SheetsdashboardComponent {
       sheet_ids:this.sheetsIdArray,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
-      dashboard_sheets_list:this.sheetIdsDataSet,
+      selected_sheet_ids:this.sheetIdsDataSet,
       data:this.dashboard,
       sheetTabs : this.sheetTabs
       
