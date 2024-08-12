@@ -774,6 +774,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       }
        : undefined
     }));
+    this.sheetIdsDataSet = this.dashboardNew.map(item => item['sheetId']);
     console.log('dashboardNew',this.dashboardNew)
       },
     error:(error)=>{
