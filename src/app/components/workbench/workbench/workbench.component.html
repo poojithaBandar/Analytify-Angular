@@ -274,7 +274,7 @@
                             <td>{{database.updated_at}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
-                              <a aria-label="anchor"(click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
+                              <a *ngIf="database.server_type !== 'CSV' || database.server_type !== 'EXCEL'" aria-label="anchor"(click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
                     class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                     <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
                                <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
@@ -334,9 +334,10 @@
                                                       class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                               </a>
                                               <div class="dropdown-menu" ngbDropdownMenu>
-                                                <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
+                                                <app-insights-button *ngIf="database.server_type !== 'CSV' || database.server_type !== 'EXCEL'" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                                                   [tabIndex]="0" (btnClickEvent)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
                                                   [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                                                
                                                 <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
                                                   [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.database_id)"
                                                   [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
