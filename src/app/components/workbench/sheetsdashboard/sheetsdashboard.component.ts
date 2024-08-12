@@ -2601,7 +2601,7 @@ dropTest2(event: any) {
       if(sheet.is_selected){
         this.sheetIdsDataSet.push(sheet.sheet_id);
       } else {
-        const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === sheet.sheetId);
+        const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === sheet.sheet_id);
         if (indexToRemove !== -1) {
           this.sheetIdsDataSet.splice(indexToRemove, 1);
         }

@@ -145,7 +145,7 @@
                                                         [cdkDropListData]="dashboardNew"
                                                         [cdkDropListConnectedTo]="[destinationList1,destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
-                                                            <li><h6 class="dropdown-header sheets-title px-4">Sheets<app-insights-button [classesList]="'btn btn-primary mt-0'"
+                                                            <li><h6 class="dropdown-header sheets-title px-4" style="display: flex; justify-content: space-between;">Sheets<app-insights-button [classesList]="'btn btn-outline-primary mt-0'"
                                                               [buttonName]="'Add'"
                                                               [previledgeId]="17" [isBtn]="true"
                                                               (btnClickEvent)="fetchSheetsList();isSheetsView = true;" [toolTip]="'Add Sheets'"
