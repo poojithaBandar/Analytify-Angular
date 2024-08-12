@@ -131,7 +131,7 @@ export class DatabaseComponent {
       this.updateQuery=true;
       this.getSavedQueryData();
      }
-     if(currentUrl.includes('/workbench/database-connection/sheets/')){
+     if(currentUrl.includes('/workbench/database-connection/sheets/dbId')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -149,6 +149,24 @@ export class DatabaseComponent {
       this.getTablesfromPrevious();
       }
     }
+    if(currentUrl.includes('/workbench/database-connection/sheets/fileId')){
+      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+       this.fileId = +atob(route.snapshot.params['id1']);
+       this.qurtySetId = +atob(route.snapshot.params['id2']);
+       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+       this.fromFileId = true;
+       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
+       if(this.datasourceQuerysetId==='null'){
+         console.log('filterqrysetid',this.datasourceQuerysetId)
+         this.datasourceQuerysetId = null
+       }
+       else{
+           parseInt(this.datasourceQuerysetId)
+           console.log(this.datasourceQuerysetId)
+         }
+       this.getTablesfromPrevious();
+       }
+     }
 
   }
   ngOnInit(){
@@ -203,39 +221,42 @@ export class DatabaseComponent {
       }
     })
   }
-  getTablesfromPrevious(){
-    const querysetId = localStorage.getItem( 'QuerySetId' ) || 0;
+  getTablesfromPrevious() {
+    const querysetId = localStorage.getItem('QuerySetId') || 0;
     this.qurtySetId = querysetId
-    if(querysetId !== 0){
-    this.workbechService.getTablesfromPrevious(this.databaseId,querysetId).subscribe({next: (data) => {
-      console.log(data);
-      this.relationOfTables= data.dragged_data.relation_tables
-      console.log('tablerelation',this.relationOfTables)
-      this.draggedtables = data.dragged_data.json_data
-      if(this.draggedtables.length > 0){
-        this.joiningTables();
-      }
-  },
-  error:(error)=>{
-   console.log(error);
-  }
-  })
+    if (querysetId !== 0) {
+      const IdToPass = this.fromFileId ? this.fileId : this.databaseId
+      this.workbechService.getTablesfromPrevious(IdToPass, querysetId).subscribe({
+        next: (data) => {
+          console.log(data);
+          this.relationOfTables = data.dragged_data.relation_tables
+          console.log('tablerelation', this.relationOfTables)
+          this.draggedtables = data.dragged_data.json_data
+          if (this.draggedtables.length > 0) {
+            this.joiningTables();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
     }
   }
-  getTablesFromFileId(){
+  getTablesFromFileId() {
     this.workbechService.getTablesFromFileId(this.fileId)
-    .subscribe({next: (data) => {
-      this.schematableList= data?.data?.schemas;
-      // console.log('filteredscemas',this.filteredSchematableList)
+      .subscribe({
+        next: (data) => {
+          this.schematableList = data?.data?.schemas;
+          // console.log('filteredscemas',this.filteredSchematableList)
           this.databaseName = data.filename;
           //  this.hostName = data.database.hostname;
-       console.log(data)
-   
-   },
-   error:(error)=>{
-    console.log(error);
-   }
-   })
+          console.log(data)
+
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
 
   }
 //   getTablesFromConnectedDb(){

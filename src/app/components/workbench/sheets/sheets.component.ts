@@ -325,20 +325,24 @@ if(this.fromFileId){
   )
  }
   goToDataSource(){
-    const encodeddbId = btoa(this.databaseId.toString());
-    const encodedqurysetId = btoa(this.qrySetId.toString())
+
+    const encodeddbId = btoa(this.databaseId?.toString());
+    const encodedqurysetId = btoa(this.qrySetId.toString());
+    const encodedFileId = btoa(this.fileId.toString());
     // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
-
+    const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
+    const fromSource = this.fromFileId ? 'fileId' : 'dbId'
+  
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
   }

@@ -31,7 +31,9 @@ export class DashboardPageComponent implements OnInit{
   dashboardPropertyTitle:any;
   roleDetails = [] as any;
   selectedRoleIds = [] as any;
+  selectedRoleIdsToNumbers = [] as any;
   selectedUserIds = [] as any;
+  selectedUserIdsToNumbers = [] as any;
   usersOnSelectedRole = [] as any;
   @ViewChild('propertiesModal') propertiesModal : any;
 
@@ -139,12 +141,15 @@ viewPropertiesTab(name:any,dashboardId:any){
   this.modalService.open(this.propertiesModal);
   this.getRoleDetailsDshboard();
   this.dashboardPropertyTitle = name;
-  this.dashboardId = dashboardId
+  this.dashboardId = dashboardId;
+  this.getAddedDashboardProperties();
 
 }
 onRolesChange(selected: string[]) {
-  console.log(selected);
   this.selectedRoleIds = selected
+  this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
+  console.log('selectedRoles',this.selectedRoleIdsToNumbers)
+
   // You can store or process the selected values here
 }
 getRoleDetailsDshboard(){
@@ -167,7 +172,7 @@ this.workbechService.getRoleDetailsDshboard().subscribe({
 }
 getUsersforRole(){
 const obj ={
-  role_ids:this.selectedRoleIds
+  role_ids:this.selectedRoleIdsToNumbers
 }
 this.workbechService.getUsersOnRole(obj).subscribe({
   next:(data)=>{
@@ -186,15 +191,17 @@ this.workbechService.getUsersOnRole(obj).subscribe({
 })
 }
 getSelectedUsers(selected: string[]){
-console.log(selected)
-this.selectedUserIds = selected
+this.selectedUserIds = selected;
+this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));
+console.log('selectedUsers',this.selectedUserIdsToNumbers)
+
 }
 
 saveDashboardProperties(){
 const obj ={
   dashboard_id:this.dashboardId,
-  role_ids:this.selectedRoleIds,
-  user_ids:this.selectedUserIds
+  role_ids:this.selectedRoleIdsToNumbers,
+  user_ids:this.selectedUserIdsToNumbers
 }
 this.workbechService.saveDashboardProperties(obj).subscribe({
   next:(data)=>{
@@ -217,5 +224,26 @@ this.workbechService.saveDashboardProperties(obj).subscribe({
     })
   }
 })
+}
+getAddedDashboardProperties(){
+  this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
+    next:(data)=>{
+      this.selectedRoleIds = data.roles.map((role: any) => role.role);
+      this.selectedUserIds = data.users.map((user:any)=>user.username);
+      console.log('savedrolesandUsers',data);
+      this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
+      this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
+
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
 }
 }

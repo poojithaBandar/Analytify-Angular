@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkbenchService } from '../workbench.service';
@@ -33,14 +33,15 @@ viewDashboardList = false;
 viewCustomSql = false;
 roleDetails = [] as any;
 selectedRoleIds = [] as any;
+selectedRoleIdsToNumbers = [] as any;
 usersOnSelectedRole =[] as any;
 selectedUserIds = [] as any;
+selectedUserIdsToNumbers = [] as any;
 dashboardPropertyTitle :any;
 dashboardId :any
-previousroleDetails = [] as any;
 @ViewChild('propertiesModal') propertiesModal : any;
 
-constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal){
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef){
   localStorage.setItem('QuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
   this.viewSheets = this.templateService.viewSheets();
@@ -385,7 +386,9 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
 
     this.router.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
   }
-
+  loadNewDashboard(){
+    this.router.navigate(['/workbench/sheetsdashboard'])
+    }
 
   viewPropertiesTab(name :any,dashboardId:any){
   this.modalService.open(this.propertiesModal);
@@ -395,30 +398,27 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.getAddedDashboardProperties();
 
   }
-  onRolesChange(selected: number[]) {
-    // this.selectedRoleIds = selected
-    this.selectedRoleIds = selected.map(value => Number(value));
-    console.log(this.selectedRoleIds);
+  getAddedDashboardProperties(){
+    this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
+      next:(data)=>{
+        this.selectedRoleIds = data.roles.map((role: any) => role.role);
+        this.selectedUserIds = data.users.map((user:any)=>user.username);
+        console.log('savedrolesandusers',data);
+        this.selectedRoleIdsToNumbers = data.roles?.map((role:any) => role.id);
+        this.selectedUserIdsToNumbers = data.users?.map((user:any) => user.user_id);
+       },
+      error:(error)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    }) 
+  }
 
-    // You can store or process the selected values here
-}
-getAddedDashboardProperties(){
-  this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
-    next:(data)=>{
-      this.previousroleDetails = data.roles;
-
-     },
-    error:(error)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-    }
-  }) 
-}
 getRoleDetailsDshboard(){
   this.workbechService.getRoleDetailsDshboard().subscribe({
     next:(data)=>{
@@ -439,7 +439,7 @@ getRoleDetailsDshboard(){
 }
 getUsersforRole(){
   const obj ={
-    role_ids:this.selectedRoleIds
+    role_ids:this.selectedRoleIdsToNumbers
   }
   this.workbechService.getUsersOnRole(obj).subscribe({
     next:(data)=>{
@@ -457,22 +457,27 @@ getUsersforRole(){
     }
   })
 }
+
+onRolesChange(selected: number[]) {
+  this.selectedRoleIds = selected
+   this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
+  console.log(this.selectedRoleIds);
+
+  // You can store or process the selected values here
+}
 getSelectedUsers(selected: number[]){
-this.selectedUserIds = selected.map(value => Number(value));
-console.log(this.selectedUserIds)
-
-// this.selectedUserIds = selected
-}
-
-loadNewDashboard(){
-this.router.navigate(['/workbench/sheetsdashboard'])
-}
+  this.selectedUserIds = selected;
+  this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));
+  console.log(this.selectedUserIds)
+  
+  // this.selectedUserIds = selected
+  }
 
 saveDashboardProperties(){
   const obj ={
     dashboard_id:this.dashboardId,
-    role_ids:this.selectedRoleIds,
-    user_ids:this.selectedUserIds
+    role_ids:this.selectedRoleIdsToNumbers,
+    user_ids:this.selectedUserIdsToNumbers
   }
   this.workbechService.saveDashboardProperties(obj).subscribe({
     next:(data)=>{

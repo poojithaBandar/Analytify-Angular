@@ -472,8 +472,8 @@
 
                             </div>
                             <div class="modal-footer p-1 me-4 border-0">
-                                <app-insights-button *ngIf="!updateQuery" [buttonName]="' Save Query '" [classesList]="'btn btn-primary'"
-                                    [previledgeId]="51" [isBtn]="true" (btnClickEvent)="saveQuery()" [isIcon]="false"></app-insights-button>
+                                <!-- <app-insights-button *ngIf="!updateQuery" [buttonName]="' Save Query '" [classesList]="'btn btn-primary'"
+                                    [previledgeId]="51" [isBtn]="true" (btnClickEvent)="saveQuery()" [isIcon]="false"></app-insights-button> -->
                                 <app-insights-button *ngIf="updateQuery" [buttonName]="' Update Query '" [classesList]="'btn btn-primary'"
                                     [previledgeId]="52" [isBtn]="true" (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
                                 <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length" (click)="executeQuery()"> Run Query </button>
