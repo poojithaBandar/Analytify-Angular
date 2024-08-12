@@ -4875,6 +4875,23 @@ fetchChartData(chartData: any){
   moveToDashboard(){
     this.dashboardId = this.selectedDashboardId;
     console.log(this.dashboardId);
-    this.viewDashboard();
+    let sheetIds = this.sheetList.map(sheet => sheet.id)
+    let obj = {
+      dashboard_id : this.dashboardId,
+      sheet_ids : sheetIds
+    }
+    this.workbechService.addSheetToDashboard(obj).subscribe({
+      next: () => {
+        this.viewDashboard();
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          text: error.error.message,
+          width: '200px',
+        })
+      }
+    })
   }
 }

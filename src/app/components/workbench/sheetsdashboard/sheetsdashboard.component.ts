@@ -147,11 +147,13 @@ export class SheetsdashboardComponent {
     }else if(currentUrl.includes('workbench/landingpage/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
-      if (route.snapshot.params['id1']) {
+      if (route.snapshot.params['id3']) {
         // this.databaseId = +atob(route.snapshot.params['id1']);
         // this.qrySetId = +atob(route.snapshot.params['id2'])
-        this.dashboardId = +atob(route.snapshot.params['id1'])
+        this.dashboardId = +atob(route.snapshot.params['id3'])
 
+        } else if(route.snapshot.params['id1']){
+          this.dashboardId = +atob(route.snapshot.params['id1'])
         }
       }
         else if(currentUrl.includes('workbench/sheetsdashboard')){
@@ -502,6 +504,8 @@ export class SheetsdashboardComponent {
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
         chartId:sheet.chart_id,
+        qrySetId : sheet.queryset_id,
+        databaseId: sheet.server_id,
         data: { title: sheet.sheet_name, content: 'Content of card New' },
         selectedSheet : sheet.selectedSheet,
         chartOptions: sheet.sheet_type === 'Chart' ? {
@@ -1144,7 +1148,10 @@ allowDrop(ev : any): void {
       this.dashboardTest.splice(this.dashboardTest.indexOf(item), 1);
       this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
     } else {
-      this.dashboard.splice(this.dashboard.indexOf(item), 1);
+      let removeIndex = this.dashboard.findIndex((sheet:any) => item.sheetId == sheet.sheetId);
+      if(removeIndex >= 0){
+        this.dashboard.splice(removeIndex, 1);
+      }
     }
     this.setDashboardNewSheets(item.sheetId, false);
   }
@@ -1175,6 +1182,23 @@ allowDrop(ev : any): void {
     }).then((result)=>{
       if(result.isConfirmed){
        this.resetDashboard();
+      }})
+  }
+
+  clearSheet(event : any , item :any){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      width: '300px',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Clear it!'
+    }).then((result)=>{
+      if(result.isConfirmed){
+        this.dashboardNew.splice(this.dashboardNew.findIndex((sheet:any) => item.sheetId == sheet.sheetId), 1);
+       this.removeItem(event, item, false);
       }})
   }
  
@@ -2527,12 +2551,16 @@ dropTest2(event: any) {
          : undefined
       }));
       this.setSelectedSheetData();
+      this.removeUnSelectedSheetsFromCanvas();
        this.isSheetsView = false;
       },
       error:(error)=>{
         console.log(error)
       }
     })
+  }
+  removeUnSelectedSheetsFromCanvas(){
+    this.dashboard = this.dashboard.filter((item:any) => this.sheetIdsDataSet.includes(item.sheetId));
   }
 
   pageChangegetUserSheetsList(page:any){

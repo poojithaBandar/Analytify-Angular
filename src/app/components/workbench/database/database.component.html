@@ -457,7 +457,7 @@
                         <div class="card mb-0" style="height: 250px;">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <div class="flex-grow-1">
-                                    <input  type="text"  placeholder="Title" [(ngModel)]="saveQueryName"  aria-label="Sheet" class="form-control" >
+                                    <input  type="text" (change)="markDirty()"  placeholder="Title" [(ngModel)]="saveQueryName"  aria-label="Sheet" class="form-control" >
                                     </div>                               
                                      <div class="right">
                                     <a class="btn btn-blue-light m-1" (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>

@@ -278,7 +278,8 @@ export class DatabaseComponent {
 // }
 getSchemaTablesFromConnectedDb(){
   const obj ={
-    search:this.searchTables
+    search:this.searchTables,
+    querySetId:this.qurtySetId
   }
   if(obj.search == '' || obj.search == null){
     delete obj.search;
@@ -289,6 +290,7 @@ getSchemaTablesFromConnectedDb(){
    console.log('filteredscemas',this.filteredSchematableList)
        this.databaseName = data.database.database;
         this.hostName = data.database.hostname;
+        this.saveQueryName = data.queryset_name;
     console.log(data)
 
 },
@@ -771,7 +773,7 @@ getJoiningTableData(){
         this.TabledataJoining = data;
         this.qryTime = data.query_exection_time;
         this.qryRows = data.no_of_rows;
-        this.saveQueryName = data.queryset_name;
+        // this.saveQueryName = data.queryset_name;
       },
       error:(error:any)=>{
       console.log(error);

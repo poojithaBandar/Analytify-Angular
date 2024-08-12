@@ -282,3 +282,18 @@ button.BtnNewStyle {
   line-height: 1;
   margin-bottom: 10px;
 }
+
+.accordion-button:not(.collapsed) {
+  background: var(--background);
+  border-color: var(--background);
+  color: #333335;
+}   
+
+.accordion-button::after {
+margin-inline-start: inherit !important;
+position: absolute !important;
+left: 3px !important;
+}
+.accordion-button {
+padding-left: 25px;
+}
