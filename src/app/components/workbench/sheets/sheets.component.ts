@@ -163,6 +163,7 @@ export class SheetsComponent {
   sheetsDashboard : boolean = false;
   sheetList : any [] = [];
   dashboardId : any;
+  selectedDashboardId : any = 1;
   Editor = ClassicEditor;
   editor : boolean = false;
   bandingSwitch: boolean = false; 
@@ -199,7 +200,7 @@ export class SheetsComponent {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
         this.filterQuerySetId = atob(route.snapshot.params['id3'])
-          this.tabs[0] = this.sheetName;
+          // this.tabs[0] = this.sheetName;
           this.sheetTagName = this.sheetName;
         if(this.filterQuerySetId==='null'){
           console.log('filterqrysetid',this.filterQuerySetId)
@@ -216,7 +217,7 @@ export class SheetsComponent {
         this.fileId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
         this.filterQuerySetId = atob(route.snapshot.params['id3']);
-        this.tabs[0] = this.sheetName;
+        // this.tabs[0] = this.sheetName;
         this.sheetTagName = this.sheetName;
         this.fromFileId = true;
         if(this.filterQuerySetId==='null'){
@@ -281,6 +282,7 @@ export class SheetsComponent {
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
+    this.getDashboardsList();
     // this.sheetRetrive();
   }
  getSheetNames(){
@@ -297,6 +299,7 @@ if(this.fromFileId){
         console.log(responce);
         if(responce.data.length>0){
           this.sheetList = responce.data;
+          this.sheetNumber = this.sheetList.length+1;
           (responce.data as any[]).forEach((sheet,index)=>{
             this.tabs.push(sheet.sheet_name);
             if(sheet.id === this.retriveDataSheet_id){
@@ -308,8 +311,12 @@ if(this.fromFileId){
         // this.sheetTitle = this.tabs[0];
         this.SheetSavePlusEnabled.splice(0, 1);
         console.log(this.SheetSavePlusEnabled)
-        this.sheetRetrive();
-  }
+          // this.sheetRetrive();
+        }
+        else {
+          this.sheetNumber = 1;
+          this.addSheet();
+        }
       },
       error: (error) => {
         console.log(error);
@@ -320,7 +327,7 @@ if(this.fromFileId){
   goToDataSource(){
     const encodeddbId = btoa(this.databaseId.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString())
-    this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+    // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
 
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
@@ -2151,7 +2158,7 @@ tableMeasures = [] as any;
        this.tabs.push(this.sheetName);
     }else{
       this.getChartData();
-      this.sheetNumber+=4;
+      this.sheetNumber = this.tabs.length+1;
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
        this.selectedTabIndex = this.tabs.length - 1;
@@ -2234,25 +2241,41 @@ tableMeasures = [] as any;
     this.SheetIndex = event.index;
     this.sheetName = event.tab?.textLabel
     this.sheetTitle = event.tab?.textLabel;
-    this.sheetList.some((sheet)=>{
-      if(sheet.sheet_name === this.sheetName){
-        this.retriveDataSheet_id = sheet.id;
-        return true;
+    const obj = {
+      "server_id": this.databaseId,
+      "queryset_id": this.qrySetId,
+    } as any;
+    if (this.fromFileId) {
+      delete obj.server_id;
+      obj.file_id = this.fileId;
+    }
+    this.workbechService.getSheetNames(obj).subscribe({
+      next: (responce: any) => {
+        this.sheetList = responce.data;
+        this.sheetList.some((sheet)=>{
+          if(sheet.sheet_name === this.sheetName){
+            this.retriveDataSheet_id = sheet.id;
+            return true;
+          }
+          else{
+            this.retriveDataSheet_id = '';
+            return false;
+          }
+        });
+        // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+        // inputElement.innerHTML = event.tab?.textLabel;
+        this.sheetTagName = event.tab?.textLabel;
+        console.log(this.sheetName)
+        console.log(this.retriveDataSheet_id);
+       // if(!this.sheetTitle){
+          this.sheetRetrive();
+       // }
+      },
+      error: (error) => {
+        console.log(error);
       }
-      else{
-        this.retriveDataSheet_id = '';
-        return false;
-      }
-    });
-    const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-    inputElement.innerHTML = event.tab?.textLabel;
-    this.sheetTagName = event.tab?.textLabel;
-    console.log(this.sheetName)
-    console.log(this.retriveDataSheet_id);
-   // if(!this.sheetTitle){
-      this.sheetRetrive();
-   // }
-    
+    }
+    )
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -2473,6 +2496,7 @@ sheetSave(){
     xlabelFontWeight : this.xlabelFontWeight,
     labelAlignment : this.labelAlignment
   }
+  this.sheetTagName = this.sheetTitle;
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
@@ -2547,7 +2571,7 @@ console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-   // this.tabs[this.SheetIndex] = this.sheetTitle;
+   this.tabs[this.SheetIndex] = this.sheetTitle;
     if(responce){
       Swal.fire({
         icon: 'success',
@@ -2555,7 +2579,7 @@ if(this.retriveDataSheet_id){
         width: '200px',
       })
     //   this.getSheetNames();
-    //  this.sheetRetrive();
+     this.sheetRetrive();
     }
   
   },
@@ -2572,7 +2596,7 @@ if(this.retriveDataSheet_id){
 }else{
   this.retriveDataSheet_id = '';
   this.workbechService.sheetSave(obj).subscribe({next: (responce:any) => {
-   // this.tabs[this.SheetIndex] = this.sheetTitle;
+   this.tabs[this.SheetIndex] = this.sheetTitle;
     console.log(responce);
     if(responce){
       Swal.fire({
@@ -2582,7 +2606,7 @@ if(this.retriveDataSheet_id){
       })
       this.retriveDataSheet_id = responce.sheet_id;
       // this.getSheetNames();
-      // this.sheetRetrive();
+      this.sheetRetrive();
       this.SheetSavePlusEnabled.splice(0, 1);
     }
     this.saveTableData= [];
@@ -2628,8 +2652,6 @@ if(this.retriveDataSheet_id){
 
   }
 sheetRetrive(){
-  this.draggedColumnsData  = [];
-  this.draggedRowsData = [];
   this.getChartData();
   console.log(this.tabs);
   const obj={
@@ -2661,14 +2683,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.selectedChartPlugin = 'apex';
         }
         if(!responce.sheet_tag_name){
-          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          inputElement.innerHTML = responce.sheet_name;
+          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          // inputElement.innerHTML = responce.sheet_name;
           this.sheetTagName = responce.sheet_name;
         }
         else{
-          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          inputElement.innerHTML = responce.sheet_tag_name;
-          inputElement.style.paddingTop = '1.5%';
+          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          // inputElement.innerHTML = responce.sheet_tag_name;
+          // inputElement.style.paddingTop = '1.5%';
           this.sheetTagName = responce.sheet_tag_name;
         }
         this.displayUnits = 'none';
@@ -4822,5 +4844,33 @@ fetchChartData(chartData: any){
     recognition.onend = () => {
       console.log('Voice recognition ended');
     };
+  }
+  openSelectDashboard(modal : any){
+    this.modalService.open(modal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+    });
+  }
+  dashboardList : any[] = [];
+  getDashboardsList() {
+    this.workbechService.getuserDashboardsList().subscribe({
+      next: (responce: any) => {
+        console.log(responce);
+        this.dashboardList = responce;
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          text: error.error.message,
+          width: '200px',
+        })
+      }
+    })
+  }
+  moveToDashboard(){
+    this.dashboardId = this.selectedDashboardId;
+    console.log(this.dashboardId);
+    this.viewDashboard();
   }
 }

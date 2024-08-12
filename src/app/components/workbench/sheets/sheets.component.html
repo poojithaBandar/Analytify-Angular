@@ -167,9 +167,9 @@
                     <div class="card-body" style="padding: 1px 17px 1px 13px;">
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
-                                <!-- <input id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" (keydown)="sheetNameChange(sheetTitle,$event)"> -->
                                 <div class="title-container">
-                                    <span id="htmlContent" [innerHtml]="sheetTagName"></span>
+                                    <input *ngIf="!editor" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (keydown)="sheetNameChange(sheetTitle,$event)">
+                                    <span *ngIf="editor" id="htmlContent" [innerHtml]="sheetTagName" style="padding-top: 1.5%;"></span>
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
                                     </span>
@@ -181,7 +181,7 @@
                                     </ckeditor>
                                     <div class="buttons">
                                         <button class="btn btn-danger" (click)="toggleEditor()">Close</button>
-                                        <button class="btn btn-primary" (click)="updateSheetName()">Update</button>
+                                        <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor()">Update</button>
                                     </div>
                                     </div>
                                 </div>
@@ -664,9 +664,36 @@
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="gotoDashboard()" class="nav-link BtnNewStyle px-2">Goto Dashboard</button></div>
-                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="viewDashboard()" class="nav-link BtnNewStyle px-2">view Dashboard</button></div>                   </div>
-                  
+                        <div *ngIf="!sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2">Move to Dashboard</button>
+                            <ng-template #content let-modal>
+                                <div class="modal-header">
+                                    <h6 class="modal-title">Move to Dashboard</h6>
+                                    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Add to Dashboard</p>
+                                    <div class="form-group select2-sm">
+                                        <select id="inputGroupSelect013" class="form-select form-select-sm select2" style="color: #ccc7c7;" [(ngModel)]="selectedDashboardId">
+                                            <option value="1">Select a Dashboard</option>
+                                            <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary " (click)="gotoDashboard(); modal.close('Save click')"> New Dashboard</button>
+                                </div>
+                            
+                            
+                                <div class="modal-footer">
+                            
+                                    <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                        Cancel
+                                    </button>
+                                    <button type="button" class="btn ripple btn-primary" (click)="moveToDashboard(); modal.close('Save click')">Ok</button>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="viewDashboard()" class="nav-link BtnNewStyle px-2">view Dashboard</button></div>        
+                    </div>
                 </div>
 
              </div>
