@@ -328,7 +328,7 @@ if(this.fromFileId){
 
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
-    const encodedFileId = btoa(this.fileId.toString());
+    const encodedFileId = btoa(this.fileId?.toString());
     // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
     const idToPass = this.fromFileId ? encodedFileId : encodeddbId;

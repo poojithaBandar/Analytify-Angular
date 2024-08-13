@@ -80,9 +80,13 @@ export class DatabaseComponent {
   TabledataJoining = [] as any;
   qryTime:any;
   qryRows:any;
+  totalRows:any;
+  showingRows:any;
   custmQryRows:any;
   custmQryTime:any;
   cutmquryTableError:any;
+  showingRowsCustomQuery:any;
+  totalRowsCustomQuery:any;
   remainingTables = [] as any;
   qurtySetId:any;
   enableJoinBtn = true;
@@ -215,6 +219,8 @@ export class DatabaseComponent {
       this.cutmquryTable = data
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
+        this.showingRowsCustomQuery=data.no_of_rows
+        this.totalRowsCustomQuery=data.total_rows
       },
       error:(error:any)=>{
         console.log(error)
@@ -459,7 +465,8 @@ clrQuery(){
 executeQuery(){
   const obj ={
     database_id: this.databaseId,
-    custom_query: this.sqlQuery
+    custom_query: this.sqlQuery,
+    row_limit:this.rowLimit
   }as any
   if(this.fromFileId){
     delete obj.database_id
@@ -475,7 +482,9 @@ executeQuery(){
         this.cutmquryTable = data
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
-        this.qurtySetId = data.query_set_id
+        this.qurtySetId = data.query_set_id;
+        this.showingRowsCustomQuery=data.no_of_rows
+        this.totalRowsCustomQuery=data.total_rows
         console.log('dkjshd',this.cutmquryTable)
       },
       error:(error:any)=>{
@@ -774,6 +783,8 @@ getJoiningTableData(){
         this.TabledataJoining = data;
         this.qryTime = data.query_exection_time;
         this.qryRows = data.no_of_rows;
+        this.totalRows = data.total_rows;
+        this.showingRows = data.no_of_rows
         // this.saveQueryName = data.queryset_name;
       },
       error:(error:any)=>{
@@ -1188,6 +1199,8 @@ getfilteredCustomSqlData(){
           this.custmQryTime = data.query_exection_time;
           this.custmQryRows = data.no_of_rows;
           this.saveQueryName = data.queryset_name;
+          this.showingRowsCustomQuery=data.no_of_rows
+          this.totalRowsCustomQuery=data.total_rows
         },
         error:(error:any)=>{
         console.log(error);
@@ -1362,6 +1375,8 @@ updateCustmQuery(){
     this.cutmquryTable = data
       this.custmQryTime = data.query_exection_time;
       this.custmQryRows = data.no_of_rows;
+      this.showingRowsCustomQuery=data.no_of_rows
+      this.totalRowsCustomQuery=data.total_rows
     },
     error:(error:any)=>{
       console.log(error)

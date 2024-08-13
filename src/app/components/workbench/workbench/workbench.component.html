@@ -334,7 +334,7 @@
                                                       class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                               </a>
                                               <div class="dropdown-menu" ngbDropdownMenu>
-                                                <app-insights-button *ngIf="database.server_type !== 'CSV' || database.server_type !== 'EXCEL'" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
+                                                <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                                                   [tabIndex]="0" (btnClickEvent)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
                                                   [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                                                 

@@ -62,11 +62,16 @@
                                                           data-bs-toggle="collapse"
                                                            data-bs-target="#collapseOne"
                                                           aria-expanded="true"
-                                                          aria-controls="collapseOne"
+                                                          aria-controls="collapseOne" style="justify-content: space-between;"
                                                           >
+                                                          <div>
                                                          <input class="form-check-input me-2 mt-0" name="checkbox1" (click)="checkAllChilds(panel)" [(ngModel)]="panel.is_selected"
                                                           type="checkbox" value="" id="checkbox1" >
                                                           {{ panel.queryset_name }}
+                                                          </div>
+                                                          <div *ngIf="panel.sheet_selected">
+                                                            <p class="mb-0 select-text-accordion">selected</p>
+                                                          </div>
                                                         </button>
                                                       </h2>
                                                        <div
@@ -487,7 +492,7 @@
             <div  cdkDropList #destinationList1="cdkDropList" [cdkDropListData]="dashboardTest"
             (cdkDropListDropped)="dropTest2($event)">
             @if(displayTabs){
-            <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: scroll;" [style.height.px]="heightGrid"
+            <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: scroll;"  [style.height.px]="heightGrid"
               [style.width.px]="widthGrid">
               <!-- <div style="height: inherit;" > -->
                 <gridster [options]="options" #gridsterTab>

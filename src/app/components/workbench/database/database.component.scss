@@ -192,12 +192,14 @@ max-width: 1226px;
 min-width: 1226px;
 margin:  auto 0;
 }
-button.TextTransform{
-  top: 178px;
+button.TextTransform {
+  top: 181px;
   position: absolute;
-  transform: translate(0%, 0%) rotate(270deg);
-  left: -124px;
-  padding: 10px 88px;
+  transform: translate(0%, 0%) rotate(
+270deg
+);
+  left: -120px;
+  padding: 10px 84px;
   border: none;
   border-bottom: 1px solid #9b9999;
 }
@@ -290,4 +292,12 @@ span.time {
 outline: none;
     border: 1px solid #edebeb;
     border-radius: 5px;
+}
+.result-icon {
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border: 1px solid #e3e6ef;
+  border-radius: 0px 4px 4px 0px;
+  cursor: pointer;
 }

@@ -62,7 +62,6 @@ export class WorkbenchComponent implements OnInit{
   connectionList =[] as any;
   searchDbName :any;
   viewNewDbs!:boolean;
-  imageData3 = data3;
   showPassword1 = false;
   toggleClass = "off-line";
   toggleClass1 = "off-line";
@@ -694,34 +693,3 @@ export class WorkbenchComponent implements OnInit{
 
   
 }
-const data3 = [
-  {
-    srcUrl: "./assets/images/Db_server_images/ibmdb2.png",
-    previewUrl: "./assets/images/Db_server_images/ibmdb2.png",
-  },
-  {
-    srcUrl: "./assets/images/Db_server_images/MongoDB_Logo.png",
-    previewUrl: "./assets/images/Db_server_images/MongoDB_Logo.png",
-  },
-  {
-    srcUrl: "./assets/images/Db_server_images/mysql.png",
-    previewUrl: "./assets/images/Db_server_images/mysql.png",
-  },
-  {
-    srcUrl: "./assets/images/Db_server_images/Oracle_logosvg.png",
-    previewUrl: "./assets/images/Db_server_images/Oracle_logosvg.png"
-  },
-  {
-    srcUrl: './assets/images/Db_server_images/postgreSql.png',
-    previewUrl: './assets/images/Db_server_images/postgreSql.png',
-  },
-  {
-    srcUrl: './assets/images/Db_server_images/sql_server.png',
-    previewUrl: './assets/images/Db_server_images/sql_server.png',
-  },
-  {
-    srcUrl: './assets/images/Db_server_images/sqlite.png',
-    previewUrl: './assets/images/Db_server_images/sqlite.png',
-  },
-
-];
