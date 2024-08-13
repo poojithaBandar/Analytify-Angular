@@ -1200,7 +1200,22 @@ allowDrop(ev : any): void {
       if(result.isConfirmed){
         this.dashboardNew.splice(this.dashboardNew.findIndex((sheet:any) => item.sheetId == sheet.sheetId), 1);
        this.removeItem(event, item, false);
+       this.sheetIdsDataSet.splice(this.sheetIdsDataSet.findIndex((sheet:any) => item.sheetId == sheet.sheetId), 1);
+       this.unSelectSheetsFromSheetsPanel(item);
       }})
+  }
+
+  unSelectSheetsFromSheetsPanel(sheetData : any){
+    this.panelscheckbox.forEach((panel : any)=>{
+      if(panel.queryset_id == sheetData.qrySetId){
+        panel.sheet_data.forEach((nestedPanel : any) => {
+          if(nestedPanel.sheet_id == sheetData.sheetId){
+            nestedPanel.is_selected = false;
+            panel.is_selected = false;
+          }
+        })
+      }
+    })
   }
  
   // addItem() {
@@ -2505,20 +2520,6 @@ dropTest2(event: any) {
     this.dashboardName = doc.body.textContent+'';
 }
 
-  addSheetIds(data:any,panel : any){
-    data.is_selected = !data.is_selected;
-    if(data.is_selected){
-      this.sheetIdsDataSet.push(data.sheet_id);
-    } else {
-      const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === data.sheet_id);
-        if (indexToRemove !== -1) {
-          this.sheetIdsDataSet.splice(indexToRemove, 1);
-          panel.is_selected = false;
-        }
-    }
-    
-  }
-
   loadDashboard(){
     let obj = {sheet_ids: this.sheetIdsDataSet};
     this.workbechService.sheetRetrivelBasedOnIds(obj).subscribe({
@@ -2596,18 +2597,34 @@ dropTest2(event: any) {
       }
     })
   }
+
+  addSheetIds(data:any,panel : any){
+    data.is_selected = !data.is_selected;
+    let dataSet = new Set(this.sheetIdsDataSet);
+    if(data.is_selected){
+      dataSet.add(data.sheet_id);
+      const allSheetDataTrue = panel.sheet_data.every((item:any) => item.sheetData == true);
+      if(allSheetDataTrue){
+        panel.is_selected = true;
+      }
+    } else {
+      dataSet.delete(data.sheet_id);
+      panel.is_selected = false;
+    }
+    this.sheetIdsDataSet = Array.from(dataSet);
+  }
+
   checkAllChilds(panel: any){
+    let dataSet = new Set(this.sheetIdsDataSet);
     panel.sheet_data.forEach((sheet : any) =>{
       sheet.is_selected = !panel.is_selected;
       if(sheet.is_selected){
-        this.sheetIdsDataSet.push(sheet.sheet_id);
+        dataSet.add(sheet.sheet_id);
       } else {
-        const indexToRemove = this.sheetIdsDataSet.findIndex((num: number) => num === sheet.sheet_id);
-        if (indexToRemove !== -1) {
-          this.sheetIdsDataSet.splice(indexToRemove, 1);
-        }
+        dataSet.delete(sheet.sheet_id);
       }
-    })
+    });
+    this.sheetIdsDataSet = Array.from(dataSet);
   }
 
 }
