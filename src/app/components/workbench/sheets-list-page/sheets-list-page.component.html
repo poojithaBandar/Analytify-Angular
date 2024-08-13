@@ -18,6 +18,13 @@
 
 
           <div class="input-group">
+            <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="loadSelectedSheetList()"  class="form-select form-select select2 fs-14 form-control border-end-0" >
+              <option value="0">All</option>
+              @for(sheetlist of sheetsList;track sheetlist.id){
+                <option value="{{sheetlist.id}}">{{sheetlist.queryset_name}}</option>
+              }
+  
+          </select>
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="sheetName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchUserList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             <button type="button" class="btn btn-primary" (click)="sheetsRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Sheet</button>
@@ -40,6 +47,7 @@
                             <th>Title</th>
                             <th>Created On</th>
                             <th>Last Modified</th>
+                            <th>DataBase Name</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -81,6 +89,7 @@
                             </td>
                                <td>{{sheets.created}}</td>  
                             <td>{{sheets.Modified}}</td>
+                            <td>{{sheets.database_name}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
@@ -249,6 +258,14 @@
                                   <span class="fs-14">{{sheets.Modified}}</span>
                               </div>
                           </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                                <span class="fw-semibold fs-14">DataBase Name : </span>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="fs-14">{{sheets.database_name}}</span>
+                            </div>
+                        </div>
                         </div>
                         </div>
                        
