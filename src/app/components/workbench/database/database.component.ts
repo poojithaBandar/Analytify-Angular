@@ -109,7 +109,7 @@ export class DatabaseComponent {
   colName:any;
   fromDatabasId = false;
   fromFileId = false;
-
+  rowLimit:any;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -760,7 +760,8 @@ getJoiningTableData(){
   const obj ={
     database_id:this.databaseId,
     query_id:this.qurtySetId,
-    datasource_queryset_id:this.datasourceQuerysetId
+    datasource_queryset_id:this.datasourceQuerysetId,
+    row_limit:this.rowLimit
   } as any
   if(this.fromFileId){
     delete obj.database_id

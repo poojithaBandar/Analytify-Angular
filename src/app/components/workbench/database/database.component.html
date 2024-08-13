@@ -245,7 +245,7 @@
 
                                 <div class="">
                                     <div class="card br-0 joining-T-H br-0">
-                                        <div class="card-header d-flex align-items-center justify-content-between">
+                                        <div class="card-header d-flex align-items-center justify-content-between" style="padding: 21px;">
                                             <h6 class="m-0">Table Custom Join</h6>
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()" ngbtooltip="fa fa-chevron-left" style="border: none;" class="fa fa-chevron-left chevron-left-icon "></i>
                                         </div>
@@ -347,57 +347,68 @@
                                 </div>
 
                             </div>
-                                <div [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
-                                    <div class="card br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''" [class.expanded]="!isOpen">
-                                        <div class="card-header d-flex align-items-center">
-                                            @if(draggedtables.length > 1){
-                                            @if(!isOpen){
-                                            <i data-bs-toggle="tooltip" (click)="toggleCard()" ngbtooltip="fa fa-chevron-left" style="border: none;" class="fa fa-chevron-right chevron-right-icon p-2 ">
-                                                <button class="TextTransform"><h6>Table Custom Join</h6></button> 
-                                            </i>
-                                            }
+                            <div [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
+                                <div class="card br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''" [class.expanded]="!isOpen">
+                                    <div class="card-header d-flex align-items-center" style="display: flex; justify-content: space-between;">
+                                        <div class="d-flex">
+                                        @if(draggedtables.length > 1){
+                                        @if(!isOpen){
+                                        <i data-bs-toggle="tooltip" (click)="toggleCard()" ngbtooltip="fa fa-chevron-left" style="border: none;" class="fa fa-chevron-right chevron-right-icon p-2 ">
+                                            <button class="TextTransform"><h6>Table Custom Join</h6></button> 
+                                        </i>
                                         }
-                                            <h6 class="mb-0">Result Preview</h6>
+                                    }
+                                        <h6 class="mb-0">Result Preview</h6>
                                         </div>
-                                        <div class="card-body d-flex align-items-center justify-content-center p-0">
-                                            @if(TabledataJoining.length){
-                                            <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
-                                            }@else{
-                                             <div class="table-responsive" style="overflow-y: scroll;height: 233px;" [class.table-left]="draggedtables.length > 1" [class.table-right]="draggedtables.length === 1">
-                                                <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                                <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
-                                                    <tr>
-                                                        @for(data of TabledataJoining.column_data;track data){
-                                                        <th>{{data}}</th>
-                                                        }
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    @for(rowss of TabledataJoining.row_data;track rowss;){
-                                                    <tr>
-                                                        @for(rowdata of rowss;track rowdata;let i = $index){
-                                            
-                                                        <td>{{rowdata}}</td>
-                                                        }
-                                                    </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        }
-                                        </div>
-                                        <div class="modal-footer border-0">
-                                            @if(qryTime){
-                                            <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{qryTime}}s</span> Rows effected:{{qryRows}}</span>
-                                            }
+                                        <div class="result-rows d-flex justify-content-end">
+                                           
                                             @if(qurtySetId && qurtySetId){
-                                            <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'" [previledgeId]="17" [isBtn]="true"
+                                                <input type="number" [(ngModel)]="rowLimit" id="input-text" (keydown.enter)="getJoiningTableData()" placeholder="rows" class="form-control w-20"> 
+                                                <a  class="modal-effect btn btn-primary " (click)="getJoiningTableData()"><i class="fa fa-arrow-right rounded-0"></i></a>
+                                            <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary ms-2'" [previledgeId]="17" [isBtn]="true"
                                                 (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
                                             }
-                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="card-body d-flex align-items-center justify-content-center p-0">
+                                        @if(TabledataJoining.length){
+                                        <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
+                                        }@else{
+                                         <div class="table-responsive" style="overflow-y: scroll;height: 233px;" [class.table-left]="draggedtables.length > 1 && !isOpen" [class.table-right]="draggedtables.length === 1 || (draggedtables.length > 1 && isOpen)">
+                                            <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                            <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
+                                                <tr>
+                                                    @for(data of TabledataJoining.column_data;track data){
+                                                    <th>{{data}}</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @for(rowss of TabledataJoining.row_data;track rowss;){
+                                                <tr>
+                                                    @for(rowdata of rowss;track rowdata;let i = $index){
+                                        
+                                                    <td>{{rowdata}}</td>
+                                                    }
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    }
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        @if(qryTime){
+                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{qryTime}}s</span> Rows effected:{{qryRows}}</span>
+                                        }
+                                        <!-- @if(qurtySetId && qurtySetId){
+                                        <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'" [previledgeId]="17" [isBtn]="true"
+                                            (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
+                                        } -->
                                     </div>
                                 </div>
+                            </div>
                             </div> 
                         </div>
                   </div>  
