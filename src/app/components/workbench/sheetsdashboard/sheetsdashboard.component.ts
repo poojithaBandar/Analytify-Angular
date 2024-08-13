@@ -2603,7 +2603,7 @@ dropTest2(event: any) {
     let dataSet = new Set(this.sheetIdsDataSet);
     if(data.is_selected){
       dataSet.add(data.sheet_id);
-      const allSheetDataTrue = panel.sheet_data.every((item:any) => item.sheetData == true);
+      const allSheetDataTrue = panel.sheet_data.every((item:any) => item.is_selected == true);
       if(allSheetDataTrue){
         panel.is_selected = true;
       }
