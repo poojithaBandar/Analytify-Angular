@@ -506,7 +506,7 @@ export class SheetsdashboardComponent {
         chartId:sheet.chart_id,
         qrySetId : sheet.queryset_id,
         databaseId: sheet.server_id,
-        data: { title: sheet.sheet_name, content: 'Content of card New' },
+        data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name},
         selectedSheet : sheet.selectedSheet,
         chartOptions: sheet.sheet_type === 'Chart' ? {
           // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
@@ -761,7 +761,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
-      data: { title: sheet.sheet_name, content: 'Content of card New' },
+      data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
         ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
@@ -2538,7 +2538,7 @@ dropTest2(event: any) {
         chartId:sheet.chart_id,
         databaseId : sheet.server_id,
         qrySetId : sheet.queryset_id,
-        data: { title: sheet.sheet_name, content: 'Content of card New' },
+        data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
         selectedSheet : sheet.selectedSheet,
         chartOptions: sheet.sheet_type === 'Chart' ? {
           // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),

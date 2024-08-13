@@ -650,7 +650,7 @@
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
               <div class="card mb-0" style="height: 100%;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
                 <div class="card-header d-flex justify-content-between p-1">
-                  <h6 [innerHtml]="item.data.sheetTagName">{{ item.data.sheetTagName }}</h6>
+                  <h6 [innerHtml]="item.data.sheetTagName"></h6>
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle

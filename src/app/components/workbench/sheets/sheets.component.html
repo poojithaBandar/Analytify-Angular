@@ -605,7 +605,7 @@
                         (selectedTabChange)="onChange($event);" 
                         >
                         @for(tab of tabs;track tab; let index = $index){
-           <mat-tab  [label]="tab ">
+           <mat-tab  [label]="tab+'' | slice:0:10">
           <!--  <br>  <br>
              Contents for {{tab}} tab
          

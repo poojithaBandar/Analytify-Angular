@@ -1856,18 +1856,18 @@ tableMeasures = [] as any;
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
           console.log(responce);
-          const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
-          const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
-          responce.data.col = (responce.data.col as any[]).sort((a, b) => {
-            const indexA = columnIndexMap.get(a.column) ?? -1;
-            const indexB = columnIndexMap.get(b.column) ?? -1;
-            return indexA - indexB;
-          });
-          responce.data.row = (responce.data.row as any[]).sort((a, b) => {
-            const indexA = rowIndexMap.get(a.col) ?? -1;
-            const indexB = rowIndexMap.get(b.col) ?? -1;
-            return indexA - indexB;
-          });
+          // const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
+          // const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
+          // responce.data.col = (responce.data.col as any[]).sort((a, b) => {
+          //   const indexA = columnIndexMap.get(a.column) ?? -1;
+          //   const indexB = columnIndexMap.get(b.column) ?? -1;
+          //   return indexA - indexB;
+          // });
+          // responce.data.row = (responce.data.row as any[]).sort((a, b) => {
+          //   const indexA = rowIndexMap.get(a.col) ?? -1;
+          //   const indexB = rowIndexMap.get(b.col) ?? -1;
+          //   return indexA - indexB;
+          // });
           this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id;
           this.tablePreviewColumn = responce.data.col;
           this.tablePreviewRow = responce.data.row;
@@ -1994,9 +1994,15 @@ tableMeasures = [] as any;
           }
         }
         this.draggedColumns.splice(event.currentIndex, 0, element);
+        const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
         //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-        this.draggedColumnsData.push([element.column,element.data_type,""])
-    
+        this.draggedColumnsData.push([element.column,element.data_type,""]);
+        this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
+          const indexA = columnIndexMap.get(a[0]) ?? -1;
+          const indexB = columnIndexMap.get(b[0]) ?? -1;
+          return indexA - indexB;
+        });
+        console.log(this.draggedColumnsData);
         this.dataExtraction();
      // }else{
      // }
@@ -2020,10 +2026,17 @@ tableMeasures = [] as any;
           }
         }
         this.draggedRows.splice(event.currentIndex, 0, element);
+        const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
         //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-        this.draggedRowsData.push([element.column,element.data_type,""])
+        this.draggedRowsData.push([element.column,element.data_type,""]);
+        this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
+          const indexA = rowIndexMap.get(a[0]) ?? -1;
+          const indexB = rowIndexMap.get(b[0]) ?? -1;
+          return indexA - indexB;
+        });
         console.log(this.draggedRowsData);
-        this.dataExtraction();
+        this.rowMeasuresCount(element,event.currentIndex,'sum');
+        // this.dataExtraction();
       //}else{
         console.log("Can't Accept")
       //}
@@ -2500,7 +2513,7 @@ sheetSave(){
     xlabelFontWeight : this.xlabelFontWeight,
     labelAlignment : this.labelAlignment
   }
-  this.sheetTagName = this.sheetTitle;
+  // this.sheetTagName = this.sheetTitle;
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
@@ -2511,7 +2524,9 @@ const obj={
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "data":{
   "columns": this.draggedColumns,
+  "columns_data":this.draggedColumnsData,
   "rows": this.draggedRows,
+  "rows_data":this.draggedRowsData,
   "results": {
     "tableData":this.saveTableData,
     "tableColumns":this.savedisplayedColumns,
