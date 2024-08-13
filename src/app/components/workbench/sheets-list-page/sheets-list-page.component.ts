@@ -20,7 +20,8 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 export class SheetsListPageComponent implements OnInit {
   sheetName:any;
   savedSheetsList:any[]=[];
-
+  sheetsList : any[] = [];
+  selectedSheetList! : any;
   itemsPerPage:any;
   pageNo = 1;
   page: number = 1;
@@ -33,8 +34,83 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
 
   ngOnInit() {
     if (this.viewSheetList) {
+      this.fetchSheetsList();
+      // this.getUserSheetsList();
+    }
+  }
+
+  loadSelectedSheetList(){
+    if(this.selectedSheetList > 0){
+    const Obj ={
+      search:this.sheetName,
+      page_no:this.pageNo,
+      page_count:this.itemsPerPage,
+      queryset_id:this.selectedSheetList
+    }
+    if(Obj.search == '' || Obj.search == null){
+      delete Obj.search;
+    }
+    if(Obj.page_count == undefined || Obj.page_count == null){
+      delete Obj.page_count;
+    }
+    this.workbechService.getUserSheetListPutTest(Obj).subscribe(
+      {
+        next:(data:any) =>{
+          this.savedSheetsList=data.sheets
+          this.itemsPerPage = data.items_per_page;
+          this.totalItems = data.total_items
+          console.log('sheetsList',data)
+  
+  
+        },
+        error:(error:any)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+      })
+    } else {
       this.getUserSheetsList();
     }
+  }
+
+  fetchSheetsList(){
+    const Obj ={
+      search:this.sheetName,
+      page_no:this.pageNo,
+      page_count:this.itemsPerPage
+    }
+    if(Obj.search == '' || Obj.search == null){
+      delete Obj.search;
+    }
+    if(Obj.page_count == undefined || Obj.page_count == null){
+      delete Obj.page_count;
+    }
+    this.workbechService.fetchSheetsListData().subscribe(
+      {
+        next:(data:any) =>{
+          this.sheetsList = data;
+          this.itemsPerPage = data.items_per_page;
+          this.totalItems = data.total_items
+          console.log('sheetsList',data)
+          this.selectedSheetList = data[0].id;
+          this.loadSelectedSheetList();
+  
+        },
+        error:(error:any)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+      })
   }
 
 pageChangegetUserSheetsList(page:any){
