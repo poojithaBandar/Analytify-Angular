@@ -94,6 +94,7 @@
   border-radius: 3px;
   outline: 0;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 20px !important;
 }
 
 .modal-backdrop {
@@ -396,6 +397,7 @@
       background-color: $custom-white;
       border: 1px solid #4d4e50;
       padding: 0 9px;
+      border-radius: 20px !important;
     }
 
     .btn-close {

@@ -50,3 +50,14 @@
   a {
     cursor: pointer;
 }
+
+.tiled-header-bg {
+  display: flex;
+  justify-content: space-between;
+  background: #00a5a2;
+  color: #fff;
+}
+.fe-more-vertical:before {
+  content: "\e99a";
+  color: #fff;
+}

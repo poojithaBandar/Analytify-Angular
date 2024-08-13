@@ -515,9 +515,16 @@ export class WorkbenchComponent implements OnInit{
           }
         )
       }
-    deleteDbConnection(id:any){
-      const obj ={
-        database_id:id
+    deleteDbConnection(dbId:any,fileId:any){
+      // const obj ={
+      //   database_id:dbId
+      // }
+      let obj: any = {};
+
+      if (dbId) {
+        obj = { database_id: dbId };
+      } else if (fileId) {
+        obj = { file_id: fileId };
       }
       this.workbechService.deleteDbMsg(obj)
       .subscribe(
@@ -535,7 +542,8 @@ export class WorkbenchComponent implements OnInit{
                 confirmButtonText: 'Yes, delete it!'
               }).then((result)=>{
                 if(result.isConfirmed){
-                  this.workbechService.deleteDbConnection(id)
+                  if(dbId){
+                  this.workbechService.deleteDbConnection(dbId)
                   .subscribe(
                     {
                       next:(data:any) => {
@@ -560,6 +568,34 @@ export class WorkbenchComponent implements OnInit{
                       }
                     } 
                   )
+                  }
+                  if(fileId){
+                    this.workbechService.deleteFileConnection(fileId)
+                    .subscribe(
+                      {
+                        next:(data:any) => {
+                          console.log(data);      
+                          if(data){
+                            Swal.fire({
+                              icon: 'success',
+                              title: 'Deleted!',
+                              text: 'Databse Deleted Successfully',
+                              width: '400px',
+                            })
+                          }
+                          this.getDbConnectionList();
+                        },
+                        error:(error:any)=>{
+                          Swal.fire({
+                            icon: 'warning',
+                            text: error.error.message,
+                            width: '300px',
+                          })
+                          console.log(error)
+                        }
+                      } 
+                    )
+                  }
                 }})
             }
           },

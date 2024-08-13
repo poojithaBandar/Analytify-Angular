@@ -91,77 +91,73 @@
                   currentPage: page,
                   totalItems: totalItems
                 }" class="col-md-12 col-xl-3">
-                      <div class="card shadow-none">
-                      <div class="card-body card-box-shadow">
-                          <div class="row">
-                              <div class="col-md-12">
-                                  <div class="row border-bottom">
-                                      <div class="col mb-1">
-                                          <div class="d-sm-flex align-items-center">
-                                            <!-- <span class="avatar avatar-xl rounded-circle">
-                                                <img src="./assets/images/charts/table-tiled-icon.jpg" alt="" class="rounded-circle"></span> -->
-                                              <div class="ms-2 mt-sm-0 mt-2">
-                                                <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
-                                                  <h6 class="mb-1">
-                                                      <a ngbTooltip="{{users.username}}"  class="float-start"> {{users.username | slice:0:15}}</a>
-                                                  </h6>
-                                                  
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="col-auto">
-                                          <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                            <a  data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                aria-haspopup="true" aria-expanded="false" class=""><i
-                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                            </a>
-                                            <div class="dropdown-menu" ngbDropdownMenu>
-                                              <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="61" [isBtn]="false"
-                                              [buttonName]="' Edit'" [tabIndex]="0"
-                                              (btnClickEvent)="getUserIdDetails(users.user_id)"
-                                              [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                                          <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="63" [isBtn]="false"
-                                              [buttonName]="' Delete'" [tabIndex]="0"
-                                              (btnClickEvent)="deleteUser(users.user_id)"
-                                              [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                                            </div>
-                                        </div>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div  class="col-md-12 mt-2">
-                                <div class="p-2 ">
+                <div class="card card-box-shadow ">
+                  <div class="card-header tiled-header-bg">
+                    <div class="d-sm-flex align-items-center">
+                      <!-- <span class="avatar avatar-xl rounded-circle">
+                          <img src="./assets/images/charts/table-tiled-icon.jpg" alt="" class="rounded-circle"></span> -->
+                        <div class="ms-2 mt-sm-0 mt-2 d-flex">
+                          <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
+                            <h6 class="mb-1">
+                                <a ngbTooltip="{{users.username}}"  class="float-start" style="line-height: 1;"> {{users.username | slice:0:15}}</a>
+                            </h6>
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-auto">
+                      <div class="d-flex justify-content-end p-1" ngbDropdown>
+                        <a  data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                            aria-haspopup="true" aria-expanded="false" class=""><i
+                                class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                        </a>
+                        <div class="dropdown-menu" ngbDropdownMenu>
+                          <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="61" [isBtn]="false"
+                          [buttonName]="' Edit'" [tabIndex]="0"
+                          (btnClickEvent)="getUserIdDetails(users.user_id)"
+                          [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                      <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="63" [isBtn]="false"
+                          [buttonName]="' Delete'" [tabIndex]="0"
+                          (btnClickEvent)="deleteUser(users.user_id)"
+                          [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                        </div>
+                    </div>
+                    </div>
+                  </div>
+                  <div class="card-body ">
+                      <div class="row">
                         
-                                  <div class="row">
-                                      <div class="col-md-6">
-                                          <span class="fw-semibold fs-14">Created by  </span>
-                                      </div>
-                                      <div class="col-md-6">
-                                          <span class="fs-14">{{users.created_by}}</span>
-                                      </div>
+                          <div  class="col-md-12">
+                             <div class="row">
+                                  <div class="col-md-6">
+                                      <span class="fw-semibold fs-14">Created by  </span>
                                   </div>
-                                  <div class="row">
-                                      <div class="col-md-6">
-                                          <span class="fw-semibold fs-14">Created on :</span>
-                                      </div>
-                                      <div class="col-md-6">
-                                          <span class="fs-14">{{users.created_at}}</span>
-                                      </div>
+                                  <div class="col-md-6">
+                                      <span class="fs-14">{{users.created_by}}</span>
                                   </div>
-                                  <div class="row">
-                                    <div class="col-md-6">
-                                        <span class="fw-semibold fs-14">Last Modified : </span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span class="fs-14">{{users.updated_at}}</span>
-                                    </div>
+                              </div>
+                              <div class="row">
+                                  <div class="col-md-6">
+                                      <span class="fw-semibold fs-14">Created on :</span>
+                                  </div>
+                                  <div class="col-md-6">
+                                      <span class="fs-14">{{users.created_at}}</span>
+                                  </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-6">
+                                    <span class="fw-semibold fs-14">Last Modified : </span>
                                 </div>
-                              </div>
-                              </div>
-                             
+                                <div class="col-md-6">
+                                    <span class="fs-14">{{users.updated_at}}</span>
+                                </div>
+                            </div>
+                          
                           </div>
+                         
                       </div>
-                      </div>
+                  </div>
+                  </div>
                     </div>
           </div>
         }

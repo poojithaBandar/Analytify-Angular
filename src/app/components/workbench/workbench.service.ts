@@ -127,6 +127,9 @@ export class WorkbenchService {
   deleteDbConnection(id:any){
     return this.http.delete<any>(`${environment.apiUrl}/database_disconnect/`+this.accessToken+'/'+id);
   }
+  deleteFileConnection(id:any){
+    return this.http.delete<any>(`${environment.apiUrl}/delete_file/`+id+'/'+this.accessToken);
+  }
   deleteDbMsg(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
