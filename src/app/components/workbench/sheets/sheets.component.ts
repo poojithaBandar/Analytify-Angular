@@ -314,6 +314,7 @@ if(this.fromFileId){
           // this.sheetRetrive();
         }
         else {
+          this.SheetSavePlusEnabled.splice(0, 1);
           this.sheetNumber = 1;
           this.addSheet();
         }
@@ -931,7 +932,7 @@ if(this.fromFileId){
         this.chartOptions1= this.areaOptions;
       }
       this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
-      this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
+      // this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
       this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
       this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
   } else {
@@ -1113,7 +1114,7 @@ if(this.fromFileId){
         this.chartOptions2= this.sidebysideBarOptions;
       }
     this.xLabelSwitch = this.chartOptions2.xaxis.labels.show;
-    this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
+    // this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
     this.yGridSwitch = this.chartOptions2.grid.yaxis.lines.show;
     }
@@ -1585,7 +1586,7 @@ if(this.fromFileId){
       this.chartOptions7 = this.hStockedOptions;
     }
     this.xLabelSwitch = this.chartOptions7.xaxis.labels.show;
-    this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
+    // this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
     this.yGridSwitch = this.chartOptions7.grid.yaxis.lines.show;
   }
@@ -1665,7 +1666,7 @@ if(this.fromFileId){
       this.chartOptions8 = this.hgroupedOptions;
     }
     this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
-    this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
+    // this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
     this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
     this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
   }
@@ -1957,6 +1958,72 @@ tableMeasures = [] as any;
         this.multiLineChart();
         this.donutChart();
         this.radarChart();
+      }
+      if(this.retriveDataSheet_id){
+        const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+        const categories = this.flattenDimensions(dimensions);
+        if(this.barchart){
+          this.chartOptions3.series.data = this.chartsRowData;
+          this.chartOptions3.xaxis.categories = this.chartsColumnData;
+        }
+        else if(this.piechart){
+          this.chartOptions4.series = this.chartsRowData;
+          this.chartOptions4.labels = this.chartsColumnData;
+        }
+        else if(this.linechart){
+          this.chartOptions.series.data = this.chartsRowData;
+          this.chartOptions.xaxis.categories = this.chartsColumnData;
+        }
+        else if(this.areachart){
+          this.chartOptions1.series.data = this.chartsRowData;
+          this.chartOptions1.labels = this.chartsColumnData;
+        }
+        else if(this.sidebysideChart){
+          this.chartOptions2.series = this.sidebysideBarRowData;
+          this.chartOptions2.xaxis.categories = categories;
+        }
+        else if(this.stockedChart){
+          this.chartOptions6.series = this.sidebysideBarRowData;
+          this.chartOptions6.xaxis.categories = categories;
+        }
+        else if(this.barlineChart){
+          this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
+          this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
+          this.chartOptions5.labels = categories;
+        }
+        else if(this.horizontolstockedChart){
+          this.chartOptions7.series = this.sidebysideBarRowData;
+          this.chartOptions7.xaxis.categories = categories;
+        }
+        else if(this.groupedChart){
+          this.chartOptions8.series = this.sidebysideBarRowData;
+          this.chartOptions8.xaxis.categories = categories;
+        }
+        else if(this.multilineChart){
+          this.chartOptions9.series = this.sidebysideBarRowData;
+          this.chartOptions9.xaxis.categories = categories;
+        }
+        else if(this.donutchart){
+          this.chartOptions10.series = this.chartsRowData;
+          this.chartOptions10.labels = this.chartsColumnData;
+        }
+        this.updateChart();
+      }
+      if(this.draggedColumns.length<1 || this.draggedRows.length<1){
+        this.table = true;
+        this.bar = false;
+        this.area = false;
+        this.line = false;
+        this.pie = false;
+        this.sidebyside = false;
+        this.stocked = false;
+        this.barLine = false;
+        this.horizentalStocked = false;
+        this.grouped = false;
+        this.multiLine = false;
+        this.donut = false;
+        this.chartId = 1;
+        this.radar = false;
       }
         },
         error: (error) => {
@@ -2513,7 +2580,7 @@ sheetSave(){
     xlabelFontWeight : this.xlabelFontWeight,
     labelAlignment : this.labelAlignment
   }
-  // this.sheetTagName = this.sheetTitle;
+  this.sheetTagName = this.sheetTitle;
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
@@ -2714,12 +2781,22 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         this.displayUnits = 'none';
         
-        this.draggedColumns.forEach((res:any) => {
-          this.draggedColumnsData.push([res.column,res.data_type,""])
-        });
-        this.draggedRows.forEach((res:any) => {
-          this.draggedRowsData.push([res.column,res.data_type,""])
-        });
+        if(this.sheetResponce.column_data){
+          this.draggedColumnsData = this.sheetResponce.column_data;
+        }
+        else{
+          this.draggedColumns.forEach((res:any) => {
+            this.draggedColumnsData.push([res.column,res.data_type,""])
+          });
+        }
+        if(this.sheetResponce.rows_data){
+          this.draggedRowsData = this.sheetResponce.rows_data;
+        }
+        else{
+          this.draggedRows.forEach((res:any) => {
+            this.draggedRowsData.push([res.column,res.data_type,""])
+          });
+        }
         if(responce.chart_id == 1){
           this.tableData = this.sheetResponce.results.tableData;
           this.displayedColumns = this.sheetResponce.results.tableColumns;
