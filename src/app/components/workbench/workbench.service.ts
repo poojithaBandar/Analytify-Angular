@@ -339,6 +339,13 @@ getColumnsInDashboardFilter(obj:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/dashboard_column_preview/`+this.accessToken,obj);  
 }
+
+getQuerySetInDashboardFilter(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_query_preview/`+this.accessToken,obj);  
+}
+
 selectedDatafromFilter(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -363,10 +370,10 @@ getFilteredData(obj:any){
 getServerTablesList(obj:any){
   return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`,obj);
 }
-deleteDashbaordFilter(obj:any){
+deleteDashbaordFilter(id:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];
-  return this.http.delete<any>(`${environment.apiUrl}/dashboard_filtered_save/`+this.accessToken); 
+  return this.http.delete<any>(`${environment.apiUrl}/dashboard_filter_delete/`+this.accessToken+'/'+id); 
 }
 
 //roles
