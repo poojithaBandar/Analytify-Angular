@@ -578,6 +578,9 @@
                                 <td *ngIf="database.server_type === 'SQLITE'">
                                     <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                                 </td>
+                                <td *ngIf="database.server_type === 'SNOWFLAKE'">
+                                    <img alt="product" src="./assets/images/icons/snowflake-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                </td>
 
                                     <!-- <td>{{database.server_type}}</td> -->
                                     

@@ -259,6 +259,9 @@
                       <td *ngIf="database.server_type === 'MICROSOFTSQLSERVER'">
                           <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'SNOWFLAKE'">
+                        <img alt="product" src="./assets/images/icons/snowflake-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                    </td>
                       <td *ngIf="database.server_type === 'SQLITE'">
                           <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
@@ -306,6 +309,8 @@
                               <img src="./assets/images/icons/MySql-icon1.jpg" alt="" class="rounded-circle"></span>
                               <span *ngIf="database.server_type === 'MICROSOFTSQLSERVER'" class="avatar avatar rounded-circle">
                                 <img src="./assets/images/icons/microsoft-sql-server-icon.jpg" alt="" class="rounded-circle"></span>
+                                <span *ngIf="database.server_type === 'SNOWFLAKE'" class="avatar avatar rounded-circle">
+                                  <img src="./assets/images/icons/snowflake-icon.jpg" alt="" class="rounded-circle"></span>
                                 <span *ngIf="database.server_type === 'SQLITE'" class="avatar avatar rounded-circle">
                                   <img src="./assets/images/icons/sqlite-icon.jpg" alt="" class="rounded-circle"></span>
                                   <span *ngIf="database.server_type === 'MONGODB'" class="avatar avatar rounded-circle">
@@ -677,6 +682,74 @@
         </div>
         
           } 
+          @if(openSnowflakeServerForm){
+            <div class="row main-container" >
+              <div class="row">
+                  <div class="col-md-12 col-xl-6 p-1 mb-0">
+                     <div class="card">
+                       <div class="card-header">
+                         <div class="card-body d-flex align-items-center justify-content-center">
+                            <img src="./assets/images/Db_server_images/Relational Database/snowflake-icon.jpg" alt="Image" class="w-200"/>
+                         </div>
+                       </div>
+                       <div class="card-body post-bg">
+                          <div class="post-txt">
+                            <span class="light-gry-txt">Microsoft SQL Server is a relational database management system (RDBMS) that supports a wide variety of transaction processing,
+                              business intelligence (BI) and data analytics applications in corporate IT environments.
+                            </span>
+                            <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
+                            <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for SQL server is 1433</span></h6>
+                            <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
+                            <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
+                            <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                          </div>
+                       </div>
+                     </div>
+                  </div>
+                  <div class="col-md-12 col-xl-6 p-1 mb-0">
+                      <div class="card">
+                          <div class="card-header">
+                              <h4 class="card-title">Connect to SNOWFLAKE Server</h4>
+                          </div>
+                          <div class="card-body">
+                              <form>
+                                      <div class="form-group">
+                                          <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 433">
+                                      </div>
+                                      <div class="form-group">
+                                        <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver">
+                                    </div>
+                                      <div class="form-group">
+                                          <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                          <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                      </div>
+                                      <div class="mb-2">
+                                        <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                        <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-mrwwyname" placeholder="e.g. InsignApps">
+                                      </div>
+                                      <div class="form-group">
+                                          <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                          <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                          <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
+                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()">Sign In</button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+            } 
           @if(ibmDb2Form){
             <div class="row main-container" >
               <div class="row">
@@ -949,6 +1022,14 @@
                 </div>
                 <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                   <span style=" width: 8rem;">Microsoft SQL SERVER</span>
+              </div>
+              </div>
+              <div class="database-logo">
+                <div class="imgcard p-4" (click)="openSnowflakeServer()">
+                    <img src="./assets/images/Db_server_images/Relational Database/snowflake-icon.jpg" alt="Image" class="card-img"/>
+                </div>
+                <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
+                  <span style=" width: 8rem;">SNOW FLAKE</span>
               </div>
               </div>
               <!-- <div class="database-logo">

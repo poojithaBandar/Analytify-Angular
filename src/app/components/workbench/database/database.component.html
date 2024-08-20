@@ -5,7 +5,7 @@
     @if(tableJoiningUI){
     <div class="row main-container" >
         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-            <div class="card-header  border-bottom d-block">
+            <div class="card p-4 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0 border-bottom">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
@@ -63,7 +63,7 @@
 
 
             <div class="card mb-0 br-0 pt-2" style="height: 581px">
-                <div class="card-header p-1 border-bottom-0">
+                <div class="card mb-0 p-1 border-bottom-0">
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keyup)="getSchemaTablesFromConnectedDb()">
                         <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
@@ -176,7 +176,7 @@
         <div class="col-xl-10 col-md-12 p-1">
                 <div class="card-body p-0 ">
                     <div class="col-xl-12 col-md-12 p-0">
-                        <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="card mb-0 p-4 br-0" style="display: flex;flex-direction: row;">
                             <div class="flex-grow-1 ">
                                 <input  type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title" aria-label="Sheet" class="form-control" >
                             </div>
@@ -194,13 +194,13 @@
                         <div class="d-flex">
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                            <div class="card card-body databse-T-H mb-0 br-0 p-0">
-                            <div class="card-body example-list-drop  mb-0 border border-0"
+                            <div class="card-body example-list-drop  mb-0"
                             cdkDropList 
                             #destinationList="cdkDropList" 
                             [cdkDropListData]="draggedtables" 
                            (cdkDropListDropped)="drop($event)">
                            @for(item of draggedtables;track $index){
-                               <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias}}({{item.schema}})
+                               <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
                                    <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
                                     <a aria-label="anchor" (click)="onDeleteItem($index)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
@@ -420,9 +420,9 @@
         @if(customSql){
         <div class="row main-container" >
             <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-                <div class="card-header  border-bottom d-block">
+                <div class="card  p-4 mb-0 br-0 border-bottom d-block">
                     <div class="d-flex align-items-center justify-content-between ">
-                        <h6 class="mb-0 border-bottom">Connections</h6>
+                        <h6 class="mb-0">Connections</h6>
                         <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                     </div>
                     <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>

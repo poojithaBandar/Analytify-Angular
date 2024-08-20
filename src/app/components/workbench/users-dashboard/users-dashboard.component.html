@@ -192,7 +192,7 @@
                         <label for="input-label" class="form-label">First Name</label>
                     </div>
                     <div class="col-md-10 border p-2">
-                        <input type="text" id="input-text"  formControlName="firstname" placeholder="First Name" class="form-control">
+                        <input type="text" id="input-text1"  formControlName="firstname" placeholder="First Name" class="form-control">
                         @if(addUserForm.get('firstname')?.errors && addUserForm.get('firstname')?.touched){
                             <div class="text-danger">firstname required</div>
                           }
@@ -204,7 +204,7 @@
                         <label for="input-label" class="form-label">Last Name</label>
                     </div>
                     <div class="col-md-10 border p-2">
-                        <input type="text" id="input-text" formControlName="lastname" placeholder="Last Name" class="form-control">
+                        <input type="text" id="input-text2" formControlName="lastname" placeholder="Last Name" class="form-control">
                         @if(addUserForm.get('lastname')?.errors && addUserForm.get('lastname')?.touched){
                             <div class="text-danger">lastname required</div>
                           }
@@ -215,7 +215,7 @@
                         <label for="input-label" class="form-label">User Name</label>
                     </div>
                     <div class="col-md-10 border p-2">
-                        <input type="text" id="input-text" formControlName="username" placeholder="User Name" class="form-control">
+                        <input type="text" id="input-text3" formControlName="username" placeholder="User Name" autocomplete="off" class="form-control">
                         @if(addUserForm.get('username')?.errors && addUserForm.get('username')?.touched){
                             <div class="text-danger">username required</div>
                           }
@@ -236,7 +236,7 @@
                         <label for="input-label" class="form-label">Email</label>
                     </div>
                     <div class="col-md-10 border p-2">
-                        <input type="text" id="input-text" placeholder="Email" formControlName="email" class="form-control">
+                        <input type="text" id="input-text4" placeholder="Email" formControlName="email" class="form-control">
                         @if(addUserForm.get('email')?.errors && addUserForm.get('email')?.touched){
                             <div class="text-danger">Email required</div>
                           }
@@ -322,7 +322,7 @@
                           <label for="input-label" class="form-label">Password</label>
                         </div>
                         <div class="col-md-10 border p-2">
-                          <input type="password" id="input-text" formControlName="password" placeholder="Password" class="form-control"
+                          <input type="password" id="input-text5" formControlName="password" placeholder="Password" class="form-control"
                             [type]="showPassword ? 'text' : 'password'" autocomplete="off">
                           <button class="btn btn-light" (click)="toggleVisibility()" type="button" id="button-addon2">
                             <i class="ri-eye-{{toggleClass}} align-middle"></i></button>

@@ -47,6 +47,7 @@ export class WorkbenchComponent implements OnInit{
   openMySqlForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
+  openSnowflakeServerForm = false;
   openMongoDbForm = false;
   sqlLiteForm = false;
   openTablesUI = false;
@@ -293,6 +294,47 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openMicrosoftSqlServerForm = false;
+                const encodedId = btoa(this.databaseId.toString());
+                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+            }
+          }
+        )
+    }
+    openSnowflakeServer(){
+      this.openSnowflakeServerForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
+    snowflakeSignIn(){
+      const obj={
+          "database_type":"snowflake",
+          "hostname":this.postGreServerName,
+          "port":this.postGrePortName,
+          "username":this.postGreUserName,
+          "password":this.PostGrePassword,
+          "display_name":this.displayName,
+          "database": this.postGreDatabaseName,
+      }
+        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+          console.log(responce)
+              if(responce){
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Connected',
+                  width: '400px',
+                })
+                this.databaseId=responce.database?.database_id
+                this.modalService.dismissAll();
+                this.openSnowflakeServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
                 this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
               }
@@ -715,6 +757,7 @@ export class WorkbenchComponent implements OnInit{
   this.openOracleForm = false;
   this.openMongoDbForm = false;
   this.openMicrosoftSqlServerForm = false;
+  this.openSnowflakeServerForm = false;
   this.ibmDb2Form= false;
   this.sqlLiteForm = false;
 

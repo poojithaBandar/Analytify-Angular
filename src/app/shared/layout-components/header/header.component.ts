@@ -3,6 +3,7 @@ import { Menu, NavService } from '../../services/navservice';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { ViewTemplateDrivenService } from '../../../components/workbench/view-template-driven.service';
 interface Item {
   id: number;
   name: string;
@@ -19,10 +20,15 @@ export class HeaderComponent implements OnInit {
   cartItemCount: number = 5;
   notificationCount: number = 4;
   public isCollapsed = true;
-  userName:any;
-collapse: any;
+  userName: any;
+  collapse: any;
+  viewRoles = false;
+  viewUsers = false;
   constructor(public navServices: NavService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private authService:AuthService,private router:Router,
-    private elementRef: ElementRef,public renderer:Renderer2) {
+    private elementRef: ElementRef,public renderer:Renderer2,private viewTemplateService:ViewTemplateDrivenService) {
+      this.viewRoles=this.viewTemplateService.ViewRoles();
+      this.viewUsers=this.viewTemplateService.viewUsers();
+
   }  SwicherOpen(){
     document.querySelector('.offcanvas-end')?.classList.add('show')
     document.querySelector("body")!.classList.add("overflow:hidden");

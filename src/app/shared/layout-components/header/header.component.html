@@ -842,9 +842,9 @@
                                     <li><a ngbDropdownItem class="dropdown-item" routerLink="/authentication/register"><i
                                                 class="ti ti-user-plus fs-18 me-2 op-7"></i>Add Another
                                             Account</a></li> -->
-                                    <li><a ngbDropdownItem class="dropdown-item" (click)="routeToUserDashboard()"><i
+                                    <li *ngIf="viewUsers"><a ngbDropdownItem class="dropdown-item" (click)="routeToUserDashboard()"><i
                                         class="ti ti-user-circle fs-18 me-2 op-7"></i>List Users</a></li>
-                                    <li><a ngbDropdownItem class="dropdown-item" (click)="routeToRolesDashboard()"><i
+                                    <li *ngIf="viewRoles"><a ngbDropdownItem class="dropdown-item" (click)="routeToRolesDashboard()"><i
                                                     class="ti ti-clipboard-check fs-18 me-2 op-7"></i>List Roles</a></li>
                                     <li><a ngbDropdownItem class="dropdown-item" (click)="logOut()"><i
                                                 class="ti ti-power fs-18 me-2 op-7"></i>Sign Out</a></li>

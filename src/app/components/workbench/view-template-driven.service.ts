@@ -27,5 +27,11 @@ viewCustomSql(){
 editDashboard(){
   return this.rolesprevilgeService.userHasPriviledge(37);
 }
+ViewRoles(){
+  return this.rolesprevilgeService.userHasPriviledge(59);
+}
+viewUsers(){
+  return this.rolesprevilgeService.userHasPriviledge(71);
+}
 
 }
