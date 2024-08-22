@@ -5,6 +5,11 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class WorkbenchService {
+  dashboardFilterDeleteFetchSheetData(obj : any) {
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dashboard_nosheet_filter/`+this.accessToken,obj);
+  }
 
   addSheetToDashboard(obj : any) {
     const currentUser = localStorage.getItem( 'currentUser' );
