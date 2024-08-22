@@ -125,8 +125,15 @@ export class DatabaseComponent {
       this.fileId = +atob(route.snapshot.params['id']);
      }
     if(currentUrl.includes('/workbench/database-connection/savedQuery/')){
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      if(currentUrl.includes('/workbench/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
+        this.fileId = +atob(route.snapshot.params['id1']);
+        this.fromFileId = true;
+        this.qurtySetId = +atob(route.snapshot.params['id2']);
+        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+      }
+      if (currentUrl.includes('/workbench/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
+        this.fromDatabasId = true;
         this.qurtySetId = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
         }

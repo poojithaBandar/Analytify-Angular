@@ -86,7 +86,7 @@ getuserDashboardsListput(){
     }
     })
 }
-deleteDashboard(serverId:any,qurysetId:any,dashboardId:any){
+deleteDashboard(dashboardId:any){
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -97,7 +97,7 @@ deleteDashboard(serverId:any,qurysetId:any,dashboardId:any){
     confirmButtonText: 'Yes, delete it!'
   }).then((result)=>{
     if(result.isConfirmed){
-      this.workbechService.deleteDashboard(serverId,qurysetId,dashboardId)
+      this.workbechService.deleteDashboard(dashboardId)
       .subscribe(
         {
           next:(data:any) => {
@@ -132,7 +132,7 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
 }
 dashboardRoute(){
-
+this.router.navigate(['/workbench/sheetsdashboard']);
 }
 
 

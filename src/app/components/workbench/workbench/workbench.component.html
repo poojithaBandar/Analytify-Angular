@@ -183,7 +183,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="postgreUpdate()">Update</button>
+            <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()">Update</button>
           </div>
         </div>
       </div>
@@ -194,7 +194,7 @@
   <div class="main-container container-fluid">
     <div class="row" class="card" style="padding: 20px;">
     <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
-      <div class="d-flex justify-content-between px-5">
+      <div class="header-title-search">
         <div class="connect-txt">
           <h4 class="card-title mt-2">Connected Database</h4>
         </div>
@@ -221,7 +221,7 @@
       you don't have permission to view!
     </div>
 
-        <div *ngIf="viewDatasourceList" class="card-body">
+        <div *ngIf="viewDatasourceList" class="card-body card-p">
           @if(!gridView){
             <div class="table-responsive" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
@@ -346,7 +346,7 @@
                       </div>
                     </div>
                     </div>
-                    <div class="card-body ">
+                    <div class="card-body title-card-body">
                         <div class="row">
                           
                             <div  class="col-md-12">

@@ -299,7 +299,41 @@ a {
   content: "\e99a";
   color: #fff;
 }
+.table {
+  color: #ffffff;
+}
+.header-title-search{
+  display: flex;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+}
 
+   // for Mobile Resolution //
+   @media only screen and ( max-width : 578px ) {
+    .header-title-search{
+      display: inline;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    .card-title {
+      margin-bottom: 10px !important;
+  }
+  .d-flex {
+    display: inline !important;
+  }
+  .d-sm-flex {
+    display: inline-flex;
+  }
+  .card-body.card-p {
+    padding: 0px;
+    margin-top: 10px;
+  }
+   }
+
+   @media ( 768px <= width <= 1198px) {
+
+   }
 // for 90% Resolution //
 @media ( 1420px <= width <= 1560px) {
    
@@ -331,6 +365,16 @@ a {
   .logo-txt {
     font-size: 11px;
   }
+  .tiled-header-bg{
+    padding: 13px;
+  }
+  .tiled-card-body {
+    padding: 13px;
+}
+.avatar {
+  width: 2.05rem;
+  height: 2.075rem;
+}
 }
 
   // for 100% Resolution //
@@ -363,6 +407,17 @@ a {
   .logo-txt {
     font-size: 10px;
   }
+  .tiled-header-bg{
+    padding: 13px;
+  }
+  .tiled-card-body {
+    padding: 13px;
+}
+.avatar {
+  width: 2.05rem;
+  height: 2.075rem;
+}
+
   }
 
    // for 110% Resolution //

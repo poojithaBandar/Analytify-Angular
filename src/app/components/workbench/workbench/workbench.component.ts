@@ -43,6 +43,7 @@ export class WorkbenchComponent implements OnInit{
   relationOfTables = [] as any;
   databaseId:any;
   fileId:any;
+  databaseType:any;
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openOracleForm = false;
@@ -141,9 +142,10 @@ export class WorkbenchComponent implements OnInit{
         )
 
     }
-    postgreUpdate(){
+    DatabaseUpdate(){
       const obj={
-          "database_type":"postgresql",
+          // "database_type":"postgresql",
+          "database_type":this.databaseType,
           "hostname":this.postGreServerName,
           "port":this.postGrePortName,
           "username":this.postGreUserName,
@@ -672,6 +674,7 @@ export class WorkbenchComponent implements OnInit{
     this.OracleServiceName = '';
     this.displayName = editData.display_name;
     this.databaseId=editData.database_id;
+    this.databaseType = editData.database_type;
     }
 
     Openmdo(OpenmdoModal: any) {

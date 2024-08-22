@@ -3,7 +3,7 @@
         <div class="container px-sm-0">
         <div class="row justify-content-center">
             <div class="col-xl-8 col-lg-6 pb-5 text-center my-auto animation-zidex pos-relative landing-main-heading">
-                <h1 class="text- fw-bold tx-fixed-white mt-0">A quick and easy way to build your Business with <span class="text-primary">"Insightapps"</span></h1>
+                <h1 class="text- fw-bold tx-fixed-white mt-0">A quick and easy way to build your Business with <span class="text-primary">"InsightApps"</span></h1>
             </div>
         </div>
         </div>
@@ -212,7 +212,7 @@
 
                                     <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="35" [isBtn]="false"
                                         [buttonName]="' Delete'"
-                                        (btnClickEvent)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
+                                        (btnClickEvent)="deleteDashboard(dashboardList.dashboard_id)"
                                         [faIconList]="'fe fe-trash'" [isIcon]="true"></app-insights-button>
                                        
                                 </div>
@@ -244,7 +244,7 @@
                                         <i class="fa fa-sliders me-2 d-inline-flex"></i> Properties</a>
                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="35" [isBtn]="false"
                                     [buttonName]="' Delete'"
-                                    (btnClickEvent)="deleteDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
+                                    (btnClickEvent)="deleteDashboard(dashboardList.dashboard_id)"
                                     [faIconList]="'fe fe-trash'" [isIcon]="true"></app-insights-button>
                                 </div>
                             </div>
@@ -435,7 +435,7 @@
                     <div *ngIf="showAllSavedQueries && i < 3" class="card img-shadow">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
                             <div class="dashboard-card-title">
-                                <h5 class="card-title   mb-1" (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id)" ngbTooltip="{{savedQuery.queryset_name}}" 
+                                <h5 class="card-title   mb-1" (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)" ngbTooltip="{{savedQuery.queryset_name}}" 
                                 style="cursor: pointer;color: #05aff8;"> {{savedQuery.queryset_name | slice:0:20}}</h5>
                                 <p class="card-text fs-11 fw-300 ">Modified on {{savedQuery.modified}} </p>
                               </div>
@@ -448,7 +448,7 @@
                                 <div class="dropdown-menu" ngbDropdownMenu>
                                     <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="54" [isBtn]="false"
                                     [buttonName]="' View Query'"
-                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id)"
+                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)"
                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="53" [isBtn]="false"
                                     [buttonName]="' Delete'"
@@ -463,7 +463,7 @@
                         <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                         <div class="card-body p-2 d-flex align-items-center justify-content-between">
                             <div class="dashboard-card-title">
-                                <h5 class="card-title   mb-1" (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id)" ngbTooltip="{{savedQuery.queryset_name}}" 
+                                <h5 class="card-title   mb-1" (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)" ngbTooltip="{{savedQuery.queryset_name}}" 
                                 style="cursor: pointer;color: #05aff8;"> {{savedQuery.queryset_name | slice:0:20}}</h5>
                                 <p class="card-text fs-11 fw-300 ">Modified on {{savedQuery.odified}} </p>
                               </div>
@@ -476,7 +476,7 @@
                                 <div class="dropdown-menu" ngbDropdownMenu>
                                     <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="54" [isBtn]="false"
                                     [buttonName]="' View Query'"
-                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id)"
+                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)"
                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="53" [isBtn]="false"
                                     [buttonName]="' Delete'"
@@ -613,13 +613,21 @@
           </div>
           <div class="">
             
+            <p class="fw-semibold mb-2 mt-3">Share/publish</p>
+            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="sharePublish($event)" [closeOnSelect]="true" [(ngModel)]="selectedRoleIds"  placeholder="Share or Publish">
+             <ng-option  value="public" selected>Public</ng-option>
+             <ng-option  value="private" selected>Private</ng-option>
+            </ng-select>
+       </div>
+          <div *ngIf="shareAsPrivate" class="">
+            
                <p class="fw-semibold mb-2 mt-3">Roles</p>
                <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)" [closeOnSelect]="false" [(ngModel)]="selectedRoleIds"  [multiple]="true" placeholder="Select Roles">
                 <ng-option *ngFor="let role of roleDetails" value="{{role.id}}" selected>{{role.role}}</ng-option>
                    
                </ng-select>
           </div>
-          <div class="">
+          <div *ngIf="shareAsPrivate" class="">
             
             <p class="fw-semibold mb-2 mt-3">Users</p>
             <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(click)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
@@ -627,6 +635,17 @@
               
             </ng-select>
        </div>
+       <div *ngIf="createUrl" class="">
+            
+        <p class="fw-semibold mb-2 mt-3">Url</p>
+        <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">svsv
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  x="0px" y="0px" viewBox="0 0 488.3 488.3" width="16px" height="16px" xml:space="preserve" (click)="copyUrl()">
+            <g>
+              <path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/>
+              <path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/>
+            </g>
+          </svg></button>
+   </div>
       </div>
       <div class="modal-footer">
         <button type="button" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
