@@ -355,3 +355,16 @@ span.abc-txt {
   height: 100%;
   width: 100%;
 }
+.ngx-slider .ngx-slider-bubble{
+  bottom: -49px !important;
+}
+
+.date-box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.date-box-width{
+  width: 100px;
+  border: 1px solid #b6b9b9;
+}
