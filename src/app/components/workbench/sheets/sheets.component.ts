@@ -264,8 +264,22 @@ export class SheetsComponent {
    }
 
 
-   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/')){
+   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/fileId/')){
     this.sheetsDashboard = true;
+    this.fromFileId = true;
+    console.log("landing page")
+    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
+      this.fileId = +atob(route.snapshot.params['id1']);
+      this.qrySetId = +atob(route.snapshot.params['id2']);
+      this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
+      this.dashboardId = +atob(route.snapshot.params['id4']);
+      console.log(this.retriveDataSheet_id)
+      // this.sheetRetrive();
+      }
+   } 
+   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/dbId/')){
+    this.sheetsDashboard = true;
+    this.fromFileId = false;
     console.log("landing page")
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
@@ -490,6 +504,11 @@ if(this.fromFileId){
         this.barOptions.dataLabels.formatter = this.formatNumber.bind(this);
         this.chartOptions3 = this.barOptions;
         this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+        this.chartOptions3.series.data = this.chartsRowData;
+        this.chartOptions3.xaxis.categories = this.chartsColumnData
+        let chart = new ApexCharts(document.querySelector('#barChart'), this.chartOptions3);
+chart.render();
+chart.updateOptions(this.chartOptions3);
         // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
         this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
@@ -2337,7 +2356,7 @@ tableMeasures = [] as any;
       next: (responce: any) => {
         this.sheetList = responce.data;
         this.sheetList.some((sheet)=>{
-          if(sheet.sheet_name === this.sheetName){
+          if(sheet.sheet_name === this.sheetName || this.retriveDataSheet_id == sheet.id){
             this.retriveDataSheet_id = sheet.id;
             return true;
           }
@@ -2816,8 +2835,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
         }
        if(responce.chart_id == 6){
-        this.chartsRowData = this.sheetResponce.results.barYaxis;
-        this.chartsColumnData = this.sheetResponce.results.barXaxis;
+        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
+        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
        if(this.isApexCharts){
         this.barOptions = this.sheetResponce.results.barOptions;
        } else {
@@ -2839,8 +2858,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
        }
        if(responce.chart_id == 24){
-        this.chartsRowData = this.sheetResponce.results.pieYaxis;
-        this.chartsColumnData = this.sheetResponce.results.pieXaxis;
+        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
+        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
         if(this.isApexCharts){
           this.pieOptions = this.sheetResponce.results.pieOptions;
         } else {
@@ -2862,8 +2881,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
        }
        if(responce.chart_id == 13){
-        this.chartsRowData = this.sheetResponce.results.lineYaxis;
-        this.chartsColumnData = this.sheetResponce.results.lineXaxis;
+        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
+        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
         if(this.isApexCharts){
           this.lineOptions = this.sheetResponce.results.lineOptions;
         } else {
@@ -2885,8 +2904,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
        }
        if(responce.chart_id == 17){
-        this.chartsRowData = this.sheetResponce.results.areaYaxis;
-        this.chartsColumnData = this.sheetResponce.results.areaXaxis;
+        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
+        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
         if(this.isApexCharts){
           this.areaOptions = this.sheetResponce.results.areaOptions;
         } else {
@@ -3048,8 +3067,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
        }
        if(responce.chart_id == 10){
-        this.chartsRowData = this.sheetResponce.results.donutYaxis;
-        this.chartsColumnData = this.sheetResponce.results.donutXaxis;
+        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
+        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
         this.donutOptions = this.sheetResponce.results.donutOptions;
         this.donutChart();
         this.bar = false;

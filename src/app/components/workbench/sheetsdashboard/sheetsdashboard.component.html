@@ -302,6 +302,7 @@
                                 </div>
                             </div>
                             </ng-template>
+                            @if(!sheetsNewDashboard){
                             <li [ngbNavItem]="2">
                                  <a ngbNavLink class="p-3">Filters</a>
                                     <ng-template ngbNavContent>
@@ -410,6 +411,7 @@
                                         </div>
                                     </ng-template>
                             </li>
+                          }
                         </ul>
                     </div>
                 </div>

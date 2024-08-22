@@ -181,7 +181,13 @@ export const admin: Routes = [
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
 },
 {
-  path: 'sheetsdashboard/sheets/:id1/:id2/:id3/:id4',
+  path: 'sheetsdashboard/sheets/fileId/:id1/:id2/:id3/:id4',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
+},
+{
+  path: 'sheetsdashboard/sheets/dbId:id1/:id2/:id3/:id4',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)

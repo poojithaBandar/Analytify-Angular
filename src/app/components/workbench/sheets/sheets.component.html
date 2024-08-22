@@ -144,7 +144,7 @@
                         }
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn ripple btn-primary" (click)="filterDataPut()">Apply</button>
+                          <button [disabled]="!(filterDataArray?.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataPut()">Apply</button>
                           <button
                             type="button"
                             class="btn ripple btn-secondary"
@@ -737,7 +737,7 @@
                                                     }
                                                     </div>
                                                     <div class="modal-footer">
-                                                      <button type="button" class="btn ripple btn-primary" (click)="filterDataEditPut()">Apply</button>
+                                                      <button [disabled]="!(filterDataArray?.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut()">Apply</button>
                                                       <button
                                                         type="button"
                                                         class="btn ripple btn-secondary"

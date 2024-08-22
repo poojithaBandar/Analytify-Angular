@@ -9,6 +9,7 @@ import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, Gridst
   GridsterComponentInterface,
  
 } from 'angular-gridster2';
+import * as _ from 'lodash';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { EChartsOption, number } from 'echarts';
@@ -34,7 +35,7 @@ import { LoaderService } from '../../../shared/services/loader.service';
 import { arrow } from '@popperjs/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading } from 'ckeditor5';
+import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading, ListUtils } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -500,6 +501,7 @@ export class SheetsdashboardComponent {
         rows: 1,
         y: 10,
         x: 10,
+        fileId : sheet.file_id,
         sheetType:sheet.sheet_type,
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
@@ -588,6 +590,7 @@ export class SheetsdashboardComponent {
         width: '400px',
       })
     }else{
+      this.assignOriginalDataToDashboard();
     const obj ={
       grid : this.gridType,
       height: this.heightGrid,
@@ -602,7 +605,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
     }as any;
     if(this.fromFileId){
       delete obj.server_id;
-      obj.file_id = [this.fileId]
+      obj.file_id = this.fileId
     }
     this.workbechService.saveDashboard(obj).subscribe({
       next:(data)=>{
@@ -701,6 +704,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
         width: '400px',
       })
     }else{
+    let dashboardData = this.assignOriginalDataToDashboard();
     const obj ={
       grid : this.gridType,
       height: this.heightGrid,
@@ -711,7 +715,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
       selected_sheet_ids:this.sheetIdsDataSet,
-      data:this.dashboard,
+      data:dashboardData,
       sheetTabs : this.sheetTabs
       
     }
@@ -733,17 +737,86 @@ selected_sheet_ids :this.sheetIdsDataSet,
   }
   }
 
+  assignOriginalDataToDashboard(){
+    let dashboardData = _.cloneDeep(this.dashboard);
+    dashboardData.forEach((item1:any) => {
+        if(item1.chartId == '6' && item1['originalData']){//bar
+        item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '24' && item1['originalData']){//pie
+          item1.chartOptions.labels = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '13' && item1['originalData']){//line
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '17' && item1['originalData']){//area
+          item1.chartOptions.labels = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '7' && item1['originalData']){//sidebyside
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '2' && item1['originalData']){//hstacked
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '5' && item1['originalData']){//stacked
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '4' && item1['originalData']){//barline
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.label = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '3' && item1['originalData']){//hgrouped
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '8' && item1['originalData']){//multiline
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+    });
+   return  dashboardData;
+  }
+
   sheetsDataWithQuerysetIdTest(){
     let obj ;
-    if(this.fileId){
+    if(this.fileId && this.fileId.length > 0){
       obj ={
-        file_id:this.fileId,
-        queryset_id:this.qrySetId
+        file_id:this.fileId[0],
+        queryset_id:this.qrySetId[0]
       }
     } else {
       obj ={
-        server_id:this.databaseId,
-      queryset_id:this.qrySetId
+        server_id:this.databaseId[0],
+      queryset_id:this.qrySetId[0]
       }
     }
   
@@ -759,6 +832,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
       y: 0,
       x: 0,
       sheetType:sheet.sheet_type,
+      databaseId : sheet.server_id,
+      fileId : sheet.file_id,
+      qrySetId : sheet.queryset_id,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
@@ -802,6 +878,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
+      databaseId : sheet.server_id,
+      fileId : sheet.file_id,
+      qrySetId : sheet.queryset_id,
       data: { title: sheet.sheet_name, content: 'Content of card  New', sheetTagName: sheet.sheet_tag_name?sheet.sheet_tag_name:sheet.sheet_name },
       selectedSheet : sheet.selectedSheet,
       chartOptions: sheet.sheet_type === 'Chart' ? {
@@ -1029,6 +1108,7 @@ allowDrop(ev : any): void {
         chartType:copy.chartType,
         databaseId : copy.databaseId,
         qrySetId : copy.qrySetId,
+        fileId : copy.fileId,
         chartId:copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
@@ -1126,14 +1206,26 @@ allowDrop(ev : any): void {
 
   viewSheet(sheetdata:any){
     let sheetId = sheetdata.sheetId;
-    this.databaseId = sheetdata.databaseId;
-    this.qrySetId = sheetdata.qrySetId;
-    const encodedServerId = btoa(this.databaseId.toString());
+if( sheetdata.fileId){
+  this.fileId = sheetdata.fileId;
+  this.qrySetId = sheetdata.qrySetId;
+    const encodedServerId = btoa(this.fileId.toString());
     const encodedQuerySetId = btoa(this.qrySetId.toString());
     const encodedSheetId = btoa(sheetId.toString());
     const encodedDashboardId = btoa(this.dashboardId.toString());
 
-    this.router.navigate(['/workbench/sheetsdashboard/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
+    this.router.navigate(['/workbench/sheetsdashboard/sheets/fileId/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
+} else {
+  this.databaseId = sheetdata.databaseId;
+  this.qrySetId = sheetdata.qrySetId;
+  const encodedServerId = btoa(this.databaseId.toString());
+  const encodedQuerySetId = btoa(this.qrySetId.toString());
+  const encodedSheetId = btoa(sheetId.toString());
+  const encodedDashboardId = btoa(this.dashboardId.toString());
+
+  this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
+}
+    
   }
   
   changedOptions() {
@@ -2351,60 +2443,84 @@ getFilteredData(){
       this.dashboard.forEach((item1:any) => {
         if(item1.sheetId == item.sheet_id){
           if(item.chart_id == '6'){//bar
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
           item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
           item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '24'){//pie
+            if(!item1.originalData){
+              item1['originalData'] = {categories:item1.chartOptions.labels , data:this.filteredRowData[0].data};
+            }
             item1.chartOptions.labels = this.filteredColumnData[0].values;
           item1.chartOptions.series = this.filteredRowData[0].data;
           }
           if(item.chart_id == '13'){//line
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
             item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
           item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '17'){//area
+            if(!item1.originalData){
+              item1['originalData'] = {categories:item1.chartOptions.labels , data:this.filteredRowData[0].data};
+            }
             item1.chartOptions.labels = this.filteredColumnData[0].values;
           item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '7'){//sidebyside
             const dimensions: Dimension[] = this.filteredColumnData
             const categories = this.flattenDimensions(dimensions)
-
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
             item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
             item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '2'){//hstacked
             const dimensions: Dimension[] = this.filteredColumnData
             const categories = this.flattenDimensions(dimensions)
-
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
             item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
             item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '5'){//stacked
             const dimensions: Dimension[] = this.filteredColumnData
             const categories = this.flattenDimensions(dimensions)
-
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
             item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
             item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '4'){//barline
             const dimensions: Dimension[] = this.filteredColumnData
             const categories = this.flattenDimensions(dimensions)
-
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
             item1.chartOptions.label = this.filteredColumnData[0].values;
             item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '3'){//hgrouped
             const dimensions: Dimension[] = this.filteredColumnData
             const categories = this.flattenDimensions(dimensions)
-            
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
             item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
             item1.chartOptions.series = this.filteredRowData;
           }
           if(item.chart_id == '8'){//multiline
             const dimensions: Dimension[] = this.filteredColumnData
             const categories = this.flattenDimensions(dimensions)
-            
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+            }
             item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
             item1.chartOptions.series = this.filteredRowData;
           }
@@ -2576,6 +2692,7 @@ dropTest2(event: any) {
         chartType:sheet.chart,
         chartId:sheet.chart_id,
         databaseId : sheet.server_id,
+        fileId : sheet.file_id,
         qrySetId : sheet.queryset_id,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
         selectedSheet : sheet.selectedSheet,
