@@ -29,11 +29,11 @@ export class InsightsButtonComponent {
   }
 
   ngOnInit(){
-    // if(this.previledgeIdsList && this.previledgeIdsList.length > 0) {
-    //   this.displayButton = this.rolesPrevilidgesService.isAnyNumberPresent(this.previledgeIdsList);
-    // } else {
-    //   this.displayButton = this.rolesPrevilidgesService.userHasPriviledge(this.previledgeId);
-    // }
+    if(this.previledgeIdsList && this.previledgeIdsList.length > 0) {
+      this.displayButton = this.rolesPrevilidgesService.isAnyNumberPresent(this.previledgeIdsList);
+    } else {
+      this.displayButton = this.rolesPrevilidgesService.userHasPriviledge(this.previledgeId);
+    }
   }
 
   onBtnClick(){
