@@ -18,6 +18,7 @@ import ApexCharts from 'apexcharts';
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { WorkbenchService } from '../workbench.service';
 import { SharedModule } from '../../../shared/sharedmodule';
+import * as _ from 'lodash';
 import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
@@ -526,6 +527,7 @@ export class SheetsdashboardComponent {
         rows: 1,
         y: 10,
         x: 10,
+        fileId : sheet.file_id,
         sheetType:sheet.sheet_type,
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
@@ -556,8 +558,8 @@ export class SheetsdashboardComponent {
   }
   getSavedDashboardData(){
     const obj ={
-      // queryset_id:this.qrySetId,
-      // server_id:this.databaseId,
+      queryset_id:this.qrySetId,
+      server_id:this.databaseId,
       dashboard_id:this.dashboardId
     }
     this.workbechService.getSavedDashboardData(obj).subscribe({
@@ -569,8 +571,8 @@ export class SheetsdashboardComponent {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-          this.fileId = data.file_id;
-          this.databaseId = data.server_id;
+        this.fileId = data.file_id;
+        this.databaseId = data.server_id;
 
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
@@ -617,6 +619,7 @@ export class SheetsdashboardComponent {
         width: '400px',
       })
     }else{
+      this.assignOriginalDataToDashboard();
     const obj ={
       grid : this.gridType,
       height: this.heightGrid,
@@ -631,7 +634,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
     }as any;
     if(this.fromFileId){
       delete obj.server_id;
-      obj.file_id = [this.fileId]
+      obj.file_id = this.fileId
     }
     this.workbechService.saveDashboard(obj).subscribe({
       next:(data)=>{
@@ -730,6 +733,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
         width: '400px',
       })
     }else{
+      let dashboardData = this.assignOriginalDataToDashboard();
     const obj ={
       grid : this.gridType,
       height: this.heightGrid,
@@ -740,7 +744,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
       selected_sheet_ids:this.sheetIdsDataSet,
-      data:this.dashboard,
+      data : dashboardData,
       sheetTabs : this.sheetTabs
       
     }
@@ -762,17 +766,86 @@ selected_sheet_ids :this.sheetIdsDataSet,
   }
   }
 
+  assignOriginalDataToDashboard(){
+    let dashboardData = _.cloneDeep(this.dashboard);
+    dashboardData.forEach((item1:any) => {
+        if(item1.chartId == '6' && item1['originalData']){//bar
+        item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '24' && item1['originalData']){//pie
+          item1.chartOptions.labels = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '13' && item1['originalData']){//line
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '17' && item1['originalData']){//area
+          item1.chartOptions.labels = item1['originalData'].categories;
+        item1.chartOptions.series = item1['originalData'].data;
+        delete item1['originalData'];
+        }
+        if(item1.chartId == '7' && item1['originalData']){//sidebyside
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '2' && item1['originalData']){//hstacked
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '5' && item1['originalData']){//stacked
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '4' && item1['originalData']){//barline
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.label = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '3' && item1['originalData']){//hgrouped
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '8' && item1['originalData']){//multiline
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
+          item1.chartOptions.series = item1['originalData'].data;
+          delete item1['originalData'];
+        }
+    });
+   return  dashboardData;
+  }
+
   sheetsDataWithQuerysetIdTest(){
     let obj ;
-    if(this.fileId){
+    if(this.fileId && this.fileId.length > 0){
       obj ={
-        file_id:this.fileId,
-        queryset_id:this.qrySetId
+        file_id:this.fileId[0],
+        queryset_id:this.qrySetId[0]
       }
     } else {
       obj ={
-        server_id:this.databaseId,
-      queryset_id:this.qrySetId
+      server_id:this.databaseId[0],
+      queryset_id:this.qrySetId[0]
       }
     }
   
@@ -788,6 +861,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
       y: 0,
       x: 0,
       sheetType:sheet.sheet_type,
+      databaseId : sheet.server_id,
+      fileId : sheet.file_id,
+      qrySetId : sheet.queryset_id,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
@@ -831,6 +907,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
+      databaseId : sheet.server_id,
+      fileId : sheet.file_id,
+      qrySetId : sheet.queryset_id,
       data: { title: sheet.sheet_name, content: 'Content of card  New', sheetTagName: sheet.sheet_tag_name?sheet.sheet_tag_name:sheet.sheet_name },
       selectedSheet : sheet.selectedSheet,
       chartOptions: sheet.sheet_type === 'Chart' ? {
@@ -1058,6 +1137,7 @@ allowDrop(ev : any): void {
         chartType:copy.chartType,
         databaseId : copy.databaseId,
         qrySetId : copy.qrySetId,
+        fileId : copy.fileId,
         chartId:copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
@@ -1065,6 +1145,12 @@ allowDrop(ev : any): void {
         selectedSheet : true,
         chartData:copy.chartOptions?.chartData || [],
       };
+      this.qrySetId.push(copy.qrySetId);
+      if(copy.fileId){
+        this.fileId.push(copy.fileId);
+      } else {
+        this.databaseId.push(copy.databaseId);
+      }
     //   if(element.chartOptions?.chart?.type === 'bar'){
     //      element['chartData'].forEach((item: { name: any; value: any; }) => {
     //       this.colArray.push(item.name);
@@ -1153,17 +1239,29 @@ allowDrop(ev : any): void {
 }
 
 
-  viewSheet(sheetdata:any){
-    let sheetId = sheetdata.sheetId;
-    this.databaseId = sheetdata.databaseId;
-    this.qrySetId = sheetdata.qrySetId;
-    const encodedServerId = btoa(this.databaseId.toString());
-    const encodedQuerySetId = btoa(this.qrySetId.toString());
-    const encodedSheetId = btoa(sheetId.toString());
-    const encodedDashboardId = btoa(this.dashboardId.toString());
+viewSheet(sheetdata:any){
+  let sheetId = sheetdata.sheetId;
+if( sheetdata.fileId){
+this.fileId = sheetdata.fileId;
+this.qrySetId = sheetdata.qrySetId;
+  const encodedServerId = btoa(this.fileId.toString());
+  const encodedQuerySetId = btoa(this.qrySetId.toString());
+  const encodedSheetId = btoa(sheetId.toString());
+  const encodedDashboardId = btoa(this.dashboardId.toString());
 
-    this.router.navigate(['/workbench/sheetsdashboard/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
-  }
+  this.router.navigate(['/workbench/sheetsdashboard/sheets/fileId/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
+} else {
+this.databaseId = sheetdata.databaseId;
+this.qrySetId = sheetdata.qrySetId;
+const encodedServerId = btoa(this.databaseId.toString());
+const encodedQuerySetId = btoa(this.qrySetId.toString());
+const encodedSheetId = btoa(sheetId.toString());
+const encodedDashboardId = btoa(this.dashboardId.toString());
+
+this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
+}
+
+}
   
   changedOptions() {
     if (this.options.api && this.options.api.optionsChanged && this.options.api.resize) {
@@ -1182,6 +1280,15 @@ allowDrop(ev : any): void {
       let removeIndex = this.dashboard.findIndex((sheet:any) => item.sheetId == sheet.sheetId);
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
+        let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
+        this.qrySetId.splice(popqryIndex, 1);
+      if(item.fileId){
+        let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
+        this.fileId.splice(popIndex, 1);
+      } else {
+        let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
+        this.databaseId.splice(popIndex, 1);
+      }
       }
     }
     this.setDashboardNewSheets(item.sheetId, false);
@@ -1194,6 +1301,9 @@ allowDrop(ev : any): void {
 
   resetDashboard() {
     this.dashboard = [];
+    this.qrySetId = [];
+    this.databaseId = [];
+    this.fileId = [];
     this.disableDashboardUpdate = true;
     this.dashboardNew.forEach(sheet => {
       sheet['selectedSheet'] = false;
@@ -2354,6 +2464,7 @@ getFilteredData(){
     id:this.keysArray,
     input_list:this.dataArray
   }
+  if(this.keysArray && this.keysArray.length > 0){
   this.workbechService.getFilteredData(Obj).subscribe({
     next:(data)=>{
       console.log(data);
@@ -2379,74 +2490,7 @@ getFilteredData(){
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
-      this.dashboard.forEach((item1:any) => {
-        if(item1.sheetId == item.sheet_id){
-          if(item.chart_id == '6'){//bar
-          item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-          item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '24'){//pie
-            item1.chartOptions.labels = this.filteredColumnData[0].values;
-          item1.chartOptions.series = this.filteredRowData[0].data;
-          }
-          if(item.chart_id == '13'){//line
-            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-          item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '17'){//area
-            item1.chartOptions.labels = this.filteredColumnData[0].values;
-          item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '7'){//sidebyside
-            const dimensions: Dimension[] = this.filteredColumnData
-            const categories = this.flattenDimensions(dimensions)
-
-            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-            item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '2'){//hstacked
-            const dimensions: Dimension[] = this.filteredColumnData
-            const categories = this.flattenDimensions(dimensions)
-
-            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-            item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '5'){//stacked
-            const dimensions: Dimension[] = this.filteredColumnData
-            const categories = this.flattenDimensions(dimensions)
-
-            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-            item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '4'){//barline
-            const dimensions: Dimension[] = this.filteredColumnData
-            const categories = this.flattenDimensions(dimensions)
-
-            item1.chartOptions.label = this.filteredColumnData[0].values;
-            item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '3'){//hgrouped
-            const dimensions: Dimension[] = this.filteredColumnData
-            const categories = this.flattenDimensions(dimensions)
-            
-            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-            item1.chartOptions.series = this.filteredRowData;
-          }
-          if(item.chart_id == '8'){//multiline
-            const dimensions: Dimension[] = this.filteredColumnData
-            const categories = this.flattenDimensions(dimensions)
-            
-            item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-            item1.chartOptions.series = this.filteredRowData;
-          }
-
-              // this.initializeChart(item1);
-              this.filteredColumnData =[]
-              this.filteredRowData=[]
-
-          console.log('filtered dashboard-data',item1)
-        }
-      })
+      this.setDashboardSheetData(item);
     });
       },
     error:(error)=>{
@@ -2458,8 +2502,105 @@ getFilteredData(){
         width: '400px',
       })
     }
+  });
+}
+}
+
+setDashboardSheetData(item:any){
+  this.dashboard.forEach((item1:any) => {
+    if(item1.sheetId == item.sheet_id){
+      if(item.chart_id == '6'){//bar
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+      item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+      item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '24'){//pie
+        if(!item1.originalData){
+          item1['originalData'] = {categories:item1.chartOptions.labels , data:this.filteredRowData[0].data};
+        }
+        item1.chartOptions.labels = this.filteredColumnData[0].values;
+      item1.chartOptions.series = this.filteredRowData[0].data;
+      }
+      if(item.chart_id == '13'){//line
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+      item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '17'){//area
+        if(!item1.originalData){
+          item1['originalData'] = {categories:item1.chartOptions.labels , data:this.filteredRowData[0].data};
+        }
+        item1.chartOptions.labels = this.filteredColumnData[0].values;
+      item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '7'){//sidebyside
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '2'){//hstacked
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '5'){//stacked
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '4'){//barline
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.label = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '3'){//hgrouped
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '8'){//multiline
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+
+          // this.initializeChart(item1);
+          this.filteredColumnData =[]
+          this.filteredRowData=[]
+
+      console.log('filtered dashboard-data',item1)
+    }
   })
 }
+
 closeFilterModal(){
   this.modalService.dismissAll('close')
 }
@@ -2477,8 +2618,49 @@ deleteDashboardFilter(id:any){
       console.log(data);
       this.DahboardListFilters =  this.DahboardListFilters.filter((obj : any) => obj.dashboard_filter_id !== id);
       // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
-     
-    },
+      let deletedFilterSheetsList = data.sheet_ids;
+      let reqObj : any = {
+        "dashboard_id":this.dashboardId,
+        "sheet_ids" : deletedFilterSheetsList
+      };
+      this.workbechService.dashboardFilterDeleteFetchSheetData(reqObj).subscribe({
+        next:(data : any)=>{
+          console.log(data);
+          delete this.storeSelectedColData.test[id];
+          data.sql_queries.forEach((item: any) => {
+            item.columns.forEach((res:any) => {      
+              let obj1={
+                name:res.column,
+                values: res.result
+              }
+              this.filteredColumnData.push(obj1);
+              console.log('filtercolumn',this.filteredColumnData)
+            });
+            item.rows.forEach((res:any) => {
+              let obj={
+                name: res.column,
+                data: res.result
+              }
+              this.filteredRowData.push(obj);
+              console.log('filterowData',this.filteredRowData)
+            });
+            this.setDashboardSheetData(item);
+          });
+          this.getFilteredData();
+          // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
+
+        },
+        error:(error)=>{
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+    });
+  },
     error:(error)=>{
       console.log(error)
       Swal.fire({
@@ -2488,8 +2670,9 @@ deleteDashboardFilter(id:any){
         width: '400px',
       })
     }
-  })
+  });
 }
+  
 //edit filter
 addfilterOnEdit(){
   this.editFilters = false;
@@ -2720,6 +2903,7 @@ dropTest2(event: any) {
         chartType:sheet.chart,
         chartId:sheet.chart_id,
         databaseId : sheet.server_id,
+        fileId : sheet.file_id,
         qrySetId : sheet.queryset_id,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
         selectedSheet : sheet.selectedSheet,
@@ -2784,46 +2968,22 @@ dropTest2(event: any) {
   addSheetIds(data:any,panel : any){
     data.is_selected = !data.is_selected;
     let dataSet = new Set(this.sheetIdsDataSet);
-    let querySetIds = new Set(this.qrySetId);
-    let databaseIds = new Set(this.databaseId);
-    let fileIds = new Set(this.fileId);
     if(data.is_selected){
       dataSet.add(data.sheet_id);
-      querySetIds.add(data.queryset_id);
-      if(data.file_id){
-        fileIds.add(data.file_id);
-      } else {
-        databaseIds.add(data.database_id);
-      }
       const allSheetDataTrue = panel.sheet_data.every((item:any) => item.is_selected == true);
       if(allSheetDataTrue){
         panel.is_selected = true;
       }
     } else {
       dataSet.delete(data.sheet_id);
-      querySetIds.delete(data.queryset_id);
-      if(data.file_id){
-        fileIds.delete(data.file_id);
-      } else {
-        databaseIds.delete(data.database_id);
-      }
       panel.is_selected = false;
     }
     this.sheetIdsDataSet = Array.from(dataSet);
-    this.qrySetId = Array.from(querySetIds);
-    if(data.file_id){
-      this.fileId = Array.from(fileIds);
-    } else {
-      this.databaseId = Array.from(databaseIds);
-    }
   }
 
   checkAllChilds(panel: any){
     panel.is_selected = !panel.is_selected;
     let dataSet = new Set(this.sheetIdsDataSet);
-    let querySetIds = new Set(this.qrySetId);
-    let databaseIds = new Set(this.databaseId);
-    let fileIds = new Set(this.fileId);
     panel.sheet_data.forEach((sheet : any) =>{
       if(panel.is_selected){
         sheet.is_selected = true;
@@ -2834,27 +2994,6 @@ dropTest2(event: any) {
       }
     });
     this.sheetIdsDataSet = Array.from(dataSet);
-    if(panel.is_selected){
-      querySetIds.add(panel.queryset_id);
-      if(panel.file_id){
-        fileIds.add(panel.file_id);
-      } else {
-        databaseIds.add(panel.database_id);
-      }
-    } else {
-      querySetIds.delete(panel.queryset_id);
-      if(panel.file_id){
-        fileIds.delete(panel.file_id);
-      } else {
-        databaseIds.delete(panel.database_id);
-      }
-    }
-    this.qrySetId = Array.from(querySetIds);
-      if(panel.file_id){
-        this.fileId = Array.from(fileIds);
-      } else {
-        this.databaseId = Array.from(databaseIds);
-      }
   }
 
 }
