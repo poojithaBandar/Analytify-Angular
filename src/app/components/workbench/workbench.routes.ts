@@ -6,6 +6,7 @@ import { PagesService } from '../pages/pages.service';
 import { authGuard } from '../../auth.guard';
 
 export const admin: Routes = [
+
   {path:'workbench',children:[ {
    path: 'work-bench/new-connections',
    canActivate:[authGuard],
@@ -14,10 +15,10 @@ export const admin: Routes = [
  },
  {
   path: 'work-bench/view-connections',
-  canActivate:[authGuard],
   loadComponent: () =>
     import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
 },
+
 //  {
 //   path: 'database-connection/tables/:id',
 //   canActivate:[authGuard],
@@ -50,7 +51,13 @@ export const admin: Routes = [
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
-  path: 'database-connection/savedQuery/:id1/:id2',
+  path: 'database-connection/savedQuery/fileId/:id1/:id2',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./database/database.component').then((m)=> m.DatabaseComponent)
+},
+{
+  path: 'database-connection/savedQuery/dbId/:id1/:id2',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
@@ -181,16 +188,15 @@ export const admin: Routes = [
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
 },
 {
-  path: 'sheetsdashboard/sheets/fileId/:id1/:id2/:id3/:id4',
+  path: 'sheetsdashboard/sheets/:id1/:id2/:id3/:id4',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
-  path: 'sheetsdashboard/sheets/dbId/:id1/:id2/:id3/:id4',
-  canActivate:[authGuard],
+  path: 'public/dashboard',
   loadComponent: () =>
-    import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
+    import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
 },
  ]}
  ];

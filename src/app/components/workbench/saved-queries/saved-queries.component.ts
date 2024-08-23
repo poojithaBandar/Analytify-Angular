@@ -126,10 +126,18 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     this.pageNo=page;
     this.getSavedQueries();
   }
-  gotoSavedQuery(dbId:any,qrySetId:any){
+  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
+    if(fileId === null){
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
 
-    this.route.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    this.route.navigate(['workbench/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
+    }
+    if(dbId === null){
+      const encodedFileId = btoa(fileId.toString());
+      const encodedQuerySetId = btoa(qrySetId.toString());
+  
+      this.route.navigate(['workbench/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+    }
   }
 }

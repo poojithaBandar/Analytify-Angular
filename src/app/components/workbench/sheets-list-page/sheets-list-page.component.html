@@ -181,97 +181,94 @@
             currentPage: page,
             totalItems: totalItems
           }"  class="col-md-12 col-xl-3">
-                <div class="card shadow-none">
-                <div class="card-body card-box-shadow">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row border-bottom">
-                                <div class="col mb-1">
-                                    <div class="d-sm-flex align-items-center">
-                                      <div class="user-image">
-                                          <span class="avatar avatar-xl rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 1" src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 6" src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 17" src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 13" src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 24" src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 7" src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 5" src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 4" src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 2" src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 3" src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 8" src="./assets/images/Tiled view sheet icons/multiline-tiled-icon.jpg" alt="" class="rounded-circle">
-                                            <img *ngIf="sheets.chart_id === 10" src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt="" class="rounded-circle">
-                                          </span>
-                                      </div>
-                                        <div class="ms-2 mt-sm-0 mt-2">
-                                          <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
-                                            <h6 class="mb-1">
-                                                <a (click)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
-                                            </h6>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                  <div class="d-flex justify-content-end p-1" ngbDropdown>
-                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                        aria-haspopup="true" aria-expanded="false" class=""><i
-                                            class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                    </a>
-                                    <div class="dropdown-menu" ngbDropdownMenu>
-                                      <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="18" [isBtn]="false"
-                                        [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
-                                        [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                                      <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'"
-                                        [previledgeId]="19" [isBtn]="false" [tabIndex]="0"
-                                        (btnClickEvent)="deleteSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
-                                        [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                                    </div>
-                                </div>
-                              </div>
+          <div class="card card-box-shadow ">
+            <div class="card-header tiled-header-bg">
+              <div class="d-sm-flex align-items-center">
+                <div class="user-image">
+                    <span class="avatar avatar rounded-circle">
+                      <img *ngIf="sheets.chart_id === 1" src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 6" src="./assets/images/Tiled view sheet icons/bar-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 17" src="./assets/images/Tiled view sheet icons/area-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 13" src="./assets/images/Tiled view sheet icons/line-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 24" src="./assets/images/Tiled view sheet icons/pie-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 7" src="./assets/images/Tiled view sheet icons/sideBar-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 5" src="./assets/images/Tiled view sheet icons/Stacked-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 4" src="./assets/images/Tiled view sheet icons/BarLine-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 2" src="./assets/images/Tiled view sheet icons/Hstacked-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 3" src="./assets/images/Tiled view sheet icons/HGrouped-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 8" src="./assets/images/Tiled view sheet icons/multiline-tiled-icon.jpg" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 10" src="./assets/images/Tiled view sheet icons/donut-tiled-icon.jpg" alt="" class="rounded-circle">
+                    </span>
+                </div>
+                  <div class="ms-2 mt-sm-0 mt-2">
+                    <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
+                      <h6 class="mb-1">
+                          <a (click)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
+                      </h6>
+                      
+                  </div>
+              </div>
+
+              <div class="col-auto">
+                <div class="d-flex justify-content-end p-1" ngbDropdown>
+                  <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                      aria-haspopup="true" aria-expanded="false" class=""><i
+                          class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                  </a>
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="18" [isBtn]="false"
+                      [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                      [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                    <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'"
+                      [previledgeId]="19" [isBtn]="false" [tabIndex]="0"
+                      (btnClickEvent)="deleteSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                      [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
+                  </div>
+              </div>
+            </div>
+            </div>
+            <div class="card-body ">
+                <div class="row">
+                  
+                    <div  class="col-md-12">
+                      <div class="row">
+                            <div class="col-md-6">
+                                <span class="fw-semibold fs-14">Created by  </span>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="fs-14">{{sheets.created_by}}</span>
                             </div>
                         </div>
-                        <div  class="col-md-12 mt-2">
-                          <div class="p-2 ">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created by  </span>
-                                </div>
-                                <div class="col-md-6">
-                                    <span class="fs-14">{{sheets.created_by}}</span>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <span class="fw-semibold fs-14">Created on :</span>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created on :</span>
-                                </div>
-                                <div class="col-md-6">
-                                    <span class="fs-14">{{sheets.created}}</span>
-                                </div>
+                            <div class="col-md-6">
+                                <span class="fs-14">{{sheets.created}}</span>
                             </div>
-                            <div class="row">
-                              <div class="col-md-6">
-                                  <span class="fw-semibold fs-14">Last Modified : </span>
-                              </div>
-                              <div class="col-md-6">
-                                  <span class="fs-14">{{sheets.Modified}}</span>
-                              </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                              <span class="fw-semibold fs-14">Last Modified : </span>
                           </div>
-                          <div class="row">
-                            <div class="col-md-6">
-                                <span class="fw-semibold fs-14">DataBase Name : </span>
-                            </div>
-                            <div class="col-md-6">
-                                <span class="fs-14">{{sheets.database_name}}</span>
-                            </div>
+                          <div class="col-md-6">
+                              <span class="fs-14">{{sheets.Modified}}</span>
+                          </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                            <span class="fw-semibold fs-14">DataBase Name : </span>
                         </div>
+                        <div class="col-md-6">
+                            <span class="fs-14">{{sheets.database_name}}</span>
                         </div>
-                        </div>
-                       
                     </div>
+                    
+                    </div>
+                  
                 </div>
-                </div>
+            </div>
+           </div> 
               </div>
             
     </div>

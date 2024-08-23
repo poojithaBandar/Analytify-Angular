@@ -38,7 +38,10 @@ usersOnSelectedRole =[] as any;
 selectedUserIds = [] as any;
 selectedUserIdsToNumbers = [] as any;
 dashboardPropertyTitle :any;
-dashboardId :any
+dashboardId :any;
+createUrl =false;
+shareAsPrivate = false;
+UrlCopy:string | null = null;
 @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef){
@@ -206,7 +209,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     const encodedId = btoa(id.toString());
     this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
   }
-  deleteDashboard(serverId:any,qurysetId:any,dashboardId:any){
+  deleteDashboard(dashboardId:any){
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -217,7 +220,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
       confirmButtonText: 'Yes, delete it!'
     }).then((result)=>{
       if(result.isConfirmed){
-        this.workbechService.deleteDashboard(serverId,qurysetId,dashboardId)
+        this.workbechService.deleteDashboard(dashboardId)
         .subscribe(
           {
             next:(data:any) => {
@@ -380,11 +383,23 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.router.navigate(['/workbench/saved-queries']) 
 
   }
-  gotoSavedQuery(dbId:any,qrySetId:any){
-    const encodedServerId = btoa(dbId.toString());
-    const encodedQuerySetId = btoa(qrySetId.toString());
+  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
+    // const encodedServerId = btoa(dbId.toString());
+    // const encodedQuerySetId = btoa(qrySetId.toString());
 
-    this.router.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    // this.router.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    if(fileId === null){
+      const encodedServerId = btoa(dbId.toString());
+      const encodedQuerySetId = btoa(qrySetId.toString());
+  
+      this.router.navigate(['workbench/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
+      }
+      if(dbId === null){
+        const encodedFileId = btoa(fileId.toString());
+        const encodedQuerySetId = btoa(qrySetId.toString());
+    
+        this.router.navigate(['workbench/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+      }
   }
   loadNewDashboard(){
     this.router.navigate(['/workbench/sheetsdashboard'])
@@ -457,7 +472,27 @@ getUsersforRole(){
     }
   })
 }
-
+///share publish
+sharePublish(value:any){
+console.log(value);
+if(value === 'public'){
+  this.createUrl = true;
+  this.shareAsPrivate = false
+} else if(value === 'private'){
+  this.createUrl = false;
+  this.shareAsPrivate = true;
+}
+}
+copyUrl(): void {
+  this.UrlCopy = 'adjchbsd'
+  navigator.clipboard.writeText(this.UrlCopy).then(() => {
+    this.UrlCopy = 'Message copied to clipboard!';
+    setTimeout(() => this.UrlCopy = null, 3000); // Clear message after 3 seconds
+  }).catch(err => {
+    console.error('Could not copy text: ', err);
+    this.UrlCopy = 'Failed to copy message.';
+  });
+}
 onRolesChange(selected: number[]) {
   this.selectedRoleIds = selected
    this.selectedRoleIdsToNumbers = selected.map(value => Number(value));

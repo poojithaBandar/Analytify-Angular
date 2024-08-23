@@ -134,14 +134,63 @@
                 
                         </div>-->
                         <div class="modal-body" style="height: 500px; overflow: scroll;">
-                            @for(data of filterData;track data){
+                            <div class="card panel panel-primary">
+                                <div class="tab-menu-heading tab-menu-heading-boxed">
+                                    <div class="tabs-menu-boxed">
+                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                            <li [ngbNavItem]="1">
+                                                <a ngbNavLink class="p-3">All</a>
+                                                <ng-template ngbNavContent>
+                                                    <div class="tab-pane active" id="activetabs">
+                                                        @for(data of filterData;track data){
+                                                            @if(data?data:''){
+                                                        <div class="form-check" >
+                                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
+                                                            <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                                                        </div>
+                                                     }
+                                                    }
+                                                    </div>
+                                                </ng-template>
+                                            </li>
+                                            <li [ngbNavItem]="2">
+                                                <a ngbNavLink class="p-3">Range of dates</a>
+                                                <ng-template ngbNavContent>
+                                                    <div class="tab-pane" id="linktabs">
+                                                        <div class="card-body">
+                                                            <div class="date-box">
+                                                                <input type="text" id="input" class="form-control date-box-width">
+                                                                <input type="text" id="input" class="form-control date-box-width">
+                                                            </div>
+                                                            <div id="merging-tooltips">
+                                                              <ngx-slider 
+                                                              [(value)]="minValue2"
+                                                              [(highValue)]="maxValue2"
+                                                              [options]="options"
+                                                            ></ngx-slider>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </li>
+                                        </ul>
+                                        <div class="panel-body tabs-menu-body p-1" style="height: 578px;">
+                                            <div class="tab-content">
+                                                <div [ngbNavOutlet]="nav"></div>
+                    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @for(data of filterData;track data){
                                 @if(data?data:''){
                             <div class="form-check" >
                                 <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
                                 <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
                             </div>
                          }
-                        }
+                        } -->
                         </div>
                         <div class="modal-footer">
                           <button [disabled]="!(filterDataArray?.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataPut()">Apply</button>
@@ -168,8 +217,8 @@
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
                                 <div class="title-container">
-                                    <input *ngIf="!editor" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (keydown)="sheetNameChange(sheetTitle,$event)">
-                                    <span *ngIf="editor" id="htmlContent" [innerHtml]="sheetTagName" style="padding-top: 1.5%;"></span>
+                                    <input *ngIf="!retriveDataSheet_id" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
+                                    <span *ngIf="retriveDataSheet_id" id="htmlContent" [innerHtml]="sheetTagTitle" style="padding-top: 1.5%;"></span>
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
                                     </span>
@@ -177,10 +226,10 @@
                                 <div *ngIf="editor" class="popup">
                                     <div class="popup-content">
                                     <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"
-                                        (keydown)="sheetNameChange(sheetTitle, $event)">
+                                        (input)="sheetNameChange(sheetTagName, $event)">
                                     </ckeditor>
                                     <div class="buttons">
-                                        <button class="btn btn-danger" (click)="toggleEditor()">Close</button>
+                                        <!-- <button class="btn btn-danger" (click)="toggleEditor()">Close</button> -->
                                         <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor()">Update</button>
                                     </div>
                                     </div>
@@ -223,13 +272,51 @@
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
                                                 <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
+                                                    <a class="btn btn-outline-light mx-0 mb-2" (click)="openDateFormatModal(dateFunctionsModal)" style="text-align: left !important;"> Date</a>
                                                     <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index,columns.column)"> Remove</a> 
                                                     
                                                 </div>
 
                                             </a>
                                         </div>
-                                    
+                                        <ng-template #dateFunctionsModal let-modal>
+                                            <div class="modal-header p-2 bg-light">
+                                              <h6 class="modal-title">Date Functions</h6>
+                                              <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                                              </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="card-body p-0">
+                                                    <div class="column-card">
+                                                        <p class="fw-semibold mb-1 ">Row : {{columns.column}}</p>
+                                                       </div>
+                                                   <div class="aggregate-card mt-3">
+                                                    <p class="fw-semibold mb-1 ">Date Extractions</p>
+                                                    <select  class="form-control" [(ngModel)]="dateValue" (change)="dateFormat(columns,index,dateValue)">
+                                                        <option [selected] value="-Select-">-Select-</option>
+                                                        <option value="year">Year           (2024)</option>
+                                                        <option value="month">Month          (January)</option>
+                                                        <option value="day">Day            (1-31)</option>
+                                                        <option value="weekdays">Week Day       (1-7)</option>
+                                                        <option value="week numbers">Week Number  (0-52)</option>
+                                                        <option value="weekname">Week Name    (Mon-Sun)</option>
+                                                        <option value="">None</option>
+                                                      </select>
+                                                   </div>
+                                                </div>
+                                           
+                                            </div>
+                                           <!-- <div class="modal-footer p-2">
+                                              <button type="button" class="btn ripple btn-primary">Save</button>
+                                              <button
+                                                type="button"
+                                                class="btn ripple btn-secondary"
+                                                (click)="modal.close('Save click')"
+                                              >
+                                                Close
+                                              </button>
+                                            </div>-->
+                                          </ng-template>
                                     </div>
                                     }
                                 </div> 
@@ -605,7 +692,7 @@
                         (selectedTabChange)="onChange($event);" 
                         >
                         @for(tab of tabs;track tab; let index = $index){
-           <mat-tab  [label]="tab+'' | slice:0:10">
+           <mat-tab  [label]="tab">
           <!--  <br>  <br>
              Contents for {{tab}} tab
          
@@ -898,7 +985,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="row">
+                                                                    <div *ngIf="!isApexCharts" class="row">
                                                                         <label class="col-md-4 form-label px-1 fs-14">Font-Size</label>
                                                                         <div class="col-md-8">
                                                                             <div class="form-group mb-1">
@@ -919,7 +1006,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="row">
+                                                                    <div *ngIf="!isApexCharts" class="row">
                                                                         <label class="col-md-5 form-label px-1 fs-14">Font-Family</label>
                                                                         <div class="col-md-7">
                                                                             <div class="form-group mb-1">
@@ -936,7 +1023,7 @@
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="row">
+                                                                    <div *ngIf="!isApexCharts" class="row">
                                                                         <label class="col-md-5 form-label px-1 fs-14">Font-Weight</label>
                                                                         <div class="col-md-7">
                                                                             <div class="form-group mb-1">
@@ -1082,7 +1169,7 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <div class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Zoom </p>
                                                         </div>
@@ -1093,7 +1180,7 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >background Color </p>
                                                         </div>
@@ -1103,7 +1190,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-label Color </p>
                                                         </div>
@@ -1113,7 +1200,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-Grid Line Color </p>
                                                         </div>
@@ -1123,7 +1210,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-label Color </p>
                                                         </div>
@@ -1133,7 +1220,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-Grid Line Color </p>
                                                         </div>
@@ -1264,6 +1351,26 @@
                                                         <div *ngIf="!legendSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('legend')">
                                                             <span></span>
                                                         </div>
+                                                    </div>
+                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId) || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Grid Line Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="GridColor"  (change)="gridLineColor($event)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>
+                                                    <div *ngIf="isApexCharts  && !(table && chartId)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >background Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="apexbBgColor"  (change)="apexbBackgroundColor($event)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
                                                     </div>
                                                 </div>
                                             </div>

@@ -14,6 +14,11 @@ export const App_Route: Route[] = [
         loadComponent: () =>
           import('../app/authentication/login/login.component').then((m) => m.LoginComponent),
       },
+      {
+        path: 'public/dashboard',
+        loadComponent: () =>
+          import('../app/components/workbench/sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
+      },
       // { path: '', component: ContentLayoutComponent, children: content },
       { path: '', component: AuthenticationLayoutComponent, children: authen },
       // { path: '', component: LandingpageLayoutComponent, children: landing },

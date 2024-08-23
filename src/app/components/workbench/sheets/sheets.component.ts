@@ -30,6 +30,9 @@ import 'ckeditor5/ckeditor5.css';
 import * as echarts from 'echarts';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { Options } from '@angular-slider/ngx-slider';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -37,6 +40,11 @@ interface TableRow {
 interface Dimension {
   name: string;
   values: string[];
+}
+interface RangeSliderModel {
+  minValue: number;
+  maxValue: number;
+  options: Options;
 }
 
 @Component({
@@ -49,7 +57,7 @@ interface Dimension {
     },
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
-    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,InsightsButtonComponent],
+    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,InsightsButtonComponent,NgxSliderModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -159,11 +167,15 @@ export class SheetsComponent {
   selectedTabIndex: any;
   isAllSelected: boolean = false;
   active=1;
+  activeTabId = 1;
   fromFileId=false;
   sheetsDashboard : boolean = false;
   sheetList : any [] = [];
   dashboardId : any;
   selectedDashboardId : any = 1;
+  GridColor : any;
+  apexbBgColor : any;
+  dateValue : any;
   Editor = ClassicEditor;
   editor : boolean = false;
   bandingSwitch: boolean = false; 
@@ -194,7 +206,7 @@ export class SheetsComponent {
   labelAlignment : HorizontalAlign = 'left';
   backgroundColor: string = '#fff';
 
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone){   
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -466,6 +478,7 @@ if(this.fromFileId){
           },
           grid: {
             show: true,
+            borderColor: '#90A4AE',
             xaxis: {
               lines: {
                 show: false
@@ -2270,10 +2283,10 @@ tableMeasures = [] as any;
   }
   sheetNameChange(name:any,event:any){
     console.log(this.SheetIndex)
-    if (event.keyCode === 13) {
-      this.tabs[this.SheetIndex] = name;
-    }
-    
+    // if (event.keyCode === 13) {
+    //   this.tabs[this.SheetIndex] = name;
+    // }
+    this.sheetTagName = name;
   }
   removeTab() {
     console.log(this.SheetIndex)
@@ -2599,7 +2612,7 @@ sheetSave(){
     xlabelFontWeight : this.xlabelFontWeight,
     labelAlignment : this.labelAlignment
   }
-  this.sheetTagName = this.sheetTitle;
+  // this.sheetTagName = this.sheetTitle;
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
@@ -2756,6 +2769,7 @@ if(this.retriveDataSheet_id){
 }
 
   }
+sheetTagTitle : any;
 sheetRetrive(){
   this.getChartData();
   console.log(this.tabs);
@@ -2798,6 +2812,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           // inputElement.style.paddingTop = '1.5%';
           this.sheetTagName = responce.sheet_tag_name;
         }
+        this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
         this.displayUnits = 'none';
         
         if(this.sheetResponce.column_data){
@@ -5005,4 +5020,105 @@ fetchChartData(chartData: any){
       }
     })
   }
+  gridLineColor(color: any){
+    if(this.barchart){
+      this.chartOptions3.grid.borderColor = color;
+    }
+    else if(this.areachart){
+      this.chartOptions1.grid.borderColor = color;
+    }
+    else if(this.linechart){
+      this.chartOptions.grid.borderColor = color;
+    }
+    else if(this.sidebysideChart){
+      this.chartOptions2.grid.borderColor = color;
+    }
+    else if(this.stockedChart){
+      this.chartOptions6.grid.borderColor = color;
+    }
+    else if(this.barlineChart){
+      this.chartOptions5.grid.borderColor = color;
+    }
+    else if(this.horizontolstockedChart){
+      this.chartOptions7.grid.borderColor = color;
+    }
+    else if(this.groupedChart){
+      this.chartOptions8.grid.borderColor = color;
+    }
+    else if(this.multilineChart){
+      this.chartOptions9.grid.borderColor = color;
+    }
+    this.updateChart();
+  }
+  apexbBackgroundColor(color: any){
+    if(this.barchart){
+      this.chartOptions3.chart.background = color;
+    }
+    else if(this.areachart){
+      this.chartOptions1.chart.background = color;
+    }
+    else if(this.linechart){
+      this.chartOptions.chart.background = color;
+    }
+    else if(this.sidebysideChart){
+      this.chartOptions2.chart.background = color;
+    }
+    else if(this.stockedChart){
+      this.chartOptions6.chart.background = color;
+    }
+    else if(this.barlineChart){
+      this.chartOptions5.chart.background = color;
+    }
+    else if(this.horizontolstockedChart){
+      this.chartOptions7.chart.background = color;
+    }
+    else if(this.groupedChart){
+      this.chartOptions8.chart.background = color;
+    }
+    else if(this.multilineChart){
+      this.chartOptions9.chart.background = color;
+    }
+    else if(this.piechart){
+      this.chartOptions4.chart.background = color;
+    }
+    else if(this.donutchart){
+      this.chartOptions10.chart.background = color;
+    }
+    this.updateChart();
+  }
+  openDateFormatModal(modal: any){
+    this.modalService.open(modal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+    });
+  }
+  dateFormat(column:any, index:any, format:any){
+    if(format === ''){
+      this.draggedColumnsData[index] = [column.column,column.data_type,format];
+      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
+      this.dataExtraction();
+     }else if(format === '-Select-'){
+      this.draggedColumnsData[index] = [column.column,column.data_type,''];
+      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:''};
+      this.dataExtraction();
+     }
+     else{
+      this.draggedColumnsData[index] = [column.column, "date", format];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format };
+      console.log(this.draggedColumns);
+      this.dataExtraction();
+     }
+  }
+  options: Options = {
+    floor: 0,
+    ceil: 100,
+    step: 0,
+    showSelectionBar: true,
+    selectionBarGradient: {
+      from: '#5a66f1',
+      to: '#5a66f1',
+    },
+  };
+  minValue2 = 10;
+  maxValue2 = 90;
 }

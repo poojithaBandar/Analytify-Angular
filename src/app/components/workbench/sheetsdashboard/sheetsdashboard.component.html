@@ -131,7 +131,7 @@
                     <div class="tabs-menu-boxed">
                         <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
 
-                            <li [ngbNavItem]="1">
+                            <li *ngIf="!isPublicUrl" [ngbNavItem]="1">
                                 <a ngbNavLink class="p-3">Dashboard</a>
                                 <ng-template ngbNavContent>
                                     <div class="tab-pane active" id="activetabs">
@@ -150,7 +150,7 @@
                                                         [cdkDropListData]="dashboardNew"
                                                         [cdkDropListConnectedTo]="[destinationList1,destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
-                                                            <li><h6 class="dropdown-header sheets-title px-4" style="display: flex; justify-content: space-between;">Sheets<app-insights-button [classesList]="'btn btn-outline-primary mt-0'"
+                                                            <li><h6 class="dropdown-header sheets-title px-4" style="display: flex; justify-content: space-between;line-height: 2;">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
                                                               [buttonName]="'Add'"
                                                               [previledgeId]="17" [isBtn]="true"
                                                               (btnClickEvent)="fetchSheetsList();isSheetsView = true;" [toolTip]="'Add Sheets'"
@@ -231,13 +231,16 @@
                                 <div class="text-wrap">
                                   <div class="row">
                                   <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 "style="border-right: 1px solid #f3f6f9;">
-                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;" class="btn text-left">{{filterList.filter_name}}
+                                    <button *ngIf="editFilters" class="btn btn-primary dropdown-toggle mb-2" (click)="addfilterOnEdit()" type="button"  aria-expanded="false" style="width: 100%;">
+                                      <i class="fa fa-plus"></i> Add Filter
+                                    </button>
+                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" (click)="editFiltersData(filterList.dashboard_filter_id)" class="btn text-left mb-2">{{filterList.filter_name}}
                                       <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id)" style="color: red;"><i style="float: right;padding-top: 3px;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
                                     </button>
 
                                     </div>
                                   <div class="col-xxl-7 col-xl-7 col-lg-7 col-md-6 " >
-                                    <div class="card-content p-0">
+                                    <div *ngIf="!editFilters" class="card-content p-0">
                                         <div class=" mt-2 mb-2">
                                           <ul class="d filter-popover" aria-labelledby="applyfilters" >
                                             <div class="setting-text border-bottom text-center">
@@ -284,7 +287,7 @@
 
                                               <div class="form-check">
                                                 <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
-                                                <label for="invalidCheck" class="form-check-label fs-14"> <h6>{{rows.label.name}}</h6> </label>
+                                                <label for="invalidCheck" class="form-check-label fs-14"> <h6>{{rows?.label.name}}</h6> </label>
                                               </div>
                                             }
                                             </div>
@@ -297,12 +300,74 @@
                                         </div>
                                      
                                     </div>
+<!-- edit filter -->
+                                    <div *ngIf="editFilters" class="card-content p-0">
+                                      <div class=" mt-2 mb-2">
+                                        <ul class="d filter-popover" aria-labelledby="applyfilters" >
+                                          <div class="setting-text border-bottom text-center">
+                                            <h6>Edit Filters</h6>
+                                          </div>
+                                          <div class="form-group p-1 mb-0">
+                                            <label class="form-label">Filter Name <span  class="text-red">*</span>
+                                            </label>
+                                            <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
+                                          </div>
+                                          <div class="form-group p-1 mb-0">
+                                            <label class="form-label">Query Set Name <span class="text-red">*</span>
+                                            </label>
+                                            <!-- <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"  class="form-select form-select select2 fs-14" >
+                                              @for(querySet of querySetNames;track querySet.queryset_id){
+                                                <option value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
+                                              }
+                                  
+                                          </select> -->
+                                          <!-- <p>{{querysetNameEdit}}</p> -->
+                                          <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">{{querysetNameEdit}}</button>
+                                          </div>
+                                  
+                                          <div class="form-group p-1">
+                                
+                                            <div ngbDropdown class="my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
+                                              <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">{{selectClmnEdit}} <i class="fa fa-angle-down"></i></button>
+                                              <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width:100%;max-height: 240px;overflow-y: auto;padding:6px">
+                                                @for(colData of columnFilterNamesEdit;track colData){
+                                                  <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmnEdit = colData.column_name;closeColumnsDropdownEdit(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
+                                                }
+                                              </ul>
+                                          </div>
+                                          </div>
+                                            <h6>Apply to Selected worksheets</h6>
+                                         
+                                          <div class="form body border p-2">
+
+                                            <div class="form-check">
+
+                                              <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRowsEdit($event)" class="form-check-input">
+                                              <label for="selectAll" class="form-check-label">Select All</label>
+                                              </div>
+                                            @for(rows1 of sheetsFilterNamesFromEdit;track rows1;let i = $index){
+                                             
+
+                                            <div class="form-check">
+                                              <input type="checkbox" [id]="'defaultCheck' + i"  name="rows1{{i}}"[(ngModel)]="rows1.selected" (change)="updateSelectedRowsEdit()" class="form-check-input"> 
+                                              <label for="invalidCheck" class="form-check-label fs-14"> <h6>{{rows1.sheet_name}}</h6> </label>
+                                            </div>
+                                          }
+                                          </div>
+
+                                          <div class="p-2">
+                                            <button type="button" (click)="updateFilters()" class="btn ripple btn-primary me-2">Update</button>
+                                            <button type="button" class="btn ripple btn-secondary " (click)="selectClmnEdit = '';filterName='';closeFilterModal();isAllSelected = false"> Cancel </button>
+                                        </div>
+                                        </ul>
+                                      </div>
+                                   
+                                  </div>
                                   </div>
                                 </div>
                                 </div>
                             </div>
                             </ng-template>
-                            @if(!sheetsNewDashboard){
                             <li [ngbNavItem]="2">
                                  <a ngbNavLink class="p-3">Filters</a>
                                     <ng-template ngbNavContent>
@@ -361,7 +426,7 @@
                                                               </ul> -->
                                                               <div style="height: 500px;overflow-y: auto;">
                                                                 @for(filterList of DahboardListFilters;track filterList){
-                                                              <div class="sub-category-card p-2 mt-2 border bg-light rounded-3">
+                                                              <div class="sub-category-card p-2 mt-2 border bg-light rounded-3 mb-2">
                                                                 <p class="text-center mb-0">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
@@ -411,7 +476,6 @@
                                         </div>
                                     </ng-template>
                             </li>
-                          }
                         </ul>
                     </div>
                 </div>
@@ -429,15 +493,15 @@
       </div>
     </div>
     <div class="col-xl-10 col-md-12 p-1 ">
-         <div class="card mb-1">
+         <div class="card mb-1" style="position: sticky;top: 0;  z-index: 900;">
             <div class="card-body p-1">
                 <div class="d-flex align-items-start">
                     <div class="flex-grow-1">
                          <!-- <input  type="text"  placeholder="Title" [(ngModel)]="dashboardName" aria-label="Sheet" class="form-control" > -->
                          <div class="title-container">
                           <div id="htmlContent" [innerHtml]="dashboardTagName">{{dashboardTagName}}</div>
-                          <span class="title-editor" (click)="toggleEditor()">
-                            <button class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
+                          <span *ngIf="!isPublicUrl" class="title-editor" (click)="toggleEditor()">
+                            <button  class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
                           </span>
                         </div>
                         <div *ngIf="editor" class="popup">
@@ -453,9 +517,9 @@
                         </div>
                         <div class="min-w-fit-content ms-3">
                             <button class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen" (click)="saveDashboard()">Save </button>
-                            <button  [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen" (click)="updateDashboard()">Update </button>
-                            <button style="margin-left: 15px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><i class="fa fa-eraser" aria-hidden="true"></i></button>
-                            <button style="margin-left: 15px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
+                            <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard()">Update </button>
+                            <button *ngIf="!isPublicUrl" style="margin-left: 15px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><i class="fa fa-eraser" aria-hidden="true"></i></button>
+                            <button *ngIf="!isPublicUrl" style="margin-left: 15px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
 
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
 
@@ -521,12 +585,12 @@
                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button [classesList]="'dropdown-item'"
+                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Goto Sheet'"
                                                               [previledgeIdsList]="[20,18]" [isBtn]="false"
                                                               (btnClickEvent)="viewSheet(item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Remove'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="removeItem($event, item, true)" 
@@ -680,12 +744,12 @@
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button [classesList]="'dropdown-item'"
+                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Goto Sheet'"
                                                               [previledgeIdsList]="[20,18]" [isBtn]="false"
                                                               (btnClickEvent)="viewSheet(item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Remove'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="removeItem($event, item, false)" 

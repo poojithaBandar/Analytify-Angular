@@ -5,11 +5,6 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class WorkbenchService {
-  dashboardFilterDeleteFetchSheetData(obj : any) {
-    const currentUser = localStorage.getItem( 'currentUser' );
-    this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/dashboard_nosheet_filter/`+this.accessToken,obj);
-  }
 
   addSheetToDashboard(obj : any) {
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -291,10 +286,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.put<any>(`${environment.apiUrl}/dashboardlist/`+this.accessToken,obj);
   }
-  deleteDashboard(serverId:any,querysetId:any,dashboardId:any){
+  deleteDashboard(dashboardId:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.delete<any>(`${environment.apiUrl}/dashboarddelete/`+serverId+'/'+querysetId+'/'+dashboardId+'/'+this.accessToken);
+    return this.http.delete<any>(`${environment.apiUrl}/dashboarddelete/`+dashboardId+'/'+this.accessToken);
   }
   getFilteredList(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -356,6 +351,11 @@ selectedDatafromFilter(obj:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_save/`+this.accessToken,obj);  
 }
+updatesDashboardFilters(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.put<any>(`${environment.apiUrl}/dashboard_filter_save/`+this.accessToken,obj);  
+}
 getColDataFromFilterId(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -380,7 +380,11 @@ deleteDashbaordFilter(id:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.delete<any>(`${environment.apiUrl}/dashboard_filter_delete/`+this.accessToken+'/'+id); 
 }
-
+editFilterDataGet(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_detail/`+this.accessToken,obj); 
+}
 //roles
 getSavedRolesList(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
