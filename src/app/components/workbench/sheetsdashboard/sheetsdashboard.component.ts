@@ -545,11 +545,8 @@ export class SheetsdashboardComponent {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        if(data.file_id){
           this.fileId = data.file_id;
-        } else {
-          this.dashboardId = data.server_id;
-        }
+          this.databaseId = data.server_id;
 
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
