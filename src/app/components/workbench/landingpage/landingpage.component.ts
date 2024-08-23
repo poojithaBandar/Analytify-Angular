@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-landingpage',
@@ -42,9 +43,10 @@ dashboardId :any;
 createUrl =false;
 shareAsPrivate = false;
 UrlCopy:string | null = null;
+publicUrl:any;
 @ViewChild('propertiesModal') propertiesModal : any;
 
-constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef){
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService){
   localStorage.setItem('QuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
   this.viewSheets = this.templateService.viewSheets();
@@ -95,7 +97,7 @@ getDbConnectionList(){
 getuserSheets(){
   const Obj ={
     search:this.wholeSearch,
-    page_count:'12'
+    // page_count:'12'
   }
   if(Obj.search == '' || Obj.search == null){
     delete Obj.search;
@@ -478,20 +480,58 @@ console.log(value);
 if(value === 'public'){
   this.createUrl = true;
   this.shareAsPrivate = false
+  const publicDashboardId = btoa(this.dashboardId.toString());
+  this.publicUrl = 'http://54.67.88.195:4200/public/dashboard/'+publicDashboardId
 } else if(value === 'private'){
   this.createUrl = false;
   this.shareAsPrivate = true;
 }
 }
+// copyUrl(): void {
+//   navigator.clipboard.writeText(this.publicUrl).then(() => {
+//     console.log(this.publicUrl);
+//     this.toasterservice.success('Link Copied','success',{ positionClass: 'toast-center-center'})
+//     // setTimeout(() => this.publicUrl = null, 3000); // Clear message after 3 seconds
+//   }).catch(err => {
+//     console.error('Could not copy text: ', err);
+//     this.publicUrl = 'Failed to copy message.';
+//   });
+// }
+
 copyUrl(): void {
-  this.UrlCopy = 'adjchbsd'
-  navigator.clipboard.writeText(this.UrlCopy).then(() => {
-    this.UrlCopy = 'Message copied to clipboard!';
-    setTimeout(() => this.UrlCopy = null, 3000); // Clear message after 3 seconds
-  }).catch(err => {
-    console.error('Could not copy text: ', err);
-    this.UrlCopy = 'Failed to copy message.';
-  });
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(this.publicUrl).then(() => {
+      console.log(this.publicUrl);
+      this.toasterservice.success('Link Copied', 'success', { positionClass: 'toast-center-center' });
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+      this.fallbackCopyTextToClipboard(this.publicUrl);
+    });
+  } else {
+    // Fallback if navigator.clipboard is not available
+    this.fallbackCopyTextToClipboard(this.publicUrl);
+  }
+}
+
+fallbackCopyTextToClipboard(text: string): void {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';  // Avoid scrolling to bottom
+  textArea.style.opacity = '0';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      this.toasterservice.success('Link Copied', 'success', { positionClass: 'toast-center-center' });
+    } else {
+      console.error('Fallback: Could not copy text');
+    }
+  } catch (err) {
+    console.error('Fallback: Unable to copy', err);
+  }
+  document.body.removeChild(textArea);
 }
 onRolesChange(selected: number[]) {
   this.selectedRoleIds = selected

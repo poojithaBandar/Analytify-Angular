@@ -146,6 +146,11 @@ apx-chart {
   top:90px;
   z-index: 900;
 }
+.sticky-top-publicUrl{
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
 .filter-popup-right{
   position: relative !important;
     inset: -70px auto auto 128px !important;

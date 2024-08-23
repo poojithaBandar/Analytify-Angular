@@ -260,7 +260,7 @@
                           <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
                       <td *ngIf="database.server_type === 'SNOWFLAKE'">
-                        <img alt="product" src="./assets/images/icons/snowflake-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                        <img alt="product" src="./assets/images/icons/snowflake-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                     </td>
                       <td *ngIf="database.server_type === 'SQLITE'">
                           <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
@@ -310,7 +310,7 @@
                               <span *ngIf="database.server_type === 'MICROSOFTSQLSERVER'" class="avatar avatar rounded-circle">
                                 <img src="./assets/images/icons/microsoft-sql-server-icon.jpg" alt="" class="rounded-circle"></span>
                                 <span *ngIf="database.server_type === 'SNOWFLAKE'" class="avatar avatar rounded-circle">
-                                  <img src="./assets/images/icons/snowflake-icon.jpg" alt="" class="rounded-circle"></span>
+                                  <img src="./assets/images/icons/snowflake-icon.png" alt="" class="rounded-circle"></span>
                                 <span *ngIf="database.server_type === 'SQLITE'" class="avatar avatar rounded-circle">
                                   <img src="./assets/images/icons/sqlite-icon.jpg" alt="" class="rounded-circle"></span>
                                   <span *ngIf="database.server_type === 'MONGODB'" class="avatar avatar rounded-circle">
@@ -689,16 +689,26 @@
                      <div class="card">
                        <div class="card-header">
                          <div class="card-body d-flex align-items-center justify-content-center">
-                            <img src="./assets/images/Db_server_images/Relational Database/snowflake-icon.jpg" alt="Image" class="w-200"/>
+                            <img src="./assets/images/Db_server_images/Relational Database/snowflake-icon.png" alt="Image" class="w-200"/>
                          </div>
                        </div>
                        <div class="card-body post-bg">
                           <div class="post-txt">
-                            <span class="light-gry-txt">Microsoft SQL Server is a relational database management system (RDBMS) that supports a wide variety of transaction processing,
-                              business intelligence (BI) and data analytics applications in corporate IT environments.
+                            <span class="light-gry-txt">Snowflake is a cloud-based data warehousing solution that offers a highly scalable platform for storing and analyzing large amounts of data. Unlike traditional databases,
+                              Snowflake operates entirely in the cloud, leveraging the power of cloud infrastructure to deliver performance, scalability, and flexibility. 
+                              It supports a wide variety of data formats, including structured, semi-structured (e.g., JSON, Parquet), and unstructured data.
+                            
+                              <!-- <h6 class="mb-0 dark-gry">  Key Features:</h6>
+                              <ul>
+                                <li> Elastic Scalability: Snowflake can scale storage and compute resources independently, allowing for automatic scaling to handle varying workloads.</li>
+                                <li> Elastic Scalability: Snowflake can scale storage and compute resources independently, allowing for automatic scaling to handle varying workloads.</li>
+                                <li>Time Travel: Enables users to access historical data and revert to previous versions of data.</li>
+                                <li>Data Sharing: Facilitates secure sharing of live data with external organizations without copying or moving the data.</li>
+                              </ul> -->
+
                             </span>
                             <h6 class="mb-0 dark-gry">Server:<span class="light-gry-txt"> Place your host url or host name</span></h6>
-                            <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for SQL server is 1433</span></h6>
+                            <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for SNOWFLAKE server is 1433</span></h6>
                             <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
                             <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
                             <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
@@ -1026,7 +1036,7 @@
               </div>
               <div class="database-logo">
                 <div class="imgcard p-4" (click)="openSnowflakeServer()">
-                    <img src="./assets/images/Db_server_images/Relational Database/snowflake-icon.jpg" alt="Image" class="card-img"/>
+                    <img src="./assets/images/Db_server_images/Relational Database/snowflake-icon.png" alt="Image" class="card-img"/>
                 </div>
                 <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                   <span style=" width: 8rem;">SNOW FLAKE</span>
@@ -1102,7 +1112,8 @@
                     </div>
                   </div>
                   <div class="database-logo">
-                    <div class="imgcard p-4" (click)="openMOngoDb()">
+                    <!-- <div class="imgcard p-4" (click)="openMOngoDb()"> -->
+                      <div class="imgcard p-4 op-4">
                       <img src="./assets/images/Db_server_images/No Sql Database/MongoDB_Logo.png" alt="Image" class="card-img" />
                     </div>
                     <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">

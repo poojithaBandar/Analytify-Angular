@@ -130,12 +130,14 @@ export class DatabaseComponent {
         this.fromFileId = true;
         this.qurtySetId = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+        this.getSchemaTablesFromConnectedDb();
       }
       if (currentUrl.includes('/workbench/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
         this.qurtySetId = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+        this.getSchemaTablesFromConnectedDb();
         }
       this.customSql=true;
       this.tableJoiningUI=false;
@@ -227,7 +229,7 @@ export class DatabaseComponent {
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
         this.showingRowsCustomQuery=data.no_of_rows
-        this.totalRowsCustomQuery=data.total_rows
+        this.totalRowsCustomQuery=data.total_rows;
       },
       error:(error:any)=>{
         console.log(error)
@@ -1287,7 +1289,13 @@ markDirty(){
                 this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
-                console.log(error)
+                console.log(error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'oops!',
+                  text: error.error.message,
+                  width: '400px',
+                })
               }
             });
           } else {

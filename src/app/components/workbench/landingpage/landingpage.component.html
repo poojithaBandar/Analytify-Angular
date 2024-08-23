@@ -167,7 +167,7 @@
 
             <div *ngIf="viewDashboardList" class="row">
                 <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
-                    <h6 class="fw-bold mb-1">Saved Dashboard</h6>
+                    <h6 class="fw-bold mb-1">Saved Dashboards</h6>
                     <div class="view-card">
                         <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Dashboard</a> -->
                         @if(!showAllDasboards && savedDashboardList.length !== 0){
@@ -187,7 +187,7 @@
                 <ng-container *ngFor="let dashboardList of savedDashboardList;let i = index" >
                     <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                     <div *ngIf="showAllDasboards && i < 3" class="card img-shadow">
-                        <img src="{{dashboardList.dashboard_image}}" class="card-img-top " alt="img">
+                        <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"  src="{{dashboardList.dashboard_image}}" class="card-img-top img-cursor" alt="img">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
                           <div class="dashboard-card-title">
                             <h5 class="card-title   mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"
@@ -222,7 +222,7 @@
                         
                     </div>
                     <div *ngIf="!showAllDasboards && i < 11" class="card  img-shadow">
-                        <img src="{{dashboardList.dashboard_image}}" class="card-img-top" alt="img">
+                        <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" src="{{dashboardList.dashboard_image}}" class="card-img-top img-cursor" alt="img">
                         <div class="card-body p-2 d-flex align-items-center justify-content-between" >
                           <div class="dashboard-card-title">
                             <h5 class="card-title   mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"  (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" style="cursor: pointer;color: #05aff8;"> 
@@ -561,25 +561,25 @@
                                         <a  class="card-title" style="color: #05aff8;" (click)="getTablesFromConnectedDb(database.database_id)" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                        </td>
                                        <td *ngIf="database.server_type === 'POSTGRESQL'">
-                                        <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
+                                        <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}} 
                                     </td>
                                     <td *ngIf="database.server_type === 'ORACLE'">
-                                      <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
+                                      <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}} 
                                   </td>
                                   <td *ngIf="database.server_type === 'MYSQL'">
-                                    <img alt="product" src="./assets/images/icons/MySql-icon1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                    <img alt="product" src="./assets/images/icons/MySql-icon1.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                 </td>
                                 <td *ngIf="database.server_type === 'MONGODB'">
-                                    <img alt="product" src="./assets/images/icons/mongodb-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                    <img alt="product" src="./assets/images/icons/mongodb-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                 </td>
                                 <td *ngIf="database.server_type === 'MICROSOFTSQLSERVER'">
-                                    <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                    <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                 </td>
                                 <td *ngIf="database.server_type === 'SQLITE'">
-                                    <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                    <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                 </td>
                                 <td *ngIf="database.server_type === 'SNOWFLAKE'">
-                                    <img alt="product" src="./assets/images/icons/snowflake-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                                    <img alt="product" src="./assets/images/icons/snowflake-icon.png" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                 </td>
 
                                     <!-- <td>{{database.server_type}}</td> -->
@@ -638,7 +638,7 @@
        <div *ngIf="createUrl" class="">
             
         <p class="fw-semibold mb-2 mt-3">Url</p>
-        <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">svsv
+        <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">{{publicUrl}}
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  x="0px" y="0px" viewBox="0 0 488.3 488.3" width="16px" height="16px" xml:space="preserve" (click)="copyUrl()">
             <g>
               <path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/>

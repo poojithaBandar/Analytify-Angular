@@ -10,6 +10,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -35,9 +36,14 @@ export class DashboardPageComponent implements OnInit{
   selectedUserIds = [] as any;
   selectedUserIdsToNumbers = [] as any;
   usersOnSelectedRole = [] as any;
+  createUrl =false;
+  publicUrl:any;
+  shareAsPrivate = false;
+
   @ViewChild('propertiesModal') propertiesModal : any;
 
-constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private modalService:NgbModal){
+constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,
+  private modalService:NgbModal,private toasterservice:ToastrService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
 }
 ngOnInit(){
@@ -245,5 +251,54 @@ getAddedDashboardProperties(){
       })
     }
   }) 
+}
+
+
+sharePublish(value:any){
+  console.log(value);
+  if(value === 'public'){
+    this.createUrl = true;
+    this.shareAsPrivate = false
+    const publicDashboardId = btoa(this.dashboardId.toString());
+    this.publicUrl = 'http://54.67.88.195:4200/public/dashboard/'+publicDashboardId
+  } else if(value === 'private'){
+    this.createUrl = false;
+    this.shareAsPrivate = true;
+  }
+  }
+copyUrl(): void {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(this.publicUrl).then(() => {
+      console.log(this.publicUrl);
+      this.toasterservice.success('Link Copied', 'success', { positionClass: 'toast-center-center' });
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+      this.fallbackCopyTextToClipboard(this.publicUrl);
+    });
+  } else {
+    // Fallback if navigator.clipboard is not available
+    this.fallbackCopyTextToClipboard(this.publicUrl);
+  }
+}
+
+fallbackCopyTextToClipboard(text: string): void {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';  // Avoid scrolling to bottom
+  textArea.style.opacity = '0';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      this.toasterservice.success('Link Copied', 'success', { positionClass: 'toast-center-center' });
+    } else {
+      console.error('Fallback: Could not copy text');
+    }
+  } catch (err) {
+    console.error('Fallback: Unable to copy', err);
+  }
+  document.body.removeChild(textArea);
 }
 }
