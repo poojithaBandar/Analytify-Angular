@@ -311,3 +311,17 @@ padding-left: 25px;
 .table thead th{
   color: #333335;
 }
+.big-number-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.big-number {
+  font-size: 4rem; /* Adjust the size as needed */
+  font-weight: bold;
+  color: #007bff; /* Example color */
+}
+@media (max-width: 768px) {
+  .big-number {
+    font-size: 3rem; /* Responsive size for smaller screens */
+  }
+}

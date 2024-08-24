@@ -41,6 +41,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -61,6 +62,12 @@ type DashboardItem = GridsterItem & {
 interface Dimension {
   name: string;
   values: string[];
+}
+interface KpiData {
+  columns: string[];
+  rows: any[]; // Replace `any` with the specific type if you know the structure of the rows.
+  fontSize: string;
+  color: string;
 }
 
 @Component({
@@ -135,7 +142,7 @@ export class SheetsdashboardComponent {
   searchSheets!: string;
   isPublicUrl = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('public/dashboard')){
@@ -539,6 +546,17 @@ export class SheetsdashboardComponent {
         databaseId: sheet.server_id,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name},
         selectedSheet : sheet.selectedSheet,
+        kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
+        ? (() => {
+            this.kpiData = {
+              columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
+              rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
+              fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
+              color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            };
+            return this.kpiData; // Return the kpi object to kpiData
+          })()
+        : undefined,
         chartOptions: sheet.sheet_type === 'Chart' ? {
           // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
           ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
@@ -559,6 +577,8 @@ export class SheetsdashboardComponent {
       }
     })
   }
+  sheetTagTitle : any={};
+  dashboardTagTitle : any;
   getSavedDashboardData(){
     const obj ={
       queryset_id:this.qrySetId,
@@ -579,17 +599,24 @@ export class SheetsdashboardComponent {
 
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
+        this.dashboard.forEach((sheet)=>{
+          console.log('Before sanitization:', sheet.data.sheetTagName);
+          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          console.log('After sanitization:', sheet.data.sheetTagName);
+        })
+        console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
-          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          inputElement.innerHTML = data.dashboard_name;
+          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          // inputElement.innerHTML = data.dashboard_name;
           this.dashboardTagName = data.dashboard_name;
         }
         else{
-          const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          inputElement.innerHTML = data.dashboard_tag_name;
-          inputElement.style.paddingTop = '1.5%';
+          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          // inputElement.innerHTML = data.dashboard_tag_name;
+          // inputElement.style.paddingTop = '1.5%';
           this.dashboardTagName = data.dashboard_tag_name;
         }
+        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         console.log(this.dashboard);
         let obj = {sheet_ids: this.sheetIdsDataSet};
         if(!this.isPublicUrl){
@@ -873,6 +900,17 @@ selected_sheet_ids :this.sheetIdsDataSet,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
       data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
+      kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
+      ? (() => {
+          this.kpiData = {
+            columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
+            rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
+            fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
+            color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+          };
+          return this.kpiData; // Return the kpi object to kpiData
+        })()
+      : undefined,
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
         ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
@@ -917,6 +955,17 @@ selected_sheet_ids :this.sheetIdsDataSet,
       qrySetId : sheet.queryset_id,
       data: { title: sheet.sheet_name, content: 'Content of card  New', sheetTagName: sheet.sheet_tag_name?sheet.sheet_tag_name:sheet.sheet_name },
       selectedSheet : sheet.selectedSheet,
+      kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
+      ? (() => {
+          this.kpiData = {
+            columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
+            rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
+            fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
+            color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+          };
+          return this.kpiData; // Return the kpi object to kpiData
+        })()
+      : undefined,
       chartOptions: sheet.sheet_type === 'Chart' ? {
         // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
         ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
@@ -1159,6 +1208,7 @@ allowDrop(ev : any): void {
         tableData:copy.tableData,
         selectedSheet : true,
         chartData:copy.chartOptions?.chartData || [],
+        kpiData:copy.kpiData
       };
       this.qrySetId.push(copy.qrySetId);
       if(copy.fileId){
@@ -1195,9 +1245,13 @@ allowDrop(ev : any): void {
     //  }
      
     //  this.initializeChartData(element);  // Initialize chart after adding
+    this.dashboard.forEach((sheet)=>{
+      console.log('Before sanitization:', sheet.data.sheetTagName);
+      this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+      console.log('After sanitization:', sheet.data.sheetTagName);
+    });
      console.log('draggedDashboard',this.dashboard)
     }
-   
   }
 
   setDashboardNewSheets(sheetId: number, selectedSheet: boolean) {
@@ -2362,7 +2416,7 @@ dropTest2(event: any) {
     const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
     this.dashboardName = doc.body.textContent+'';
 }
-
+kpiData?: KpiData;
   loadDashboard(){
     let obj = {sheet_ids: this.sheetIdsDataSet};
     this.workbechService.sheetRetrivelBasedOnIds(obj).subscribe({
@@ -2384,6 +2438,17 @@ dropTest2(event: any) {
         qrySetId : sheet.queryset_id,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
         selectedSheet : sheet.selectedSheet,
+        kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
+        ? (() => {
+            this.kpiData = {
+              columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
+              rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
+              fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
+              color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
+            };
+            return this.kpiData; // Return the kpi object to kpiData
+          })()
+        : undefined,
         chartOptions: sheet.sheet_type === 'Chart' ? {
           // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
           ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
@@ -2472,7 +2537,9 @@ dropTest2(event: any) {
     });
     this.sheetIdsDataSet = Array.from(dataSet);
   }
-
+  updatedashboardName(name:any){
+    this.dashboardTagName = name;
+  }
 }
 
 // export interface CustomGridsterItem extends GridsterItem {

@@ -10,7 +10,7 @@
                     <div class="card mb-0 p-4 br-0 border-bottom">
                         <div class="d-flex align-items-center justify-content-between ">
                             <h6 class="mb-0">Connections</h6>
-                            <app-insights-button [buttonName]="'Edit'" [classesList]="'add-txt text-info'" [previledgeId]="2" [isBtn]="false"
+                            <app-insights-button *ngIf="database_name" [buttonName]="'Edit'" [classesList]="'add-txt text-info'" [previledgeId]="2" [isBtn]="false"
                             (btnClickEvent)="goToDataSource()" [isIcon]="false"></app-insights-button>
                             <app-insights-button [buttonName]="'Add'" [classesList]="'add-txt text-info'" [isIcon]="false" [previledgeId]="1" [isBtn]="false"
                             (btnClickEvent)="goToConnections()"></app-insights-button>
@@ -143,12 +143,12 @@
                                                 <ng-template ngbNavContent>
                                                     <div class="tab-pane active" id="activetabs">
                                                         @for(data of filterData;track data){
-                                                            @if(data?data:''){
+                                                            
                                                         <div class="form-check" >
                                                             <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
                                                             <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
                                                         </div>
-                                                     }
+                                                     
                                                     }
                                                     </div>
                                                 </ng-template>
@@ -226,10 +226,10 @@
                                 <div *ngIf="editor" class="popup">
                                     <div class="popup-content">
                                     <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"
-                                        (input)="sheetNameChange(sheetTagName, $event)">
+                                        >
                                     </ckeditor>
                                     <div class="buttons">
-                                        <!-- <button class="btn btn-danger" (click)="toggleEditor()">Close</button> -->
+                                        <button class="btn btn-danger" (click)="toggleEditor()">Close</button>
                                         <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor()">Update</button>
                                     </div>
                                     </div>
@@ -267,12 +267,12 @@
                                         {{ columns.column }}
                                      <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
 
-                                        <div class="" ngbDropdown>
+                                        <div class="" ngbDropdown style="margin-top: 5px;">
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
                                                 <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
-                                                    <a class="btn btn-outline-light mx-0 mb-2" (click)="openDateFormatModal(dateFunctionsModal)" style="text-align: left !important;"> Date</a>
+                                                    <a *ngIf="columns.data_type == 'timestamp'" class="btn btn-outline-light mx-0 mb-2" (click)="openDateFormatModal(dateFunctionsModal)" style="text-align: left !important;"> Date</a>
                                                     <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index,columns.column)"> Remove</a> 
                                                     
                                                 </div>
@@ -280,43 +280,38 @@
                                             </a>
                                         </div>
                                         <ng-template #dateFunctionsModal let-modal>
-                                            <div class="modal-header p-2 bg-light">
-                                              <h6 class="modal-title">Date Functions</h6>
-                                              <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
-                                              </button>
+                                            <div class="modal-header">
+                                                <h6 class="modal-title">Date Functions</h6>
+                                                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                                </button>
                                             </div>
-                                            <div class="modal-body">
+                                        
+                                            <div class="modal-body" style="height: 500px; overflow: scroll;">
                                                 <div class="card-body p-0">
                                                     <div class="column-card">
                                                         <p class="fw-semibold mb-1 ">Row : {{columns.column}}</p>
-                                                       </div>
-                                                   <div class="aggregate-card mt-3">
-                                                    <p class="fw-semibold mb-1 ">Date Extractions</p>
-                                                    <select  class="form-control" [(ngModel)]="dateValue" (change)="dateFormat(columns,index,dateValue)">
-                                                        <option [selected] value="-Select-">-Select-</option>
-                                                        <option value="year">Year           (2024)</option>
-                                                        <option value="month">Month          (January)</option>
-                                                        <option value="day">Day            (1-31)</option>
-                                                        <option value="weekdays">Week Day       (1-7)</option>
-                                                        <option value="week numbers">Week Number  (0-52)</option>
-                                                        <option value="weekname">Week Name    (Mon-Sun)</option>
-                                                        <option value="">None</option>
-                                                      </select>
-                                                   </div>
+                                                    </div>
+                                                    <div class="aggregate-card mt-3">
+                                                        <p class="fw-semibold mb-1 ">Date Extractions</p>
+                                                        <select class="form-control" [(ngModel)]="dateValue" (change)="dateFormat(columns,index,dateValue)">
+                                                            <option [selected] value="-Select-">-Select-</option>
+                                                            <option value="year">Year (2024)</option>
+                                                            <option value="month">Month (January)</option>
+                                                            <option value="day">Day (1-31)</option>
+                                                            <option value="weekdays">Week Day (1-7)</option>
+                                                            <option value="week numbers">Week Number (0-52)</option>
+                                                            <option value="weekname">Week Name (Mon-Sun)</option>
+                                                            <option value="">None</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                           
                                             </div>
-                                           <!-- <div class="modal-footer p-2">
-                                              <button type="button" class="btn ripple btn-primary">Save</button>
-                                              <button
-                                                type="button"
-                                                class="btn ripple btn-secondary"
-                                                (click)="modal.close('Save click')"
-                                              >
-                                                Close
-                                              </button>
-                                            </div>-->
-                                          </ng-template>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                                    Close
+                                                </button>
+                                            </div>
+                                        </ng-template>
                                     </div>
                                     }
                                 </div> 
@@ -369,42 +364,38 @@
                                             </a>
                                         </div>
                                         <ng-template #aggregateUserModal let-modal>
-                                            <div class="modal-header p-2 bg-light">
-                                              <h6 class="modal-title">Aggregated measures:</h6>
-                                              <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
-                                              </button>
+                                            <div class="modal-header">
+                                                <h6 class="modal-title">Aggregated measures</h6>
+                                                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                                </button>
                                             </div>
-                                            <div class="modal-body">
+                                        
+                                            <div class="modal-body" style="height: 500px; overflow: scroll;">
                                                 <div class="card-body p-0">
                                                     <div class="column-card">
                                                         <p class="fw-semibold mb-1 ">Row : {{rows.column}}</p>
-                                                       </div>
-                                                   <div class="aggregate-card mt-3">
-                                                    <p class="fw-semibold mb-1 ">Aggregate</p>
-                                                    <select  class="form-control" [(ngModel)]="measureValue"  (change)="rowMeasuresCount(rows,index,measureValue)">
-                                                        <option [selected] value="-Select-">-Select-</option>
-                                                        <option value="sum">Sum</option>
-                                                        <option value="avg">Avg</option>
-                                                        <option value="min">Min</option>
-                                                        <option value="max">Max</option>
-                                                        <option value="count">Count</option>
-                                                        <option value="">None</option>
-                                                      </select>
-                                                   </div>
+                                                    </div>
+                                                    <div class="aggregate-card mt-3">
+                                                        <p class="fw-semibold mb-1 ">Aggregate</p>
+                                                        <select class="form-control" [(ngModel)]="measureValue"
+                                                            (change)="rowMeasuresCount(rows,index,measureValue)">
+                                                            <option [selected] value="-Select-">-Select-</option>
+                                                            <option value="sum">Sum</option>
+                                                            <option value="avg">Avg</option>
+                                                            <option value="min">Min</option>
+                                                            <option value="max">Max</option>
+                                                            <option value="count">Count</option>
+                                                            <option value="">None</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                           
                                             </div>
-                                           <!-- <div class="modal-footer p-2">
-                                              <button type="button" class="btn ripple btn-primary">Save</button>
-                                              <button
-                                                type="button"
-                                                class="btn ripple btn-secondary"
-                                                (click)="modal.close('Save click')"
-                                              >
-                                                Close
-                                              </button>
-                                            </div>-->
-                                          </ng-template>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                                    Close
+                                                </button>
+                                            </div>
+                                        </ng-template>
                                         <!-- <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="openSuperScaledModal(aggregateModal)"></i> -->
                                        <!--  <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="toggleDropdown()"></i>
                                         <select  class="form-control" [(ngModel)]="measureValue" [class.show]="isDropdownVisible" (change)="rowMeasuresCount(rows,index,measureValue)">
@@ -450,7 +441,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0" style="height: 488px; overflow-y: scroll;">
+            <div class="card mb-0" style="height: 488px;">
                 @if(!table){
                 <div class="col-lg-3 col-md-3">
                     <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
@@ -460,7 +451,7 @@
                     </select>
                 </div>
                 }
-                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center;">
+                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: scroll;">
                     @for(tab of tabs;track tab; let index = $index){
                        
                         @if(tab === sheetName){
@@ -486,6 +477,15 @@
                                     }
                                     </tbody>
                                   </table>
+                                }
+                                @if(kpi && chartId){
+                                    <div class="big-number-container">
+                                        @for(row of tableData;track row;let i = $index){
+                                            @for(column of displayedColumns;track column){
+                                                <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ row[column] }}</h1>
+                                            }
+                                        }
+                                    </div>
                                 }
                                 @if(isApexCharts){
               @if(bar && chartId){
@@ -751,7 +751,7 @@
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2">Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2">Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -843,43 +843,46 @@
                                                     <div class="row"> 
                                                        
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,12)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,12)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [class.disabled]="draggedRows.length>1">
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,25)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1369,6 +1372,19 @@
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="apexbBgColor"  (change)="apexbBackgroundColor($event)"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <label for="font-size">Font Size</label>
+                                                        <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider>
+                                                        <span>{{ kpiFontSize }}rem</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <label for="color">Color:</label>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="kpiColor"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>

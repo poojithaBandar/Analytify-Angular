@@ -501,11 +501,11 @@
          <div class="card mb-1" style="position: sticky;top: 0;  z-index: 900;">
             <div class="card-body p-1">
                 <div class="d-flex align-items-start">
-                    <div class="flex-grow-1">
-                         <!-- <input  type="text"  placeholder="Title" [(ngModel)]="dashboardName" aria-label="Sheet" class="form-control" > -->
-                         <div class="title-container">
-                          <div id="htmlContent" [innerHtml]="dashboardTagName">{{dashboardTagName}}</div>
-                          <span *ngIf="!isPublicUrl" class="title-editor" (click)="toggleEditor()">
+                  <div class="flex-grow-1">                     
+                    <div class="title-container">
+                      <input *ngIf="!dashboardId"  type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
+                      <div *ngIf="dashboardId" id="htmlContent" [innerHtml]="dashboardTagTitle" style="padding-top: 1.5%;"></div>              
+                       <span *ngIf="!isPublicUrl" class="title-editor" (click)="toggleEditor()">
                             <button  class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
                           </span>
                         </div>
@@ -515,7 +515,7 @@
                             </ckeditor>
                             <div class="buttons">
                               <button class="btn btn-danger" (click)="toggleEditor()">Close</button>
-                              <button class="btn btn-primary" (click)="updateSheetName()">Update</button>
+                              <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor()">Update</button>
                             </div>
                           </div>
                         </div>
@@ -753,7 +753,7 @@
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
               <div class="card mb-0" style="height: 100%;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
                 <div class="card-header d-flex justify-content-between p-1">
-                  <h6 [innerHtml]="item.data.sheetTagName"></h6>
+                  <div style="width: 100%;" [innerHtml]="sheetTagTitle[item.data.title]?sheetTagTitle[item.data.title]:item.data.sheetTagName"></div>
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -985,6 +985,15 @@
                         [stroke]="item.chartOptions.stroke!" [tooltip]="item.chartOptions.tooltip!" [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" 
                         [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
+                  @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
+                    <div class="big-number-container">
+                        @for(row of item['kpiData'].rows;track row){
+                          @for(column of item['kpiData']?.columns;track column){
+                            <h1 class="big-number" [style.font-size]="item['kpiData']?.fontSize" [style.color]="item['kpiData']?.color">{{ row[column] }}</h1>
+                            }
+                          }
+                    </div>
+                  }
                   <div *ngIf="item.chartOptions && item['chartId'] === 5">
                     <apx-chart
                       [series]="item.chartOptions.series!"

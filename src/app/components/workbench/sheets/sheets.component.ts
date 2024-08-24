@@ -175,7 +175,7 @@ export class SheetsComponent {
   selectedDashboardId : any = 1;
   GridColor : any;
   apexbBgColor : any;
-  dateValue : any;
+  dateValue : any = "-Select-";
   Editor = ClassicEditor;
   editor : boolean = false;
   bandingSwitch: boolean = false; 
@@ -2041,7 +2041,7 @@ tableMeasures = [] as any;
         }
         this.updateChart();
       }
-      if(this.draggedColumns.length<1 || this.draggedRows.length<1){
+      if((this.draggedColumns.length<1 || this.draggedRows.length<1) && !this.kpi){
         this.table = true;
         this.bar = false;
         this.area = false;
@@ -2134,12 +2134,12 @@ tableMeasures = [] as any;
           return indexA - indexB;
         });
         console.log(this.draggedRowsData);
-        this.rowMeasuresCount(element,event.currentIndex,'sum');
-        // this.dataExtraction();
-      //}else{
-        console.log("Can't Accept")
-      //}
-   // });
+        const integerList=['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double']
+        if(integerList.includes(element.data_type)){
+          this.rowMeasuresCount(element,event.currentIndex,'sum');
+        }else {
+          this.dataExtraction();
+        }
 
   }
   isDropdownVisible = false;
@@ -2229,8 +2229,9 @@ tableMeasures = [] as any;
   grouped = false;
   multiLine = false;
   donut = false;
+  kpi = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -2245,6 +2246,7 @@ tableMeasures = [] as any;
     this.donut = donut;
     this.chartId = chartId;
     this.radar = radar;
+    this.kpi = kpi;
     this.dataExtraction();
   }
   enableDisableCharts(){
@@ -2369,7 +2371,7 @@ tableMeasures = [] as any;
       next: (responce: any) => {
         this.sheetList = responce.data;
         this.sheetList.some((sheet)=>{
-          if(sheet.sheet_name === this.sheetName || this.retriveDataSheet_id == sheet.id){
+          if(sheet.sheet_name === this.sheetName){
             this.retriveDataSheet_id = sheet.id;
             return true;
           }
@@ -2383,9 +2385,15 @@ tableMeasures = [] as any;
         this.sheetTagName = event.tab?.textLabel;
         console.log(this.sheetName)
         console.log(this.retriveDataSheet_id);
-       // if(!this.sheetTitle){
+        this.draggedColumns = [];
+        this.draggedColumnsData = [];
+        this.draggedRows = [];
+        this.draggedRowsData = [];
+        this.displayedColumns = [];
+        this.tableData = [];
+       if(this.retriveDataSheet_id){
           this.sheetRetrive();
-       // }
+       }
       },
       error: (error) => {
         console.log(error);
@@ -2603,6 +2611,10 @@ sheetSave(){
     this.barLineXaxis = this.sidebysideBarColumnData1;
       savedChartOptions = this.eRadarChartOptions;
   }
+  if(this.kpi && this.chartId == 25){
+    this.saveTableData =  this.tableData;
+    this.savedisplayedColumns = this.displayedColumns;
+   }
   let customizeObject = {
     isZoom : this.isZoom,
     xGridColor : this.xGridColor,
@@ -2679,7 +2691,12 @@ const obj={
 
       "donutYaxis": this.donutYaxis,
       "donutXaxis": this.donutXaxis,
-      "donutOptions":this.donutOptions
+      "donutOptions":this.donutOptions,
+
+      "kpiData": this.saveTableData,
+      "kpiColumns": this.savedisplayedColumns,
+      "kpiFontSize": this.kpiFontSize,
+      "kpicolor": this.kpiColor
   },
   "isApexChart" : this.isApexCharts,
   "isEChart" : this.isEChatrts,
@@ -2854,6 +2871,27 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
+        }
+        if(responce.chart_id == 25){
+          this.tableData = this.sheetResponce.results.kpiData;
+          this.displayedColumns = this.sheetResponce.results.kpiColumns;
+          this.kpiFontSize = this.sheetResponce.results.kpiFontSize;
+          this.kpiColor = this.sheetResponce.results.kpicolor;
+          this.table = false;
+          this.bar = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = true;
         }
        if(responce.chart_id == 6){
         this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
@@ -2877,6 +2915,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 24){
         this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
@@ -2900,6 +2939,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 13){
         this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
@@ -2923,6 +2963,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 17){
         this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
@@ -2946,6 +2987,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 7){
         this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -2965,6 +3007,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 5){
         this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -2984,6 +3027,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 4){
         this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
@@ -3007,6 +3051,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 12){
         this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
@@ -3024,6 +3069,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = true;
+          this.kpi = false;
           if(this.isApexCharts){
           
           } else {
@@ -3048,6 +3094,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 3){
         this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
@@ -3067,6 +3114,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 8){
         this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
@@ -3086,6 +3134,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = true;
           this.donut = false;
           this.radar = false;
+          this.kpi = false;
        }
        if(responce.chart_id == 10){
         this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
@@ -3105,6 +3154,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.multiLine = false;
           this.donut = true;
           this.radar = false;
+          this.kpi = false;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
@@ -4863,13 +4913,13 @@ fetchChartData(chartData: any){
           console.log("This is ChaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type==="Bar Chart"){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type==="Pie Chart"){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type==="Line Chart"){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type==="Area Chart"){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,17);
           }
           this.dataExtraction();
 
@@ -5127,4 +5177,16 @@ fetchChartData(chartData: any){
   };
   minValue2 = 10;
   maxValue2 = 90;
+  kpiFontSize: string = '3';
+  kpiColor: string = '#000000';
+
+  sliderOptions = {
+    floor: 1,
+    ceil: 20,
+    step: 0.1,
+    showTicks: true
+  };
+  getFontSize(): string {
+    return `${this.kpiFontSize}rem`;
+  }
 }
