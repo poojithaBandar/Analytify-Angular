@@ -137,7 +137,6 @@ export class SheetsdashboardComponent {
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService){
     this.dashboard = [];
     const currentUrl = this.router.url; 
-    debugger
     if(currentUrl.includes('public/dashboard')){
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
@@ -989,83 +988,93 @@ selected_sheet_ids :this.sheetIdsDataSet,
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
-
-      return this.barChartOptions(xaxis,yaxis) 
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.barChartOptions(xaxis,yaxis,savedOptions) 
     }
     if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
       let yaxis = sheet.sheet_data?.results?.areaYaxis;
-      return this.areaChartOptions(xaxis,yaxis)
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.areaChartOptions(xaxis,yaxis,savedOptions)
     }
     if(sheet.chart_id === 13){
       let xaxis = sheet.sheet_data?.results?.lineXaxis;
       let yaxis = sheet.sheet_data?.results?.lineYaxis;
-      return this.lineChartOptions(xaxis,yaxis)
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.lineChartOptions(xaxis,yaxis,savedOptions)
     }
     if(sheet.chart_id === 24){
       let xaxis = sheet.sheet_data?.results?.pieXaxis;
       let yaxis = sheet.sheet_data?.results?.pieYaxis;
-      return this.pieChartOptions(xaxis,yaxis)
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.pieChartOptions(xaxis,yaxis,savedOptions)
     }
     //sidebyside
     if(sheet.chart_id === 7){
       let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
       let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
 
       const dimensions: Dimension[] =xaxis
       const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis)
+      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions)
 
     }
     if(sheet.chart_id === 5){
       let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
       let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
-      return this.stockedBarChartOptions(categories,yaxis)
+      return this.stockedBarChartOptions(categories,yaxis,savedOptions)
     }
     if(sheet.chart_id === 4){
       let xaxis = sheet.sheet_data?.results?.barLineXaxis;
       let yaxis = sheet.sheet_data?.results?.barLineYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
       console.log('barlinexaxis',xaxis)
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
       console.log('barlinecategories',categories)
 
-      return this.barLineChartOptions(categories,yaxis)
+      return this.barLineChartOptions(categories,yaxis,savedOptions)
     }
     if(sheet.chart_id === 2){
       let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
       let yaxis = sheet.sheet_data?.results?.hStockedYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
-      return this.hStockedBarChartOptions(categories,yaxis);
+      return this.hStockedBarChartOptions(categories,yaxis,savedOptions);
     }
     if(sheet.chart_id === 3){
       let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
       let yaxis = sheet.sheet_data?.results?.hgroupedYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
-      return this.hGroupedChartOptions(categories,yaxis)
+      return this.hGroupedChartOptions(categories,yaxis,savedOptions)
     }
     if(sheet.chart_id === 8){
       let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
       let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
-      return this.multiLineChartOptions(categories,yaxis)
+      return this.multiLineChartOptions(categories,yaxis,savedOptions)
     }
     if(sheet.chart_id === 10){
       let xaxis = sheet.sheet_data?.results?.donutXaxis;
       let yaxis = sheet.sheet_data?.results?.donutYaxis;
-      return this.donutChartOptions(xaxis,yaxis)
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.donutChartOptions(xaxis,yaxis,savedOptions)
     }
     
   }
@@ -1596,618 +1605,72 @@ this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+
   }
 
 /////chartOptions
-barChartOptions(xaxis:any,yaxis:any){
-   return {
-    series: [
-      {
-        name: '',
-        data: yaxis,
-      },
-    ],
-    chart: {
-      toolbar: {
-        show: false
-      },
-      height: 500,
-      type: 'bar',
-      foreColor: '#9aa0ac',
-    },
-    grid: {
-      show: false,      // you can either change hear to disable all grids
-      xaxis: {
-        lines: {
-          show: false  //or just here to disable only x axis grids
-         }
-       },  
-      yaxis: {
-        lines: { 
-          show: false  //or just here to disable only y axis
-         }
-       },   
-    },
-    plotOptions: {
-      bar: {
-        dataLabels: {
-          hideOverflowingLabels:false,
-          position: 'top', // top, center, bottom
-        },
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      formatter: function (val: number) {
-        return val + '';
-      },
-      offsetY: -20,
-      style: {
-        fontSize: '12px',
-        colors: ['#9aa0ac'],
-      },
-    },
-    fill: {
-      type: 'gradient',
-    },
-    xaxis: {
-      categories: xaxis,
-      position: 'bottom',
-      labels: {
-        rotate:0,
-        // offsetY: 0,
-        trim: true,
-        // minHeight: 40,
-        hideOverlappingLabels: false,
-        style: {
-          colors: '#9aa0ac',
-          
-        },
-      //   formatter: (value) => {
-      //     return (value && value.split(' ')[1][1] === '0' ? value : '');
-      // }
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      crosshairs: {
-        fill: {
-          type: 'gradient',
-          gradient: {
-            colorFrom: '#D8E3F0',
-            colorTo: '#BED1E6',
-            stops: [0, 100],
-            opacityFrom: 0.4,
-            opacityTo: 0.5,
-          },
-        },
-      },
-      tooltip: {
-        enabled: false,
-        offsetY: -35,
-      },
-
-    },
-
-    // fill: {
-    //   type: 'gradient',
-    //   gradient: {
-    //     shade: 'light',
-    //     type: 'horizontal',
-    //     shadeIntensity: 0.25,
-    //     gradientToColors: undefined,
-    //     inverseColors: true,
-    //     opacityFrom: 1,
-    //     opacityTo: 1,
-    //     stops: [50, 0, 100, 100],
-    //   },
-    // },
-    yaxis: {
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      labels: {
-        show: false,
-        formatter: function (val: number) {
-          return val + '$';
-        },
-      },
-    },
-    title: {
-      text: '',
-      offsetY: 10,
-      align: 'center',
-      style: {
-        color: '#9aa0ac',
-      },
-    },
-    // tooltip: {
-    //   theme: 'dark',
-    //   marker: {
-    //     show: true,
-    //   },
-    //   x: {
-    //     show: true,
-    //   },
-    // },
-  };
+barChartOptions(xaxis:any,yaxis:any,savedOptions : any){
+  savedOptions.series.data = yaxis;
+  savedOptions.xaxis.categories = xaxis;
+  return savedOptions;
 }
-areaChartOptions(xaxis:any,yaxis:any){
-  return {
-    series: [
-      {
-        name: "",
-        data: yaxis,
-      },
-    ],
-    chart: {
-      type: "area",
-      height: 200,
-      zoom: {
-        enabled: false,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "straight",
-    },
-    subtitle: {
-      text: "",
-      align: "left",
-      style: {
-        fontSize: "11px",
-        fontWeight: "normal",
-        color: "#8c9097",
-      },
-    },
-    grid: {
-      borderColor: "rgba(119, 119, 142, 0.05)",
-    },
-    labels: xaxis,
-    title: {
-      text: "",
-      align: "left",
-      style: {
-        fontSize: "13px",
-        fontWeight: "bold",
-        color: "#8c9097",
-      },
-    },
-    colors: ["#00a5a2"],
-    xaxis: {
-      type: "",
-      labels: {
-        show: true,
-        style: {
-          colors: "#8c9097",
-          fontSize: "11px",
-          fontWeight: 600,
-          cssClass: "apexcharts-xaxis-label",
-        },
-      },
-    },
-    yaxis: {
-      opposite: true,
-      labels: {
-        show: true,
-        style: {
-          colors: "#8c9097",
-          fontSize: "11px",
-          fontWeight: 600,
-          cssClass: "apexcharts-xaxis-label",
-        },
-      },
-    },
-    legend: {
-      horizontalAlign: "left",
-    },
-  };
+areaChartOptions(xaxis:any,yaxis:any,savedOptions : any){
+  savedOptions.series.data = yaxis;
+  savedOptions.labels = xaxis;
+  return savedOptions;
 }
-lineChartOptions(xaxis:any,yaxis:any){
- return {
-    series: [{
-        name: "",
-        data: yaxis
-    }],
-   
-        chart: {
-            height: 200,
-            type: 'line',
-            reponsive: true,
-            zoom: {
-                enabled: false
-            },
-            events: {
-                mounted: (chart:any) => {
-                  chart.windowResizeHandler();
-                }
-              },
-        },
-        colors: ['#00a5a2'],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'straight',
-            width: 3,
-        },
-        grid: {
-          borderColor: "rgba(119, 119, 142, 0.05)",
-        },
-        title: {
-            text: '',
-            align: 'left',
-            style: {
-                fontSize: '13px',
-                fontWeight: 'bold',
-                color: '#8c9097'
-            },
-        },
-        xaxis: {
-            categories: xaxis,
-            labels: {
-                show: true,
-                style: {
-                    colors: "#8c9097",
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    cssClass: 'apexcharts-xaxis-label',
-                },
-            }
-        },
-        yaxis: {
-            labels: {
-                show: true,
-                style: {
-                    colors: "#8c9097",
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    cssClass: 'apexcharts-yaxis-label',
-                },
-            }
-        }
-    
+lineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series.data = yaxis;
+  savedOptions.xaxis.categories = xaxis;
+  return savedOptions;
 }
+pieChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = yaxis;
+  savedOptions.labels = xaxis;
+  return savedOptions;
 }
-pieChartOptions(xaxis:any,yaxis:any){
-  return {
-    series: yaxis,
-    chart: {
-        height: 300,
-        type: 'pie',
-    },
-    colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
-    labels: xaxis,
-    legend: {
-        position: "bottom"
-    },
-    dataLabels: {
-        dropShadow: {
-            enabled: false
-        }
-    },
-    };
+sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = yaxis;
+  savedOptions.xaxis.categories = xaxis;
+  return savedOptions;
 }
-sidebySideBarChartOptions(xaxis:any,yaxis:any){
-  return{
-    series: yaxis,
-    colors:['#00a5a2','#0dc9c5','#f43f63'],
-    chart: {
-      type: 'bar',
-      height: 320,
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        // endingShape: "rounded"
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent'],
-    },
-    xaxis: {
-      categories:xaxis,
-      
-    },
-    yaxis: {
-      title: {
-        text: '',
-      },
-    },
-    fill: {
-      opacity: 1,
-    },
-    tooltip: {
-      y: {
-        formatter: function (val:any) {
-          console.log(val)
-          return val ;
-        },
-      },
-    },
-    grid: {
-      borderColor: "rgba(119, 119, 142, 0.05)",
-    },
-  };
+stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = yaxis;
+  savedOptions.xaxis.categories = xaxis;
+  return savedOptions;
 }
-stockedBarChartOptions(xaxis:any,yaxis:any){
-  return {
-    series: yaxis,
-    chart: {
-      type: "bar",
-      height: 350,
-      stacked: true,
-      toolbar: {
-        show: false
-      },
-      zoom: {
-        enabled: true
-      }
+barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = [
+    {
+      name: yaxis[0]?.name,
+      type: "column",
+      data: yaxis[0]?.data
     },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            position: "bottom",
-            offsetX: -10,
-            offsetY: 0
-          }
-        }
-      }
-    ],
-    plotOptions: {
-      bar: {
-        horizontal: false
-      }
-    },
-    xaxis: {
-      type: "category",
-      categories: xaxis,
-    },
-    legend: {
-      position: "right",
-      offsetY: 40
-    },
-    fill: {
-      opacity: 1
+    {
+      name: yaxis[1]?.name,
+      type: "line",
+      data: yaxis[1]?.data,
     }
-  };
+  ];
+  savedOptions.labels = xaxis;
+  return savedOptions;
 }
-barLineChartOptions(xaxis:any,yaxis:any){
-    return {
-      series: [
-        {
-          name: yaxis[0]?.name,
-          type: "column",
-          data: yaxis[0]?.data
-        },
-        {
-          name: yaxis[1]?.name,
-          type: "line",
-          data: yaxis[1]?.data,
-        }
-      ],
-      colors:['#00a5a2','#31d1ce'],
-      chart: {
-        height: 350,
-        type: "line"
-      },
-      grid: {
-        borderColor: "rgba(119, 119, 142, 0.05)",
-      },
-      stroke: {
-        width: [0, 4]
-      },
-      title: {
-        text: "",
-        style: {
-          fontSize: "13px",
-          fontWeight: "bold",
-          color: "#8c9097",
-        },
-      },
-      dataLabels: {
-        enabled: true,
-        enabledOnSeries: [1]
-      },
-      labels: xaxis,
-      xaxis: {
-        type: ""
-      },
-      yaxis: [
-        {
-          title: {
-            text: "",
-            style: {
-              fontSize: "13px",
-              fontWeight: "bold",
-              color: "#8c9097",
-            },
-          }
-        },
-        {
-          opposite: true,
-          title: {
-            text: "",
-            style: {
-              fontSize: "13px",
-              fontWeight: "bold",
-              color: "#8c9097",
-            },
-          }
-        }
-      ]
-      
-    };
-}
-hStockedBarChartOptions(xaxis:any,yaxis:any){
-    return {
-    series: yaxis,
-    chart: {
-      type: "bar",
-      height: 350,
-      stacked: true,
-      toolbar: {
-        show: true
-      },
-      zoom: {
-        enabled: true
-      }
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            position: "bottom",
-            offsetX: -10,
-            offsetY: 0
-          }
-        }
-      }
-    ],
-    plotOptions: {
-      bar: {
-        horizontal: true
-      }
-    },
-    xaxis: {
-      type: "category",
-      categories: xaxis,
-    },
-    legend: {
-      position: "right",
-      offsetY: 40
-    },
-    fill: {
-      opacity: 1
-    }
-  }
+hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = yaxis;
+  savedOptions.xaxis.categories = xaxis;
+  return savedOptions;
 }
 
-hGroupedChartOptions(xaxis:any,yaxis:any){
-  return{
-    series: yaxis,
-    chart: {
-      type: "bar",
-      height: 430
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        dataLabels: {
-          position: "top"
-        }
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      offsetX: -6,
-      style: {
-        fontSize: "12px",
-        colors: ["#fff"]
-      }
-    },
-    stroke: {
-      show: true,
-      width: 1,
-      colors: ["#fff"]
-    },
-    xaxis: {
-      categories: xaxis
-    }
-  };
+hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = yaxis;
+  savedOptions.xaxis.categories = xaxis;
+  return savedOptions;
 }
-multiLineChartOptions(xaxis:any,yaxis:any){
-  return {
-    series: yaxis,
-    chart: {
-      height: 350,
-      type: "line"
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      width: 5,
-      curve: "straight",
-      dashArray: [0, 8, 5]
-    },
-    title: {
-      text: "",
-      align: "left"
-    },
-    legend: {
-      tooltipHoverFormatter: function(val:any, opts:any) {
-        return (
-          val +
-          " - <strong>" +
-          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
-          "</strong>"
-        );
-      }
-    },
-    markers: {
-      size: 0,
-      hover: {
-        sizeOffset: 6
-      }
-    },
-    xaxis: {
-      labels: {
-        trim: false
-      },
-      categories: xaxis
-    },
-    tooltip: {
-      y: [
-        {
-          title: {
-            formatter: function(val:any) {
-              return val;
-            }
-          }
-        },
-      ]
-    },
-    grid: {
-      borderColor: "#f1f1f1"
-    }
-  };
+multiLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = yaxis;
+  savedOptions.xaxis.categories = xaxis;
+  return savedOptions;
 }
-donutChartOptions(xaxis:any,yaxis:any){
-  return {
-    series: yaxis,
-    chart: {
-      type: "donut"
-    },
-    labels: xaxis,
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 100
-          },
-          legend: {
-            position: "bottom"
-          }
-        }
-      }
-    ]
-  };
+donutChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+  savedOptions.series = yaxis;
+  savedOptions.labels = xaxis;
+  return savedOptions;
 }
 
 

@@ -2557,11 +2557,13 @@ sheetSave(){
     this.sidebysideBarYaxis = this.sidebysideBarRowData;
     this.sidebysideBarXaxis = this.sidebysideBarColumnData1;
     this.sidebysideBarOptions = this.chartOptions2;
+    savedChartOptions = this.chartOptions2;
   }
   if(this.stocked && this.chartId == 5){
     this.stokedBarYaxis = this.sidebysideBarRowData;
     this.stokedBarXaxis = this.sidebysideBarColumnData1;
     this.stokedOptions = this.chartOptions6;
+    savedChartOptions = this.chartOptions6;
   }
   if(this.barLine && this.chartId == 4){
     this.barLineYaxis = this.sidebysideBarRowData;
@@ -2577,21 +2579,25 @@ sheetSave(){
     this.hStockedYaxis = this.sidebysideBarRowData;
     this.hStockedXaxis = this.sidebysideBarColumnData1;
     this.hStockedOptions = this.chartOptions7;
+    savedChartOptions = this.chartOptions7;
   }
   if(this.grouped && this.chartId == 3){
     this.hgroupedYaxis = this.sidebysideBarRowData;
     this.hgroupedXaxis = this.sidebysideBarColumnData1;
     this.hgroupedOptions = this.chartOptions8;
+    savedChartOptions = this.chartOptions8;
   }
   if(this.multiLine && this.chartId == 8){
     this.multiLineYaxis = this.sidebysideBarRowData;
     this.multiLineXaxis = this.sidebysideBarColumnData1;
     this.multiLineOptions = this.chartOptions9;
+    savedChartOptions = this.chartOptions9;
   }
   if(this.donut && this.chartId == 10){
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
     this.donutOptions = this.chartOptions10;
+    savedChartOptions = this.chartOptions10;
   }
   if(this.radar && this.chartId == 12){
     this.barLineXaxis = this.sidebysideBarColumnData1;
