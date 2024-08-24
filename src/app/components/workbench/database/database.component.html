@@ -254,7 +254,7 @@
                                                 @if(isOpen){
                                             <div class=" gap-1 d-flex flex-wrap p-2">
                                                 <div ngbDropdown class="btn-group my-2 dropdown">
-                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false" class="dropdown-toggle btn btn-info-light"> {{selectedClmnT1 ? selectedClmnT1:'Select Column'}}</button>
+                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false" class="dropdown-toggle btn btn-info-light"> {{(selectedClmnT1 ? selectedClmnT1:'Select Column') | slice:0:13}}</button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         @for(table of draggedtables;track table){
                                                             <li class="dropdown-plus-title">
@@ -289,7 +289,7 @@
                                                     </ul>
                                                 </div>
                                                    <div ngbDropdown class="btn-group my-2 dropdown">
-                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false"  [disabled]="!selectedClmnT1" class="dropdown-toggle btn btn-info-light">{{ selectedClmnT2 ? selectedClmnT2 : 'Select Column' }}
+                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false"  [disabled]="!selectedClmnT1" class="dropdown-toggle btn btn-info-light">{{ (selectedClmnT2 ? selectedClmnT2 : 'Select Column') | slice:0:13 }}
                                                     </button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         @for(table of remainingTables;track table){
@@ -366,7 +366,7 @@
                                             @if(TabledataJoining){
                                                 <input type="number" [(ngModel)]="rowLimit" id="input-text" style="border-radius: 4px 0px 0px 4px;" (keydown.enter)="getJoiningTableData()" placeholder="rows" class="form-control w-30"> 
                                                 <a (click)="getJoiningTableData()"><i class="mdi mdi-arrow-right-thick result-icon"></i></a>
-                                            <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary ms-2'" [previledgeId]="17" [isBtn]="true"
+                                            <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary ms-2'" [previledgeId]="17" [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable"
                                                 (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
                                             }
                                     </div>

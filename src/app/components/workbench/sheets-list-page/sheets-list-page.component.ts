@@ -21,7 +21,7 @@ export class SheetsListPageComponent implements OnInit {
   sheetName:any;
   savedSheetsList:any[]=[];
   sheetsList : any[] = [];
-  selectedSheetList! : any;
+  selectedSheetList=0;
   itemsPerPage:any;
   pageNo = 1;
   page: number = 1;
@@ -97,7 +97,7 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
           this.itemsPerPage = data.items_per_page;
           this.totalItems = data.total_items
           console.log('sheetsList',data)
-          this.selectedSheetList = data[0].id;
+          this.selectedSheetList = 0;
           this.loadSelectedSheetList();
   
         },

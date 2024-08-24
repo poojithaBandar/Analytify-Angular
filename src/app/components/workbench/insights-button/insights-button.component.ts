@@ -23,6 +23,8 @@ export class InsightsButtonComponent {
   @Input() isBtn! : boolean
   @Input() toolTip! : string;
   @Output() btnClickEvent: EventEmitter<any>;
+  @Input() gotoSheetButton! : boolean;
+
   displayButton : boolean = false;
   constructor(private rolesPrevilidgesService : RolespriviledgesService){
     this.btnClickEvent = new EventEmitter();

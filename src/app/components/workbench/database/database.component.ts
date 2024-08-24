@@ -114,6 +114,7 @@ export class DatabaseComponent {
   fromDatabasId = false;
   fromFileId = false;
   rowLimit:any;
+  gotoSheetButtonDisable = true;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -199,7 +200,7 @@ export class DatabaseComponent {
       if(this.fromFileId){
         this.getTablesFromFileId();
       }
-   // this.getTablesfromPrevious()
+    this.getTablesfromPrevious()
   }
 //  if(this.updateQuery){
 //       this.getSavedQueryData();
@@ -577,6 +578,7 @@ joiningTables(){
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
         this.getJoiningTableData();
+        this.gotoSheetButtonDisable = false;
       },
       error:(error:any)=>{
       console.log(error);
@@ -585,7 +587,13 @@ joiningTables(){
         title: 'oops!',
         text: error.error.message,
         width: '400px',
-      })
+      });
+      this.TabledataJoining = [];
+      this.qryTime = '';
+      this.qryRows ='';
+      this.totalRows = '';
+      this.showingRows = '';
+      this.gotoSheetButtonDisable= true
     }
     })
   
@@ -793,8 +801,12 @@ getJoiningTableData(){
         this.qryTime = data.query_exection_time;
         this.qryRows = data.no_of_rows;
         this.totalRows = data.total_rows;
-        this.showingRows = data.no_of_rows
+        this.showingRows = data.no_of_rows;
+        this.gotoSheetButtonDisable = false;
         // this.saveQueryName = data.queryset_name;
+        if(this.TabledataJoining?.column_data?.length === 0){
+          this.gotoSheetButtonDisable = true;
+        }
       },
       error:(error:any)=>{
       console.log(error);
@@ -804,6 +816,7 @@ getJoiningTableData(){
         text: error.error.message,
         width: '400px',
       })
+
     }
     })
 }

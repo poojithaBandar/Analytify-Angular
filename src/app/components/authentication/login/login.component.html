@@ -20,6 +20,12 @@
                                 <div class="mb-3">
                                     <label class="mb-2 fw-500">Email<span class="text-danger ms-1">*</span></label>
                                     <input class="form-control ms-0" type="email" formControlName="email" placeholder="Enter your Email">
+                                    @if(loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched){
+                                        <div class="text-danger">Email required</div>
+                                    }
+                                    @if(loginForm.get('email')?.hasError('pattern')){
+                                        <div class="text-danger">Please enter a valid email address</div>
+                                    }
                                 </div>
                             </div>
                             <div class="col-sm-12">
