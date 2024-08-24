@@ -40,6 +40,7 @@ import 'ckeditor5/ckeditor5.css';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { ToastrService } from 'ngx-toastr';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -134,14 +135,17 @@ export class SheetsdashboardComponent {
   searchSheets!: string;
   isPublicUrl = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('public/dashboard')){
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
       this.active = 2;
-      localStorage.setItem('currentUser',('{"Token":"XwybWf3wWJlpzS6i1IvS8fXnnjvdVO"}'));
+      localStorage.setItem('currentUser',('{"Token":"B8nGJ4oIRfujTrmosWBAN54zatfn9J"}'));
+      if (route.snapshot.params['id1']) {
+      this.dashboardId = +atob(route.snapshot.params['id1'])
+      }
     }
     if(!this.isPublicUrl){
       this.editDashboard = this.viewTemplateService.editDashboard();
@@ -272,7 +276,7 @@ export class SheetsdashboardComponent {
     }
   }
   if(this.isPublicUrl){
-    this.dashboardId = 145
+    // this.dashboardId = 145
     this.getSavedDashboardData();
     this.getDashboardFilterredList();
 
@@ -588,7 +592,9 @@ export class SheetsdashboardComponent {
         }
         console.log(this.dashboard);
         let obj = {sheet_ids: this.sheetIdsDataSet};
+        if(!this.isPublicUrl){
         this.fetchSheetsDataBasedOnSheetIds(obj);
+        }
       },
       error:(error)=>{
         console.log(error)
@@ -1766,12 +1772,8 @@ closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
 getSelectedData(){
 
 if(this.filterName === ''){
-  Swal.fire({
-    icon: 'error',
-    title: 'oops!',
-    text: 'Please add name to Filter',
-    width: '400px',
-})
+  this.toasterService.error('Please Add Filter Name','error',{ positionClass: 'toast-center-center'})
+
 }else{
   const Obj ={
     dashboard_id:this.dashboardId,
@@ -1785,16 +1787,24 @@ if(this.filterName === ''){
     next:(data)=>{
       console.log(data);
       this.dashboardFilterId = data.dashboard_filter_id
-      this.getDashboardFilterredList()
+      this.getDashboardFilterredList();
+      this.sheetsFilterNames = []
+      this.selectClmn = '';
+      this.columnFilterNames=[];
+      this.filterName = '';
+      this.isAllSelected = false;
+      this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
+
     },
     error:(error)=>{
       console.log(error)
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'oops!',
+      //   text: error.error.message,
+      //   width: '400px',
+      // })
+      this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
     }
   })
 }
@@ -2109,18 +2119,22 @@ deleteDashboardFilter(id:any){
             });
             this.setDashboardSheetData(item);
           });
+          this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
+
           this.getFilteredData();
           // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
 
         },
         error:(error)=>{
           console.log(error)
-          Swal.fire({
-            icon: 'error',
-            title: 'oops!',
-            text: error.error.message,
-            width: '400px',
-          })
+          // Swal.fire({
+          //   icon: 'error',
+          //   title: 'oops!',
+          //   text: error.error.message,
+          //   width: '400px',
+          // })
+          this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-center'})
+
         }
     });
   },

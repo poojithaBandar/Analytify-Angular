@@ -49,8 +49,8 @@
                           }">
                             <td>
                               <div class="d-flex">
-                                <div class="imgdf">
-                                  <img src="{{dashboard.dashboard_image}}" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                <div (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" class="imgdf">
+                                  <img src="{{dashboard.dashboard_image}}" alt="" class="w-7 h-7 border rounded-3  me-4 img-cursor">
                                 </div>
                                 <div class="content">
                                   <a style="color: #05aff8;cursor: pointer;" ngbTooltip="{{dashboard.dashboard_name}}"
@@ -96,7 +96,7 @@
                   }" class="col-md-12 col-xl-3">
                   <div class="card  ">
                     <div class="user-image card-box-shadow">                        
-                          <img src="{{dashboard.dashboard_image}}" alt="" class="card-img-top" style="height: 140px;">
+                          <img src="{{dashboard.dashboard_image}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" alt="" class="card-img-top img-cursor" style="height: 140px;">
                     </div>
                     <div class="card-body p-1 mt-1 text-center">
                         <a  class="fs-18 fw-bold d-block" ngbTooltip="{{dashboard.dashboard_name}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)">{{dashboard.dashboard_name | slice:0:15}}</a>
@@ -223,13 +223,21 @@
           </div>
           <div class="">
             
+            <p class="fw-semibold mb-2 mt-3">Share/publish</p>
+            <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="sharePublish($event)" [closeOnSelect]="true" [(ngModel)]="selectedRoleIds"  placeholder="Share or Publish">
+             <ng-option  value="public" selected>Public</ng-option>
+             <ng-option  value="private" selected>Private</ng-option>
+            </ng-select>
+       </div>
+          <div *ngIf="shareAsPrivate" class="">
+            
                <p class="fw-semibold mb-2 mt-3">Roles</p>
                <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button" (change)="onRolesChange($event)"  [closeOnSelect]="false" [(ngModel)]="selectedRoleIds" [multiple]="true" placeholder="Select Roles">
                    <ng-option *ngFor="let role of roleDetails" value="{{role.id}}" selected>{{role.role}}</ng-option>
                    
                </ng-select>
           </div>
-          <div class="">
+          <div *ngIf="shareAsPrivate" class="">
             
             <p class="fw-semibold mb-2 mt-3">Users</p>
             <ng-select class="form-control p-0" name="choices-multiple-remove-button" id="choices-multiple-remove-button1"(click)="getUsersforRole()" (change)="getSelectedUsers($event)" [(ngModel)]="selectedUserIds"  [closeOnSelect]="false"  [multiple]="true" placeholder="Select Users">
@@ -237,6 +245,17 @@
               
             </ng-select>
        </div>
+       <div *ngIf="createUrl" class="">
+            
+        <p class="fw-semibold mb-2 mt-3">Url</p>
+        <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">{{publicUrl}}
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  x="0px" y="0px" viewBox="0 0 488.3 488.3" width="16px" height="16px" xml:space="preserve" (click)="copyUrl()">
+            <g>
+              <path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/>
+              <path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/>
+            </g>
+          </svg></button>
+   </div>
       </div>
       <div class="modal-footer">
         <button type="button" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>

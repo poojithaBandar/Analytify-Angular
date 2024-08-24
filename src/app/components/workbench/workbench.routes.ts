@@ -199,7 +199,7 @@ export const admin: Routes = [
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
-  path: 'public/dashboard',
+  path: 'public/dashboard/:id1',
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
 },

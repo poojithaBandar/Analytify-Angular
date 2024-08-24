@@ -24,7 +24,9 @@ a {
     display: flex;
     justify-content: flex-end;
 }
-
+.img-cursor{
+    cursor: pointer;
+}
      // for Mobile Resolution //
      @media only screen and ( max-width : 578px ) {
         .h1, h1{
