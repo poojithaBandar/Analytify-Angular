@@ -2134,8 +2134,8 @@ tableMeasures = [] as any;
           return indexA - indexB;
         });
         console.log(this.draggedRowsData);
-        const integerList=['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double']
-        if(integerList.includes(element.data_type)){
+        const dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz']
+        if(!dateList.includes(element.data_type)){
           this.rowMeasuresCount(element,event.currentIndex,'sum');
         }else {
           this.dataExtraction();
@@ -2639,6 +2639,7 @@ const obj={
   "sheet_tag_name": this.sheetTagName,
   "filterId":this.filterId,
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
+  "filter_data": this.dimetionMeasure,
   "data":{
   "columns": this.draggedColumns,
   "columns_data":this.draggedColumnsData,
@@ -3220,7 +3221,7 @@ if(this.fromFileId){
    console.log(this.filterDataArray)
   }
   filterDataPut(){
-    this.dimetionMeasure = [];
+    // this.dimetionMeasure = [];
     const obj={
     //"filter_id": this.filter_id,
     "database_id": this.databaseId,
@@ -3336,6 +3337,7 @@ openSuperScalededitFilter(modal: any,data:any) {
   });
   this.filterName = data.col_name;
   this.filterType = data.data_type;
+  this.filter_id = data.filter_id;
   this.filterEditGet();
 }
 gotoDashboard(){

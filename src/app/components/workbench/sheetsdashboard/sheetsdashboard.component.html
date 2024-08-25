@@ -750,7 +750,7 @@
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
-              <div class="card mb-0" style="height: 100%;" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
+              <div class="card mb-0" style="height: 100%;">
                 <div class="card-header d-flex justify-content-between p-1">
                   <div style="width: 100%;" [innerHtml]="sheetTagTitle[item.data.title]?sheetTagTitle[item.data.title]:item.data.sheetTagName"></div>
                     <div class="dashboard-option">
@@ -775,7 +775,7 @@
                         </div>
                       </div>
                 </div>
-                <div class="card-body p-1">
+                <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
     
                   <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
                     <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
