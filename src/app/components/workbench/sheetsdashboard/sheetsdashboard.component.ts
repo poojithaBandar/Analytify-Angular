@@ -278,7 +278,7 @@ export class SheetsdashboardComponent {
   
   ngOnInit() {  
     if(!this.isPublicUrl){
-    if(this.fileId || this.databaseId){
+    if(this.fileId.length > 0 || this.databaseId.length > 0){
       this.sheetsDataWithQuerysetIdTest();
     }
   }
@@ -652,7 +652,7 @@ export class SheetsdashboardComponent {
       })
     }else{
       this.assignOriginalDataToDashboard();
-    const obj ={
+    let obj ={
       grid : this.gridType,
       height: this.heightGrid,
       width: this.widthGrid,
@@ -662,7 +662,8 @@ export class SheetsdashboardComponent {
 selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
-      data:this.dashboard
+      data:this.dashboard,
+      file_id : this.fileId
     }as any;
     if(this.fromFileId){
       delete obj.server_id;
@@ -789,7 +790,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       })
     }else{
       let dashboardData = this.assignOriginalDataToDashboard();
-    const obj ={
+    let obj ={
       grid : this.gridType,
       height: this.heightGrid,
       width: this.widthGrid,
@@ -800,8 +801,13 @@ selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_tag_name:this.dashboardTagName,
       selected_sheet_ids:this.sheetIdsDataSet,
       data : dashboardData,
-      sheetTabs : this.sheetTabs
+      sheetTabs : this.sheetTabs,
+      file_id : this.fileId
       
+    }as any;
+    if(this.fromFileId){
+      delete obj.server_id;
+      obj['file_id'] = this.fileId;
     }
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
@@ -2059,6 +2065,7 @@ getFilteredData(){
 setDashboardSheetData(item:any){
   this.dashboard.forEach((item1:any) => {
     if(item1.sheetId == item.sheet_id){
+      
       if(item.chart_id == '6'){//bar
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
@@ -2066,7 +2073,20 @@ setDashboardSheetData(item:any){
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
       }
+      if(item.chart_id == '25'){//KPI
+        if(!item1.originalData){
+          item1['originalData'] = {rows: item['kpiData'].rows };
+        }
+        item1['kpiData'].rows = item.rows;
+      }
       if(item.chart_id == '24'){//pie
+        if(!item1.originalData){
+          item1['originalData'] = {categories:item1.chartOptions.labels , data:this.filteredRowData[0].data};
+        }
+        item1.chartOptions.labels = this.filteredColumnData[0].values;
+      item1.chartOptions.series = this.filteredRowData[0].data;
+      }
+      if(item.chart_id == '10'){//donut
         if(!item1.originalData){
           item1['originalData'] = {categories:item1.chartOptions.labels , data:this.filteredRowData[0].data};
         }
