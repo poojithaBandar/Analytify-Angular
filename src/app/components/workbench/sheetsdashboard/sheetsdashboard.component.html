@@ -601,16 +601,11 @@
                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
-                                                              [buttonName]="'Goto Sheet'"
-                                                              [previledgeIdsList]="[20,18]" [isBtn]="false"
-                                                              (btnClickEvent)="viewSheet(item)" 
-                                                              [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
-                                                              [buttonName]="'Remove'"
-                                                              [previledgeId]="37" [isBtn]="false"
-                                                              (btnClickEvent)="removeItem($event, item, true)" 
-                                                              [isIcon]="false"></app-insights-button>
+                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Goto Sheet'"
+                                [previledgeIdsList]="[20,18]" [isBtn]="false" (btnClickEvent)="viewSheet(item)"
+                                [isIcon]="false"></app-insights-button>
+                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'" [previledgeId]="37"
+                                [isBtn]="false" (btnClickEvent)="removeItem($event, item, true)" [isIcon]="false"></app-insights-button>
                             </div>
                           </div>
                         </div>

@@ -44,6 +44,8 @@ createUrl =false;
 shareAsPrivate = false;
 UrlCopy:string | null = null;
 publicUrl:any;
+port:any;
+host:any;
 @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService){
@@ -64,6 +66,13 @@ ngOnInit(){
   }if(this.viewCustomSql){
   this.getSavedQueries();
   }
+  this.getHostAndPort();
+}
+getHostAndPort(): void {
+  const { hostname, port } = window.location;
+  this.host = hostname;
+  this.port = port;
+  console.log('port',this.port,'host',this.host)
 }
 totalSearch(){
   this.getuserSheets();
@@ -481,7 +490,7 @@ if(value === 'public'){
   this.createUrl = true;
   this.shareAsPrivate = false
   const publicDashboardId = btoa(this.dashboardId.toString());
-  this.publicUrl = 'http://54.67.88.195:4200/public/dashboard/'+publicDashboardId
+  this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
 } else if(value === 'private'){
   this.createUrl = false;
   this.shareAsPrivate = true;

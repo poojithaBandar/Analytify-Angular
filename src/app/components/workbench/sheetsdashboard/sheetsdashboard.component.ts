@@ -1719,19 +1719,19 @@ stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   return savedOptions;
 }
 barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series = [
-    {
-      name: yaxis[0]?.name,
-      type: "column",
-      data: yaxis[0]?.data
-    },
-    {
-      name: yaxis[1]?.name,
-      type: "line",
-      data: yaxis[1]?.data,
-    }
-  ];
-  savedOptions.labels = xaxis;
+  // savedOptions.series = [
+  //   {
+  //     name: yaxis[0]?.name,
+  //     type: "column",
+  //     data: yaxis[0]?.data
+  //   },
+  //   {
+  //     name: yaxis[1]?.name,
+  //     type: "line",
+  //     data: yaxis[1]?.data,
+  //   }
+  // ];
+  // savedOptions.labels = xaxis;
   return savedOptions;
 }
 hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
@@ -1746,8 +1746,8 @@ hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   return savedOptions;
 }
 multiLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
+  // savedOptions.series = yaxis;
+  // savedOptions.xaxis.categories = xaxis;
   return savedOptions;
 }
 donutChartOptions(xaxis:any,yaxis:any,savedOptions:any){
