@@ -2573,7 +2573,7 @@ kpiData?: KpiData;
         sheet.is_selected = true;
         dataSet.add(sheet.sheet_id);
       } else {
-        sheet.is_selected = true;
+        sheet.is_selected = false;
         dataSet.delete(sheet.sheet_id);
       }
     });
