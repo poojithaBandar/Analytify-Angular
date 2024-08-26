@@ -322,7 +322,7 @@
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
-                                  <a (click)="getTablesFromConnectedDb(database.database_id,database.file_id)"  class="float-start">{{database.display_name | slice:0:15}}</a>
+                                  <a (click)="getTablesFromConnectedDb(database.database_id,database.file_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
                               </h6>
                               
                           </div>

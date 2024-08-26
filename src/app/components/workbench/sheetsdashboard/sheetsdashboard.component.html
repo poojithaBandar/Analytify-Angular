@@ -293,7 +293,7 @@
                                             </div>
 
                                             <div class="p-2">
-                                              <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData()" class="btn ripple btn-primary me-2">Save</button>
+                                              <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData();selectedQuerySetId = 0" class="btn ripple btn-primary me-2">Save</button>
                                               <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';closeFilterModal();sheetsFilterNames =[];isAllSelected = false;columnFilterNames =[]"> Cancel </button>
                                           </div>
                                           </ul>

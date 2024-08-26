@@ -2318,7 +2318,7 @@ this.isAllSelected = this.sheetsFilterNamesFromEdit.every((row: { selected: any;
 }
 toggleAllRowsEdit(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  this.sheetsFilterNames.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+  this.sheetsFilterNamesFromEdit.forEach((row: { selected: boolean; }) => row.selected = isChecked);
   this.updateSelectedRowsEdit();
 }
 closeColumnsDropdownEdit(colName:any,colDatatype:any, dropdown: NgbDropdown) {
