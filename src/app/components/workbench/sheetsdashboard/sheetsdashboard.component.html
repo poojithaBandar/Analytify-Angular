@@ -190,15 +190,15 @@
                                                         <h6 class="mb-0">Size</h6>
                                                         <div class="form-group mb-1">
                                                           <select class="form-select form-select select2 fs-14">
-                                                              <option value="1">Custom size (1500 * 1400)</option>
+                                                            <option value="1">Custom size ({{widthGrid}} * {{heightGrid}})</option>
                                                               <option value="2">Custom size (1200 * 1100)</option>
-                                                              <option value="3">Custom size (1500 * 1400)</option>
+                                                              <option value="3">Custom size (1000 * 900)</option>
                                                         
                                                           </select>
                                                       </div>
                                                       <div class=" p-1 mt-3">
-                                                        <a href="javascript:void(0);" (click)="changeGridType('fixed')" class="btn btn-outline-primary">Fixed</a>
-                                                        <a href="javascript:void(0);" (click)="changeGridType('scroll')" class="btn btn-primary-light">Scroll</a>
+                                                        <a style="border: #00a5a2;" [ngStyle]="gridType === 'fixed' ? { 'background-color': '#00a5a2', 'color': 'white' } : { 'background-color': 'white', 'color': '#00a5a2' }" href="javascript:void(0);" (click)="changeGridType('fixed')" class="btn">Fixed</a>
+                                                        <a style="border: #00a5a2;" [ngStyle]="gridType === 'scroll' ? { 'background-color': '#00a5a2', 'color': 'white' } : { 'background-color': 'white', 'color': '#00a5a2' }" href="javascript:void(0);" (click)="changeGridType('scroll')" class="btn">Scroll</a>
                                                     </div>
                                                      
                                                        <div class="row">
@@ -982,9 +982,7 @@
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
                     <div class="big-number-container">
                         @for(row of item['kpiData'].rows;track row){
-                          @for(column of item['kpiData']?.columns;track column){
-                            <h1 class="big-number" [style.font-size]="item['kpiData']?.fontSize" [style.color]="item['kpiData']?.color">{{ row[column] }}</h1>
-                            }
+                          <h1 class="big-number" [style.font-size]="item['kpiData']?.fontSize" [style.color]="item['kpiData']?.color">{{ row.result_data[0] }}</h1>
                           }
                     </div>
                   }

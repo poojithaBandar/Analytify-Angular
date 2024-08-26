@@ -1995,7 +1995,7 @@ tableMeasures = [] as any;
         const dimensions: Dimension[] = this.sidebysideBarColumnData1;
         const categories = this.flattenDimensions(dimensions);
         if(this.barchart){
-          this.chartOptions3.series.data = this.chartsRowData;
+          this.chartOptions3.series[0].data = this.chartsRowData;
           this.chartOptions3.xaxis.categories = this.chartsColumnData;
         }
         else if(this.piechart){
@@ -2003,11 +2003,11 @@ tableMeasures = [] as any;
           this.chartOptions4.labels = this.chartsColumnData;
         }
         else if(this.linechart){
-          this.chartOptions.series.data = this.chartsRowData;
+          this.chartOptions.series[0].data = this.chartsRowData;
           this.chartOptions.xaxis.categories = this.chartsColumnData;
         }
         else if(this.areachart){
-          this.chartOptions1.series.data = this.chartsRowData;
+          this.chartOptions1.series[0].data = this.chartsRowData;
           this.chartOptions1.labels = this.chartsColumnData;
         }
         else if(this.sidebysideChart){
@@ -2019,9 +2019,11 @@ tableMeasures = [] as any;
           this.chartOptions6.xaxis.categories = categories;
         }
         else if(this.barlineChart){
-          this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
-          this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
+          // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
+          // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
+          this.chartOptions5.series = this.sidebysideBarRowData;
           this.chartOptions5.labels = categories;
+          this.chartOptions5.xaxis.categories = categories;
         }
         else if(this.horizontolstockedChart){
           this.chartOptions7.series = this.sidebysideBarRowData;
@@ -2056,6 +2058,7 @@ tableMeasures = [] as any;
         this.donut = false;
         this.chartId = 1;
         this.radar = false;
+        this.kpi = false;
       }
         },
         error: (error) => {
@@ -2282,6 +2285,7 @@ tableMeasures = [] as any;
        this.selectedTabIndex = this.tabs.length - 1;
        this.sheetTagName = 'Sheet ' +this.sheetNumber;
     }
+    this.kpi=false;
   }
   sheetNameChange(name:any,event:any){
     console.log(this.SheetIndex)
@@ -2370,16 +2374,15 @@ tableMeasures = [] as any;
     this.workbechService.getSheetNames(obj).subscribe({
       next: (responce: any) => {
         this.sheetList = responce.data;
-        this.sheetList.some((sheet)=>{
-          if(sheet.sheet_name === this.sheetName){
-            this.retriveDataSheet_id = sheet.id;
-            return true;
-          }
-          else{
-            this.retriveDataSheet_id = '';
-            return false;
-          }
-        });
+        if (!this.sheetList.some(sheet => sheet.sheet_name === this.sheetName)) {
+          this.retriveDataSheet_id = '';
+        } else {
+          this.sheetList.forEach(sheet => {
+            if (sheet.sheet_name === this.sheetName) {
+              this.retriveDataSheet_id = sheet.id;
+            }
+          });
+        }
         // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
         // inputElement.innerHTML = event.tab?.textLabel;
         this.sheetTagName = event.tab?.textLabel;
@@ -2391,6 +2394,7 @@ tableMeasures = [] as any;
         this.draggedRowsData = [];
         this.displayedColumns = [];
         this.tableData = [];
+        this.getChartData();
        if(this.retriveDataSheet_id){
           this.sheetRetrive();
        }
@@ -2694,8 +2698,7 @@ const obj={
       "donutXaxis": this.donutXaxis,
       "donutOptions":this.donutOptions,
 
-      "kpiData": this.saveTableData,
-      "kpiColumns": this.savedisplayedColumns,
+      "kpiData": this.tablePreviewRow,
       "kpiFontSize": this.kpiFontSize,
       "kpicolor": this.kpiColor
   },
@@ -2817,6 +2820,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
         this.dimetionMeasure = responce.filters_data;
+        responce.filters_data.forEach((filter: any)=>{
+          this.filterId.push(filter.filter_id);
+        })
         this.isEChatrts = this.sheetResponce.isEChart;
         this.isApexCharts = this.sheetResponce.isApexChart;
         if(this.isEChatrts){
@@ -2875,8 +2881,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
         }
         if(responce.chart_id == 25){
-          this.tableData = this.sheetResponce.results.kpiData;
-          this.displayedColumns = this.sheetResponce.results.kpiColumns;
+          this.tablePreviewRow = this.sheetResponce.results.kpiData;
           this.kpiFontSize = this.sheetResponce.results.kpiFontSize;
           this.kpiColor = this.sheetResponce.results.kpicolor;
           this.table = false;
@@ -3358,6 +3363,7 @@ viewDashboard(){
   const encodedDashboardId = btoa(this.dashboardId.toString());
   this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
 }
+chartDataColor : any;
 marksColor2(color:any){
 console.log(this.sidebysideBarRowData);
 console.log(color)

@@ -64,8 +64,7 @@ interface Dimension {
   values: string[];
 }
 interface KpiData {
-  columns: string[];
-  rows: any[]; // Replace `any` with the specific type if you know the structure of the rows.
+  rows: any[];
   fontSize: string;
   color: string;
 }
@@ -549,7 +548,6 @@ export class SheetsdashboardComponent {
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
-              columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -932,7 +930,6 @@ selected_sheet_ids :this.sheetIdsDataSet,
       kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
       ? (() => {
           this.kpiData = {
-            columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -987,7 +984,6 @@ selected_sheet_ids :this.sheetIdsDataSet,
       kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
       ? (() => {
           this.kpiData = {
-            columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -2483,7 +2479,6 @@ kpiData?: KpiData;
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
-              columns: sheet.sheet_data?.results?.kpiColumns || [], // Default to an empty array if not provided
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
