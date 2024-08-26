@@ -2065,7 +2065,6 @@ getFilteredData(){
 setDashboardSheetData(item:any){
   this.dashboard.forEach((item1:any) => {
     if(item1.sheetId == item.sheet_id){
-      
       if(item.chart_id == '6'){//bar
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
