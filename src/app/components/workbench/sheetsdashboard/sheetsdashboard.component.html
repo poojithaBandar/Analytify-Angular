@@ -533,8 +533,8 @@
                                           class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                   </a>
                                   <div class="dropdown-menu" ngbDropdownMenu>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Download Image</a>
-                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);">Refresh Dashboard</a>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="downloadImageInPublic()">Download Image</a>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="getSavedDashboardData()">Refresh Dashboard</a>
 
                                   </div>
                               </div>

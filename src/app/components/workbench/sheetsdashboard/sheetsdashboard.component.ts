@@ -725,6 +725,29 @@ selected_sheet_ids :this.sheetIdsDataSet,
      
   }}, 1000);
   }
+  downloadImageInPublic() {
+    this.startMethod();
+    this.loaderService.show();
+    setTimeout(() => {
+      const element = document.getElementById('capture-element');
+      if (element) {
+        htmlToImage.toPng(element)
+          .then((dataUrl) => {
+            // Download the image
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'screenshot.png'; // Set the filename
+            link.click();
+  
+            this.loaderService.hide();
+            this.endMethod(); 
+          })
+          .catch((error) => {
+            console.error('oops, something went wrong!', error);
+          });
+      }
+    }, 2000);
+  }
 
   startMethod() {
     this.isOverflowHidden = true;

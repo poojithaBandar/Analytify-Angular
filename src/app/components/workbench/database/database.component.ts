@@ -300,6 +300,9 @@ getSchemaTablesFromConnectedDb(){
   if(obj.search == '' || obj.search == null){
     delete obj.search;
   }
+  if(obj.querySetId === 0){
+    delete obj.querySetId
+  }
   this.workbechService.getSchemaTablesFromConnectedDb(this.databaseId,obj).subscribe({next: (data) => {
    this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
