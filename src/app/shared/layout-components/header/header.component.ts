@@ -309,5 +309,10 @@ export class HeaderComponent implements OnInit {
   routeToRolesDashboard(){
     this.router.navigate(['/workbench/roles-list/dashboard'])
   }
+
+  routeToConfigurePage() {
+    this.router.navigate(['/workbench/configure-page/configure']);
+  }
+
 }
 
