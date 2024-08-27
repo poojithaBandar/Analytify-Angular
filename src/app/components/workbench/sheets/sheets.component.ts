@@ -2404,6 +2404,7 @@ tableMeasures = [] as any;
       }
     }
     )
+    this.kpi = false;
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -2615,10 +2616,6 @@ sheetSave(){
     this.barLineXaxis = this.sidebysideBarColumnData1;
       savedChartOptions = this.eRadarChartOptions;
   }
-  if(this.kpi && this.chartId == 25){
-    this.saveTableData =  this.tableData;
-    this.savedisplayedColumns = this.displayedColumns;
-   }
   let customizeObject = {
     isZoom : this.isZoom,
     xGridColor : this.xGridColor,
@@ -2724,7 +2721,7 @@ if(this.retriveDataSheet_id){
         width: '200px',
       })
     //   this.getSheetNames();
-     this.sheetRetrive();
+    //  this.sheetRetrive();
     }
   
   },
@@ -2820,6 +2817,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
         this.dimetionMeasure = responce.filters_data;
+        // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
+        // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
         responce.filters_data.forEach((filter: any)=>{
           this.filterId.push(filter.filter_id);
         })
@@ -3248,6 +3247,7 @@ if(this.fromFileId){
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id});
         this.dataExtraction();
+        this.filterDataArray = [];
       },
       error: (error) => {
         console.log(error);
@@ -3274,7 +3274,11 @@ if(this.fromFileId){
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
         });
-        
+        this.filterData.forEach((filter:any)=>{
+          if(filter.selected){
+            this.filterDataArray.push(filter.label);
+          }
+        })
       },
       error: (error) => {
         console.log(error);
@@ -3303,6 +3307,7 @@ if(this.fromFileId){
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
           this.dataExtraction();
+          this.filterDataArray = [];
         },
         error: (error) => {
           console.log(error);
@@ -3363,7 +3368,8 @@ viewDashboard(){
   const encodedDashboardId = btoa(this.dashboardId.toString());
   this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
 }
-chartDataColor : any;
+barColor : any;
+lineColor : any;
 marksColor2(color:any){
 console.log(this.sidebysideBarRowData);
 console.log(color)
@@ -3385,7 +3391,8 @@ else if(this.stockedChart){
   this.chartOptions6.colors = color;
 }
 else if(this.barlineChart){
-  this.chartOptions5.colors = color;
+  this.chartOptions5.series[0].color = this.barColor;
+  this.chartOptions5.series[1].color = this.lineColor;
 }
 else if(this.horizontolstockedChart){
   this.chartOptions7.colors = color;
@@ -3398,6 +3405,19 @@ else if(this.multilineChart){
 }
 this.updateChart();
 }
+// scolor : any;
+// barColors(color:any, index: any){
+//   if(index === 0){
+//     this.chartOptions2.series[0].color = color;
+//   }
+//   if(index === 1){
+//     this.chartOptions2.series[1].color = color;
+//   }
+//   if(index === 2){
+//     this.chartOptions2.series[2].color = color;
+//   }
+//   this.updateChart();
+// }
 rename(index:any,name:any,event:any){
   this.oldColumn = '';
 this.oldColumn = name;
@@ -5085,70 +5105,74 @@ fetchChartData(chartData: any){
     })
   }
   gridLineColor(color: any){
-    if(this.barchart){
-      this.chartOptions3.grid.borderColor = color;
+    if(color){
+      if(this.barchart){
+        this.chartOptions3.grid.borderColor = color;
+      }
+      else if(this.areachart){
+        this.chartOptions1.grid.borderColor = color;
+      }
+      else if(this.linechart){
+        this.chartOptions.grid.borderColor = color;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.grid.borderColor = color;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.grid.borderColor = color;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.grid.borderColor = color;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.grid.borderColor = color;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.grid.borderColor = color;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.grid.borderColor = color;
+      }
+      this.updateChart();
     }
-    else if(this.areachart){
-      this.chartOptions1.grid.borderColor = color;
-    }
-    else if(this.linechart){
-      this.chartOptions.grid.borderColor = color;
-    }
-    else if(this.sidebysideChart){
-      this.chartOptions2.grid.borderColor = color;
-    }
-    else if(this.stockedChart){
-      this.chartOptions6.grid.borderColor = color;
-    }
-    else if(this.barlineChart){
-      this.chartOptions5.grid.borderColor = color;
-    }
-    else if(this.horizontolstockedChart){
-      this.chartOptions7.grid.borderColor = color;
-    }
-    else if(this.groupedChart){
-      this.chartOptions8.grid.borderColor = color;
-    }
-    else if(this.multilineChart){
-      this.chartOptions9.grid.borderColor = color;
-    }
-    this.updateChart();
   }
   apexbBackgroundColor(color: any){
-    if(this.barchart){
-      this.chartOptions3.chart.background = color;
+    if(color){
+      if(this.barchart){
+        this.chartOptions3.chart.background = color;
+      }
+      else if(this.areachart){
+        this.chartOptions1.chart.background = color;
+      }
+      else if(this.linechart){
+        this.chartOptions.chart.background = color;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.chart.background = color;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.chart.background = color;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.chart.background = color;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.chart.background = color;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.chart.background = color;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.chart.background = color;
+      }
+      else if(this.piechart){
+        this.chartOptions4.chart.background = color;
+      }
+      else if(this.donutchart){
+        this.chartOptions10.chart.background = color;
+      }
+      this.updateChart();
     }
-    else if(this.areachart){
-      this.chartOptions1.chart.background = color;
-    }
-    else if(this.linechart){
-      this.chartOptions.chart.background = color;
-    }
-    else if(this.sidebysideChart){
-      this.chartOptions2.chart.background = color;
-    }
-    else if(this.stockedChart){
-      this.chartOptions6.chart.background = color;
-    }
-    else if(this.barlineChart){
-      this.chartOptions5.chart.background = color;
-    }
-    else if(this.horizontolstockedChart){
-      this.chartOptions7.chart.background = color;
-    }
-    else if(this.groupedChart){
-      this.chartOptions8.chart.background = color;
-    }
-    else if(this.multilineChart){
-      this.chartOptions9.chart.background = color;
-    }
-    else if(this.piechart){
-      this.chartOptions4.chart.background = color;
-    }
-    else if(this.donutchart){
-      this.chartOptions10.chart.background = color;
-    }
-    this.updateChart();
   }
   openDateFormatModal(modal: any){
     this.modalService.open(modal, {

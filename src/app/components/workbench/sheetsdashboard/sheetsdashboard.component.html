@@ -504,7 +504,7 @@
                   <div class="flex-grow-1">                     
                     <div class="title-container">
                       <input *ngIf="!dashboardId"  type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
-                      <div *ngIf="dashboardId" id="htmlContent" [innerHtml]="dashboardTagTitle" style="padding-top: 1.5%;"></div>              
+                      <div *ngIf="dashboardId" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
                        <span *ngIf="!isPublicUrl" class="title-editor" (click)="toggleEditor()">
                             <button  class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
                           </span>

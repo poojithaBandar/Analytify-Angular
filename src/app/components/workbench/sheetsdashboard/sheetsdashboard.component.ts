@@ -672,7 +672,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
     this.workbechService.saveDashboard(obj).subscribe({
       next:(data)=>{
         console.log(data);
-        this.dashboardId=data.dashboard_id
+        this.dashboardId=data.dashboard_id;
+        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+        this.updateDashbpardBoolen = true;
         Swal.fire({
           icon: 'success',
           title: 'Congartualtions!',
