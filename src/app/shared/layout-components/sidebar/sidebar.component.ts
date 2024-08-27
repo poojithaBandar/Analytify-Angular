@@ -117,7 +117,7 @@ export class SidebarComponent{
         if (item.title === 'Home') {
           return true;
         }
-        if (item.title === 'Dashboard' && this.viewDashboard) {
+        if (item.title === 'Dashboards' && this.viewDashboard) {
           return true;
         }
         if (item.title === 'Saved Queries' && this.viewSavedQueries) {
@@ -126,7 +126,7 @@ export class SidebarComponent{
         if (item.title === 'Sheets' && this.viewSheets) {
           return true;
         }
-        if (item.title === 'Data Source' && this.viewDataSource) { 
+        if (item.title === 'Data Sources' && this.viewDataSource) { 
           return true;
         }
       })

@@ -115,6 +115,7 @@ export class DatabaseComponent {
   fromFileId = false;
   rowLimit:any;
   gotoSheetButtonDisable = true;
+  fromSavedQuery = false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -131,7 +132,7 @@ export class DatabaseComponent {
         this.fromFileId = true;
         this.qurtySetId = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-        this.getSchemaTablesFromConnectedDb();
+        this.getTablesFromFileId();
       }
       if (currentUrl.includes('/workbench/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -143,6 +144,7 @@ export class DatabaseComponent {
       this.customSql=true;
       this.tableJoiningUI=false;
       this.updateQuery=true;
+      this.fromSavedQuery = true;
       this.getSavedQueryData();
      }
      if(currentUrl.includes('/workbench/database-connection/sheets/dbId')){
@@ -231,6 +233,12 @@ export class DatabaseComponent {
         this.custmQryRows = data.no_of_rows;
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows;
+        // if(this.fromSavedQuery){
+        //   if(data.file_id === null)
+        //   this.getSchemaTablesFromConnectedDb();
+        // }else if(data.database_id === null){
+        //   this.getTablesFromFileId();
+        // }
       },
       error:(error:any)=>{
         console.log(error)
@@ -303,7 +311,8 @@ getSchemaTablesFromConnectedDb(){
   if(obj.querySetId === 0){
     delete obj.querySetId
   }
-  this.workbechService.getSchemaTablesFromConnectedDb(this.databaseId,obj).subscribe({next: (data) => {
+  const IdToPass = this.fromFileId ? this.fileId : this.databaseId
+  this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
    this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
    console.log('filteredscemas',this.filteredSchematableList)

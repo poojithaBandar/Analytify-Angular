@@ -41,7 +41,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
+            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Connect</button>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Sign In</button>
+            <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Connect</button>
           </div>
         </div>
       </div>
@@ -136,7 +136,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Sign In</button>
+            <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Connect</button>
           </div>
         </div>
       </div>
@@ -277,12 +277,15 @@
                             <td>{{database.updated_at}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
-                              <a *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL')" aria-label="anchor"(click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
-                    class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                    <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
-                               <a aria-label="anchor" (click)="deleteDbConnection(database.database_id,database.file_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                        </a>
+                                <button
+                                  [disabled]="(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE')"
+                                  aria-label="anchor" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
+                                  class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                                  <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
+                                <a aria-label="anchor" (click)="deleteDbConnection(database.database_id,database.file_id)"
+                                  class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                  <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                                </a>
                               </div>
                               </td>
                         </tr>
@@ -335,7 +338,7 @@
                                   class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                           </a>
                           <div class="dropdown-menu" ngbDropdownMenu>
-                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
+                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                             
@@ -467,7 +470,7 @@
                           </div>
                           <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Sign In</button>
+                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Connect</button>
                           </div>
                       </form>
                   </div>
@@ -535,7 +538,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Sign In</button>
+                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Connect</button>
                             </div>
                         </form>
                     </div>
@@ -604,7 +607,7 @@
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Sign In</button>
+                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Connect</button>
                               </div>
                           </form>
                       </div>
@@ -672,7 +675,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()">Sign In</button>
+                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()">Connect</button>
                                 </div>
                             </form>
                         </div>
@@ -750,7 +753,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()">Sign In</button>
+                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()">Connect</button>
                                   </div>
                               </form>
                           </div>
@@ -819,7 +822,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="ibmDb2SignIn()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Sign In</button>
+                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Connect</button>
                                   </div>
                               </form>
                           </div>
@@ -890,7 +893,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Sign In</button>
+                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Connect</button>
                                   </div>
                               </form>
                           </div>
@@ -915,10 +918,10 @@
                               <span class="light-gry-txt">SQLite is an embedded, server-less relational database management system.
                                 It is an in-memory open-source library with zero configuration and does not require any installation.
                               </span>
-                              <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for Sqlite is 8191</span></h6>
+                              <!-- <h6 class="mb-0 dark-gry">port:<span class="light-gry-txt"> Example port number for Sqlite is 8191</span></h6>
                               <h6 class="mb-0 dark-gry">Database:<span class="light-gry-txt"> Please give your database name in this field</span></h6>
                               <h6 class="mb-0 dark-gry">Username:<span class="light-gry-txt"> Enter your username in this field</span></h6>
-                              <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6>
+                              <h6 class="mb-0 dark-gry">Password:<span class="light-gry-txt"> Please give your password in this field</span></h6> -->
                             </div>
                          </div>
                        </div>
@@ -944,7 +947,7 @@
                                         
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()">Sign In</button>
+                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()">Connect</button>
                                     </div>
                                 </form>
                             </div>

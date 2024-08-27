@@ -681,6 +681,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
           text: 'Dashboard Saved Successfully',
           width: '400px',
         })
+        const encodedDashboardId = btoa(this.dashboardId.toString());
+        this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
+  
       },
       error:(error)=>{
         console.log(error)
@@ -2590,8 +2593,10 @@ kpiData?: KpiData;
   addSheetIds(data:any,panel : any){
     data.is_selected = !data.is_selected;
     let dataSet = new Set(this.sheetIdsDataSet);
+
     if(data.is_selected){
       dataSet.add(data.sheet_id);
+      panel.sheet_selected = true;
       const allSheetDataTrue = panel.sheet_data.every((item:any) => item.is_selected == true);
       if(allSheetDataTrue){
         panel.is_selected = true;
@@ -2599,6 +2604,8 @@ kpiData?: KpiData;
     } else {
       dataSet.delete(data.sheet_id);
       panel.is_selected = false;
+      panel.sheet_selected = false;
+
     }
     this.sheetIdsDataSet = Array.from(dataSet);
   }
@@ -2609,9 +2616,11 @@ kpiData?: KpiData;
     panel.sheet_data.forEach((sheet : any) =>{
       if(panel.is_selected){
         sheet.is_selected = true;
+        panel.sheet_selected = true;
         dataSet.add(sheet.sheet_id);
       } else {
         sheet.is_selected = false;
+        panel.sheet_selected = false;
         dataSet.delete(sheet.sheet_id);
       }
     });

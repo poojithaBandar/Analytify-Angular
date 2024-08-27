@@ -287,7 +287,7 @@
 
                                               <div class="form-check">
                                                 <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
-                                                <label for="invalidCheck" class="form-check-label fs-14"> <h6>{{rows?.label.name}}</h6> </label>
+                                                <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <h6>{{rows?.label.name}}</h6> </label>
                                               </div>
                                             }
                                             </div>
@@ -350,7 +350,7 @@
 
                                             <div class="form-check">
                                               <input type="checkbox" [id]="'defaultCheck' + i"  name="rows1{{i}}"[(ngModel)]="rows1.selected" (change)="updateSelectedRowsEdit()" class="form-check-input"> 
-                                              <label for="invalidCheck" class="form-check-label fs-14"> <h6>{{rows1.sheet_name}}</h6> </label>
+                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <h6>{{rows1.sheet_name}}</h6> </label>
                                             </div>
                                           }
                                           </div>
@@ -368,7 +368,7 @@
                                 </div>
                             </div>
                             </ng-template>
-                            @if(!sheetsNewDashboard){
+                            @if(updateDashbpardBoolen){
                             <li [ngbNavItem]="2">
                                  <a ngbNavLink class="p-3">Filters</a>
                                     <ng-template ngbNavContent>
@@ -442,7 +442,7 @@
                                                                      
                                                                       <div class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
-                                                                        <label for="invalidCheck" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
+                                                                        <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
                                                                       </div>
                                                                   }
                                                                   <div class="p-2">

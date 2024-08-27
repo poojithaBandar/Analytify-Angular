@@ -310,7 +310,7 @@ export class NavService implements OnDestroy {
       nochild: true,
     },
     {
-      title: 'Data Source',
+      title: 'Data Sources',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="side-menu__icon">
       <path d="M0 0h24v24H0V0z" fill="none"></path>
       <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16zm0-11.47L17.74 9 12 13.47 6.26 9 12 4.53z">
@@ -359,7 +359,7 @@ export class NavService implements OnDestroy {
       nochild: true,
     },
     {
-      title: 'Dashboard',
+      title: 'Dashboards',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
       <path d="M0 0h24v24H0V0z" fill="none"></path>
       <path d="M11 7h6v2h-6zm0 4h6v2h-6zm0 4h6v2h-6zM7 7h2v2H7zm0 4h2v2H7zm0 4h2v2H7zM20.1 3H3.9c-.5 0-.9.4-.9.9v16.2c0 .4.4.9.9.9h16.2c.4 0 .9-.5.9-.9V3.9c0-.5-.5-.9-.9-.9zM19 19H5V5h14v14z">
