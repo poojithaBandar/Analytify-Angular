@@ -42,7 +42,9 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
-
+interface TableRow {
+  [key: string]: any;
+}
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   annotations: ApexAnnotations;
@@ -832,7 +834,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
         item1.chartOptions.xaxis.categories = item1['originalData'].categories;
         item1.chartOptions.series = item1['originalData'].data;
         delete item1['originalData'];
-        }
+        }if(item1.chartId == '1' && item1['originalData']){//bar
+          item1['tableData'] = item1['originalData']['tableData'];
+          delete item1['originalData'];
+          }
         if(item1.chartId == '25' && item1['originalData']){//bar
           item1['kpiData'] = item1['originalData'];
           delete item1['originalData'];
@@ -915,8 +920,11 @@ selected_sheet_ids :this.sheetIdsDataSet,
     this.workbechService.sheetsDataWithQuerysetId(obj)
     .subscribe({next: (data) => {
        console.log('sheetData',data)
-       this.sheetData = data.sheets,
-       this.databaseName= data.database_name
+       this.databaseName= data[0].database_name;
+       this.sheetData = [];
+       data.forEach((sheetData : any ) => {
+        this.sheetData.push(sheetData.sheets[0]);
+       })
     this.dashboardNew = this.sheetData.map((sheet:any) => ({
       id:uuidv4(),
       cols: 1,
@@ -2065,12 +2073,34 @@ getFilteredData(){
 setDashboardSheetData(item:any){
   this.dashboard.forEach((item1:any) => {
     if(item1.sheetId == item.sheet_id){
-      if(item.chart_id == '1'){//bar
+      if(item.chart_id == '1'){//table
         if(!item1.originalData){
-          item1['originalData'] = {tableData: item1.tableData};
+          item1['originalData'] = _.cloneDeep({tableData: item1.tableData});
         }
-      // item1.tableData = 
+        this.tablePreviewColumn = item.columns;
+        this.tablePreviewRow = item.rows;
+        let rowCount:any;
+       if(this.tablePreviewColumn[0]?.result?.length){
+         rowCount = this.tablePreviewColumn[0]?.result?.length;
+       }else{
+         rowCount = this.tablePreviewRow[0]?.result?.length;
+       }
+        //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
+        // Extract column names
+        item1.tableData.headers = this.tablePreviewColumn.map((col:any) => col.column).concat(this.tablePreviewRow.map((row:any) => row.column));
+        // Create table data
+        item1.tableData.rows = [];
+        for (let i = 0; i < rowCount; i++) {
+          const row: TableRow = {};
+          this.tablePreviewColumn.forEach((col:any) => {
+            row[col.column] = col.result[i];
+          });
+          this.tablePreviewRow.forEach((rowData:any) => {
+            row[rowData.column] = rowData.result[i];
+          });
+          item1.tableData.rows.push(row);
       }
+    }
       if(item.chart_id == '6'){//bar
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
