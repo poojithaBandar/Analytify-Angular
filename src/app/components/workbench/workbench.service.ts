@@ -381,6 +381,10 @@ getFilteredData(obj:any){
 getServerTablesList(obj:any){
   return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`,obj);
 }
+
+openApiKey(obj:any){
+  return this.http.post<any>(`${environment.apiUrl}/ai/validate-api-key/`,obj);
+}
 deleteDashbaordFilter(id:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];

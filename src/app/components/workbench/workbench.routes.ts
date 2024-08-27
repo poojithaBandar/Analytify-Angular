@@ -203,6 +203,11 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
 },
+{
+  path: 'configure-page/configure',
+  loadComponent: () =>
+    import('./configure/configure.component').then((m) => m.ConfigureComponent),
+},
  ]}
  ];
 
