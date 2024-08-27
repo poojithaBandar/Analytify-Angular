@@ -472,7 +472,7 @@
                                     <input  type="text" (change)="markDirty()"  placeholder="Title" [(ngModel)]="saveQueryName"  aria-label="Sheet" class="form-control" >
                                     </div>                               
                                      <div class="right">
-                                    <a *ngIf="!customSql" class="btn btn-blue-light m-1" (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
+                                     <a *ngIf="!fromSavedQuery" class="btn btn-blue-light m-1" (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
                                     <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" (click)="openSuperScaled(applyFiltersModal);getFilteredList()" class="modal-effect btn btn-primary m-1">
                                         <i class="fa fa-filter"></i> Apply Filters
                                     </a>
@@ -621,8 +621,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                  <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
-                                </td>
+                                    <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{ rows.label }} </label>                                </td>
                              </tr>
                             }             
                         </tbody>
@@ -735,7 +734,7 @@
                                 </div>
                             </td>
                             <td>
-                                <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
+                                <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{ rows.label }} </label>
                             </td>
                          </tr>
                         }             
