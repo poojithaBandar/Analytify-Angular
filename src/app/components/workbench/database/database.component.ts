@@ -308,7 +308,7 @@ getSchemaTablesFromConnectedDb(){
   if(obj.search == '' || obj.search == null){
     delete obj.search;
   }
-  if(obj.querySetId === 0){
+  if(obj.querySetId === '0'){
     delete obj.querySetId
   }
   const IdToPass = this.fromFileId ? this.fileId : this.databaseId
