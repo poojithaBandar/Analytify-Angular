@@ -833,6 +833,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
         item1.chartOptions.series = item1['originalData'].data;
         delete item1['originalData'];
         }
+        if(item1.chartId == '25' && item1['originalData']){//bar
+          item1['kpiData'] = item1['originalData'];
+          delete item1['originalData'];
+          }
         if(item1.chartId == '24' && item1['originalData']){//pie
           item1.chartOptions.labels = item1['originalData'].categories;
         item1.chartOptions.series = item1['originalData'].data;
@@ -2061,6 +2065,12 @@ getFilteredData(){
 setDashboardSheetData(item:any){
   this.dashboard.forEach((item1:any) => {
     if(item1.sheetId == item.sheet_id){
+      if(item.chart_id == '1'){//bar
+        if(!item1.originalData){
+          item1['originalData'] = {tableData: item1.tableData};
+        }
+      // item1.tableData = 
+      }
       if(item.chart_id == '6'){//bar
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
@@ -2070,9 +2080,10 @@ setDashboardSheetData(item:any){
       }
       if(item.chart_id == '25'){//KPI
         if(!item1.originalData){
-          item1['originalData'] = {rows: item['kpiData'].rows };
+          item1['originalData'] = _.cloneDeep(item1['kpiData']);
         }
-        item1['kpiData'].rows = item.rows;
+        let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
+        item1['kpiData'].rows = [obj];
       }
       if(item.chart_id == '24'){//pie
         if(!item1.originalData){
