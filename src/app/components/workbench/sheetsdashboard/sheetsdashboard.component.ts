@@ -925,11 +925,11 @@ selected_sheet_ids :this.sheetIdsDataSet,
     .subscribe({next: (data) => {
        console.log('sheetData',data)
        this.databaseName= data[0].database_name;
-       this.sheetData = [];
-       data.forEach((sheetData : any ) => {
-        this.sheetData.push(sheetData.sheets[0]);
-       })
-    this.dashboardNew = this.sheetData.map((sheet:any) => ({
+      //  this.sheetData = [];
+      //  data.forEach((sheetData : any ) => {
+      //   this.sheetData.push(sheetData.sheets[0]);
+      //  })
+    this.dashboardNew = data.map((sheet:any) => ({
       id:uuidv4(),
       cols: 1,
       rows: 1,
