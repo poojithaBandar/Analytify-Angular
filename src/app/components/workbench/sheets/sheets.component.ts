@@ -2136,6 +2136,13 @@ tableMeasures = [] as any;
           const indexB = rowIndexMap.get(b[0]) ?? -1;
           return indexA - indexB;
         });
+        this.draggedRows.forEach((row: any, index: number) => {
+          if (row.column === element.column) {
+            if(event.currentIndex !== index){
+              event.currentIndex = index;
+            }
+          }
+        });
         console.log(this.draggedRowsData);
         const dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz']
         if(!dateList.includes(element.data_type)){
