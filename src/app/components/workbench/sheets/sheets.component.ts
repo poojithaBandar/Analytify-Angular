@@ -2112,6 +2112,7 @@ tableMeasures = [] as any;
    // });
     
   }
+  dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz'];
   rowdrop(event: CdkDragDrop<string[]>){
    console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -2144,8 +2145,7 @@ tableMeasures = [] as any;
           }
         });
         console.log(this.draggedRowsData);
-        const dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz']
-        if(!dateList.includes(element.data_type)){
+        if(!this.dateList.includes(element.data_type)){
           this.rowMeasuresCount(element,event.currentIndex,'sum');
         }else {
           this.dataExtraction();
@@ -3352,10 +3352,37 @@ openSuperScalededitFilter(modal: any,data:any) {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
   });
-  this.filterName = data.col_name;
+  console.log(data);
   this.filterType = data.data_type;
-  this.filter_id = data.filter_id;
+  if ('filter_id' in data) {
+    this.filterName = data.col_name;
+    this.filter_id = data.filter_id;
+  }
+  else{
+    this.filterName = data.column;
+    this.dimetionMeasure.forEach((column:any)=>{
+      if(column.col_name === data.column){
+        this.filter_id = column.filter_id;
+      }
+    })
+  }
   this.filterEditGet();
+}
+filterAdded : boolean = false;
+editFilterCheck(data:any){
+  if(this.dimetionMeasure.length>0){
+    this.dimetionMeasure.forEach((column:any)=>{
+      if(column.col_name === data){
+        this.filterAdded = true;
+      }
+      else{
+        this.filterAdded = false;
+      }
+    })
+  }
+  else{
+    this.filterAdded = false;
+  }
 }
 gotoDashboard(){
   if(!this.fromFileId){

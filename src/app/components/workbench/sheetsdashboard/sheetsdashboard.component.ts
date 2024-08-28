@@ -2036,12 +2036,14 @@ getFilteredData(){
   this.workbechService.getFilteredData(Obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.tablePreviewColumn = data.columns;
-      this.tablePreviewRow = data.rows;
-      console.log(this.tablePreviewColumn);
-      console.log(this.tablePreviewRow);
+      // this.tablePreviewColumn = data.columns;
+      // this.tablePreviewRow = data.rows;
+      // console.log(this.tablePreviewColumn);
+      // console.log(this.tablePreviewRow);
       // localStorage.removeItem('filterid')
       data.forEach((item: any) => {
+      this.tablePreviewColumn.push(item.columns);
+      this.tablePreviewRow.push(item.rows);
       item.columns.forEach((res:any) => {      
         let obj1={
           name:res.column,
@@ -2627,6 +2629,9 @@ kpiData?: KpiData;
   }
   updatedashboardName(name:any){
     this.dashboardTagName = name;
+  }
+  sheetsRoute(){
+    this.router.navigate(['/workbench/sheets']);  
   }
 
 
