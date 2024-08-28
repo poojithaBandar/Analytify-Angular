@@ -150,6 +150,7 @@ viewPropertiesTab(name:any,dashboardId:any){
   this.dashboardPropertyTitle = name;
   this.dashboardId = dashboardId;
   this.dashboardPropertyId = dashboardId;
+   this.publishedDashboard = false;
   this.getAddedDashboardProperties();
 
 }

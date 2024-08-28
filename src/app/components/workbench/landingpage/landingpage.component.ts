@@ -424,8 +424,8 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.dashboardPropertyTitle = name;
   this.dashboardPropertyId = dashboardId;
   this.dashboardId = dashboardId;
+  this.publishedDashboard = false;
   this.getAddedDashboardProperties();
-    this.publishedDashboard = false;
   }
   getAddedDashboardProperties(){
     this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
