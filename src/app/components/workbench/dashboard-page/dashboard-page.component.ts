@@ -39,7 +39,8 @@ export class DashboardPageComponent implements OnInit{
   createUrl =false;
   publicUrl:any;
   shareAsPrivate = false;
-
+  dashboardPropertyId:any;
+  publishedDashboard = false;
   @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,
@@ -148,6 +149,7 @@ viewPropertiesTab(name:any,dashboardId:any){
   this.getRoleDetailsDshboard();
   this.dashboardPropertyTitle = name;
   this.dashboardId = dashboardId;
+  this.dashboardPropertyId = dashboardId;
   this.getAddedDashboardProperties();
 
 }
@@ -300,5 +302,19 @@ fallbackCopyTextToClipboard(text: string): void {
     console.error('Fallback: Unable to copy', err);
   }
   document.body.removeChild(textArea);
+}
+publishDashboard(){
+  this.workbechService.publishDashbord(this.dashboardPropertyId).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.toasterservice.success('Dashboard Published','success',{ positionClass: 'toast-center-center'})
+      this.publishedDashboard = true;
+     },
+    error:(error)=>{
+      console.log(error);
+      this.toasterservice.error('Dashboard Published','error',{ positionClass: 'toast-center-center'})
+
+    }
+  })
 }
 }

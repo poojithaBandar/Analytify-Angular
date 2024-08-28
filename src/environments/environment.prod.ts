@@ -12,4 +12,8 @@ export const environment = {
   production: false,
   apiUrl:'http://13.57.231.251:50/v1',
      //prod_domain
+
+    //  //local
+    //  apiUrl:'http://127.0.0.1:8000/v1',
+
 };

@@ -245,7 +245,7 @@
               
             </ng-select>
        </div>
-       <div *ngIf="createUrl" class="">
+       <div *ngIf="publishedDashboard" class="">
             
         <p class="fw-semibold mb-2 mt-3">Url</p>
         <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">{{publicUrl}}
@@ -257,8 +257,20 @@
           </svg></button>
    </div>
       </div>
-      <div class="modal-footer">
+      <!-- <div class="modal-footer">
         <button type="button" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button
+          type="button"
+          class="btn ripple btn-secondary"
+          (click)="modal.close('Save click')"
+        >
+          Close
+        </button>
+      </div> -->
+      <div class="modal-footer">
+        <button type="button" *ngIf="!createUrl" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
+        <button type="button" *ngIf="createUrl" (click)="publishDashboard()" class="btn ripple btn-primary">Publish</button>
+
         <button
           type="button"
           class="btn ripple btn-secondary"

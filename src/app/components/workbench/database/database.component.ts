@@ -308,7 +308,7 @@ getSchemaTablesFromConnectedDb(){
   if(obj.search == '' || obj.search == null){
     delete obj.search;
   }
-  if(obj.querySetId === '0'){
+  if(obj.querySetId === '0' || obj.querySetId === 0){
     delete obj.querySetId
   }
   const IdToPass = this.fromFileId ? this.fileId : this.databaseId
@@ -1278,7 +1278,13 @@ markDirty(){
                 this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
-                console.log(error)
+                console.log(error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'oops!',
+                  text: error.error.message,
+                  width: '400px',
+                })
               }
             });
           } else {
@@ -1294,7 +1300,13 @@ markDirty(){
                 this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
-                console.log(error)
+                console.log(error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'oops!',
+                  text: error.error.message,
+                  width: '400px',
+                })
               }
             });
           } else {
@@ -1336,7 +1348,13 @@ markDirty(){
                 this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
-                console.log(error)
+                console.log(error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'oops!',
+                  text: error.error.message,
+                  width: '400px',
+                })
               }
             });
           } else {

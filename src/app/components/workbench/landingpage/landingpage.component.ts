@@ -39,6 +39,7 @@ usersOnSelectedRole =[] as any;
 selectedUserIds = [] as any;
 selectedUserIdsToNumbers = [] as any;
 dashboardPropertyTitle :any;
+dashboardPropertyId:any;
 dashboardId :any;
 createUrl =false;
 shareAsPrivate = false;
@@ -46,6 +47,7 @@ UrlCopy:string | null = null;
 publicUrl:any;
 port:any;
 host:any;
+publishedDashboard = false;
 @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService){
@@ -420,9 +422,10 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.modalService.open(this.propertiesModal);
   this.getRoleDetailsDshboard();
   this.dashboardPropertyTitle = name;
+  this.dashboardPropertyId = dashboardId;
   this.dashboardId = dashboardId;
   this.getAddedDashboardProperties();
-
+    this.publishedDashboard = false;
   }
   getAddedDashboardProperties(){
     this.workbechService.getAddedDashboardProperties(this.dashboardId).subscribe({
@@ -573,6 +576,25 @@ saveDashboardProperties(){
         text: data.message,
         width: '400px',
       })
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+
+publishDashboard(){
+  this.workbechService.publishDashbord(this.dashboardPropertyId).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.toasterservice.success('Dashboard Published','success',{ positionClass: 'toast-center-center'})
+      this.publishedDashboard = true;
      },
     error:(error)=>{
       console.log(error);

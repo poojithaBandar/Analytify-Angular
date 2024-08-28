@@ -150,7 +150,6 @@ export class SheetsdashboardComponent {
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
       this.active = 2;
-      localStorage.setItem('currentUser',('{"Token":"B8nGJ4oIRfujTrmosWBAN54zatfn9J"}'));
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
       }
@@ -285,8 +284,8 @@ export class SheetsdashboardComponent {
   }
   if(this.isPublicUrl){
     // this.dashboardId = 145
-    this.getSavedDashboardData();
-    this.getDashboardFilterredList();
+    this.getSavedDashboardDataPublic();
+    this.getDashboardFilterredListPublic();
 
   }
     // if(this.sheetsNewDashboard){
@@ -2628,6 +2627,165 @@ kpiData?: KpiData;
   }
   updatedashboardName(name:any){
     this.dashboardTagName = name;
+  }
+
+
+
+
+
+
+  //public apis
+  getSavedDashboardDataPublic(){
+    const obj ={
+      dashboard_id:this.dashboardId
+    }
+    this.workbechService.getSavedDashboardDataPublic(obj).subscribe({
+      next:(data)=>{
+        console.log('savedDashboard',data);
+        this.dashboardName=data.dashboard_name;
+        this.heightGrid = data.height;
+        this.widthGrid = data.width;
+        this.gridType = data.grid_type;
+        this.changeGridType(this.gridType);
+        this.qrySetId = data.queryset_id;
+        this.fileId = data.file_id;
+        this.databaseId = data.server_id;
+
+        this.dashboard = data.dashboard_data;
+        this.sheetIdsDataSet = data.selected_sheet_ids;
+        this.dashboard.forEach((sheet)=>{
+          console.log('Before sanitization:', sheet.data.sheetTagName);
+          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          console.log('After sanitization:', sheet.data.sheetTagName);
+        })
+        console.log(this.sheetTagTitle);
+        if(!data.dashboard_tag_name){
+          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          // inputElement.innerHTML = data.dashboard_name;
+          this.dashboardTagName = data.dashboard_name;
+        }
+        else{
+          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+          // inputElement.innerHTML = data.dashboard_tag_name;
+          // inputElement.style.paddingTop = '1.5%';
+          this.dashboardTagName = data.dashboard_tag_name;
+        }
+        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+        console.log(this.dashboard);
+        let obj = {sheet_ids: this.sheetIdsDataSet};
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
+
+  getDashboardFilterredListPublic(){
+    const Obj ={
+      dashboard_id:this.dashboardId
+    }
+    this.workbechService.getDashboardFilterredListPublic(Obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.DahboardListFilters = data
+      },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
+  getFilteredDataPublic(){
+    this.extractKeysAndData();
+    const Obj ={
+      id:this.keysArray,
+      input_list:this.dataArray
+    }
+    if(this.keysArray && this.keysArray.length > 0){
+    this.workbechService.getFilteredDataPublic(Obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.tablePreviewColumn = data.columns;
+        this.tablePreviewRow = data.rows;
+        console.log(this.tablePreviewColumn);
+        console.log(this.tablePreviewRow);
+        // localStorage.removeItem('filterid')
+        data.forEach((item: any) => {
+        item.columns.forEach((res:any) => {      
+          let obj1={
+            name:res.column,
+            values: res.result
+          }
+          this.filteredColumnData.push(obj1);
+          console.log('filtercolumn',this.filteredColumnData)
+        });
+        item.rows.forEach((res:any) => {
+          let obj={
+            name: res.column,
+            data: res.result
+          }
+          this.filteredRowData.push(obj);
+          console.log('filterowData',this.filteredRowData)
+        });
+        this.setDashboardSheetData(item);
+      });
+        },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
+  }
+  }
+  getColDataFromFilterIdPublic(id:string,colData:any){
+    if(localStorage.getItem('filterid')){
+      colData['colData']= JSON.parse(localStorage.getItem('filterid')!);
+    } else {
+    const Obj ={
+      id:id
+    }
+    this.workbechService.getColDataFromFilterIdPublic(Obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        const lookup = new Map<number, boolean>();
+        if (colData['colData']) {
+          colData['colData'].forEach((item: any) => {
+            lookup.set(item.label, item.selected);
+          });
+          const array3 = [...colData['colData']];
+          data.col_data.forEach((label: any) => {
+            if (!lookup.has(label)) {
+              array3.push({ label, selected: false });
+            }
+          });
+        colData['colData']= array3;
+        } else {
+          colData['colData']= data.col_data?.map((name: any) => ({ label: name, selected: false }))
+        }
+        localStorage.setItem(id, JSON.stringify(colData['colData']));
+        console.log('coldata',this.colData)
+      },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
   }
 }
 

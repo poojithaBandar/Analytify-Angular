@@ -480,6 +480,21 @@ deleteUser(id:any){
     this.accessToken = JSON.parse(currentUser!)['Token'];
     return this.http.get<any>(`${environment.apiUrl}/dashboard_properties/`+id+'/'+ this.accessToken);
   }
+  //public dashboard
+  publishDashbord(id:any){
+    return this.http.get<any>(`${environment.apiUrl}/is_public/`+id);
+  }
+  getDashboardFilterredListPublic(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/public/dashboard_filter_list/`,obj); 
+  }
+  getSavedDashboardDataPublic(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/public/dashboardretrieve/`,obj);
+  }getFilteredDataPublic(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/public/dashboard_filtered_data/`,obj); 
+  }
+  getColDataFromFilterIdPublic(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/public/dashboard_columndata_preview/`,obj); 
+  }
   //image convert
       blobToFile(theBlob:any){
       theBlob.lastModifiedDate = new Date();
