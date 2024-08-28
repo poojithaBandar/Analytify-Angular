@@ -48,6 +48,7 @@ publicUrl:any;
 port:any;
 host:any;
 publishedDashboard = false;
+testVariableToChange! : string ;
 @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService){
@@ -489,6 +490,7 @@ getUsersforRole(){
 ///share publish
 sharePublish(value:any){
 console.log(value);
+this.testVariableToChange = value;
 if(value === 'public'){
   this.createUrl = true;
   this.shareAsPrivate = false
