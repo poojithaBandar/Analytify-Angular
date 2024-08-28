@@ -2906,8 +2906,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = true;
         }
        if(responce.chart_id == 6){
-        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
-        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
+        this.chartsRowData = this.sheetResponce.results.barYaxis;
+        this.chartsColumnData = this.sheetResponce.results.barXaxis;
        if(this.isApexCharts){
         this.barOptions = this.sheetResponce.results.barOptions;
        } else {
@@ -2930,8 +2930,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
        }
        if(responce.chart_id == 24){
-        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
-        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
+        this.chartsRowData = this.sheetResponce.results.pieYaxis;
+        this.chartsColumnData = this.sheetResponce.results.pieXaxis;
         if(this.isApexCharts){
           this.pieOptions = this.sheetResponce.results.pieOptions;
         } else {
@@ -2954,8 +2954,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
        }
        if(responce.chart_id == 13){
-        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
-        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
+        this.chartsRowData = this.sheetResponce.results.lineYaxis;
+        this.chartsColumnData = this.sheetResponce.results.lineXaxis
         if(this.isApexCharts){
           this.lineOptions = this.sheetResponce.results.lineOptions;
         } else {
@@ -2978,8 +2978,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
        }
        if(responce.chart_id == 17){
-        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
-        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
+        this.chartsRowData = this.sheetResponce.results.areaYaxis;
+        this.chartsColumnData = this.sheetResponce.results.areaXaxis;
         if(this.isApexCharts){
           this.areaOptions = this.sheetResponce.results.areaOptions;
         } else {
@@ -3149,8 +3149,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
        }
        if(responce.chart_id == 10){
-        this.chartsRowData = responce.sheet_reload_data.row[0].rows_data;
-        this.chartsColumnData = responce.sheet_reload_data.col[0].rows_data;
+        this.chartsRowData = this.sheetResponce.results.donutYaxis
+        this.chartsColumnData = this.sheetResponce.results.donutXaxis;
         this.donutOptions = this.sheetResponce.results.donutOptions;
         this.donutChart();
         this.bar = false;
