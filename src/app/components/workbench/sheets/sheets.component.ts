@@ -4957,6 +4957,8 @@ renameColumns(){
       const apiKey = localStorage.getItem('API_KEY');
     
       if (!apiKey || apiKey.trim() === '') {
+        // Store the current URL before navigating to the configure page
+        localStorage.setItem('previousUrl', this.router.url);
         this.chartSuggestions = null;
         // API Key is missing or empty, show the message and navigate to the configure page on click
         this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
