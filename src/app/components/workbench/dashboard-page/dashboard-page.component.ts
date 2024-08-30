@@ -151,6 +151,7 @@ viewPropertiesTab(name:any,dashboardId:any){
   this.dashboardId = dashboardId;
   this.dashboardPropertyId = dashboardId;
    this.publishedDashboard = false;
+   this.shareAsPrivate = false;
   this.getAddedDashboardProperties();
 
 }

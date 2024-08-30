@@ -426,6 +426,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.dashboardPropertyId = dashboardId;
   this.dashboardId = dashboardId;
   this.publishedDashboard = false;
+  this.shareAsPrivate = false;
   this.getAddedDashboardProperties();
   }
   getAddedDashboardProperties(){

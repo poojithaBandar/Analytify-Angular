@@ -268,7 +268,7 @@
                                            
                                             @if(TabledataJoining){
                                                 <input type="number" [(ngModel)]="rowLimit" id="input-text" style="border-radius: 4px 0px 0px 4px;" (keydown.enter)="getJoiningTableData()" placeholder="rows" class="form-control w-30"> 
-                                                <a (click)="getJoiningTableData()"><i class="mdi mdi-arrow-right-thick result-icon"></i></a>
+                                                <a  [class.disabled]="!rowLimit || rowLimit <= 0" [style.pointer-events]="!rowLimit || rowLimit <= 0 ? 'none' : 'auto'" (click)="getJoiningTableData()"><i class="mdi mdi-arrow-right-thick result-icon"></i></a>
                                             <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary ms-2'" [previledgeId]="17" [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable"
                                                 (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
                                             }

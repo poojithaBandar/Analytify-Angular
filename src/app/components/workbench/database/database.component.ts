@@ -116,6 +116,8 @@ export class DatabaseComponent {
   rowLimit:any;
   gotoSheetButtonDisable = true;
   fromSavedQuery = false;
+  fromSheetEditDb = false;
+
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -153,6 +155,7 @@ export class DatabaseComponent {
       this.qurtySetId = +atob(route.snapshot.params['id2']);
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
       this.fromDatabasId = true;
+      this.fromSheetEditDb = true;
       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
       if(this.datasourceQuerysetId==='null'){
         console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -162,7 +165,6 @@ export class DatabaseComponent {
           parseInt(this.datasourceQuerysetId)
           console.log(this.datasourceQuerysetId)
         }
-      this.getTablesfromPrevious();
       }
     }
     if(currentUrl.includes('/workbench/database-connection/sheets/fileId')){
@@ -171,6 +173,7 @@ export class DatabaseComponent {
        this.qurtySetId = +atob(route.snapshot.params['id2']);
        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
        this.fromFileId = true;
+       this.fromSheetEditDb = true;
        this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
        if(this.datasourceQuerysetId==='null'){
          console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -180,7 +183,6 @@ export class DatabaseComponent {
            parseInt(this.datasourceQuerysetId)
            console.log(this.datasourceQuerysetId)
          }
-       this.getTablesfromPrevious();
        }
      }
 
@@ -194,7 +196,7 @@ export class DatabaseComponent {
             ?.setAttribute('data-toggled', 'icon-overlay-close');    
     }
 
-    if(!this.updateQuery){
+    if(!this.updateQuery && !this.fromSheetEditDb){
       if(this.fromDatabasId){
     // this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
@@ -204,9 +206,14 @@ export class DatabaseComponent {
       }
     this.getTablesfromPrevious()
   }
-//  if(this.updateQuery){
-//       this.getSavedQueryData();
-//     }
+  if(this.fromSheetEditDb){
+    this.getTablesfromPrevious();
+    if(this.fromFileId){
+      this.getTablesFromFileId();
+    }else if(this.fromDatabasId){
+      this.getSchemaTablesFromConnectedDb();
+    }
+  }
   }
   toggleCard() {
     this.isOpen = !this.isOpen;
@@ -488,7 +495,8 @@ executeQuery(){
   const obj ={
     database_id: this.databaseId,
     custom_query: this.sqlQuery,
-    row_limit:this.rowLimit
+    row_limit:this.rowLimit,
+    queryset_id:this.qurtySetId
   }as any
   if(this.fromFileId){
     delete obj.database_id
@@ -821,7 +829,7 @@ getJoiningTableData(){
         this.totalRows = data.total_rows;
         this.showingRows = data.no_of_rows;
         this.gotoSheetButtonDisable = false;
-        // this.saveQueryName = data.queryset_name;
+        this.saveQueryName = data.queryset_name;
         if(this.TabledataJoining?.column_data?.length === 0){
           this.gotoSheetButtonDisable = true;
         }
