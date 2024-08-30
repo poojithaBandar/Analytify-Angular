@@ -83,6 +83,7 @@ export class SheetsComponent {
   dimensionExpand = false;
   chartSuggestions: any = null;
   errorMessage : any;
+  errorMessage1:any;
   userPrompt: string = '';
   selectedChartPlugin : string = 'apex'	
   isApexCharts : boolean = true;
@@ -426,7 +427,7 @@ if(this.fromFileId){
             },
           },
           xaxis: {
-            categories: this.chartsColumnData,
+            categories: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
             position: 'bottom',
             labels: {
               show: true,
@@ -639,7 +640,7 @@ chart.updateOptions(this.chartOptions3);
               type: 'pie',
           },
           colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
-          labels: this.chartsColumnData,
+          labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
           legend: {
               show: true,
               position: "bottom"
@@ -749,7 +750,7 @@ chart.updateOptions(this.chartOptions3);
                   },
               },
               xaxis: {
-                  categories: this.chartsColumnData,
+                ategories: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
                   labels: {
                       show: true,
                       hideOverlappingLabels: false,
@@ -922,7 +923,7 @@ chart.updateOptions(this.chartOptions3);
               }
             },
           },
-          labels: this.chartsColumnData,
+          labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
           title: {
             text: "",
             align: "left",
@@ -1156,7 +1157,7 @@ chart.updateOptions(this.chartOptions3);
   flattenDimensions(dimensions: Dimension[]): string[] {
     const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
     return Array.from({ length: numCategories }, (_, index) => {
-      return dimensions.map(dim => dim.values[index] || '').join(',');
+      return dimensions.map(dim => dim.values[index] === null ? 'null' : dim.values[index] || '').join(',');
     });
   }
   stockedBar(){
@@ -1815,7 +1816,7 @@ chart.updateOptions(this.chartOptions3);
         chart: {
           type: "donut"
         },
-        labels: this.chartsColumnData,
+        labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
         responsive: [
           {
             breakpoint: 480,
@@ -2117,6 +2118,8 @@ tableMeasures = [] as any;
     
   }
   dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz'];
+  integerList=['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double'];
+  boolList=['bool','boolean'];
   rowdrop(event: CdkDragDrop<string[]>){
    console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -2149,7 +2152,7 @@ tableMeasures = [] as any;
           }
         });
         console.log(this.draggedRowsData);
-        if(!this.dateList.includes(element.data_type)){
+        if(this.integerList.includes(element.data_type)){
           this.rowMeasuresCount(element,event.currentIndex,'sum');
         }else {
           this.dataExtraction();
@@ -3195,6 +3198,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   }
   filterData = [] as any;
   filter_id: any;
+  minValue: any;
+  maxValue: any;
+  floor: any;
+  ceil: any;
+  minDate: string = '';
+  maxDate: string = '';
+  options: Options ={};
+  filterDateRange : any[] = [];
+  updateDateRange() {
+    this.minDate = new Date(this.minValue).toLocaleDateString();
+    this.maxDate = new Date(this.maxValue).toLocaleDateString();
+    this.filterDateRange = [this.minDate,this.maxDate];
+  }
   filterDataGet(){
     const obj={
       "database_id" :this.databaseId,
@@ -3213,6 +3229,26 @@ if(this.fromFileId){
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterData = responce.col_data;
+        if(this.dateList.includes(responce.dtype)){
+          this.floor = new Date(this.filterData[0]).getTime();
+          this.ceil = new Date(this.filterData[this.filterData.length - 1]).getTime();
+          this.minValue = this.floor;
+          this.maxValue = this.ceil;
+          this.options = {
+            floor: this.floor,
+            ceil: this.ceil,
+            step: 24 * 60 * 60 * 1000,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            },
+            translate: (value: number): string => {
+              return new Date(value).toLocaleDateString();
+            }
+          };
+          this.updateDateRange();
+        }
         //this.filter_id = responce.filter_id;
       },
       error: (error) => {
@@ -3244,7 +3280,7 @@ if(this.fromFileId){
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": [],
+    "range_values": this.filterDateRange,
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
        "data_type":this.filterType,
@@ -4967,7 +5003,8 @@ renameColumns(){
         localStorage.setItem('previousUrl', this.router.url);
         this.chartSuggestions = null;
         // API Key is missing or empty, show the message and navigate to the configure page on click
-        this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+        // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+        this.errorMessage1 = 'the GPT API key is missing. Please'
         // this.router.navigate(['/workbench/configure-page/configure']);
       } else {
         // Handle other errors
@@ -4979,6 +5016,10 @@ renameColumns(){
     }
   );
 }
+routeConfigure(){
+  this.router.navigate(['/workbench/configure-page/configure'])
+}
+
 fetchChartData(chartData: any){
   this.databaseId = chartData.database_id;
           this.qrySetId = chartData.queryset_id;
@@ -5258,18 +5299,7 @@ fetchChartData(chartData: any){
       this.dataExtraction();
      }
   }
-  options: Options = {
-    floor: 0,
-    ceil: 100,
-    step: 0,
-    showSelectionBar: true,
-    selectionBarGradient: {
-      from: '#5a66f1',
-      to: '#5a66f1',
-    },
-  };
-  minValue2 = 10;
-  maxValue2 = 90;
+  
   kpiFontSize: string = '3';
   kpiColor: string = '#000000';
 
