@@ -3207,9 +3207,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   options: Options ={};
   filterDateRange : any[] = [];
   updateDateRange() {
-    this.minDate = new Date(this.minValue).toLocaleDateString();
-    this.maxDate = new Date(this.maxValue).toLocaleDateString();
-    this.filterDateRange = [this.minDate,this.maxDate];
+    const format: Intl.DateTimeFormatOptions = { 
+      month: '2-digit', 
+      day: '2-digit', 
+      year: 'numeric' 
+    };
+    this.minDate = new Date(this.minValue).toLocaleDateString('en-US', format);
+    this.maxDate = new Date(this.maxValue).toLocaleDateString('en-US', format);
+    this.filterDateRange = [this.minDate, this.maxDate];
   }
   filterDataGet(){
     const obj={
