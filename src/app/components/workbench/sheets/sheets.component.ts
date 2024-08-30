@@ -5131,8 +5131,9 @@ fetchChartData(chartData: any){
           if (!apiKey || apiKey.trim() === '') {
             this.chartSuggestions = null;
             // API Key is missing or empty, show the message and navigate to the configure page
-            this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
-            this.router.navigate(['/workbench/configure-page/configure']);
+            // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+            this.errorMessage1 = 'the GPT API key is missing. Please'
+            // this.router.navigate(['/workbench/configure-page/configure']);
           } else {
             // Handle other errors
             console.log("Error:", error.message);

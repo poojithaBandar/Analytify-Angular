@@ -1663,7 +1663,7 @@
                                                 </div>
                                                 <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
                                                     <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
-                                                    <p *ngIf="errorMessage1" [innerHTML]="errorMessage">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">add GPT API KEY to proceed.</a></p>
+                                                    <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
                                                     <a *ngIf="!qrySetId" (click)="goToConnections()" style="cursor: pointer;"><span
                                                             class="add-txt text-info">Add</span></a>
                                                 </div>
@@ -1673,10 +1673,10 @@
                                                         <!-- <button (click)="startVoiceRecognition()" style="height: 33px; width:33px"> <img
                                                                 src="./assets/images/microphone.svg" alt="Micro Phone" /> </button>
                                                         <button class="btn btn-primary inp-send" (click)="sendPrompt()">></button> -->
-                                                        <button type="button" class="btn  btn-icon btn-primary-light rounded-pill">
+                                                        <button type="button" class="btn  btn-icon btn-primary-light rounded-pill" (click)="startVoiceRecognition()">
                                                             <i class="fe fe-mic"></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-icon btn-primary brround">
+                                                        <button type="button" class="btn btn-icon btn-primary brround" (click)="sendPrompt()">
                                                                 <i class="fa fa-paper-plane-o"></i>
                                                             </button>
                                                     </div>
