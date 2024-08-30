@@ -86,7 +86,7 @@ getDbConnectionList(){
   const Obj ={
     search : this.searchDbName
   }
-  if(Obj.search == '' || Obj.search == null){
+  if(Obj.search === '' || Obj.search === null){
     delete Obj.search;
   }
   this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
@@ -111,7 +111,7 @@ getuserSheets(){
     search:this.wholeSearch,
     // page_count:'12'
   }
-  if(Obj.search === ' ' || Obj.search === null){
+  if(Obj.search === '' || Obj.search === null || Obj.search === ' '){
     delete Obj.search;
   }
   this.workbechService.getUserSheetListPut(Obj).subscribe(
@@ -138,7 +138,7 @@ getuserDashboardsList(){
     page_count:'12'
 
   }
-  if(Obj.search == ' ' || Obj.search == null){
+  if(Obj.search === ' ' || Obj.search === null || Obj.search === ''){
     delete Obj.search;
   }
   this.workbechService.getuserDashboardsListput(Obj).subscribe(
@@ -165,7 +165,7 @@ getSavedQueries(){
     page_count:'12'
 
   }
-  if(Obj.search == ' ' || Obj.search == null){
+  if(Obj.search === ' ' || Obj.search === null || Obj.search === ''){
     delete Obj.search;
   }
   this.workbechService.getSavedQueryList(Obj).subscribe({

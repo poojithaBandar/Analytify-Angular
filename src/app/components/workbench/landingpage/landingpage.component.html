@@ -182,7 +182,7 @@
                     </div>
                 </div>
                 <div *ngIf="savedDashboardList.length === 0">
-                    No Dashboard please CREATE ONE!
+                    No dashboards to display!
                 </div>
                 <ng-container *ngFor="let dashboardList of savedDashboardList;let i = index" >
                     <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
@@ -283,7 +283,7 @@
                     </div>
                 </div>
                 <div *ngIf="userSheetsList.length === 0">
-                    No Charts please CREATE ONE!
+                    No charts to display!
                 </div>
                 <ng-container *ngFor="let sheetlist of userSheetsList;let i = index">
                     <div *ngIf="i < 11" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
@@ -427,7 +427,7 @@
                     </div>
                 </div>
                 <div *ngIf="savedQueryList.length === 0">
-                    No Queries please CREATE ONE!
+                    No queries to display!
                 </div>
 
                 <ng-container *ngFor="let savedQuery of savedQueryList;let i = index">

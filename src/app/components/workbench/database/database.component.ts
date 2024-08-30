@@ -188,13 +188,13 @@ export class DatabaseComponent {
 
   }
   ngOnInit(){
-    {
-      document.querySelector('html')?.getAttribute('data-toggled') != null
-        ? document.querySelector('html')?.removeAttribute('data-toggled')
-        : document
-            .querySelector('html')
-            ?.setAttribute('data-toggled', 'icon-overlay-close');    
-    }
+    // {
+    //   document.querySelector('html')?.getAttribute('data-toggled') != null
+    //     ? document.querySelector('html')?.removeAttribute('data-toggled')
+    //     : document
+    //         .querySelector('html')
+    //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
+    // }
 
     if(!this.updateQuery && !this.fromSheetEditDb){
       if(this.fromDatabasId){
