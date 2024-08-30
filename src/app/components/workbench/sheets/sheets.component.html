@@ -1471,7 +1471,7 @@
                                                     <button *ngFor="let chart of chartSuggestions" type="button"
                                                         class="btn ripple btn-primary inp-btn d-flex align-items-center"
                                                         (click)="fetchChartData(chart)">
-                                                        <span class="avatar avatar-xl rounded-circle-copilot mr-2">
+                                                        <span class="avatar avatar rounded-circle-copilot mr-2 me-2">
                                                             <img *ngIf="chart.chart_id === 1"
                                                                 src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt=""
                                                                 class="rounded-circle-copilot">
@@ -1520,9 +1520,15 @@
                                                 <div class="input-group mt-3 inp">
                                                     <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
                                                     <div class="input-group-append">
-                                                        <button (click)="startVoiceRecognition()" style="height: 33px; width:33px"> <img
+                                                        <!-- <button (click)="startVoiceRecognition()" style="height: 33px; width:33px"> <img
                                                                 src="./assets/images/microphone.svg" alt="Micro Phone" /> </button>
-                                                        <button class="btn btn-primary inp-send" (click)="sendPrompt()">></button>
+                                                        <button class="btn btn-primary inp-send" (click)="sendPrompt()">></button> -->
+                                                        <button type="button" class="btn  btn-icon btn-primary-light rounded-pill">
+                                                            <i class="fe fe-mic"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-primary brround">
+                                                                <i class="fa fa-paper-plane-o"></i>
+                                                            </button>
                                                     </div>
                                                 </div>
                                             </div>

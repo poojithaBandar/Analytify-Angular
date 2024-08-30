@@ -510,7 +510,13 @@ executeQuery(){
         console.log('dkjshd',this.cutmquryTable)
       },
       error:(error:any)=>{
-      console.log(error)
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
       this.cutmquryTableError = error;
     }
     })
@@ -570,7 +576,7 @@ joiningTables(){
     query_set_id:this.qurtySetId,
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
-    join_type:[],
+    join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array:this.draggedtables
   }as any;
@@ -1437,7 +1443,13 @@ updateCustmQuery(){
       this.totalRowsCustomQuery=data.total_rows
     },
     error:(error:any)=>{
-      console.log(error)
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
     }
   })
 }

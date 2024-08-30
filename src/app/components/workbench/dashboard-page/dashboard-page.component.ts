@@ -132,8 +132,8 @@ deleteDashboard(dashboardId:any){
     }})
 }
 viewDashboard(serverId:any,querysetId:any,dashboardId:any){
-  const encodedServerId = btoa(serverId.toString());
-  const encodedQuerySetId = btoa(querysetId.toString());
+  // const encodedServerId = btoa(serverId.toString());
+  // const encodedQuerySetId = btoa(querysetId.toString());
   const encodedDashboardId = btoa(dashboardId.toString());
 
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])

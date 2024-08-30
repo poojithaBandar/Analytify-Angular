@@ -2429,7 +2429,7 @@ const obj ={
       this.modalService.dismissAll('close');
       Swal.fire({
         icon: 'success',
-        title: 'oops!',
+        title: 'Done',
         text: 'Filter Updated Successfully',
         width: '400px',
       })
