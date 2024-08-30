@@ -3301,6 +3301,7 @@ if(this.fromFileId){
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id});
         this.dataExtraction();
         this.filterDataArray = [];
+        this.filterDateRange = [];
       },
       error: (error) => {
         console.log(error);
@@ -3333,6 +3334,9 @@ if(this.fromFileId){
             this.filterDataArray.push(filter.label);
           }
         })
+        if(this.dateList.includes(responce.dtype)){
+          this.updateDateRange();
+        }
       },
       error: (error) => {
         console.log(error);
@@ -3348,7 +3352,7 @@ if(this.fromFileId){
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": [],
+      "range_values": this.filterDateRange,
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
       "data_type":this.filterType
@@ -3362,6 +3366,7 @@ if(this.fromFileId){
           console.log(responce);
           this.dataExtraction();
           this.filterDataArray = [];
+          this.filterDateRange = [];
         },
         error: (error) => {
           console.log(error);
@@ -3565,11 +3570,12 @@ renameColumns(){
     this.editor = !this.editor;
   }
   updateSheetName() {
-    const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-    if (inputElement) {
-      inputElement.innerHTML = this.sheetTagName;
-      inputElement.style.paddingTop = '1.5%';
-    }
+    // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+    // if (inputElement) {
+    //   inputElement.innerHTML = this.sheetTagName;
+    //   inputElement.style.paddingTop = '1.5%';
+    // }
+    this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
     const parser = new DOMParser();
     const doc = parser.parseFromString(this.sheetTagName, 'text/html');
     this.sheetTitle = doc.body.textContent+'';
@@ -5324,5 +5330,5 @@ fetchChartData(chartData: any){
   editFilterList(){
     this.filterEditGet();
   }
-
+  titleShow : boolean = true;
 }

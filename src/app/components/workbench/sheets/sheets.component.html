@@ -29,7 +29,7 @@
                         <button class="btn btn-primary border me-2" (click)="columnsData()" type="button" id="button-addon2"
                             style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                     </div>
-                    <div style="height: 435px; overflow-y: scroll;">
+                    <div class="sheet-table-h">
                         @for(columns of tableColumnsData; track columns){
                             <div  class="menu-item mb-1">
                                 
@@ -142,15 +142,19 @@
                 
                         </div>-->
                         <div class="modal-body" style="height: 500px; overflow: scroll;">
-                            @if(integerList.includes(filterType)||dateList.includes(filterType)){
+                            @if(dateList.includes(filterType)){
                                 <div class="card panel panel-primary">
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
                                             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
                                                 <li [ngbNavItem]="1">
-                                                    <a ngbNavLink class="p-3">All</a>
+                                                    <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
+                                                            <div style="display: flex;">
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                            </div>
                                                             @for(data of filterData;track data){
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                 <div class="form-check">
@@ -158,6 +162,97 @@
                                                                         (click)="filterCheck($event,data)">
                                                                     <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
                                                                 </div>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                <li [ngbNavItem]="2">
+                                                    <a ngbNavLink class="p-3">Range of dates</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane" id="linktabs">
+                                                            <div class="card-body">
+                                                                <div class="date-box">
+                                                                    <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
+                                                                    <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                </div>
+                                                                <div id="merging-tooltips">
+                                                                  <ngx-slider 
+                                                                  [(value)]="minValue"
+                                                                  [(highValue)]="maxValue"
+                                                                  [options]="options"
+                                                                  (valueChange)="updateDateRange()"
+                                                                  (highValueChange)="updateDateRange()"
+                                                                ></ngx-slider>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                            </ul>
+                                            <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                                <div class="tab-content">
+                                                    <div [ngbNavOutlet]="nav"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }@else{
+                                <div style="display: flex;">
+                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                </div>
+                                @for(data of filterData;track data){
+                                    @if(data? data : (boolList.includes(filterType)? true: '')){
+                                        <div class="form-check">
+                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input"
+                                                (click)="filterCheck($event,data)">
+                                            <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                        <div class="modal-footer">
+                          <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataPut(); modal.dismiss('Cross click')">Apply</button>
+                          <button
+                            type="button"
+                            class="btn ripple btn-secondary"
+                            (click)="modal.close('Save click')"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </ng-template>
+
+                      <ng-template #contentedit let-modal>
+                        <div class="modal-header">
+                          <h6 class="modal-title"> Edit Filter</h6>
+                          <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+                          </button>
+                        </div>
+                        <div class="modal-body"  style="height: 500px; overflow: scroll;">
+
+                            @if(dateList.includes(filterType)){
+                                <div class="card panel panel-primary">
+                                    <div class="tab-menu-heading tab-menu-heading-boxed">
+                                        <div class="tabs-menu-boxed">
+                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                <li [ngbNavItem]="1">
+                                                    <a ngbNavLink class="p-3">General</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane active" id="activetabs">
+                                                            <div style="display: flex;">
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                            </div>
+                                                            @for(data of filterData;track data){
+                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                    </div>
                                                                 }
                                                             }
                                                         </div>
@@ -195,44 +290,28 @@
                                     </div>
                                 </div>
                             }@else{
+                                <div style="display: flex;">
+                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                </div>
                                 @for(data of filterData;track data){
                                     @if(data? data : (boolList.includes(filterType)? true: '')){
                                         <div class="form-check">
-                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input"
-                                                (click)="filterCheck($event,data)">
-                                            <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
                                         </div>
                                     }
                                 }
                             }
-                        </div>
-                        <div class="modal-footer">
-                          <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataPut(); modal.dismiss('Cross click')">Apply</button>
-                          <button
-                            type="button"
-                            class="btn ripple btn-secondary"
-                            (click)="modal.close('Save click')"
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </ng-template>
 
-                      <ng-template #contentedit let-modal>
-                        <div class="modal-header">
-                          <h6 class="modal-title"> Edit Filter</h6>
-                          <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
-                          </button>
-                        </div>
-                        <div class="modal-body"  style="height: 500px; overflow: scroll;">
-                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                            <!-- <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                             <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                             @for(data of filterData;track data){
                             <div class="form-check">
                                 <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
                                 <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
                             </div>
-                        }
+                        } -->
                         </div>
                         <div class="modal-footer">
                           <button [disabled]="!(filterDataArray?.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
@@ -258,8 +337,8 @@
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
                                 <div class="title-container">
-                                    <input *ngIf="!retriveDataSheet_id" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span *ngIf="retriveDataSheet_id" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="{'padding-top': sheetTagName[0] === '<' ? '1.5%' : '0'}"></span>
+                                    <input *ngIf="!retriveDataSheet_id && titleShow" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
+                                    <span *ngIf="retriveDataSheet_id || !titleShow" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="{'padding-top': sheetTagName[0] === '<' ? '1.5%' : '0'}"></span>
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
                                     </span>
@@ -271,7 +350,7 @@
                                     </ckeditor>
                                     <div class="buttons">
                                         <button class="btn btn-danger" (click)="toggleEditor()">Close</button>
-                                        <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor()">Update</button>
+                                        <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor(); titleShow = false">Update</button>
                                     </div>
                                     </div>
                                 </div>
@@ -279,9 +358,9 @@
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0" [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
                                 <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
                                 <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
-                                <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary w-100'" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
+                                <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
                                 (btnClickEvent)="sheetSave()"></app-insights-button>
-                                <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary w-100'" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
+                                <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
                                 (btnClickEvent)="sheetSave()"></app-insights-button>
                             </div>
                         </div>
@@ -292,7 +371,7 @@
                     <div class="row align-items-center mb-2">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
-                                <label for="inputName" class="form-control mb-0">Columns</label>
+                                <label for="inputName" class="form-control mb-0 column-text">Columns</label>
                             </div>
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
@@ -312,9 +391,9 @@
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
-                                                <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
+                                                <div class="dropdown-menu  cu" ngbDropdownMenu>
                                                     <a *ngIf="dateList.includes(columns.data_type)" class="btn btn-outline-light mx-0 mb-2" (click)="openDateFormatModal(dateFunctionsModal)" style="text-align: left !important;"> Date</a>
-                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index,columns.column)"> Remove</a> 
+                                                    <a class="btn btn-secondary-light mx-0" style="text-align: left !important;" (click)="dragStartedColumn(index,columns.column)"> Remove</a> 
                                                     
                                                 </div>
 
@@ -375,7 +454,7 @@
                     <div class="row align-items-center">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                             <div class="card-area d-flex gap-2">
-                                <label for="inputName" class="form-control mb-0">Rows</label>
+                                <label for="inputName" class="form-control mb-0 row-text">Rows</label>
                             </div> 
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
@@ -397,9 +476,9 @@
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
-                                                <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
-                                                    <a class="btn btn-outline-light mx-0 mb-2" (click)="openSuperScaledModal(aggregateUserModal,rows.type)" style="text-align: left !important;"> Aggregation</a> 
-                                                    <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="dragStartedRow(index,rows.column)"> Remove</a> 
+                                                <div class="dropdown-menu  cu" ngbDropdownMenu>
+                                                    <a class="btn btn-outline-light mx-0 " (click)="openSuperScaledModal(aggregateUserModal,rows.type)" style="text-align: left !important;"> Aggregation</a> 
+                                                    <a class="btn btn-secondary-light mx-0" style="text-align: left !important;" (click)="dragStartedRow(index,rows.column)"> Remove</a> 
                                                 </div>
 
                                             </a>
@@ -855,21 +934,91 @@
                                                       </button>
                                                     </div>
                                                     <div class="modal-body"  style="height: 500px; overflow: scroll;">
-                                                        <div class="input-group">
+                                                        <!-- <div class="input-group">
                                                             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"
                                                                 (keyup.enter)="editFilterList()" aria-describedby="button-addon2">
                                                             <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2"
                                                                 style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                                        </div>
-                                                        @for(data of filterData;track data){
+                                                        </div> -->
+                                                        @if(dateList.includes(filterType)){
+                                                            <div class="card panel panel-primary">
+                                                                <div class="tab-menu-heading tab-menu-heading-boxed">
+                                                                    <div class="tabs-menu-boxed">
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                                            <li [ngbNavItem]="1">
+                                                                                <a ngbNavLink class="p-3">General</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane active" id="activetabs">
+                                                                                        <div style="display: flex;">
+                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                                            <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                        </div>
+                                                                                        @for(data of filterData;track data){
+                                                                                            @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                                                <div class="form-check">
+                                                                                                    <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                                                    <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                                                </div>
+                                                                                            }
+                                                                                        }
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="2">
+                                                                                <a ngbNavLink class="p-3">Range of dates</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane" id="linktabs">
+                                                                                        <div class="card-body">
+                                                                                            <div class="date-box">
+                                                                                                <input type="text" id="input" [(ngModel)]="minDate" class="form-control date-box-width">
+                                                                                                <input type="text" id="input" [(ngModel)]="maxDate" class="form-control date-box-width">
+                                                                                            </div>
+                                                                                            <div id="merging-tooltips">
+                                                                                              <ngx-slider 
+                                                                                              [(value)]="minValue"
+                                                                                              [(highValue)]="maxValue"
+                                                                                              [options]="options"
+                                                                                              (valueChange)="updateDateRange()"
+                                                                                              (highValueChange)="updateDateRange()"
+                                                                                            ></ngx-slider>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                        </ul>
+                                                                        <div class="panel-body tabs-menu-body p-1" style="height: 578px;">
+                                                                            <div class="tab-content">
+                                                                                <div [ngbNavOutlet]="nav"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }@else{
+                                                            <div style="display: flex;">
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                            </div>
+                                                            @for(data of filterData;track data){
+                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        }
+
+                                                        <!-- @for(data of filterData;track data){
                                                         <div class="form-check">
                                                             <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
                                                             <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
                                                         </div>
-                                                    }
+                                                    } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                      <button [disabled]="!(filterDataArray?.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
+                                                      <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
                                                       <button
                                                         type="button"
                                                         class="btn ripple btn-secondary"
@@ -932,7 +1081,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div *ngIf="isApexCharts && !(table && chartId)" class="card mb-0 marks-card-height" style=" height: 168px; overflow-y: scroll;">
+                                            <div *ngIf="isApexCharts && !(table && chartId)" class="card mb-0 marks-card-height" >
                                                 <div class="card-header justify-content-between align-items-center">
                                                     <div class="card-title fs-12">Marks </div>
                                                 </div>
@@ -994,7 +1143,7 @@
                                                             </div>
                                                             <span class="mark-txt fs-11">Size</span>
                                                         </div>
-                                                        <div class="col-3 px-2 m-1 border text-center sub-menu-item">
+                                                        <div class="col-3 px-1 m-1 border text-center sub-menu-item">
                                                             <a href="javascript:void(0);">
                                                                 <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
                                                             </a>
@@ -1465,8 +1614,8 @@
                                     </a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane" id="linktabs">
-                                            <div class="copilot-container">
-                                                <h5>InsightApps Copilot</h5>
+                                            <div class="copilot-container p-2">
+                                                <h6>InsightApps Copilot</h6>
                                                 <div *ngIf="chartSuggestions && chartSuggestions.length > 0" class="chart-suggestions mt-3">
                                                     <button *ngFor="let chart of chartSuggestions" type="button"
                                                         class="btn ripple btn-primary inp-btn d-flex align-items-center"
@@ -1539,7 +1688,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="panel-body tabs-menu-body p-1" style="height: 630px;">
+                    <div class="panel-body tabs-menu-body p-1 panel-body-h" >
                         <div class="tab-content">
                             <div [ngbNavOutlet]="nav"></div>
 

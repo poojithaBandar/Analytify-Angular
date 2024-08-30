@@ -335,6 +335,9 @@ span.abc-txt {
 .inp{
   bottom: 5px;
   position: absolute;
+  right: 28px;
+  left: 0;
+  padding: 10px;
 }
 
 .inp-btn{
@@ -402,6 +405,15 @@ span.abc-txt {
 .show-chart-card{
   height: 522px;
 }
+.sheet-table-h{
+  height: 459px;
+   overflow-y: scroll;
+}
+.panel-body-h{
+  height: 620px;
+}
+
+
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
   
@@ -427,6 +439,42 @@ app-insights-button {
 .nav-link {
   font-size: 12px;
 }
+.sheet-table-h{
+  height: 387px;
+  overflow-y: scroll;
+}
+.show-chart-card {
+  height: 443px;
+}
+.panel-body-h {
+  height: 539px;
+}
+.charts-card-height {
+  overflow-y: scroll;
+  height: 210px;
+}
+.filter-card-height {
+  height: 150px;
+  overflow-y: scroll;
+}
+.marks-card-height{
+  height: 164px;
+  overflow-y: scroll;
+}
+.column-text {
+  font-size: 12px;
+}
+.row-text{
+  font-size: 12px;
+}
+.mat-mdc-tab:not(.mdc-tab--stacked) {
+  height: 41px;
+}
+.update-btn{
+  font-size: 12px;
+}
+
+
 }
  // for 100% Resolution //
  @media ( 1280px <= width <= 1420px) {
@@ -445,7 +493,43 @@ app-insights-button {
   .nav-link {
     font-size: 12px;
   }
+  .sheet-table-h {
+    height: 326px;
+    overflow-y: scroll;
 }
+.show-chart-card {
+  height: 376px;
+}
+.filter-card-height {
+  height: 130px;
+  overflow-y: scroll;
+}
+.charts-card-height {
+  overflow-y: scroll;
+  height: 185px;
+}
+.marks-card-height {
+  height: 142px;
+  overflow-y: scroll;
+}
+.panel-body-h {
+  height: 475px;
+}
+.column-text {
+  font-size: 12px;
+}
+.row-text{
+  font-size: 12px;
+}
+.mat-mdc-tab:not(.mdc-tab--stacked) {
+  height: 33px;
+}
+.update-btn{
+  font-size: 11px;
+}
+}
+
+
  // for 110% Resolution //
  @media ( 1163px <= width <= 1279px) {
   h6 {
