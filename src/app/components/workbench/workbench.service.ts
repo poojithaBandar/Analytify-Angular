@@ -385,10 +385,16 @@ getServerTablesList(obj:any){
 openApiKey(obj:any){
   return this.http.post<any>(`${environment.apiUrl}/ai/validate-api-key/`,obj);
 }
-deleteDashbaordFilter(id:any){
+deleteDashbaordFilter(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
   this.accessToken = JSON.parse( currentUser! )['Token'];
-  return this.http.delete<any>(`${environment.apiUrl}/dashboard_filter_delete/`+this.accessToken+'/'+id); 
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_delete/`+this.accessToken,obj); 
+}
+
+deleteSheetFilter(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_filter_sheet_update/`+this.accessToken,obj); 
 }
 editFilterDataGet(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );

@@ -95,6 +95,9 @@ export class SheetsComponent {
   xGridColor : string = '#00a5a2';
   yLabelColor : string = '#00a5a2';
   yGridColor : string = '#00a5a2';
+  filterSearch! : string;
+  editFilterSearch! : string;
+  tableSearch! : string;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -1843,6 +1846,7 @@ tableMeasures = [] as any;
     const obj={
       "db_id":this.databaseId,
       "queryset_id":this.qrySetId,
+      "search":this.tableSearch
   }as any;
   if(this.fromFileId){
     delete obj.db_id;
@@ -3199,6 +3203,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "datasource_queryset_id" :this.filterQuerySetId,
       "col_name":this.filterName,
        "data_type":this.filterType,
+       "search":this.filterSearch
       // "format_date":""
 }as any;
 if(this.fromFileId){
@@ -3267,7 +3272,8 @@ if(this.fromFileId){
     const obj={
       "type_filter":"chartfilter",
       "database_id" :this.databaseId,
-      "filter_id" :this.filter_id
+      "filter_id" :this.filter_id,
+      "search":this.editFilterSearch
 }as any;
 if(this.fromFileId){
   delete obj.database_id;
@@ -5274,4 +5280,12 @@ fetchChartData(chartData: any){
   getFontSize(): string {
     return `${this.kpiFontSize}rem`;
   }
+
+  searchFilterList(){
+    this.filterDataGet();
+  }
+  editFilterList(){
+    this.filterEditGet();
+  }
+
 }

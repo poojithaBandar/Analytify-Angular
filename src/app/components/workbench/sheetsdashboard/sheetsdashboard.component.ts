@@ -1390,8 +1390,10 @@ this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+
       let removeIndex = this.dashboard.findIndex((sheet:any) => item.sheetId == sheet.sheetId);
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
+        this.loaderService.show();
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
         this.qrySetId.splice(popqryIndex, 1);
+        this.deleteSheetFilter(item.sheetId);
       if(item.fileId){
         let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
         this.fileId.splice(popIndex, 1);
@@ -1403,6 +1405,29 @@ this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+
     }
     this.setDashboardNewSheets(item.sheetId, false);
   }
+
+  deleteSheetFilter(sheetId: any){
+    let reqObj = {
+      "dashboard_id": this.dashboardId,
+      "sheet_ids": sheetId
+    }
+    this.workbechService.deleteSheetFilter(reqObj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.loaderService.hide();
+        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'})
+    },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
+  }
   removeNestedItem($event:any, item:any) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -1411,10 +1436,28 @@ this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+
 
   resetDashboard() {
     this.dashboard = [];
+    this.loaderService.show();
     this.qrySetId = [];
     this.databaseId = [];
     this.fileId = [];
     this.disableDashboardUpdate = true;
+    const idsArray = this.DahboardListFilters.map((obj:any) => obj.dashboard_filter_id);
+    this.workbechService.deleteDashbaordFilter({"filter_id" : idsArray}).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.DahboardListFilters =  [];
+        this.loaderService.hide();
+    },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
     this.dashboardNew.forEach(sheet => {
       sheet['selectedSheet'] = false;
     })
@@ -1423,7 +1466,7 @@ this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+
   clearDashboard(){
     Swal.fire({
       title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      text: "Filters on dashbard will be deleted .You won't be able to revert this!",
       icon: 'warning',
       width: '300px',
       showCancelButton: true,
@@ -2222,10 +2265,10 @@ closeFilterModal(){
   }
 
 deleteDashboardFilter(id:any){
-  const Obj ={
-    id:id
-  }
-  this.workbechService.deleteDashbaordFilter(id).subscribe({
+  const Obj =
+    {"filter_id" : [id]
+};
+  this.workbechService.deleteDashbaordFilter(Obj).subscribe({
     next:(data)=>{
       console.log(data);
       this.DahboardListFilters =  this.DahboardListFilters.filter((obj : any) => obj.dashboard_filter_id !== id);

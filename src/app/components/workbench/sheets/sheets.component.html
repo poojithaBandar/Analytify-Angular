@@ -23,6 +23,12 @@
                 </div>
                 <div class="card-body p-1">
                     <h6 class="fw-600  mb-0 p-4 ">Tables</h6>
+                    <div class="input-group">
+                        <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="tableSearch"
+                            (keyup.enter)="columnsData()" aria-describedby="button-addon2">
+                        <button class="btn btn-primary border me-2" (click)="columnsData()" type="button" id="button-addon2"
+                            style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                    </div>
                     <div style="height: 435px; overflow-y: scroll;">
                         @for(columns of tableColumnsData; track columns){
                             <div  class="menu-item mb-1">
@@ -142,6 +148,12 @@
                                         <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
                                             <li [ngbNavItem]="1">
                                                 <a ngbNavLink class="p-3">All</a>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch"
+                                                        (keyup.enter)="searchFilterList()" aria-describedby="button-addon2">
+                                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2"
+                                                        style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                </div>
                                                 <ng-template ngbNavContent>
                                                     <div class="tab-pane active" id="activetabs">
                                                         @for(data of filterData;track data){
@@ -213,6 +225,8 @@
                           </button>
                         </div>
                         <div class="modal-body"  style="height: 500px; overflow: scroll;">
+                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                            <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                             @for(data of filterData;track data){
                             <div class="form-check">
                                 <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
@@ -841,6 +855,12 @@
                                                       </button>
                                                     </div>
                                                     <div class="modal-body"  style="height: 500px; overflow: scroll;">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"
+                                                                (keyup.enter)="editFilterList()" aria-describedby="button-addon2">
+                                                            <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2"
+                                                                style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                        </div>
                                                         @for(data of filterData;track data){
                                                         <div class="form-check">
                                                             <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
@@ -904,10 +924,10 @@
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon "></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,12)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,12)"><img src="./assets/images/charts/spider.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,25)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,25)"><img src="./assets/images/charts/big-number.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon"></a>
                                                         </div>
                                                     </div>
                                                 </div>
