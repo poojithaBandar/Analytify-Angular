@@ -46,7 +46,15 @@ interface RangeSliderModel {
   maxValue: number;
   options: Options;
 }
-
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
+  plotOptions: ApexPlotOptions;
+  dataLabels: ApexDataLabels;
+  legend: ApexLegend;
+};
 @Component({
   selector: 'app-sheets',
   standalone: true,
@@ -1840,6 +1848,87 @@ chart.updateOptions(this.chartOptions3);
     }
     this.legendSwitch = this.chartOptions10.legend.show;
   }
+  @ViewChild('heatchart') chart!: ChartComponent;
+  public heatChart!: any;
+  heatMapChart() {
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    this.heatChart = {
+      series: this.sidebysideBarRowData,
+      chart: {
+        height: 350,
+        type: 'heatmap',
+      },
+      plotOptions: {
+        heatmap: {
+          shadeIntensity: 0.5,
+          radius: 0,
+          useFillColorAsStroke: true,
+          colorScale: {
+            ranges: [
+              {
+                from: 0,
+                to: 50,
+                name: 'low',
+                color: '#00A100'
+              },
+              {
+                from: 51,
+                to: 100,
+                name: 'medium',
+                color: '#128FD9'
+              },
+              {
+                from: 101,
+                to: 150,
+                name: 'high',
+                color: '#FFB200'
+              },
+              {
+                from: 151,
+                to: 200,
+                name: 'extreme',
+                color: '#FF0000'
+              }
+            ]
+          }
+        }
+      },
+      dataLabels: {
+        enabled: true
+      },
+      xaxis: {
+        type: 'category',
+        categories: categories,
+      },
+      yaxis: {
+        title: {
+          text: 'Values'
+        }
+      },
+      legend: {
+        show: true,
+        position: 'bottom'
+      }
+    };
+  }
+  private generateData(count: number, yrange: number) {
+    let series = [];
+    for (let i = 0; i < count; i++) {
+      let data = [];
+      for (let j = 0; j < yrange; j++) {
+        data.push({
+          x: 'W' + (j + 1).toString(),
+          y: Math.floor(Math.random() * (150 - 1 + 1)) + 1
+        });
+      }
+      series.push({
+        name: 'Metric ' + (i + 1).toString(),
+        data: data
+      });
+    }
+    return series;
+  }
 
 tableDimentions = [] as any;
 tableMeasures = [] as any;
@@ -1995,6 +2084,7 @@ tableMeasures = [] as any;
         this.multiLineChart();
         this.donutChart();
         this.radarChart();
+        this.heatMapChart();
       }
       if(this.retriveDataSheet_id){
         const dimensions: Dimension[] = this.sidebysideBarColumnData1;
@@ -2247,8 +2337,9 @@ tableMeasures = [] as any;
   multiLine = false;
   donut = false;
   kpi = false;
+  heatMap = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -2264,6 +2355,7 @@ tableMeasures = [] as any;
     this.chartId = chartId;
     this.radar = radar;
     this.kpi = kpi;
+    this.heatMap = heatMap;
     this.dataExtraction();
   }
   enableDisableCharts(){
@@ -5045,13 +5137,13 @@ fetchChartData(chartData: any){
           console.log("This is ChaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type==="Bar Chart"){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type==="Pie Chart"){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type==="Line Chart"){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type==="Area Chart"){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }
           this.dataExtraction();
 
