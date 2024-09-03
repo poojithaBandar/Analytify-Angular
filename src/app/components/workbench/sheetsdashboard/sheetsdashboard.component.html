@@ -5,6 +5,14 @@
 <div *ngIf="sheetsNewDashboard">
   <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/workbench/sheets" activeitem="Dashboard"></app-page-header>
   </div>
+  <!-- <div *ngIf="publicHeader">
+    <app-page-header [publicHeader]="true"></app-page-header>
+    </div> -->
+    <div *ngIf="publicHeader" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+      <a class="header-logo">
+      <img src="./assets/images/brand/insightApps-logo-Public.png" alt="logo" class="desktop-dark">
+  </a>
+  </div>
   @if(isSheetsView){
     <div class="main-container container-fluid">
       <div class="row" class="card " style="padding: 20px;">

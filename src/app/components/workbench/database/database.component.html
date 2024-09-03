@@ -89,7 +89,7 @@
                                     <i class="fa fa-filter"></i> Apply Filters
                                 </a>
                                 }
-                                <app-insights-button [buttonName]="'New Custom SQL'" [classesList]="'btn btn-blue-light m-1'" [previledgeId]="54" [isBtn]="true"
+                                <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light m-1'" [previledgeId]="54" [isBtn]="true"
                                                 (btnClickEvent)="customSql=true;tableJoiningUI=false" [isIcon]="false"></app-insights-button>
                                 <!-- <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a> -->
                             </div>
@@ -250,7 +250,7 @@
                                 </div>
 
                             </div>
-                            <div [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
+                            <div class="p-0" [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
                                 <div class="card br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''" [class.expanded]="!isOpen">
                                     <div class="card-header d-flex align-items-center" style="display: flex; justify-content: space-between;">
                                         <div class="d-flex">

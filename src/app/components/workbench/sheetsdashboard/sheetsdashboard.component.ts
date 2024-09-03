@@ -142,6 +142,7 @@ export class SheetsdashboardComponent {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  publicHeader = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer){
     this.dashboard = [];
@@ -150,6 +151,7 @@ export class SheetsdashboardComponent {
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
       this.active = 2;
+      this.publicHeader = true
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
       }
