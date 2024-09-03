@@ -89,6 +89,7 @@ export class DatabaseComponent {
   totalRowsCustomQuery:any;
   remainingTables = [] as any;
   qurtySetId:any;
+  custumQuerySetid:any;
   enableJoinBtn = true;
   customSql = false;
   tableJoiningUI = true;
@@ -496,7 +497,7 @@ executeQuery(){
     database_id: this.databaseId,
     custom_query: this.sqlQuery,
     row_limit:this.rowLimit,
-    queryset_id:this.qurtySetId
+    queryset_id:this.custumQuerySetid
   }as any
   if(this.fromFileId){
     delete obj.database_id
@@ -513,6 +514,7 @@ executeQuery(){
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
         this.qurtySetId = data.query_set_id;
+        this.custumQuerySetid = data.query_set_id
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows
         console.log('dkjshd',this.cutmquryTable)
@@ -1149,6 +1151,8 @@ deleteFilter(id:any){
             title: 'Removed!',
             text: ' Filter Removed Successfully',
             width: '400px',
+            timer: 2000,
+            showConfirmButton: false 
           })
 
         }
@@ -1405,6 +1409,8 @@ saveQuery(){
             title: 'Done!',
             text: 'Query Saved Successfully',
             width: '400px',
+            timer: 2000, 
+            showConfirmButton: false 
           })
         }
       },

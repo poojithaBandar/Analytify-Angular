@@ -201,7 +201,8 @@ export class SheetsComponent {
   displayUnits: string = 'none';
   prefix: string = '';
   suffix: string = '';
-
+  isCustomSql = false;
+  
   @ViewChild('barChart') barchart!: ChartComponent;
   @ViewChild('areaChart') areachart!: ChartComponent;
   @ViewChild('lineChart') linechart!: ChartComponent;
@@ -365,6 +366,27 @@ if(this.fromFileId){
  }
   goToDataSource(){
 
+    if(this.isCustomSql){
+      const encodeddbId = btoa(this.databaseId?.toString());
+      const encodedqurysetId = btoa(this.qrySetId.toString());
+      const encodedFileId = btoa(this.fileId?.toString());
+
+      const fromSource = this.fromFileId ? 'fileId' : 'dbId'
+      const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
+
+      if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
+        // Encode 'null' to represent a null value
+       const encodedDsQuerySetId = btoa('null');
+       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+  
+      } else {
+        // Convert to string and encode
+       const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
+       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+    
+      } 
+     }
+    else{
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
     const encodedFileId = btoa(this.fileId?.toString());
@@ -384,6 +406,8 @@ if(this.fromFileId){
      this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
+  }
+
   }
   goToConnections(){
     this.router.navigate(['/workbench/work-bench/view-connections'])
@@ -1946,6 +1970,7 @@ tableMeasures = [] as any;
           console.log(responce);
           this.tableColumnsData = responce;
           this.database_name = responce[0].database_name;
+          this.isCustomSql = responce[0].is_custom_sql;
           this.tableDimentions = responce.dimensions;
           this.tableMeasures = responce.measures;
         },
