@@ -19,6 +19,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { CommonModule } from '@angular/common';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { tickStep } from 'd3';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-database',
@@ -119,7 +120,7 @@ export class DatabaseComponent {
   fromSavedQuery = false;
   fromSheetEditDb = false;
 
-  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
+  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
       this.fromDatabasId=true
@@ -605,7 +606,13 @@ joiningTables(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
-        this.getJoiningTableData();
+        if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
+          this.getDsQuerysetId()
+        }
+        else{
+          this.getJoiningTableData();
+        }
+        // this.getJoiningTableData();
         this.gotoSheetButtonDisable = false;
       },
       error:(error:any)=>{
@@ -679,7 +686,13 @@ joiningTablesFromDelete(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
-        this.getJoiningTableData();
+        // this.getJoiningTableData();
+        if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
+          this.getDsQuerysetId()
+        }
+        else{
+          this.getJoiningTableData();
+        }
       },
       error:(error:any)=>{
       console.log(error);
@@ -734,7 +747,13 @@ customTableJoin(){
         this.qurtySetId = data?.table_columns_and_rows?.query_set_id;       
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
-        this.getJoiningTableData();
+        if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
+          this.getDsQuerysetId()
+        }
+        else{
+          this.getJoiningTableData();
+        }
+        // this.getJoiningTableData();
         this.clearJoinCondns();
       },
       error:(error:any)=>{
@@ -821,6 +840,7 @@ getJoiningTableData(){
     delete obj.database_id
     obj.file_id=this.fileId
   }
+
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1059,7 +1079,7 @@ getDsQuerysetId(){
         if(this.customSql){
           this.getfilteredCustomSqlData();
         }
-        this.getFilteredList();
+        // this.getFilteredList();
       },
       error:(error:any)=>{
       console.log(error);
@@ -1146,14 +1166,15 @@ deleteFilter(id:any){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          Swal.fire({
-            icon: 'success',
-            title: 'Removed!',
-            text: ' Filter Removed Successfully',
-            width: '400px',
-            timer: 2000,
-            showConfirmButton: false 
-          })
+          // Swal.fire({
+          //   icon: 'success',
+          //   title: 'Removed!',
+          //   text: ' Filter Removed Successfully',
+          //   width: '400px',
+          //   timer: 2000,
+          //   showConfirmButton: false 
+          // })
+          this.toasterService.success('Filter Removed Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
         console.log('filter ids',this.datasourceFilterIdArray)
@@ -1404,14 +1425,16 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          Swal.fire({
-            icon: 'success',
-            title: 'Done!',
-            text: 'Query Saved Successfully',
-            width: '400px',
-            timer: 2000, 
-            showConfirmButton: false 
-          })
+          // Swal.fire({
+          //   icon: 'success',
+          //   title: 'Done!',
+          //   text: 'Query Saved Successfully',
+          //   width: '400px',
+          //   timer: 2000, 
+          //   showConfirmButton: false 
+          // })
+          this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+
         }
       },
       error:(error:any)=>{

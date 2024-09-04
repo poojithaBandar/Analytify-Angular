@@ -30,7 +30,23 @@ button.BtnNewStyle.span-left {
   padding: 6px 12px;
 }
 
+// [cdkDropListDisabled] {
+//   cursor: not-allowed !important;
 
+//   // Optional: Style adjustments for better visual indication
+//   opacity: 0.5; // Makes the element semi-transparent
+//   pointer-events: none; // Prevents any interaction with the element
+// }
+// ::ng-deep [cdkDropListDisabled] {
+//   cursor: not-allowed !important;
+//   opacity: 0.5; // Optional
+//   pointer-events: none; // Optional
+// }
+.drag-disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+  pointer-events: none;
+}
 button.BtnRowStyle {
   margin-inline: 0px !important;
   border-radius: 0px !important;

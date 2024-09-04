@@ -33,6 +33,8 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options } from '@angular-slider/ngx-slider';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { ToastrService } from 'ngx-toastr';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -202,7 +204,7 @@ export class SheetsComponent {
   prefix: string = '';
   suffix: string = '';
   isCustomSql = false;
-  
+  canDrop = true;
   @ViewChild('barChart') barchart!: ChartComponent;
   @ViewChild('areaChart') areachart!: ChartComponent;
   @ViewChild('lineChart') linechart!: ChartComponent;
@@ -218,8 +220,9 @@ export class SheetsComponent {
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
   backgroundColor: string = '#fff';
-
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer){   
+  canEditDb = false;
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -315,7 +318,9 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    } 
-}
+   this.canEditDb = this.templateService.addDatasource();
+   this.canDrop = !this.canEditDb
+  }
 
   ngOnInit(): void {
     this.columnsData();
@@ -2381,7 +2386,8 @@ tableMeasures = [] as any;
     this.radar = radar;
     this.kpi = kpi;
     this.heatMap = heatMap;
-    this.dataExtraction();
+    // this.dataExtraction();
+    
   }
   enableDisableCharts(){
     console.log(this.draggedColumnsData);
@@ -2452,12 +2458,13 @@ tableMeasures = [] as any;
                     console.log(data);
                     if (data) {
                       this.tabs.splice(this.SheetIndex, 1);
-                      Swal.fire({
-                        icon: 'success',
-                        title: 'Deleted!',
-                        text: 'Deleted Successfully',
-                        width: '200px',
-                      })
+                      // Swal.fire({
+                      //   icon: 'success',
+                      //   title: 'Deleted!',
+                      //   text: 'Deleted Successfully',
+                      //   width: '200px',
+                      // })
+                      this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                       this.getChartData();
                     }
                   },
@@ -2846,11 +2853,13 @@ if(this.retriveDataSheet_id){
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
    this.tabs[this.SheetIndex] = this.sheetTitle;
     if(responce){
-      Swal.fire({
-        icon: 'success',
-        text: responce.message,
-        width: '200px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   text: responce.message,
+      //   width: '200px',
+      // })
+      this.toasterService.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+
     //   this.getSheetNames();
     //  this.sheetRetrive();
     }
@@ -2872,11 +2881,12 @@ if(this.retriveDataSheet_id){
    this.tabs[this.SheetIndex] = this.sheetTitle;
     console.log(responce);
     if(responce){
-      Swal.fire({
-        icon: 'success',
-        text: responce.message,
-        width: '200px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   text: responce.message,
+      //   width: '200px',
+      // })
+      this.toasterService.success(responce.message,'success',{ positionClass: 'toast-top-right'});
       this.retriveDataSheet_id = responce.sheet_id;
       // this.getSheetNames();
       this.sheetRetrive();

@@ -8,6 +8,7 @@ import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-roles-dashboard',
@@ -38,7 +39,7 @@ export class RolesDashboardComponent {
   updateRole = false;
   assaignedUsers =[] as any;
   addRoleDiv = false;
-constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute){
+constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private toasterservice:ToastrService){
   if(this.router.url.includes('/workbench/dashboard/role-add')){
     this.addRoleDiv = true;
     this.getPrevilagesList();
@@ -232,12 +233,13 @@ if(this.roleTitle === ''){
     next:(data)=>{
       console.log(data);
       this.addRoleDiv = false;
-      Swal.fire({
-        icon: 'success',
-        title: 'Done!',
-        text: data.message,
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Done!',
+      //   text: data.message,
+      //   width: '400px',
+      // })
+      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
       this.getSavedRolesList();
      },
     error:(error)=>{
@@ -269,12 +271,13 @@ deleteRole(id:any){
           next:(data:any) => {
             console.log(data);      
             if(data){
-              Swal.fire({
-                icon: 'success',
-                title: 'Deleted!',
-                text: 'Role Deleted Successfully',
-                width: '400px',
-              })
+              // Swal.fire({
+              //   icon: 'success',
+              //   title: 'Deleted!',
+              //   text: 'Role Deleted Successfully',
+              //   width: '400px',
+              // })
+              this.toasterservice.success('Role Deleted Successfully','success',{ positionClass: 'toast-top-right'});
             }
             this.getSavedRolesList();
           },
@@ -329,12 +332,13 @@ editRoles(){
     next:(data)=>{
       this.modalService.dismissAll();
       console.log(data);
-      Swal.fire({
-        icon: 'success',
-        title: 'Done!',
-        text: data.message,
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Done!',
+      //   text: data.message,
+      //   width: '400px',
+      // })
+      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
      },
     error:(error)=>{
       this.modalService.dismissAll();

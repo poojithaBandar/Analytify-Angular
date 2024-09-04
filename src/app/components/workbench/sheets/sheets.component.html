@@ -45,12 +45,13 @@
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.dimensions"
                             [cdkDropListConnectedTo]="[columnList,rowList]"
-                            (cdkDropListDropped)="columndrop($event)" >
+                            (cdkDropListDropped)="columndrop($event)"
+                            [cdkDropListDisabled]="canDrop" [ngClass]="{'drag-disabled': canDrop}">
                             
                            @for(dimensions of columns.dimensions; track dimensions){
                                <div class="d-flex justify-content-between border border-bottom">
                                 <li class="example-box" ngbTooltip="{{dimensions.column}}"
-                                (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag  >
+                                (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" >
                                 <span class="abc-txt">abc</span>
                                 {{ dimensions.column?.substr(0,15) }}{{ dimensions.column.length > 15 ? '...' : '' }}
                                 </li>
@@ -61,8 +62,8 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu" ngbDropdownMenu>
-                                            <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScaled(content,dimensions)"> Apply Filters </a>
-                                            <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
+                                            <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                            <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                            <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                             <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
                                         </div>
@@ -75,10 +76,11 @@
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.measures"
                             [cdkDropListConnectedTo]="[rowList,columnList]"
-                            (cdkDropListDropped)="rowdrop($event)">
+                            (cdkDropListDropped)="rowdrop($event)"
+                            [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                             
                             @for(measures of columns.measures; track measures){ 
-                                <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.column}}" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag ># 
+                                <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.column}}" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" ># 
                                     {{ measures.column?.substr(0,18) }}{{ measures.column.length > 18 ? '...' : '' }}
                                     <div class="dashboard-option">
                                         <div class=" p-1" ngbDropdown>
@@ -380,7 +382,8 @@
                                 style="position: relative;min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
-                                (cdkDropListDropped)="columndrop($event)">
+                                (cdkDropListDropped)="columndrop($event)"
+                                [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(columns of draggedColumns;track columns;let index = $index){
                                     <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
                                        
@@ -463,7 +466,8 @@
                                 position: relative; min-height: 33px; padding: 2px;"
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
-                                (cdkDropListDropped)="rowdrop($event)">
+                                (cdkDropListDropped)="rowdrop($event)"
+                                [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
                                     <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.type){

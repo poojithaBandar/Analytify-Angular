@@ -43,7 +43,7 @@ export class DashboardPageComponent implements OnInit{
   publishedDashboard = false;
   @ViewChild('propertiesModal') propertiesModal : any;
 
-constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,
+constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
 }
@@ -110,12 +110,15 @@ deleteDashboard(dashboardId:any){
           next:(data:any) => {
             console.log(data);      
             if(data){
-              Swal.fire({
-                icon: 'success',
-                title: 'Deleted!',
-                text: 'Dashboard Deleted Successfully',
-                width: '400px',
-              })
+              // Swal.fire({
+              //   icon: 'success',
+              //   title: 'Deleted!',
+              //   text: 'Dashboard Deleted Successfully',
+              //   width: '400px',
+              //   timer: 2000, 
+              //   showConfirmButton: false 
+              // })
+               this.toasterservice.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
             }
             this.getuserDashboardsListput();
           },
@@ -124,6 +127,7 @@ deleteDashboard(dashboardId:any){
               icon: 'warning',
               text: error.error.message,
               width: '300px',
+             
             })
             console.log(error)
           }
@@ -221,7 +225,8 @@ this.workbechService.saveDashboardProperties(obj).subscribe({
       icon: 'success',
       title: 'Done!',
       text: data.message,
-      width: '400px',
+      timer: 2000, 
+      showConfirmButton: false 
     })
    },
   error:(error)=>{

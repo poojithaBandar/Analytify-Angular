@@ -33,5 +33,18 @@ ViewRoles(){
 viewUsers(){
   return this.rolesprevilgeService.userHasPriviledge(71);
 }
-
+//add
+addDatasource(){
+  return this.rolesprevilgeService.userHasPriviledge(1);
+}
+addsheet(){
+  return this.rolesprevilgeService.userHasPriviledge(17);
+}
+//edit
+editDatasource(){
+  return this.rolesprevilgeService.userHasPriviledge(2);
+}
+editsheet(){
+  return this.rolesprevilgeService.userHasPriviledge(18);
+}
 }

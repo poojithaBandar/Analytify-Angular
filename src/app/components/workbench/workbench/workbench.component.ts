@@ -116,11 +116,12 @@ export class WorkbenchComponent implements OnInit{
               this.databaseName = responce.database.database_name
               this.databaseId = responce.database.database_id
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
@@ -158,12 +159,12 @@ export class WorkbenchComponent implements OnInit{
               console.log(responce);
               this.modalService.dismissAll('close');
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Updated Successfully',
-                  width: '400px',
-                })
-               
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Updated Successfully',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
               }
               this.getDbConnectionList();
             },
@@ -205,11 +206,12 @@ export class WorkbenchComponent implements OnInit{
               this.databaseName = responce.database.database_name
               this.databaseId = responce.database.database_id
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openOracleForm = false;
@@ -247,11 +249,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openMySqlForm = false;
@@ -329,11 +332,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openSnowflakeServerForm = false;
@@ -370,11 +374,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openMongoDbForm = false;
@@ -411,11 +416,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
@@ -453,11 +459,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
@@ -500,12 +507,12 @@ export class WorkbenchComponent implements OnInit{
       this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
         console.log(responce)
             if(responce){
-              Swal.fire({
-                icon: 'success',
-                title: 'Connected',
-                width: '400px',
-              })
-
+              // Swal.fire({
+              //   icon: 'success',
+              //   title: 'Connected',
+              //   width: '400px',
+              // })
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.fileId=responce.file_id
               const encodedId = btoa(this.fileId.toString());
               this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
@@ -537,11 +544,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.fileId=responce.file_id
                
                 const encodedId = btoa(this.fileId.toString());
@@ -593,12 +601,13 @@ export class WorkbenchComponent implements OnInit{
                       next:(data:any) => {
                         console.log(data);      
                         if(data){
-                          Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted!',
-                            text: 'Databse Deleted Successfully',
-                            width: '400px',
-                          })
+                          // Swal.fire({
+                          //   icon: 'success',
+                          //   title: 'Deleted!',
+                          //   text: 'Databse Deleted Successfully',
+                          //   width: '400px',
+                          // })
+                          this.toasterservice.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                         }
                         this.getDbConnectionList();
                       },
@@ -620,12 +629,13 @@ export class WorkbenchComponent implements OnInit{
                         next:(data:any) => {
                           console.log(data);      
                           if(data){
-                            Swal.fire({
-                              icon: 'success',
-                              title: 'Deleted!',
-                              text: 'Databse Deleted Successfully',
-                              width: '400px',
-                            })
+                            // Swal.fire({
+                            //   icon: 'success',
+                            //   title: 'Deleted!',
+                            //   text: 'Databse Deleted Successfully',
+                            //   width: '400px',
+                            // })
+                            this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                           }
                           this.getDbConnectionList();
                         },

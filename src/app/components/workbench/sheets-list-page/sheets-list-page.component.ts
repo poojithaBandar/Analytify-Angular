@@ -9,6 +9,7 @@ import { NgxPaginationModule, PaginatePipe, PaginationControlsComponent } from '
 import { Router } from '@angular/router';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-sheets-list-page',
@@ -28,7 +29,7 @@ export class SheetsListPageComponent implements OnInit {
   totalItems:any;
   gridView = true;
   viewSheetList = false;
-constructor(private workbechService:WorkbenchService,private router:Router,private viewTemplateService:ViewTemplateDrivenService){
+constructor(private workbechService:WorkbenchService,private router:Router,private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService){
   this.viewSheetList = this.viewTemplateService.viewSheets()
 }
 
@@ -205,12 +206,14 @@ deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
                   next:(data:any) => {
                     console.log(data);      
                     if(data){
-                      Swal.fire({
-                        icon: 'success',
-                        title: 'Deleted!',
-                        text: 'Sheet Deleted Successfully',
-                        width: '400px',
-                      })
+                      // Swal.fire({
+                      //   icon: 'success',
+                      //   title: 'Deleted!',
+                      //   text: 'Sheet Deleted Successfully',
+                      //   width: '400px',
+                      // })
+                      this.toasterService.success('Sheet Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+
                     }
                     this.getUserSheetsList();
                   },

@@ -558,7 +558,7 @@
                                 @for(database of connectionList;track database){
                                 <tr>
                                     <td>
-                                        <a  class="card-title" style="color: #05aff8;" (click)="getTablesFromConnectedDb(database.database_id)" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
+                                        <a  class="card-title" style="color: #05aff8;" (click)="getTablesFromConnectedDb(database.database_id,database.file_id)" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                        </td>
                                        <td *ngIf="database.server_type === 'POSTGRESQL'">
                                         <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}} 
