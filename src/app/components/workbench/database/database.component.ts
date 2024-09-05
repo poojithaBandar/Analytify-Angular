@@ -116,6 +116,9 @@ export class DatabaseComponent {
   rowLimit:any;
   gotoSheetButtonDisable = true;
   fromSavedQuery = false;
+  columnSearch! : string;
+  columnDataSearch! : string;
+  editFilterId!: number;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -907,7 +910,8 @@ callColumnWithTable(){
   const obj ={
     database_id:this.databaseId,
     query_set_id :this.qurtySetId,
-    type_of_filter:'datasource'
+    type_of_filter:'datasource',
+    search : this.columnSearch
   }as any;
   if(this.fromFileId){
     delete obj.database_id
@@ -918,6 +922,41 @@ callColumnWithTable(){
       next:(data:any) =>{
         console.log(data)
        this.columnWithTablesData= data
+      },
+      error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+    })
+}
+
+seachColumnDataFilter(){
+  const obj ={
+    database_id:this.databaseId,
+    query_set_id:this.qurtySetId,
+    datasource_queryset_id:this.datasourceQuerysetId,
+    type_of_filter:'datasource',
+    col_name:this.colName,
+    data_type:this.dataType,
+    search : this.columnDataSearch
+  }as any;
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
+  }
+  this.workbechService.selectedColumnGetRows(obj).subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+        this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
+        this.tableColumnFilter =false;
+        this.columnRowFilter = true;
+        console.log('colmnfilterrows',this.columnsInFilters)
       },
       error:(error:any)=>{
       console.log(error);
@@ -985,6 +1024,8 @@ isAnyRowSelected(): boolean {
   return this.columnsInFilters.some((row: { selected: any; }) => row.selected);
 }
 getSelectedRows() {
+  this.columnDataSearch = "";
+  this.columnSearch = "";
   this.selectedRows = this.columnsInFilters
   .filter((row: { selected: any; }) => row.selected)
   .map((row: { label: any; }) => row.label);
@@ -999,7 +1040,7 @@ getSelectedRows() {
     select_values:this.selectedRows,
     range_values:null,
     col_name:this.colName,
-    data_type:this.dataType,
+    data_type:this.dataType
   }as any;
   if(this.fromFileId){
     delete obj.database_id
@@ -1090,10 +1131,12 @@ getFilteredList(){
     })
 }
 editFilter(id:any){
+  this.editFilterId = id;
   const obj ={
     type_filter:'datasource',
     database_id:this.databaseId,
-    filter_id:id
+    filter_id:id,
+    search : this.columnDataSearch
   }as any;
   if(this.fromFileId){
     delete obj.database_id
@@ -1185,6 +1228,8 @@ isAnyEditRowSelected(): boolean {
   return this.editFilterList.some((row: { selected: any; }) => row.selected);
 }
 getSelectedRowsFromEdit() {
+  this.columnDataSearch = "";
+  this.columnSearch = "";
   this.selectedRows = this.editFilterList
   .filter((row: { selected: any; }) => row.selected)
   .map((row: { label: any; }) => row.label);
