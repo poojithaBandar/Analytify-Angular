@@ -390,7 +390,28 @@
                                         {{ columns.column }}
                                      <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
 
-                                        <div class="" ngbDropdown style="margin-top: 5px;">
+                                     <div class="dropup" ngbDropdown>
+                                        <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                        <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
+                                                <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Date</li>
+                                                <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'month')">Month (January)</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'day')">Day (1-31)</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekdays')">Week Day (1-7)</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'week numbers')">Week Number (0-52)</a></li>
+                                                    <!-- <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekname')">Week Name (Mon-Sun)</a></li> -->
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
+                                                </ul>
+                                            </div>
+                                            <li><a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedColumn(index,columns.column)"> Remove</a>  </li>
+                                        </ul>
+                                    </div>
+
+                                        <!-- <div class="" ngbDropdown style="margin-top: 5px;">
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
@@ -401,7 +422,7 @@
                                                 </div>
 
                                             </a>
-                                        </div>
+                                        </div> -->
                                         <ng-template #dateFunctionsModal let-modal>
                                             <div class="modal-header">
                                                 <h6 class="modal-title">Date Functions</h6>
@@ -476,17 +497,50 @@
                                              {{ rows.column }}
                                        <!-- <input type="text" class="form-control example-box1 border-end" [(ngModel)]="rows.column" value="" (click)="rename(index,rows.column,$event)" (keydown)="renameColumn(index,rows.column,$event)" >-->
                                         }
-                                        <div class="" ngbDropdown>
+                                        <div class="dropup" ngbDropdown>
+                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                <div class="dropup" ngbDropdown style="display: flex; align-items: center;">
+                                                    <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
+                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
+                                                    </ul>
+                                                </div>
+                                                <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                 aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                 
-                                                <div class="dropdown-menu  cu" ngbDropdownMenu>
-                                                    <a class="btn btn-outline-light mx-0 " (click)="openSuperScaledModal(aggregateUserModal,rows.type)" style="text-align: left !important;"> Aggregation</a> 
-                                                    <a class="btn btn-secondary-light mx-0" style="text-align: left !important;" (click)="dragStartedRow(index,rows.column)"> Remove</a> 
+                                                <div class="dropdown-menu  cu" ngbDropdownMenu style="float: right;">
+                                                    <div class="d-inline-block float-right" ngbDropdown>
+                                                        <a class="btn btn-outline-light mx-0 " data-bs-toggle="dropdown" ngbDropdownToggle  style="text-align: left !important; width: 65%;"> Aggregation
+                                                            <i class="fe fe-chevron-right fs-18 text-body-secondary"></i>
+                                                            <div class="dropdown-menu  cu" ngbDropdownMenu>
+                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a>
+                                                            </div>
+                                                        </a> 
+                                                    </div>
+                                                    <a class="btn btn-secondary-light mx-0" style="text-align: left !important;width: 65%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> 
                                                 </div>
 
                                             </a>
-                                        </div>
+                                        </div> -->
                                         <ng-template #aggregateUserModal let-modal>
                                             <div class="modal-header">
                                                 <h6 class="modal-title">Aggregated measures</h6>
@@ -764,13 +818,14 @@
               @if(heatMap){
                 <div id="chart">
                     <apx-chart #heatchart
-                      [series]="heatChart.series"
-                      [chart]="heatChart.chart"
-                      [xaxis]="heatChart.xaxis"
-                      [yaxis]="heatChart.yaxis"
-                      [plotOptions]="heatChart.plotOptions"
-                      [dataLabels]="heatChart.dataLabels"
-                      [legend]="heatChart.legend"
+                      [series]="heatMapChartOptions.series"
+                      [chart]="heatMapChartOptions.chart"   
+                      [xaxis]="heatMapChartOptions.xaxis"
+                      [yaxis]="heatMapChartOptions.yaxis"
+                      [plotOptions]="heatMapChartOptions.plotOptions"
+                      [dataLabels]="heatMapChartOptions.dataLabels"
+                      [legend]="heatMapChartOptions.legend"
+                      [grid]="heatMapChartOptions.grid"
                     ></apx-chart>
                   </div>
               }
@@ -1096,9 +1151,9 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0}">
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,25)"><img src="./assets/images/charts/big-number.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
                                                         </div>
-                                                        <!-- <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,26)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
-                                                        </div> -->
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

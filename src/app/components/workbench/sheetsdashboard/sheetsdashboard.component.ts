@@ -1177,6 +1177,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return this.donutChartOptions(xaxis,yaxis,savedOptions)
     }
+    if(sheet.chart_id === 26){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
     
   }
 
@@ -1819,6 +1823,9 @@ multiLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
 donutChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   savedOptions.series = yaxis;
   savedOptions.labels = xaxis;
+  return savedOptions;
+}
+heatMapChartOptions(savedOptions:any){
   return savedOptions;
 }
 

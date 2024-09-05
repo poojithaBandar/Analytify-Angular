@@ -587,3 +587,12 @@ app-insights-button {
     opacity: 1;
     background-color: #ecf0f1;
   }
+  .custom-dropdown.show {
+    position:fixed !important; 
+    display: flex !important;
+    flex-direction: column !important;
+}
+.d-inline-block {
+  display: inline-block !important;
+  vertical-align: middle; /* Aligns vertically centered with text */
+}

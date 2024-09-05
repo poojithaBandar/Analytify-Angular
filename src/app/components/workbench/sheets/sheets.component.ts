@@ -48,15 +48,6 @@ interface RangeSliderModel {
   maxValue: number;
   options: Options;
 }
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  yaxis: ApexYAxis;
-  plotOptions: ApexPlotOptions;
-  dataLabels: ApexDataLabels;
-  legend: ApexLegend;
-};
 @Component({
   selector: 'app-sheets',
   standalone: true,
@@ -154,6 +145,7 @@ export class SheetsComponent {
   chartOptions8:any;
   chartOptions9:any;
   chartOptions10:any;
+  heatMapChartOptions: any;
   eBarChartOptions: any;
   eAreaChartOptions: any;
   eLineChartOptions: any;
@@ -1877,12 +1869,10 @@ chart.updateOptions(this.chartOptions3);
     }
     this.legendSwitch = this.chartOptions10.legend.show;
   }
-  @ViewChild('heatchart') chart!: ChartComponent;
-  public heatChart!: any;
   heatMapChart() {
     const dimensions: Dimension[] = this.sidebysideBarColumnData1;
     const categories = this.flattenDimensions(dimensions);
-    this.heatChart = {
+    this.heatMapChartOptions = {
       series: this.sidebysideBarRowData,
       chart: {
         height: 350,
@@ -1891,35 +1881,12 @@ chart.updateOptions(this.chartOptions3);
       plotOptions: {
         heatmap: {
           shadeIntensity: 0.5,
-          radius: 0,
-          useFillColorAsStroke: true,
           colorScale: {
-            ranges: [
-              {
-                from: 0,
-                to: 50,
-                name: 'low',
-                color: '#00A100'
-              },
-              {
-                from: 51,
-                to: 100,
-                name: 'medium',
-                color: '#128FD9'
-              },
-              {
-                from: 101,
-                to: 150,
-                name: 'high',
-                color: '#FFB200'
-              },
-              {
-                from: 151,
-                to: 200,
-                name: 'extreme',
-                color: '#FF0000'
-              }
-            ]
+            ranges: [],
+            // Stops define the gradient stops for color intensity
+            stops: [0,10,20,30,40,50,60,70,80,90,100],
+            // Enable this to inverse the colors
+            inverseColors: true
           }
         }
       },
@@ -1932,31 +1899,19 @@ chart.updateOptions(this.chartOptions3);
       },
       yaxis: {
         title: {
-          text: 'Values'
+          text: ''
         }
       },
       legend: {
         show: true,
         position: 'bottom'
+      },
+      grid: {
+        padding: {
+          right: 20
+        }
       }
     };
-  }
-  private generateData(count: number, yrange: number) {
-    let series = [];
-    for (let i = 0; i < count; i++) {
-      let data = [];
-      for (let j = 0; j < yrange; j++) {
-        data.push({
-          x: 'W' + (j + 1).toString(),
-          y: Math.floor(Math.random() * (150 - 1 + 1)) + 1
-        });
-      }
-      series.push({
-        name: 'Metric ' + (i + 1).toString(),
-        data: data
-      });
-    }
-    return series;
   }
 
 tableDimentions = [] as any;
@@ -2184,6 +2139,7 @@ tableMeasures = [] as any;
         this.chartId = 1;
         this.radar = false;
         this.kpi = false;
+        this.heatMap = false;
       }
         },
         error: (error) => {
@@ -2754,6 +2710,9 @@ sheetSave(){
     this.barLineXaxis = this.sidebysideBarColumnData1;
       savedChartOptions = this.eRadarChartOptions;
   }
+  if(this.heatMap && this.chartId == 26){
+    savedChartOptions = this.heatMapChartOptions;
+  }
   let customizeObject = {
     isZoom : this.isZoom,
     xGridColor : this.xGridColor,
@@ -3019,6 +2978,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce.results.kpiData;
@@ -3038,6 +2998,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = true;
+          this.heatMap = false;
         }
        if(responce.chart_id == 6){
         this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -3062,6 +3023,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 24){
         this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -3086,6 +3048,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 13){
         this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -3110,6 +3073,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 17){
         this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -3134,6 +3098,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 7){
         this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -3154,6 +3119,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 5){
         this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -3174,6 +3140,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 4){
         this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
@@ -3198,6 +3165,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 12){
         this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
@@ -3216,6 +3184,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = true;
           this.kpi = false;
+          this.heatMap = false;
           if(this.isApexCharts){
           
           } else {
@@ -3241,6 +3210,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 3){
         this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
@@ -3261,6 +3231,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 8){
         this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
@@ -3281,6 +3252,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = false;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
        }
        if(responce.chart_id == 10){
         this.chartsRowData = this.sheetResponce.results.donutYaxis
@@ -3301,6 +3273,25 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.donut = true;
           this.radar = false;
           this.kpi = false;
+          this.heatMap = false;
+       }
+       if(responce.chart_id == 26){
+        this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = true;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
@@ -3687,8 +3678,7 @@ renameColumns(){
     fontSize: {
       options: [9, 11, 13, 'default', 17, 19, 21]
     },
-    toolbar: ['undo', 'redo', '|', 'selectAll', '|', 'heading', '|', 'bold', 'italic', 'underline',
-      '|', 'removeformat', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'alignment'],
+    toolbar: ['heading', '|', 'bold', 'italic', 'underline','|', 'fontSize', 'fontFamily', 'fontColor', '|', 'alignment'],
     plugins: [
       Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Underline, RemoveFormat, SelectAll, Heading],
   };

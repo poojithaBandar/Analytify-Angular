@@ -1068,6 +1068,19 @@
                     [responsive]="item.chartOptions.responsive!"(chartInit)="onChartInit($event, item)" >
                 </apx-chart>
                   </div>
+
+                  <div *ngIf="item.chartOptions && item['chartId'] === 26">
+                    <apx-chart
+                    [series]="item.chartOptions.series!"
+                    [chart]="item.chartOptions.chart!"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [legend]="item.chartOptions.legend!"
+                    [grid]="item.chartOptions.grid!"
+                    [yaxis]="item.chartOptions.yaxis!" (chartInit)="onChartInit($event, item)"
+                  ></apx-chart>
+                  </div>
+
                 </div>
                 <div class="card-footer p-1">
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">
