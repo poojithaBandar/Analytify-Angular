@@ -142,6 +142,7 @@ export class SheetsdashboardComponent {
   public chartOptions!: Partial<ChartOptions>;
   searchSheets!: string;
   isPublicUrl = false;
+  publicHeader = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer){
     this.dashboard = [];
@@ -150,6 +151,7 @@ export class SheetsdashboardComponent {
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
       this.active = 2;
+      this.publicHeader = true
       if (route.snapshot.params['id1']) {
       this.dashboardId = +atob(route.snapshot.params['id1'])
       }
@@ -674,12 +676,13 @@ selected_sheet_ids :this.sheetIdsDataSet,
         this.dashboardId=data.dashboard_id;
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.updateDashbpardBoolen = true;
-        Swal.fire({
-          icon: 'success',
-          title: 'Congartualtions!',
-          text: 'Dashboard Saved Successfully',
-          width: '400px',
-        })
+        // Swal.fire({
+        //   icon: 'success',
+        //   title: 'Congartualtions!',
+        //   text: 'Dashboard Saved Successfully',
+        //   width: '400px',
+        // })
+        this.toasterService.success('Dashboard Saved Successfully','success',{ positionClass: 'toast-top-right'});
         const encodedDashboardId = btoa(this.dashboardId.toString());
         this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
   
@@ -816,12 +819,14 @@ selected_sheet_ids :this.sheetIdsDataSet,
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
-        Swal.fire({
-          icon: 'success',
-          title: 'Congartualtions!',
-          text: 'Dashboard Updated Successfully',
-          width: '400px',
-        })
+        // Swal.fire({
+        //   icon: 'success',
+        //   title: 'Congartualtions!',
+        //   text: 'Dashboard Updated Successfully',
+        //   width: '400px',
+        // })
+        this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
+
         this.endMethod(); 
       },
       error:(error)=>{
@@ -2427,12 +2432,13 @@ const obj ={
     next:(data)=>{
       console.log(data);
       this.modalService.dismissAll('close');
-      Swal.fire({
-        icon: 'success',
-        title: 'Done',
-        text: 'Filter Updated Successfully',
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Done',
+      //   text: 'Filter Updated Successfully',
+      //   width: '400px',
+      // })
+      this.toasterService.success('Filter Updated Successfully','success',{ positionClass: 'toast-top-right'});
     },
     error:(error)=>{
       console.log(error)

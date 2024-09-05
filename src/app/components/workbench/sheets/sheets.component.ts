@@ -33,6 +33,8 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options } from '@angular-slider/ngx-slider';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { ToastrService } from 'ngx-toastr';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -46,7 +48,15 @@ interface RangeSliderModel {
   maxValue: number;
   options: Options;
 }
-
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
+  plotOptions: ApexPlotOptions;
+  dataLabels: ApexDataLabels;
+  legend: ApexLegend;
+};
 @Component({
   selector: 'app-sheets',
   standalone: true,
@@ -83,6 +93,7 @@ export class SheetsComponent {
   dimensionExpand = false;
   chartSuggestions: any = null;
   errorMessage : any;
+  errorMessage1:any;
   userPrompt: string = '';
   selectedChartPlugin : string = 'apex'	
   isApexCharts : boolean = true;
@@ -192,7 +203,8 @@ export class SheetsComponent {
   displayUnits: string = 'none';
   prefix: string = '';
   suffix: string = '';
-
+  isCustomSql = false;
+  canDrop = true;
   @ViewChild('barChart') barchart!: ChartComponent;
   @ViewChild('areaChart') areachart!: ChartComponent;
   @ViewChild('lineChart') linechart!: ChartComponent;
@@ -208,8 +220,9 @@ export class SheetsComponent {
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
   backgroundColor: string = '#fff';
-
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer){   
+  canEditDb = false;
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -305,7 +318,9 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    } 
-}
+   this.canEditDb = this.templateService.addDatasource();
+   this.canDrop = !this.canEditDb
+  }
 
   ngOnInit(): void {
     this.columnsData();
@@ -356,6 +371,27 @@ if(this.fromFileId){
  }
   goToDataSource(){
 
+    if(this.isCustomSql){
+      const encodeddbId = btoa(this.databaseId?.toString());
+      const encodedqurysetId = btoa(this.qrySetId.toString());
+      const encodedFileId = btoa(this.fileId?.toString());
+
+      const fromSource = this.fromFileId ? 'fileId' : 'dbId'
+      const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
+
+      if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
+        // Encode 'null' to represent a null value
+       const encodedDsQuerySetId = btoa('null');
+       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+  
+      } else {
+        // Convert to string and encode
+       const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
+       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+    
+      } 
+     }
+    else{
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
     const encodedFileId = btoa(this.fileId?.toString());
@@ -375,6 +411,8 @@ if(this.fromFileId){
      this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
+  }
+
   }
   goToConnections(){
     this.router.navigate(['/workbench/work-bench/view-connections'])
@@ -426,7 +464,7 @@ if(this.fromFileId){
             },
           },
           xaxis: {
-            categories: this.chartsColumnData,
+            categories: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
             position: 'bottom',
             labels: {
               show: true,
@@ -639,7 +677,7 @@ chart.updateOptions(this.chartOptions3);
               type: 'pie',
           },
           colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
-          labels: this.chartsColumnData,
+          labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
           legend: {
               show: true,
               position: "bottom"
@@ -749,7 +787,7 @@ chart.updateOptions(this.chartOptions3);
                   },
               },
               xaxis: {
-                  categories: this.chartsColumnData,
+                ategories: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
                   labels: {
                       show: true,
                       hideOverlappingLabels: false,
@@ -922,7 +960,7 @@ chart.updateOptions(this.chartOptions3);
               }
             },
           },
-          labels: this.chartsColumnData,
+          labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
           title: {
             text: "",
             align: "left",
@@ -1156,7 +1194,7 @@ chart.updateOptions(this.chartOptions3);
   flattenDimensions(dimensions: Dimension[]): string[] {
     const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
     return Array.from({ length: numCategories }, (_, index) => {
-      return dimensions.map(dim => dim.values[index] || '').join(',');
+      return dimensions.map(dim => dim.values[index] === null ? 'null' : dim.values[index] || '').join(',');
     });
   }
   stockedBar(){
@@ -1815,7 +1853,7 @@ chart.updateOptions(this.chartOptions3);
         chart: {
           type: "donut"
         },
-        labels: this.chartsColumnData,
+        labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
         responsive: [
           {
             breakpoint: 480,
@@ -1839,6 +1877,87 @@ chart.updateOptions(this.chartOptions3);
     }
     this.legendSwitch = this.chartOptions10.legend.show;
   }
+  @ViewChild('heatchart') chart!: ChartComponent;
+  public heatChart!: any;
+  heatMapChart() {
+    const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+    const categories = this.flattenDimensions(dimensions);
+    this.heatChart = {
+      series: this.sidebysideBarRowData,
+      chart: {
+        height: 350,
+        type: 'heatmap',
+      },
+      plotOptions: {
+        heatmap: {
+          shadeIntensity: 0.5,
+          radius: 0,
+          useFillColorAsStroke: true,
+          colorScale: {
+            ranges: [
+              {
+                from: 0,
+                to: 50,
+                name: 'low',
+                color: '#00A100'
+              },
+              {
+                from: 51,
+                to: 100,
+                name: 'medium',
+                color: '#128FD9'
+              },
+              {
+                from: 101,
+                to: 150,
+                name: 'high',
+                color: '#FFB200'
+              },
+              {
+                from: 151,
+                to: 200,
+                name: 'extreme',
+                color: '#FF0000'
+              }
+            ]
+          }
+        }
+      },
+      dataLabels: {
+        enabled: true
+      },
+      xaxis: {
+        type: 'category',
+        categories: categories,
+      },
+      yaxis: {
+        title: {
+          text: 'Values'
+        }
+      },
+      legend: {
+        show: true,
+        position: 'bottom'
+      }
+    };
+  }
+  private generateData(count: number, yrange: number) {
+    let series = [];
+    for (let i = 0; i < count; i++) {
+      let data = [];
+      for (let j = 0; j < yrange; j++) {
+        data.push({
+          x: 'W' + (j + 1).toString(),
+          y: Math.floor(Math.random() * (150 - 1 + 1)) + 1
+        });
+      }
+      series.push({
+        name: 'Metric ' + (i + 1).toString(),
+        data: data
+      });
+    }
+    return series;
+  }
 
 tableDimentions = [] as any;
 tableMeasures = [] as any;
@@ -1856,6 +1975,7 @@ tableMeasures = [] as any;
           console.log(responce);
           this.tableColumnsData = responce;
           this.database_name = responce[0].database_name;
+          this.isCustomSql = responce[0].is_custom_sql;
           this.tableDimentions = responce.dimensions;
           this.tableMeasures = responce.measures;
         },
@@ -1994,6 +2114,7 @@ tableMeasures = [] as any;
         this.multiLineChart();
         this.donutChart();
         this.radarChart();
+        this.heatMapChart();
       }
       if(this.retriveDataSheet_id){
         const dimensions: Dimension[] = this.sidebysideBarColumnData1;
@@ -2117,6 +2238,8 @@ tableMeasures = [] as any;
     
   }
   dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz'];
+  integerList=['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double'];
+  boolList=['bool','boolean'];
   rowdrop(event: CdkDragDrop<string[]>){
    console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -2149,7 +2272,7 @@ tableMeasures = [] as any;
           }
         });
         console.log(this.draggedRowsData);
-        if(!this.dateList.includes(element.data_type)){
+        if(this.integerList.includes(element.data_type)){
           this.rowMeasuresCount(element,event.currentIndex,'sum');
         }else {
           this.dataExtraction();
@@ -2244,8 +2367,9 @@ tableMeasures = [] as any;
   multiLine = false;
   donut = false;
   kpi = false;
+  heatMap = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -2261,7 +2385,9 @@ tableMeasures = [] as any;
     this.chartId = chartId;
     this.radar = radar;
     this.kpi = kpi;
-    this.dataExtraction();
+    this.heatMap = heatMap;
+    // this.dataExtraction();
+    
   }
   enableDisableCharts(){
     console.log(this.draggedColumnsData);
@@ -2332,12 +2458,13 @@ tableMeasures = [] as any;
                     console.log(data);
                     if (data) {
                       this.tabs.splice(this.SheetIndex, 1);
-                      Swal.fire({
-                        icon: 'success',
-                        title: 'Deleted!',
-                        text: 'Deleted Successfully',
-                        width: '200px',
-                      })
+                      // Swal.fire({
+                      //   icon: 'success',
+                      //   title: 'Deleted!',
+                      //   text: 'Deleted Successfully',
+                      //   width: '200px',
+                      // })
+                      this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                       this.getChartData();
                     }
                   },
@@ -2726,11 +2853,13 @@ if(this.retriveDataSheet_id){
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
    this.tabs[this.SheetIndex] = this.sheetTitle;
     if(responce){
-      Swal.fire({
-        icon: 'success',
-        text: responce.message,
-        width: '200px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   text: responce.message,
+      //   width: '200px',
+      // })
+      this.toasterService.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+
     //   this.getSheetNames();
     //  this.sheetRetrive();
     }
@@ -2752,11 +2881,12 @@ if(this.retriveDataSheet_id){
    this.tabs[this.SheetIndex] = this.sheetTitle;
     console.log(responce);
     if(responce){
-      Swal.fire({
-        icon: 'success',
-        text: responce.message,
-        width: '200px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   text: responce.message,
+      //   width: '200px',
+      // })
+      this.toasterService.success(responce.message,'success',{ positionClass: 'toast-top-right'});
       this.retriveDataSheet_id = responce.sheet_id;
       // this.getSheetNames();
       this.sheetRetrive();
@@ -3195,6 +3325,24 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   }
   filterData = [] as any;
   filter_id: any;
+  minValue: any;
+  maxValue: any;
+  floor: any;
+  ceil: any;
+  minDate: string = '';
+  maxDate: string = '';
+  options: Options ={};
+  filterDateRange : any[] = [];
+  updateDateRange() {
+    const format: Intl.DateTimeFormatOptions = { 
+      month: '2-digit', 
+      day: '2-digit', 
+      year: 'numeric' 
+    };
+    this.minDate = new Date(this.minValue).toLocaleDateString('en-US', format);
+    this.maxDate = new Date(this.maxValue).toLocaleDateString('en-US', format);
+    this.filterDateRange = [this.minDate, this.maxDate];
+  }
   filterDataGet(){
     const obj={
       "database_id" :this.databaseId,
@@ -3213,6 +3361,26 @@ if(this.fromFileId){
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterData = responce.col_data;
+        if(this.dateList.includes(responce.dtype)){
+          this.floor = new Date(this.filterData[0]).getTime();
+          this.ceil = new Date(this.filterData[this.filterData.length - 1]).getTime();
+          this.minValue = this.floor;
+          this.maxValue = this.ceil;
+          this.options = {
+            floor: this.floor,
+            ceil: this.ceil,
+            step: 24 * 60 * 60 * 1000,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            },
+            translate: (value: number): string => {
+              return new Date(value).toLocaleDateString();
+            }
+          };
+          this.updateDateRange();
+        }
         //this.filter_id = responce.filter_id;
       },
       error: (error) => {
@@ -3244,7 +3412,7 @@ if(this.fromFileId){
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": [],
+    "range_values": this.filterDateRange,
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
        "data_type":this.filterType,
@@ -3260,6 +3428,7 @@ if(this.fromFileId){
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id});
         this.dataExtraction();
         this.filterDataArray = [];
+        this.filterDateRange = [];
       },
       error: (error) => {
         console.log(error);
@@ -3292,6 +3461,9 @@ if(this.fromFileId){
             this.filterDataArray.push(filter.label);
           }
         })
+        if(this.dateList.includes(responce.dtype)){
+          this.updateDateRange();
+        }
       },
       error: (error) => {
         console.log(error);
@@ -3307,7 +3479,7 @@ if(this.fromFileId){
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": [],
+      "range_values": this.filterDateRange,
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
       "data_type":this.filterType
@@ -3321,6 +3493,7 @@ if(this.fromFileId){
           console.log(responce);
           this.dataExtraction();
           this.filterDataArray = [];
+          this.filterDateRange = [];
         },
         error: (error) => {
           console.log(error);
@@ -3524,11 +3697,12 @@ renameColumns(){
     this.editor = !this.editor;
   }
   updateSheetName() {
-    const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-    if (inputElement) {
-      inputElement.innerHTML = this.sheetTagName;
-      inputElement.style.paddingTop = '1.5%';
-    }
+    // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+    // if (inputElement) {
+    //   inputElement.innerHTML = this.sheetTagName;
+    //   inputElement.style.paddingTop = '1.5%';
+    // }
+    this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
     const parser = new DOMParser();
     const doc = parser.parseFromString(this.sheetTagName, 'text/html');
     this.sheetTitle = doc.body.textContent+'';
@@ -4967,7 +5141,8 @@ renameColumns(){
         localStorage.setItem('previousUrl', this.router.url);
         this.chartSuggestions = null;
         // API Key is missing or empty, show the message and navigate to the configure page on click
-        this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+        // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+        this.errorMessage1 = 'the GPT API key is missing. Please'
         // this.router.navigate(['/workbench/configure-page/configure']);
       } else {
         // Handle other errors
@@ -4979,6 +5154,10 @@ renameColumns(){
     }
   );
 }
+routeConfigure(){
+  this.router.navigate(['/workbench/configure-page/configure'])
+}
+
 fetchChartData(chartData: any){
   this.databaseId = chartData.database_id;
           this.qrySetId = chartData.queryset_id;
@@ -4993,13 +5172,13 @@ fetchChartData(chartData: any){
           console.log("This is ChaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type==="Bar Chart"){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type==="Pie Chart"){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type==="Line Chart"){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type==="Area Chart"){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }
           this.dataExtraction();
 
@@ -5079,8 +5258,9 @@ fetchChartData(chartData: any){
           if (!apiKey || apiKey.trim() === '') {
             this.chartSuggestions = null;
             // API Key is missing or empty, show the message and navigate to the configure page
-            this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
-            this.router.navigate(['/workbench/configure-page/configure']);
+            // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+            this.errorMessage1 = 'the GPT API key is missing. Please'
+            // this.router.navigate(['/workbench/configure-page/configure']);
           } else {
             // Handle other errors
             console.log("Error:", error.message);
@@ -5258,18 +5438,7 @@ fetchChartData(chartData: any){
       this.dataExtraction();
      }
   }
-  options: Options = {
-    floor: 0,
-    ceil: 100,
-    step: 0,
-    showSelectionBar: true,
-    selectionBarGradient: {
-      from: '#5a66f1',
-      to: '#5a66f1',
-    },
-  };
-  minValue2 = 10;
-  maxValue2 = 90;
+  
   kpiFontSize: string = '3';
   kpiColor: string = '#000000';
 
@@ -5289,5 +5458,5 @@ fetchChartData(chartData: any){
   editFilterList(){
     this.filterEditGet();
   }
-
+  titleShow : boolean = true;
 }

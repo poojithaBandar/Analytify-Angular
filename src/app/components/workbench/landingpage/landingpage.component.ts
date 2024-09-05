@@ -86,7 +86,7 @@ getDbConnectionList(){
   const Obj ={
     search : this.searchDbName
   }
-  if(Obj.search == '' || Obj.search == null){
+  if(Obj.search === '' || Obj.search === null){
     delete Obj.search;
   }
   this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
@@ -111,7 +111,7 @@ getuserSheets(){
     search:this.wholeSearch,
     // page_count:'12'
   }
-  if(Obj.search === ' ' || Obj.search === null){
+  if(Obj.search === '' || Obj.search === null || Obj.search === ' '){
     delete Obj.search;
   }
   this.workbechService.getUserSheetListPut(Obj).subscribe(
@@ -138,7 +138,7 @@ getuserDashboardsList(){
     page_count:'12'
 
   }
-  if(Obj.search == ' ' || Obj.search == null){
+  if(Obj.search === ' ' || Obj.search === null || Obj.search === ''){
     delete Obj.search;
   }
   this.workbechService.getuserDashboardsListput(Obj).subscribe(
@@ -165,7 +165,7 @@ getSavedQueries(){
     page_count:'12'
 
   }
-  if(Obj.search == ' ' || Obj.search == null){
+  if(Obj.search === ' ' || Obj.search === null || Obj.search === ''){
     delete Obj.search;
   }
   this.workbechService.getSavedQueryList(Obj).subscribe({
@@ -219,9 +219,17 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.router.navigate(['workbench/work-bench/view-connections']) 
 
   }
-  getTablesFromConnectedDb(id:any){
-    const encodedId = btoa(id.toString());
-    this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+  getTablesFromConnectedDb(dbId:any,fileId:any){
+    // const encodedId = btoa(id.toString());
+    // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+    if(dbId === null){
+      const encodedId = btoa(fileId.toString());
+      this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
+      }
+      if(fileId === null){
+        const encodedId = btoa(dbId.toString());
+        this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+        }
   }
   deleteDashboard(dashboardId:any){
     Swal.fire({
@@ -240,12 +248,13 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
             next:(data:any) => {
               console.log(data);      
               if(data){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Deleted!',
-                  text: 'Dashboard Deleted Successfully',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Deleted!',
+                //   text: 'Dashboard Deleted Successfully',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Dashboard Deleted Successfullyy','success',{ positionClass: 'toast-top-right'});
               }
               this.getuserDashboardsList();
             },
@@ -288,12 +297,13 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
                     next:(data:any) => {
                       console.log(data);      
                       if(data){
-                        Swal.fire({
-                          icon: 'success',
-                          title: 'Deleted!',
-                          text: 'Sheet Deleted Successfully',
-                          width: '400px',
-                        })
+                        // Swal.fire({
+                        //   icon: 'success',
+                        //   title: 'Deleted!',
+                        //   text: 'Sheet Deleted Successfully',
+                        //   width: '400px',
+                        // })
+                        this.toasterservice.success('Sheet Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                       }
                       this.getuserSheets();
                     },
@@ -349,12 +359,13 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
                     next:(data:any) => {
                       console.log(data);      
                       if(data){
-                        Swal.fire({
-                          icon: 'success',
-                          title: 'Deleted!',
-                          text: 'Query Deleted Successfully',
-                          width: '400px',
-                        })
+                        // Swal.fire({
+                        //   icon: 'success',
+                        //   title: 'Deleted!',
+                        //   text: 'Query Deleted Successfully',
+                        //   width: '400px',
+                        // })
+                        this.toasterservice.success('Query Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                       }
                       this.getSavedQueries();
                     },
@@ -426,6 +437,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   this.dashboardPropertyId = dashboardId;
   this.dashboardId = dashboardId;
   this.publishedDashboard = false;
+  this.shareAsPrivate = false;
   this.getAddedDashboardProperties();
   }
   getAddedDashboardProperties(){
@@ -572,12 +584,13 @@ saveDashboardProperties(){
     next:(data)=>{
       console.log('properties save',data);
       this.modalService.dismissAll();
-      Swal.fire({
-        icon: 'success',
-        title: 'Done!',
-        text: data.message,
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Done!',
+      //   text: data.message,
+      //   width: '400px',
+      // })
+      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
      },
     error:(error)=>{
       console.log(error);

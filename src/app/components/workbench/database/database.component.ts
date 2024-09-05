@@ -19,6 +19,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { CommonModule } from '@angular/common';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { tickStep } from 'd3';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-database',
@@ -89,6 +90,7 @@ export class DatabaseComponent {
   totalRowsCustomQuery:any;
   remainingTables = [] as any;
   qurtySetId:any;
+  custumQuerySetid:any;
   enableJoinBtn = true;
   customSql = false;
   tableJoiningUI = true;
@@ -119,7 +121,9 @@ export class DatabaseComponent {
   columnSearch! : string;
   columnDataSearch! : string;
   editFilterId!: number;
-  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal){
+  fromSheetEditDb = false;
+
+  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
       this.fromDatabasId=true
@@ -156,6 +160,7 @@ export class DatabaseComponent {
       this.qurtySetId = +atob(route.snapshot.params['id2']);
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
       this.fromDatabasId = true;
+      this.fromSheetEditDb = true;
       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
       if(this.datasourceQuerysetId==='null'){
         console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -165,7 +170,6 @@ export class DatabaseComponent {
           parseInt(this.datasourceQuerysetId)
           console.log(this.datasourceQuerysetId)
         }
-      this.getTablesfromPrevious();
       }
     }
     if(currentUrl.includes('/workbench/database-connection/sheets/fileId')){
@@ -174,6 +178,7 @@ export class DatabaseComponent {
        this.qurtySetId = +atob(route.snapshot.params['id2']);
        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
        this.fromFileId = true;
+       this.fromSheetEditDb = true;
        this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
        if(this.datasourceQuerysetId==='null'){
          console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -183,21 +188,20 @@ export class DatabaseComponent {
            parseInt(this.datasourceQuerysetId)
            console.log(this.datasourceQuerysetId)
          }
-       this.getTablesfromPrevious();
        }
      }
 
   }
   ngOnInit(){
-    {
-      document.querySelector('html')?.getAttribute('data-toggled') != null
-        ? document.querySelector('html')?.removeAttribute('data-toggled')
-        : document
-            .querySelector('html')
-            ?.setAttribute('data-toggled', 'icon-overlay-close');    
-    }
+    // {
+    //   document.querySelector('html')?.getAttribute('data-toggled') != null
+    //     ? document.querySelector('html')?.removeAttribute('data-toggled')
+    //     : document
+    //         .querySelector('html')
+    //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
+    // }
 
-    if(!this.updateQuery){
+    if(!this.updateQuery && !this.fromSheetEditDb){
       if(this.fromDatabasId){
     // this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
@@ -207,9 +211,14 @@ export class DatabaseComponent {
       }
     this.getTablesfromPrevious()
   }
-//  if(this.updateQuery){
-//       this.getSavedQueryData();
-//     }
+  if(this.fromSheetEditDb){
+    this.getTablesfromPrevious();
+    if(this.fromFileId){
+      this.getTablesFromFileId();
+    }else if(this.fromDatabasId){
+      this.getSchemaTablesFromConnectedDb();
+    }
+  }
   }
   toggleCard() {
     this.isOpen = !this.isOpen;
@@ -491,7 +500,8 @@ executeQuery(){
   const obj ={
     database_id: this.databaseId,
     custom_query: this.sqlQuery,
-    row_limit:this.rowLimit
+    row_limit:this.rowLimit,
+    queryset_id:this.custumQuerySetid
   }as any
   if(this.fromFileId){
     delete obj.database_id
@@ -508,6 +518,7 @@ executeQuery(){
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
         this.qurtySetId = data.query_set_id;
+        this.custumQuerySetid = data.query_set_id
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows
         console.log('dkjshd',this.cutmquryTable)
@@ -598,7 +609,13 @@ joiningTables(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
-        this.getJoiningTableData();
+        if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
+          this.getDsQuerysetId()
+        }
+        else{
+          this.getJoiningTableData();
+        }
+        // this.getJoiningTableData();
         this.gotoSheetButtonDisable = false;
       },
       error:(error:any)=>{
@@ -672,7 +689,13 @@ joiningTablesFromDelete(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
-        this.getJoiningTableData();
+        // this.getJoiningTableData();
+        if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
+          this.getDsQuerysetId()
+        }
+        else{
+          this.getJoiningTableData();
+        }
       },
       error:(error:any)=>{
       console.log(error);
@@ -727,7 +750,13 @@ customTableJoin(){
         this.qurtySetId = data?.table_columns_and_rows?.query_set_id;       
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
-        this.getJoiningTableData();
+        if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
+          this.getDsQuerysetId()
+        }
+        else{
+          this.getJoiningTableData();
+        }
+        // this.getJoiningTableData();
         this.clearJoinCondns();
       },
       error:(error:any)=>{
@@ -814,6 +843,7 @@ getJoiningTableData(){
     delete obj.database_id
     obj.file_id=this.fileId
   }
+
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
       next:(data:any) =>{
@@ -824,7 +854,7 @@ getJoiningTableData(){
         this.totalRows = data.total_rows;
         this.showingRows = data.no_of_rows;
         this.gotoSheetButtonDisable = false;
-        // this.saveQueryName = data.queryset_name;
+        this.saveQueryName = data.queryset_name;
         if(this.TabledataJoining?.column_data?.length === 0){
           this.gotoSheetButtonDisable = true;
         }
@@ -1090,7 +1120,7 @@ getDsQuerysetId(){
         if(this.customSql){
           this.getfilteredCustomSqlData();
         }
-        this.getFilteredList();
+        // this.getFilteredList();
       },
       error:(error:any)=>{
       console.log(error);
@@ -1179,12 +1209,15 @@ deleteFilter(id:any){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          Swal.fire({
-            icon: 'success',
-            title: 'Removed!',
-            text: ' Filter Removed Successfully',
-            width: '400px',
-          })
+          // Swal.fire({
+          //   icon: 'success',
+          //   title: 'Removed!',
+          //   text: ' Filter Removed Successfully',
+          //   width: '400px',
+          //   timer: 2000,
+          //   showConfirmButton: false 
+          // })
+          this.toasterService.success('Filter Removed Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
         console.log('filter ids',this.datasourceFilterIdArray)
@@ -1437,12 +1470,16 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          Swal.fire({
-            icon: 'success',
-            title: 'Done!',
-            text: 'Query Saved Successfully',
-            width: '400px',
-          })
+          // Swal.fire({
+          //   icon: 'success',
+          //   title: 'Done!',
+          //   text: 'Query Saved Successfully',
+          //   width: '400px',
+          //   timer: 2000, 
+          //   showConfirmButton: false 
+          // })
+          this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+
         }
       },
       error:(error:any)=>{

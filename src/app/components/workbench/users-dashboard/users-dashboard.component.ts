@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { PasswordValidators } from '../../../shared/password-validator';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-users-dashboard',
@@ -35,7 +36,7 @@ export class UsersDashboardComponent {
   userId:any;
   @ViewChild('Adduser') Adduser : any;
 
-  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,private router:Router){
+  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,private router:Router,private toasterservice:ToastrService){
     this.addUserForm = this.formBuilder.group({
       username: ['', Validators.required],
       firstname:['', Validators.required],
@@ -268,12 +269,13 @@ addUser(){
     next:(data)=>{
       console.log(data);
       this.addUserDivForm = false;
-      Swal.fire({
-        icon: 'success',
-        title: 'Done!',
-        text: data.message,
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Done!',
+      //   text: data.message,
+      //   width: '400px',
+      // })
+      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
       this.getUserList();
      },
     error:(error)=>{
@@ -304,12 +306,13 @@ deleteUser(id:any){
           next:(data:any) => {
             console.log(data);      
             if(data){
-              Swal.fire({
-                icon: 'success',
-                title: 'Deleted!',
-                text: 'User Deleted Successfully',
-                width: '400px',
-              })
+              // Swal.fire({
+              //   icon: 'success',
+              //   title: 'Deleted!',
+              //   text: 'User Deleted Successfully',
+              //   width: '400px',
+              // })
+              this.toasterservice.success('User Deleted Successfully','success',{ positionClass: 'toast-top-right'});
             }
             this.getUserList();
           },
@@ -388,12 +391,13 @@ editUser(){
     next:(data)=>{
       console.log(data);
       this.addUserDivForm = false;
-      Swal.fire({
-        icon: 'success',
-        title: 'Done!',
-        text: data.message,
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Done!',
+      //   text: data.message,
+      //   width: '400px',
+      // })
+      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
       this.getUserList();
      },
     error:(error)=>{

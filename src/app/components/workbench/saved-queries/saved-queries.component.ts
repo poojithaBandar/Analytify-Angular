@@ -8,6 +8,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-saved-queries',
@@ -25,7 +26,7 @@ export class SavedQueriesComponent {
   savedQueryList:any[]=[];
   gridView = true;
   viewSavedQueries = false;
-constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService){
+constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService){
   this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
 }
 
@@ -87,12 +88,13 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
                     next:(data:any) => {
                       console.log(data);      
                       if(data){
-                        Swal.fire({
-                          icon: 'success',
-                          title: 'Deleted!',
-                          text: 'Query Deleted Successfully',
-                          width: '400px',
-                        })
+                        // Swal.fire({
+                        //   icon: 'success',
+                        //   title: 'Deleted!',
+                        //   text: 'Query Deleted Successfully',
+                        //   width: '400px',
+                        // })
+                        this.toasterservice.success('Query Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                       }
                       this.getSavedQueries();
                     },
