@@ -1967,109 +1967,11 @@ tableMeasures = [] as any;
         obj.file_id=this.fileId;
       }
     this.workbechService.getDataExtraction(obj).subscribe({next: (responce:any) => {
-          console.log(responce);
-          // const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
-          // const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
-          // responce.data.col = (responce.data.col as any[]).sort((a, b) => {
-          //   const indexA = columnIndexMap.get(a.column) ?? -1;
-          //   const indexB = columnIndexMap.get(b.column) ?? -1;
-          //   return indexA - indexB;
-          // });
-          // responce.data.row = (responce.data.row as any[]).sort((a, b) => {
-          //   const indexA = rowIndexMap.get(a.col) ?? -1;
-          //   const indexB = rowIndexMap.get(b.col) ?? -1;
-          //   return indexA - indexB;
-          // });
-          this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id;
-          this.tablePreviewColumn = responce.data.col;
-          this.tablePreviewRow = responce.data.row;
-          console.log(this.tablePreviewColumn);
-          console.log(this.tablePreviewRow);
-          this.tablePreviewColumn.forEach((res:any) => {
-            let obj={
-              data: res.result_data
-            }
-            this.sidebysideBarColumnData.push(res.result_data);
-            let obj1={
-              name:res.column,
-              values: res.result_data
-            }
-            this.sidebysideBarColumnData1.push(obj1);
-          });
-          this.tablePreviewRow.forEach((res:any) => {
-            let obj={
-              name: res.col,
-              data: res.result_data
-            }
-            this.sidebysideBarRowData.push(obj);
-          });
-          this.tablePreviewRow.forEach((res:any) => {
-            let obj={
-              name: res.col,
-              value: res.result_data
-            }
-            this.radarRowData.push(obj);
-          });
-          console.log(this.sidebysideBarColumnData)
-          console.log('sidebysideBarColumnData1this',this.sidebysideBarColumnData1)
-          console.log(this.sidebysideBarRowData);
-          let rowCount:any;
-         if(this.tablePreviewColumn[0]?.result_data?.length){
-           rowCount = this.tablePreviewColumn[0]?.result_data?.length;
-         }else{
-           rowCount = this.tablePreviewRow[0]?.result_data?.length;
-         }
-          //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
-          // Extract column names
-          this.displayedColumns = this.tablePreviewColumn.map((col:any) => col.column).concat(this.tablePreviewRow.map((row:any) => row.col));
-          // Create table data
-          console.log(this.displayedColumns)
-          for (let i = 0; i < rowCount; i++) {
-            const row: TableRow = {};
-            this.tablePreviewColumn.forEach((col:any) => {
-              row[col.column] = col.result_data[i];
-            });
-            this.tablePreviewRow.forEach((rowData:any) => {
-              row[rowData.col] = rowData.result_data[i];
-            });
-            this.tableData.push(row);
-         
-        }
-      console.log(this.tableData);
-      this.tablePreviewColumn.forEach((col:any) => {
-        this.chartsColumnData = col.result_data;
-      });
-      this.tablePreviewRow.forEach((rowData:any) => {
-        this.chartsRowData = rowData.result_data;
-      });
-      console.log(this.chartsColumnData)
-      console.log(this.chartsRowData)
-      const length = Math.min(this.chartsColumnData.length, this.chartsRowData.length);
-      for (let i = 0; i < length; i++) {
-        const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
-        this.chartsData.push(aa);
-      }
-      console.log(this.chartsData)
+      console.log(responce);
+      this.chartsDataSet(responce);
       if(this.chartsRowData.length >0){
         this.enableDisableCharts();
-       // this.createSvg();
-       // this.drawBars(this.chartsData);
-        this.barChart();
-        //this.createSvgPie();
-        //this.createColors();
-        //this.drawChartPie();
-        this.pieChart();
-        this.lineChart();
-        this.areaChart();
-        this.sidebysideBar();
-        this.stockedBar();
-        this.barLineChart();
-        this.horizentalStockedBar();
-        this.hGrouped();
-        this.multiLineChart();
-        this.donutChart();
-        this.radarChart();
-        this.heatMapChart();
+        this.chartsOptionsSet(); 
       }
       if(this.retriveDataSheet_id){
         const dimensions: Dimension[] = this.sidebysideBarColumnData1;
@@ -2147,8 +2049,111 @@ tableMeasures = [] as any;
         }
       }
     )
+  }
+
+  chartsDataSet(data: any) {
+    this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
+    this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
+    this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+    console.log(this.tablePreviewColumn);
+    console.log(this.tablePreviewRow);
+    if(this.tablePreviewColumn && this.tablePreviewRow){
+      this.tablePreviewColumn.forEach((res: any) => {
+        let obj = {
+          data: res.result_data
+        }
+        this.sidebysideBarColumnData.push(res.result_data);
+        let obj1 = {
+          name: res.column,
+          values: res.result_data
+        }
+        this.sidebysideBarColumnData1.push(obj1);
+      });
+      this.tablePreviewRow.forEach((res: any) => {
+        let obj = {
+          name: res.col,
+          data: res.result_data
+        }
+        this.sidebysideBarRowData.push(obj);
+      });
+      this.tablePreviewRow.forEach((res: any) => {
+        let obj = {
+          name: res.col,
+          value: res.result_data
+        }
+        this.radarRowData.push(obj);
+      });
+      console.log(this.sidebysideBarColumnData)
+      console.log('sidebysideBarColumnData1this', this.sidebysideBarColumnData1)
+      console.log(this.sidebysideBarRowData);
+      let rowCount: any;
+      if (this.tablePreviewColumn[0]?.result_data?.length) {
+        rowCount = this.tablePreviewColumn[0]?.result_data?.length;
+      } else {
+        rowCount = this.tablePreviewRow[0]?.result_data?.length;
+      }
+      //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
+      // Extract column names
+      this.displayedColumns = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.col));
+      // Create table data
+      console.log(this.displayedColumns)
+      for (let i = 0; i < rowCount; i++) {
+        const row: TableRow = {};
+        this.tablePreviewColumn.forEach((col: any) => {
+          row[col.column] = col.result_data[i];
+        });
+        this.tablePreviewRow.forEach((rowData: any) => {
+          row[rowData.col] = rowData.result_data[i];
+        });
+        this.tableData.push(row);
   
-   
+      }
+      console.log(this.tableData);
+      this.tablePreviewColumn.forEach((col: any) => {
+        this.chartsColumnData = col.result_data;
+      });
+      this.tablePreviewRow.forEach((rowData: any) => {
+        this.chartsRowData = rowData.result_data;
+      });
+      console.log(this.chartsColumnData)
+      console.log(this.chartsRowData)
+      const length = Math.min(this.chartsColumnData.length, this.chartsRowData.length);
+      for (let i = 0; i < length; i++) {
+        const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
+        this.chartsData.push(aa);
+      }
+      console.log(this.chartsData)
+    }
+  }
+
+  chartsOptionsSet(){
+    if(this.bar){
+      this.barChart();
+    }else if(this.area){
+      this.areaChart();
+    }else if(this.line){
+      this.lineChart();
+    }else if(this.pie){
+      this.pieChart();
+    }else if(this.sidebyside){
+      this.sidebysideBar();
+    }else if(this.stocked){
+      this.stockedBar();
+    }else if(this.barLine){
+      this.barLineChart();
+    }else if(this.horizentalStocked){
+      this.horizentalStockedBar();
+    }else if(this.grouped){
+      this.hGrouped();
+    }else if(this.multiLine){
+      this.multiLineChart();
+    }else if(this.donut){
+      this.donutChart();
+    }else if(this.radar){
+      this.radarChart();
+    }else if(this.heatMap){
+      this.heatMapChart();
+    }
   }
  
   tableNameMethod(schemaname:any,tablename:any,tableAlias:any){
@@ -2343,7 +2348,7 @@ tableMeasures = [] as any;
     this.kpi = kpi;
     this.heatMap = heatMap;
     // this.dataExtraction();
-    
+    this.chartsOptionsSet(); 
   }
   enableDisableCharts(){
     console.log(this.draggedColumnsData);
@@ -2743,6 +2748,8 @@ const obj={
   "columns_data":this.draggedColumnsData,
   "rows": this.draggedRows,
   "rows_data":this.draggedRowsData,
+  "col":this.tablePreviewColumn,
+  "row":this.tablePreviewRow,
   "results": {
     "tableData":this.saveTableData,
     "tableColumns":this.savedisplayedColumns,
@@ -2960,6 +2967,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.draggedRowsData.push([res.column,res.data_type,""])
           });
         }
+        this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           this.tableData = this.sheetResponce.results.tableData;
           this.displayedColumns = this.sheetResponce.results.tableColumns;
@@ -3682,6 +3690,12 @@ renameColumns(){
     plugins: [
       Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Underline, RemoveFormat, SelectAll, Heading],
   };
+
+  // editorConfig1 = {
+  //   toolbar: [],
+  //   plugins: [
+  //     Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, Underline, RemoveFormat, SelectAll, Heading],
+  // };
 
   toggleEditor() {
     this.editor = !this.editor;

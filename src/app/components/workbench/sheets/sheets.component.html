@@ -16,7 +16,7 @@
                             (btnClickEvent)="goToConnections()"></app-insights-button>
                         </div>
                         </div>
-                        <div class="card mb-0 p-4 br-0 border-bottom">
+                        <div class="card mb-0 p-3 br-0 border-bottom">
                             <h6 class="mb-0">Database</h6>
                             <p class=" mb-0" ngbTooltip="{{database_name}}">{{database_name}}</p> 
                         </div>
@@ -52,7 +52,9 @@
                                <div class="d-flex justify-content-between border border-bottom">
                                 <li class="example-box" ngbTooltip="{{dimensions.column}}"
                                 (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" >
-                                <span class="abc-txt">abc</span>
+                                <span *ngIf="!dateList.includes(dimensions.data_type) && !boolList.includes(dimensions.data_type)" class="abc-txt">abc</span>
+                                <span *ngIf="dateList.includes(dimensions.data_type)" class="date-dtype"><i class="fa fa-clock-o"></i></span>
+                                <span *ngIf="boolList.includes(dimensions.data_type)" class="date-dtype" style="font-family: 'Times New Roman', Times, serif; font-style: italic;">T|F</span>
                                 {{ dimensions.column?.substr(0,15) }}{{ dimensions.column.length > 15 ? '...' : '' }}
                                 </li>
                                 <div class="dashboard-option">
@@ -154,7 +156,7 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div style="display: flex;">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                                                 <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             @for(data of filterData;track data){
@@ -202,7 +204,7 @@
                                 </div>
                             }@else{
                                 <div style="display: flex;">
-                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                     <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                 </div>
                                 @for(data of filterData;track data){
@@ -246,8 +248,8 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div style="display: flex;">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             @for(data of filterData;track data){
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -293,8 +295,8 @@
                                 </div>
                             }@else{
                                 <div style="display: flex;">
-                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                    <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                 </div>
                                 @for(data of filterData;track data){
                                     @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -335,21 +337,22 @@
            <div class="card p-0 mb-1">
            
                 <div class="card p-0 mb-1">
-                    <div class="card-body" style="padding: 1px 17px 1px 13px;">
+                    <div class="card-body title-padding">
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
                                 <div class="title-container">
                                     <input *ngIf="!retriveDataSheet_id && titleShow" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
                                     <span *ngIf="retriveDataSheet_id || !titleShow" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="{'padding-top': sheetTagName[0] === '<' ? '1.5%' : '0'}"></span>
+                                    <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
                                     </span>
                                 </div> 
+                                <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor>
+                                <ckeditor *ngIf="!editor" placeholder="Sheet Name" (click)="editor =true" [editor]="Editor" [config]="editorConfig1" [(ngModel)]="sheetTagName"></ckeditor> -->
                                 <div *ngIf="editor" class="popup">
                                     <div class="popup-content">
-                                    <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"
-                                        >
-                                    </ckeditor>
+                                    <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor>
                                     <div class="buttons">
                                         <button class="btn btn-danger" (click)="toggleEditor()">Close</button>
                                         <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor(); titleShow = false">Update</button>
@@ -369,7 +372,7 @@
                     </div>
                 </div>
         
-                <div class="card-body" style="padding: 2px 16px;">
+                <div class="card-body" style="padding: 2px 16px;" (click)="editor =false">
                     <div class="row align-items-center mb-2">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
@@ -1023,8 +1026,8 @@
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane active" id="activetabs">
                                                                                         <div style="display: flex;">
-                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                                            <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                                            <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                                                         </div>
                                                                                         @for(data of filterData;track data){
                                                                                             @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -1070,8 +1073,8 @@
                                                             </div>
                                                         }@else{
                                                             <div style="display: flex;">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             @for(data of filterData;track data){
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -1107,11 +1110,12 @@
                                                     <div class="card-title fs-12">Charts </div>
                                                 </div>
                                                 <div class="card-body" style=" padding: 2px 12px;">
-                                                    <div class="row"> 
-                                                       
+                                                    <div class="row">
+                                                        <div class="card-title fs-12" style="text-align: center;">Structured Data</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
+                                                        <div class="card-title fs-12" style="text-align: center;">Single Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
                                                         </div>
@@ -1124,6 +1128,13 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': pie}"></a>
                                                         </div>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': donut}"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0}">
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,25)"><img src="./assets/images/charts/big-number.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
+                                                        </div>
+                                                        <div class="card-title fs-12" style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': sidebyside}"></a>
                                                         </div>
@@ -1142,22 +1153,16 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': multiLine}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': donut}"></a>
-                                                        </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,12)"><img src="./assets/images/charts/spider.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': radar}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,25)"><img src="./assets/images/charts/big-number.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
-                                                        </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,26)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,26)"><img src="./assets/images/charts/heatmap_icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div *ngIf="isApexCharts && !(table && chartId)" class="card mb-0 marks-card-height" >
+                                            <!-- <div *ngIf="isApexCharts && !(table && chartId)" class="card mb-0 marks-card-height" >
                                                 <div class="card-header justify-content-between align-items-center">
                                                     <div class="card-title fs-12">Marks </div>
                                                 </div>
@@ -1171,25 +1176,10 @@
                                                            [(ngModel)]="color"  (ngModelChange)="marksColor2($event)"
                                                            [format] = "'hex'"
                                                             ></ngx-colors>
-                                                              <!--  <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                                    aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/color.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                                                </a>
-                                                                <div class="dropdown-menu p-3" ngbDropdownMenu>
-                                                                    <h5 class="card-title fs-14 mb-1  border-bottom">Color...</h5>
-                                                                    <a class="btn btn-blue-light mx-4"> Edit colors</a> 
-                                                                </div>-->
                                                                 <span class="mark-txt fs-11">Color</span>
                                                             </div>
                                                             
                                                         </div>
-                                                        <!-- @if(sidebysideChart){
-                                                            <div *ngFor="let count of chartOptions2.series; let i = index" class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                                                <div class="" ngbDropdown>
-                                                                    <ngx-colors ngx-colors-trigger (change)="barColors($event,i)" [format]="'hex'"></ngx-colors>
-                                                                    <span class="mark-txt fs-11">bar color</span>
-                                                                </div>
-                                                            </div>
-                                                        } -->
                                                         <div *ngIf="barlineChart" class="col-3 px-2 m-1 border text-center sub-menu-item">
                                                             <div class="" ngbDropdown>
                                                                 <ngx-colors ngx-colors-trigger [(ngModel)]="barColor" (ngModelChange)="marksColor2($event)" [format]="'hex'"></ngx-colors>
@@ -1227,7 +1217,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </ng-template>
                                 </li>
@@ -1676,6 +1666,39 @@
                                                         [(ngModel)]="kpiColor"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
+                                                    </div>
+                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >chart Color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="color" 
+                                                        (ngModelChange)="marksColor2($event)"
+                                                        [format]="'hex'"></ngx-colors>
+                                                    </div>
+                                                    <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >bar color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="barColor" 
+                                                        (ngModelChange)="marksColor2($event)" 
+                                                        [format]="'hex'">
+                                                        </ngx-colors>
+                                                    </div>
+                                                    <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >line color </p>
+                                                        </div>
+                                                        
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="lineColor" 
+                                                        (ngModelChange)="marksColor2($event)" 
+                                                        [format]="'hex'">
+                                                        </ngx-colors>
                                                     </div>
                                                 </div>
                                             </div>

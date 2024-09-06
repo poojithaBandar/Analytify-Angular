@@ -428,6 +428,32 @@ span.abc-txt {
 .panel-body-h{
   height: 620px;
 }
+.chart-icon.active {
+  border-color:#00a2a5 !important; /* Change to the color you prefer for the active state */
+  opacity: 1;
+  background-color: #ecf0f1;
+}
+.custom-dropdown.show {
+  position:fixed !important; 
+  display: flex !important;
+  flex-direction: column !important;
+}
+.d-inline-block {
+display: inline-block !important;
+vertical-align: middle; /* Aligns vertically centered with text */
+}
+.ck.ck-editor__main {
+display: flex;
+flex-direction: column-reverse; /* Reverse the toolbar and the editor */
+}
+.date-dtype{
+font-size: 12px;
+margin-right: 5px;
+margin-top: 3px;
+}
+.title-padding {
+padding: 4px 17px 4px 17px;
+}
 
 
 // for Mobile Resolution //
@@ -489,7 +515,9 @@ app-insights-button {
 .update-btn{
   font-size: 12px;
 }
-
+.title-padding {
+  padding: 4px 26px 4px 17px;
+}
 
 }
  // for 100% Resolution //
@@ -543,6 +571,9 @@ app-insights-button {
 .update-btn{
   font-size: 11px;
 }
+.title-padding {
+  padding: 4px 32px 4px 17px;
+}
 }
 
 
@@ -582,17 +613,4 @@ app-insights-button {
       font-size: 11px;
     }
   }
-  .chart-icon.active {
-    border-color:#00a2a5 !important; /* Change to the color you prefer for the active state */
-    opacity: 1;
-    background-color: #ecf0f1;
-  }
-  .custom-dropdown.show {
-    position:fixed !important; 
-    display: flex !important;
-    flex-direction: column !important;
-}
-.d-inline-block {
-  display: inline-block !important;
-  vertical-align: middle; /* Aligns vertically centered with text */
-}
+  
