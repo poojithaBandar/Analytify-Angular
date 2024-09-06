@@ -2510,6 +2510,9 @@ chart.updateOptions(this.chartOptions3);
   selected = new FormControl(0);
   addSheet() {
     this.retriveDataSheet_id = '';
+    this.draggedDrillDownColumns = [];
+    this.drillDownObject = [];
+    this.drillDownIndex = 0;
     this.sheetName = ''; this.sheetTitle = '';
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
@@ -2882,6 +2885,8 @@ const obj={
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "filter_data": this.dimetionMeasure,
   "data":{
+    "drillDownHierarchy":this.draggedDrillDownColumns,
+    "isDrillDownData" : this.dateDrillDownSwitch,
   "columns": this.draggedColumns,
   "columns_data":this.draggedColumnsData,
   "rows": this.draggedRows,
@@ -3069,6 +3074,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         })
         this.isEChatrts = this.sheetResponce.isEChart;
         this.isApexCharts = this.sheetResponce.isApexChart;
+        this.dateDrillDownSwitch = this.sheetResponce.isDrillDownData;
+        this.draggedDrillDownColumns = this.sheetResponce.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
         } else {
