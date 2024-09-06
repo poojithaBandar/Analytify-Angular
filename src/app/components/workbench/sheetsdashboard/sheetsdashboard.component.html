@@ -454,7 +454,7 @@
                                                                 <p class="text-center mb-0">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
-                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">Select Column <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,true)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">Select Column <i class="fa fa-angle-down" ></i></button>
                                                                   <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">Select Column <i class="fa fa-angle-down" ></i></button>
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;background-color: #ffffff;max-height: 240px;overflow-y: auto;">
