@@ -42,6 +42,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
+import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 interface TableRow {
   [key: string]: any;
 }
@@ -143,6 +144,7 @@ export class SheetsdashboardComponent {
   searchSheets!: string;
   isPublicUrl = false;
   publicHeader = false;
+  columnSearch: any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer){
     this.dashboard = [];
@@ -1859,7 +1861,8 @@ getQuerySetForFilter(){
 getColumnsForFilter(){
   const obj ={
     dashboard_id:this.dashboardId,
-    queryset_id : this.selectedQuerySetId
+    queryset_id : this.selectedQuerySetId,
+    search : this.columnSearch
   }
   this.workbechService.getColumnsInDashboardFilter(obj).subscribe({
     next:(data)=>{
@@ -1973,12 +1976,13 @@ getDashboardFilterredList(){
     }
   })
 }
-getColDataFromFilterId(id:string,colData:any){
+getColDataFromFilterId(id:string,colData:any,isFilter : boolean){
   if(localStorage.getItem('filterid')){
     colData['colData']= JSON.parse(localStorage.getItem('filterid')!);
   } else {
   const Obj ={
-    id:id
+    id:id,
+    search:colData.search
   }
   this.workbechService.getColDataFromFilterId(Obj).subscribe({
     next:(data)=>{
@@ -1991,12 +1995,12 @@ getColDataFromFilterId(id:string,colData:any){
         const array3 = [...colData['colData']];
         data.col_data.forEach((label: any) => {
           if (!lookup.has(label)) {
-            array3.push({ label, selected: false });
+            array3.push({ label, selected: false ,display : false});
           }
         });
       colData['colData']= array3;
       } else {
-        colData['colData']= data.col_data?.map((name: any) => ({ label: name, selected: false }))
+        colData['colData']= data.col_data?.map((name: any) => ({ label: name, selected: false , display : true }))
       }
       localStorage.setItem(id, JSON.stringify(colData['colData']));
       console.log('coldata',this.colData)
