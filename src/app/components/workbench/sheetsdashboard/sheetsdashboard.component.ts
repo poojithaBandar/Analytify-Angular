@@ -2333,6 +2333,7 @@ deleteDashboardFilter(id:any){
       this.DahboardListFilters =  this.DahboardListFilters.filter((obj : any) => obj.dashboard_filter_id !== id);
       // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
       let deletedFilterSheetsList = data.sheet_ids;
+      if(deletedFilterSheetsList && deletedFilterSheetsList.length > 0) {
       let reqObj : any = {
         "dashboard_id":this.dashboardId,
         "sheet_ids" : deletedFilterSheetsList
@@ -2378,6 +2379,7 @@ deleteDashboardFilter(id:any){
 
         }
     });
+  }
   },
     error:(error)=>{
       console.log(error)
