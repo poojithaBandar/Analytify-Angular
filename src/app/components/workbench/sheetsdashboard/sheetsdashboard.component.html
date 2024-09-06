@@ -286,6 +286,15 @@
                                                   }
                                                 </ul>
                                             </div>
+                                            <!-- <ng-select [items]="dropdownOptions" bindLabel="value" bindValue="value" groupBy="group" [(ngModel)]="selectedOption"
+                                              [searchable]="true" [searchFn]="customSearch.bind(this)" placeholder="Select column" [clearable]="false">
+                                              <ng-template ng-optgroup-tmp let-item="item">
+                                                <strong>{{ item.group }}</strong>
+                                              </ng-template>
+                                              <ng-template ng-option-tmp let-item="item">
+                                                {{ item.value }}
+                                              </ng-template>
+                                            </ng-select> -->
                                             </div>
                                               <h6>Apply to Selected worksheets</h6>
                                            
@@ -1068,6 +1077,19 @@
                     [responsive]="item.chartOptions.responsive!"(chartInit)="onChartInit($event, item)" >
                 </apx-chart>
                   </div>
+
+                  <div *ngIf="item.chartOptions && item['chartId'] === 26">
+                    <apx-chart
+                    [series]="item.chartOptions.series!"
+                    [chart]="item.chartOptions.chart!"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [legend]="item.chartOptions.legend!"
+                    [grid]="item.chartOptions.grid!"
+                    [yaxis]="item.chartOptions.yaxis!" (chartInit)="onChartInit($event, item)"
+                  ></apx-chart>
+                  </div>
+
                 </div>
                 <div class="card-footer p-1">
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">

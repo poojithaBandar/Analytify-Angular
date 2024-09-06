@@ -124,17 +124,33 @@
                             <div class="card databse-T-H mb-0 br-0">
                             <div class="card-body overflow-scroll ">
                                 @if(relationOfTables.length){                                   
-                                    <ul class="tags">
+                                    <ul class="tags"> 
                                         @for(relation of displayJoiningCndnsList;track relation;let i = $index){
-                                        <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
+                                        <!-- <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
                                             <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
                                                 <i class="fa fa-circle" style="opacity: 0.5; margin-left: -10px;"></i></span>
                                                 {{relation}}
                                             <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
+                                        </li> -->
+                                        <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
+                                            <span *ngIf="relation.type === 'full Outer'" ngbTooltip="Full Outer Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            </span>
+                                            <span *ngIf="relation.type === 'Right'" ngbTooltip="Right Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/right-join.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            </span>
+                                            <span *ngIf="relation.type === 'Left'" ngbTooltip="Left Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/left-join.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            </span>
+                                            <span *ngIf="relation.type === 'inner'" ngbTooltip="Inner Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            </span>
+                                                 <span style="margin-top: 4px;">{{relation.condition}}</span>
+                                            <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a>
                                         </li>
                                         }
                                     </ul>                            
-                                }
+                                } 
                             </div>
                         </div>
                         </div>
@@ -176,7 +192,7 @@
                                                     <ul ngbDropdownMenu class="dropdown-menu" style="background-color: #ffffff;">
                                                         <li><a class="dropdown-item" (click)="selectedJoin = 'Left'" ngbDropdownItem >Left</a></li>
                                                         <li><a class="dropdown-item" (click)="selectedJoin = 'Right'" ngbDropdownItem >Right</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'Inner'" ngbDropdownItem >Inner</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'inner'" ngbDropdownItem >Inner</a></li>
                                                         <li><a class="dropdown-item" (click)="selectedJoin = 'Self'" ngbDropdownItem >Self</a></li>
                                                         <li><a class="dropdown-item" (click)="selectedJoin = 'full Outer'" ngbDropdownItem >Full Outer</a></li>         
                                                     </ul>

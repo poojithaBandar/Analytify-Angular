@@ -43,6 +43,7 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
+import { NgSelectModule } from '@ng-select/ng-select';
 interface TableRow {
   [key: string]: any;
 }
@@ -77,7 +78,7 @@ interface KpiData {
   standalone: true,
   imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -279,7 +280,19 @@ export class SheetsdashboardComponent {
     console.info('gridSizeChanged', grid);
   }
 
-  
+  responseData = {
+    tables: {
+      user_profile: [
+        { column_name: 'email_id', column_dtype: 'varchar' },
+        { column_name: 'sub_identifier', column_dtype: 'varchar' }
+      ],
+      user_role: [
+        { column_name: 'id', column_dtype: 'integer' },
+        { column_name: 'role_id', column_dtype: 'integer' },
+        { column_name: 'user_id(user_role)', column_dtype: 'integer' }
+      ]
+    }
+  }
   ngOnInit() {  
     if(!this.isPublicUrl){
     if(this.fileId.length > 0 || this.databaseId.length > 0){
@@ -361,7 +374,36 @@ export class SheetsdashboardComponent {
     //   }
     // },
     // ];
+    this.buildDropdownOptions(this.responseData.tables); 
+
   }
+  dropdownOptions: any[] = [];
+  selectedOption: string | null = null;
+  buildDropdownOptions(tables:any) {
+    this.dropdownOptions = [];
+  
+    // Loop through each table (e.g., user_profile, user_role)
+    Object.keys(tables).forEach((tableName: string) => {
+      const columns = tables[tableName]; // Access the columns array for each table
+  
+      // Map each column to an object for ng-select, ensuring group is a string (table name)
+      const tableOptions = columns.map((column: any) => ({
+        group: tableName,   // Ensure this is a string, use table name directly
+        value: column.column_name,  // Display the column_name as the value
+        searchKey: `${tableName} ${column.column_name}` // Combine table name and column name for search
+      }));
+  
+      // Append options for each table to dropdownOptions
+      this.dropdownOptions = [...this.dropdownOptions, ...tableOptions];
+    });
+    console.log(this.dropdownOptions);
+  
+  }
+  customSearch(term: string, item: any): boolean {
+    return item.searchKey.toLowerCase().includes(term.toLowerCase());
+  
+  }
+
 
   changeGridType(gridType : string){
   if(gridType.toLocaleLowerCase() == 'fixed'){
@@ -1179,6 +1221,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return this.donutChartOptions(xaxis,yaxis,savedOptions)
     }
+    if(sheet.chart_id === 26){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
     
   }
 
@@ -1823,6 +1869,9 @@ donutChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   savedOptions.labels = xaxis;
   return savedOptions;
 }
+heatMapChartOptions(savedOptions:any){
+  return savedOptions;
+}
 
 
 //filters
@@ -1910,6 +1959,7 @@ closeColumnsDropdown(colName:any,colDatatype:any, dropdown: NgbDropdown) {
   this.selectdColmnDtype=colDatatype
 
 }
+
 closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
   localStorage.setItem(id, JSON.stringify(colData));
   dropdown.close();
