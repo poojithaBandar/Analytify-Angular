@@ -839,6 +839,9 @@ getJoiningTableData(){
     datasource_queryset_id:this.datasourceQuerysetId,
     row_limit:this.rowLimit
   } as any
+if(obj.row_limit === null || obj.row_limit === undefined){
+ delete obj.row_limit;
+}
   if(this.fromFileId){
     delete obj.database_id
     obj.file_id=this.fileId
@@ -873,7 +876,7 @@ getJoiningTableData(){
 }
 deleteJoiningRelation(index:number){
 
-  const deleteCondtin = this.displayJoiningCndnsList[index]
+  const deleteCondtin = this.displayJoiningCndnsList[index].condition
   console.log(deleteCondtin)
   this.relationOfTables = this.relationOfTables.map((subArray: any[]) =>
     subArray.filter(item => item !== deleteCondtin)

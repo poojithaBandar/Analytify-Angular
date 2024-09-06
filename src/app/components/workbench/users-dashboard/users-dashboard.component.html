@@ -99,7 +99,7 @@
                         <div class="ms-2 mt-sm-0 mt-2 d-flex">
                           <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                             <h6 class="mb-1">
-                                <a ngbTooltip="{{users.username}}"  class="float-start" style="line-height: 1;"> {{users.username | slice:0:15}}</a>
+                                <a ngbTooltip="{{users.username}}" (click)="getUserIdDetails(users.user_id)" class="float-start" style="line-height: 1;"> {{users.username | slice:0:15}}</a>
                             </h6>
                             
                         </div>

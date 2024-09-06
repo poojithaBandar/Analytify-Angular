@@ -92,7 +92,7 @@
                         <div class="ms-2 mt-sm-0 mt-2">
                           <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                             <h6 class="mb-1">
-                                <a ngbTooltip="{{roles.role}}"  class="float-start"> {{roles.role | slice:0:15}}</a>
+                                <a ngbTooltip="{{roles.role}}" (click)="updateRolesDivOpen(roles.role_id);getPrevilagesList();getRoleIdDetails(roles.role_id)" class="float-start"> {{roles.role | slice:0:15}}</a>
                             </h6>
                             
                         </div>

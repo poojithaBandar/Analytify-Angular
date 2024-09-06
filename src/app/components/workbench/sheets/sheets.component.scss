@@ -454,7 +454,14 @@ margin-top: 3px;
 .title-padding {
 padding: 4px 17px 4px 17px;
 }
+.rounded-circle-copilot {
+  border-radius: 15% !important;
+  width: 30px;
+}
 
+.inp-btn{
+  margin: 5px 0px;
+}
 
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
