@@ -144,6 +144,7 @@ export class SheetsdashboardComponent {
   searchSheets!: string;
   isPublicUrl = false;
   publicHeader = false;
+  columnSearch: any;
   rolesForUpdateDashboard:any[] = [];
   usersForUpdateDashboard:any[] =[];
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
@@ -1888,7 +1889,8 @@ getQuerySetForFilter(){
 getColumnsForFilter(){
   const obj ={
     dashboard_id:this.dashboardId,
-    queryset_id : this.selectedQuerySetId
+    queryset_id : this.selectedQuerySetId,
+    search : this.columnSearch
   }
   this.workbechService.getColumnsInDashboardFilter(obj).subscribe({
     next:(data)=>{
@@ -2038,12 +2040,13 @@ getDashboardFilterredList(){
     }
   })
 }
-getColDataFromFilterId(id:string,colData:any){
+getColDataFromFilterId(id:string,colData:any,isFilter : boolean){
   if(localStorage.getItem('filterid')){
     colData['colData']= JSON.parse(localStorage.getItem('filterid')!);
   } else {
   const Obj ={
-    id:id
+    id:id,
+    search:colData.search
   }
   this.workbechService.getColDataFromFilterId(Obj).subscribe({
     next:(data)=>{

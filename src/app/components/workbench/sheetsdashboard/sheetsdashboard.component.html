@@ -5,6 +5,14 @@
 <div *ngIf="sheetsNewDashboard">
   <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/workbench/sheets" activeitem="Dashboard"></app-page-header>
   </div>
+  <!-- <div *ngIf="publicHeader">
+    <app-page-header [publicHeader]="true"></app-page-header>
+    </div> -->
+    <div *ngIf="publicHeader" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+      <a class="header-logo">
+      <img src="./assets/images/brand/insightApps-logo-Public.png" alt="logo" class="desktop-dark">
+  </a>
+  </div>
   @if(isSheetsView){
     <div class="main-container container-fluid">
       <div class="row" class="card " style="padding: 20px;">
@@ -270,41 +278,25 @@
                                             </div>
                                     
                                             <div class="form-group p-1">
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-                                              <div ngbDropdown class="my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
-=======
                                   
                                               <!-- <div ngbDropdown class="my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
->>>>>>> Stashed changes
-=======
-                                  
-                                              <!-- <div ngbDropdown class="my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
->>>>>>> Stashed changes
                                                 <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">{{selectClmn ? selectClmn:'Select Column'}} <i class="fa fa-angle-down"></i></button>
                                                 <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width:100%;max-height: 240px;overflow-y: auto;padding:6px">
-                                                  <div class="input-group">
-                                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="columnSearch"
-                                                        (keyup.enter)="getColumnsForFilter()" aria-describedby="button-addon2">
-                                                    <button class="btn btn-primary border me-2" (click)="getColumnsForFilter()" type="button" id="button-addon2"
-                                                        style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                                </div>
                                                   @for(colData of columnFilterNames;track colData){
                                                     <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmn = colData.column_name;closeColumnsDropdown(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
                                                   }
                                                 </ul>
                                             </div> -->
-                                            <ng-select [items]="dropdownOptions" bindLabel="value" [(ngModel)]="selectedOption" [searchable]="true"
-                                              [searchFn]="customSearch.bind(this)" (change)="onOptionSelected(selectedOption)" placeholder="Select column"
-                                              [clearable]="false">
-                                              <ng-template ng-optgroup-tmp let-item="item">
-                                                <strong>{{ item.group }}</strong> <!-- Table heading (group name) -->
-                                              </ng-template>
-                                              <ng-template ng-option-tmp let-item="item">
-                                                {{ item.value }} <!-- Display column name -->
-                                              </ng-template>
-                                            </ng-select>
+                                        <ng-select [items]="dropdownOptions" bindLabel="value" [(ngModel)]="selectedOption" [searchable]="true"
+                                          [searchFn]="customSearch.bind(this)" (change)="onOptionSelected(selectedOption)" placeholder="Select column"
+                                          [clearable]="false">
+                                          <ng-template ng-optgroup-tmp let-item="item">
+                                            <strong>{{ item.group }}</strong> <!-- Table heading (group name) -->
+                                          </ng-template>
+                                          <ng-template ng-option-tmp let-item="item">
+                                            {{ item.value }} <!-- Display column name -->
+                                          </ng-template>
+                                        </ng-select>
                                             </div>
                                               <h6>Apply to Selected worksheets</h6>
                                            
@@ -481,7 +473,7 @@
                                                                       </div>
                                                                     @for(col of filterList.colData;track col;let i = $index){
                                                                      
-                                                                      <div *ngIf="col.display" class="form-check">
+                                                                      <div class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
                                                                         <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
                                                                       </div>
