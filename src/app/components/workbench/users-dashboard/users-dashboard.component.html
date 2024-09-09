@@ -186,8 +186,8 @@
               <button  type="button" class="btn btn-primary" (click)="addUserDivForm = false" style="border-radius: 4px 4px 4px 4px;"> View Users</button>    
             </div>
             
-            <div class="modal-body">
-                <div class="row  p-1">
+            <div class="modal-body p-0">
+                <div class="row  ps-3 pe-3">
                     <div class="col-md-2 border p-2">
                         <label for="input-label" class="form-label">First Name</label>
                     </div>
@@ -387,7 +387,7 @@
                     </div>
 
                 </div>
-                <div class="justify-conent-between">
+                <div class="justify-conent-between mt-1">
                     <div class="add-role-save-btn" style="float: right;">
                       <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" (click)="closeAddUserForm()">Close</button>
                         <button *ngIf="!userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!addUserForm.valid">
