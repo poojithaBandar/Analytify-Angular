@@ -58,6 +58,8 @@ export class DatabaseComponent {
   selectedJoin:any;
   selectedAliasT1:any;
   selectedAliasT2:any;
+  draggedtables_searched:any;
+  draggedtables_data:any;
   tableRelationUi = true;
   custmT1Data = [] as any;
   custmT2Data = [] as any;
@@ -118,13 +120,17 @@ export class DatabaseComponent {
   rowLimit:any;
   gotoSheetButtonDisable = true;
   fromSavedQuery = false;
-  columnSearch! : string;
+  columnSearch! : string ;
   columnDataSearch! : string;
   editFilterId!: number;
   fromSheetEditDb = false;
-
+  remainingTables_data: any;
+  remaintables_searched: any;
+  remainSearch :string;
+  draggedSearch: string = '';
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService){
     const currentUrl = this.router.url;
+    this.remainSearch=''
     if(currentUrl.includes('/workbench/database-connection/tables/')){
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);
@@ -268,6 +274,7 @@ export class DatabaseComponent {
           this.relationOfTables = data.dragged_data.relation_tables
           console.log('tablerelation', this.relationOfTables)
           this.draggedtables = data.dragged_data.json_data
+          this.draggedtables_data = this.draggedtables
           if (this.draggedtables.length > 0) {
             this.joiningTables();
           }
@@ -414,6 +421,13 @@ pushToDraggedTables(newTable:any): void {
     }
     newTable['alias']=tableName;
     this.draggedtables.push(newTable);
+    console.log(this.draggedtables_data)
+    if(this.draggedtables.length >1){
+      this.relationOfTables.push([])
+    }
+    else{
+      this.relationOfTables =[]
+    }
 }
 
 getTablerowclms(table:any,schema:any){
@@ -452,18 +466,26 @@ getTablerowclms(table:any,schema:any){
 // }
 
 onDeleteItem(index: number) {
-   this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
-   console.log(this.draggedtables);
-  //  const schema = this.draggedtables[index].schema
-  //  const tablename = this.draggedtables[index].table
-  //  const tablealias = this.draggedtables[index].alias
-
-
-  //  if(this.draggedtables.length !== 0){
-    const deleteIndex = index - 1
-    this.relationOfTables.splice(deleteIndex,1)
-   this.joiningTablesFromDelete();
-   this.isOpen = false;
+  if(index==0){
+    this.draggedtables = []
+    this.relationOfTables=[]
+    this.clrQuery()
+  }
+  else{
+    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
+    console.log(this.draggedtables);
+   //  const schema = this.draggedtables[index].schema
+   //  const tablename = this.draggedtables[index].table
+   //  const tablealias = this.draggedtables[index].alias
+ 
+ 
+   //  if(this.draggedtables.length !== 0){
+     const deleteIndex = index - 1
+     this.relationOfTables.splice(deleteIndex,1)
+    this.joiningTablesFromDelete();
+    this.isOpen = false;
+  }
+   
   //  }
 }
 buildCustomRelation(){
@@ -489,6 +511,45 @@ buildCustomRelation(){
       }
       })
 
+}
+
+searchconditiontables(){
+
+    // this.draggedtables_data = this.draggedtables_data
+    if (this.draggedSearch !=='' && this.draggedSearch!=null){
+      this.draggedtables_searched = this.draggedtables.map((table: any) => ({
+        ...table,  // Keep the original table properties like alias, schema, etc.
+        columns: table.columns.filter((col: any) => col.column.includes(this.draggedSearch))  // Filter the columns
+      }))
+      this.draggedtables_data= this.draggedtables_searched
+    }
+    else{
+      this.draggedtables_data = this.draggedtables
+    }
+      // Keep only tables with matching columns
+    
+    
+    console.log(this.draggedtables)
+}
+
+
+searchremainingtables(){
+
+  // this.draggedtables_data = this.draggedtables_data
+  if (this.remainSearch !=='' && this.remainSearch!=null){
+    this.remaintables_searched = this.remainingTables_data.map((table: any) => ({
+      ...table,  // Keep the original table properties like alias, schema, etc.
+      columns: table.columns.filter((col: any) => col.column.includes(this.remainSearch))  // Filter the columns
+    }))
+    this.remainingTables_data= this.remaintables_searched
+  }
+  else{
+    this.remainingTables_data = this.remainingTables
+  }
+
+  
+  
+  console.log(this.draggedtables)
 }
 clrQuery(){
   this.sqlQuery = ''
@@ -539,6 +600,8 @@ executeQuery(){
 updateRemainingTables() {
   this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
   this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
+  this.remainingTables_data = this.remainingTables
+
 }
 
 joiningTablesWithoutQuerySetId(){
@@ -585,7 +648,7 @@ joiningTablesWithoutQuerySetId(){
 joiningTables(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
    console.log(schemaTablePairs)
-   this.relationOfTables.push([])
+   
   const obj ={
     query_set_id:this.qurtySetId,
     database_id:this.databaseId,
