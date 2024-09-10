@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ResizableModule, ResizeEvent } from 'angular-resizable-element';
 import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, GridsterItemComponentInterface, GridsterModule, GridsterPush, 
@@ -42,7 +42,6 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
-import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 import { NgSelectModule } from '@ng-select/ng-select';
 interface TableRow {
   [key: string]: any;
@@ -146,8 +145,10 @@ export class SheetsdashboardComponent {
   isPublicUrl = false;
   publicHeader = false;
   columnSearch: any;
+  rolesForUpdateDashboard:any[] = [];
+  usersForUpdateDashboard:any[] =[];
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     if(currentUrl.includes('public/dashboard')){
@@ -217,7 +218,8 @@ export class SheetsdashboardComponent {
   chartOptionsinitialize = false;
   editquerysetId:any;
   //@ViewChild('gridster') gridster!: ElementRef;
-
+  dropdownOptions: any[] = [];
+  selectedOption: string | null = null;
   screenshotSrc: string | null = null;
 
   itemToPush!: GridsterItemComponent;
@@ -374,37 +376,9 @@ export class SheetsdashboardComponent {
     //   }
     // },
     // ];
-    this.buildDropdownOptions(this.responseData.tables); 
+ 
 
   }
-  dropdownOptions: any[] = [];
-  selectedOption: string | null = null;
-  buildDropdownOptions(tables:any) {
-    this.dropdownOptions = [];
-  
-    // Loop through each table (e.g., user_profile, user_role)
-    Object.keys(tables).forEach((tableName: string) => {
-      const columns = tables[tableName]; // Access the columns array for each table
-  
-      // Map each column to an object for ng-select, ensuring group is a string (table name)
-      const tableOptions = columns.map((column: any) => ({
-        group: tableName,   // Ensure this is a string, use table name directly
-        value: column.column_name,  // Display the column_name as the value
-        searchKey: `${tableName} ${column.column_name}` // Combine table name and column name for search
-      }));
-  
-      // Append options for each table to dropdownOptions
-      this.dropdownOptions = [...this.dropdownOptions, ...tableOptions];
-    });
-    console.log(this.dropdownOptions);
-  
-  }
-  customSearch(term: string, item: any): boolean {
-    return item.searchKey.toLowerCase().includes(term.toLowerCase());
-  
-  }
-
-
   changeGridType(gridType : string){
   if(gridType.toLocaleLowerCase() == 'fixed'){
     this.gridType = 'fixed';
@@ -644,6 +618,8 @@ export class SheetsdashboardComponent {
 
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
+        this.usersForUpdateDashboard = data.user_ids;
+        this.rolesForUpdateDashboard = data.role_ids;
         this.dashboard.forEach((sheet)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
@@ -853,8 +829,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
       selected_sheet_ids:this.sheetIdsDataSet,
       data : dashboardData,
       sheetTabs : this.sheetTabs,
-      file_id : this.fileId
-      
+      file_id : this.fileId,
+      user_ids:this.usersForUpdateDashboard,
+      role_ids:this.rolesForUpdateDashboard
     }as any;
     if(this.fromFileId){
       delete obj.server_id;
@@ -1897,12 +1874,14 @@ getQuerySetForFilter(){
     },
     error:(error)=>{
       console.log(error)
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'oops!',
+      //   text: error.error.message,
+      //   width: '400px',
+      // })
+      this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+
     }
   })
 }
@@ -1916,8 +1895,9 @@ getColumnsForFilter(){
   this.workbechService.getColumnsInDashboardFilter(obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.columnFilterNames=data.response_data?.columns;
+      this.columnFilterNames=data.response_data.tables;
       this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
+      this.buildDropdownOptions(this.columnFilterNames); 
 
     },
     error:(error)=>{
@@ -1930,7 +1910,41 @@ getColumnsForFilter(){
       })
     }
   })
+  this.cdr.detectChanges();
 }
+//get data for filters columns
+buildDropdownOptions(tables:any) {
+  this.dropdownOptions = [];
+
+  Object.keys(tables).forEach((tableName: string) => {
+    const columns = tables[tableName]; 
+
+    const tableOptions = columns.map((column: any) => ({
+      group: tableName,  
+      value: column.column_name, 
+      column_dtype: column.column_dtype,
+      searchKey: `${tableName} ${column.column_name}` 
+    }));
+    this.dropdownOptions = [...this.dropdownOptions, ...tableOptions];
+  });
+  console.log(this.dropdownOptions);
+
+}
+onOptionSelected(selectedItem: any) {
+  if (selectedItem) {
+    const selectedColumn = selectedItem.value;  // Column name
+    const selectedDataType = selectedItem.column_dtype;  // Column data type
+    this.selectClmn=selectedColumn,
+    this.selectdColmnDtype=selectedDataType
+
+    console.log('Selected Column:', selectedColumn);
+    console.log('Selected Data Type:', selectedDataType);
+  }
+}
+customSearch(term: string, item: any): boolean {
+  return item.searchKey.toLowerCase().includes(term.toLowerCase());
+}
+//get data for filters columns end
 
 ResetDashboard(){
   this.dashboard =[];
@@ -1940,7 +1954,7 @@ updateSelectedRows(){
   .filter((row: { selected: any; }) => row.selected)
   .map((row: { label: any; }) => row.label.id);
 console.log('selected rows', this.selectedRows);
-
+9
 this.isAllSelected = this.sheetsFilterNames.every((row: { selected: any; }) => row.selected);
 }
 
@@ -2045,12 +2059,12 @@ getColDataFromFilterId(id:string,colData:any,isFilter : boolean){
         const array3 = [...colData['colData']];
         data.col_data.forEach((label: any) => {
           if (!lookup.has(label)) {
-            array3.push({ label, selected: false ,display : false});
+            array3.push({ label, selected: false });
           }
         });
       colData['colData']= array3;
       } else {
-        colData['colData']= data.col_data?.map((name: any) => ({ label: name, selected: false , display : true }))
+        colData['colData']= data.col_data?.map((name: any) => ({ label: name, selected: false }))
       }
       localStorage.setItem(id, JSON.stringify(colData['colData']));
       console.log('coldata',this.colData)
@@ -2333,7 +2347,6 @@ deleteDashboardFilter(id:any){
       this.DahboardListFilters =  this.DahboardListFilters.filter((obj : any) => obj.dashboard_filter_id !== id);
       // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
       let deletedFilterSheetsList = data.sheet_ids;
-      if(deletedFilterSheetsList && deletedFilterSheetsList.length > 0) {
       let reqObj : any = {
         "dashboard_id":this.dashboardId,
         "sheet_ids" : deletedFilterSheetsList
@@ -2379,7 +2392,6 @@ deleteDashboardFilter(id:any){
 
         }
     });
-  }
   },
     error:(error)=>{
       console.log(error)

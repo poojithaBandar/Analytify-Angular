@@ -1862,10 +1862,10 @@
                                                     </button>
                                                 </div>
                                                 <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
+                                                    <a *ngIf="!qrySetId" (click)="goToConnections()" style="cursor: pointer;"><span
+                                                        class="add-txt text-info">Connect to DataSource</span></a>
                                                     <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>
-                                                    <a *ngIf="!qrySetId" (click)="goToConnections()" style="cursor: pointer;"><span
-                                                            class="add-txt text-info">Add</span></a>
                                                 </div>
                                                 <div class="input-group mt-3 inp">
                                                     <input type="text" class="form-control" [(ngModel)]="userPrompt" placeholder="Enter your prompt">
@@ -1880,6 +1880,8 @@
                                                                 <i class="fa fa-paper-plane-o"></i>
                                                             </button>
                                                     </div>
+                                                    <p></p>
+                                                    <p style="font-size: 0.6rem;">The art of chart suggestion: not magic, but data-driven</p>
                                                 </div>
                                             </div>
                                         </div>
