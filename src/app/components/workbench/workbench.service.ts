@@ -379,11 +379,15 @@ getFilteredData(obj:any){
 }
 
 getServerTablesList(obj:any){
-  return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`,obj);
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`+this.accessToken,obj);
 }
 
 openApiKey(obj:any){
-  return this.http.post<any>(`${environment.apiUrl}/ai/validate-api-key/`,obj);
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/ai/validate-api-key/`+this.accessToken,obj);
 }
 deleteDashbaordFilter(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
