@@ -268,6 +268,7 @@ export class DatabaseComponent {
           this.relationOfTables = data.dragged_data.relation_tables
           console.log('tablerelation', this.relationOfTables)
           this.draggedtables = data.dragged_data.json_data
+          this.joinTypes = data.dragged_data.join_type
           if (this.draggedtables.length > 0) {
             this.joiningTables();
           }

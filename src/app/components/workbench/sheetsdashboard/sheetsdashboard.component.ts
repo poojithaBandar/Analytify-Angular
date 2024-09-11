@@ -145,8 +145,9 @@ export class SheetsdashboardComponent {
   isPublicUrl = false;
   publicHeader = false;
   columnSearch: any;
-  rolesForUpdateDashboard:any[] = [];
-  usersForUpdateDashboard:any[] =[];
+  rolesForUpdateDashboard:[] = [];
+  usersForUpdateDashboard:[] =[];
+  tableNameSelectedForFilter:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef){
     this.dashboard = [];
@@ -1859,7 +1860,9 @@ openSuperScaled(modal: any) {
   });
 this.editFilters = false;
 this.filterName = '';
-
+this.dropdownOptions = [];
+this.querySetNames = [];
+this.selectedQuerySetId = 0
 }
 
 getQuerySetForFilter(){
@@ -1912,6 +1915,13 @@ getColumnsForFilter(){
   })
   this.cdr.detectChanges();
 }
+getColumnsForFilterEdit(selectedqryId:any,dashboardId:any){
+this.dashboardId= dashboardId,
+this.selectedQuerySetId = selectedqryId
+this.getColumnsForFilter();
+this.loadSelectedForEditing()
+
+}
 //get data for filters columns
 buildDropdownOptions(tables:any) {
   this.dropdownOptions = [];
@@ -1934,6 +1944,7 @@ onOptionSelected(selectedItem: any) {
   if (selectedItem) {
     const selectedColumn = selectedItem.value;  // Column name
     const selectedDataType = selectedItem.column_dtype;  // Column data type
+    this.tableNameSelectedForFilter = selectedItem.group;
     this.selectClmn=selectedColumn,
     this.selectdColmnDtype=selectedDataType
 
@@ -1943,6 +1954,24 @@ onOptionSelected(selectedItem: any) {
 }
 customSearch(term: string, item: any): boolean {
   return item.searchKey.toLowerCase().includes(term.toLowerCase());
+}
+loadSelectedForEditing() {
+  // Simulating an API response with the selected item
+  const selectedForEdit = {
+    column_name: this.selectClmnEdit,
+    column_dtype: this.selectdColmnDtypeEdit,
+    group: this.tableNameSelectedForFilter
+  };
+
+  // Find the option in the dropdown that matches the selected value
+  const selectedOption = this.dropdownOptions.find(option =>
+    option.value === selectedForEdit.column_name && option.group === selectedForEdit.group
+  );
+
+  if (selectedOption) {
+    this.selectedOption = selectedOption;  // Set the selected option
+    this.cdr.detectChanges();
+  }
 }
 //get data for filters columns end
 
@@ -1991,7 +2020,8 @@ if(this.filterName === ''){
     column:this.selectClmn,
     sheets:this.selectedRows,
     datatype:this.selectdColmnDtype,
-    queryset_id:this.selectedQuerySetId
+    queryset_id:this.selectedQuerySetId,
+    table_name:this.tableNameSelectedForFilter
   }
   this.workbechService.selectedDatafromFilter(Obj).subscribe({
     next:(data)=>{
@@ -2413,6 +2443,9 @@ addfilterOnEdit(){
   this.filterName = '';
   this.isAllSelected = false;
   this.querysetNameEdit = '';
+  //new
+  this.dropdownOptions = [];
+this.selectedQuerySetId = 0
 }
 
 editFiltersData(id:any){
@@ -2430,8 +2463,10 @@ editFiltersData(id:any){
       this.selectClmnEdit = data.selected_column;
       this.selectdColmnDtypeEdit = data.datatype;
       this.editquerysetId = data.query_id;
+      this.tableNameSelectedForFilter = data.table_name;
       this.updateSelectedRowsEdit();
       this.getColumnsFromEdit(data.query_id,data.dashboard_id);
+      this.getColumnsForFilterEdit(data.query_id,data.dashboard_id);
     },
     error:(error)=>{
       console.log(error)
@@ -2491,10 +2526,11 @@ const obj ={
   dashboard_filter_id:this.dashboardFilterIdEdit,
   dashboard_id:this.dashboardId,
   filter_name:this.filterName,
-  column:this.selectClmnEdit,
+  column:this.selectClmn,
   sheets:this.selectedRowsEdit,
-  datatype:this.selectdColmnDtypeEdit,
-  queryset_id:this.editquerysetId
+  datatype:this.selectdColmnDtype,
+  queryset_id:this.editquerysetId,
+  table_name:this.tableNameSelectedForFilter
 }
   this.workbechService.updatesDashboardFilters(obj).subscribe({
     next:(data)=>{

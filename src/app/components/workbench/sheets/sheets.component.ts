@@ -198,6 +198,7 @@ export class SheetsComponent {
   suffix: string = '';
   isCustomSql = false;
   canDrop = true;
+  createdBy : any;
   @ViewChild('barChart') barchart!: ChartComponent;
   @ViewChild('areaChart') areachart!: ChartComponent;
   @ViewChild('lineChart') linechart!: ChartComponent;
@@ -2097,7 +2098,8 @@ chart.updateOptions(this.chartOptions3);
           "hierarchy": this.draggedDrillDownColumns,
           "is_date": this.dateDrillDownSwitch,
           "drill_down": this.drillDownObject,
-          "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex]
+          "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
+          "parent_user":this.createdBy
         } as any;
         if (this.fromFileId) {
           delete obj.database_id;
@@ -3067,6 +3069,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
         this.dimetionMeasure = responce.filters_data;
+        this.createdBy = responce.created_by;
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
         responce.filters_data.forEach((filter: any)=>{

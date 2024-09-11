@@ -29,6 +29,10 @@ export class SheetsListPageComponent implements OnInit {
   totalItems:any;
   gridView = true;
   viewSheetList = false;
+  dbId:any;
+  fileId:any;
+  qrysetId:any;
+  datasourceQuerysetId:any;
 constructor(private workbechService:WorkbenchService,private router:Router,private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService){
   this.viewSheetList = this.viewTemplateService.viewSheets()
 }
@@ -39,7 +43,32 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
       // this.getUserSheetsList();
     }
   }
+  getValuesForSheetRoute(event:Event){
+    // const selectedOption = (event.target as HTMLSelectElement).selectedOptions[0];
+    // this.dbId = selectedOption.getAttribute('data-server_id');
+    // this.fileId = selectedOption.getAttribute('data-file_id');
+    // this.datasourceQuerysetId = selectedOption.getAttribute('data-datasource_queryset_id');
+    // this.qrysetId = this.selectedSheetList
 
+
+      const selectedSheet = (event.target as HTMLSelectElement).value;
+    
+      // Check if the 'All' option is selected
+      if (selectedSheet === '0') {
+        console.log('All sheets selected');
+      } else {
+        // Here, `selectedSheet` is a string representation, convert it back if needed
+        const selectedObject = this.sheetsList.find(sheet => sheet.id === +selectedSheet);
+    
+        if (selectedObject) {
+          this.dbId = selectedObject.server_id;
+          this.fileId = selectedObject.file_id;
+          this.datasourceQuerysetId = selectedObject.datasource_queryset_id;
+          this.qrysetId = selectedObject.id
+        }
+      }
+    
+  }
   loadSelectedSheetList(){
     if(this.selectedSheetList > 0){
     const Obj ={
@@ -242,6 +271,32 @@ deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
   )
 }
 sheetsRoute(){
-  this.router.navigate(['/workbench/sheets'])  
+  // this.router.navigate(['/workbench/sheets'])  
+  if (this.dbId === null || this.dbId === undefined) {
+    const encodedFileId = btoa(this.fileId.toString());
+    const encodedQuerySetId = btoa(this.qrysetId.toString());
+    if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
+      // Encode 'null' to represent a null value
+      const encodedDsQuerySetId = btoa('null');
+      this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+    }
+     else {
+      const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
+        this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      }
+    } 
+   else if (this.fileId === undefined || this.fileId === null) {
+    const encodedDatabaseId = btoa(this.dbId.toString());
+    const encodedQuerySetId = btoa(this.qrysetId.toString());
+    if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
+      // Encode 'null' to represent a null value
+      const encodedDsQuerySetId = btoa('null');
+      this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+    }
+    else {
+      const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
+        this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      }
+    } 
 }
 }

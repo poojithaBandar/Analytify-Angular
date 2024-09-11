@@ -635,7 +635,7 @@ export class WorkbenchComponent implements OnInit{
                             //   text: 'Databse Deleted Successfully',
                             //   width: '400px',
                             // })
-                            this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                            this.toasterservice.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                           }
                           this.getDbConnectionList();
                         },
