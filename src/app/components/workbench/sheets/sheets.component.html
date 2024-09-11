@@ -340,17 +340,17 @@
                     <div class="card-body title-padding">
                         <div class="row align-items-center">
                             <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
-                                <div class="title-container">
-                                    <input *ngIf="!retriveDataSheet_id && titleShow" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span *ngIf="retriveDataSheet_id || !titleShow" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="{'padding-top': sheetTagName[0] === '<' ? '1.5%' : '0'}"></span>
+                                <div class="title-container" *ngIf="!editor">
+                                    <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
+                                    <span *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="{'padding-top': sheetTagName[0] === '<' ? '1.5%' : '0'}"></span>
                                     <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
                                     </span>
                                 </div> 
-                                <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor>
-                                <ckeditor *ngIf="!editor" placeholder="Sheet Name" (click)="editor =true" [editor]="Editor" [config]="editorConfig1" [(ngModel)]="sheetTagName"></ckeditor> -->
-                                <div *ngIf="editor" class="popup">
+                                <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName" (ngModelChange)="updateSheetName()"></ckeditor>
+                                <!-- <ckeditor *ngIf="!editor" placeholder="Sheet Name" (click)="editor =true" [editor]="Editor" [config]="editorConfig1" [(ngModel)]="sheetTagName"></ckeditor> -->
+                                <!-- <div *ngIf="editor" class="popup">
                                     <div class="popup-content">
                                     <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor>
                                     <div class="buttons">
@@ -358,7 +358,7 @@
                                         <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor(); titleShow = false">Update</button>
                                     </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0" [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
                                 <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
@@ -694,7 +694,8 @@
                                     </thead>
                                     <tbody>
                                         @for(row of tableData;track row;let i = $index){
-                                      <tr [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''">
+                                      <tr [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                                      [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}">
                                         @for(column of displayedColumns;track column){
                                         <td>{{ row[column] }}</td>
                                         }
@@ -1154,7 +1155,6 @@
                                                 </div>
                                                 <div class="card-body" style=" padding: 2px 12px;">
                                                     <div class="row">
-                                                        <div class="card-title fs-12" style="text-align: center;">Structured Data</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
@@ -1175,7 +1175,7 @@
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': donut}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,25)"><img src="./assets/images/charts/big-number.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,25)"><img src="./assets/images/charts/kpi-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
@@ -1495,6 +1495,21 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
+                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                        <div class=""> 
+                                                            <p >Banding color </p>
+                                                        </div>
+                                                        <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="color1"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                         <ngx-colors 
+                                                        ngx-colors-trigger 
+                                                        [(ngModel)]="color2"
+                                                        [format] = "'hex'"
+                                                         ></ngx-colors>
+                                                    </div>
                                                     <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Zoom </p>
@@ -1676,6 +1691,46 @@
                                                         </div>
                                                         <div *ngIf="!legendSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('legend')">
                                                             <span></span>
+                                                        </div>
+                                                        <div class="">Allignment</div>
+                                                        <div class="btn-group my-2" ngbDropdown>
+                                                            <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                              {{legendsAllignment}}
+                                                            </button>
+                                                            <ul class="dropdown-menu" ngbDropdownMenu>
+                                                                <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('top')">Top</a></li>
+                                                                <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('bottom')">Bottom</a></li>
+                                                                <li><a  ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('left')">Left</a></li>
+                                                                <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('right')">Right</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class=""> 
+                                                            <p >Data Labels </p>
+                                                        </div>
+                                                        <div *ngIf="dataLabels" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('dataLabels')">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="!dataLabels" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('dataLabels')">
+                                                            <span></span>
+                                                        </div>
+                                                        <div *ngIf="donut" style="display: flex;">
+                                                            <div class="" > 
+                                                                <p >Label </p>
+                                                            </div>
+                                                            <div *ngIf="label" style="margin-left: 100px;" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('label')">
+                                                                <span></span>
+                                                            </div>
+                                                            <div *ngIf="!label" style="margin-left: 100px;" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('label')">
+                                                                <span></span>
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="donut" style="display: flex;">
+                                                            <div>
+                                                                <label>Donut Size</label>
+                                                            </div>
+                                                            <div style="margin-left: 100px;">
+                                                                <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5" (ngModelChange)="changeSize()">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId) || donut || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">

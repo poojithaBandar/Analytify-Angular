@@ -432,29 +432,41 @@ if(this.fromFileId){
               data: this.chartsRowData 
             }
           ],
+          annotations: {
+            points: [{
+              x: 'zoom',
+              seriesIndex: 0,
+              label: {
+                borderColor: '#775DD0',
+                offsetY: 0,
+                style: {
+                  color: '#fff',
+                  background: '#775DD0',
+                },
+                text: 'zoom',
+              }
+            }]
+          },
           chart: {
             toolbar: {
-              show: true
+              show: true,
+              offsetX: 0,
+              offsetY: 0,
+              tools: {
+                download: true,
+                selection: true,
+                zoom: true,
+                zoomin: true,
+                zoomout: true,
+                pan: true,
+                reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
+              },
+              autoSelected: 'zoom' 
             },
             type: 'bar',
             height: 320,
-            foreColor: this.color,
-            zoom: {
-              enabled: true,
-              type: 'x',
-              autoScaleYaxis: false,
-              zoomedArea: {
-                fill: {
-                  color: '#90CAF9',
-                  opacity: 0.4
-                },
-                stroke: {
-                  color: '#0D47A1',
-                  opacity: 0.4,
-                  width: 1
-                }
-              }
-            }, events: {
+            foreColor: this.color, 
+            events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
@@ -480,6 +492,7 @@ if(this.fromFileId){
           },
           xaxis: {
             categories: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
+            tickPlacement: 'on',
             position: 'bottom',
             labels: {
               show: true,
@@ -728,11 +741,13 @@ chart.updateOptions(this.chartOptions3);
               position: "bottom"
           },
           dataLabels: {
+            enabled: true,
               dropShadow: {
                   enabled: false
               }
           },
           };
+          this.changeLegendsAllignment('bottom');
       }
       else{
         this.chartOptions4= this.pieOptions;
@@ -795,12 +810,42 @@ chart.updateOptions(this.chartOptions3);
             name: "",
             data: this.chartsRowData
           }],
+          annotations: {
+            points: [{
+              x: 'zoom',
+              seriesIndex: 0,
+              label: {
+                borderColor: '#775DD0',
+                offsetY: 0,
+                style: {
+                  color: '#fff',
+                  background: '#775DD0',
+                },
+                text: 'zoom',
+              }
+            }]
+          },
           chart: {
+            toolbar: {
+              show: true,
+              offsetX: 0,
+              offsetY: 0,
+              tools: {
+                download: true,
+                selection: true,
+                zoom: true,
+                zoomin: true,
+                zoomout: true,
+                pan: true,
+                reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
+              },
+              autoSelected: 'zoom' 
+            },
             height: 200,
             type: 'line',
             reponsive: true,
             zoom: {
-              enabled: false
+              enabled: true
             },
             events: {
               mounted: (chart: any) => {
@@ -862,7 +907,8 @@ chart.updateOptions(this.chartOptions3);
               },
             },
             xaxis: {
-              ategories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
+              categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
+              tickPlacement: 'on',
               labels: {
                 show: true,
                 hideOverlappingLabels: false,
@@ -1007,11 +1053,41 @@ chart.updateOptions(this.chartOptions3);
                 data: this.chartsRowData,
               },
             ],
+            annotations: {
+              points: [{
+                x: 'zoom',
+                seriesIndex: 0,
+                label: {
+                  borderColor: '#775DD0',
+                  offsetY: 0,
+                  style: {
+                    color: '#fff',
+                    background: '#775DD0',
+                  },
+                  text: 'zoom',
+                }
+              }]
+            },
             chart: {
+              toolbar: {
+                show: true,
+                offsetX: 0,
+                offsetY: 0,
+                tools: {
+                  download: true,
+                  selection: true,
+                  zoom: true,
+                  zoomin: true,
+                  zoomout: true,
+                  pan: true,
+                  reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
+                },
+                autoSelected: 'zoom' 
+              },
               type: "area",
               height: 200,
               zoom: {
-                enabled: false,
+                enabled: true,
               },
             },
             dataLabels: {
@@ -1071,6 +1147,7 @@ chart.updateOptions(this.chartOptions3);
                   cssClass: "apexcharts-xaxis-label",
                 },
               },
+              tickPlacement: 'on'
             },
             yaxis: {
               opposite: true,
@@ -1193,8 +1270,38 @@ chart.updateOptions(this.chartOptions3);
       if (!this.sidebysideBarOptions) {
         this.chartOptions2 = {
           series: this.sidebysideBarRowData,
+          annotations: {
+            points: [{
+              x: 'zoom',
+              seriesIndex: 0,
+              label: {
+                borderColor: '#775DD0',
+                offsetY: 0,
+                style: {
+                  color: '#fff',
+                  background: '#775DD0',
+                },
+                text: 'zoom',
+              }
+            }]
+          },
           colors: ['#00a5a2', '#0dc9c5', '#f43f63'],
           chart: {
+            toolbar: {
+              show: true,
+              offsetX: 0,
+              offsetY: 0,
+              tools: {
+                download: true,
+                selection: true,
+                zoom: true,
+                zoomin: true,
+                zoomout: true,
+                pan: true,
+                reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
+              },
+              autoSelected: 'zoom' 
+            },
             type: 'bar',
             height: 320,
           },
@@ -1220,6 +1327,7 @@ chart.updateOptions(this.chartOptions3);
           },
           xaxis: {
             categories: categories,
+            tickPlacement: 'on',
             labels: {
               show: true,
               style: {
@@ -1292,12 +1400,27 @@ chart.updateOptions(this.chartOptions3);
       if (!this.stokedOptions) {
         this.chartOptions6 = {
           series: this.sidebysideBarRowData,
+          annotations: {
+            points: [{
+              x: 'zoom',
+              seriesIndex: 0,
+              label: {
+                borderColor: '#775DD0',
+                offsetY: 0,
+                style: {
+                  color: '#fff',
+                  background: '#775DD0',
+                },
+                text: 'zoom',
+              }
+            }]
+          },
           chart: {
             type: "bar",
             height: 350,
             stacked: true,
             toolbar: {
-              show: false
+              show: true
             },
             zoom: {
               enabled: true
@@ -1324,6 +1447,7 @@ chart.updateOptions(this.chartOptions3);
           xaxis: {
             type: "category",
             categories: categories,
+            tickPlacement: 'on',
             labels: {
               show: true,
               style: {
@@ -1405,8 +1529,38 @@ chart.updateOptions(this.chartOptions3);
                 data: this.sidebysideBarRowData[1]?.data,
               }
             ],
+            annotations: {
+              points: [{
+                x: 'zoom',
+                seriesIndex: 0,
+                label: {
+                  borderColor: '#775DD0',
+                  offsetY: 0,
+                  style: {
+                    color: '#fff',
+                    background: '#775DD0',
+                  },
+                  text: 'zoom',
+                }
+              }]
+            },
             colors: ['#00a5a2', '#31d1ce'],
             chart: {
+              toolbar: {
+                show: true,
+                offsetX: 0,
+                offsetY: 0,
+                tools: {
+                  download: true,
+                  selection: true,
+                  zoom: true,
+                  zoomin: true,
+                  zoomout: true,
+                  pan: true,
+                  reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
+                },
+                autoSelected: 'zoom' 
+              },
               height: 350,
               type: "line"
             },
@@ -1446,6 +1600,7 @@ chart.updateOptions(this.chartOptions3);
             labels: categories,
             xaxis: {
               type: "",
+              tickPlacement: 'on',
               labels: {
                 show: true,
                 style: {
@@ -1840,7 +1995,37 @@ chart.updateOptions(this.chartOptions3);
       if (!this.multiLineOptions) {
         this.chartOptions9 = {
           series: this.sidebysideBarRowData,
+          annotations: {
+            points: [{
+              x: 'zoom',
+              seriesIndex: 0,
+              label: {
+                borderColor: '#775DD0',
+                offsetY: 0,
+                style: {
+                  color: '#fff',
+                  background: '#775DD0',
+                },
+                text: 'zoom',
+              }
+            }]
+          },
           chart: {
+            toolbar: {
+              show: true,
+              offsetX: 0,
+              offsetY: 0,
+              tools: {
+                download: true,
+                selection: true,
+                zoom: true,
+                zoomin: true,
+                zoomout: true,
+                pan: true,
+                reset: true || '<img src="./assets/images/icons/home-icon.png" width="20">',
+              },
+              autoSelected: 'zoom' 
+            },
             height: 350,
             type: "line"
           },
@@ -1880,6 +2065,7 @@ chart.updateOptions(this.chartOptions3);
           },
           xaxis: {
             categories: categories,
+            tickPlacement: 'on',
             labels: {
               show: true,
               style: {
@@ -1975,7 +2161,39 @@ chart.updateOptions(this.chartOptions3);
           legend: {
             show: true,
           },
+          dataLabels: {
+            enabled: true,
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                labels: {
+                  show: true,
+                  name: {
+                    show: true
+                  },
+                  value: {
+                    show: true,
+                    formatter: (val:any) => {
+                      return val;
+                    }
+                  },
+                  total: {
+                    show: true,
+                    showAlways: false,
+                    formatter: (w:any) => {
+                      return w.globals.seriesTotals.reduce((a:any, b:any) => {
+                        return +a + b
+                      }, 0)
+                    }
+                  }
+                }
+              }
+            }
+          },
         };
+        this.changeLegendsAllignment('right');
+        this.label = this.chartOptions10.plotOptions.pie.donut.labels.show;
       }
       else {
         this.chartOptions10 = this.donutOptions;
@@ -2722,6 +2940,8 @@ chart.updateOptions(this.chartOptions3);
       this.hgroupedOptions = undefined;
       this.multiLineOptions = undefined;
       this.donutOptions = undefined;
+      this.kpiFontSize = '3';
+      this.kpiColor = '#000000';
    // }
   }
   saveTableData = [] as any;
@@ -2763,10 +2983,17 @@ chart.updateOptions(this.chartOptions3);
 
 sheetSave(){
   let savedChartOptions ;
+  let kpiData;
+  let kpiColor;
+  let kpiFontSize;
+  let bandColor1;
+  let bandColor2;
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
    this.savedisplayedColumns = this.displayedColumns;
    this.banding = this.bandingSwitch;
+   bandColor1 = this.color1;
+   bandColor2 = this.color2;
   }
   if(this.bar && this.chartId == 6){
     this.saveBar = this.chartsRowData;
@@ -2858,6 +3085,11 @@ sheetSave(){
     this.barLineXaxis = this.sidebysideBarColumnData1;
       savedChartOptions = this.eRadarChartOptions;
   }
+  if(this.kpi && this.chartId == 25){
+    kpiData = this.tablePreviewRow;
+    kpiColor = this.kpiColor;
+    kpiFontSize = this.kpiFontSize;
+  }
   if(this.heatMap && this.chartId == 26){
     savedChartOptions = this.heatMapChartOptions;
   }
@@ -2899,6 +3131,8 @@ const obj={
     "tableData":this.saveTableData,
     "tableColumns":this.savedisplayedColumns,
     "banding":this.banding,
+    "color1":bandColor1,
+    "color2":bandColor2,
 
     "barYaxis":this.saveBar,
     "barXaxis":this.barXaxis,
@@ -2944,9 +3178,9 @@ const obj={
       "donutXaxis": this.donutXaxis,
       "donutOptions":this.donutOptions,
 
-      "kpiData": this.tablePreviewRow,
-      "kpiFontSize": this.kpiFontSize,
-      "kpicolor": this.kpiColor
+      "kpiData": kpiData,
+      "kpiFontSize": kpiFontSize,
+      "kpicolor": kpiColor
   },
   "isApexChart" : this.isApexCharts,
   "isEChart" : this.isEChatrts,
@@ -3070,6 +3304,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.draggedRows = this.sheetResponce.rows;
         this.dimetionMeasure = responce.filters_data;
         this.createdBy = responce.created_by;
+        this.color1 = responce.sheet_data?.results?.color1;
+        this.color2 = responce.sheet_data?.results?.color2;
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
         responce.filters_data.forEach((filter: any)=>{
@@ -3205,6 +3441,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
+          this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
        }
        if(responce.chart_id == 13){
         this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -3430,6 +3668,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
+          this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
+          this.label = this.sheetResponce.savedChartOptions.plotOptions.pie.donut.labels.show
        }
        if(responce.chart_id == 26){
         this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
@@ -3527,6 +3768,7 @@ if(this.fromFileId){
             }
           };
           this.updateDateRange();
+          this.filterDateRange = [];
         }
         //this.filter_id = responce.filter_id;
       },
@@ -3610,6 +3852,7 @@ if(this.fromFileId){
         })
         if(this.dateList.includes(responce.dtype)){
           this.updateDateRange();
+          this.filterDateRange = [];
         }
       },
       error: (error) => {
@@ -4985,9 +5228,15 @@ renameColumns(){
       console.log(this.chartOptions10);
     }
   }
+  dataLabels:boolean = true;
+  label : boolean = true;
   toggleSwitch(type : string) {
     if(type === 'banding'){
       this.bandingSwitch = !this.bandingSwitch;
+      if(!this.bandingSwitch){
+        this.color1 = undefined;
+        this.color2 = undefined;
+      }
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
@@ -5195,6 +5444,21 @@ renameColumns(){
       }
       else if(this.donutchart){
         this.chartOptions10.legend.show = this.legendSwitch;
+      }
+    }
+    else if(type === 'dataLabels'){
+      this.dataLabels = !this.dataLabels;
+      if(this.piechart){
+        this.chartOptions4.dataLabels.enabled = this.dataLabels;
+      }
+      else if(this.donutchart){
+        this.chartOptions10.dataLabels.enabled = this.dataLabels;
+      }
+    }
+    else if(type === 'label'){
+      this.label = !this.label;
+      if(this.donutchart){
+        this.chartOptions10.plotOptions.pie.donut.labels.show = this.label;
       }
     }
     this.updateChart();
@@ -5660,4 +5924,24 @@ fetchChartData(chartData: any){
             }         
           }
   titleShow : boolean = true;
+  legendsAllignment : any;
+  changeLegendsAllignment(allignment:any){
+    this.legendsAllignment = allignment;
+    if(this.pie){
+      this.legendsAllignment = allignment;
+      this.chartOptions4.legend.position = allignment;
+    }
+    else if(this.donut){
+      this.legendsAllignment = allignment;
+      this.chartOptions10.legend.position = allignment;
+    }
+    this.updateChart();
+  }
+  donutSize:any = 50;
+  changeSize(){
+    this.chartOptions10.plotOptions.pie.donut.size = this.donutSize+'%';
+    this.updateChart();
+  }
+  color1:any;
+  color2:any;
 }
