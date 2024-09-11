@@ -530,26 +530,18 @@
                         </div>
                     </div>
                 </div>
-                <div  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
+                <ng-container *ngFor="let dashboardList of demoDashboardList;let i = index" >
+                    <div (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
                         <div class=" p-2 ">
                             <div class="card overflow-hidden img-shadow mb-0">
-                                <img src="./assets/images/icons/sales-analysis.jpg" alt="img" class="card-img-top">
+                                <img src="{{dashboardList.dashboard_image}}" alt="img" class="card-img-top">
                             </div>
                             <div class="card-body p-2">
-                                <h5 class="card-title text-center">Sales Analysis</h5>
+                                <h5 class="card-title text-center">{{dashboardList.dashboard_name}}</h5>
                             </div>
                         </div>
-                </div>  
-                <div  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
-                    <div class=" p-2 ">
-                        <div class="card overflow-hidden img-shadow mb-0">
-                            <img src="./assets/images/icons/profit-analysis.jpg" alt="img" class="card-img-top">
-                        </div>
-                        <div class="card-body p-2">
-                            <h5 class="card-title text-center">Profit Analysis</h5>
-                        </div>
-                    </div>
-            </div>
+                </div>
+</ng-container>
               
             </div>
 

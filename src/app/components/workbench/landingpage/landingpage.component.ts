@@ -22,6 +22,7 @@ export class LandingpageComponent implements OnInit {
 searchDbName:any
 userSheetsList :any[] =[];
 savedDashboardList: any[] =[];
+demoDashboardList: any[] =[];
 connectionList:any[]=[];
 savedQueryList:any[]=[];
 showAllSheets = true;
@@ -144,7 +145,8 @@ getuserDashboardsList(){
   this.workbechService.getuserDashboardsListput(Obj).subscribe(
     {
       next:(data:any) =>{
-        this.savedDashboardList=data.sheets
+        this.savedDashboardList=data.sheets;
+        this.demoDashboardList = data.sample_dashboards;
         console.log(this.savedDashboardList)
 
       },
