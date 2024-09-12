@@ -148,6 +148,11 @@ export class SheetsComponent {
   chartOptions10:any;
   heatMapChartOptions: any;
   eBarChartOptions: any;
+  eStackedBarChartOptions: any;
+  eGroupedBarChartOptions: any;
+  eMultiBarChartOptions: any;
+  ehorizontalStackedBarChartOptions: any;
+  eSideBySideBarChartOptions: any;
   eAreaChartOptions: any;
   eLineChartOptions: any;
   ePieChartOptions: any;
@@ -1267,6 +1272,7 @@ chart.updateOptions(this.chartOptions3);
     sidebysideBar(){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
+      if(this.isApexCharts){
       if (!this.sidebysideBarOptions) {
         this.chartOptions2 = {
           series: this.sidebysideBarRowData,
@@ -1387,6 +1393,91 @@ chart.updateOptions(this.chartOptions3);
       // this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
       this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
       this.yGridSwitch = this.chartOptions2.grid.yaxis.lines.show;
+    } else {
+      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      yaxisOptions.forEach((bar : any)=>{
+bar["type"]="bar";
+      });
+      this.eSideBySideBarChartOptions = {
+        backgroundColor: this.backgroundColor,
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        toolbox: {
+          feature: {
+            magicType: { show: true, type: ['line'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+        },
+        axisPointer: {
+          type: 'none'
+        },
+        dataZoom: [
+          {
+            show: this.isZoom,
+            type: 'slider'
+          },
+
+        ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '13%',
+          containLabel: true,
+        },
+        yAxis: {
+          type: 'value',
+         
+          splitLine: {
+            lineStyle: {
+              color: this.xGridColor
+            }, show: this.xGridSwitch
+          },
+          axisLine: {
+            lineStyle: {
+              color: this.xLabelColor,
+            },
+          },
+          axisLabel: {
+            show: this.xLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+            align: this.labelAlignment// Hide xAxis labels
+          }
+        },
+        toggleGridLines: true,
+        xAxis: {
+          type: 'category',
+          data: categories,
+          axisLine: {
+            lineStyle: {
+              color: this.yLabelColor
+            }
+          },
+          axisLabel: {
+            show: this.yLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+          },
+          splitLine: {
+            lineStyle: {
+              color: this.yGridColor
+            },
+            show: this.yGridSwitch
+          }
+        },
+        series: yaxisOptions,
+        
+
+      };
+    }
     }
     flattenDimensions(dimensions: Dimension[]): string[] {
       const numCategories = Math.max(...dimensions.map(dim => dim.values.length));
@@ -1397,6 +1488,7 @@ chart.updateOptions(this.chartOptions3);
     stockedBar(){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
+      if(this.isApexCharts){
       if (!this.stokedOptions) {
         this.chartOptions6 = {
           series: this.sidebysideBarRowData,
@@ -1506,9 +1598,95 @@ chart.updateOptions(this.chartOptions3);
         this.chartOptions6 = this.stokedOptions;
       }
       this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
-      // this.yLabelSwitch = this.chartOptions6.yaxis.labels.show;
       this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
       this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
+    } else {
+      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      yaxisOptions.forEach((bar : any)=>{
+bar["type"]="bar";
+bar["stack"]="total";
+      });
+      this.eStackedBarChartOptions = {
+        backgroundColor: this.backgroundColor,
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        toolbox: {
+          feature: {
+            magicType: { show: true, type: ['line'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+        },
+        axisPointer: {
+          type: 'none'
+        },
+        dataZoom: [
+          {
+            show: this.isZoom,
+            type: 'slider'
+          },
+
+        ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '13%',
+          containLabel: true,
+        },
+        yAxis: {
+          type: 'value',
+         
+          splitLine: {
+            lineStyle: {
+              color: this.xGridColor
+            }, show: this.xGridSwitch
+          },
+          axisLine: {
+            lineStyle: {
+              color: this.xLabelColor,
+            },
+          },
+          axisLabel: {
+            show: this.xLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+            align: this.labelAlignment// Hide xAxis labels
+          }
+        },
+        toggleGridLines: true,
+        xAxis: {
+          type: 'category',
+          data: categories,
+          axisLine: {
+            lineStyle: {
+              color: this.yLabelColor
+            }
+          },
+          axisLabel: {
+            show: this.yLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+          },
+          splitLine: {
+            lineStyle: {
+              color: this.yGridColor
+            },
+            show: this.yGridSwitch
+          }
+        },
+        series: yaxisOptions,
+        
+
+      };
+    }
+
     }
 
     barLineChart(){
@@ -1813,6 +1991,7 @@ chart.updateOptions(this.chartOptions3);
     horizentalStockedBar(){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
+      if(this.isApexCharts){
       if (!this.hStockedOptions) {
         this.chartOptions7 = {
           series: this.sidebysideBarRowData,
@@ -1908,10 +2087,97 @@ chart.updateOptions(this.chartOptions3);
       // this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
       this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
       this.yGridSwitch = this.chartOptions7.grid.yaxis.lines.show;
+    } else {
+      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      yaxisOptions.forEach((bar : any)=>{
+bar["type"]="bar";
+bar["stack"]="total";
+      });
+      this.ehorizontalStackedBarChartOptions = {
+        backgroundColor: this.backgroundColor,
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        toolbox: {
+          feature: {
+            magicType: { show: true, type: ['line'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+        },
+        axisPointer: {
+          type: 'none'
+        },
+        dataZoom: [
+          {
+            show: this.isZoom,
+            type: 'slider'
+          },
+
+        ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '13%',
+          containLabel: true,
+        },
+        xAxis: {
+          type: 'value',
+         
+          splitLine: {
+            lineStyle: {
+              color: this.xGridColor
+            }, show: this.xGridSwitch
+          },
+          axisLine: {
+            lineStyle: {
+              color: this.xLabelColor,
+            },
+          },
+          axisLabel: {
+            show: this.xLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+            align: this.labelAlignment// Hide xAxis labels
+          }
+        },
+        toggleGridLines: true,
+        yAxis: {
+          type: 'category',
+          data: categories,
+          axisLine: {
+            lineStyle: {
+              color: this.yLabelColor
+            }
+          },
+          axisLabel: {
+            show: this.yLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+          },
+          splitLine: {
+            lineStyle: {
+              color: this.yGridColor
+            },
+            show: this.yGridSwitch
+          }
+        },
+        series: yaxisOptions,
+        
+
+      };
+    }
     }
     hGrouped(){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
+      if(this.isApexCharts){
       if (!this.hgroupedOptions) {
         this.chartOptions8 = {
           series: this.sidebysideBarRowData,
@@ -1988,10 +2254,96 @@ chart.updateOptions(this.chartOptions3);
       // this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
       this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
       this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
+     } else {
+        let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+        yaxisOptions.forEach((bar : any)=>{
+  bar["type"]="bar";
+        });
+        this.eGroupedBarChartOptions = {
+          backgroundColor: this.backgroundColor,
+          legend: {
+            orient: 'vertical',
+            left: 'left'
+          },
+          toolbox: {
+            feature: {
+              magicType: { show: true, type: ['line'] },
+              restore: { show: true },
+              saveAsImage: { show: true }
+            }
+          },
+          tooltip: {
+            trigger: 'axis',
+          },
+          axisPointer: {
+            type: 'none'
+          },
+          dataZoom: [
+            {
+              show: this.isZoom,
+              type: 'slider'
+            },
+  
+          ],
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '13%',
+            containLabel: true,
+          },
+          xAxis: {
+            type: 'value',
+           
+            splitLine: {
+              lineStyle: {
+                color: this.xGridColor
+              }, show: this.xGridSwitch
+            },
+            axisLine: {
+              lineStyle: {
+                color: this.xLabelColor,
+              },
+            },
+            axisLabel: {
+              show: this.xLabelSwitch,
+              fontFamily: this.xLabelFontFamily,
+              fontSize: this.xLabelFontSize,
+              fontWeight: this.xlabelFontWeight,
+              align: this.labelAlignment// Hide xAxis labels
+            }
+          },
+          toggleGridLines: true,
+          yAxis: {
+            type: 'category',
+            data: categories,
+            axisLine: {
+              lineStyle: {
+                color: this.yLabelColor
+              }
+            },
+            axisLabel: {
+              show: this.yLabelSwitch,
+              fontFamily: this.xLabelFontFamily,
+              fontSize: this.xLabelFontSize,
+              fontWeight: this.xlabelFontWeight,
+            },
+            splitLine: {
+              lineStyle: {
+                color: this.yGridColor
+              },
+              show: this.yGridSwitch
+            }
+          },
+          series: yaxisOptions,
+          
+  
+        };
+      }
     }
     multiLineChart(){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
+      if(this.isApexCharts){
       if (!this.multiLineOptions) {
         this.chartOptions9 = {
           series: this.sidebysideBarRowData,
@@ -2122,6 +2474,91 @@ chart.updateOptions(this.chartOptions3);
       // this.yLabelSwitch = this.chartOptions9.yaxis.labels.show;
       this.xGridSwitch = this.chartOptions9.grid.xaxis.lines.show;
       this.yGridSwitch = this.chartOptions9.grid.yaxis.lines.show;
+    } else {
+      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      yaxisOptions.forEach((bar : any)=>{
+bar["type"]="line";
+      });
+      this.eMultiBarChartOptions = {
+        backgroundColor: this.backgroundColor,
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        toolbox: {
+          feature: {
+            magicType: { show: true, type: ['bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+        },
+        axisPointer: {
+          type: 'none'
+        },
+        dataZoom: [
+          {
+            show: this.isZoom,
+            type: 'slider'
+          },
+
+        ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '13%',
+          containLabel: true,
+        },
+        xAxis: {
+          type: 'value',
+         
+          splitLine: {
+            lineStyle: {
+              color: this.xGridColor
+            }, show: this.xGridSwitch
+          },
+          axisLine: {
+            lineStyle: {
+              color: this.xLabelColor,
+            },
+          },
+          axisLabel: {
+            show: this.xLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+            align: this.labelAlignment// Hide xAxis labels
+          }
+        },
+        toggleGridLines: true,
+        yAxis: {
+          type: 'category',
+          data: categories,
+          axisLine: {
+            lineStyle: {
+              color: this.yLabelColor
+            }
+          },
+          axisLabel: {
+            show: this.yLabelSwitch,
+            fontFamily: this.xLabelFontFamily,
+            fontSize: this.xLabelFontSize,
+            fontWeight: this.xlabelFontWeight,
+          },
+          splitLine: {
+            lineStyle: {
+              color: this.yGridColor
+            },
+            show: this.yGridSwitch
+          }
+        },
+        series: yaxisOptions,
+        
+
+      };
+    }
     }
     donutChart(){
       const self = this;
@@ -3038,14 +3475,24 @@ sheetSave(){
   if(this.sidebyside && this.chartId == 7){
     this.sidebysideBarYaxis = this.sidebysideBarRowData;
     this.sidebysideBarXaxis = this.sidebysideBarColumnData1;
-    this.sidebysideBarOptions = this.chartOptions2;
+    if(this.isApexCharts) {
+      this.sidebysideBarOptions = this.chartOptions2;
     savedChartOptions = this.chartOptions2;
+    } else {
+      savedChartOptions = this.eSideBySideBarChartOptions;
+    }
+    
   }
   if(this.stocked && this.chartId == 5){
     this.stokedBarYaxis = this.sidebysideBarRowData;
     this.stokedBarXaxis = this.sidebysideBarColumnData1;
-    this.stokedOptions = this.chartOptions6;
+    if(this.isApexCharts) {
+      this.stokedOptions = this.chartOptions6;
     savedChartOptions = this.chartOptions6;
+    } else {
+      savedChartOptions = this.eStackedBarChartOptions;
+    }
+    
   }
   if(this.barLine && this.chartId == 4){
     this.barLineYaxis = this.sidebysideBarRowData;
@@ -3060,20 +3507,35 @@ sheetSave(){
   if(this.horizentalStocked && this.chartId == 2){
     this.hStockedYaxis = this.sidebysideBarRowData;
     this.hStockedXaxis = this.sidebysideBarColumnData1;
-    this.hStockedOptions = this.chartOptions7;
+    if(this.isApexCharts) {
+      this.hStockedOptions = this.chartOptions7;
     savedChartOptions = this.chartOptions7;
+    } else {
+      savedChartOptions = this.ehorizontalStackedBarChartOptions;
+    }
+    
   }
   if(this.grouped && this.chartId == 3){
     this.hgroupedYaxis = this.sidebysideBarRowData;
     this.hgroupedXaxis = this.sidebysideBarColumnData1;
-    this.hgroupedOptions = this.chartOptions8;
-    savedChartOptions = this.chartOptions8;
+    if(this.isApexCharts) {
+      this.hgroupedOptions = this.chartOptions8;
+      savedChartOptions = this.chartOptions8;
+    } else {
+      savedChartOptions = this.eGroupedBarChartOptions;
+    }
+    
   }
   if(this.multiLine && this.chartId == 8){
     this.multiLineYaxis = this.sidebysideBarRowData;
     this.multiLineXaxis = this.sidebysideBarColumnData1;
-    this.multiLineOptions = this.chartOptions9;
+    if(this.isApexCharts) {
+      this.multiLineOptions = this.chartOptions9;
     savedChartOptions = this.chartOptions9;
+    } else {
+      savedChartOptions = this.eMultiBarChartOptions;
+    }
+    
   }
   if(this.donut && this.chartId == 10){
     this.donutYaxis = this.chartsRowData;
@@ -5476,6 +5938,18 @@ renameColumns(){
     }
     else if(this.barLine){
       this.barLineChart();
+    } else if(this.stocked){
+      this.stockedBar();
+    }
+    else if(this.grouped){
+      this.hGrouped();
+    }
+    else if(this.sidebyside){
+      this.sidebysideBar();
+    } else if(this.horizentalStocked){
+      this.horizentalStockedBar();
+    } else if(this.multiLine){
+      this.multiLineChart();
     }
   }
 
@@ -5620,6 +6094,10 @@ fetchChartData(chartData: any){
     this.areaChart();
     this.barLineChart();
     this.radarChart();
+    this.stockedBar();
+    this.hGrouped();
+    this.sidebysideBar();
+    this.horizentalStockedBar();
   }
   marksColor(color: any, colorCase: number) {
     console.log(color)

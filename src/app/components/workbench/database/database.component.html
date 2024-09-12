@@ -172,6 +172,27 @@
                                         <div class="card-body">
                                                 @if(isOpen){
                                             <div class=" gap-1 d-flex flex-wrap p-2">
+                                                <!-- <ng-select [items]="dropdownOptions"
+                                                       bindLabel="value"
+                                                       [(ngModel)]="selectedOption"
+                                                       [groupBy]="'group'" 
+                                                       [searchable]="true"
+                                                       [searchFn]="customSearch.bind(this)"
+                                                       (change)="updateRemainingTables($event)"
+                                                       placeholder="Select column"
+                                                       [clearable]="true">
+                                            
+                                              
+                                              <ng-template ng-optgroup-tmp let-item="item">
+                                                <strong>{{ item.group }}</strong> 
+                                              </ng-template>
+                                            
+                                            
+                                              <ng-template ng-option-tmp let-item="item">
+                                                {{ item.value }} 
+                                              </ng-template>
+                                            
+                                            </ng-select> -->
                                                 <div ngbDropdown class="btn-group my-2 dropdown">
                                                     <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false" class="dropdown-toggle btn btn-info-light"> {{(selectedClmnT1 ? selectedClmnT1:'Select Column') | slice:0:13}}</button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
@@ -181,7 +202,7 @@
                                                              </li>
                                                              @for(column of table.columns;track column){
                                                         <li>
-                                                            <a ngbDropdownItem class="dropdown-item" (click)="selectedClmnT1 = column.column;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables()">{{ column.column }}</a>
+                                                            <a ngbDropdownItem class="dropdown-item" (click)="selectedClmnT1 = column.column;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables(table)">{{ column.column }}</a>
                                                         </li>    
                                                     }
                                                     }       
@@ -221,6 +242,27 @@
                                                         }         
                                                     </ul>
                                                 </div>
+                                                <!-- <ng-select [items]="remainingDropdownOptions"
+                                                bindLabel="value"
+                                                [(ngModel)]="selectedOption"
+                                                [groupBy]="'group'" 
+                                                [searchable]="true"
+                                                [searchFn]="customSearch.bind(this)"
+                                            
+                                                placeholder="Select column"
+                                                [clearable]="true">
+                                     
+                                 
+                                       <ng-template ng-optgroup-tmp let-item="item">
+                                         <strong>{{ item.group }}</strong>  
+                                       </ng-template>
+                                     
+                                      
+                                       <ng-template ng-option-tmp let-item="item">
+                                         {{ item.value }} 
+                                       </ng-template>
+                                     
+                                     </ng-select> -->
                                             </div>
                                             <div class="modal-footer" style="border-block-start:none">
                                                 <button class="btn btn-secondary" (click)="clearJoinCondns()" aria-expanded="false">

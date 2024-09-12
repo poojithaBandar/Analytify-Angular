@@ -20,11 +20,13 @@ import { CommonModule } from '@angular/common';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { tickStep } from 'd3';
 import { ToastrService } from 'ngx-toastr';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent],
+  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   animations:[
@@ -69,6 +71,9 @@ export class DatabaseComponent {
   dragedTableName: any;
   databaseconnectionsList=true;
   draggedtables = [] as any;
+  dropdownOptions: any[] = [];
+  remainingDropdownOptions: any[] = [];
+  selectedOption: string | null = null;
   getTableColumns = [] as any;
   getTableRows = [] as any;
   relationOfTables = [] as any;
@@ -271,6 +276,7 @@ export class DatabaseComponent {
           this.joinTypes = data.dragged_data.join_type
           if (this.draggedtables.length > 0) {
             this.joiningTables();
+            this.dropdownOptions = this.buildDropdownOptions(this.draggedtables);
           }
         },
         error: (error) => {
@@ -278,6 +284,29 @@ export class DatabaseComponent {
         }
       })
     }
+  }
+
+  customSearch(term: string, item: any): boolean {
+    return item.searchKey.toLowerCase().includes(term.toLowerCase());
+  }
+
+  buildDropdownOptions(tables:any) {
+    let dropdownOptions:any[] = [];
+  
+    tables.forEach((tableName: any) => {
+      const columns = tableName.columns; 
+  
+      const tableOptions = columns.map((column: any) => ({
+        group: tableName.alias,  
+        value: column.column, 
+        column_dtype: column.datatype,
+        
+        searchKey: `${tableName.alias} ${column.column}` 
+      }));
+      dropdownOptions = [...dropdownOptions, ...tableOptions];
+    });
+    console.log(dropdownOptions);
+  return dropdownOptions;
   }
   getTablesFromFileId() {
     this.workbechService.getTablesFromFileId(this.fileId)
@@ -415,6 +444,7 @@ pushToDraggedTables(newTable:any): void {
     }
     newTable['alias']=tableName;
     this.draggedtables.push(newTable);
+    this.dropdownOptions = this.buildDropdownOptions(this.draggedtables);
 }
 
 getTablerowclms(table:any,schema:any){
@@ -537,8 +567,9 @@ executeQuery(){
     })
 }
 
-updateRemainingTables() {
+updateRemainingTables(item:any) {
   this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
+  this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
   this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
 }
 

@@ -884,6 +884,35 @@
                 </div>
             </div>
             }
+            @if(stocked && chartId){         
+                <div class="card-body">
+                    <div id="bar-chart">
+                        <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
+                    </div>
+                </div>
+                }
+                @if(sidebyside && chartId){         
+                    <div class="card-body">
+                        <div id="bar-chart">
+                            <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
+                        </div>
+                    </div>
+                    }
+            @if(grouped && chartId){         
+                    <div class="card-body">
+                        <div id="bar-chart">
+                            <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
+                        </div>
+                    </div>
+            }
+            @if(horizentalStocked && chartId){         
+                <div class="card-body">
+                    <div id="bar-chart">
+                        <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
+                    </div>
+                </div>
+        }
+                
             @if(area && chartId){
             <div class="card-body">
                 <div id="bar-chart">
