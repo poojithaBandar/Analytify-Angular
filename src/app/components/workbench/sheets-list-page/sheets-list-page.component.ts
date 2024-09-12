@@ -33,6 +33,7 @@ export class SheetsListPageComponent implements OnInit {
   fileId:any;
   qrysetId:any;
   datasourceQuerysetId:any;
+  selectedSheet = '0';
 constructor(private workbechService:WorkbenchService,private router:Router,private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService){
   this.viewSheetList = this.viewTemplateService.viewSheets()
 }
@@ -52,12 +53,13 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
 
 
       const selectedSheet = (event.target as HTMLSelectElement).value;
-    
       // Check if the 'All' option is selected
       if (selectedSheet === '0') {
+        this.selectedSheet = selectedSheet;
         console.log('All sheets selected');
       } else {
         // Here, `selectedSheet` is a string representation, convert it back if needed
+        this.selectedSheet = selectedSheet;
         const selectedObject = this.sheetsList.find(sheet => sheet.id === +selectedSheet);
     
         if (selectedObject) {
@@ -271,7 +273,9 @@ deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
   )
 }
 sheetsRoute(){
-  // this.router.navigate(['/workbench/sheets'])  
+  if (this.selectedSheet === '0') {
+  this.router.navigate(['/workbench/sheets'])  
+  }else{
   if (this.dbId === null || this.dbId === undefined) {
     const encodedFileId = btoa(this.fileId.toString());
     const encodedQuerySetId = btoa(this.qrysetId.toString());
@@ -298,5 +302,6 @@ sheetsRoute(){
         this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
       }
     } 
+  }
 }
 }
