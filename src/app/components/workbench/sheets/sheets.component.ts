@@ -3013,13 +3013,19 @@ bar["type"]="line";
         const indexB = columnIndexMap.get(b[0]) ?? -1;
         return indexA - indexB;
       });
+      this.draggedColumns.forEach((column: any, index: number) => {
+        if (column.column === element.column) {
+          if (event.currentIndex !== index) {
+            event.currentIndex = index;
+          }
+        }
+      });
       console.log(this.draggedColumnsData);
-      this.dataExtraction();
-      // }else{
-      // }
-
-      // });
-
+      if (this.dateList.includes(element.data_type)) {
+        this.dateFormat(element, event.currentIndex, 'year');
+      } else {
+        this.dataExtraction();
+      }
     }
     dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz'];
     integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double'];
@@ -3698,22 +3704,24 @@ if(this.retriveDataSheet_id){
     //   this.getSheetNames();
     //  this.sheetRetrive();
     }
-    let obj : object= {
-      "sheet_id":this.retriveDataSheet_id
+    if(this.dashboardId){
+      let obj : object= {
+        "sheet_id":this.retriveDataSheet_id
+      }
+      this.workbechService.dashboardSheetsUpdate(obj).subscribe({next: (responce:any) => {
+        console.log('sheet_dash_update');
+        console.log(responce);
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          text: error.error.message,
+          width: '200px',
+        })
+      }
+    })
     }
-    this.workbechService.dashboardSheetsUpdate(obj).subscribe({next: (responce:any) => {
-      console.log('sheet_dash_update');
-      console.log(responce);
-    },
-    error: (error) => {
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        text: error.error.message,
-        width: '200px',
-      })
-    }
-  })
   
   },
   error: (error) => {
@@ -6369,18 +6377,28 @@ fetchChartData(chartData: any){
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
-      this.dataExtraction();
      }else if(format === '-Select-'){
       this.draggedColumnsData[index] = [column.column,column.data_type,''];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:''};
-      this.dataExtraction();
      }
      else{
       this.draggedColumnsData[index] = [column.column, "date", format];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format };
       console.log(this.draggedColumns);
-      this.dataExtraction();
      }
+     this.dataExtraction();
+  }
+  dateAggregation(column:any, index:any, type:any){
+    if (type === '') {
+      this.draggedColumnsData[index] = [column.column, column.data_type, type];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
+    }
+    else {
+      this.draggedColumnsData[index] = [column.column, "date", type];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
+      console.log(this.draggedColumns);
+    }
+    this.dataExtraction();
   }
   
   kpiFontSize: string = '3';

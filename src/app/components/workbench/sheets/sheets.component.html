@@ -410,6 +410,17 @@
                                                     <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
+                                            <div  *ngIf="dateList.includes(columns.data_type) && false" class="dropup" ngbDropdown style="display: flex; align-items: center;">
+                                                <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Measure</li>
+                                                <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count')">Count</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count distinct')">Count (Distinct)</a></li>
+                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'')">None</a></li>  
+                                                </ul>
+                                            </div>
                                             <li><a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedColumn(index,columns.column)"> Remove</a>  </li>
                                         </ul>
                                     </div>
