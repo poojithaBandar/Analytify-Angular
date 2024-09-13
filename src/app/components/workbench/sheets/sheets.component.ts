@@ -607,9 +607,9 @@ if(this.fromFileId){
             }
           }
         };
-        let chart = new ApexCharts(document.querySelector('#barChart'), this.chartOptions3);
-chart.render();
-chart.updateOptions(this.chartOptions3);
+//         let chart = new ApexCharts(document.querySelector('#barChart'), this.chartOptions3);
+// chart.render();
+// chart.updateOptions(this.chartOptions3);
         // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
         this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
@@ -718,41 +718,51 @@ chart.updateOptions(this.chartOptions3);
     if(this.isApexCharts){
       const self = this;
       if(!this.pieOptions){
-        this.chartOptions4={
-          series: this.chartsRowData, 
-          chart: { 
-              height: 300,
-              type: 'pie',
-              events :  {
-                                 dataPointSelection: function(event:any, chartContext:any, config:any) {
-                                   const selectedXValue = self.chartsColumnData[config.dataPointIndex];
-                                   console.log('X-axis value:', selectedXValue);
-                                 if(self.drillDownIndex < self.draggedDrillDownColumns.length - 1  ){
-                                 const selectedXValue = self.chartOptions4.labels[config.dataPointIndex];
-                            console.log('X-axis value:', selectedXValue);
-                            let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
-                            self.drillDownIndex++;
-                            let obj = { [nestedKey] : selectedXValue};
-                            self.drillDownObject.push(obj);
-                            self.dataExtraction();
-                                  }
-                                 }
-                               }
+        this.chartOptions4 = {
+          series: this.chartsRowData,
+          chart: {
+            height: 300,
+            type: 'pie',
+            events: {
+              dataPointSelection: function (event: any, chartContext: any, config: any) {
+                const selectedXValue = self.chartsColumnData[config.dataPointIndex];
+                console.log('X-axis value:', selectedXValue);
+                if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
+                  const selectedXValue = self.chartOptions4.labels[config.dataPointIndex];
+                  console.log('X-axis value:', selectedXValue);
+                  let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+                  self.drillDownIndex++;
+                  let obj = { [nestedKey]: selectedXValue };
+                  self.drillDownObject.push(obj);
+                  self.dataExtraction();
+                }
+              }
+            }
           },
           colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
-          labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category),
+          labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
           legend: {
-              show: true,
-              position: "bottom"
+            show: true,
+            position: "bottom"
           },
           dataLabels: {
             enabled: true,
-              dropShadow: {
-                  enabled: false
-              }
+            dropShadow: {
+              enabled: false
+            }
           },
-          };
+          tooltip: {
+            enabled:true,
+            y: {
+              formatter: function(value: number) {
+                console.log("Tooltip triggered"); // Simple debug message
+                return value;
+              }
+            }
+          }
+        };
           this.changeLegendsAllignment('bottom');
+          console.log(this.chartOptions4)
       }
       else{
         this.chartOptions4= this.pieOptions;
@@ -2838,6 +2848,24 @@ bar["type"]="line";
               this.kpi = false;
               this.heatMap = false;
             }
+            if(this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length > 1)){
+              this.table = true;
+              this.bar = false;
+              this.area = false;
+              this.line = false;
+              this.pie = false;
+              this.sidebyside = false;
+              this.stocked = false;
+              this.barLine = false;
+              this.horizentalStocked = false;
+              this.grouped = false;
+              this.multiLine = false;
+              this.donut = false;
+              this.chartId = 1;
+              this.radar = false;
+              this.kpi = false;
+              this.heatMap = false;
+            }
           },
           error: (error) => {
             console.log(error);
@@ -3670,6 +3698,22 @@ if(this.retriveDataSheet_id){
     //   this.getSheetNames();
     //  this.sheetRetrive();
     }
+    let obj : object= {
+      "sheet_id":this.retriveDataSheet_id
+    }
+    this.workbechService.dashboardSheetsUpdate(obj).subscribe({next: (responce:any) => {
+      console.log('sheet_dash_update');
+      console.log(responce);
+    },
+    error: (error) => {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        text: error.error.message,
+        width: '200px',
+      })
+    }
+  })
   
   },
   error: (error) => {

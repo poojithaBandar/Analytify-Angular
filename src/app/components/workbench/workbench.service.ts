@@ -537,7 +537,12 @@ deleteUser(id:any){
       return (<File> blob);
     }
 
-
+    //dashboard sheets upadte
+    dashboardSheetsUpdate(sheetId:any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_sheet_update/`+this.accessToken,sheetId);
+    }
 
 
 }

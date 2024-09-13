@@ -211,6 +211,8 @@ export class HeaderComponent implements OnInit {
     });
     const currentUser = localStorage.getItem( 'username' );
     this.userName = JSON.parse( currentUser! )['userName'];
+    let html = this.elementRef.nativeElement.ownerDocument.documentElement;
+    html.setAttribute('data-toggled', 'icon-overlay-close');
   }
   logOut() {
     this.authService.logOut().subscribe((res) => {

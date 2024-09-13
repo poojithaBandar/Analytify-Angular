@@ -699,13 +699,13 @@ export class WorkbenchComponent implements OnInit{
       }
     }
   ngOnInit(): void {
-    {
-      document.querySelector('html')?.getAttribute('data-toggled') != null
-        ? document.querySelector('html')?.removeAttribute('data-toggled')
-        : document
-            .querySelector('html')
-            ?.setAttribute('data-toggled', 'icon-overlay-close');    
-    }
+    // {
+    //   document.querySelector('html')?.getAttribute('data-toggled') != null
+    //     ? document.querySelector('html')?.removeAttribute('data-toggled')
+    //     : document
+    //         .querySelector('html')
+    //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
+    // }
     if(this.viewDatasourceList){
    this.getDbConnectionList();
     }
