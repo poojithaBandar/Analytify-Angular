@@ -5,6 +5,9 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class WorkbenchService {
+  getDrillDowndata(Obj: any) {
+    throw new Error('Method not implemented.');
+  }
 
   addSheetToDashboard(obj : any) {
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -179,6 +182,12 @@ export class WorkbenchService {
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/sheetslist/`+this.accessToken,obj);
+  }
+
+  getDashboardDrillDowndata(obj : any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_down/`+this.accessToken,obj);
   }
 
   sheetRetrivelBasedOnIds(obj : any){
