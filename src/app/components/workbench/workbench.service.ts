@@ -189,6 +189,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_down/`+this.accessToken,obj);
   }
+  
+  getPublicDashboardDrillDowndata(obj : any){
+    return this.http.post<any>(`${environment.apiUrl}/public/dashboard_drill_down/`,obj);
+  }
 
   sheetRetrivelBasedOnIds(obj : any){
     const currentUser = localStorage.getItem( 'currentUser' );

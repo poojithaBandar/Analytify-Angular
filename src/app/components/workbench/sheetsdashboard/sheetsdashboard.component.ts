@@ -628,6 +628,7 @@ export class SheetsdashboardComponent {
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          if(sheet && sheet.chartOptions && sheet.chartOptions.chart) {
           sheet.chartOptions.chart.events = {
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               let selectedXValue;
@@ -647,6 +648,7 @@ export class SheetsdashboardComponent {
               }
             }
           };
+        }
           console.log('After sanitization:', sheet.data.sheetTagName);
         })
         console.log(this.sheetTagTitle);
@@ -2885,9 +2887,31 @@ kpiData?: KpiData;
 
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
-        this.dashboard.forEach((sheet)=>{
+        let self = this;
+        this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          if(sheet && sheet.chartOptions && sheet.chartOptions.chart) {
+            sheet.chartOptions.chart.events = {
+              dataPointSelection: function (event: any, chartContext: any, config: any) {
+                let selectedXValue;
+                if(sheet.chartId == 24 || sheet.chartId == 10 ){
+                  selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
+                } else {
+                  selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
+                }              
+                if (sheet.drillDownIndex < sheet.drillDownHierarchy.length - 1) {
+                  // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
+                  console.log('X-axis value:', selectedXValue);
+                  let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
+                  sheet.drillDownIndex++;
+                  let obj = { [nestedKey]: selectedXValue };
+                  sheet.drillDownObject.push(obj);
+                  self.publicDataExtraction(sheet);
+                }
+              }
+            };
+          }
           console.log('After sanitization:', sheet.data.sheetTagName);
         })
         console.log(this.sheetTagTitle);
@@ -3018,6 +3042,54 @@ kpiData?: KpiData;
       }
     })
   }
+  }
+
+  publicDataExtraction(item : any){
+    this.extractKeysAndData();
+    let Obj : any = {
+      "col":item.column_Data,"row":item.row_Data,
+      id:this.keysArray,
+      input_list:this.dataArray,
+      // "id":["766"],"input_list":[["Home Appliances"]],
+      "dashboard_id":this.dashboardId,
+      "sheet_id":item.sheetId,
+      "database_id":item.databaseId,
+      "is_date":false,
+  "drill_down":item.drillDownObject,
+  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
+    }
+    this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
+      next:(data)=>{
+     console.log(data);
+      data.data.col.forEach((res:any) => {      
+        let obj1={
+          name:res.column,
+          values: res.result_data
+        }
+        this.filteredColumnData.push(obj1);
+        console.log('filtercolumn',this.filteredColumnData)
+      });
+      data.data.row.forEach((res:any) => {
+        let obj={
+          name: res.col,
+          data: res.result_data
+        }
+        this.filteredRowData.push(obj);
+        console.log('filterowData',this.filteredRowData)
+      });
+      this.setDashboardSheetData(item, false);
+  
+        },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
   }
 
   dataExtraction(item : any){
