@@ -22,7 +22,7 @@ export class AuthService {
   afs: any;
   emailActivationToken:any;
   public showLoader:boolean=false;
-
+  accessToken:any;
   constructor(private afu: AngularFireAuth, private router: Router,public ngZone: NgZone,private http: HttpClient) {
     this.afu.authState.subscribe((auth: any) => {
       this.authState = auth;
@@ -173,6 +173,12 @@ reactivateEmail(data:any){
   return this.http.post<any>(`${environment.apiUrl}/re_activation`+'/',data);
 
 }
+getTokenQuickbook(data:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/quickbooks_token/`+this.accessToken,data); 
+}
+
 logOut(){
 localStorage.removeItem('username');
        localStorage.removeItem('currentUser');

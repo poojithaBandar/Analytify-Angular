@@ -1901,7 +1901,6 @@ getColumnsForFilter(){
       this.columnFilterNames=data.response_data.tables;
       this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
       this.buildDropdownOptions(this.columnFilterNames); 
-
     },
     error:(error)=>{
       console.log(error)
@@ -2069,6 +2068,23 @@ getDashboardFilterredList(){
       })
     }
   })
+}
+getFilteredColumns(filterList: any) {
+  // Ensure filterList.searchText is a string (handling null/undefined cases)
+  const searchText = filterList?.searchText ? filterList.searchText.toLowerCase() : '';
+
+  // If searchText is empty, return the full list of columns
+  if (!searchText) {
+    return filterList?.colData || []; // Return an empty array if colData is null or undefined
+  }
+
+  // Safely filter colData and check if col.label exists before calling toLowerCase
+  const data = (filterList?.colData || []).filter((col: any) => col?.label?.toLowerCase().includes(searchText));
+  
+  console.log('Filtered Data:', data); // Log the filtered data to check the output
+
+  return data;
+
 }
 getColDataFromFilterId(id:string,colData:any,isFilter : boolean){
   if(localStorage.getItem('filterid')){
@@ -2947,6 +2963,22 @@ kpiData?: KpiData;
   }
 }
 
+import { Pipe, PipeTransform } from '@angular/core';
+@Pipe({
+  name: 'filterPipe'
+})
+export class FilterPipe implements PipeTransform {
+  transform(items: any[], searchText: string): any[] {
+    if (!items) {
+      return [];
+    }
+    if (!searchText) {
+      return items;
+    }
+    searchText = searchText.toLowerCase();
+    return items.filter(item => item.label.toLowerCase().includes(searchText));
+  }
+}
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
 //   content: string;

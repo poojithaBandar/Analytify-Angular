@@ -31,7 +31,7 @@ ViewRoles(){
   return this.rolesprevilgeService.userHasPriviledge(59);
 }
 viewUsers(){
-  return this.rolesprevilgeService.userHasPriviledge(71);
+  return this.rolesprevilgeService.userHasPriviledge(64);
 }
 //add
 addDatasource(){

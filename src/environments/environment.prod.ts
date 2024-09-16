@@ -15,5 +15,8 @@ export const environment = {
 
     //  //local
     //  apiUrl:'http://127.0.0.1:8000/v1',
-
+    // QA server
+    // apiUrl:'http://13.52.99.241:80/v1',
+    // demo url
+      // apiUrl:'https://api.insightapps.ai'
 };

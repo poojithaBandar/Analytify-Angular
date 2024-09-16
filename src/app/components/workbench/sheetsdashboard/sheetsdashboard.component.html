@@ -477,8 +477,8 @@
                                                               </div>
                                                               </ul> -->
                                                               <div style="height: 500px;overflow-y: auto;">
-                                                                @for(filterList of DahboardListFilters;track filterList){
-                                                              <div class="sub-category-card p-2 mt-2 border bg-light rounded-3 mb-2">
+                                                                <!-- @for(filterList of DahboardListFilters;track filterList){ -->
+                                                              <div *ngFor="let filterList of DahboardListFilters" class="sub-category-card p-2 mt-2 border bg-light rounded-3 mb-2">
                                                                 <p class="text-center mb-0">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
@@ -487,23 +487,23 @@
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;background-color: #ffffff;max-height: 240px;overflow-y: auto;">
                                                                     <div class="input-group">
-                                                                      <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterList.search"
-                                                                          (keyup.enter)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,true)" aria-describedby="button-addon2">
-                                                                      <button class="btn btn-primary border me-2" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,true)" type="button" id="button-addon2"
-                                                                          style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                                                  </div>
+                                                                      <input type="text" [(ngModel)]="filterList.searchText" class="form-control border-end-0" placeholder="Search" aria-describedby="button-addon2">
+                                                                      <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;">
+                                                                        <i class="fe fe-search"></i>
+                                                                      </button>
+                                                                    </div>
                                                                     <div class="form-check">
 
                                                                       <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllColumns($event,filterList)" class="form-check-input">
                                                                       <label for="selectAll" class="form-check-label">Select All</label>
                                                                       </div>
-                                                                    @for(col of filterList.colData;track col;let i = $index){
+                                                                    <!-- @for(col of filterList.colData;track col;let i = $index){ -->
                                                                      
-                                                                      <div class="form-check">
+                                                                      <div *ngFor="let col of getFilteredColumns(filterList); let i = index" class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
                                                                         <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
                                                                       </div>
-                                                                  }
+                                                                  <!-- } -->
                                                                   <div class="p-2">
                                                                     <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">Save</button>
                                                                 </div>
@@ -524,7 +524,7 @@
                                                                   </div>
                                                                 </div> -->
                                                               </div>
-                                                            }
+                                                            <!-- } -->
                                                             <button *ngIf="DahboardListFilters .length > 0; else noData" style="float: right;" class="btn ripple btn-primary" (click)="isPublicUrl ? getFilteredDataPublic() : getFilteredData()">Apply filters</button>
                                                             <ng-template #noData>
                                                               <p>No Filters Available</p>

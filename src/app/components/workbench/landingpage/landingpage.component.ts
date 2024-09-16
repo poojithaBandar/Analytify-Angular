@@ -197,13 +197,12 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
-  if (serverId === null ) {
+  if (serverId === null || serverId ==='') {
     const encodedFileId = btoa(fileId.toString());
     this.router.navigate(['/workbench/landingpage/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
   }
-
-  if(fileId === null){
+  else if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
     this.router.navigate(['/workbench/landingpage/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 

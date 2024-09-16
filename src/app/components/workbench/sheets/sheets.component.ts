@@ -4253,7 +4253,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "datasource_queryset_id" :this.filterQuerySetId,
       "col_name":this.filterName,
        "data_type":this.filterType,
-       "search":this.filterSearch
+       "search":this.filterSearch,
+       "parent_user":this.createdBy
       // "format_date":""
 }as any;
 if(this.fromFileId){
@@ -4319,6 +4320,7 @@ if(this.fromFileId){
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
        "data_type":this.filterType,
+       "parent_user":this.createdBy
 }as any;
 if(this.fromFileId){
   delete obj.database_id;

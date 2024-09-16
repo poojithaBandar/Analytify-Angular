@@ -52,6 +52,15 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/get_file/`+id+'/'+this.accessToken);
   }
+
+  //Quickbooks
+  connectQuickBooks(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/quickbooks/`+this.accessToken);
+  }
+
+
   // getTableData(obj:any){
   //   const currentUser = localStorage.getItem( 'currentUser' );
   //   console.log(JSON.parse( currentUser!))
@@ -379,15 +388,11 @@ getFilteredData(obj:any){
 }
 
 getServerTablesList(obj:any){
-  const currentUser = localStorage.getItem( 'currentUser' );
-  this.accessToken = JSON.parse( currentUser! )['Token'];
-  return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`+this.accessToken,obj);
+  return this.http.post<any>(`${environment.apiUrl}/ai/copilot/`,obj);
 }
 
 openApiKey(obj:any){
-  const currentUser = localStorage.getItem( 'currentUser' );
-  this.accessToken = JSON.parse( currentUser! )['Token'];
-  return this.http.post<any>(`${environment.apiUrl}/ai/validate-api-key/`+this.accessToken,obj);
+  return this.http.post<any>(`${environment.apiUrl}/ai/validate-api-key/`,obj);
 }
 deleteDashbaordFilter(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );

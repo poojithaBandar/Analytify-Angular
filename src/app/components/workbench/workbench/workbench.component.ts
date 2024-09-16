@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
@@ -75,7 +75,8 @@ export class WorkbenchComponent implements OnInit{
   totalItems:any;
   fileData:any;
   viewDatasourceList = false;
-  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private viewTemplateService:ViewTemplateDrivenService){ 
+  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/work-bench/view-connections')){
@@ -567,6 +568,35 @@ export class WorkbenchComponent implements OnInit{
           }
         )
       }
+      // quickbooks Connection
+      connectQuickBooks(){
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'This will redirect to QuickBooks SignIn page',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Connect it!'
+        }).then((result)=>{
+          if(result.isConfirmed){
+            this.workbechService.connectQuickBooks()
+            .subscribe(
+              {
+                next: (data) => {
+                  console.log(data);
+                  // this.routeUrl = data.redirection_url
+                  this.document.location.href = data.redirection_url;
+                },
+                error: (error) => {
+                  console.log(error);
+                }
+              }
+            )
+          }}) 
+      }
+
+
     deleteDbConnection(dbId:any,fileId:any){
       // const obj ={
       //   database_id:dbId
