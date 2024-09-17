@@ -568,6 +568,7 @@ export class SheetsdashboardComponent {
         column_Data : sheet.sheet_data.columns_data,
         row_Data : sheet.sheet_data.rows_data,
         drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
+        isDrillDownData : sheet.sheet_data.isDrillDownData,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name},
         selectedSheet : sheet.selectedSheet,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
@@ -628,7 +629,7 @@ export class SheetsdashboardComponent {
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
-          if(sheet && sheet.chartOptions && sheet.chartOptions.chart) {
+          if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
           sheet.chartOptions.chart.events = {
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               let selectedXValue;
@@ -1001,6 +1002,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       column_Data : sheet.sheet_data.columns_data,
       row_Data : sheet.sheet_data.rows_data,
       drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
+      isDrillDownData : sheet.sheet_data.isDrillDownData,
       data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
       kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
       ? (() => {
@@ -1317,7 +1319,8 @@ allowDrop(ev : any): void {
         column_Data : copy.column_Data,
       row_Data : copy.row_Data,
       drillDownObject : [],
-      drillDownIndex : 0
+      drillDownIndex : 0,
+      isDrillDownData : copy.isDrillDownData
       };
       this.qrySetId.push(copy.qrySetId);
       if(copy.fileId){
@@ -2891,7 +2894,7 @@ kpiData?: KpiData;
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
-          if(sheet && sheet.chartOptions && sheet.chartOptions.chart) {
+          if((sheet && sheet.chartOptions && sheet.chartOptions.chart) || sheet.isDrillDownData) {
             sheet.chartOptions.chart.events = {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 let selectedXValue;
@@ -3054,7 +3057,7 @@ kpiData?: KpiData;
       "dashboard_id":this.dashboardId,
       "sheet_id":item.sheetId,
       "database_id":item.databaseId,
-      "is_date":false,
+      "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
   "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
     }
@@ -3094,15 +3097,22 @@ kpiData?: KpiData;
 
   dataExtraction(item : any){
     this.extractKeysAndData();
+    let draggedColumnsObj;
+    if (item.isDrillDownData) {
+      draggedColumnsObj = _.cloneDeep(item.column_Data);
+      draggedColumnsObj[0][2] = 'year'
+    } else {
+      draggedColumnsObj = item.column_Data
+    }
     let Obj : any = {
-      "col":item.column_Data,"row":item.row_Data,
+      "col":draggedColumnsObj,"row":item.row_Data,
       id:this.keysArray,
       input_list:this.dataArray,
       // "id":["766"],"input_list":[["Home Appliances"]],
       "dashboard_id":this.dashboardId,
       "sheet_id":item.sheetId,
       "database_id":item.databaseId,
-      "is_date":false,
+      "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
   "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
     }
