@@ -746,6 +746,14 @@ joiningTablesFromDelete(){
     })
 }
 customTableJoin(){
+  if( this.selectedJoin === undefined || this.selectedJoin === null || this.selectedCndn === undefined || this.selectedCndn === null){
+    Swal.fire({
+      icon: 'error',
+      title: 'oops!',
+      text: 'Please Select Join Condition/Operator',
+      width: '400px',
+    })
+  }else{
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any;alias:any }) => [item.schema, item.table, item.alias]);
   console.log(schemaTablePairs)
   const t1Index = this.draggedtables.findIndex((x: { alias: any; }) => x.alias === this.selectedAliasT1)
@@ -808,6 +816,7 @@ customTableJoin(){
     }
     })
   }
+}
 }
 
 // populateDropdown() {
