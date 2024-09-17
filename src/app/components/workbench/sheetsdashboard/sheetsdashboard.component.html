@@ -806,7 +806,7 @@
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
               <div class="card mb-0" style="height: 100%;">
                 <div class="card-header d-flex justify-content-between p-1">
-                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10) && item['drillDownHierarchy']){
+                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10) && item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                     <!-- <div class="col-lg-3 col-md-3"> -->
                         <button style="margin-right: 10px;" class="btn btn-primary" (click)="goDrillDownBack(item)"> Back</button>
                    <!-- </div> -->
