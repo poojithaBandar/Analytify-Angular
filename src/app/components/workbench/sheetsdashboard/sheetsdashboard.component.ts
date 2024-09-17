@@ -3154,7 +3154,11 @@ kpiData?: KpiData;
     if(item.drillDownIndex > 0) {
       item.drillDownIndex--;
       item.drillDownObject.pop();
-      this.dataExtraction(item);
+      if(this.isPublicUrl){
+        this.publicDataExtraction(item);
+      } else {
+        this.dataExtraction(item);
+      }
     }         
   }
 }
