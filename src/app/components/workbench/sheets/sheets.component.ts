@@ -2623,59 +2623,71 @@ bar["type"]="line";
             if (this.chartsRowData.length > 0) {
               this.enableDisableCharts();
               this.chartsOptionsSet();
+              // if (this.retriveDataSheet_id) {
+              //   const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+              //   const categories = this.flattenDimensions(dimensions);
+              //   if (this.barchart) {
+              //     this.chartOptions3.series[0].data = this.chartsRowData;
+              //     this.chartOptions3.xaxis.categories = this.chartsColumnData;
+              //     // this.chartsColumnData.forEach((data:any)=>{
+              //     //   this.chartOptions3.xaxis.categories.push(data);
+              //     // })
+              //     // this.chartOptions3.labels = this.chartsColumnData;
+              //     console.log(this.chartOptions3.xaxis.categories);
+              //     console.log(this.chartOptions3);
+              //     console.log(this.barchart);
+              //     this.barchart.updateOptions(this.chartOptions3);
+              //   }
+              //   else if (this.piechart) {
+              //     this.chartOptions4.series = this.chartsRowData;
+              //     this.chartOptions4.labels = this.chartsColumnData;
+              //   }
+              //   else if (this.linechart) {
+              //     this.chartOptions.series[0].data = this.chartsRowData;
+              //     this.chartOptions.xaxis.categories = this.chartsColumnData;
+              //   }
+              //   else if (this.areachart) {
+              //     this.chartOptions1.series[0].data = this.chartsRowData;
+              //     this.chartOptions1.labels = this.chartsColumnData;
+              //   }
+              //   else if (this.sidebysideChart) {
+              //     this.chartOptions2.series = this.sidebysideBarRowData;
+              //     this.chartOptions2.xaxis.categories = categories;
+              //   }
+              //   else if (this.stockedChart) {
+              //     this.chartOptions6.series = this.sidebysideBarRowData;
+              //     this.chartOptions6.xaxis.categories = categories;
+              //   }
+              //   else if (this.barlineChart) {
+              //     // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
+              //     // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
+              //     this.chartOptions5.series = this.sidebysideBarRowData;
+              //     this.chartOptions5.labels = categories;
+              //     this.chartOptions5.xaxis.categories = categories;
+              //   }
+              //   else if (this.horizontolstockedChart) {
+              //     this.chartOptions7.series = this.sidebysideBarRowData;
+              //     this.chartOptions7.xaxis.categories = categories;
+              //   }
+              //   else if (this.groupedChart) {
+              //     this.chartOptions8.series = this.sidebysideBarRowData;
+              //     this.chartOptions8.xaxis.categories = categories;
+              //   }
+              //   else if (this.multilineChart) {
+              //     this.chartOptions9.series = this.sidebysideBarRowData;
+              //     this.chartOptions9.xaxis.categories = categories;
+              //   }
+              //   else if (this.donutchart) {
+              //     this.chartOptions10.series = this.chartsRowData;
+              //     this.chartOptions10.labels = this.chartsColumnData;
+              //   }
+              //   // this.updateChart();
+              // }
+              // else{
+              //   this.chartsOptionsSet();
+              // }
             }
-            // if (this.retriveDataSheet_id) {
-            //   const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-            //   const categories = this.flattenDimensions(dimensions);
-            //   if (this.barchart) {
-            //     this.chartOptions3.series[0].data = this.chartsRowData;
-            //     this.chartOptions3.xaxis.categories = this.chartsColumnData;
-            //   }
-            //   else if (this.piechart) {
-            //     this.chartOptions4.series = this.chartsRowData;
-            //     this.chartOptions4.labels = this.chartsColumnData;
-            //   }
-            //   else if (this.linechart) {
-            //     this.chartOptions.series[0].data = this.chartsRowData;
-            //     this.chartOptions.xaxis.categories = this.chartsColumnData;
-            //   }
-            //   else if (this.areachart) {
-            //     this.chartOptions1.series[0].data = this.chartsRowData;
-            //     this.chartOptions1.labels = this.chartsColumnData;
-            //   }
-            //   else if (this.sidebysideChart) {
-            //     this.chartOptions2.series = this.sidebysideBarRowData;
-            //     this.chartOptions2.xaxis.categories = categories;
-            //   }
-            //   else if (this.stockedChart) {
-            //     this.chartOptions6.series = this.sidebysideBarRowData;
-            //     this.chartOptions6.xaxis.categories = categories;
-            //   }
-            //   else if (this.barlineChart) {
-            //     // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
-            //     // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
-            //     this.chartOptions5.series = this.sidebysideBarRowData;
-            //     this.chartOptions5.labels = categories;
-            //     this.chartOptions5.xaxis.categories = categories;
-            //   }
-            //   else if (this.horizontolstockedChart) {
-            //     this.chartOptions7.series = this.sidebysideBarRowData;
-            //     this.chartOptions7.xaxis.categories = categories;
-            //   }
-            //   else if (this.groupedChart) {
-            //     this.chartOptions8.series = this.sidebysideBarRowData;
-            //     this.chartOptions8.xaxis.categories = categories;
-            //   }
-            //   else if (this.multilineChart) {
-            //     this.chartOptions9.series = this.sidebysideBarRowData;
-            //     this.chartOptions9.xaxis.categories = categories;
-            //   }
-            //   else if (this.donutchart) {
-            //     this.chartOptions10.series = this.chartsRowData;
-            //     this.chartOptions10.labels = this.chartsColumnData;
-            //   }
-            //   this.updateChart();
-            // }
+           
             if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1) && !this.kpi) {
               this.table = true;
               this.bar = false;
@@ -3480,48 +3492,48 @@ const obj={
     "color1":bandColor1,
     "color2":bandColor2,
 
-  //   "barYaxis":this.saveBar,
-  //   "barXaxis":this.barXaxis,
+    "barYaxis":this.saveBar,
+    "barXaxis":this.barXaxis,
   //  "barOptions":this.barOptions,
 
-  //   "pieYaxis":this.savePie,
-  //   "pieXaxis":this.pieXaxis,
+    "pieYaxis":this.savePie,
+    "pieXaxis":this.pieXaxis,
   //   "pieOptions":this.pieOptions,
 
-  //   "lineYaxis":this.lineYaxis,
-  //   "lineXaxis": this.lineXaxis,
+    "lineYaxis":this.lineYaxis,
+    "lineXaxis": this.lineXaxis,
   //   "lineOptions":this.lineOptions,
 
-  //   "areaYaxis":this.areaYaxis,
-  //   "areaXaxis":this.areaXaxis,
+    "areaYaxis":this.areaYaxis,
+    "areaXaxis":this.areaXaxis,
   //   "areaOptions":this.areaOptions,
 
-  //     "sidebysideBarYaxis": this.sidebysideBarYaxis,
-  //     "sidebysideBarXaxis": this.sidebysideBarXaxis,
+      "sidebysideBarYaxis": this.sidebysideBarYaxis,
+      "sidebysideBarXaxis": this.sidebysideBarXaxis,
   //     "sidebysideBarOptions":this.sidebysideBarOptions,
    
-  //     "stokedBarYaxis": this.stokedBarYaxis,
-  //     "stokedBarXaxis": this.stokedBarXaxis,
+      "stokedBarYaxis": this.stokedBarYaxis,
+      "stokedBarXaxis": this.stokedBarXaxis,
   //     "stokedOptions":this.stokedOptions,
   
-  //     "barLineYaxis":this.barLineYaxis,
-  //     "barLineXaxis":this.barLineXaxis,
+      "barLineYaxis":this.barLineYaxis,
+      "barLineXaxis":this.barLineXaxis,
   //     "barLineOptions":this.barLineOptions,
 
-  //     "hStockedYaxis": this.hStockedYaxis,
-  //     "hStockedXaxis": this.hStockedXaxis,
+      "hStockedYaxis": this.hStockedYaxis,
+      "hStockedXaxis": this.hStockedXaxis,
   //     "hStockedOptions":this.hStockedOptions,
 
-  //     "hgroupedYaxis": this.hgroupedYaxis,
-  //     "hgroupedXaxis": this.hgroupedXaxis,
+      "hgroupedYaxis": this.hgroupedYaxis,
+      "hgroupedXaxis": this.hgroupedXaxis,
   //     "hgroupedOptions":this.hgroupedOptions,
 
-  //     "multiLineYaxis":this.multiLineYaxis,
-  //     "multiLineXaxis": this.multiLineXaxis,
+      "multiLineYaxis":this.multiLineYaxis,
+      "multiLineXaxis": this.multiLineXaxis,
   //     "multiLineOptions":this.multiLineOptions,
 
-  //     "donutYaxis": this.donutYaxis,
-  //     "donutXaxis": this.donutXaxis,
+      "donutYaxis": this.donutYaxis,
+      "donutXaxis": this.donutXaxis,
   //     "donutOptions":this.donutOptions,
 
       "kpiData": kpiData,
@@ -3822,7 +3834,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
            }
           }
         };
-        this.legendSwitch = this.chartOptions4.legend.show;
+        this.legendSwitch = this.chartOptions4.legend?.show;
         } else {
           this.ePieChartOptions = this.sheetResponce.savedChartOptions;
         }
