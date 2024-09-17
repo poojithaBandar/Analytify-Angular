@@ -127,18 +127,18 @@ export class DatabaseComponent {
   columnDataSearch! : string;
   editFilterId!: number;
   fromSheetEditDb = false;
-
+  fromQuickbooks = false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);
     }
-    if(currentUrl.includes('/workbench/database-connection/files/tables/')){
+    else if(currentUrl.includes('/workbench/database-connection/files/tables/')){
       this.fromFileId=true;
       this.fileId = +atob(route.snapshot.params['id']);
      }
-    if(currentUrl.includes('/workbench/database-connection/savedQuery/')){
+    else if(currentUrl.includes('/workbench/database-connection/savedQuery/')){
       if(currentUrl.includes('/workbench/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
         this.fileId = +atob(route.snapshot.params['id1']);
         this.fromFileId = true;
@@ -159,7 +159,7 @@ export class DatabaseComponent {
       this.fromSavedQuery = true;
       this.getSavedQueryData();
      }
-     if(currentUrl.includes('/workbench/database-connection/sheets/dbId')){
+     else if(currentUrl.includes('/workbench/database-connection/sheets/dbId')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -177,7 +177,7 @@ export class DatabaseComponent {
         }
       }
     }
-    if(currentUrl.includes('/workbench/database-connection/sheets/fileId')){
+    else if(currentUrl.includes('/workbench/database-connection/sheets/fileId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
        this.fileId = +atob(route.snapshot.params['id1']);
        this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -195,6 +195,11 @@ export class DatabaseComponent {
          }
        }
      }
+     if(currentUrl.includes('/workbench/database-connection/tables/quickbooks/')){
+      this.fromDatabasId=true;
+      this.fromQuickbooks= true;
+      this.databaseId = +atob(route.snapshot.params['id']);
+    }
 
   }
   ngOnInit(){

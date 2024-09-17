@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { NgOtpInputModule } from 'ng-otp-input';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../../shared/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-email-activation',
@@ -30,7 +31,7 @@ export class EmailActivationComponent {
   resendOtp: boolean = false;
   displayTimer: boolean = false;
   otp:any;
-constructor( @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,private router:Router,
+constructor( @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,private router:Router,private toasterService:ToastrService,
 private renderer: Renderer2,private sanitizer: DomSanitizer){}
 
 ngOnInit(): void {
@@ -113,7 +114,7 @@ validateOtp(){
         if(error){
           Swal.fire({
             icon: 'error',
-            title: 'Congratulations!',
+            title: 'error!',
             text: error.error.message,
             width: '400px',
           })
@@ -122,7 +123,33 @@ validateOtp(){
     }
   )
 }
+resendOtpApi(){
+const obj={
+  token:this.authService.emailActivationToken
 
+}
+  this.authService.resendOtpApi(obj)
+  .subscribe(
+    {
+      next:(data) => {
+        this.toasterService.success('OTP sent to registered Mail','success',{ positionClass: 'toast-top-right'});
+
+        this.start(1); 
+      },
+      error:(error)=>{
+        console.log(error)
+        if(error){
+          Swal.fire({
+            icon: 'error',
+            title: 'error!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      }
+    }
+  )
+}
 
 
 }

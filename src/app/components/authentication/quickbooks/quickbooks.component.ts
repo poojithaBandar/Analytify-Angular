@@ -36,7 +36,8 @@ getToken(url:any){
             //localStorage.setItem('connectedToQuickbooks', JSON.stringify(connectedToQuickbooks));
             // this.connectionSuccess = true;
             // this.getCompanyDetails();
-            
+            const quickBooksId = data.quickbooks_id;
+            this.router.navigate(['/workbench/database-connection/tables/quickbooks'+quickBooksId]);
           }
         },
         error: (error: any) => {

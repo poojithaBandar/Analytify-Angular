@@ -155,7 +155,7 @@ submitForgotPasswordForm(){
         Swal.fire({
           icon: 'warning',
           title: 'Oops!',
-          text: error.message,
+          text: error.error.message,
           width: '400px',
          })
       }

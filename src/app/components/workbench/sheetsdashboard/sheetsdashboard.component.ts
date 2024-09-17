@@ -1944,7 +1944,8 @@ this.editFilters = false;
 this.filterName = '';
 this.dropdownOptions = [];
 this.querySetNames = [];
-this.selectedQuerySetId = 0
+this.selectedQuerySetId = 0;
+this.selectedOption = null;
 }
 
 getQuerySetForFilter(){
@@ -2565,6 +2566,10 @@ editFiltersData(id:any){
       this.updateSelectedRowsEdit();
       this.getColumnsFromEdit(data.query_id,data.dashboard_id);
       this.getColumnsForFilterEdit(data.query_id,data.dashboard_id);
+      this.selectedOption=data.selected_column;
+
+      this.selectClmn=data.selected_column;
+      this.selectdColmnDtype=data.datatype;
     },
     error:(error)=>{
       console.log(error)

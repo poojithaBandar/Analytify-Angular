@@ -32,6 +32,13 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
+//quickbooks
+{
+  path: 'database-connection/tables/quickbooks/:id',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./database/database.component').then((m)=> m.DatabaseComponent)
+},
 {
   path: 'database-connection/files/tables/:id',
   canActivate:[authGuard],
