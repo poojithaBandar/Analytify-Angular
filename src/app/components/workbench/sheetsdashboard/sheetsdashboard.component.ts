@@ -844,22 +844,41 @@ selected_sheet_ids :this.sheetIdsDataSet,
       })
     }else{
       let dashboardData = this.assignOriginalDataToDashboard();
-    let obj ={
-      grid : this.gridType,
-      height: this.heightGrid,
-      width: this.widthGrid,
-      queryset_id:this.qrySetId,
-      server_id:this.databaseId,
-      sheet_ids:this.sheetsIdArray,
-      dashboard_name:this.dashboardName,
-      dashboard_tag_name:this.dashboardTagName,
-      selected_sheet_ids:this.sheetIdsDataSet,
-      data : dashboardData,
-      sheetTabs : this.sheetTabs,
-      file_id : this.fileId,
-      user_ids:this.usersForUpdateDashboard,
-      role_ids:this.rolesForUpdateDashboard
-    }as any;
+      let obj;
+      if(this.fileId && this.fileId.length){
+        obj ={
+          grid : this.gridType,
+          height: this.heightGrid,
+          width: this.widthGrid,
+          queryset_id:this.qrySetId,
+          sheet_ids:this.sheetsIdArray,
+          dashboard_name:this.dashboardName,
+          dashboard_tag_name:this.dashboardTagName,
+          selected_sheet_ids:this.sheetIdsDataSet,
+          data : dashboardData,
+          sheetTabs : this.sheetTabs,
+          file_id : this.fileId,
+          user_ids:this.usersForUpdateDashboard,
+          role_ids:this.rolesForUpdateDashboard
+        }as any;
+      } else {
+        obj ={
+          grid : this.gridType,
+          height: this.heightGrid,
+          width: this.widthGrid,
+          queryset_id:this.qrySetId,
+          server_id:this.databaseId,
+          sheet_ids:this.sheetsIdArray,
+          dashboard_name:this.dashboardName,
+          dashboard_tag_name:this.dashboardTagName,
+          selected_sheet_ids:this.sheetIdsDataSet,
+          data : dashboardData,
+          sheetTabs : this.sheetTabs,
+          user_ids:this.usersForUpdateDashboard,
+          role_ids:this.rolesForUpdateDashboard
+        }as any;
+      }
+    
     if(this.fromFileId){
       delete obj.server_id;
       obj['file_id'] = this.fileId;
