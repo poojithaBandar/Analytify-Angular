@@ -3057,6 +3057,7 @@ kpiData?: KpiData;
       "dashboard_id":this.dashboardId,
       "sheet_id":item.sheetId,
       "database_id":item.databaseId,
+      "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
   "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
@@ -3110,6 +3111,7 @@ kpiData?: KpiData;
       input_list:this.dataArray,
       // "id":["766"],"input_list":[["Home Appliances"]],
       "dashboard_id":this.dashboardId,
+      "file_id": item.fileId,
       "sheet_id":item.sheetId,
       "database_id":item.databaseId,
       "is_date":item.isDrillDownData,
