@@ -429,7 +429,6 @@ if(this.fromFileId){
   barChart() {
     if (this.isApexCharts) {
       const self = this;
-      if(!this.barOptions){
         this.chartOptions3 = {
           series: [
             {
@@ -586,35 +585,6 @@ if(this.fromFileId){
           },
           colors: [this.color]
         };
-      }
-      else{
-        this.barOptions.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions3 = this.barOptions;
-        this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
-        this.chartOptions3.series.data = this.chartsRowData;
-        this.chartOptions3.xaxis.categories = this.chartsColumnData
-        this.chartOptions3.chart.events = {
-          dataPointSelection: function (event: any, chartContext: any, config: any) {
-            const selectedXValue = self.chartOptions3.xaxis.categories[config.dataPointIndex];
-            if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
-              const selectedXValue = self.chartsColumnData[config.dataPointIndex];
-              console.log('X-axis value:', selectedXValue);
-              let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
-              self.drillDownIndex++;
-              let obj = { [nestedKey]: selectedXValue };
-              self.drillDownObject.push(obj);
-              self.dataExtraction();
-            }
-          }
-        };
-//         let chart = new ApexCharts(document.querySelector('#barChart'), this.chartOptions3);
-// chart.render();
-// chart.updateOptions(this.chartOptions3);
-        // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
-        console.log(this.chartOptions3);
-      }  
     } else {
       this.eBarChartOptions = {
         backgroundColor: this.backgroundColor,
@@ -717,7 +687,6 @@ if(this.fromFileId){
   pieChart(){
     if(this.isApexCharts){
       const self = this;
-      if(!this.pieOptions){
         this.chartOptions4 = {
           series: this.chartsRowData,
           chart: {
@@ -761,27 +730,8 @@ if(this.fromFileId){
             }
           }
         };
-          this.changeLegendsAllignment('bottom');
-          console.log(this.chartOptions4)
-      }
-      else{
-        this.chartOptions4= this.pieOptions;
-        this.chartOptions4.chart.events =  {
-                     dataPointSelection: function(event:any, chartContext:any, config:any) {
-                      if(self.drillDownIndex < self.draggedDrillDownColumns.length - 1  ){
-                       const selectedXValue = self.chartOptions4.labels[config.dataPointIndex];
-                      console.log('X-axis value:', selectedXValue);
-                      let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
-                      self.drillDownIndex++;
-                      let obj = { [nestedKey] : selectedXValue};
-                      self.drillDownObject.push(obj);
-                      self.dataExtraction();
-                      }
-                     }
-                   };
-      }
-      this.legendSwitch = this.chartOptions4.legend.show;
-    } else {
+    }
+     else {
       let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
         value: value,
         name: this.chartsColumnData[index]
@@ -819,7 +769,6 @@ if(this.fromFileId){
   lineChart() {
     if (this.isApexCharts) {
       const self = this;
-      if (!this.lineOptions) {
         this.chartOptions = {
           series: [{
             name: "",
@@ -949,28 +898,6 @@ if(this.fromFileId){
               }
             }
           }
-        }
-      else {
-          this.chartOptions = this.lineOptions;
-          this.chartOptions.events = {
-
-            dataPointSelection: function (event: any, chartContext: any, config: any) {
-              if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
-                const selectedXValue = self.chartsColumnData[config.dataPointIndex];
-                console.log('X-axis value:', selectedXValue);
-                let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
-                self.drillDownIndex++;
-                let obj = { [nestedKey]: selectedXValue };
-                self.drillDownObject.push(obj);
-                self.callDrillDown();
-              }
-            }
-          }
-        }
-        this.xLabelSwitch = this.chartOptions.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
       } else {
         this.eLineChartOptions = {
           backgroundColor: this.backgroundColor,
@@ -1060,7 +987,6 @@ if(this.fromFileId){
     }
     areaChart(){
       if (this.isApexCharts) {
-        if (!this.areaOptions) {
           this.chartOptions1 = {
             series: [
               {
@@ -1181,14 +1107,6 @@ if(this.fromFileId){
               horizontalAlign: "left",
             },
           };
-        }
-        else {
-          this.chartOptions1 = this.areaOptions;
-        }
-        this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
       } else {
         this.eAreaChartOptions = {
           backgroundColor: this.backgroundColor,
@@ -1283,7 +1201,6 @@ if(this.fromFileId){
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
-      if (!this.sidebysideBarOptions) {
         this.chartOptions2 = {
           series: this.sidebysideBarRowData,
           annotations: {
@@ -1395,14 +1312,6 @@ if(this.fromFileId){
             },
           },
         };
-      }
-      else {
-        this.chartOptions2 = this.sidebysideBarOptions;
-      }
-      this.xLabelSwitch = this.chartOptions2.xaxis.labels.show;
-      // this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
-      this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
-      this.yGridSwitch = this.chartOptions2.grid.yaxis.lines.show;
     } else {
       let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
       yaxisOptions.forEach((bar : any)=>{
@@ -1499,7 +1408,6 @@ bar["type"]="bar";
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
-      if (!this.stokedOptions) {
         this.chartOptions6 = {
           series: this.sidebysideBarRowData,
           annotations: {
@@ -1603,13 +1511,6 @@ bar["type"]="bar";
             },
           }
         };
-      }
-      else {
-        this.chartOptions6 = this.stokedOptions;
-      }
-      this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
-      this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
-      this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
     } else {
       let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
       yaxisOptions.forEach((bar : any)=>{
@@ -1703,7 +1604,6 @@ bar["stack"]="total";
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
       if (this.isApexCharts) {
-        if (!this.barLineOptions) {
           this.chartOptions5 = {
             series: [
               {
@@ -1846,14 +1746,6 @@ bar["stack"]="total";
             ]
 
           };
-        }
-        else {
-          this.chartOptions5 = this.barLineOptions;
-        }
-        this.xLabelSwitch = this.chartOptions5.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions5.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions5.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
       } else {
         this.eBarLineChartOptions = {
           backgroundColor: this.backgroundColor,
@@ -2002,7 +1894,6 @@ bar["stack"]="total";
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
-      if (!this.hStockedOptions) {
         this.chartOptions7 = {
           series: this.sidebysideBarRowData,
           chart: {
@@ -2089,14 +1980,6 @@ bar["stack"]="total";
             },
           }
         };
-      }
-      else {
-        this.chartOptions7 = this.hStockedOptions;
-      }
-      this.xLabelSwitch = this.chartOptions7.xaxis.labels.show;
-      // this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
-      this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
-      this.yGridSwitch = this.chartOptions7.grid.yaxis.lines.show;
     } else {
       let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
       yaxisOptions.forEach((bar : any)=>{
@@ -2188,7 +2071,6 @@ bar["stack"]="total";
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
-      if (!this.hgroupedOptions) {
         this.chartOptions8 = {
           series: this.sidebysideBarRowData,
           chart: {
@@ -2256,14 +2138,6 @@ bar["stack"]="total";
             },
           },
         };
-      }
-      else {
-        this.chartOptions8 = this.hgroupedOptions;
-      }
-      this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
-      // this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
-      this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
-      this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
      } else {
         let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
         yaxisOptions.forEach((bar : any)=>{
@@ -2354,7 +2228,6 @@ bar["stack"]="total";
       const dimensions: Dimension[] = this.sidebysideBarColumnData1;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
-      if (!this.multiLineOptions) {
         this.chartOptions9 = {
           series: this.sidebysideBarRowData,
           annotations: {
@@ -2476,14 +2349,6 @@ bar["stack"]="total";
             },
           }
         };
-      }
-      else {
-        this.chartOptions9 = this.multiLineOptions;
-      }
-      this.xLabelSwitch = this.chartOptions9.xaxis.labels.show;
-      // this.yLabelSwitch = this.chartOptions9.yaxis.labels.show;
-      this.xGridSwitch = this.chartOptions9.grid.xaxis.lines.show;
-      this.yGridSwitch = this.chartOptions9.grid.yaxis.lines.show;
     } else {
       let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
       yaxisOptions.forEach((bar : any)=>{
@@ -2572,7 +2437,6 @@ bar["type"]="line";
     }
     donutChart(){
       const self = this;
-      if (!this.donutOptions) {
         this.chartOptions10 = {
           series: this.chartsRowData,
           chart: {
@@ -2641,24 +2505,6 @@ bar["type"]="line";
         };
         this.changeLegendsAllignment('right');
         this.label = this.chartOptions10.plotOptions.pie.donut.labels.show;
-      }
-      else {
-        this.chartOptions10 = this.donutOptions;
-        this.chartOptions10.chart.events = {
-          dataPointSelection: function (event: any, chartContext: any, config: any) {
-            if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
-              const selectedXValue = self.chartOptions10.labels[config.dataPointIndex];
-              console.log('X-axis value:', selectedXValue);
-              let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
-              self.drillDownIndex++;
-              let obj = { [nestedKey]: selectedXValue };
-              self.drillDownObject.push(obj);
-              self.callDrillDown();
-            }
-          }
-        }
-        this.legendSwitch = this.chartOptions10.legend.show;
-      }
     }
       heatMapChart() {
         const dimensions: Dimension[] = this.sidebysideBarColumnData1;
@@ -2778,58 +2624,58 @@ bar["type"]="line";
               this.enableDisableCharts();
               this.chartsOptionsSet();
             }
-            if (this.retriveDataSheet_id) {
-              const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-              const categories = this.flattenDimensions(dimensions);
-              if (this.barchart) {
-                this.chartOptions3.series[0].data = this.chartsRowData;
-                this.chartOptions3.xaxis.categories = this.chartsColumnData;
-              }
-              else if (this.piechart) {
-                this.chartOptions4.series = this.chartsRowData;
-                this.chartOptions4.labels = this.chartsColumnData;
-              }
-              else if (this.linechart) {
-                this.chartOptions.series[0].data = this.chartsRowData;
-                this.chartOptions.xaxis.categories = this.chartsColumnData;
-              }
-              else if (this.areachart) {
-                this.chartOptions1.series[0].data = this.chartsRowData;
-                this.chartOptions1.labels = this.chartsColumnData;
-              }
-              else if (this.sidebysideChart) {
-                this.chartOptions2.series = this.sidebysideBarRowData;
-                this.chartOptions2.xaxis.categories = categories;
-              }
-              else if (this.stockedChart) {
-                this.chartOptions6.series = this.sidebysideBarRowData;
-                this.chartOptions6.xaxis.categories = categories;
-              }
-              else if (this.barlineChart) {
-                // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
-                // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
-                this.chartOptions5.series = this.sidebysideBarRowData;
-                this.chartOptions5.labels = categories;
-                this.chartOptions5.xaxis.categories = categories;
-              }
-              else if (this.horizontolstockedChart) {
-                this.chartOptions7.series = this.sidebysideBarRowData;
-                this.chartOptions7.xaxis.categories = categories;
-              }
-              else if (this.groupedChart) {
-                this.chartOptions8.series = this.sidebysideBarRowData;
-                this.chartOptions8.xaxis.categories = categories;
-              }
-              else if (this.multilineChart) {
-                this.chartOptions9.series = this.sidebysideBarRowData;
-                this.chartOptions9.xaxis.categories = categories;
-              }
-              else if (this.donutchart) {
-                this.chartOptions10.series = this.chartsRowData;
-                this.chartOptions10.labels = this.chartsColumnData;
-              }
-              this.updateChart();
-            }
+            // if (this.retriveDataSheet_id) {
+            //   const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+            //   const categories = this.flattenDimensions(dimensions);
+            //   if (this.barchart) {
+            //     this.chartOptions3.series[0].data = this.chartsRowData;
+            //     this.chartOptions3.xaxis.categories = this.chartsColumnData;
+            //   }
+            //   else if (this.piechart) {
+            //     this.chartOptions4.series = this.chartsRowData;
+            //     this.chartOptions4.labels = this.chartsColumnData;
+            //   }
+            //   else if (this.linechart) {
+            //     this.chartOptions.series[0].data = this.chartsRowData;
+            //     this.chartOptions.xaxis.categories = this.chartsColumnData;
+            //   }
+            //   else if (this.areachart) {
+            //     this.chartOptions1.series[0].data = this.chartsRowData;
+            //     this.chartOptions1.labels = this.chartsColumnData;
+            //   }
+            //   else if (this.sidebysideChart) {
+            //     this.chartOptions2.series = this.sidebysideBarRowData;
+            //     this.chartOptions2.xaxis.categories = categories;
+            //   }
+            //   else if (this.stockedChart) {
+            //     this.chartOptions6.series = this.sidebysideBarRowData;
+            //     this.chartOptions6.xaxis.categories = categories;
+            //   }
+            //   else if (this.barlineChart) {
+            //     // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
+            //     // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
+            //     this.chartOptions5.series = this.sidebysideBarRowData;
+            //     this.chartOptions5.labels = categories;
+            //     this.chartOptions5.xaxis.categories = categories;
+            //   }
+            //   else if (this.horizontolstockedChart) {
+            //     this.chartOptions7.series = this.sidebysideBarRowData;
+            //     this.chartOptions7.xaxis.categories = categories;
+            //   }
+            //   else if (this.groupedChart) {
+            //     this.chartOptions8.series = this.sidebysideBarRowData;
+            //     this.chartOptions8.xaxis.categories = categories;
+            //   }
+            //   else if (this.multilineChart) {
+            //     this.chartOptions9.series = this.sidebysideBarRowData;
+            //     this.chartOptions9.xaxis.categories = categories;
+            //   }
+            //   else if (this.donutchart) {
+            //     this.chartOptions10.series = this.chartsRowData;
+            //     this.chartOptions10.labels = this.chartsColumnData;
+            //   }
+            //   this.updateChart();
+            // }
             if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1) && !this.kpi) {
               this.table = true;
               this.bar = false;
@@ -3467,6 +3313,7 @@ sheetSave(){
    bandColor2 = this.color2;
   }
   if(this.bar && this.chartId == 6){
+    console.log(this.chartOptions3);
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData;
     if(this.isApexCharts) {
@@ -3630,49 +3477,49 @@ const obj={
     "color1":bandColor1,
     "color2":bandColor2,
 
-    "barYaxis":this.saveBar,
-    "barXaxis":this.barXaxis,
-   "barOptions":this.barOptions,
+  //   "barYaxis":this.saveBar,
+  //   "barXaxis":this.barXaxis,
+  //  "barOptions":this.barOptions,
 
-    "pieYaxis":this.savePie,
-    "pieXaxis":this.pieXaxis,
-    "pieOptions":this.pieOptions,
+  //   "pieYaxis":this.savePie,
+  //   "pieXaxis":this.pieXaxis,
+  //   "pieOptions":this.pieOptions,
 
-    "lineYaxis":this.lineYaxis,
-    "lineXaxis": this.lineXaxis,
-    "lineOptions":this.lineOptions,
+  //   "lineYaxis":this.lineYaxis,
+  //   "lineXaxis": this.lineXaxis,
+  //   "lineOptions":this.lineOptions,
 
-    "areaYaxis":this.areaYaxis,
-    "areaXaxis":this.areaXaxis,
-    "areaOptions":this.areaOptions,
+  //   "areaYaxis":this.areaYaxis,
+  //   "areaXaxis":this.areaXaxis,
+  //   "areaOptions":this.areaOptions,
 
-      "sidebysideBarYaxis": this.sidebysideBarYaxis,
-      "sidebysideBarXaxis": this.sidebysideBarXaxis,
-      "sidebysideBarOptions":this.sidebysideBarOptions,
+  //     "sidebysideBarYaxis": this.sidebysideBarYaxis,
+  //     "sidebysideBarXaxis": this.sidebysideBarXaxis,
+  //     "sidebysideBarOptions":this.sidebysideBarOptions,
    
-      "stokedBarYaxis": this.stokedBarYaxis,
-      "stokedBarXaxis": this.stokedBarXaxis,
-      "stokedOptions":this.stokedOptions,
+  //     "stokedBarYaxis": this.stokedBarYaxis,
+  //     "stokedBarXaxis": this.stokedBarXaxis,
+  //     "stokedOptions":this.stokedOptions,
   
-      "barLineYaxis":this.barLineYaxis,
-      "barLineXaxis":this.barLineXaxis,
-      "barLineOptions":this.barLineOptions,
+  //     "barLineYaxis":this.barLineYaxis,
+  //     "barLineXaxis":this.barLineXaxis,
+  //     "barLineOptions":this.barLineOptions,
 
-      "hStockedYaxis": this.hStockedYaxis,
-      "hStockedXaxis": this.hStockedXaxis,
-      "hStockedOptions":this.hStockedOptions,
+  //     "hStockedYaxis": this.hStockedYaxis,
+  //     "hStockedXaxis": this.hStockedXaxis,
+  //     "hStockedOptions":this.hStockedOptions,
 
-      "hgroupedYaxis": this.hgroupedYaxis,
-      "hgroupedXaxis": this.hgroupedXaxis,
-      "hgroupedOptions":this.hgroupedOptions,
+  //     "hgroupedYaxis": this.hgroupedYaxis,
+  //     "hgroupedXaxis": this.hgroupedXaxis,
+  //     "hgroupedOptions":this.hgroupedOptions,
 
-      "multiLineYaxis":this.multiLineYaxis,
-      "multiLineXaxis": this.multiLineXaxis,
-      "multiLineOptions":this.multiLineOptions,
+  //     "multiLineYaxis":this.multiLineYaxis,
+  //     "multiLineXaxis": this.multiLineXaxis,
+  //     "multiLineOptions":this.multiLineOptions,
 
-      "donutYaxis": this.donutYaxis,
-      "donutXaxis": this.donutXaxis,
-      "donutOptions":this.donutOptions,
+  //     "donutYaxis": this.donutYaxis,
+  //     "donutXaxis": this.donutXaxis,
+  //     "donutOptions":this.donutOptions,
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
@@ -3907,14 +3754,35 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
         }
        if(responce.chart_id == 6){
-        this.chartsRowData = this.sheetResponce.results.barYaxis;
-        this.chartsColumnData = this.sheetResponce.results.barXaxis;
+        // this.chartsRowData = this.sheetResponce.results.barYaxis;
+        // this.chartsColumnData = this.sheetResponce.results.barXaxis;
        if(this.isApexCharts){
-        this.barOptions = this.sheetResponce.results.barOptions;
+        const self = this;
+        this.chartOptions3 = this.sheetResponce.savedChartOptions;
+        this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
+        this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
+        this.chartOptions3.chart.events = {
+          dataPointSelection: function (event: any, chartContext: any, config: any) {
+            const selectedXValue = self.chartOptions3.xaxis.categories[config.dataPointIndex];
+            if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
+              const selectedXValue = self.chartsColumnData[config.dataPointIndex];
+              console.log('X-axis value:', selectedXValue);
+              let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              self.drillDownIndex++;
+              let obj = { [nestedKey]: selectedXValue };
+              self.drillDownObject.push(obj);
+              self.dataExtraction();
+            }
+          }
+        };
+        // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
+        this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
+        this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+        console.log(this.chartOptions3);
        } else {
          this.eBarChartOptions = this.sheetResponce.savedChartOptions;
        }
-       this.barChart();
+      //  this.barChart();
         this.bar = true;
         this.table = false;
           this.pie = false;
@@ -3932,14 +3800,30 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 24){
-        this.chartsRowData = this.sheetResponce.results.pieYaxis;
-        this.chartsColumnData = this.sheetResponce.results.pieXaxis;
+        // this.chartsRowData = this.sheetResponce.results.pieYaxis;
+        // this.chartsColumnData = this.sheetResponce.results.pieXaxis;
         if(this.isApexCharts){
-          this.pieOptions = this.sheetResponce.results.pieOptions;
+          const self = this;
+          this.chartOptions4 = this.sheetResponce.savedChartOptions;
+          this.changeLegendsAllignment('bottom');
+          this.chartOptions4.chart.events =  {
+          dataPointSelection: function(event:any, chartContext:any, config:any) {
+           if(self.drillDownIndex < self.draggedDrillDownColumns.length - 1  ){
+            const selectedXValue = self.chartOptions4.labels[config.dataPointIndex];
+           console.log('X-axis value:', selectedXValue);
+           let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+           self.drillDownIndex++;
+           let obj = { [nestedKey] : selectedXValue};
+           self.drillDownObject.push(obj);
+           self.dataExtraction();
+           }
+          }
+        };
+        this.legendSwitch = this.chartOptions4.legend.show;
         } else {
           this.ePieChartOptions = this.sheetResponce.savedChartOptions;
         }
-        this.pieChart();
+        // this.pieChart();
         this.bar = false;
         this.table = false;
           this.pie = true;
@@ -3959,14 +3843,32 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
        }
        if(responce.chart_id == 13){
-        this.chartsRowData = this.sheetResponce.results.lineYaxis;
-        this.chartsColumnData = this.sheetResponce.results.lineXaxis
+        // this.chartsRowData = this.sheetResponce.results.lineYaxis;
+        // this.chartsColumnData = this.sheetResponce.results.lineXaxis
         if(this.isApexCharts){
-          this.lineOptions = this.sheetResponce.results.lineOptions;
+          const self = this;
+          this.chartOptions = this.sheetResponce.savedChartOptions;
+          this.chartOptions.events = {
+            dataPointSelection: function (event: any, chartContext: any, config: any) {
+              if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
+                const selectedXValue = self.chartsColumnData[config.dataPointIndex];
+                console.log('X-axis value:', selectedXValue);
+                let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+                self.drillDownIndex++;
+                let obj = { [nestedKey]: selectedXValue };
+                self.drillDownObject.push(obj);
+                self.callDrillDown();
+              }
+            }
+          }
+          this.xLabelSwitch = this.chartOptions.xaxis.labels.show;
+          // this.yLabelSwitch = this.chartOptions.yaxis.labels.show;
+          this.xGridSwitch = this.chartOptions.grid.xaxis.lines.show;
+          this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
         } else {
           this.eLineChartOptions = this.sheetResponce.savedChartOptions;
         }
-        this.lineChart();
+        // this.lineChart();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -3984,14 +3886,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 17){
-        this.chartsRowData = this.sheetResponce.results.areaYaxis;
-        this.chartsColumnData = this.sheetResponce.results.areaXaxis;
+        // this.chartsRowData = this.sheetResponce.results.areaYaxis;
+        // this.chartsColumnData = this.sheetResponce.results.areaXaxis;
         if(this.isApexCharts){
-          this.areaOptions = this.sheetResponce.results.areaOptions;
+          this.chartOptions1 = this.sheetResponce.savedChartOptions;
+          this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
+          // this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
+          this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
+          this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
         } else {
           this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
         }
-        this.areaChart();
+        // this.areaChart();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4009,10 +3915,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 7){
-        this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.sidebysideBarXaxis;
-        this.sidebysideBarOptions = this.sheetResponce.results.sidebysideBarOptions;
-        this.sidebysideBar();
+        // this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
+        // this.sidebysideBarColumnData1 = this.sheetResponce.results.sidebysideBarXaxis;
+        this.chartOptions2 = this.sheetResponce.savedChartOptions;
+        this.xLabelSwitch = this.chartOptions2.xaxis.labels.show;
+        // this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
+        this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
+        this.yGridSwitch = this.chartOptions2.grid.yaxis.lines.show;
+        // this.sidebysideBar();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4030,10 +3940,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 5){
-        this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.stokedBarXaxis;
-        this.stokedOptions = this.sheetResponce.results.stokedOptions;
-        this.stockedBar();
+        // this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
+        // this.sidebysideBarColumnData1 = this.sheetResponce.results.stokedBarXaxis;
+        this.chartOptions6 = this.sheetResponce.savedChartOptions;
+        this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
+        this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
+        this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
+        // this.stockedBar();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4051,14 +3964,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 4){
-        this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
+        // this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
+        // this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
         if(this.isApexCharts){
-          this.barLineOptions = this.sheetResponce.results.barLineOptions;
+          this.chartOptions5 = this.sheetResponce.savedChartOptions;
+          this.xLabelSwitch = this.chartOptions5.xaxis.labels.show;
+          // this.yLabelSwitch = this.chartOptions5.yaxis.labels.show;
+          this.xGridSwitch = this.chartOptions5.grid.xaxis.lines.show;
+          this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
         } else {
           this.eBarLineChartOptions = this.sheetResponce.savedChartOptions;
         }
-        this.barLineChart();
+        // this.barLineChart();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4100,10 +4017,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
        }
        if(responce.chart_id == 2){
-        this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.hStockedXaxis;
-        this.hStockedOptions = this.sheetResponce.results.hStockedOptions;
-        this.horizentalStockedBar();
+        // this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
+        // this.sidebysideBarColumnData1 = this.sheetResponce.results.hStockedXaxis;
+        this.chartOptions7 = this.sheetResponce.savedChartOptions;
+        this.xLabelSwitch = this.chartOptions7.xaxis.labels.show;
+        // this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
+        this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
+        this.yGridSwitch = this.chartOptions7.grid.yaxis.lines.show;
+        // this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4121,10 +4042,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 3){
-        this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.hgroupedXaxis;
-        this.hgroupedOptions = this.sheetResponce.results.hgroupedOptions;
-        this.hGrouped();
+        // this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
+        // this.sidebysideBarColumnData1 = this.sheetResponce.results.hgroupedXaxis;
+        this.chartOptions8 = this.sheetResponce.savedChartOptions;
+        this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
+        // this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
+        this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
+        this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
+        // this.hGrouped();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4142,10 +4067,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 8){
-        this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.multiLineXaxis;
-        this.multiLineOptions = this.sheetResponce.results.multiLineOptions;
-        this.multiLineChart();
+        // this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
+        // this.sidebysideBarColumnData1 = this.sheetResponce.results.multiLineXaxis;
+        this.chartOptions9 = this.sheetResponce.savedChartOptions;
+        this.xLabelSwitch = this.chartOptions9.xaxis.labels.show;
+        // this.yLabelSwitch = this.chartOptions9.yaxis.labels.show;
+        this.xGridSwitch = this.chartOptions9.grid.xaxis.lines.show;
+        this.yGridSwitch = this.chartOptions9.grid.yaxis.lines.show;
+        // this.multiLineChart();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4163,10 +4092,25 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
        }
        if(responce.chart_id == 10){
-        this.chartsRowData = this.sheetResponce.results.donutYaxis
-        this.chartsColumnData = this.sheetResponce.results.donutXaxis;
-        this.donutOptions = this.sheetResponce.results.donutOptions;
-        this.donutChart();
+        // this.chartsRowData = this.sheetResponce.results.donutYaxis
+        // this.chartsColumnData = this.sheetResponce.results.donutXaxis;
+        this.chartOptions10 = this.sheetResponce.savedChartOptions;
+        const self = this;
+        this.chartOptions10.chart.events = {
+          dataPointSelection: function (event: any, chartContext: any, config: any) {
+            if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
+              const selectedXValue = self.chartOptions10.labels[config.dataPointIndex];
+              console.log('X-axis value:', selectedXValue);
+              let nestedKey = self.draggedDrillDownColumns[self.drillDownIndex];
+              self.drillDownIndex++;
+              let obj = { [nestedKey]: selectedXValue };
+              self.drillDownObject.push(obj);
+              self.callDrillDown();
+            }
+          }
+        }
+        this.legendSwitch = this.chartOptions10.legend.show;
+        // this.donutChart();
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -6396,7 +6340,7 @@ fetchChartData(chartData: any){
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
     }
     else {
-      this.draggedColumnsData[index] = [column.column, "date", type];
+      this.draggedColumnsData[index] = [column.column, "aggregate", type];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
       console.log(this.draggedColumns);
     }
