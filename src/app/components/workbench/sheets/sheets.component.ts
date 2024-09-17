@@ -3132,6 +3132,9 @@ bar["type"]="line";
       )
   }
   onChange(event:any){
+    this.draggedDrillDownColumns = [];
+    this.drillDownObject = [];
+    this.drillDownIndex = 0;
     this.sheetName = '';
     console.log(event)
     if(event.index === -1){
