@@ -688,17 +688,12 @@ export class SheetsdashboardComponent {
   }
 
   saveDashboard(){
-    this.takeScreenshot();
     // localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
     this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: 'Please add Name to Dashboard',
-        width: '400px',
-      })
+      this.toasterService.info('Please add dashboard Title.','info',{ positionClass: 'toast-top-center'})
     }else{
+      this.takeScreenshot();
       this.assignOriginalDataToDashboard();
     let obj ={
       grid : this.gridType,
@@ -1463,6 +1458,7 @@ allowDrop(ev : any): void {
 
 
 viewSheet(sheetdata:any){
+  if(this.dashboardId){
   let sheetId = sheetdata.sheetId;
 if( sheetdata.fileId){
 this.fileId = sheetdata.fileId;
@@ -1483,6 +1479,9 @@ const encodedDashboardId = btoa(this.dashboardId.toString());
 
 this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
 }
+  } else {
+    this.toasterService.info('Please save the dashboard.','info',{ positionClass: 'toast-top-center'})
+  }
 
 }
   
