@@ -1390,6 +1390,7 @@ markDirty(){
 }
 
   goToSheet() {
+    this.goToSheetButtonClicked = true;
     if (this.saveQueryName === '' || this.saveQueryName == null || this.saveQueryName == undefined) {
       Swal.fire({
         icon: 'error',
@@ -1585,5 +1586,36 @@ updateCustmQuery(){
   })
 }
 }
+goToSheetButtonClicked = false;
+// Method to show alert when unsaved changes exist
+dataNotSaveAlert(): Promise<boolean> {
+  if (this.goToSheetButtonClicked) {
+    // If the "Go to Sheet" button is clicked, skip the alert
+    return Promise.resolve(true);
+  }
+  return Swal.fire({
+    position: "center",
+    icon: "warning",
+    title: "Your work has not been saved, Do you want to continnue?",
+    showConfirmButton: true,
+    showCancelButton: true, // Add a "No" button
+    confirmButtonText: 'Yes', // Text for "Yes" button
+    cancelButtonText: 'No',   // Text for "No" button
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // User clicked "Yes", allow navigation
+      return true;
+    } else {
+      // User clicked "No", prevent navigation
+      return false;
+    }
+  });
+}
 
+
+// The `canDeactivate` method is used by the guard
+canDeactivate(): boolean {
+  // This is handled in the functional guard
+  return !this.gotoSheetButtonDisable; 
+}
 }
