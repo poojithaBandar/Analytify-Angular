@@ -222,6 +222,7 @@ export class SheetsComponent {
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
   drillDownIndex : number = 0;
+  originalData : any ;
   dateDrillDownSwitch : boolean = false;
   drillDownLevel : any[] = [];
   drillDownObject: any[] = [];
@@ -481,6 +482,7 @@ if(this.fromFileId){
                   self.drillDownIndex++;
                   let obj = { [nestedKey]: selectedXValue };
                   self.drillDownObject.push(obj);
+                  self.setOriginalData();
                   self.dataExtraction();
                 }
               }
@@ -703,6 +705,7 @@ if(this.fromFileId){
                   self.drillDownIndex++;
                   let obj = { [nestedKey]: selectedXValue };
                   self.drillDownObject.push(obj);
+                  self.setOriginalData();
                   self.dataExtraction();
                 }
               }
@@ -823,6 +826,7 @@ if(this.fromFileId){
                   self.drillDownIndex++;
                   let obj = { [nestedKey]: selectedXValue };
                   self.drillDownObject.push(obj);
+                  self.setOriginalData();
                   self.dataExtraction();
                 }
               },
@@ -2450,6 +2454,7 @@ bar["type"]="line";
                   self.drillDownIndex++;
                   let obj = { [nestedKey]: selectedXValue };
                   self.drillDownObject.push(obj);
+                  self.setOriginalData();
                   self.dataExtraction();
                 }
               }
@@ -3062,6 +3067,7 @@ bar["type"]="line";
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
     this.drillDownIndex = 0;
+    delete this.originalData;
     this.sheetName = ''; this.sheetTitle = '';
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
@@ -3148,6 +3154,7 @@ bar["type"]="line";
     this.drillDownObject = [];
     this.drillDownIndex = 0;
     this.sheetName = '';
+    delete this.originalData;
     console.log(event)
     if(event.index === -1){
      this.retriveDataSheet_id = 1;
@@ -3320,6 +3327,8 @@ sheetSave(){
   let kpiFontSize;
   let bandColor1;
   let bandColor2;
+  let tablePreviewRow = this.tablePreviewRow;
+  let tablePreviewCol = this.tablePreviewColumn;
   if(this.table && this.chartId == 1){
    this.saveTableData =  this.tableData;
    this.savedisplayedColumns = this.displayedColumns;
@@ -3331,6 +3340,17 @@ sheetSave(){
     console.log(this.chartOptions3);
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData;
+    if (this.originalData) {
+      this.saveBar = this.originalData.data;
+      this.barXaxis = this.originalData.categories;
+      this.chartOptions3.xaxis.categories = this.originalData.categories;
+      this.chartOptions3.series[0].data = this.originalData.data;
+      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
+      tablePreviewRow[0].result_data = this.originalData.data;
+      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
+      tablePreviewCol[0].result_data = this.originalData.categories;
+      delete this.originalData;
+    }
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions3;
       this.barOptions = this.chartOptions3;
@@ -3342,10 +3362,21 @@ sheetSave(){
     this.savePie = this.chartsRowData;
     this.pieXaxis = this.chartsColumnData;
     if(this.isApexCharts) {
-      savedChartOptions = this.chartOptions4;
+      savedChartOptions = _.cloneDeep(this.chartOptions4);
       this.pieOptions = this.chartOptions4;
     } else {
       savedChartOptions = this.ePieChartOptions;
+    }
+    if (this.originalData) {
+      this.savePie = this.originalData.data;
+      this.pieXaxis = this.originalData.categories;
+      savedChartOptions.labels = this.originalData.categories;
+      savedChartOptions.series = this.originalData.data;
+      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
+      tablePreviewRow[0].result_data = this.originalData.data;
+      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
+      tablePreviewCol[0].result_data = this.originalData.categories;
+      delete this.originalData;
     }
   }
   if(this.line && this.chartId == 13){
@@ -3434,10 +3465,22 @@ sheetSave(){
     
   }
   if(this.donut && this.chartId == 10){
+    
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
     this.donutOptions = this.chartOptions10;
-    savedChartOptions = this.chartOptions10;
+    savedChartOptions = _.cloneDeep(this.chartOptions10);
+    if (this.originalData) {
+      this.donutYaxis = this.originalData.data;
+      this.donutXaxis = this.originalData.categories;
+      savedChartOptions.labels = this.originalData.categories;
+      savedChartOptions.series = this.originalData.data;
+      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
+      tablePreviewRow[0].result_data = this.originalData.data;
+      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
+      tablePreviewCol[0].result_data = this.originalData.categories;
+      delete this.originalData;
+    }
   }
   if(this.radar && this.chartId == 12){
     this.barLineXaxis = this.sidebysideBarColumnData1;
@@ -3483,8 +3526,8 @@ const obj={
   "columns_data":this.draggedColumnsData,
   "rows": this.draggedRows,
   "rows_data":this.draggedRowsData,
-  "col":this.tablePreviewColumn,
-  "row":this.tablePreviewRow,
+  "col":tablePreviewCol,
+  "row":tablePreviewRow,
   "results": {
     "tableData":this.saveTableData,
     "tableColumns":this.savedisplayedColumns,
@@ -3786,6 +3829,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
+              self.setOriginalData();
               self.dataExtraction();
             }
           }
@@ -3830,6 +3874,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
            self.drillDownIndex++;
            let obj = { [nestedKey] : selectedXValue};
            self.drillDownObject.push(obj);
+           self.setOriginalData();
            self.dataExtraction();
            }
           }
@@ -3872,6 +3917,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
                 self.drillDownIndex++;
                 let obj = { [nestedKey]: selectedXValue };
                 self.drillDownObject.push(obj);
+                self.setOriginalData();
                 self.callDrillDown();
               }
             }
@@ -4120,6 +4166,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               self.drillDownIndex++;
               let obj = { [nestedKey]: selectedXValue };
               self.drillDownObject.push(obj);
+              self.setOriginalData();
               self.callDrillDown();
             }
           }
@@ -6450,4 +6497,22 @@ fetchChartData(chartData: any){
   }
   color1:any;
   color2:any;
+
+  setOriginalData(){
+        if(this.bar){//bar
+          if(!this.originalData){
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+          }
+        }
+        else if(this.pie){//pie
+          if(!this.originalData){
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+          }
+        }
+        else if(this.donut){//pie
+          if(!this.originalData){
+            this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+          }
+        }
+      }
 }
