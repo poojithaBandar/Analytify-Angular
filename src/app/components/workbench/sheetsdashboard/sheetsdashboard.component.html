@@ -146,7 +146,7 @@
                         <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
 
                             <li *ngIf="!isPublicUrl" [ngbNavItem]="1">
-                                <a ngbNavLink class="p-3">Dashboard</a>
+                                <a ngbNavLink class="dashboard-tab-padding">Dashboard</a>
                                 <ng-template ngbNavContent>
                                     <div class="tab-pane active" id="activetabs">
                                       <div class="panel-body tabs-menu-body p-0">
@@ -158,19 +158,18 @@
                                             <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
                                                 <div class="text-wrap">
                                                     <div class="dropdown-samples">
+                                                      <h6 class="dropdown-header sheets-title" style="display: flex; justify-content: space-between;line-height: 2;">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
+                                                        [buttonName]="'Add'"
+                                                        [previledgeId]="17" [isBtn]="true"
+                                                        (btnClickEvent)="fetchSheetsList();isSheetsView = true;" [toolTip]="'Add Sheets'"
+                                                        [faIconList]="'fa fa-plus'" [isIcon]="true"></app-insights-button></h6>
                                                         <ul class="dropdown-menu br-0 draggable-item"
                                                          cdkDropList
                                                          #originList="cdkDropList"
                                                         [cdkDropListData]="dashboardNew"
                                                         [cdkDropListConnectedTo]="[destinationList1,destinationList]"
                                                         (cdkDropListDropped)="drop($event)">
-                                                            <li><h6 class="dropdown-header sheets-title px-4" style="display: flex; justify-content: space-between;line-height: 2;">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
-                                                              [buttonName]="'Add'"
-                                                              [previledgeId]="17" [isBtn]="true"
-                                                              (btnClickEvent)="fetchSheetsList();isSheetsView = true;" [toolTip]="'Add Sheets'"
-                                                              [faIconList]="'fa fa-plus'" [isIcon]="true"></app-insights-button></h6>  
-                                                              
-                                                            </li>
+                                                           
                                                             <li *ngFor="let item of dashboardNew" ><a draggable="true" [ngClass]="{ 'sheet-bold': item['selectedSheet']}"
                                                            class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip" ngbTooltip="{{item.data.title}}" (click)="viewSheet(item)" class="fa fa-plus-square-o"></i> {{item.data.title | slice:0:15}}<i data-bs-toggle="tooltip"  ngbTooltip="clear" style="float: right;" (click)="clearSheet($event,item)" class="fa fa-close"></i></a></li>
 
@@ -190,8 +189,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card mb-0 p-4 br-0 " >
-                                              <h6 class="mb-0">Size</h6>
+                                            <div class="card mb-0  br-0 "  style="box-shadow: none;">
+                                              <h6 class="mb-0 size-text">Size</h6>
                                              <div class="custom-size-card d-flex justify-conent-between">
                                                 <p class="mb-0 custom-size-txt">Custom size ({{widthGrid}} * {{heightGrid}})</p>
                                               
@@ -421,7 +420,7 @@
                             </ng-template>
                             <!-- @if(updateDashbpardBoolen){ -->
                             <li [ngbNavItem]="2" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
-                                 <a ngbNavLink class="p-3">Filters</a>
+                                 <a ngbNavLink class="dashboard-tab-padding">Filters</a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane" id="linktabs">
                                             <div class="card-body p-0">
@@ -564,9 +563,7 @@
                     <div class="title-container">
                       <input *ngIf="!dashboardId"  type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
                       <div *ngIf="dashboardId" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
-                       <span *ngIf="!isPublicUrl" class="title-editor" (click)="toggleEditor()">
-                            <button  class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
-                          </span>
+                       
                         </div>
                         <div *ngIf="editor" class="popup">
                           <div class="popup-content">
@@ -579,11 +576,14 @@
                           </div>
                         </div>
                         </div>
-                        <div class="min-w-fit-content ms-3">              
+                        <span *ngIf="!isPublicUrl" class="title-editor ms-1" (click)="toggleEditor()">
+                          <button  class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
+                        </span>
+                        <div class="min-w-fit-content ms-1">              
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard()">Save </button>
                             <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard()">Update </button>
-                            <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl" style="margin-left: 15px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><i class="fa fa-eraser" aria-hidden="true"></i></button>
-                            <button *ngIf="!isPublicUrl" style="margin-left: 15px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
+                            <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><i class="fa fa-eraser" aria-hidden="true"></i></button>
+                            <button *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
                             <div *ngIf="isPublicUrl" class="dashboard-option">
                               <div class="d-flex justify-content-end p-1" ngbDropdown>
@@ -799,7 +799,7 @@
           }
           </div>
         
-        <div  id="capture-element" style="margin: 0;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
+        <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
