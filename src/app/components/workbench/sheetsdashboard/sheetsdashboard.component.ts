@@ -95,6 +95,7 @@ export class SheetsdashboardComponent {
  panelscheckbox=[] as any;
  isSheetsView : boolean = false;
  sheetsIdArray = [] as any;
+ dashboardsheetsIdArray = [] as any;
  sheetIdsDataSet = [] as any;
  sheetsNewDashboard=false;
  dashboardView = false;
@@ -620,7 +621,7 @@ export class SheetsdashboardComponent {
         this.qrySetId = data.queryset_id;
         this.fileId = data.file_id;
         this.databaseId = data.server_id;
-
+        this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
         this.usersForUpdateDashboard = data.user_ids;
@@ -1456,34 +1457,53 @@ allowDrop(ev : any): void {
   }
 }
 
-
-viewSheet(sheetdata:any){
-  if(this.dashboardId){
-  let sheetId = sheetdata.sheetId;
-if( sheetdata.fileId){
-this.fileId = sheetdata.fileId;
-this.qrySetId = sheetdata.qrySetId;
-  const encodedServerId = btoa(this.fileId.toString());
-  const encodedQuerySetId = btoa(this.qrySetId.toString());
-  const encodedSheetId = btoa(sheetId.toString());
-  const encodedDashboardId = btoa(this.dashboardId.toString());
-
-  this.router.navigate(['/workbench/sheetsdashboard/sheets/fileId/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
-} else {
-this.databaseId = sheetdata.databaseId;
-this.qrySetId = sheetdata.qrySetId;
-const encodedServerId = btoa(this.databaseId.toString());
-const encodedQuerySetId = btoa(this.qrySetId.toString());
-const encodedSheetId = btoa(sheetId.toString());
-const encodedDashboardId = btoa(this.dashboardId.toString());
-
-this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId+'/'+encodedDashboardId])
-}
-  } else {
-    this.toasterService.info('Please save the dashboard.','info',{ positionClass: 'toast-top-center'})
+arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
+  // Check if arrays are of the same length
+  if (arr1.length !== arr2.length) {
+    return false;
   }
 
+  // Sort both arrays and check if every element is the same
+  const sortedArr1 = arr1.slice().sort((a, b) => a - b);  // Sort the first array
+  const sortedArr2 = arr2.slice().sort((a, b) => a - b);  // Sort the second array
+
+  // Compare each element
+  return sortedArr1.every((value, index) => value === sortedArr2[index]);
 }
+
+
+  viewSheet(sheetdata: any) {
+    if (this.dashboardId) {
+      this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+      if (this.sheetsIdArray && this.dashboardsheetsIdArray && !this.arraysHaveSameData(this.sheetsIdArray , this.dashboardsheetsIdArray)) {
+        this.toasterService.info('Please Update the dashboard.', 'info', { positionClass: 'toast-top-center' })
+      } else {
+        let sheetId = sheetdata.sheetId;
+        if (sheetdata.fileId) {
+          this.fileId = sheetdata.fileId;
+          this.qrySetId = sheetdata.qrySetId;
+          const encodedServerId = btoa(this.fileId.toString());
+          const encodedQuerySetId = btoa(this.qrySetId.toString());
+          const encodedSheetId = btoa(sheetId.toString());
+          const encodedDashboardId = btoa(this.dashboardId.toString());
+
+          this.router.navigate(['/workbench/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+        } else {
+          this.databaseId = sheetdata.databaseId;
+          this.qrySetId = sheetdata.qrySetId;
+          const encodedServerId = btoa(this.databaseId.toString());
+          const encodedQuerySetId = btoa(this.qrySetId.toString());
+          const encodedSheetId = btoa(sheetId.toString());
+          const encodedDashboardId = btoa(this.dashboardId.toString());
+
+          this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+        }
+      }
+    } else {
+      this.toasterService.info('Please save the dashboard.', 'info', { positionClass: 'toast-top-center' })
+    }
+
+  }
   
   changedOptions() {
     if (this.options.api && this.options.api.optionsChanged && this.options.api.resize) {
@@ -2479,6 +2499,7 @@ deleteDashboardFilter(id:any){
         "dashboard_id":this.dashboardId,
         "sheet_ids" : deletedFilterSheetsList
       };
+      if(deletedFilterSheetsList && deletedFilterSheetsList.length > 0) {
       this.workbechService.dashboardFilterDeleteFetchSheetData(reqObj).subscribe({
         next:(data : any)=>{
           console.log(data);
@@ -2520,6 +2541,10 @@ deleteDashboardFilter(id:any){
 
         }
     });
+  } else {
+    this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
+
+  }
   },
     error:(error)=>{
       console.log(error)
@@ -2910,7 +2935,7 @@ kpiData?: KpiData;
         this.qrySetId = data.queryset_id;
         this.fileId = data.file_id;
         this.databaseId = data.server_id;
-
+        this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
         let self = this;
@@ -3186,6 +3211,7 @@ kpiData?: KpiData;
       }
     }         
   }
+  
 }
 
 import { Pipe, PipeTransform } from '@angular/core';

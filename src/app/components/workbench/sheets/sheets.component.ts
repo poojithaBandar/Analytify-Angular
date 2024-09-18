@@ -184,7 +184,7 @@ export class SheetsComponent {
   sheetsDashboard : boolean = false;
   sheetList : any [] = [];
   dashboardId : any;
-  selectedDashboardId : any = 1;
+  selectedDashboardId : any = 0;
   GridColor : any;
   apexbBgColor : any;
   dateValue : any = "-Select-";
@@ -334,7 +334,7 @@ export class SheetsComponent {
     this.getDashboardsList();
     // this.sheetRetrive();
   }
- getSheetNames(){
+ async getSheetNames(){
   //this.tabs = [];
   const obj={
     "server_id":this.databaseId,
@@ -6236,8 +6236,13 @@ fetchChartData(chartData: any){
       }
     })
   }
-  moveToDashboard(){
-    this.dashboardId = this.selectedDashboardId;
+  async moveToDashboard(){
+    if(this.selectedDashboardId > 0) {
+      this.dashboardId = this.selectedDashboardId;
+    }
+    if(this.tabs && this.sheetList &&  this.tabs.length != this.sheetList.length){
+      await this.getSheetNames();
+    }
     console.log(this.dashboardId);
     let sheetIds = this.sheetList.map(sheet => sheet.id)
     let obj = {
