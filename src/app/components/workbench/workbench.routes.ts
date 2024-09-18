@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/sharedmodule';
 import { PagesService } from '../pages/pages.service';
 import { authGuard } from '../../auth.guard';
+import { canDeactivateGuard } from '../../can-deactivate.guard';
 
 export const admin: Routes = [
 
@@ -29,6 +30,7 @@ export const admin: Routes = [
 {
   path: 'database-connection/tables/:id',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
@@ -36,36 +38,42 @@ export const admin: Routes = [
 {
   path: 'database-connection/tables/quickbooks/:id',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
   path: 'database-connection/files/tables/:id',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
   path: 'database-connection/sheets/fileId/:id1/:id2/:id3',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
   path: 'database-connection/sheets/dbId/:id1/:id2/:id3',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
   path: 'database-connection/savedQuery/fileId/:id1/:id2',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
   path: 'database-connection/savedQuery/dbId/:id1/:id2',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
