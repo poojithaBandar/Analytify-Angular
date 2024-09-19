@@ -2975,7 +2975,6 @@ bar["type"]="line";
   onAliasChange(rows : any , index : any){
     this.isMeasureEdit = false;
     this.rowMeasuresCount(rows, index, rows.type);
-    this.dataExtraction();
   }
    drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
