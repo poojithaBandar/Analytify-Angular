@@ -2020,7 +2020,7 @@ getColumnsForFilter(){
 getColumnsForFilterEdit(selectedqryId:any,dashboardId:any){
 this.dashboardId= dashboardId,
 this.selectedQuerySetId = selectedqryId
-this.getColumnsForFilter();
+ //this.getColumnsForFilter();
 this.loadSelectedForEditing()
 
 }
@@ -2058,7 +2058,6 @@ customSearch(term: string, item: any): boolean {
   return item.searchKey.toLowerCase().includes(term.toLowerCase());
 }
 loadSelectedForEditing() {
-  // Simulating an API response with the selected item
   const selectedForEdit = {
     column_name: this.selectClmnEdit,
     column_dtype: this.selectdColmnDtypeEdit,
@@ -2085,8 +2084,22 @@ updateSelectedRows(){
   .filter((row: { selected: any; }) => row.selected)
   .map((row: { label: any; }) => row.label.id);
 console.log('selected rows', this.selectedRows);
-9
 this.isAllSelected = this.sheetsFilterNames.every((row: { selected: any; }) => row.selected);
+}
+getColumnSelectionLabel(filterList: any): string {
+  // Get the filtered columns using the provided method
+  const filteredColumns = this.getFilteredColumns(filterList);
+  const selectedColumns = filteredColumns.filter((col: any) => col.selected);
+  
+  if (selectedColumns.length === 0) {
+    return 'Select Column';
+  } else if (selectedColumns.length === 1) {
+    return selectedColumns[0].label; // Display the label of the single selected column
+  } else if (selectedColumns.length === filteredColumns.length) {
+    return 'All Selected';
+  } else {
+    return 'Multiple Values'; // Display 'Multiple Values' if more than one column is selected
+  }
 }
 
 toggleAllRows(event: Event) {
@@ -2108,6 +2121,15 @@ closeColumnsDropdown(colName:any,colDatatype:any, dropdown: NgbDropdown) {
 closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
   localStorage.setItem(id, JSON.stringify(colData));
   dropdown.close();
+}
+clearSelectedData(dropdown: NgbDropdown,colData :any,id: any){
+  colData.forEach((col: any) => {
+    col.selected = false;
+  });
+  if (this.storeSelectedColData["test"][id]) {
+    this.storeSelectedColData["test"][id] = [];
+  }
+  localStorage.setItem(id, JSON.stringify(colData));
 }
 
 getSelectedData(){
@@ -2136,7 +2158,7 @@ if(this.filterName === ''){
       this.filterName = '';
       this.isAllSelected = false;
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
-
+      this.selectedOption = null;
     },
     error:(error)=>{
       console.log(error)
@@ -2173,18 +2195,15 @@ getDashboardFilterredList(){
   })
 }
 getFilteredColumns(filterList: any) {
-  // Ensure filterList.searchText is a string (handling null/undefined cases)
   const searchText = filterList?.searchText ? filterList.searchText.toLowerCase() : '';
 
-  // If searchText is empty, return the full list of columns
   if (!searchText) {
-    return filterList?.colData || []; // Return an empty array if colData is null or undefined
+    return filterList?.colData || []; 
   }
 
-  // Safely filter colData and check if col.label exists before calling toLowerCase
   const data = (filterList?.colData || []).filter((col: any) => col?.label?.toLowerCase().includes(searchText));
   
-  console.log('Filtered Data:', data); // Log the filtered data to check the output
+  console.log('Filtered Data:', data); 
 
   return data;
 
@@ -2252,6 +2271,7 @@ this.isAllSelected = filterList.colData.every((row: { selected: any; }) => row.s
   toggleAllColumns(event: Event, filterList: any) {
     let array: any[] = [];
     const isChecked = (event.target as HTMLInputElement).checked;
+
     filterList.colData.forEach((row: { selected: boolean; }) => row.selected = isChecked);
     // this.updateSelectedColmns(filterList,filterList.colData);
     if (isChecked) {
@@ -2340,6 +2360,26 @@ getFilteredData(){
   });
 }
 }
+clearAllFilters(): void {
+  if (this.DahboardListFilters && Array.isArray(this.DahboardListFilters)) {
+      this.DahboardListFilters.forEach(filterList => {
+          if (filterList && Array.isArray(filterList.colData)) {
+              filterList.colData.forEach((col: { selected: boolean }) => {
+                  col.selected = false;
+              });
+          }
+          if (this.storeSelectedColData["test"][filterList.dashboard_filter_id]) {
+            this.storeSelectedColData["test"][filterList.dashboard_filter_id] = [];
+          }
+      });
+      localStorage.removeItem('storeSelectedColData'); 
+      console.log('All filters cleared');
+      this.getFilteredData();
+  } else {
+      console.warn('DahboardListFilters is not defined or not an array');
+  }
+}
+
 
 setDashboardSheetData(item:any , isFilter : boolean){
   this.dashboard.forEach((item1:any) => {
@@ -3213,23 +3253,6 @@ kpiData?: KpiData;
     }         
   }
   
-}
-
-import { Pipe, PipeTransform } from '@angular/core';
-@Pipe({
-  name: 'filterPipe'
-})
-export class FilterPipe implements PipeTransform {
-  transform(items: any[], searchText: string): any[] {
-    if (!items) {
-      return [];
-    }
-    if (!searchText) {
-      return items;
-    }
-    searchText = searchText.toLowerCase();
-    return items.filter(item => item.label.toLowerCase().includes(searchText));
-  }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

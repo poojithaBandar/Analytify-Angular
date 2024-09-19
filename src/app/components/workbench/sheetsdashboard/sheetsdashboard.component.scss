@@ -326,6 +326,9 @@ a.dashboard-tab-padding.nav-link {
 #sticky-sidebar {
   background-color: #fff;
 }
+.ng-untouched.ng-valid {
+  color: #aeb1b6;
+}
 
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
@@ -334,6 +337,9 @@ a.dashboard-tab-padding.nav-link {
   }
   .flex-grow-1 {
     margin-bottom: 5px;
+}
+#capture-element {
+  width: 100% !important;
 }
 }
 
@@ -358,6 +364,9 @@ button.btn.ripple.btn-primary {
 }
 div#sticky-sidebar {
   background: white;
+}
+#capture-element {
+  width: 100% !important;
 }
 }
 
