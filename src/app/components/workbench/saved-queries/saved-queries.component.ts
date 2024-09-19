@@ -128,7 +128,8 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     this.pageNo=page;
     this.getSavedQueries();
   }
-  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
+  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any,isCustomSql:boolean,dsQrySetId:any){
+    if(isCustomSql){ 
     if(fileId === null){
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
@@ -141,5 +142,33 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
   
       this.route.navigate(['workbench/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
     }
+
+  }
+  else{
+    const encodeddbId = btoa(dbId?.toString());
+    const encodedqurysetId = btoa(qrySetId.toString());
+    const encodedFileId = btoa(fileId?.toString());
+    // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+
+    const idToPass = fileId ? encodedFileId : encodeddbId;
+    const fromSource = fileId ? 'fileId' : 'dbId';
+
+    const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
+  ? btoa('null') 
+  : btoa(dsQrySetId.toString()); 
+   this.route.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+
+    // if (dsQrySetId === null || dsQrySetId === undefined) {
+    //   // Encode 'null' to represent a null value
+    //  const encodedDsQuerySetId = btoa('null');
+    //  this.route.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+
+    // } else {
+    //   // Convert to string and encode
+    //  const encodedDsQuerySetId = btoa(dsQrySetId.toString());
+    //  this.route.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+  
+    // }
+  }
   }
 }

@@ -308,7 +308,7 @@
                                             
                                             </ng-select>
                                             </div>
-                                              <h6>Apply to Selected worksheets</h6>
+                                              <label class="form-label">Apply to Selected worksheets</label>
                                            
                                             <div class="form body border p-2">
 
@@ -322,7 +322,7 @@
 
                                               <div class="form-check">
                                                 <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
-                                                <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <h6>{{rows?.label.name}}</h6> </label>
+                                                <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <p>{{rows?.label.name}}</p> </label>
                                               </div>
                                             }
                                             </div>
@@ -386,7 +386,7 @@
                                           
                                           </ng-select>
                                           </div>
-                                            <h6>Apply to Selected worksheets</h6>
+                                            <label class="form-label">Apply to Selected worksheets</label>
                                          
                                           <div class="form body border p-2">
 
@@ -400,7 +400,7 @@
 
                                             <div class="form-check">
                                               <input type="checkbox" [id]="'defaultCheck' + i"  name="rows1{{i}}"[(ngModel)]="rows1.selected" (change)="updateSelectedRowsEdit()" class="form-check-input"> 
-                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <h6>{{rows1.sheet_name}}</h6> </label>
+                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <p>{{rows1.sheet_name}}</p> </label>
                                             </div>
                                           }
                                           </div>
@@ -477,14 +477,15 @@
                                                               </ul> -->
                                                               <div style="height: 500px;overflow-y: auto;">
                                                                 <!-- @for(filterList of DahboardListFilters;track filterList){ -->
-                                                              <div *ngFor="let filterList of DahboardListFilters" class="sub-category-card p-2 mt-2 border bg-light rounded-3 mb-2">
-                                                                <p class="text-center mb-0">{{filterList.filter_name}}</p>
+                                                              <div *ngFor="let filterList of DahboardListFilters" class="sub-category-card p-1 mt-2 border bg-light rounded-3 mb-2">
+                                                                <p class="text-center mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
-                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">Select Column <i class="fa fa-angle-down" ></i></button>
-                                                                  <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">Select Column <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button>
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;background-color: #ffffff;max-height: 240px;overflow-y: auto;">
+                                                                    <div class="scrollable-content" style="max-height: calc(100% - 50px); overflow-y: auto;"> <!-- Adjust the height to account for buttons -->
                                                                     <div class="input-group">
                                                                       <input type="text" [(ngModel)]="filterList.searchText" class="form-control border-end-0" placeholder="Search" aria-describedby="button-addon2">
                                                                       <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;">
@@ -503,7 +504,10 @@
                                                                         <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
                                                                       </div>
                                                                   <!-- } -->
-                                                                  <div class="p-2">
+                                                                </div>
+
+                                                                  <div class="fixed-buttons p-2" style="position: sticky; bottom: 0; left: 0; width: 100%; background-color: #ffffff; padding: 8px 6px; box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);">
+                                                                    <button type="button"  (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-danger me-2">Clear</button>
                                                                     <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">Save</button>
                                                                 </div>
                                                                   </ul>
@@ -524,7 +528,13 @@
                                                                 </div> -->
                                                               </div>
                                                             <!-- } -->
-                                                            <button *ngIf="DahboardListFilters .length > 0; else noData" style="float: right;" class="btn ripple btn-primary" (click)="isPublicUrl ? getFilteredDataPublic() : getFilteredData()">Apply filters</button>
+                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData" > 
+                                                                <button class="btn ripple btn-danger"
+                                                                  (click)="clearAllFilters()">Clear filters</button>
+                                                              
+                                                                <button *ngIf="DahboardListFilters .length > 0; else noData" style="float: right;" class="btn ripple btn-primary"
+                                                                  (click)="isPublicUrl ? getFilteredDataPublic() : getFilteredData()">Apply filters</button>
+                                                              </div>
                                                             <ng-template #noData>
                                                               <p>No Filters Available</p>
                                                             </ng-template>
@@ -556,9 +566,9 @@
       </div>
     </div>
     <div class="col-xl-10 col-md-12 p-1 ">
-         <div class="card mb-1" style="position: sticky;top: 0;  z-index: 900;">
+         <div class="card mb-1" style="position: sticky;top: 59px;  z-index: 2;">
             <div class="card-body p-1">
-                <div class="d-flex align-items-start">
+                <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
                     <div class="title-container">
                       <input *ngIf="!dashboardId"  type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
@@ -576,10 +586,11 @@
                           </div>
                         </div>
                         </div>
+
+                        <div class="min-w-fit-content ms-1">              
                         <span *ngIf="!isPublicUrl" class="title-editor ms-1" (click)="toggleEditor()">
                           <button  class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
                         </span>
-                        <div class="min-w-fit-content ms-1">              
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard()">Save </button>
                             <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard()">Update </button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><i class="fa fa-eraser" aria-hidden="true"></i></button>

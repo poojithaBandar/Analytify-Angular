@@ -51,7 +51,7 @@
                             <td>{{data.modified}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
-                            <a aria-label="anchor" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id)" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                            <a aria-label="anchor" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                 <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
                             <a aria-label="anchor" (click)="deleteSavedQuery(data.queryset_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                 <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
@@ -79,7 +79,7 @@
                       <div class="ms-2 mt-sm-0 mt-2">
                         <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                           <h6 class="mb-1">
-                              <a ngbTooltip="{{data.queryset_name}}" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id)"  class="float-start"> {{data.queryset_name | slice:0:15}}</a>
+                              <a ngbTooltip="{{data.queryset_name}}" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)"  class="float-start"> {{data.queryset_name | slice:0:15}}</a>
                           </h6>
                           
                       </div>
@@ -92,7 +92,7 @@
                               class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu" ngbDropdownMenu>
-                         <a class="dropdown-item" tabindex="0" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id)">
+                         <a class="dropdown-item" tabindex="0" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)">
                                 <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
                             <a  class="dropdown-item  btn btn-secondary-light" tabindex="0" (click)="deleteSavedQuery(data.queryset_id)" >
                                 <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
