@@ -320,7 +320,46 @@ a.dashboard-tab-padding.nav-link {
 #capture-element {
   width: 100% !important;
 }
+.dashboard-title-card{
+  display: flex;
+}
+#sticky-sidebar {
+  background-color: #fff;
+}
 
+ // for Mobile Resolution //
+ @media only screen and ( max-width : 578px ) {
+  .dashboard-title-card{
+    display: inline-block;
+  }
+  .flex-grow-1 {
+    margin-bottom: 5px;
+}
+}
+
+// for Tab Resolution //
+@media ( 768px <= width <= 1198px) {
+  .row.main-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+.category-text {
+  font-size: 9px;
+}
+.filterColumnbtn.select-column-text {
+  font-size: 8px;
+}
+.fa-angle-down {
+  font-size: 12px;
+}
+button.btn.ripple.btn-primary {
+  font-size: 12px;
+}
+div#sticky-sidebar {
+  background: white;
+}
+}
 
 // for 90% Resolution //
 @media ( 1420px <= width <= 1560px) {
