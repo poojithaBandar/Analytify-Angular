@@ -888,6 +888,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
         //   text: 'Dashboard Updated Successfully',
         //   width: '400px',
         // })
+        this.dashboardsheetsIdArray = this.sheetsIdArray;
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
 
         this.endMethod(); 
