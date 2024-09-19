@@ -248,7 +248,7 @@
                                       <i class="fa fa-plus"></i> Add Filter
                                     </button>
                                     <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" (click)="editFiltersData(filterList.dashboard_filter_id)" class="btn text-left mb-2">{{filterList.filter_name}}
-                                      <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id)" style="color: red;"><i style="float: right;padding-top: 3px;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
+                                      <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id);$event.stopPropagation()" style="color: red;"><i style="float: right;padding-top: 3px;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
                                     </button>
 
                                     </div>
