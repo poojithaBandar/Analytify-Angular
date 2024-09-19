@@ -326,6 +326,9 @@ a.dashboard-tab-padding.nav-link {
 #sticky-sidebar {
   background-color: #fff;
 }
+.ng-untouched.ng-valid {
+  color: #aeb1b6;
+}
 
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
