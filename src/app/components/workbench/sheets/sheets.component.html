@@ -872,7 +872,8 @@
                     [series]="chartOptions10.series"
                     [chart]="chartOptions10.chart"
                     [labels]="chartOptions10.labels"
-                    [responsive]="chartOptions10.responsive" >
+                    [responsive]="chartOptions10.responsive"
+                    [plotOptions] = "chartOptions10.plotOptions" >
                 </apx-chart>
                   </div>
               }
@@ -1515,7 +1516,7 @@
                                                                             
                                                                             <div class="buttons">
                                                                                 <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                                <button class="btn btn-primary" (click)="updateChart()">Update</button>
+                                                                                <button class="btn btn-primary" (click)="updateChart({ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}})">Update</button>
                                                                             </div>
                                                                           </div>
                                                                       }

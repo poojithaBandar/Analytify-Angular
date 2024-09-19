@@ -36,6 +36,7 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options } from '@angular-slider/ngx-slider';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
+import { series } from '../../charts/apexcharts/data';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -2484,7 +2485,7 @@ bar["type"]="line";
             pie: {
               donut: {
                 labels: {
-                  show: true,
+                  show: false,
                   name: {
                     show: true
                   },
@@ -2496,7 +2497,7 @@ bar["type"]="line";
                   },
                   total: {
                     show: true,
-                    showAlways: false,
+                    showAlways: true,
                     formatter: (w:any) => {
                       return w.globals.seriesTotals.reduce((a:any, b:any) => {
                         return +a + b
@@ -2627,70 +2628,83 @@ bar["type"]="line";
             this.chartsDataSet(responce);
             if (this.chartsRowData.length > 0) {
               this.enableDisableCharts();
-              this.chartsOptionsSet();
-              // if (this.retriveDataSheet_id) {
-              //   const dimensions: Dimension[] = this.sidebysideBarColumnData1;
-              //   const categories = this.flattenDimensions(dimensions);
-              //   if (this.barchart) {
-              //     this.chartOptions3.series[0].data = this.chartsRowData;
-              //     this.chartOptions3.xaxis.categories = this.chartsColumnData;
-              //     // this.chartsColumnData.forEach((data:any)=>{
-              //     //   this.chartOptions3.xaxis.categories.push(data);
-              //     // })
-              //     // this.chartOptions3.labels = this.chartsColumnData;
-              //     console.log(this.chartOptions3.xaxis.categories);
-              //     console.log(this.chartOptions3);
-              //     console.log(this.barchart);
-              //     this.barchart.updateOptions(this.chartOptions3);
-              //   }
-              //   else if (this.piechart) {
-              //     this.chartOptions4.series = this.chartsRowData;
-              //     this.chartOptions4.labels = this.chartsColumnData;
-              //   }
-              //   else if (this.linechart) {
-              //     this.chartOptions.series[0].data = this.chartsRowData;
-              //     this.chartOptions.xaxis.categories = this.chartsColumnData;
-              //   }
-              //   else if (this.areachart) {
-              //     this.chartOptions1.series[0].data = this.chartsRowData;
-              //     this.chartOptions1.labels = this.chartsColumnData;
-              //   }
-              //   else if (this.sidebysideChart) {
-              //     this.chartOptions2.series = this.sidebysideBarRowData;
-              //     this.chartOptions2.xaxis.categories = categories;
-              //   }
-              //   else if (this.stockedChart) {
-              //     this.chartOptions6.series = this.sidebysideBarRowData;
-              //     this.chartOptions6.xaxis.categories = categories;
-              //   }
-              //   else if (this.barlineChart) {
-              //     // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
-              //     // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
-              //     this.chartOptions5.series = this.sidebysideBarRowData;
-              //     this.chartOptions5.labels = categories;
-              //     this.chartOptions5.xaxis.categories = categories;
-              //   }
-              //   else if (this.horizontolstockedChart) {
-              //     this.chartOptions7.series = this.sidebysideBarRowData;
-              //     this.chartOptions7.xaxis.categories = categories;
-              //   }
-              //   else if (this.groupedChart) {
-              //     this.chartOptions8.series = this.sidebysideBarRowData;
-              //     this.chartOptions8.xaxis.categories = categories;
-              //   }
-              //   else if (this.multilineChart) {
-              //     this.chartOptions9.series = this.sidebysideBarRowData;
-              //     this.chartOptions9.xaxis.categories = categories;
-              //   }
-              //   else if (this.donutchart) {
-              //     this.chartOptions10.series = this.chartsRowData;
-              //     this.chartOptions10.labels = this.chartsColumnData;
-              //   }
-              //   // this.updateChart();
-              // }
-              // else{
-              //   this.chartsOptionsSet();
-              // }
+              // this.chartsOptionsSet();
+              if (this.retriveDataSheet_id) {
+                const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+                const categories = this.flattenDimensions(dimensions);
+                let object : any;
+                if (this.barchart) {
+                  this.chartOptions3.series[0].data = this.chartsRowData;
+                  this.chartOptions3.xaxis.categories = this.chartsColumnData;
+                  this.chartOptions3.xaxis.convertedCatToNumeric = true;
+                  console.log(this.chartOptions3.xaxis.categories);
+                  console.log(this.chartOptions3);
+                  object = [{data : this.chartsRowData}];
+                  this.barchart.updateSeries(object);
+                  object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
+                  this.barchart.updateOptions(object);
+                  console.log(this.barchart);
+                }
+                else if (this.piechart) {
+                  this.chartOptions4.series = this.chartsRowData;
+                  this.chartOptions4.labels = this.chartsColumnData;
+                }
+                else if (this.linechart) {
+                  this.chartOptions.series[0].data = this.chartsRowData;
+                  this.chartOptions.xaxis.categories = this.chartsColumnData;
+                  this.chartOptions.xaxis.convertedCatToNumeric = true;
+                  object = [{data : this.chartsRowData}];
+                  this.linechart.updateSeries(object);
+                  object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
+                  this.linechart.updateOptions(object);
+                  console.log(this.linechart);
+                }
+                else if (this.areachart) {
+                  this.chartOptions1.series[0].data = this.chartsRowData;
+                  this.chartOptions1.labels = this.chartsColumnData;
+                  this.chartOptions1.xaxis.convertedCatToNumeric = true;
+                  object = [{data : this.chartsRowData}];
+                  this.areachart.updateSeries(object);
+                  object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
+                  this.areachart.updateOptions(object);
+                  console.log(this.linechart);
+                }
+                else if (this.sidebysideChart) {
+                  this.chartOptions2.series = this.sidebysideBarRowData;
+                  this.chartOptions2.xaxis.categories = categories;
+                }
+                else if (this.stockedChart) {
+                  this.chartOptions6.series = this.sidebysideBarRowData;
+                  this.chartOptions6.xaxis.categories = categories;
+                }
+                else if (this.barlineChart) {
+                  // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
+                  // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
+                  this.chartOptions5.series = this.sidebysideBarRowData;
+                  this.chartOptions5.labels = categories;
+                  this.chartOptions5.xaxis.categories = categories;
+                }
+                else if (this.horizontolstockedChart) {
+                  this.chartOptions7.series = this.sidebysideBarRowData;
+                  this.chartOptions7.xaxis.categories = categories;
+                }
+                else if (this.groupedChart) {
+                  this.chartOptions8.series = this.sidebysideBarRowData;
+                  this.chartOptions8.xaxis.categories = categories;
+                }
+                else if (this.multilineChart) {
+                  this.chartOptions9.series = this.sidebysideBarRowData;
+                  this.chartOptions9.xaxis.categories = categories;
+                }
+                else if (this.donutchart) {
+                  this.chartOptions10.series = this.chartsRowData;
+                  this.chartOptions10.labels = this.chartsColumnData;
+                }
+                // this.updateChart();
+              }
+              else{
+                this.chartsOptionsSet();
+              }
             }
            
             if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1) && !this.kpi) {
@@ -3609,24 +3623,14 @@ if(this.retriveDataSheet_id){
     //   this.getSheetNames();
     //  this.sheetRetrive();
     }
-    if(this.dashboardId){
       let obj : object= {
         "sheet_id":this.retriveDataSheet_id
       }
       this.workbechService.dashboardSheetsUpdate(obj).subscribe({next: (responce:any) => {
         console.log('sheet_dash_update');
         console.log(responce);
-      },
-      error: (error) => {
-        console.log(error);
-        Swal.fire({
-          icon: 'error',
-          text: error.error.message,
-          width: '200px',
-        })
       }
     })
-    }
   
   },
   error: (error) => {
@@ -3817,8 +3821,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(this.isApexCharts){
         const self = this;
         this.chartOptions3 = this.sheetResponce.savedChartOptions;
+        this.chartOptions3.xaxis.convertedCatToNumeric = true;
+        this.barchart?.updateOptions(this.chartOptions3);
         this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
-        this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
         this.chartOptions3.chart.events = {
           dataPointSelection: function (event: any, chartContext: any, config: any) {
             const selectedXValue = self.chartOptions3.xaxis.categories[config.dataPointIndex];
@@ -3834,9 +3839,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             }
           }
         };
+        this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
         // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
         this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+        console.log(this.chartOptions3.xaxis.convertedCatToNumeric);
         console.log(this.chartOptions3);
        } else {
          this.eBarChartOptions = this.sheetResponce.savedChartOptions;
@@ -3908,6 +3915,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.isApexCharts){
           const self = this;
           this.chartOptions = this.sheetResponce.savedChartOptions;
+          this.chartOptions.xaxis.convertedCatToNumeric = true;
+          this.linechart?.updateOptions(this.chartOptions);
           this.chartOptions.events = {
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
@@ -3951,6 +3960,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.chartsColumnData = this.sheetResponce.results.areaXaxis;
         if(this.isApexCharts){
           this.chartOptions1 = this.sheetResponce.savedChartOptions;
+          this.chartOptions1.xaxis.convertedCatToNumeric = true;
+          this.areachart?.updateOptions(this.chartOptions1);
           this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
           // this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
           this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
@@ -4498,37 +4509,47 @@ lineColor : any;
 marksColor2(color:any){
 console.log(this.sidebysideBarRowData);
 console.log(color)
+let object : any;
 if(this.barchart){
   this.chartOptions3.colors = color;
+  object = {colors: [color]};
 }
 else if(this.areachart){
   this.chartOptions1.colors = color;
+  object = {colors: [color]};
 }
 else if(this.linechart){
   this.chartOptions.colors = color;
+  object = {colors: [color]};
 }
 else if(this.sidebysideChart){
   if(this.sidebysideBarRowData){
   }
   this.chartOptions2.colors = color;
+  object = {colors: [color]};
 }
 else if(this.stockedChart){
   this.chartOptions6.colors = color;
+  object = {colors: [color]};
 }
 else if(this.barlineChart){
   this.chartOptions5.series[0].color = this.barColor;
   this.chartOptions5.series[1].color = this.lineColor;
+  object = {colors: [this.barColor, this.lineColor]};
 }
 else if(this.horizontolstockedChart){
   this.chartOptions7.colors = color;
+  object = {colors: [color]};
 }
 else if(this.groupedChart){
   this.chartOptions8.colors = color;
+  object = {colors: [color]};
 }
 else if(this.multilineChart){
   this.chartOptions9.colors = color;
+  object = {colors: [color]};
 }
-this.updateChart();
+this.updateChart(object);
 }
 // scolor : any;
 // barColors(color:any, index: any){
@@ -4625,8 +4646,10 @@ renameColumns(){
     this.sheetTitle = doc.body.textContent+'';
   }
   fontChange(event : any, section : any){
+    let object:any;
     if (section === 'dimension') {
       if (event.target.value === 'arial') {
+        object = {xaxis: {labels: {style: {fontFamily: 'Arial, sans-serif',fontWeight: 'bold',fontSize: '12px',}}, categories: this.chartsColumnData}}
         if (this.barchart) {
           this.chartOptions3.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
           this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
@@ -4674,6 +4697,7 @@ renameColumns(){
         }
       }
       if (event.target.value === 'calibri') {
+        object = {xaxis: {labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}, categories: this.chartsColumnData}}
         if (this.barchart) {
           this.chartOptions3.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
           this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
@@ -4721,6 +4745,7 @@ renameColumns(){
         }
       }
       if (event.target.value === 'times') {
+        object = {xaxis: {labels: {style: {fontFamily: 'Times New Roman, serif',fontWeight: 'bold',fontSize: '16px',}}, categories: this.chartsColumnData}}
         if (this.barchart) {
           this.chartOptions3.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
           this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
@@ -4768,6 +4793,7 @@ renameColumns(){
         }
       }
       if (event.target.value === 'verdana') {
+        object = {xaxis: {labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}, categories: this.chartsColumnData}}
         if (this.barchart) {
           this.chartOptions3.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
           this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
@@ -4817,6 +4843,7 @@ renameColumns(){
     }
     else{
       if(event.target.value === 'arial'){
+        object = {yaxis: [{labels: {style: {fontFamily: 'Arial, sans-serif',fontWeight: 'bold',fontSize: '12px',}}}]};
         if (this.barchart) {
           if(this.chartOptions3.yaxis.length >0){
             (this.chartOptions3.yaxis as any[]).forEach((data)=>{
@@ -4830,6 +4857,7 @@ renameColumns(){
             this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
             this.chartOptions3.yaxis.labels.style.fontSize = '12px';
           }
+          
         }
         else if (this.areachart){
           if(this.chartOptions1.yaxis.length >0){
@@ -4945,6 +4973,7 @@ renameColumns(){
         }
       }
       if(event.target.value === 'calibri'){
+        object = {yaxis: [{labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}}]};
         if(this.barchart){
           if(this.chartOptions3.yaxis.length >0){
             (this.chartOptions3.yaxis as any[]).forEach((data)=>{
@@ -5073,6 +5102,7 @@ renameColumns(){
         }
       }
       if(event.target.value === 'times'){
+        object = {yaxis: [{labels: {style: {fontFamily: 'Times New Roman, serif',fontWeight: 'bold',fontSize: '16px',}}}]};
         if(this.barchart){
           if(this.chartOptions3.yaxis.length >0){
             (this.chartOptions3.yaxis as any[]).forEach((data)=>{
@@ -5201,6 +5231,7 @@ renameColumns(){
         }
       }
       if(event.target.value === 'verdana'){
+        object = {yaxis: [{labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}}]};
         if(this.barchart){
           if(this.chartOptions3.yaxis.length >0){
             (this.chartOptions3.yaxis as any[]).forEach((data)=>{
@@ -5331,11 +5362,13 @@ renameColumns(){
     }
     
     console.log(this.chartOptions3);
-    this.updateChart();
+    this.updateChart(object);
   }
   allignmentChange(event: any, section: any) {
+    let object : any;
     if (section === 'dimension') {
       if (event.target.value === 'center') {
+        object = {xaxis: {labels : {offsetX : 0}, categories: this.chartsColumnData}};
         if(this.barchart){
           this.chartOptions3.xaxis.labels.offsetX = 0;
         }
@@ -5366,6 +5399,7 @@ renameColumns(){
 
       }
       if (event.target.value === 'left') {
+        object = {xaxis: {labels : {offsetX : -10}, categories: this.chartsColumnData}};
         if(this.barchart){
           this.chartOptions3.xaxis.labels.offsetX = -10;
         }
@@ -5395,6 +5429,7 @@ renameColumns(){
         }
       }
       if (event.target.value === 'right') {
+        object = {xaxis: {labels : {offsetX : 10}, categories: this.chartsColumnData}};
         if(this.barchart){
           this.chartOptions3.xaxis.labels.offsetX = 10;
         }
@@ -5426,6 +5461,7 @@ renameColumns(){
     }
     else {
       if (event.target.value === 'center') {
+        object = {yaxis: {labels : {offsetY : 0}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -5518,6 +5554,7 @@ renameColumns(){
         }
       }
       if (event.target.value === 'up') {
+        object = {yaxis: {labels : {offsetY : -10}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -5610,6 +5647,7 @@ renameColumns(){
         }
       }
       if (event.target.value === 'down') {
+        object = {yaxis: {labels : {offsetY : 10}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -5702,57 +5740,69 @@ renameColumns(){
         }
       }
     }
-    this.updateChart();
+    this.updateChart(object);
   }
-  updateChart() {
+  updateChart(object : any) {
     if (this.barchart) {
-      this.barchart.updateOptions(this.chartOptions3);
+      this.barchart.updateOptions(object);
       console.log(this.chartOptions3);
+      console.log(this.barchart);
     }
     else if(this.areachart){
-      this.areachart.updateOptions(this.chartOptions1);
+      this.areachart.updateOptions(object);
       console.log(this.chartOptions1);
+      console.log(this.areachart);
     }
     else if(this.linechart){
-      this.linechart.updateOptions(this.chartOptions);
+      this.linechart.updateOptions(object);
       console.log(this.chartOptions);
+      console.log(this.linechart);
     }
     else if(this.sidebysideChart){
-      this.sidebysideChart.updateOptions(this.chartOptions2);
+      this.sidebysideChart.updateOptions(object);
       console.log(this.chartOptions2);
+      console.log(this.sidebysideChart);
     }
     else if(this.stockedChart){
-      this.stockedChart.updateOptions(this.chartOptions6);
+      this.stockedChart.updateOptions(object);
       console.log(this.chartOptions6);
+      console.log(this.stockedChart);
     }
     else if(this.barlineChart){
-      this.barlineChart.updateOptions(this.chartOptions5);
+      this.barlineChart.updateOptions(object);
       console.log(this.chartOptions5);
+      console.log(this.barlineChart);
     }
     else if(this.horizontolstockedChart){
-      this.horizontolstockedChart.updateOptions(this.chartOptions7);
+      this.horizontolstockedChart.updateOptions(object);
       console.log(this.chartOptions7);
+      console.log(this.horizontolstockedChart);
     }
     else if(this.groupedChart){
-      this.groupedChart.updateOptions(this.chartOptions8);
+      this.groupedChart.updateOptions(object);
       console.log(this.chartOptions8);
+      console.log(this.groupedChart);
     }
     else if(this.multilineChart){
-      this.multilineChart.updateOptions(this.chartOptions9);
+      this.multilineChart.updateOptions(object);
       console.log(this.chartOptions9);
+      console.log(this.multilineChart);
     }
     else if(this.piechart){
-      this.piechart.updateOptions(this.chartOptions4);
+      this.piechart.updateOptions(object);
       console.log(this.chartOptions4);
+      console.log(this.piechart);
     }
     else if(this.donutchart){
-      this.donutchart.updateOptions(this.chartOptions10);
+      this.donutchart.updateOptions(object);
       console.log(this.chartOptions10);
+      console.log(this.donutchart);
     }
   }
   dataLabels:boolean = true;
   label : boolean = true;
   toggleSwitch(type : string) {
+    let object:any;
     if(type === 'banding'){
       this.bandingSwitch = !this.bandingSwitch;
       if(!this.bandingSwitch){
@@ -5762,33 +5812,45 @@ renameColumns(){
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
+      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
+      object = { xaxis: {labels: {show: this.xLabelSwitch}, categories: this.chartsColumnData}};
       if(this.barchart){
         this.chartOptions3.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions3.xaxis.categories = this.chartsColumnData;
       }
       else if(this.areachart){
         this.chartOptions1.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions1.xaxis.categories = this.chartsColumnData;
       }
       else if(this.linechart){
         this.chartOptions.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions.xaxis.categories = this.chartsColumnData;
       }
       else if(this.sidebysideChart){
         this.chartOptions2.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions2.xaxis.categories = categories;
       }
       else if(this.stockedChart){
         this.chartOptions6.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions6.xaxis.categories = categories;
       }
       else if(this.barlineChart){
         this.chartOptions5.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions5.xaxis.categories = categories;
       }
       else if(this.horizontolstockedChart){
         this.chartOptions7.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions7.xaxis.categories = categories;
       }
       else if(this.groupedChart){
         this.chartOptions8.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions8.xaxis.categories = categories;
       }
       else if(this.multilineChart){
         this.chartOptions9.xaxis.labels.show = this.xLabelSwitch;
+        this.chartOptions9.xaxis.categories = categories;
       }
     } else {
       this.changeAlignment();
@@ -5797,6 +5859,7 @@ renameColumns(){
     else if(type === 'ylabel'){
       this.yLabelSwitch = !this.yLabelSwitch;
       if(this.isApexCharts){
+      object = { yaxis: {labels: {show: this.yLabelSwitch}}};
       if(this.barchart){
         if(this.chartOptions3.yaxis.length >0){
           (this.chartOptions3.yaxis as any[]).forEach((data)=>{
@@ -5894,6 +5957,7 @@ renameColumns(){
     else if(type === 'xgrid'){
       this.xGridSwitch = !this.xGridSwitch;
       if(this.isApexCharts){
+      object = {grid: {xaxis: {lines: {show: this.xGridSwitch}}}};
       if(this.barchart){
         this.chartOptions3.grid.xaxis.lines.show = this.xGridSwitch;
       }
@@ -5928,6 +5992,7 @@ renameColumns(){
     else if(type === 'ygrid'){
       this.yGridSwitch = !this.yGridSwitch;
       if(this.isApexCharts){
+      object = {grid: {yaxis: {lines: {show: this.yGridSwitch}}}};
       if(this.barchart){
         this.chartOptions3.grid.yaxis.lines.show = this.yGridSwitch;
       }
@@ -5961,6 +6026,7 @@ renameColumns(){
     }
     else if(type === 'legend'){
       this.legendSwitch = !this.legendSwitch;
+      object = {legend: {show: this.legendSwitch}};
       if(this.piechart){
         this.chartOptions4.legend.show = this.legendSwitch;
       }
@@ -5970,6 +6036,7 @@ renameColumns(){
     }
     else if(type === 'dataLabels'){
       this.dataLabels = !this.dataLabels;
+      object = {dataLabels: {enabled: this.dataLabels}}; 
       if(this.piechart){
         this.chartOptions4.dataLabels.enabled = this.dataLabels;
       }
@@ -5979,11 +6046,12 @@ renameColumns(){
     }
     else if(type === 'label'){
       this.label = !this.label;
+      object = {plotOptions: {pie: {donut: {labels: {show: this.label}}}}}
       if(this.donutchart){
         this.chartOptions10.plotOptions.pie.donut.labels.show = this.label;
       }
     }
-    this.updateChart();
+    this.updateChart(object);
   }
   enableZoom(){
     this.isZoom = !this.isZoom;
@@ -6176,7 +6244,7 @@ fetchChartData(chartData: any){
     this.isZoom = data.isZoom;
     this.xGridColor = data.xGridColor;
     this.xGridSwitch = data.xGridSwitch;
-    this.xLabelSwitch = data.xLabelSwitch;
+    // this.xLabelSwitch = data.xLabelSwitch;
     this.xLabelColor = data.xLabelColor;
     this.yLabelSwitch = data.yLabelSwitch;
     this.yGridColor = data.yGridColor;
@@ -6311,7 +6379,9 @@ fetchChartData(chartData: any){
     })
   }
   gridLineColor(color: any){
+    let object : any;
     if(color){
+      object = {grid: { borderColor: color }}
       if(this.barchart){
         this.chartOptions3.grid.borderColor = color;
       }
@@ -6339,11 +6409,13 @@ fetchChartData(chartData: any){
       else if(this.multilineChart){
         this.chartOptions9.grid.borderColor = color;
       }
-      this.updateChart();
+      this.updateChart(object);
     }
   }
   apexbBackgroundColor(color: any){
+    let object:any;
     if(color){
+      object = {chart: {background: color}};
       if(this.barchart){
         this.chartOptions3.chart.background = color;
       }
@@ -6377,7 +6449,7 @@ fetchChartData(chartData: any){
       else if(this.donutchart){
         this.chartOptions10.chart.background = color;
       }
-      this.updateChart();
+      this.updateChart(object);
     }
   }
   openDateFormatModal(modal: any){
@@ -6480,6 +6552,7 @@ fetchChartData(chartData: any){
   legendsAllignment : any;
   changeLegendsAllignment(allignment:any){
     this.legendsAllignment = allignment;
+    let object : any = {legend: {position: allignment}};
     if(this.pie){
       this.legendsAllignment = allignment;
       this.chartOptions4.legend.position = allignment;
@@ -6488,12 +6561,13 @@ fetchChartData(chartData: any){
       this.legendsAllignment = allignment;
       this.chartOptions10.legend.position = allignment;
     }
-    this.updateChart();
+    this.updateChart(object);
   }
   donutSize:any = 50;
   changeSize(){
+    let object : any = {plotOptions: { pie: {donut: {size: this.donutSize+'%'}}}};
     this.chartOptions10.plotOptions.pie.donut.size = this.donutSize+'%';
-    this.updateChart();
+    this.updateChart(object);
   }
   color1:any;
   color2:any;
