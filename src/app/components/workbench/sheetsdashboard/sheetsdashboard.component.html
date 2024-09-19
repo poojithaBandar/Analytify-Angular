@@ -589,11 +589,11 @@
 
                         <div class="min-w-fit-content ms-1">              
                         <span *ngIf="!isPublicUrl" class="title-editor ms-1" (click)="toggleEditor()">
-                          <button  class="btn btn-primary" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
+                          <button  class="btn btn-primary me-1" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
                         </span>
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard()">Save </button>
                             <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard()">Update </button>
-                            <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><i class="fa fa-eraser" aria-hidden="true"></i></button>
+                            <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             <button *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
                             <div *ngIf="isPublicUrl" class="dashboard-option">
