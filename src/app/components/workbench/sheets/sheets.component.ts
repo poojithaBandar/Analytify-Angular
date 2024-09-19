@@ -102,6 +102,7 @@ export class SheetsComponent {
   filterSearch! : string;
   editFilterSearch! : string;
   tableSearch! : string;
+  isMeasureEdit : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -2884,7 +2885,7 @@ bar["type"]="line";
       this.draggedColumns.splice(event.currentIndex, 0, element);
       const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
       //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-      this.draggedColumnsData.push([element.column, element.data_type, ""]);
+      this.draggedColumnsData.push([element.column, element.data_type, "", ""]);
       this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
         const indexA = columnIndexMap.get(a[0]) ?? -1;
         const indexB = columnIndexMap.get(b[0]) ?? -1;
@@ -2925,7 +2926,7 @@ bar["type"]="line";
     this.draggedRows.splice(event.currentIndex, 0, element);
     const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
     //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-    this.draggedRowsData.push([element.column, element.data_type, ""]);
+    this.draggedRowsData.push([element.column, element.data_type, "", ""]);
     this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
       const indexA = rowIndexMap.get(a[0]) ?? -1;
       const indexB = rowIndexMap.get(b[0]) ?? -1;
@@ -2953,22 +2954,28 @@ bar["type"]="line";
   }
   rowMeasuresCount(rows:any,index:any,type:any){
       this.measureValues = [];
-      this.measureValues = [rows.column,"aggregate",type]
+      this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""]
      if(type === ''){
-      this.draggedRowsData[index] = [rows.column,rows.data_type,type];
-      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type};
+      this.draggedRowsData[index] = [rows.column,rows.data_type,type,rows.alias ? rows.alias : ""];
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
       this.dataExtraction();
      }else if(type === '-Select-'){
-      this.draggedRowsData[index] = [rows.column,rows.data_type,''];
-      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:''};
+      this.draggedRowsData[index] = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
+      this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:'',alias:rows.alias};
       this.dataExtraction();
      }else{
     this.draggedRowsData[index] = this.measureValues;
     console.log(this.draggedRowsData);
-    this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type};
+    this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     console.log(this.draggedRows)
     this.dataExtraction();
      }
+  }
+
+  onAliasChange(rows : any , index : any){
+    this.isMeasureEdit = false;
+    this.rowMeasuresCount(rows, index, rows.type);
+    this.dataExtraction();
   }
    drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -3763,7 +3770,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         else{
           this.draggedColumns.forEach((res:any) => {
-            this.draggedColumnsData.push([res.column,res.data_type,""])
+            this.draggedColumnsData.push([res.column,res.data_type,"",""])
           });
         }
         if(this.sheetResponce.rows_data){
@@ -3771,7 +3778,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         else{
           this.draggedRows.forEach((res:any) => {
-            this.draggedRowsData.push([res.column,res.data_type,""])
+            this.draggedRowsData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
         this.chartsDataSet(responce);
@@ -6460,14 +6467,14 @@ fetchChartData(chartData: any){
   }
   dateFormat(column:any, index:any, format:any){
     if(format === ''){
-      this.draggedColumnsData[index] = [column.column,column.data_type,format];
+      this.draggedColumnsData[index] = [column.column,column.data_type,format,""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
      }else if(format === '-Select-'){
-      this.draggedColumnsData[index] = [column.column,column.data_type,''];
+      this.draggedColumnsData[index] = [column.column,column.data_type,'',''];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:''};
      }
      else{
-      this.draggedColumnsData[index] = [column.column, "date", format];
+      this.draggedColumnsData[index] = [column.column, "date", format,''];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format };
       console.log(this.draggedColumns);
      }
@@ -6475,11 +6482,11 @@ fetchChartData(chartData: any){
   }
   dateAggregation(column:any, index:any, type:any){
     if (type === '') {
-      this.draggedColumnsData[index] = [column.column, column.data_type, type];
+      this.draggedColumnsData[index] = [column.column, column.data_type, type, ''];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
     }
     else {
-      this.draggedColumnsData[index] = [column.column, "aggregate", type];
+      this.draggedColumnsData[index] = [column.column, "aggregate", type, ''];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
       console.log(this.draggedColumns);
     }

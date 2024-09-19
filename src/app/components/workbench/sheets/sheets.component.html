@@ -508,16 +508,28 @@
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
                                     <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
-                                        @if(rows.type){
+                                        @if(rows.alias){
+                                            {{ rows.alias }}
+                                        }
+                                        @else if(rows.type){
                                             {{ rows.type }} ({{rows.column}})
                                         }@else{   
                                              {{ rows.column }}
-                                       <!-- <input type="text" class="form-control example-box1 border-end" [(ngModel)]="rows.column" value="" (click)="rename(index,rows.column,$event)" (keydown)="renameColumn(index,rows.column,$event)" >-->
                                         }
                                         <div class="dropup" ngbDropdown>
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown style="display: flex; align-items: center;">
+                                                    <li  *ngIf="!isMeasureEdit">@if(rows.alias){
+                                                        {{ rows.alias }}
+                                                    }
+                                                    @else if(rows.type){
+                                                        {{ rows.type }} ({{rows.column}})
+                                                    }@else{   
+                                                         {{ rows.column }}
+                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil"></i> </li>
+                                                <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
+                                                </li>
                                                     <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
