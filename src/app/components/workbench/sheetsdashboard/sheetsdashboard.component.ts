@@ -2434,12 +2434,20 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         if(!item1.originalData ){
           item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
         }
+        if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+          item1.drillDownIndex = 0;
+          item1.drillDownObject = [];
+        }
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
       if(item.chart_id == '10'|| item.chartId == '10'){//donut
         if(!item1.originalData ){
           item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
+        }
+        if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+          item1.drillDownIndex = 0;
+          item1.drillDownObject = [];
         }
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData[0].data;
