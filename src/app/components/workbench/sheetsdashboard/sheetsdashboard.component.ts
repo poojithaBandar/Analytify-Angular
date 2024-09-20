@@ -2345,7 +2345,7 @@ getFilteredData(){
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, true);
+      this.setDashboardSheetData(item, true , true);
     });
       },
     error:(error)=>{
@@ -2381,7 +2381,7 @@ clearAllFilters(): void {
 }
 
 
-setDashboardSheetData(item:any , isFilter : boolean){
+setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean){
   this.dashboard.forEach((item1:any) => {
     if((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId)){
       if(item.chart_id == '1'){//table
@@ -2415,6 +2415,10 @@ setDashboardSheetData(item:any , isFilter : boolean){
       if(item.chart_id == '6' || item.chartId == '6'){//bar
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+          item1.drillDownIndex = 0;
+          item1.drillDownObject = [];
         }
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
@@ -2562,7 +2566,7 @@ deleteDashboardFilter(id:any){
               this.filteredRowData.push(obj);
               console.log('filterowData',this.filteredRowData)
             });
-            this.setDashboardSheetData(item, true);
+            this.setDashboardSheetData(item, true, false);
           });
           this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
 
@@ -3058,12 +3062,14 @@ kpiData?: KpiData;
     this.workbechService.getFilteredDataPublic(Obj).subscribe({
       next:(data)=>{
         console.log(data);
-        this.tablePreviewColumn = data.columns;
-        this.tablePreviewRow = data.rows;
-        console.log(this.tablePreviewColumn);
-        console.log(this.tablePreviewRow);
+        // this.tablePreviewColumn = data.columns;
+        // this.tablePreviewRow = data.rows;
+        // console.log(this.tablePreviewColumn);
+        // console.log(this.tablePreviewRow);
         // localStorage.removeItem('filterid')
         data.forEach((item: any) => {
+          this.tablePreviewColumn.push(item.columns);
+      this.tablePreviewRow.push(item.rows);
         item.columns.forEach((res:any) => {      
           let obj1={
             name:res.column,
@@ -3080,7 +3086,7 @@ kpiData?: KpiData;
           this.filteredRowData.push(obj);
           console.log('filterowData',this.filteredRowData)
         });
-        this.setDashboardSheetData(item, true);
+        this.setDashboardSheetData(item, true, true);
       });
         },
       error:(error)=>{
@@ -3170,7 +3176,7 @@ kpiData?: KpiData;
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false);
+      this.setDashboardSheetData(item, false, false);
   
         },
       error:(error)=>{
@@ -3226,7 +3232,7 @@ kpiData?: KpiData;
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false);
+      this.setDashboardSheetData(item, false, false);
   
         },
       error:(error)=>{
