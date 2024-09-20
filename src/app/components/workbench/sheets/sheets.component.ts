@@ -3087,6 +3087,7 @@ bar["type"]="line";
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
     this.drillDownIndex = 0;
+    this.dateDrillDownSwitch = false;
     delete this.originalData;
     this.sheetName = ''; this.sheetTitle = '';
     if(this.sheetName != ''){
@@ -3174,6 +3175,7 @@ bar["type"]="line";
     this.drillDownObject = [];
     this.drillDownIndex = 0;
     this.sheetName = '';
+    this.dateDrillDownSwitch = false;
     delete this.originalData;
     console.log(event)
     if(event.index === -1){
