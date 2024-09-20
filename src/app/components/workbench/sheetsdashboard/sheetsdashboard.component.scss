@@ -329,11 +329,21 @@ a.dashboard-tab-padding.nav-link {
 .ng-untouched.ng-valid {
   color: #aeb1b6;
 }
+.mobile-nav-icon{
+  display: none;
+}
+.sub-category-card{
+  height: 500px;
+  overflow-y: auto;
+}
+.panel-body-height{
+  height: 578px;
+}
 
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
   .dashboard-title-card{
-    display: inline-block;
+    display: flex;
   }
   .flex-grow-1 {
     margin-bottom: 5px;
@@ -341,6 +351,44 @@ a.dashboard-tab-padding.nav-link {
 #capture-element {
   width: 100% !important;
 }
+.mobile-nav-icon{
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid #c7c6c6;
+  border-radius: 5px;
+  margin-left: 5px;
+}
+.title-container{
+  border: none;
+}
+.sub-category-card{
+  max-height: 270px;
+  overflow-y: auto;
+}
+.panel-body-height{
+  height: 330px;
+}
+img.desktop-dark {
+  padding: 5px 50px;
+}
+gridster-item {
+  height: auto !important;
+}
+.panel {
+  transition: max-height 0.3s ease; /* Optional for smooth transition */
+  overflow: hidden; /* Hide overflowing content */
+}
+
+.panel.hidden {
+  max-height: 0; /* Collapse panel */
+  padding: 0; /* Remove padding when hidden */
+}
+
+.panel:not(.hidden) {
+  max-height: 500px; /* Adjust this value based on your content */
+  padding: 1rem; /* Add padding when shown */
+}
+
 }
 
 // for Tab Resolution //
@@ -351,7 +399,7 @@ a.dashboard-tab-padding.nav-link {
     flex-wrap: nowrap;
 }
 .category-text {
-  font-size: 9px;
+  font-size: 8px;
 }
 .filterColumnbtn.select-column-text {
   font-size: 8px;
@@ -360,6 +408,10 @@ a.dashboard-tab-padding.nav-link {
   font-size: 12px;
 }
 button.btn.ripple.btn-primary {
+  font-size: 12px;
+  margin-top: 5px;
+}
+button.btn.ripple.btn-danger {
   font-size: 12px;
 }
 div#sticky-sidebar {

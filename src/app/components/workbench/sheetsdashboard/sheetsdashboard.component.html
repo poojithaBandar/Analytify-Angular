@@ -139,7 +139,10 @@
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }">
         <div class="card mb-0">
           <div class="card-body p-0">
-            <div class="panel panel-primary ">
+            <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
+              <i class="fa fa-navicon"></i>
+            </div>
+            <div class="panel panel-primary "[class.hidden]="isPanelHidden">
               <div class="card panel panel-primary p-0">
                 <div class="tab-menu-heading tab-menu-heading-boxed">
                     <div class="tabs-menu-boxed">
@@ -476,9 +479,9 @@
                                                                   <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';closeMainDropdown(mainDropdown)"> Cancel </button>
                                                               </div>
                                                               </ul> -->
-                                                              <div style="height: 500px;overflow-y: auto;">
+                                                              <div >
                                                                 <!-- @for(filterList of DahboardListFilters;track filterList){ -->
-                                                              <div *ngFor="let filterList of DahboardListFilters" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2">
+                                                               <div *ngFor="let filterList of DahboardListFilters" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2">
                                                                 <p class="p-1 mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
@@ -549,11 +552,18 @@
                                         </div>
                                     </ng-template>
                             </li>
+                            <!-- <li [ngbNavItem]="3" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
+                              <a ngbNavLink class="dashboard-tab-padding">
+                                <div class="mobile-nav-icon">
+                                  <i class="fa fa-navicon"></i>
+                                </div>
+                              </a>
+                            </li> -->
                           <!-- } -->
                         </ul>
                     </div>
                 </div>
-                <div class="panel-body tabs-menu-body p-1" style="height: 578px;">
+                <div class="panel-body tabs-menu-body p-1 panel-body-height">
                     <div class="tab-content">
                         <div [ngbNavOutlet]="nav"></div>
 
@@ -567,7 +577,7 @@
       </div>
     </div>
     <div class="col-xl-10 col-md-12 p-1 ">
-         <div class="card mb-1" style="position: sticky;top: 59px;  z-index: 2;">
+         <div class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
