@@ -149,6 +149,8 @@ export class SheetsdashboardComponent {
   rolesForUpdateDashboard:[] = [];
   usersForUpdateDashboard:[] =[];
   tableNameSelectedForFilter:any;
+  isPanelHidden: boolean = true;
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef){
     this.dashboard = [];
@@ -3266,7 +3268,15 @@ kpiData?: KpiData;
       }
     }         
   }
-  
+  //mobile view filters
+ // Initially, panel is hidden
+
+  togglePanel() {
+    this.isPanelHidden = !this.isPanelHidden; 
+    this.cdr.detectChanges();  // Force change detection
+
+  }
+
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
