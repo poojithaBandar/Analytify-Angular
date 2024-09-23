@@ -3547,7 +3547,7 @@ const obj={
   "server_id": this.databaseId,
   "sheet_name": this.sheetTitle,
   "sheet_tag_name": this.sheetTagName,
-  "filterId":this.filterId,
+  "filter_id":this.filterId,
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "filter_data": this.dimetionMeasure,
   "datasource_querysetid": this.filterQuerySetId,
