@@ -2748,7 +2748,6 @@ bar["type"]="line";
 
       chartsDataSet(data: any) {
         this.sheetCustomQuery = data.custom_query;
-        this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
         console.log(this.tablePreviewColumn);
@@ -3762,6 +3761,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.createdBy = responce.created_by;
         this.color1 = responce.sheet_data?.results?.color1;
         this.color2 = responce.sheet_data?.results?.color2;
+        this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id || responce.sheet_filter_quereyset_ids;
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
         responce.filters_data.forEach((filter: any)=>{
