@@ -732,9 +732,9 @@
                                 }
                                 @if(kpi && chartId){
                                     <div class="big-number-container">
-                                        @for(data of tablePreviewRow;track data){
-                                            <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ data.result_data[0] }}</h1>
-                                        }
+                                        <!-- @for(data of tablePreviewRow;track data){ -->
+                                            <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
+                                        <!-- } -->
                                     </div>
                                 }
                                 @if(isApexCharts){
@@ -1441,7 +1441,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut )" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -1483,6 +1483,34 @@
                                                                               </div>
                                                                           </div>
                                                                       </div>
+                                                                      @if(kpi){
+                                                                        <div class="row">
+                                                                          <label for="col-md-4 form-label px-1 fs-14">Decimal places:</label>
+                                                                          <input type="number" id="decimal-places" [(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <label for="decimal-places">Round:</label>
+                                                                          <input type="number" id="decimal-places" [(ngModel)]="KPIRoundPlaces" min="0">
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <label for="display-units">Display Units:</label>
+                                                                          <select id="display-units" [(ngModel)]="KPIDisplayUnits" (change)="formatKPINumber()">
+                                                                            <option value="none">None</option>
+                                                                            <option value="K">Thousands (K)</option>
+                                                                            <option value="M">Millions (M)</option>
+                                                                            <option value="B">Billions (B)</option>
+                                                                            <option value="G">Billions (G)</option>
+                                                                          </select>
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <label for="prefix">Prefix:</label>
+                                                                          <input type="text" id="prefix" [(ngModel)]="KPIPrefix" (input)="formatKPINumber()">
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <label for="suffix">Suffix:</label>
+                                                                          <input type="text" id="suffix" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
+                               </div>
+                                                                      }
                                                                       <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                           <div class="col-md-8">
@@ -1495,6 +1523,7 @@
                                                                               </div>
                                                                           </div>
                                                                       </div>
+                                                                      @if(!kpi){
                                                                       <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
                                                                           <div class="col-md-8">
@@ -1506,6 +1535,7 @@
                                                                               </div>
                                                                           </div>
                                                                       </div>
+                                                                    }
                                                                       @if(numberPopup){
                                                                         <div class="number-formatting number-popup popup-content">
                                                                             <label for="decimal-places">Decimal places:</label>

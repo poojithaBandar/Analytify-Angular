@@ -203,6 +203,11 @@ export class SheetsComponent {
   displayUnits: string = 'none';
   prefix: string = '';
   suffix: string = '';
+  KPIDecimalPlaces: number = 0;
+  KPIRoundPlaces: number = 0;
+  KPIDisplayUnits: string = 'none';
+  KPIPrefix: string = '';
+  KPISuffix: string = '';
   isCustomSql = false;
   canDrop = true;
   createdBy : any;
@@ -228,6 +233,8 @@ export class SheetsComponent {
   dateDrillDownSwitch : boolean = false;
   drillDownLevel : any[] = [];
   drillDownObject: any[] = [];
+  sheetCustomQuery: any;
+  KPINumber: any;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService){   
@@ -2708,7 +2715,7 @@ bar["type"]="line";
               }
             }
            
-            if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1) && !this.kpi) {
+            if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1)) {
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -2726,24 +2733,7 @@ bar["type"]="line";
               this.kpi = false;
               this.heatMap = false;
             }
-            if(this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length > 1)){
-              this.table = true;
-              this.bar = false;
-              this.area = false;
-              this.line = false;
-              this.pie = false;
-              this.sidebyside = false;
-              this.stocked = false;
-              this.barLine = false;
-              this.horizentalStocked = false;
-              this.grouped = false;
-              this.multiLine = false;
-              this.donut = false;
-              this.chartId = 1;
-              this.radar = false;
-              this.kpi = false;
-              this.heatMap = false;
-            }
+           
           },
           error: (error) => {
             console.log(error);
@@ -2753,6 +2743,7 @@ bar["type"]="line";
       }
 
       chartsDataSet(data: any) {
+        this.sheetCustomQuery = data.custom_query;
         this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
@@ -2854,7 +2845,13 @@ bar["type"]="line";
           this.radarChart();
         } else if (this.heatMap) {
           this.heatMapChart();
+        } else if (this.kpi){
+          this.KPIChart();
         }
+      }
+
+      KPIChart(){
+        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
       }
 
       tableNameMethod(schemaname: any, tablename: any, tableAlias: any){
@@ -3090,6 +3087,11 @@ bar["type"]="line";
     this.dateDrillDownSwitch = false;
     delete this.originalData;
     this.sheetName = ''; this.sheetTitle = '';
+    this.KPIDecimalPlaces = 0;
+    this.KPIRoundPlaces = 0;
+    this.KPIDisplayUnits = 'none';
+    this.KPIPrefix = '';
+    this.KPISuffix = '';
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
@@ -3532,6 +3534,13 @@ sheetSave(){
     labelAlignment : this.labelAlignment
   }
   // this.sheetTagName = this.sheetTitle;
+  let draggedColumnsObj;
+  if (this.dateDrillDownSwitch) {
+    draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
+    draggedColumnsObj[0][2] = 'year'
+  } else {
+    draggedColumnsObj = this.draggedColumnsData
+  }
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
@@ -3541,6 +3550,10 @@ const obj={
   "filterId":this.filterId,
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "filter_data": this.dimetionMeasure,
+  "datasource_querysetid": this.filterQuerySetId,
+  "col": draggedColumnsObj,
+  "row": this.draggedRowsData,
+  "custom_query":this.sheetCustomQuery,
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
     "isDrillDownData" : this.dateDrillDownSwitch,
@@ -3603,7 +3616,12 @@ const obj={
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
-      "kpicolor": kpiColor
+      "kpicolor": kpiColor,
+      "kpiNumber" : this.KPINumber,
+      "kpiPrefix" : this.KPIPrefix,
+      "kpiSuffix" : this.KPISuffix,
+      "kpiDecimalUnit" : this.KPIDisplayUnits,
+      "kpiDecimalPlaces" : this.KPIDecimalPlaces
   },
   "isApexChart" : this.isApexCharts,
   "isEChart" : this.isEChatrts,
@@ -3730,6 +3748,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartId = responce.chart_id;
         this.sheetName = responce.sheet_name;
         this.sheetTitle = responce.sheet_name;
+        this.sheetCustomQuery = responce.custom_query;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
@@ -3805,8 +3824,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce.results.kpiData;
+          this.KPINumber = this.sheetResponce.results.kpiNumber;
           this.kpiFontSize = this.sheetResponce.results.kpiFontSize;
           this.kpiColor = this.sheetResponce.results.kpicolor;
+          this.KPIPrefix = this.sheetResponce.results.kpiPrefix,
+          this.KPIDisplayUnits = this.sheetResponce.results.kpiDecimalUnit,
+          this.KPISuffix = this.sheetResponce.results.kpiSuffix,
+          this.KPIDecimalPlaces = this.sheetResponce.results.kpiDecimalPlaces,
           this.table = false;
           this.bar = false;
           this.pie = false;
@@ -6126,6 +6150,31 @@ renameColumns(){
     }
 
     return this.prefix + formattedNumber + this.suffix;
+  }
+
+  formatKPINumber() {
+    let formattedNumber = this.tablePreviewRow[0].result_data[0]+'';
+    let value = this.tablePreviewRow[0].result_data[0];
+    if (this.KPIDisplayUnits !== 'none') {
+      switch (this.KPIDisplayUnits) {
+        case 'K':
+          formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+          break;
+        case 'M':
+          formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+          break;
+        case 'B':
+          formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+          break;
+        case 'G':
+          formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+          break;
+      }
+    } else {
+      formattedNumber = (value).toFixed(this.KPIDecimalPlaces)
+    }
+
+    this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
   }
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;

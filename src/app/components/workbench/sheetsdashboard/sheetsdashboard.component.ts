@@ -125,7 +125,7 @@ export class SheetsdashboardComponent {
  colData = [] as any;
  heightGrid : number = 800;
  widthGrid : number = 800;
- gridItemSize : number = 100;
+ gridItemSize : number = 50;
  dataArray = [] as any;
  keysArray = [] as any;
  tablePreviewRow = [] as any;
@@ -332,9 +332,9 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      fixedColWidth: 100,
-      fixedRowHeight: 100,
-      margin : 10,
+      fixedColWidth: this.gridItemSize,
+      fixedRowHeight: this.gridItemSize,
+      // margin : 10,
       // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
@@ -396,10 +396,10 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      fixedColWidth: 100,
-      fixedRowHeight: 100,
-      margin : 10,
-      outerMarginBottom: 20,
+      fixedColWidth: this.gridItemSize,
+      fixedRowHeight: this.gridItemSize,
+      // margin : 10,
+      // outerMarginBottom: 20,
       // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
@@ -433,9 +433,9 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      fixedColWidth: 100,
-      fixedRowHeight: 100,
-      margin : 10,
+      fixedColWidth: this.gridItemSize,
+      fixedRowHeight: this.gridItemSize,
+      // margin : 10,
       // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
@@ -473,7 +473,7 @@ export class SheetsdashboardComponent {
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
         fixedRowHeight: this.gridItemSize,
-        margin : 10,
+        // margin : 10,
         // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
         //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
         
@@ -508,7 +508,7 @@ export class SheetsdashboardComponent {
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
         fixedRowHeight: this.gridItemSize,
-        margin : 10,
+        // margin : 10,
         // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
         //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
         
