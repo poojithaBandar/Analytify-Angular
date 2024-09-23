@@ -519,19 +519,25 @@
                                         <div class="dropup" ngbDropdown>
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                <div class="dropup" ngbDropdown style="display: flex; align-items: center;">
-                                                    <li  *ngIf="!isMeasureEdit">@if(rows.alias){
+                                                <div class="dropup" ngbDropdown>
+                                                    <div class="d-flex"style="align-items: center;">
+                                                    <li  *ngIf="!isMeasureEdit" class="dropdown-item text-center">@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
                                                     @else if(rows.type){
                                                         {{ rows.type }} ({{rows.column}})
                                                     }@else{   
                                                          {{ rows.column }}
-                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil"></i> </li>
-                                                <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
-                                                </li>
-                                                    <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
-                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    } 
+                                                    </li>
+                                                    <i (click)="isMeasureEdit = true;" class="fa fa-pencil p-1"></i> 
+                                                </div>
+                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color">
+                                                    </li>
+                                                    <div class="d-flex" style="align-items: center;">
+                                                        <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
+                                                        <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
@@ -664,8 +670,8 @@
                                                             <div class="" ngbDropdown style="margin-top: 5px;">
                                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                                     aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
-                                                                <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
-                                                                        <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
+                                                                <div class="dropdown-menu  cu" ngbDropdownMenu>
+                                                                        <a class="btn btn-secondary-light mx-0" style="text-align: left !important;" (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
                                                                     </div>
                                                                 </a>
                                                         </div>
@@ -681,7 +687,7 @@
             <div class="card mb-0 show-chart-card">
                 @if(!(table || kpi)){
                     <div class="input-group">
-                <div class="col-lg-3 col-md-3">
+                <div class="col-lg-3 col-md-3 p-1">
                     <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
                         (change)="changeChartPlugin()">
                         <option value="apex">Apex</option>
@@ -689,13 +695,13 @@
                     </select>
                 </div>
                 @if(pie || bar || line || donut || area){
-                                    <div class="col-lg-3 col-md-3">
+                                    <div class="col-lg-3 col-md-3 p-1">
                                         <button class="btn btn-primary" (click)="goDrillDownBack()"> Back</button>
                                    </div>
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
-                                    <div class="col-lg-3 col-md-3" style="display: inline-flex;">
+                                    <div class="col-lg-3 col-md-3 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
-                                       <h4 > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h4> ->
+                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span style="padding-top: 3px;">-></span>
                                    }
                                     </div>
                                 }
