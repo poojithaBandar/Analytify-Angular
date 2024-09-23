@@ -339,6 +339,12 @@ a.dashboard-tab-padding.nav-link {
 .panel-body-height{
   height: 578px;
 }
+.even-row {
+  background-color:  #ffffff;
+}
+.odd-row {
+  background-color: #d4d3d2;
+}
 
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {

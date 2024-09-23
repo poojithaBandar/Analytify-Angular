@@ -364,9 +364,9 @@
                                 <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
                                 <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
                                 <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
-                                (btnClickEvent)="sheetSave()"></app-insights-button>
+                                (btnClickEvent)="sheetSave(); editor=false"></app-insights-button>
                                 <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
-                                (btnClickEvent)="sheetSave()"></app-insights-button>
+                                (btnClickEvent)="sheetSave(); editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                             </div>
                         </div>
                     </div>
@@ -776,7 +776,7 @@
                     <div id="line-chart">
                         <apx-chart #lineChart
                         [series]="chartOptions.series || []" [chart]="chartOptions.chart"
-                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels"
+                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels" [yaxis]="chartOptions.yaxis"
                         [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
                         [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
                     </div>
@@ -1056,7 +1056,7 @@
                                     <p>Add to Dashboard</p>
                                     <div class="form-group select2-sm">
                                         <select id="inputGroupSelect013" class="form-select form-select select2 fs-14"  [(ngModel)]="selectedDashboardId">
-                                            <option value="1">Select a Dashboard</option>
+                                            <option value="0" disabled selected>Select a Dashboard</option>
                                             <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
                                         </select>
                                     </div>
