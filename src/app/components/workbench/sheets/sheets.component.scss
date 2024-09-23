@@ -481,11 +481,11 @@ app-insights-button {
   font-size: 12px;
 }
 .sheet-table-h{
-  height: 387px;
+  height: 394px;
   overflow-y: scroll;
 }
 .show-chart-card {
-  height: 443px;
+  height: 393px;
 }
 .panel-body-h {
   height: 539px;
@@ -516,6 +516,11 @@ app-insights-button {
 }
 .title-padding {
   padding: 4px 26px 4px 17px;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  font-size: 12px;
 }
 
 }
@@ -572,6 +577,11 @@ app-insights-button {
 }
 .title-padding {
   padding: 4px 32px 4px 17px;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 4px;
+  font-size: 11px;
 }
 }
 

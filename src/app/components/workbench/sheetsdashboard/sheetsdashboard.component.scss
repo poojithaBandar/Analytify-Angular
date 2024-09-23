@@ -332,10 +332,10 @@ a.dashboard-tab-padding.nav-link {
 .mobile-nav-icon{
   display: none;
 }
-.sub-category-card{
-  height: 500px;
-  overflow-y: auto;
-}
+// .sub-category-card{
+//   height: 500px;
+//   overflow-y: auto;
+// }
 .panel-body-height{
   height: 578px;
 }
@@ -344,6 +344,15 @@ a.dashboard-tab-padding.nav-link {
 }
 .odd-row {
   background-color: #d4d3d2;
+}
+.fixed-buttons{
+  position: sticky; 
+  bottom: -6px; 
+  left: 0; 
+  width: 100%; 
+  background-color: #ffffff; 
+  padding: 8px 6px; 
+  box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
 }
 
  // for Mobile Resolution //
@@ -369,7 +378,6 @@ a.dashboard-tab-padding.nav-link {
 }
 .sub-category-card{
   max-height: 270px;
-  overflow-y: auto;
 }
 .panel-body-height{
   height: 330px;
@@ -394,7 +402,15 @@ gridster-item {
   max-height: 500px; /* Adjust this value based on your content */
   padding: 1rem; /* Add padding when shown */
 }
-
+.fixed-buttons{
+  position: sticky;
+  bottom: 21px;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 8px 6px;
+  box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
+}
 }
 
 // for Tab Resolution //

@@ -140,7 +140,7 @@
         <div class="card mb-0">
           <div class="card-body p-0">
             <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
-              <i class="fa fa-navicon"></i>
+              <i class="fa fa-filter"></i>
             </div>
             <div class="panel panel-primary "[class.hidden]="isPanelHidden">
               <div class="card panel panel-primary p-0">
@@ -510,7 +510,7 @@
                                                                   <!-- } -->
                                                                 </div>
 
-                                                                  <div class="fixed-buttons p-2" style="position: sticky; bottom: 0; left: 0; width: 100%; background-color: #ffffff; padding: 8px 6px; box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);">
+                                                                  <div class="fixed-buttons p-2">
                                                                     <button type="button"  (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-danger me-2">Clear</button>
                                                                     <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">Save</button>
                                                                 </div>
@@ -532,7 +532,7 @@
                                                                 </div> -->
                                                               </div>
                                                             <!-- } -->
-                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData" > 
+                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData"  class="p-2"> 
                                                                 <button class="btn ripple btn-danger"
                                                                   (click)="clearAllFilters()">Clear filters</button>
                                                               
