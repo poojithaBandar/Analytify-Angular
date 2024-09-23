@@ -77,6 +77,8 @@ export class SheetsComponent {
   schemaName: any;
   table_alias: any;
   draggedColumnsData = [] as any;
+  mulColData = [] as any;
+  mulRowData = [] as any;
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
@@ -2635,6 +2637,8 @@ bar["type"]="line";
             console.log(responce);
             this.chartsDataSet(responce);
             if (this.chartsRowData.length > 0) {
+              this.mulColData = responce.columns;
+              this.mulRowData = responce.rows;
               this.enableDisableCharts();
               // this.chartsOptionsSet();
               if (this.retriveDataSheet_id) {
@@ -3551,14 +3555,14 @@ const obj={
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "filter_data": this.dimetionMeasure,
   "datasource_querysetid": this.filterQuerySetId,
-  "col": draggedColumnsObj,
-  "row": this.draggedRowsData,
+  "col": this.mulColData,
+  "row": this.mulRowData,
   "custom_query":this.sheetCustomQuery,
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
     "isDrillDownData" : this.dateDrillDownSwitch,
   "columns": this.draggedColumns,
-  "columns_data":this.draggedColumnsData,
+  "columns_data":draggedColumnsObj,
   "rows": this.draggedRows,
   "rows_data":this.draggedRowsData,
   "col":tablePreviewCol,
@@ -3752,6 +3756,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
         this.draggedRows = this.sheetResponce.rows;
+        this.mulColData = responce.col_data;
+        this.mulRowData = responce.row_data;
         this.dimetionMeasure = responce.filters_data;
         this.createdBy = responce.created_by;
         this.color1 = responce.sheet_data?.results?.color1;
