@@ -2655,9 +2655,9 @@ bar["type"]="line";
             this.tablePaginationColumn=responce.columns;
             this.tablePaginationCustomQuery=responce.custom_query;
             this.chartsDataSet(responce);
+            this.mulColData = responce.columns;
+            this.mulRowData = responce.rows;
             if (this.chartsRowData.length > 0) {
-              this.mulColData = responce.columns;
-              this.mulRowData = responce.rows;
               this.enableDisableCharts();
               // this.chartsOptionsSet();
               if (this.retriveDataSheet_id) {
@@ -2769,62 +2769,69 @@ bar["type"]="line";
         this.pageNo=page;
         this.tableDisplayPagination();
       }
-      tableDisplayPagination(){
-        const obj ={
-          database_id:this.databaseId,
-          file_id:this.fileId,
-          sheetqueryset_id:this.sheetfilter_querysets_id,
-          queryset_id:this.qrySetId,
-          page_no:this.pageNo,
-          page_count:this.itemsPerPage,
-          search:this.tableChartSearch,
-          rows:this.tablePaginationRows,
-          columns:this.tablePaginationColumn,
-          custom_query:this.tablePaginationCustomQuery
-        }
-        if(obj.search === '' || obj.search === null){
-          delete obj.search;
-        }
-        this.tableDataDisplay=[]
-        this.tableColumnsDisplay=[]
-        this.workbechService.tablePaginationSearch(obj).subscribe(
-          {next: (data:any) => {
-          console.log(data);
-          this.itemsPerPage = data.items_per_page;
-          this.totalItems = data.total_items;
-            this.tableColumnDisplayPreview = data.data?.col
-            this.tableRowDisplayPreview = data.data?.row
+      tableDisplayPagination() {
+        if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
+          const obj = {
+            database_id: this.databaseId,
+            file_id: this.fileId,
+            sheetqueryset_id: this.sheetfilter_querysets_id,
+            queryset_id: this.qrySetId,
+            page_no: this.pageNo,
+            page_count: this.itemsPerPage,
+            search: this.tableChartSearch,
+            rows: this.tablePaginationRows,
+            columns: this.tablePaginationColumn,
+            custom_query: this.tablePaginationCustomQuery
+          }
+          if (obj.search === '' || obj.search === null) {
+            delete obj.search;
+          }
+          this.tableDataDisplay = []
+          this.tableColumnsDisplay = []
+          this.workbechService.tablePaginationSearch(obj).subscribe(
+            {
+              next: (data: any) => {
+                console.log(data);
+                this.itemsPerPage = data.items_per_page;
+                this.totalItems = data.total_items;
+                this.tableColumnDisplayPreview = data.data?.col
+                this.tableRowDisplayPreview = data.data?.row
 
-            let rowCountData: any;
-            if (this.tableColumnDisplayPreview[0]?.result_data?.length) {
-              rowCountData = this.tableColumnDisplayPreview[0]?.result_data?.length;
-            } else {
-              rowCountData = this.tableRowDisplayPreview[0]?.result_data?.length;
+                let rowCountData: any;
+                if (this.tableColumnDisplayPreview[0]?.result_data?.length) {
+                  rowCountData = this.tableColumnDisplayPreview[0]?.result_data?.length;
+                } else {
+                  rowCountData = this.tableRowDisplayPreview[0]?.result_data?.length;
+                }
+                this.tableColumnsDisplay = this.tableColumnDisplayPreview.map((col: any) => col.column).concat(this.tableRowDisplayPreview.map((row: any) => row.col));
+
+                for (let i = 0; i < rowCountData; i++) {
+                  const tableRow: TableRow = {};
+                  this.tableColumnDisplayPreview?.forEach((col: any) => {
+                    tableRow[col.column] = col.result_data[i];
+                  });
+                  this.tableRowDisplayPreview?.forEach((rowData: any) => {
+                    tableRow[rowData.col] = rowData.result_data[i];
+                  });
+                  this.tableDataDisplay.push(tableRow);
+                  console.log('display row data ', this.tableDataDisplay)
+                }
+              },
+              error: (error) => {
+                console.log(error);
+              }
             }
-            this.tableColumnsDisplay = this.tableColumnDisplayPreview.map((col: any) => col.column).concat(this.tableRowDisplayPreview.map((row: any) => row.col));
-        
-            for (let i = 0; i < rowCountData; i++) {
-              const tableRow: TableRow = {};
-              this.tableColumnDisplayPreview?.forEach((col: any) => {
-                tableRow[col.column] = col.result_data[i];
-              });
-              this.tableRowDisplayPreview?.forEach((rowData: any) => {
-                tableRow[rowData.col] = rowData.result_data[i];
-              });
-              this.tableDataDisplay.push(tableRow);
-              console.log('display row data ', this.tableDataDisplay)
-            }
-        },
-        error: (error) => {
-          console.log(error);
+          )
+        } else {
+          this.tableDataDisplay = []
+          this.tableColumnsDisplay = []
+          this.totalItems = 0
         }
-      }
-    )
       }
 
       chartsDataSet(data: any) {
         this.sheetCustomQuery = data.custom_query;
-        this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
+        // this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.tablePreviewRow = data.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
         this.tableDisplayPagination();
@@ -3839,6 +3846,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.draggedRows = this.sheetResponce.rows;
         this.mulColData = responce.col_data;
         this.mulRowData = responce.row_data;
+        this.tablePaginationRows=responce.row_data;
+        this.tablePaginationColumn=responce.col_data;
         this.dimetionMeasure = responce.filters_data;
         this.createdBy = responce.created_by;
         this.color1 = responce.sheet_data?.results?.color1;
