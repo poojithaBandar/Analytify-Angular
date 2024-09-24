@@ -1342,7 +1342,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -1458,7 +1458,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut )" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel )" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -1674,7 +1674,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1730,7 +1730,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1836,7 +1836,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId) || donut || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId) || donut || kpi || funnel)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Grid Line Color </p>
                                                         </div>
@@ -1846,7 +1846,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="isApexCharts  && !((table && chartId) || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="isApexCharts  && !((table && chartId) || kpi || funnel)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >background Color </p>
                                                         </div>
@@ -1868,7 +1868,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >chart Color </p>
                                                         </div>
