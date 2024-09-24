@@ -140,7 +140,7 @@
         <div class="card mb-0">
           <div class="card-body p-0">
             <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
-              <i class="fa fa-navicon"></i>
+              <i class="fa fa-filter"></i>
             </div>
             <div class="panel panel-primary "[class.hidden]="isPanelHidden">
               <div class="card panel panel-primary p-0">
@@ -220,11 +220,11 @@
                                                        <div class="row">
                                                         <div class="col-6">
                                                           <label for="input-rounded-pill" class="form-label">Width</label>
-                                                          <input  type="number" name="number" [(ngModel)]="widthGrid" class="form-control">
+                                                          <input  type="number" step="100" name="number" [(ngModel)]="widthGrid" class="form-control">
                                                         </div>
                                                         <div class="col-6">
                                                           <label for="input-rounded-pill" class="form-label">Height </label>
-                                                          <input  type="number" name="number" [(ngModel)]="heightGrid" class="form-control">
+                                                          <input  type="number" step="100" name="number" [(ngModel)]="heightGrid" class="form-control">
                                                         </div>
                                                        </div>
                                                      </div>
@@ -510,7 +510,7 @@
                                                                   <!-- } -->
                                                                 </div>
 
-                                                                  <div class="fixed-buttons p-2" style="position: sticky; bottom: 0; left: 0; width: 100%; background-color: #ffffff; padding: 8px 6px; box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);">
+                                                                  <div class="fixed-buttons p-2">
                                                                     <button type="button"  (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-danger me-2">Clear</button>
                                                                     <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">Save</button>
                                                                 </div>
@@ -532,7 +532,7 @@
                                                                 </div> -->
                                                               </div>
                                                             <!-- } -->
-                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData" > 
+                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData"  class="p-2"> 
                                                                 <button class="btn ripple btn-danger"
                                                                   (click)="clearAllFilters()">Clear filters</button>
                                                               
@@ -581,12 +581,13 @@
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
-                    <div class="title-container">
-                      <input *ngIf="!dashboardId"  type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
-                      <div *ngIf="dashboardId" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
+                    <div class="title-container" *ngIf="!editor">
+                      <input *ngIf="!dashboardId && !editor" (click)="editor =true" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
+                      <div *ngIf="dashboardId && !editor" (click)="editor =true" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
                        
                         </div>
-                        <div *ngIf="editor" class="popup">
+                        <ckeditor *ngIf="editor" placeholder="dashbaord Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)"></ckeditor>
+                        <!-- <div *ngIf="editor" class="popup">
                           <div class="popup-content">
                             <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName">
                             </ckeditor>
@@ -595,7 +596,7 @@
                               <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor()">Update</button>
                             </div>
                           </div>
-                        </div>
+                        </div> -->
                         </div>
 
                         <div class="min-w-fit-content ms-1">              
@@ -1015,8 +1016,9 @@
                               </tr>
                             </thead>
                             <tbody>
-                                 @for(row of item.tableData?.rows;track row){
-                          <tr>
+                                 @for(row of item.tableData?.rows;track row;let i = $index){
+                          <tr [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                          [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}">
                             @for(column of item.tableData?.headers;track column){
                             <td>{{ row[column] }}</td>
                             }
@@ -1035,7 +1037,8 @@
                     [chart]="item.chartOptions.chart!"
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                    [xaxis]="item.chartOptions.xaxis!"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                    [yaxis]="item.chartOptions.yaxis!"
                    (chartInit)="onChartInit($event, item)">
                  </apx-chart> 
                   </div>
@@ -1043,15 +1046,15 @@
                  </div>
                  <div *ngIf="item.chartOptions && item['chartId'] === 17">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" [stroke]="item.chartOptions.stroke!"
+                    [xaxis]="item.chartOptions.xaxis!" [stroke]="item.chartOptions.stroke!"
                     [dataLabels]="item.chartOptions.dataLabels!" [yaxis]="item.chartOptions.yaxis!"
                     [labels]="item.chartOptions.labels!" [legend]="item.chartOptions.legend!"  [grid]="item.chartOptions.grid!"
                     [title]="item.chartOptions.title!" [subtitle]="item.chartOptions.subtitle!"[colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 13">
                     <apx-chart [series]="item.chartOptions.series! || []" [chart]="item.chartOptions.chart!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" [dataLabels]="item.chartOptions.dataLabels!"
-                        [grid]="item.chartOptions.grid!" [stroke]="item.chartOptions.stroke!"
+                    [xaxis]="item.chartOptions.xaxis!" [dataLabels]="item.chartOptions.dataLabels!"
+                        [grid]="item.chartOptions.grid!" [stroke]="item.chartOptions.stroke!" [yaxis]="item.chartOptions.yaxis!"
                         [title]="item.chartOptions.title!" [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 24">
@@ -1063,7 +1066,7 @@
                         [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
                         [yaxis]="item.chartOptions.yaxis!" [legend]="item.chartOptions.legend!" [fill]="item.chartOptions.fill!"
                         [stroke]="item.chartOptions.stroke!" [tooltip]="item.chartOptions.tooltip!" [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" 
-                        [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" (chartInit)="onChartInit($event, item)"></apx-chart>
+                        [xaxis]="item.chartOptions.xaxis!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
                     <div class="big-number-container">
@@ -1079,7 +1082,8 @@
                       [dataLabels]="item.chartOptions.dataLabels!"
                       [plotOptions]="item.chartOptions.plotOptions!"
                       [responsive]="item.chartOptions.responsive!"
-                      [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                      [xaxis]="item.chartOptions.xaxis!"
+                      [yaxis]="item.chartOptions.yaxis!"
                       [legend]="item.chartOptions.legend!"
                       [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                     ></apx-chart>
@@ -1098,7 +1102,8 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
                     [responsive]="item.chartOptions.responsive!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!"
                     (chartInit)="onChartInit($event, item)"></apx-chart>
@@ -1110,7 +1115,8 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
                     [responsive]="item.chartOptions.responsive!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
@@ -1135,7 +1141,10 @@
                     [series]="item?.chartOptions?.series!"
                     [chart]="item?.chartOptions?.chart!"
                     [labels]="item?.chartOptions?.labels!"
-                    [responsive]="item?.chartOptions?.responsive!"(chartInit)="onChartInit($event, item)" >
+                    [responsive]="item?.chartOptions?.responsive!"
+                    [legend]="item.chartOptions.legend!"
+                    [plotOptions]="item.chartOptions.plotOptions!"
+                    [dataLabels]="item.chartOptions.dataLabels!" (chartInit)="onChartInit($event, item)" >
                 </apx-chart>
                   </div>
 
@@ -1152,11 +1161,11 @@
                   </div>
 
                 </div>
-                <div class="card-footer p-1">
+                <!-- <div class="card-footer p-1"> -->
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">
                       Delete
                     </button> -->
-                  </div>
+                  <!-- </div> -->
               </div>
             </gridster-item>
           </gridster>

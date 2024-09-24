@@ -364,16 +364,16 @@
                                 <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
                                 <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
                                 <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
-                                (btnClickEvent)="sheetSave()"></app-insights-button>
+                                (btnClickEvent)="sheetSave(); editor=false"></app-insights-button>
                                 <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
-                                (btnClickEvent)="sheetSave()"></app-insights-button>
+                                (btnClickEvent)="sheetSave(); editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                             </div>
                         </div>
                     </div>
                 </div>
         
                 <div class="card-body" style="padding: 2px 16px;" (click)="editor =false">
-                    <div class="row align-items-center mb-2">
+                    <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
                                 <label for="inputName" class="form-control mb-0 column-text">Columns</label>
@@ -492,7 +492,7 @@
                             
                         </div>
                     </div>
-                    <div class="row align-items-center">
+                    <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                             <div class="card-area d-flex gap-2">
                                 <label for="inputName" class="form-control mb-0 row-text">Rows</label>
@@ -519,19 +519,25 @@
                                         <div class="dropup" ngbDropdown>
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                <div class="dropup" ngbDropdown style="display: flex; align-items: center;">
-                                                    <li  *ngIf="!isMeasureEdit">@if(rows.alias){
+                                                <div class="dropup" ngbDropdown>
+                                                    <div class="d-flex"style="align-items: center;">
+                                                    <li  *ngIf="!isMeasureEdit" class="dropdown-item text-center">@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
                                                     @else if(rows.type){
                                                         {{ rows.type }} ({{rows.column}})
                                                     }@else{   
                                                          {{ rows.column }}
-                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil"></i> </li>
-                                                <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Column Alias" [(ngModel)]="rows.alias" class="form-control checkbox-color">
-                                                </li>
-                                                    <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
-                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    } 
+                                                    </li>
+                                                    <i (click)="isMeasureEdit = true;" class="fa fa-pencil p-1"></i> 
+                                                </div>
+                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Measure Alias" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color">
+                                                    </li>
+                                                    <div class="d-flex" style="align-items: center;">
+                                                        <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
+                                                        <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
@@ -664,8 +670,8 @@
                                                             <div class="" ngbDropdown style="margin-top: 5px;">
                                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                                     aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
-                                                                <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
-                                                                        <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
+                                                                <div class="dropdown-menu  cu" ngbDropdownMenu>
+                                                                        <a class="btn btn-secondary-light mx-0" style="text-align: left !important;" (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
                                                                     </div>
                                                                 </a>
                                                         </div>
@@ -681,7 +687,7 @@
             <div class="card mb-0 show-chart-card">
                 @if(!(table || kpi)){
                     <div class="input-group">
-                <div class="col-lg-3 col-md-3">
+                <div class="col-lg-3 col-md-3 p-1">
                     <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
                         (change)="changeChartPlugin()">
                         <option value="apex">Apex</option>
@@ -689,13 +695,13 @@
                     </select>
                 </div>
                 @if(pie || bar || line || donut || area){
-                                    <div class="col-lg-3 col-md-3">
+                                    <div class="col-lg-3 col-md-3 p-1">
                                         <button class="btn btn-primary" (click)="goDrillDownBack()"> Back</button>
                                    </div>
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
-                                    <div class="col-lg-3 col-md-3" style="display: inline-flex;">
+                                    <div class="col-lg-3 col-md-3 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
-                                       <h4 > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h4> ->
+                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span style="padding-top: 3px;">-></span>
                                    }
                                     </div>
                                 }
@@ -776,7 +782,7 @@
                     <div id="line-chart">
                         <apx-chart #lineChart
                         [series]="chartOptions.series || []" [chart]="chartOptions.chart"
-                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels"
+                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels" [yaxis]="chartOptions.yaxis"
                         [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
                         [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
                     </div>
@@ -1056,7 +1062,7 @@
                                     <p>Add to Dashboard</p>
                                     <div class="form-group select2-sm">
                                         <select id="inputGroupSelect013" class="form-select form-select select2 fs-14"  [(ngModel)]="selectedDashboardId">
-                                            <option value="1">Select a Dashboard</option>
+                                            <option value="0" disabled selected>Select a Dashboard</option>
                                             <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
                                         </select>
                                     </div>

@@ -204,15 +204,15 @@ export class SheetsdashboardComponent {
     
   }
   options!: GridsterConfig;
-  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
-  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
   }>;
-  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
-  dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
   }>;
-  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }>;
   pushNewSheet =[] as any;
   sheetData = [] as any;
@@ -1291,11 +1291,14 @@ selected_sheet_ids :this.sheetIdsDataSet,
         return undefined;        
     }
   }
-getTableData(tableData: any): { headers: any[], rows: any[] } {
+getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any } {
     // Example implementation for table data extraction
     return {
       headers: tableData.results.tableColumns,
-      rows: tableData.results.tableData
+      rows: tableData.results.tableData,
+      banding: tableData.results.banding,
+      color1: tableData.results.color1,
+      color2: tableData.results.color2,
     };
   }
 
@@ -3015,6 +3018,10 @@ kpiData?: KpiData;
   }
   updatedashboardName(name:any){
     this.dashboardTagName = name;
+    this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
+    this.dashboardName = doc.body.textContent+'';
   }
   sheetsRoute(){
     this.router.navigate(['/workbench/sheets']);  

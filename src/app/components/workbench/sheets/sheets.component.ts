@@ -553,7 +553,7 @@ if(this.fromFileId){
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 12,
               },
-              formatter: this.formatNumber.bind(this)
+              // formatter: this.formatNumber.bind(this)
             },
             axisBorder: {
               show: false,
@@ -2745,7 +2745,6 @@ bar["type"]="line";
         }
         )
       }
-
       chartsDataSet(data: any) {
         this.sheetCustomQuery = data.custom_query;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
@@ -6137,7 +6136,7 @@ renameColumns(){
       this.barLineChart();
     }
   }
-
+  formattedData : any[] = [];
   formatNumber(value: number): string {
     let formattedNumber = value+'';
 
@@ -6157,7 +6156,7 @@ renameColumns(){
           break;
       }
     }
-
+    this.formattedData.push(this.prefix + formattedNumber + this.suffix);
     return this.prefix + formattedNumber + this.suffix;
   }
 
