@@ -532,7 +532,7 @@
                                                     </li>
                                                     <i (click)="isMeasureEdit = true;" class="fa fa-pencil p-1"></i> 
                                                 </div>
-                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color">
+                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Measure Alias" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color">
                                                     </li>
                                                     <div class="d-flex" style="align-items: center;">
                                                         <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
@@ -1491,12 +1491,8 @@
                                                                       </div>
                                                                       @if(kpi){
                                                                         <div class="row">
-                                                                          <label for="col-md-4 form-label px-1 fs-14">Decimal places:</label>
+                                                                          <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
                                                                           <input type="number" id="decimal-places" [(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
-                                                                          </div>
-                                                                          <div class="row">
-                                                                          <label for="decimal-places">Round:</label>
-                                                                          <input type="number" id="decimal-places" [(ngModel)]="KPIRoundPlaces" min="0">
                                                                           </div>
                                                                           <div class="row">
                                                                           <label for="display-units">Display Units:</label>
