@@ -519,20 +519,51 @@
                                         <div class="dropup" ngbDropdown>
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                <div class="dropup" ngbDropdown>
-                                                    <div class="d-flex"style="align-items: center;">
-                                                    <li  *ngIf="!isMeasureEdit" class="dropdown-item text-center">@if(rows.alias){
+                                                <div class="dropup" ngbDropdown >
+                                                    <li  *ngIf="!isMeasureEdit" style="    padding: 0.5rem 0.5rem 0.5rem 2.8rem !important;">@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
                                                     @else if(rows.type){
                                                         {{ rows.type }} ({{rows.column}})
                                                     }@else{   
                                                          {{ rows.column }}
-                                                    } 
+                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1" style="float: right; padding-top: 5px;"></i> </li>
+                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
-                                                    <i (click)="isMeasureEdit = true;" class="fa fa-pencil p-1"></i> 
+                                                    <div class="d-flex" style="align-items: center;">
+                                                    <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
+                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
-                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Measure Alias" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color">
+                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
+                                                    </ul>
+                                                </div>
+                                                <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
+                                            </ul>
+                                        </div>
+                                        <!-- <div class="dropup" ngbDropdown>
+                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                <div class="dropup" ngbDropdown>
+                                                   
+                                                    <li  *ngIf="!isMeasureEdit" class=" text-center">@if(rows.alias){
+                                                        {{ rows.alias }}
+                                                    }
+                                                    @else if(rows.type){
+                                                        {{ rows.type }} ({{rows.column}})
+                                                    }@else{   
+                                                         {{ rows.column }}
+                                                    }  <i (click)="isMeasureEdit = true;" class="fa fa-pencil "></i> 
+                                                    </li>
+                                                   
+                                               
+                                                    <li  *ngIf="isMeasureEdit"><input  type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color" style="cursor: auto;">
                                                     </li>
                                                     <div class="d-flex" style="align-items: center;">
                                                         <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
@@ -550,7 +581,7 @@
                                                 </div>
                                                 <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
-                                        </div>
+                                        </div> -->
 
                                         <!-- <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -1476,6 +1507,9 @@
                                                                 <ng-template>
                                                                   <div >
                                                                     <div class="sub-menu-item  p-2" >
+                                                                        <div class="row">
+                                                                            
+                                                                        </div>
                                                                       <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Font</label>
                                                                           <div class="col-md-8">
