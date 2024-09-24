@@ -1560,10 +1560,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       let removeIndex = this.dashboard.findIndex((sheet:any) => item.sheetId == sheet.sheetId);
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
-        this.loaderService.show();
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
         this.qrySetId.splice(popqryIndex, 1);
-        this.deleteSheetFilter(item.sheetId);
+        if(this.dashboardId){
+          this.deleteSheetFilter(item.sheetId);
+        }
       if(item.fileId){
         let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
         this.fileId.splice(popIndex, 1);
@@ -1580,7 +1581,8 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     let reqObj = {
       "dashboard_id": this.dashboardId,
       "sheet_ids": sheetId
-    }
+    };
+    this.loaderService.show();
     this.workbechService.deleteSheetFilter(reqObj).subscribe({
       next:(data)=>{
         console.log(data);

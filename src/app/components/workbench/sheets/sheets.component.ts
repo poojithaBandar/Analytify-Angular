@@ -4562,10 +4562,19 @@ if(this.fromFileId){
 }
 }
 viewDashboard(){
+  if(this.fromFileId){
+    const encodedDatabaseId = btoa(this.fileId.toString());
+    const encodedQuerySetId = btoa(this.qrySetId.toString());
+    const encodedDashboardId = btoa(this.dashboardId.toString());
+    this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+
+  } else {
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
   this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  }
+
 }
 barColor : any;
 lineColor : any;
