@@ -149,6 +149,7 @@ export class SheetsComponent {
   chartOptions9:any;
   chartOptions10:any;
   heatMapChartOptions: any;
+  funnelChartOptions:any;
   eBarChartOptions: any;
   eStackedBarChartOptions: any;
   eGroupedBarChartOptions: any;
@@ -222,6 +223,7 @@ export class SheetsComponent {
   @ViewChild('multiline') multilineChart!: ChartComponent;
   @ViewChild('piechart') piechart!: ChartComponent;
   @ViewChild('donutchart') donutchart!: ChartComponent;
+  @ViewChild('funnelChart') funnelCharts!: ChartComponent;
   radar: boolean = false;
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
@@ -2565,6 +2567,50 @@ bar["type"]="line";
         };
       }
 
+      funnelChart(){
+        const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+        const categories = this.flattenDimensions(dimensions);
+        this.funnelChartOptions = {
+          series: this.sidebysideBarRowData,
+          chart: {
+            type: "bar",
+            height: 350
+          },
+          plotOptions: {
+            bar: {
+              borderRadius: 0,
+              horizontal: true,
+              barHeight: "80%",
+              isFunnel: true,
+              dataLabels: {
+                position: "center",
+              }
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function (val:any, opt:any) {
+              return opt.w.globals.labels[opt.dataPointIndex];
+            },
+            dropShadow: {
+              enabled: true,
+            },
+            style: {
+              fontSize: "8px",
+              fontFamily: "Helvetica, Arial, sans-serif",
+            },
+          },
+          title: {
+          },
+          xaxis: {
+            categories: categories
+          },
+          legend: {
+            show: false
+          }
+        };
+      }
+
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
@@ -2708,6 +2754,14 @@ bar["type"]="line";
                   this.chartOptions10.series = this.chartsRowData;
                   this.chartOptions10.labels = this.chartsColumnData;
                 }
+                else if (this.heatMap) {
+                  this.chartOptions9.series = this.sidebysideBarRowData;
+                  this.chartOptions9.xaxis.categories = categories;
+                }
+                else if (this.funnel) {
+                  this.chartOptions9.series = this.sidebysideBarRowData;
+                  this.chartOptions9.xaxis.categories = categories;
+                }
                 // this.updateChart();
               }
               else{
@@ -2847,6 +2901,8 @@ bar["type"]="line";
           this.heatMapChart();
         } else if (this.kpi){
           this.KPIChart();
+        } else if (this.funnel){
+          this.funnelChart();
         }
       }
 
@@ -3038,8 +3094,9 @@ bar["type"]="line";
   donut = false;
   kpi = false;
   heatMap = false;
+  funnel = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -3056,6 +3113,7 @@ bar["type"]="line";
     this.radar = radar;
     this.kpi = kpi;
     this.heatMap = heatMap;
+    this.funnel = funnel;
     // this.dataExtraction();
     this.chartsOptionsSet(); 
   }
@@ -3291,6 +3349,9 @@ bar["type"]="line";
       this.multiLine = false;
       this.donut = false;
       this.radar = false;
+      this.kpi = false;
+      this.heatMap = false;
+      this.funnel = false;
       this.banding = false;
       this.barOptions = undefined;
       this.lineOptions = undefined;
@@ -3517,6 +3578,9 @@ sheetSave(){
   }
   if(this.heatMap && this.chartId == 26){
     savedChartOptions = this.heatMapChartOptions;
+  }
+  if(this.funnel && this.chartId == 27){
+    savedChartOptions = this.funnelChartOptions;
   }
   let customizeObject = {
     isZoom : this.isZoom,
@@ -3821,6 +3885,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce.results.kpiData;
@@ -3846,6 +3911,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = true;
           this.heatMap = false;
+          this.funnel = false;
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -3896,6 +3962,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 24){
         // this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -3938,6 +4005,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
           this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
           this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
        }
@@ -3986,6 +4054,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 17){
         // this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -4017,6 +4086,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 7){
         // this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -4042,6 +4112,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 5){
         // this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -4066,6 +4137,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 4){
         // this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
@@ -4095,6 +4167,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 12){
         this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
@@ -4114,6 +4187,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = true;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
           if(this.isApexCharts){
           
           } else {
@@ -4144,6 +4218,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 3){
         // this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
@@ -4169,6 +4244,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 8){
         // this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
@@ -4194,6 +4270,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
        }
        if(responce.chart_id == 10){
         // this.chartsRowData = this.sheetResponce.results.donutYaxis
@@ -4231,6 +4308,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
           this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
           this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
           this.label = this.sheetResponce.savedChartOptions.plotOptions.pie.donut.labels.show
@@ -4252,6 +4330,26 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = true;
+          this.funnel = false;
+       }
+       if(responce.chart_id == 27){
+        this.funnelChartOptions = this.sheetResponce.savedChartOptions;
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = true;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
@@ -5830,9 +5928,14 @@ renameColumns(){
       console.log(this.chartOptions10);
       console.log(this.donutchart);
     }
+    else if(this.funnel){
+      this.funnelCharts.updateOptions(object);
+      console.log(this.funnelCharts);
+    }
   }
   dataLabels:boolean = true;
   label : boolean = true;
+  isDistributed : boolean = false;
   toggleSwitch(type : string) {
     let object:any;
     if(type === 'banding'){
@@ -6083,6 +6186,11 @@ renameColumns(){
         this.chartOptions10.plotOptions.pie.donut.labels.show = this.label;
       }
     }
+    else if(type === 'distributed'){
+      this.isDistributed = !this.isDistributed;
+      object = {plotOptions: {bar: {distributed: this.isDistributed}}};
+      this.funnelChartOptions.plotOptions.bar.distributed = this.isDistributed;
+    }
     this.updateChart(object);
   }
   enableZoom(){
@@ -6250,13 +6358,13 @@ fetchChartData(chartData: any){
           console.log("This is ChaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type==="Bar Chart"){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type==="Pie Chart"){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type==="Line Chart"){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type==="Area Chart"){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }
           this.dataExtraction();
 
@@ -6645,5 +6753,44 @@ fetchChartData(chartData: any){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
           }
         }
+      }
+
+      sortFunnel(event:any){
+        const numbers = this.funnelChartOptions.series[0].data;
+        if(event.target.value === 'ascending'){
+          numbers.sort((a:any, b:any) => a - b);
+        }
+        else if(event.target.value === 'descending'){
+          numbers.sort((a:any, b:any) => b - a);
+        }
+        console.log(numbers);
+        this.funnelChartOptions.series[0].data = numbers;
+        this.funnelCharts.updateSeries([{data: numbers}]);
+      }
+      funnelFontChange(event:any,type:any){
+        let font = event.target.value;
+        let object = {};
+        if(type === 'family'){
+          this.funnelChartOptions.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.funnelChartOptions
+        } else if(type === 'size'){
+          let size = event.target.value;
+          this.funnelChartOptions.dataLabels.style.fontSize = size;
+          object = { datalabels: { style: { fontSize: size } } };
+          object = this.funnelChartOptions;
+        } else if(type === 'allign'){
+          let allign = event.target.value;
+          this.funnelChartOptions.plotOptions.bar.dataLabels.position = allign;
+          object = { plotOptions: { bar: { dataLabels: { position: allign } } } }
+        }
+        this.updateChart(object);
+      }
+      funnelColorChange(event:any){
+        let selectedColor = event;
+        this.funnelChartOptions.series[0].color = selectedColor;
+        let object = {series: [{color: selectedColor}]}
+        object = this.funnelChartOptions;
+        this.updateChart(object);
       }
 }
