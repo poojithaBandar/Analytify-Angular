@@ -12,7 +12,7 @@ import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, Gridst
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { EChartsOption, number } from 'echarts';
-import { NgxEchartsModule } from 'ngx-echarts';
+import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { ApexOptions, ChartComponent, ChartType, NgApexchartsModule } from 'ng-apexcharts';
 import ApexCharts from 'apexcharts';
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
@@ -43,6 +43,8 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
+import * as echarts from 'echarts';
+
 interface TableRow {
   [key: string]: any;
 }
@@ -80,7 +82,13 @@ interface KpiData {
 @Component({
   selector: 'app-sheetsdashboard',
   standalone: true,
-  imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
+  providers: [
+    {
+      provide: NGX_ECHARTS_CONFIG,
+      useFactory: () => ({ echarts: echarts }),
+    },
+  ],
+  imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule],
   templateUrl: './sheetsdashboard.component.html',
@@ -206,7 +214,7 @@ export class SheetsdashboardComponent {
   options!: GridsterConfig;
   nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
-  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
+  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
   }>;
   dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
@@ -573,7 +581,7 @@ export class SheetsdashboardComponent {
         chartId:sheet.chart_id,
         qrySetId : sheet.queryset_id,
         databaseId: sheet.server_id,
-        isEChart : sheet.isEChart,
+        isEChart : sheet.sheet_data.isEChart,
         column_Data : sheet.sheet_data.columns_data,
         row_Data : sheet.sheet_data.rows_data,
         drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
@@ -1030,7 +1038,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       chartId:sheet.chart_id,
       column_Data : sheet.sheet_data.columns_data,
       row_Data : sheet.sheet_data.rows_data,
-      isEChart : sheet.isEChart,
+      isEChart : sheet.sheet_data.isEChart,
       drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
       isDrillDownData : sheet.sheet_data.isDrillDownData,
       data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
@@ -1186,25 +1194,25 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions) 
+      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
     }
     if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
       let yaxis = sheet.sheet_data?.results?.areaYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.areaChartOptions(xaxis,yaxis,savedOptions)
+      return this.areaChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 13){
       let xaxis = sheet.sheet_data?.results?.lineXaxis;
       let yaxis = sheet.sheet_data?.results?.lineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.lineChartOptions(xaxis,yaxis,savedOptions)
+      return this.lineChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 24){
       let xaxis = sheet.sheet_data?.results?.pieXaxis;
       let yaxis = sheet.sheet_data?.results?.pieYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.pieChartOptions(xaxis,yaxis,savedOptions)
+      return this.pieChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     //sidebyside
     if(sheet.chart_id === 7){
@@ -1214,7 +1222,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
 
       const dimensions: Dimension[] =xaxis
       const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions)
+      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
 
     }
     if(sheet.chart_id === 5){
@@ -1359,6 +1367,7 @@ allowDrop(ev : any): void {
         chartData:copy.chartOptions?.chartData || [],
         kpiData:copy.kpiData,
         isEChart : copy.isEChart,
+        echartOptions :  copy.chartOptions,
         drillDownHierarchy : copy.drillDownHierarchy,
         column_Data : copy.column_Data,
       row_Data : copy.row_Data,
@@ -1755,24 +1764,24 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       }
     }
   }
-  saveItemDimensions(item: GridsterItem) {
-    // Assuming you have a backend service to save dimensions
-    // this.workbenchService.saveItemDimensions(item)
-    //   .subscribe({
-    //     next: (response) => console.log('Item dimensions saved', response),
-    //     error: (error) => console.error('Error saving item dimensions', error)
-    //   });
+  // saveItemDimensions(item: GridsterItem) {
+  //   // Assuming you have a backend service to save dimensions
+  //   // this.workbenchService.saveItemDimensions(item)
+  //   //   .subscribe({
+  //   //     next: (response) => console.log('Item dimensions saved', response),
+  //   //     error: (error) => console.error('Error saving item dimensions', error)
+  //   //   });
   
-    // For local storage:
-    const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
-    const index = savedItems.findIndex((i: any) => i.id === item['id']);
-    if (index > -1) {
-      this.dashboard[index] = item;
-    } else {
-      this.dashboard.push(item);
-    }
-    localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
-  }  // onResizeStop(item: GridsterItem, itemComponent: GridsterItemComponent) {
+  //   // For local storage:
+  //   const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
+  //   const index = savedItems.findIndex((i: any) => i.id === item['id']);
+  //   if (index > -1) {
+  //     this.dashboard[index] = item;
+  //   } else {
+  //     this.dashboard.push(item);
+  //   }
+  //   localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
+  // }  // onResizeStop(item: GridsterItem, itemComponent: GridsterItemComponent) {
   //   // Handle resize stop event here
   //   //this.updateChartDimensions(item);
   // }
@@ -1910,30 +1919,63 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   }
 
 /////chartOptions
-barChartOptions(xaxis:any,yaxis:any,savedOptions : any){
-  savedOptions.series.data = yaxis;
-  savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
+barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
+  if (isEchart) {
+    savedOptions.series.data = yaxis;
+    savedOptions.xAxis.data = xaxis;
+    return savedOptions;
+  } else {
+    savedOptions.series.data = yaxis;
+    savedOptions.xaxis.categories = xaxis;
+    return savedOptions;
+  }
 }
-areaChartOptions(xaxis:any,yaxis:any,savedOptions : any){
+areaChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
+  if (isEchart) {
   savedOptions.series.data = yaxis;
-  savedOptions.labels = xaxis;
+  savedOptions.xAxis.data = xaxis;
   return savedOptions;
+  } else {
+    savedOptions.series.data = yaxis;
+    savedOptions.labels = xaxis;
+    return savedOptions;
+  }
 }
-lineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series.data = yaxis;
-  savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
+lineChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    savedOptions.series.data = yaxis;
+    savedOptions.xAxis.data = xaxis;
+    return savedOptions;
+  } else {
+    savedOptions.series.data = yaxis;
+    savedOptions.xaxis.categories = xaxis;
+    return savedOptions;
+  }
 }
-pieChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+pieChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    let combinedArray = yaxis.map((value : any, index :number) => ({
+      value: value,
+      name: xaxis[index]
+    }));
+    savedOptions.series.data = combinedArray;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
   savedOptions.labels = xaxis;
   return savedOptions;
+  }
 }
-sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    savedOptions.series = yaxis;
+    savedOptions.xAxis.categories = xaxis;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
   savedOptions.xaxis.categories = xaxis;
   return savedOptions;
+  }
 }
 stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   savedOptions.series = yaxis;
@@ -2908,7 +2950,7 @@ kpiData?: KpiData;
         databaseId : sheet.server_id,
         fileId : sheet.file_id,
         qrySetId : sheet.queryset_id,
-        isEChart : sheet.isEChart,
+        isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
         selectedSheet : sheet.selectedSheet,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25

@@ -857,6 +857,14 @@
                         </div>
                       </div>
                 </div>
+                @if(item['isEChart']){
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
+                    <div>
+                    <div id="echartsBar" echarts [options]="item['echartOptions']" class="echart-charts"></div>
+                    </div>
+                    </div>
+                
+              } @else{
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
     
                   <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
@@ -1161,6 +1169,8 @@
                   </div>
 
                 </div>
+              }
+
                 <!-- <div class="card-footer p-1"> -->
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">
                       Delete

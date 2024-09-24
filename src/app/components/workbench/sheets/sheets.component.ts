@@ -1889,6 +1889,9 @@ bar["stack"]="total";
         axisName: {
           color: 'rgb(238, 197, 102)'
         },
+        axisLabel : {
+          color : this.xLabelColor
+        },
         radar: {
           // shape: 'circle',
           indicator:
@@ -4029,11 +4032,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 7){
         // this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
         // this.sidebysideBarColumnData1 = this.sheetResponce.results.sidebysideBarXaxis;
+        if(this.isApexCharts){
         this.chartOptions2 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions2.xaxis.labels.show;
         // this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
         this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions2.grid.yaxis.lines.show;
+        } else {
+          this.eSideBySideBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.sidebysideBar();
         this.bar = false;
         this.table = false;
@@ -4054,10 +4061,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 5){
         // this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
         // this.sidebysideBarColumnData1 = this.sheetResponce.results.stokedBarXaxis;
+        if(this.isApexCharts){
         this.chartOptions6 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
         this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
+        } else {
+          this.eStackedBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.stockedBar();
         this.bar = false;
         this.table = false;
@@ -4131,11 +4142,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 2){
         // this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
         // this.sidebysideBarColumnData1 = this.sheetResponce.results.hStockedXaxis;
+        if(this.isApexCharts){
         this.chartOptions7 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions7.xaxis.labels.show;
         // this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
         this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions7.grid.yaxis.lines.show;
+        } else {
+          this.ehorizontalStackedBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
@@ -4156,11 +4171,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 3){
         // this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
         // this.sidebysideBarColumnData1 = this.sheetResponce.results.hgroupedXaxis;
+        if(this.isApexCharts){
         this.chartOptions8 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
         // this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
         this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
+        } else {
+          this.eGroupedBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.hGrouped();
         this.bar = false;
         this.table = false;
@@ -4181,11 +4200,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 8){
         // this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
         // this.sidebysideBarColumnData1 = this.sheetResponce.results.multiLineXaxis;
+        if(this.isApexCharts){
         this.chartOptions9 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions9.xaxis.labels.show;
         // this.yLabelSwitch = this.chartOptions9.yaxis.labels.show;
         this.xGridSwitch = this.chartOptions9.grid.xaxis.lines.show;
         this.yGridSwitch = this.chartOptions9.grid.yaxis.lines.show;
+        } else {
+          this.eMultiBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.multiLineChart();
         this.bar = false;
         this.table = false;
