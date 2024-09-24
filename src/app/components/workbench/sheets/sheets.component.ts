@@ -2739,6 +2739,24 @@ bar["type"]="line";
               this.radar = false;
               this.kpi = false;
               this.heatMap = false;
+            } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
+              this.table = false;
+              this.bar = false;
+              this.area = false;
+              this.line = false;
+              this.pie = false;
+              this.sidebyside = true;
+              this.stocked = false;
+              this.barLine = false;
+              this.horizentalStocked = false;
+              this.grouped = false;
+              this.multiLine = false;
+              this.donut = false;
+              this.chartId = 7;
+              this.radar = false;
+              this.kpi = false;
+              this.heatMap = false;
+              this.sidebysideBar();
             }
            
           },
