@@ -573,6 +573,7 @@ export class SheetsdashboardComponent {
         chartId:sheet.chart_id,
         qrySetId : sheet.queryset_id,
         databaseId: sheet.server_id,
+        isEChart : sheet.isEChart,
         column_Data : sheet.sheet_data.columns_data,
         row_Data : sheet.sheet_data.rows_data,
         drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
@@ -594,7 +595,7 @@ export class SheetsdashboardComponent {
             return this.kpiData; // Return the kpi object to kpiData
           })()
         : undefined,
-        chartOptions: sheet.sheet_type === 'Chart' ? {
+        chartOptions: sheet.sheet_type === 'Chart' && !sheet.sheet_data.isEchart ? {
           // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
           ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
           // chart: { type: sheet.chart, height: 300 },
@@ -1029,6 +1030,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       chartId:sheet.chart_id,
       column_Data : sheet.sheet_data.columns_data,
       row_Data : sheet.sheet_data.rows_data,
+      isEChart : sheet.isEChart,
       drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
       isDrillDownData : sheet.sheet_data.isDrillDownData,
       data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
@@ -1356,6 +1358,7 @@ allowDrop(ev : any): void {
         selectedSheet : true,
         chartData:copy.chartOptions?.chartData || [],
         kpiData:copy.kpiData,
+        isEChart : copy.isEChart,
         drillDownHierarchy : copy.drillDownHierarchy,
         column_Data : copy.column_Data,
       row_Data : copy.row_Data,
@@ -2905,6 +2908,7 @@ kpiData?: KpiData;
         databaseId : sheet.server_id,
         fileId : sheet.file_id,
         qrySetId : sheet.queryset_id,
+        isEChart : sheet.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
         selectedSheet : sheet.selectedSheet,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
