@@ -1184,6 +1184,20 @@
                   ></apx-chart>
                   </div>
 
+                  <div *ngIf="item.chartOptions && item['chartId'] === 27">
+                    <apx-chart
+                    [series]="item.chartOptions.series!"
+                    [chart]="item.chartOptions.chart!"
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [plotOptions]="item.chartOptions.plotOptions!"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [colors]="item.chartOptions.colors!"
+                    [title]="item.chartOptions.title!"
+                    [legend]="item.chartOptions.legend!"
+                    (chartInit)="onChartInit($event, item)"
+                  ></apx-chart>
+                  </div>
+
                 </div>
                 <!-- <div class="card-footer p-1"> -->
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">

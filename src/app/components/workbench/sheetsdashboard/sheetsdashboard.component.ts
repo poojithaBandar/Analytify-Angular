@@ -1286,6 +1286,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return savedOptions;
     }
+    if(sheet.chart_id === 27){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
     
   }
 
