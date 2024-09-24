@@ -70,6 +70,11 @@ interface KpiData {
   rows: any[];
   fontSize: string;
   color: string;
+  kpiNumber: any;
+  kpiPrefix : string;
+  kpiSuffix: string;
+  kpiDecimalUnit : string;
+  kpiDecimalPlaces: number;
 }
 
 @Component({
@@ -577,6 +582,11 @@ export class SheetsdashboardComponent {
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
+              kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -1025,6 +1035,11 @@ selected_sheet_ids :this.sheetIdsDataSet,
       kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
       ? (() => {
           this.kpiData = {
+            kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -1079,6 +1094,11 @@ selected_sheet_ids :this.sheetIdsDataSet,
       kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
       ? (() => {
           this.kpiData = {
+            kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -2431,6 +2451,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         }
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
         item1['kpiData'].rows = [obj];
+        item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
       }
       if(item.chart_id == '24' || item.chartId == '24'){//pie
         if(!item1.originalData ){
@@ -2530,6 +2551,31 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       console.log('filtered dashboard-data',item1)
     }
   })
+}
+
+formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
+  let formattedNumber = value+'';
+  let KPINumber;
+  if (KPIDisplayUnits !== 'none') {
+    switch (KPIDisplayUnits) {
+      case 'K':
+        formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
+        break;
+      case 'M':
+        formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
+        break;
+      case 'B':
+        formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
+        break;
+      case 'G':
+        formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
+        break;
+    }
+  } else {
+    formattedNumber = (value).toFixed(KPIDecimalPlaces)
+  }
+
+  return KPINumber = KPIPrefix + formattedNumber + KPISuffix;
 }
 
 closeFilterModal(){
@@ -2861,6 +2907,11 @@ kpiData?: KpiData;
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
+              kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)

@@ -3747,7 +3747,6 @@ if(this.fromFileId){
 this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
           console.log(responce);
         this.retriveDataSheet_id = responce.sheet_id;
-        this.sheetfilter_querysets_id = responce.sheet_filter_quereyset_ids;
         this.chartId = responce.chart_id;
         this.sheetName = responce.sheet_name;
         this.sheetTitle = responce.sheet_name;
@@ -3833,9 +3832,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.KPINumber = this.sheetResponce.results.kpiNumber;
           this.kpiFontSize = this.sheetResponce.results.kpiFontSize;
           this.kpiColor = this.sheetResponce.results.kpicolor;
-          this.KPIPrefix = this.sheetResponce.results.kpiPrefix,
+          if(this.sheetResponce.results.kpiPrefix) {
+            this.KPIPrefix = this.sheetResponce.results.kpiPrefix;
+          }
+          if(this.sheetResponce.results.kpiSuffix) {
+            this.KPISuffix = this.sheetResponce.results.kpiSuffix;
+          }
           this.KPIDisplayUnits = this.sheetResponce.results.kpiDecimalUnit,
-          this.KPISuffix = this.sheetResponce.results.kpiSuffix,
           this.KPIDecimalPlaces = this.sheetResponce.results.kpiDecimalPlaces,
           this.table = false;
           this.bar = false;
