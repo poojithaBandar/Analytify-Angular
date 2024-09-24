@@ -37,6 +37,7 @@ import { Options } from '@angular-slider/ngx-slider';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { series } from '../../charts/apexcharts/data';
+import { NgxPaginationModule } from 'ngx-pagination';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -60,7 +61,8 @@ interface RangeSliderModel {
     },
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
-    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,InsightsButtonComponent,NgxSliderModule],
+    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -82,7 +84,7 @@ export class SheetsComponent {
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
-  tableData: TableRow[] = [];
+  tableData: TableRow[] = [];  
   displayedColumns: string[] = [];
   chartEnable = true;
   dimensionExpand = false;
@@ -238,6 +240,20 @@ export class SheetsComponent {
   sheetCustomQuery: any;
   KPINumber: any;
 
+  tableDataDisplay: TableRow[] = [];
+  tableColumnsDisplay: string[] = [];
+  tableRowDisplayPreview = [] as any;
+  tableColumnDisplayPreview = [] as any;
+
+  itemsPerPage!:number;
+  pageNo = 1;
+  page: number = 1;
+  totalItems:any;
+  tableChartSearch:any;
+
+  tablePaginationCustomQuery:any;
+  tablePaginationColumn =[] as any;
+  tablePaginationRows =[] as any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
@@ -2635,6 +2651,9 @@ bar["type"]="line";
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
             console.log(responce);
+            this.tablePaginationRows=responce.rows;
+            this.tablePaginationColumn=responce.columns;
+            this.tablePaginationCustomQuery=responce.custom_query;
             this.chartsDataSet(responce);
             if (this.chartsRowData.length > 0) {
               this.mulColData = responce.columns;
@@ -2745,10 +2764,70 @@ bar["type"]="line";
         }
         )
       }
+
+      pageChangeTableDisplay(page:any){
+        this.pageNo=page;
+        this.tableDisplayPagination();
+      }
+      tableDisplayPagination(){
+        const obj ={
+          database_id:this.databaseId,
+          file_id:this.fileId,
+          sheetqueryset_id:this.sheetfilter_querysets_id,
+          queryset_id:this.qrySetId,
+          page_no:this.pageNo,
+          page_count:this.itemsPerPage,
+          search:this.tableChartSearch,
+          rows:this.tablePaginationRows,
+          columns:this.tablePaginationColumn,
+          custom_query:this.tablePaginationCustomQuery
+        }
+        if(obj.search === '' || obj.search === null){
+          delete obj.search;
+        }
+        this.tableDataDisplay=[]
+        this.tableColumnsDisplay=[]
+        this.workbechService.tablePaginationSearch(obj).subscribe(
+          {next: (data:any) => {
+          console.log(data);
+          this.itemsPerPage = data.items_per_page;
+          this.totalItems = data.total_items;
+            this.tableColumnDisplayPreview = data.data?.col
+            this.tableRowDisplayPreview = data.data?.row
+
+            let rowCountData: any;
+            if (this.tableColumnDisplayPreview[0]?.result_data?.length) {
+              rowCountData = this.tableColumnDisplayPreview[0]?.result_data?.length;
+            } else {
+              rowCountData = this.tableRowDisplayPreview[0]?.result_data?.length;
+            }
+            this.tableColumnsDisplay = this.tableColumnDisplayPreview.map((col: any) => col.column).concat(this.tableRowDisplayPreview.map((row: any) => row.col));
+        
+            for (let i = 0; i < rowCountData; i++) {
+              const tableRow: TableRow = {};
+              this.tableColumnDisplayPreview?.forEach((col: any) => {
+                tableRow[col.column] = col.result_data[i];
+              });
+              this.tableRowDisplayPreview?.forEach((rowData: any) => {
+                tableRow[rowData.col] = rowData.result_data[i];
+              });
+              this.tableDataDisplay.push(tableRow);
+              console.log('display row data ', this.tableDataDisplay)
+            }
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      }
+    )
+      }
+
       chartsDataSet(data: any) {
         this.sheetCustomQuery = data.custom_query;
-        this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
-        this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
+        this.tablePreviewColumn = data.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
+        this.tablePreviewRow = data.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        this.tableDisplayPagination();
         console.log(this.tablePreviewColumn);
         console.log(this.tablePreviewRow);
         if (this.tablePreviewColumn && this.tablePreviewRow) {
@@ -3260,6 +3339,9 @@ bar["type"]="line";
       this.tablePreviewColumn = [];
       this.tablePreviewRow = [];
       this.tableData = [];
+      this.totalItems = 0;
+      this.tableDataDisplay = [];
+      this.tableColumnsDisplay = [];
       this.displayedColumns = [];
       this.chartsData = [];
       this.chartsRowData = [];
@@ -3571,6 +3653,8 @@ const obj={
     "banding":this.banding,
     "color1":bandColor1,
     "color2":bandColor2,
+    "items_per_page":this.itemsPerPage,
+    "total_items":this.totalItems,
 
     "barYaxis":this.saveBar,
     "barXaxis":this.barXaxis,
@@ -3760,6 +3844,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.color1 = responce.sheet_data?.results?.color1;
         this.color2 = responce.sheet_data?.results?.color2;
         this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id || responce.sheet_filter_quereyset_ids;
+        this.tablePaginationCustomQuery = responce.custom_query;
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
         responce.filters_data.forEach((filter: any)=>{

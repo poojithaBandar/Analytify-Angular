@@ -41,6 +41,8 @@ export class DashboardPageComponent implements OnInit{
   shareAsPrivate = false;
   dashboardPropertyId:any;
   publishedDashboard = false;
+  port:any;
+  host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -51,6 +53,13 @@ ngOnInit(){
   if(this.viewDashboardList){
   this.getuserDashboardsListput();
   }
+  this.getHostAndPort();
+}
+getHostAndPort(): void {
+  const { hostname, port } = window.location;
+  this.host = hostname;
+  this.port = port;
+  console.log('port',this.port,'host',this.host)
 }
 pageChangeUserDashboardsList(page:any){
 this.pageNo=page;
@@ -269,7 +278,7 @@ sharePublish(value:any){
     this.createUrl = true;
     this.shareAsPrivate = false
     const publicDashboardId = btoa(this.dashboardId.toString());
-    this.publicUrl = 'http://54.67.88.195:4200/public/dashboard/'+publicDashboardId
+    this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;

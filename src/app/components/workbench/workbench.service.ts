@@ -360,7 +360,19 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/rename_column/`+this.accessToken,obj);
   }
-
+//
+// sheet table pagination
+tablePaginationSearch(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/table_pagination/`+this.accessToken,obj);
+}
+//dahboard table pagination
+paginationTableDashboard(obj:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/dashboard_table/`+this.accessToken,obj);
+}
 //Dashboard Filters
 getColumnsInDashboardFilter(obj:any){
   const currentUser = localStorage.getItem( 'currentUser' );
@@ -526,6 +538,9 @@ deleteUser(id:any){
   }
   getColDataFromFilterIdPublic(obj:any){
     return this.http.post<any>(`${environment.apiUrl}/public/dashboard_columndata_preview/`,obj); 
+  }
+  paginationTableDashboardPublic(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/public/dashboard_table/`,obj);
   }
   //image convert
       blobToFile(theBlob:any){

@@ -314,7 +314,7 @@
                                             </div>
                                               <label class="form-label">Apply to Selected worksheets</label>
                                            
-                                            <div class="form body border p-2" style="height: 200px;  overflow: scroll;">
+                                            <div class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
 
                                               <div class="form-check">
 
@@ -374,6 +374,8 @@
                                                 }
                                               </ul>
                                           </div> -->
+                                          <label class="form-label">Column <span class="text-red">*</span>
+                                          </label>
                                           <ng-select [items]="dropdownOptions" bindLabel="value" [(ngModel)]="selectedOption" [groupBy]="'group'"
                                             [searchable]="true" [searchFn]="customSearch.bind(this)" (change)="onOptionSelected(selectedOption)"
                                             placeholder="Select column" [clearable]="true">
@@ -392,7 +394,7 @@
                                           </div>
                                             <label class="form-label">Apply to Selected worksheets</label>
                                          
-                                          <div class="form body border p-2" style="height: 200px;  overflow: scroll;">
+                                          <div class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
 
                                             <div class="form-check">
 
@@ -675,7 +677,7 @@
                     [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
                     <div class="card mb-0" style="height: 100%;overflow: scroll;">
                       <div class="card-header d-flex justify-content-between p-1">
-                        <h6>{{ item.data?.title }}</h6>
+                        <h6>{{ item.data?.title }}</h6>       
                         <div class="dashboard-option">
                           <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -835,6 +837,16 @@
                    <!-- </div> -->
                   }
                   <div style="width: 100%;" [innerHtml]="sheetTagTitle[item.data?.title]?sheetTagTitle[item.data?.title]:item.data?.sheetTagName"></div>
+                  <div *ngIf="item['chartType'] === 'Table'"  class="sheet-search">
+                    <div class="">
+                    </div>
+                    <div  class="input-group mt-1 p-1 sheet-table-search">
+                        <input type="text" placeholder="Search" aria-describedby="button-addon2"      (mousedown)="disableDragging($event)"
+                        (mouseup)="enableDragging($event)" [(ngModel)]="tableSearch" (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)" class="form-control border-end-0 ">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)" style="border-radius: 0px 4px 4px 0px;">
+                        <i class="fe fe-search"></i></button>
+                    </div>
+                   </div>
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -1016,16 +1028,31 @@
                               </tr>
                             </thead>
                             <tbody>
-                                 @for(row of item.tableData?.rows;track row;let i = $index){
-                          <tr [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                                 <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
+                          <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
+                          [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
                           [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}">
-                            @for(column of item.tableData?.headers;track column){
+                            <!-- @for(column of item.tableData?.headers;track column){
                             <td>{{ row[column] }}</td>
-                            }
+                            } -->
+                            <td *ngFor="let column of item.tableData?.headers">
+                              {{ row[column] }}
+                            </td>
                           </tr>
-                        }
+                        
                             </tbody>
                         </table>
+                        <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,(tablePage = $event)) : pageChangeTableDisplay(item,(tablePage = $event))"></pagination-controls>
+                        <div  style="float: right;font-size: 15px; margin-top: -41px;">
+                          <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,tablePage) : pageChangeTableDisplay(item,tablePage)" (mousedown)="stopDragging($event)"class="form-control cursor">
+                                <option  value="10"> 10</option>
+                                <option  value="50"> 50</option>
+                                <option  value="100"> 100</option>
+                                <option  value="500"> 500</option>
+                                <option  value="1000"> 1000</option>
+
+                          </select>
+                       </div>
                     </div>
                     <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
                     </div>

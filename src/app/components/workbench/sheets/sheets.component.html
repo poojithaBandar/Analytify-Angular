@@ -739,6 +739,17 @@
                                 }
                                    </div>
                 }
+                @if(table && chartId){
+                <div class="sheet-search">
+                    <div class="">
+                    </div>
+                    <div *ngIf="totalItems > 0" class="input-group mt-1 p-1 sheet-table-search">
+                        <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPagination()" class="form-control border-end-0 ">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="tableDisplayPagination()" style="border-radius: 0px 4px 4px 0px;">
+                        <i class="fe fe-search"></i></button>
+                    </div>
+                   </div>
+                }
                  <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: scroll;">
                     @for(tab of tabs;track tab; let index = $index){
                        
@@ -750,22 +761,25 @@
                                 <table>
                                     <thead>
                                       <tr>
-                                        @for(column of displayedColumns;track column){
+                                        @for(column of tableColumnsDisplay;track column){
                                         <th>{{ column }}</th>
                                         }
                                       </tr>
                                     </thead>
                                     <tbody>
-                                        @for(row of tableData;track row;let i = $index){
-                                      <tr [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                      [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}">
-                                        @for(column of displayedColumns;track column){
+                                    <tr *ngFor="let row of (tableDataDisplay | paginate: { itemsPerPage: itemsPerPage,
+                                                                currentPage: page,
+                                                                totalItems: totalItems }) ; let i = index"
+                                        [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}">
+                                        @for(column of tableColumnsDisplay;track column){
                                         <td>{{ row[column] }}</td>
                                         }
-                                      </tr>
-                                    }
+                                    </tr>
+                                    
                                     </tbody>
                                   </table>
+                                  <pagination-controls *ngIf="totalItems > 0" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(kpi && chartId){
                                     <div class="big-number-container">
@@ -1631,6 +1645,19 @@
                                                         [(ngModel)]="color2"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
+                                                    </div>
+                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                        <div  style="font-size: 15px;">
+                                                            <label>Page Length</label>
+                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination()" class="form-control cursor">
+                                                                <option  [ngValue]="''" disabled> select page length</option>
+                                                                  <option  [ngValue]="10"> 10</option>
+                                                                  <option  value="50"> 50</option>
+                                                                  <option  value="100"> 100</option>
+                                                                  <option  value="500"> 500</option>
+                                                                  <option  value="1000"> 1000</option>
+                                                            </select>
+                                                         </div>
                                                     </div>
                                                     <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
