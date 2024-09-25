@@ -164,6 +164,14 @@ export class SheetsdashboardComponent {
   tableNameSelectedForFilter:any;
   isPanelHidden: boolean = true;
 
+
+  tableItemsPerPage:any;
+  tablePageNo = 1;
+  tablePage: number = 1;
+  tableTotalItems:any;
+  tableSearch:any;
+  isDraggingDisabled = false;
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef){
     this.dashboard = [];
@@ -322,7 +330,6 @@ export class SheetsdashboardComponent {
     // this.dashboardId = 145
     this.getSavedDashboardDataPublic();
     this.getDashboardFilterredListPublic();
-
   }
     // if(this.sheetsNewDashboard){
     //   this.sheetsDataWithQuerysetId();
@@ -361,7 +368,11 @@ export class SheetsdashboardComponent {
       // },
       pushItems: true,
       draggable: {
-        enabled: this.editDashboard,
+        enabled: this.editDashboard && !this.isDraggingDisabled,
+        stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+          // Optional logic when dragging stops
+          console.log('Drag stopped for item', item);
+        }
         
       },
       resizable: {
@@ -1296,6 +1307,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return savedOptions;
     }
+    if(sheet.chart_id === 27){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
     
   }
 
@@ -1314,6 +1329,8 @@ selected_sheet_ids :this.sheetIdsDataSet,
   }
 getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any } {
     // Example implementation for table data extraction
+    this.tableItemsPerPage=tableData.results.items_per_page
+    this.tableTotalItems = tableData.results.total_items
     return {
       headers: tableData.results.tableColumns,
       rows: tableData.results.tableData,
@@ -2228,7 +2245,7 @@ getColumnSelectionLabel(filterList: any): string {
   const selectedColumns = filteredColumns.filter((col: any) => col.selected);
   
   if (selectedColumns.length === 0) {
-    return 'Select Column';
+    return 'Select Data';
   } else if (selectedColumns.length === 1) {
     return selectedColumns[0].label; // Display the label of the single selected column
   } else if (selectedColumns.length === filteredColumns.length) {
@@ -2481,7 +2498,13 @@ getFilteredData(){
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
+      if(item.chart_id === 1){
+        this.pageChangeTableDisplay(item,1)
+        // this.tablePageNo =1;
+        this.tablePage=1
+      }else{
       this.setDashboardSheetData(item, true , true);
+      }
     });
       },
     error:(error)=>{
@@ -2510,7 +2533,11 @@ clearAllFilters(): void {
       });
       localStorage.removeItem('storeSelectedColData'); 
       console.log('All filters cleared');
-      this.getFilteredData();
+      if(this.isPublicUrl){
+        this.getFilteredDataPublic()
+      }else{
+        this.getFilteredData();
+      }
   } else {
       console.warn('DahboardListFilters is not defined or not an array');
   }
@@ -3266,7 +3293,12 @@ kpiData?: KpiData;
           this.filteredRowData.push(obj);
           console.log('filterowData',this.filteredRowData)
         });
-        this.setDashboardSheetData(item, true, true);
+        // this.setDashboardSheetData(item, true, true);
+        if(item.chart_id === 1){
+          this.pageChangeTableDisplayPublic(item,1)
+        }else{
+        this.setDashboardSheetData(item, true , true);
+        }
       });
         },
       error:(error)=>{
@@ -3446,7 +3478,89 @@ kpiData?: KpiData;
     this.cdr.detectChanges();  // Force change detection
 
   }
+//tablePagination
+tableSearchDashboard(item:any){
+  this.tablePageNo=1;
+  this.pageChangeTableDisplay(item,1);
+}
+pageChangeTableDisplay(item:any,page:any){
+  const obj={
+    sheet_id:item.sheetId ?? item.sheet_id,
+    id:this.keysArray,
+    input_list:this.dataArray,
+    database_id: item.databaseId,
+    file_id: item.fileId,
+    page_no: page,
+    page_count: this.tableItemsPerPage,
+    dashboard_id:this.dashboardId,
+    search:this.tableSearch
+  }
+  if(obj.search === '' || obj.search === null){
+    delete obj.search;
+  }
+  this.workbechService.paginationTableDashboard(obj).subscribe({
+    next:(data)=>{
+      data.data['chart_id']=1,
+      data.data['sheet_id']=item.sheetId ?? item.sheet_id,
+      this.tableItemsPerPage = data.items_per_page;
+      this.tableTotalItems = data.total_items;
+      this.setDashboardSheetData(data.data, false , false);
+    },error:(error)=>{
+      console.log(error.error.message);
+    }
+  })  
+}
+tableSearchDashboardPublic(item:any){
+  this.tablePageNo=1;
+  this.pageChangeTableDisplayPublic(item,1);
+}
+pageChangeTableDisplayPublic(item:any,page:any){
+  const obj={
+    sheet_id:item.sheetId ?? item.sheet_id,
+    id:this.keysArray,
+    input_list:this.dataArray,
+    database_id: item.databaseId,
+    file_id: item.fileId,
+    page_no: page,
+    page_count: this.tableItemsPerPage,
+    dashboard_id:this.dashboardId,
+    search:this.tableSearch
+  }
+  if(obj.search === '' || obj.search === null){
+    delete obj.search;
+  }
+  this.workbechService.paginationTableDashboardPublic(obj).subscribe({
+    next:(data)=>{
+      data.data['chart_id']=1,
+      data.data['sheet_id']=item.sheetId ?? item.sheet_id,
+      this.tableItemsPerPage = data.items_per_page;
+      this.tableTotalItems = data.total_items;
+      this.setDashboardSheetData(data.data, false , false);
+    },error:(error)=>{
+      console.log(error.error.message);
+    }
+  }) 
+}
+disableDragging(event: MouseEvent) {
+  event.stopPropagation();
+  this.isDraggingDisabled = true;  // Disable dragging
+  this.updateGridsterOptions();     // Update Gridster options
+}
 
+enableDragging(event: MouseEvent) {
+  event.stopPropagation();
+  this.isDraggingDisabled = false;  // Re-enable dragging
+  this.updateGridsterOptions();      // Update Gridster options
+}
+
+updateGridsterOptions() {
+  if (this.options && this.options.draggable) {
+    this.options.draggable.enabled = this.editDashboard && !this.isDraggingDisabled;
+  }
+}
+stopDragging(event: MouseEvent) {
+  event.stopPropagation(); // Prevent the event from triggering dragging
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
