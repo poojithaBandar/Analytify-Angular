@@ -2795,7 +2795,7 @@ bar["type"]="line";
               }
             }
            
-            if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1)) {
+            if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1) && !this.kpi) {
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -2812,6 +2812,26 @@ bar["type"]="line";
               this.radar = false;
               this.kpi = false;
               this.heatMap = false;
+              this.funnel = false;
+            }
+            if(this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length < 1 || this.draggedRows.length > 1)){
+              this.table = true;
+              this.bar = false;
+              this.area = false;
+              this.line = false;
+              this.pie = false;
+              this.sidebyside = false;
+              this.stocked = false;
+              this.barLine = false;
+              this.horizentalStocked = false;
+              this.grouped = false;
+              this.multiLine = false;
+              this.donut = false;
+              this.chartId = 1;
+              this.radar = false;
+              this.kpi = false;
+              this.heatMap = false;
+              this.funnel = false;
             }
            
           },
