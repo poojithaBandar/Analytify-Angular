@@ -160,6 +160,7 @@ export class SheetsComponent {
   eAreaChartOptions: any;
   eLineChartOptions: any;
   ePieChartOptions: any;
+  eDonutChartOptions: any;
   eBarLineChartOptions: any;
   eRadarChartOptions: any;
   dimetionMeasure = [] as any;
@@ -1886,13 +1887,13 @@ bar["stack"]="total";
           show: true,
 
         },
-        axisName: {
-          color: 'rgb(238, 197, 102)'
-        },
-        axisLabel : {
-          color : this.xLabelColor
-        },
         radar: {
+          axisName: {
+            color: this.xLabelColor
+          },
+          axisLabel : {
+            color : this.xLabelColor
+          },
           // shape: 'circle',
           indicator:
             radarArray
@@ -1900,7 +1901,6 @@ bar["stack"]="total";
         },
         series: [
           {
-            name: 'Budget vs spending',
             type: 'radar',
             data: this.radarRowData,
 
@@ -2455,6 +2455,7 @@ bar["type"]="line";
     }
     donutChart(){
       const self = this;
+      if(this.isApexCharts){
         this.chartOptions10 = {
           series: this.chartsRowData,
           chart: {
@@ -2524,7 +2525,42 @@ bar["type"]="line";
         };
         this.changeLegendsAllignment('right');
         this.label = this.chartOptions10.plotOptions.pie.donut.labels.show;
-    }
+      } else {
+          let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
+            value: value,
+            name: this.chartsColumnData[index]
+          }));
+          this.eDonutChartOptions = {
+            backgroundColor: this.backgroundColor,
+            title: {
+              left: 'center'
+            },
+            tooltip: {
+              trigger: 'item'
+            },
+            legend: {
+              orient: 'horizontal',
+              left: 'left'
+            },
+            series: [
+              {
+                name: 'Access From',
+                type: 'pie',
+                radius: ['40%' , '70%'],
+                data: combinedArray,
+                emphasis: {
+                  itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+                }
+              }
+            ]
+          };
+        }
+      }
+    
       heatMapChart() {
         const dimensions: Dimension[] = this.sidebysideBarColumnData1;
         const categories = this.flattenDimensions(dimensions);
@@ -3515,8 +3551,7 @@ sheetSave(){
     
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
-    this.donutOptions = this.chartOptions10;
-    savedChartOptions = _.cloneDeep(this.chartOptions10);
+    
     if (this.originalData) {
       this.donutYaxis = this.originalData.data;
       this.donutXaxis = this.originalData.categories;
@@ -3527,6 +3562,12 @@ sheetSave(){
       tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
       tablePreviewCol[0].result_data = this.originalData.categories;
       delete this.originalData;
+    }
+    if(this.isApexCharts) {
+      savedChartOptions = _.cloneDeep(this.chartOptions10);
+      this.donutOptions = this.chartOptions10;
+    } else {
+      savedChartOptions = this.eDonutChartOptions;
     }
   }
   if(this.radar && this.chartId == 12){
@@ -4247,6 +4288,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 10){
         // this.chartsRowData = this.sheetResponce.results.donutYaxis
         // this.chartsColumnData = this.sheetResponce.results.donutXaxis;
+        if(this.isApexCharts){
         this.chartOptions10 = this.sheetResponce.savedChartOptions;
         const self = this;
         this.chartOptions10.chart.events = {
@@ -4262,6 +4304,10 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               self.callDrillDown();
             }
           }
+        }
+      }
+        else {
+          this.eDonutChartOptions = this.sheetResponce.savedChartOptions;
         }
         this.legendSwitch = this.chartOptions10.legend.show;
         // this.donutChart();
@@ -6341,6 +6387,7 @@ fetchChartData(chartData: any){
     this.hGrouped();
     this.sidebysideBar();
     this.horizentalStockedBar();
+    this.donutChart();
   }
   marksColor(color: any, colorCase: number) {
     console.log(color)

@@ -967,6 +967,13 @@
                 </div>
             </div>
             }
+            @if(donut && chartId){
+                <div class="card-body">
+                    <div id="bar-chart">
+                        <div id="echartsBar" echarts [options]="eDonutChartOptions" class="echart-charts"></div>
+                    </div>
+                </div>
+                }
             @if(barLine && chartId){
                 <div class="card-body">
                     <div id="bar-chart">
