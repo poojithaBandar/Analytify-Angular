@@ -871,9 +871,7 @@
                 </div>
                 @if(item['isEChart']){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
-                    <div>
                     <div id="echartsBar" echarts [options]="item['echartOptions']" class="echart-charts"></div>
-                    </div>
                     </div>
                 
               } @else{
