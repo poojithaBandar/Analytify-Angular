@@ -1070,7 +1070,8 @@
                     [chart]="item.chartOptions.chart!"
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                    [yaxis]="item.chartOptions.yaxis!"
                    (chartInit)="onChartInit($event, item)">
                  </apx-chart> 
                   </div>
@@ -1078,15 +1079,15 @@
                  </div>
                  <div *ngIf="item.chartOptions && item['chartId'] === 17">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" [stroke]="item.chartOptions.stroke!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }" [stroke]="item.chartOptions.stroke!"
                     [dataLabels]="item.chartOptions.dataLabels!" [yaxis]="item.chartOptions.yaxis!"
                     [labels]="item.chartOptions.labels!" [legend]="item.chartOptions.legend!"  [grid]="item.chartOptions.grid!"
                     [title]="item.chartOptions.title!" [subtitle]="item.chartOptions.subtitle!"[colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 13">
                     <apx-chart [series]="item.chartOptions.series! || []" [chart]="item.chartOptions.chart!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" [dataLabels]="item.chartOptions.dataLabels!"
-                    [grid]="item.chartOptions.grid!" [stroke]="item.chartOptions.stroke!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }" [dataLabels]="item.chartOptions.dataLabels!"
+                    [grid]="item.chartOptions.grid!" [stroke]="item.chartOptions.stroke!" [yaxis]="item.chartOptions.yaxis!"
                         [title]="item.chartOptions.title!" [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 24">
@@ -1098,7 +1099,7 @@
                         [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
                         [yaxis]="item.chartOptions.yaxis!" [legend]="item.chartOptions.legend!" [fill]="item.chartOptions.fill!"
                         [stroke]="item.chartOptions.stroke!" [tooltip]="item.chartOptions.tooltip!" [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" 
-                        [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"  (chartInit)="onChartInit($event, item)"></apx-chart>
+                        [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"  (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
                     <div class="big-number-container">
@@ -1114,7 +1115,8 @@
                       [dataLabels]="item.chartOptions.dataLabels!"
                       [plotOptions]="item.chartOptions.plotOptions!"
                       [responsive]="item.chartOptions.responsive!"
-                      [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                      [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
+                      [yaxis]="item.chartOptions.yaxis!"
                       [legend]="item.chartOptions.legend!"
                       [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                     ></apx-chart>
@@ -1133,7 +1135,8 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
                     [responsive]="item.chartOptions.responsive!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
+                    [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!"
                     (chartInit)="onChartInit($event, item)"></apx-chart>
@@ -1145,7 +1148,7 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
                     [responsive]="item.chartOptions.responsive!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                     [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"

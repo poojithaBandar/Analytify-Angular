@@ -936,7 +936,9 @@
                     [chart]="chartOptions10.chart"
                     [labels]="chartOptions10.labels"
                     [responsive]="chartOptions10.responsive"
-                    [plotOptions] = "chartOptions10.plotOptions" >
+                    [plotOptions] = "chartOptions10.plotOptions"
+                    [dataLabels]="chartOptions10.dataLabels"
+                    [legend]="chartOptions10.legend" >
                 </apx-chart>
                   </div>
               }
@@ -1400,7 +1402,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -1516,7 +1518,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel )" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || heatMap)" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -1744,7 +1746,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1800,7 +1802,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1906,7 +1908,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId) || donut || kpi || funnel)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Grid Line Color </p>
                                                         </div>
@@ -1916,7 +1918,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="isApexCharts  && !((table && chartId) || kpi || funnel)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="isApexCharts  && !((table && chartId) || kpi || funnel || heatMap)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >background Color </p>
                                                         </div>
@@ -1991,7 +1993,7 @@
                                                         </div>
                                                         <div style="display: flex;justify-content: space-between;">
                                                             <label>Font</label>
-                                                            <select style="width: 30%;" (change)="funnelFontChange($event,'family')">
+                                                            <select [(ngModel)]="funnelDLFontFamily" style="width: 30%;" (change)="funnelFontChange($event,'family')">
                                                                 <option value="0" selected disabled>family</option>
                                                                 <option value="'Arial', sans-serif">Arial</option>
                                                                 <option value="'Helvetica', sans-serif">Helvetica</option>
@@ -2002,7 +2004,7 @@
                                                                 <option value="'Merriweather', serif">Merriweather</option>
                                                                 <option value="'Roboto', sans-serif">Roboto</option>
                                                             </select>
-                                                            <select (change)="funnelFontChange($event,'size')" style="width: 30%;">
+                                                            <select [(ngModel)]="funnelDLFontSize" (change)="funnelFontChange($event,'size')" style="width: 30%;">
                                                                 <option value="0" selected disabled>size</option>
                                                                 <option value="10px">10px</option>
                                                                 <option value="12px">12px</option>
@@ -2011,7 +2013,7 @@
                                                                 <option value="18px">18px</option>
                                                                 <option value="20px">20px</option>
                                                             </select>
-                                                            <select (change)="funnelFontChange($event,'allign')">
+                                                            <select [(ngModel)]="funnelDLAllign" (change)="funnelFontChange($event,'allign')">
                                                                 <option value="0" selected disabled>allign</option>
                                                                 <option value="top">Right</option>
                                                                 <option value="center">center</option>
@@ -2020,7 +2022,7 @@
                                                         </div>
                                                         <div style="display: flex;justify-content: space-between;" *ngIf="!isDistributed">
                                                             <label>color</label>
-                                                            <ngx-colors ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
+                                                            <ngx-colors [(ngModel)]="funnelColor" ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
                                                             </ngx-colors>
                                                         </div>
                                                     </div>
