@@ -739,7 +739,7 @@
                 <div class="sheet-search">
                     <div class="">
                     </div>
-                    <div *ngIf="totalItems > 0" class="input-group mt-1 p-1 sheet-table-search">
+                    <div *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" class="input-group mt-1 p-1 sheet-table-search">
                         <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPagination()" class="form-control border-end-0 ">
                         <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="tableDisplayPagination()" style="border-radius: 0px 4px 4px 0px;">
                         <i class="fe fe-search"></i></button>
@@ -775,7 +775,7 @@
                                     
                                     </tbody>
                                   </table>
-                                  <pagination-controls *ngIf="totalItems > 0" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
+                                  <pagination-controls *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(kpi && chartId){
                                     <div class="big-number-container">
@@ -965,7 +965,7 @@
                     }
               @if(guage){
                 <div id="chart">
-                    <apx-chart #heatchart
+                    <apx-chart #guageChart
                       [series]="guageChartOptions.series"
                       [chart]="guageChartOptions.chart"   
                       [xaxis]="guageChartOptions.xaxis"
@@ -2090,10 +2090,10 @@
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
-                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="updateGuageChart()" />
+                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="guageChart()" />
                                                           
                                                             <label for="maxValue">Enter Maximum Value:</label>
-                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="updateGuageChart()" />
+                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="guageChart()" />
                                                         </div>
                                                     </div>
                                                 </div>

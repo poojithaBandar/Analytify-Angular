@@ -229,6 +229,8 @@ export class SheetsComponent {
   @ViewChild('piechart') piechart!: ChartComponent;
   @ViewChild('donutchart') donutchart!: ChartComponent;
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
+  @ViewChild('guageChart') guageCharts!: ChartComponent;
+
   radar: boolean = false;
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
@@ -2637,114 +2639,213 @@ bar["type"]="line";
           }
         };
       }
-
-      guageChart(){
-        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
-        this.guageChartOptions = {
-          series: [this.calculateSeries(this.KPINumber)],
-          chart: {
-          height: 350,
-          type: 'radialBar',
-          toolbar: {
-            show: true
-          }
-        },
-        plotOptions: {
-          radialBar: {
-            startAngle: -135,
-            endAngle: 225,
-             hollow: {
-              margin: 0,
-              size: '70%',
-              background: '#fff',
-              image: undefined,
-              imageOffsetX: 0,
-              imageOffsetY: 0,
-              position: 'front',
-              dropShadow: {
-                enabled: true,
-                top: 3,
-                left: 0,
-                blur: 4,
-                opacity: 0.24
-              }
-            },
-            track: {
-              background: '#fff',
-              strokeWidth: '67%',
-              margin: 0, // margin is in pixels
-              dropShadow: {
-                enabled: true,
-                top: -3,
-                left: 0,
-                blur: 4,
-                opacity: 0.35
-              }
-            },
-        
-            dataLabels: {
-              show: true,
-              name: {
-                offsetY: -10,
-                show: true,
-                color: '#888',
-                fontSize: '17px'
-              },
-              value: {
-                formatter: (val: number) => {
-                  console.log('Formatter value:', val);
-    
-                  if (isNaN(val) || !isFinite(val)) {
-                    console.error('Invalid value detected in formatter:', val);
-                    return '0'; // Handle NaN by returning '0'
-                  }
-                      const originalValue = Math.round((val / 100) * this.maxValueGuage);
-                  console.log('Original Value:', originalValue);
-                  return originalValue.toString(); 
-                },
-                color: '#111',
-                fontSize: '36px',
-                show: true,
-              }
-            }
-          }
-        },
+      guageChart() {
+        // Ensure maxValueGuage and KPINumber are set before building the chart
+        // if (!this.maxValueGuage || this.maxValueGuage <= 0) {
+        //   console.error('Invalid maxValueGuage:', this.maxValueGuage);
+        //   return;
+        // }
       
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'horizontal',
-            shadeIntensity: 0.5,
-            gradientToColors: ['#ABE5A1'],
-            inverseColors: true,
-            opacityFrom: 1,
-            opacityTo: 1,
-            stops: [0, 100]
-          }
-        },
-        stroke: {
-          lineCap: 'round'
-        },
-        labels: [this.tablePreviewRow[0].col], 
+        // Deep clone the result_data and set KPINumber
+        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+        // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
+         const valueToDivide = this.maxValueGuage-this.minValueGuage
+        // Initialize the chart options
+        this.guageChartOptions = {
+          series: [ Math.round((this.KPINumber / valueToDivide)*100)], // Correct percentage calculation
+          chart: {
+            height: 350,
+            type: 'radialBar',
+            toolbar: {
+              show: true
+            }
+          },
+          plotOptions: {
+            radialBar: {
+              startAngle: -135,
+              endAngle: 225,
+              hollow: {
+                margin: 0,
+                size: '70%',
+                background: '#fff',
+                dropShadow: {
+                  enabled: true,
+                  top: 3,
+                  left: 0,
+                  blur: 4,
+                  opacity: 0.24
+                }
+              },
+              track: {
+                background: '#fff',
+                strokeWidth: '67%',
+                margin: 0,
+                dropShadow: {
+                  enabled: true,
+                  top: -3,
+                  left: 0,
+                  blur: 4,
+                  opacity: 0.35
+                }
+              },
+              dataLabels: {
+                show: true,
+                name: {
+                  offsetY: -10,
+                  show: true,
+                  color: '#888',
+                  fontSize: '17px'
+                },
+                value: {
+                  formatter: (val: number) => `${val}%`, // Displaying percentage
+                  color: '#111',
+                  fontSize: '36px',
+                  show: true,
+                }
+              },
+              min: this.minValueGuage,  // Use user's min value
+              max: this.maxValueGuage
+            }
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shade: 'dark',
+              type: 'horizontal',
+              shadeIntensity: 0.5,
+              gradientToColors: ['#ABE5A1'],
+              inverseColors: true,
+              opacityFrom: 1,
+              opacityTo: 1,
+              stops: [0, 3000]
+            }
+          },
+          stroke: {
+            lineCap: 'round'
+          },
+          labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
+        };
       }
-      }
+      // calculateGuageToPercent(val:any){
+      //    this.maxValueGuage = this.KPINumber+this.KPINumber
+      //    const guagePercentValue = Math.round((this.KPINumber / this.maxValueGuage)*100);
+
+      //    return guagePercentValue
+      // }
       updateGuageChart() {
-        this.guageChartOptions.series = [this.calculateSeries(this.KPINumber)];
-    
-      }
-      calculateSeries(value: number): number {
-        console.log('Series Value:', value);
-            if (isNaN(value) || value < 0 || isNaN(this.maxValueGuage) || this.maxValueGuage <= 0) {
-          console.error('Invalid series or maxValue:', value, this.maxValueGuage);
-          return 0; 
-        }
+        // const guagePercentValue = Math.round((this.KPINumber / this.maxValueGuage)*100);
+        // let object ={}
+        // object = { }
+
+        // this.updateChart(object);
+      }      
+      // guageChart(){
+      //   this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
+      //   this.guageChartOptions = {
+      //     series: [this.calculateSeries(this.KPINumber)],
+      //     chart: {
+      //     height: 350,
+      //     type: 'radialBar',
+      //     toolbar: {
+      //       show: true
+      //     }
+      //   },
+      //   plotOptions: {
+      //     radialBar: {
+      //       startAngle: -135,
+      //       endAngle: 225,
+      //        hollow: {
+      //         margin: 0,
+      //         size: '70%',
+      //         background: '#fff',
+      //         image: undefined,
+      //         imageOffsetX: 0,
+      //         imageOffsetY: 0,
+      //         position: 'front',
+      //         dropShadow: {
+      //           enabled: true,
+      //           top: 3,
+      //           left: 0,
+      //           blur: 4,
+      //           opacity: 0.24
+      //         }
+      //       },
+      //       track: {
+      //         background: '#fff',
+      //         strokeWidth: '67%',
+      //         margin: 0, // margin is in pixels
+      //         dropShadow: {
+      //           enabled: true,
+      //           top: -3,
+      //           left: 0,
+      //           blur: 4,
+      //           opacity: 0.35
+      //         }
+      //       },
         
-        const calculatedValue = (value / this.maxValueGuage) * 100;
-        console.log('Calculated Series Value:', calculatedValue);
+      //       dataLabels: {
+      //         show: true,
+      //         name: {
+      //           offsetY: -10,
+      //           show: true,
+      //           color: '#888',
+      //           fontSize: '17px'
+      //         },
+      //         value: {
+      //           formatter: (val: number) => {
+      //             console.log('Formatter value:', val);
     
-        return calculatedValue;
-      }
+      //             if (isNaN(val) || !isFinite(val)) {
+      //               console.error('Invalid value detected in formatter:', val);
+      //               return '0'; // Handle NaN by returning '0'
+      //             }
+      //                 const originalValue = Math.round((val / 100) * this.maxValueGuage);
+      //             console.log('Original Value:', originalValue);
+      //             return originalValue.toString(); 
+      //           },
+      //           color: '#111',
+      //           fontSize: '36px',
+      //           show: true,
+      //         }
+      //       }
+      //     }
+      //   },
+      
+      //   fill: {
+      //     type: 'gradient',
+      //     gradient: {
+      //       shade: 'dark',
+      //       type: 'horizontal',
+      //       shadeIntensity: 0.5,
+      //       gradientToColors: ['#ABE5A1'],
+      //       inverseColors: true,
+      //       opacityFrom: 1,
+      //       opacityTo: 1,
+      //       stops: [0, 100]
+      //     }
+      //   },
+      //   stroke: {
+      //     lineCap: 'round'
+      //   },
+      //   labels: [this.tablePreviewRow[0].col], 
+      // }
+      // }
+      // updateGuageChart() {
+      //   this.guageChartOptions.series = [this.calculateSeries(this.KPINumber)];
+    
+      // }
+      // calculateSeries(value: number): number {
+      //   console.log('Series Value:', value);
+      //       if (isNaN(value) || value < 0 || isNaN(this.maxValueGuage) || this.maxValueGuage <= 0) {
+      //     console.error('Invalid series or maxValue:', value, this.maxValueGuage);
+      //     return 0; 
+      //   }
+        
+      //   const calculatedValue = (value / this.maxValueGuage) * 100;
+      //   console.log('Calculated Series Value:', calculatedValue);
+    
+      //   return calculatedValue;
+      // }
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
@@ -3818,6 +3919,9 @@ sheetSave(){
   }
   if(this.guage && this.chartId == 28){
     savedChartOptions = this.guageChartOptions;
+    // savedChartOptions['max1'] = this.maxValue
+    // savedChartOptions['min1'] = this.minValue
+
   }
   let customizeObject = {
     isZoom : this.isZoom,
@@ -4637,6 +4741,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 28){
         this.guageChartOptions = this.sheetResponce.savedChartOptions;
+        this.maxValueGuage = this.guageChartOptions.plotOptions.radialBar.max;
+        this.minValueGuage =  this.guageChartOptions.plotOptions.radialBar.min;
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4654,6 +4760,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = true;
+        
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
@@ -6244,6 +6351,10 @@ renameColumns(){
     else if(this.funnel){
       this.funnelCharts.updateOptions(object);
       console.log(this.funnelCharts);
+    }
+    else if(this.guage){
+      this.guageCharts.updateOptions(object);
+      console.log(this.guageCharts);
     }
   }
   dataLabels:boolean = true;

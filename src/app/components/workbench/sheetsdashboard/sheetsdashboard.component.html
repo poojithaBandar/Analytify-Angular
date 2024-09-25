@@ -1205,7 +1205,20 @@
                     (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
-
+                  <div *ngIf="item.chartOptions && item['chartId'] === 28">
+                    <apx-chart
+                    [series]="item.chartOptions.series!"
+                    [chart]="item.chartOptions.chart!"
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [plotOptions]="item.chartOptions.plotOptions!"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [colors]="item.chartOptions.colors!"
+                    [title]="item.chartOptions.title!"
+                    [legend]="item.chartOptions.legend!"
+                    [labels]="item.chartOptions.labels!"
+                    (chartInit)="onChartInit($event, item)"
+                  ></apx-chart>
+                  </div>
                 </div>
               }
 
