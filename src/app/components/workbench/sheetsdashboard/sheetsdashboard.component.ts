@@ -1236,6 +1236,17 @@ selected_sheet_ids :this.sheetIdsDataSet,
       return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
 
     }
+    if(sheet.chart_id === 12){//radar
+      return sheet.sheet_data.savedChartOptions;
+      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
+      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+
+      const dimensions: Dimension[] =xaxis
+      const categories = this.flattenDimensions(dimensions)
+      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
+
+    }
     if(sheet.chart_id === 5){
       let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
       let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
@@ -1244,7 +1255,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
-      return this.stockedBarChartOptions(categories,yaxis,savedOptions)
+      return this.stockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 4){
       let xaxis = sheet.sheet_data?.results?.barLineXaxis;
@@ -1264,7 +1275,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
-      return this.hStockedBarChartOptions(categories,yaxis,savedOptions);
+      return this.hStockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart);
     }
     if(sheet.chart_id === 3){
       let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
@@ -1274,7 +1285,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
-      return this.hGroupedChartOptions(categories,yaxis,savedOptions)
+      return this.hGroupedChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 8){
       let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
@@ -1290,7 +1301,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.donutXaxis;
       let yaxis = sheet.sheet_data?.results?.donutYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.donutChartOptions(xaxis,yaxis,savedOptions)
+      return this.donutChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 26){
       let savedOptions = sheet.sheet_data.savedChartOptions;
@@ -1990,6 +2001,9 @@ pieChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
 }
 sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
   if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+    });
     savedOptions.series = yaxis;
     savedOptions.xAxis.categories = xaxis;
     return savedOptions;
@@ -1999,10 +2013,31 @@ sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boole
   return savedOptions;
   }
 }
-stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+
+eRadarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+      let radarArray = categories.map((value: any, index: number) => ({
+        name: categories[index]
+      }));
+  savedOptions.series.data = yaxis;
+    savedOptions.radar.indicator = radarArray;
+    return savedOptions;
+}
+stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+      bar["stack"]="total";
+    });
+    savedOptions.series = yaxis;
+    savedOptions.xAxis.data = xaxis;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
   savedOptions.xaxis.categories = xaxis;
   return savedOptions;
+  }
 }
 barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   // savedOptions.series = [
@@ -2020,26 +2055,55 @@ barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   // savedOptions.labels = xaxis;
   return savedOptions;
 }
-hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
+hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  
+  if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+      bar["stack"]="total";
+    });
+    savedOptions.series = yaxis;
+    savedOptions.yAxis.data = xaxis;
+    return savedOptions;
+  } else {
+    savedOptions.series = yaxis;
+    savedOptions.xaxis.categories = xaxis;
+    return savedOptions;
+  }
 }
 
-hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+    });
+    savedOptions.series = yaxis;
+    savedOptions.yAxis.data = xaxis;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
   savedOptions.xaxis.categories = xaxis;
   return savedOptions;
+  }
 }
 multiLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   // savedOptions.series = yaxis;
   // savedOptions.xaxis.categories = xaxis;
   return savedOptions;
 }
-donutChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+donutChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    let combinedArray = yaxis.map((value : any, index :number) => ({
+      value: value,
+      name: xaxis[index]
+    }));
+    savedOptions.series.data = combinedArray;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
   savedOptions.labels = xaxis;
   return savedOptions;
+  }
 }
 heatMapChartOptions(savedOptions:any){
   return savedOptions;
