@@ -85,6 +85,9 @@ export class SheetsComponent {
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
   tableData: TableRow[] = [];  
+  tableDataStore: TableRow[] = [];  
+  storeTableRow = [] as any;
+  storeTableColumn = [] as any;
   displayedColumns: string[] = [];
   chartEnable = true;
   dimensionExpand = false;
@@ -2914,6 +2917,9 @@ bar["type"]="line";
         this.sidebysideBarColumnData1 = [];
         this.tablePreviewColumn = [];
         this.tablePreviewRow = [];
+        this.storeTableRow = [];
+        this.storeTableColumn = [];
+        this.tableDataStore = [];
         this.tableData = [];
         this.chartsData = [];
         this.displayedColumns = [];
@@ -3142,7 +3148,7 @@ bar["type"]="line";
                     tableRow[rowData.col] = rowData.result_data[i];
                   });
                   this.tableDataDisplay.push(tableRow);
-                  console.log('display row data ', this.tableDataDisplay)
+                 // console.log('display row data ', this.tableDataDisplay)
                 }
               },
               error: (error) => {
@@ -3160,8 +3166,11 @@ bar["type"]="line";
       chartsDataSet(data: any) {
         this.sheetCustomQuery = data.custom_query;
         // this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
-        this.tablePreviewColumn = data.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
-        this.tablePreviewRow = data.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
+        this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        
+        this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
+        this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
         this.tableDisplayPagination();
         console.log(this.tablePreviewColumn);
         console.log(this.tablePreviewRow);
@@ -3218,7 +3227,27 @@ bar["type"]="line";
             this.tableData.push(row);
 
           }
-          console.log(this.tableData);
+          //storing table
+          let rowCountStore: any;
+          if (this.storeTableColumn[0]?.result_data?.length) {
+            rowCountStore = this.storeTableColumn[0]?.result_data?.length;
+          } else {
+            rowCountStore = this.storeTableRow[0]?.result_data?.length;
+          }
+          rowCountStore = rowCountStore > 10 ? 10:rowCountStore;
+          for (let i = 0; i < rowCountStore; i++) {
+            const row: TableRow = {};
+            this.storeTableColumn.forEach((col: any) => {
+              row[col.column] = col.result_data[i];
+            });
+            this.storeTableRow.forEach((rowData: any) => {
+              row[rowData.col] = rowData.result_data[i];
+            });
+            this.tableDataStore.push(row);
+          }
+          console.log('only table store',this.tableDataStore);
+          //store table data close
+
           this.tablePreviewColumn.forEach((col: any) => {
             this.chartsColumnData = col.result_data;
           });
@@ -3683,6 +3712,9 @@ bar["type"]="line";
       this.draggedRows = [];
       this.tablePreviewColumn = [];
       this.tablePreviewRow = [];
+      this.storeTableRow = [];
+      this.storeTableColumn = [];
+      this.tableDataStore = [];
       this.tableData = [];
       this.totalItems = 0;
       this.tableDataDisplay = [];
@@ -3789,7 +3821,8 @@ sheetSave(){
   let tablePreviewRow = this.tablePreviewRow;
   let tablePreviewCol = this.tablePreviewColumn;
   if(this.table && this.chartId == 1){
-   this.saveTableData =  this.tableData;
+  //  this.saveTableData =  this.tableData;
+   this.saveTableData =  this.tableDataStore;
    this.savedisplayedColumns = this.displayedColumns;
    this.banding = this.bandingSwitch;
    bandColor1 = this.color1;
@@ -7309,5 +7342,46 @@ fetchChartData(chartData: any){
         let object = {series: [{color: selectedColor}]}
         object = this.funnelChartOptions;
         this.updateChart(object);
+      }
+      viewQuery(modal:any){
+        this.modalService.open(modal, {
+          centered: true,
+          windowClass: 'animate__animated animate__zoomIn',
+        });
+      }
+      copyQuery(){
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(this.tablePaginationCustomQuery).then(() => {
+            console.log(this.tablePaginationCustomQuery);
+            this.toasterService.success('Query Copied', 'success', { positionClass: 'toast-top-right' });
+          }).catch(err => {
+            console.error('Could not copy text: ', err);
+            this.fallbackCopyTextToClipboard(this.tablePaginationCustomQuery);
+          });
+        } else {
+          // Fallback if navigator.clipboard is not available
+          this.fallbackCopyTextToClipboard(this.tablePaginationCustomQuery);
+        }
+      }
+
+      fallbackCopyTextToClipboard(text: string): void {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';  // Avoid scrolling to bottom
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            this.toasterService.success('Query Copied', 'success', { positionClass: 'toast-top-right' });
+          } else {
+            console.error('Fallback: Could not copy text');
+          }
+        } catch (err) {
+          console.error('Fallback: Unable to copy', err);
+        }
+        document.body.removeChild(textArea);
       }
 }

@@ -418,6 +418,24 @@ span.abc-txt {
   font-weight: bold;
   color: #007bff; /* Example color */
 }
+button.viewQueryImg {
+  border: none;
+  background: none;
+}
+.viewQueryImg img{
+  height: 30px;
+  width: 30px;
+  object-fit: fill;
+}
+.maind-flex{
+  display: flex;
+  justify-content: flex-end;  
+  align-items: center;
+}
+.viewQuery-hgt {
+  height: 200px;
+  overflow-y: scroll;
+}
 
 @media (max-width: 768px) {
   .big-number {
@@ -650,4 +668,5 @@ th, td {
       font-size: 11px;
     }
   }
+  
   
