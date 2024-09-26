@@ -165,7 +165,10 @@ background-color: aliceblue;
   padding-left: 35px !important;
   cursor: pointer;
 }
-
+.viewQuery-hgt {
+  height: 200px;
+  overflow-y: scroll;
+}
 
 // .side-card {
 //   padding: 10px;

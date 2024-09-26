@@ -24,7 +24,7 @@ export class InsightsButtonComponent {
   @Input() toolTip! : string;
   @Output() btnClickEvent: EventEmitter<any>;
   @Input() gotoSheetButton! : boolean;
-
+  @Input() imageUrl!: string; 
   displayButton : boolean = false;
   constructor(private rolesPrevilidgesService : RolespriviledgesService){
     this.btnClickEvent = new EventEmitter();

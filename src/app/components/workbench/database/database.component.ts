@@ -128,6 +128,7 @@ export class DatabaseComponent {
   editFilterId!: number;
   fromSheetEditDb = false;
   fromQuickbooks = false;
+  queryBuilt:any;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -905,6 +906,7 @@ if(obj.row_limit === null || obj.row_limit === undefined){
         this.showingRows = data.no_of_rows;
         this.gotoSheetButtonDisable = false;
         this.saveQueryName = data.queryset_name;
+        this.queryBuilt = data.custom_query;
         if(this.TabledataJoining?.column_data?.length === 0){
           this.gotoSheetButtonDisable = true;
         }
@@ -1618,5 +1620,47 @@ dataNotSaveAlert(): Promise<boolean> {
 canDeactivate(): boolean {
   // This is handled in the functional guard
   return !this.gotoSheetButtonDisable; 
+}
+
+viewQuery(modal:any){
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+}
+copyQuery(){
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(this.queryBuilt).then(() => {
+      console.log(this.queryBuilt);
+      this.toasterService.success('Query Copied', 'success', { positionClass: 'toast-top-right' });
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+      this.fallbackCopyTextToClipboard(this.queryBuilt);
+    });
+  } else {
+    // Fallback if navigator.clipboard is not available
+    this.fallbackCopyTextToClipboard(this.queryBuilt);
+  }
+}
+
+fallbackCopyTextToClipboard(text: string): void {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';  // Avoid scrolling to bottom
+  textArea.style.opacity = '0';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      this.toasterService.success('Query Copied', 'success', { positionClass: 'toast-top-right' });
+    } else {
+      console.error('Fallback: Could not copy text');
+    }
+  } catch (err) {
+    console.error('Fallback: Unable to copy', err);
+  }
+  document.body.removeChild(textArea);
 }
 }

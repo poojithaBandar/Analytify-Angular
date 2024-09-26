@@ -89,8 +89,11 @@
                                     <i class="fa fa-filter"></i> Apply Filters
                                 </a>
                                 }
-                                <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light m-1'" [previledgeId]="54" [isBtn]="true"
-                                                (btnClickEvent)="customSql=true;tableJoiningUI=false" [isIcon]="false"></app-insights-button>
+                                <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light m-1'" [previledgeId]="54"
+                                    [isBtn]="true" (btnClickEvent)="customSql=true;tableJoiningUI=false" [isIcon]="false"></app-insights-button>
+                                        <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="18" [gotoSheetButton]="draggedtables.length === 0" [isBtn]="true" [isIcon]="false"
+                                        (btnClickEvent)="viewQuery(viewQueryModal)" [toolTip]="' View Query'" [imageUrl]="'./assets/images/icons/view-query.png'">
+                                        </app-insights-button>
                                 <!-- <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a> -->
                             </div>
                         </div>
@@ -733,6 +736,23 @@
           </button>
         </div>
       </ng-template>
-
+      <ng-template #viewQueryModal let-modal>
+        <div class="modal-header">
+            <h6 class="modal-title">Query</h6>
+        </div>
+        <div class="modal-body viewQuery-hgt">
+            
+            <div class="form-group select2-sm">
+               <p>{{queryBuilt}}</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+                        
+            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                close
+            </button>
+            <button type="button" class="btn ripple btn-primary" (click)="copyQuery(); modal.close('Save click')">Copy <i class="fa fa-copy"></i></button>
+        </div>
+    </ng-template>
 
    
