@@ -12,7 +12,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 export class QuickbooksComponent implements OnInit {
 constructor(private router:Router,private authService:AuthService){
   const currentUrl = this.router.url;
-  if ((currentUrl.includes('integrations/quickbooks?code='))) {
+  if ((currentUrl.includes('/quickbooks?code='))) {
     let url = this.router.url;
     console.log(url);
     this.getToken(url);

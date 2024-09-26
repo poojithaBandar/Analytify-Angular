@@ -1311,7 +1311,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return savedOptions;
     }
-    
+    if(sheet.chart_id === 28){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
   }
 
   getChartData(results: any, chartType: string): any[] | undefined{
@@ -2683,6 +2686,13 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '28'){//guage
+        if(!item1.originalData){
+          item1['originalData'] = {data:item1.chartOptions.series };
+        }
+        let seriesval =[Math.round(( this.filteredRowData[0]?.data[0]/ (item1.chartOptions.plotOptions.radialBar.max-item1.chartOptions.plotOptions.radialBar.min))*100)]
+        item1.chartOptions.series = seriesval;
       }
 
           // this.initializeChart(item1);

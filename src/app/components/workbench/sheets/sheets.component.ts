@@ -154,6 +154,7 @@ export class SheetsComponent {
   chartOptions10:any;
   heatMapChartOptions: any;
   funnelChartOptions:any;
+  guageChartOptions:any;
   eBarChartOptions: any;
   eStackedBarChartOptions: any;
   eGroupedBarChartOptions: any;
@@ -229,6 +230,8 @@ export class SheetsComponent {
   @ViewChild('piechart') piechart!: ChartComponent;
   @ViewChild('donutchart') donutchart!: ChartComponent;
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
+  @ViewChild('guageChart') guageCharts!: ChartComponent;
+
   radar: boolean = false;
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
@@ -257,6 +260,11 @@ export class SheetsComponent {
   tablePaginationCustomQuery:any;
   tablePaginationColumn =[] as any;
   tablePaginationRows =[] as any;
+
+  guagechartRowData:any;
+  minValueGuage: number = 0; // Default minimum value
+  maxValueGuage: number = 100; // Default maximum value
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
@@ -2667,7 +2675,213 @@ bar["type"]="line";
           }
         };
       }
+      guageChart() {
+        // Ensure maxValueGuage and KPINumber are set before building the chart
+        // if (!this.maxValueGuage || this.maxValueGuage <= 0) {
+        //   console.error('Invalid maxValueGuage:', this.maxValueGuage);
+        //   return;
+        // }
+      
+        // Deep clone the result_data and set KPINumber
+        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+        // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
+         const valueToDivide = this.maxValueGuage-this.minValueGuage
+        // Initialize the chart options
+        this.guageChartOptions = {
+          series: [ Math.round((this.KPINumber / valueToDivide)*100)], // Correct percentage calculation
+          chart: {
+            height: 350,
+            type: 'radialBar',
+            toolbar: {
+              show: true
+            }
+          },
+          plotOptions: {
+            radialBar: {
+              startAngle: -135,
+              endAngle: 225,
+              hollow: {
+                margin: 0,
+                size: '70%',
+                background: '#fff',
+                dropShadow: {
+                  enabled: true,
+                  top: 3,
+                  left: 0,
+                  blur: 4,
+                  opacity: 0.24
+                }
+              },
+              track: {
+                background: '#fff',
+                strokeWidth: '67%',
+                margin: 0,
+                dropShadow: {
+                  enabled: true,
+                  top: -3,
+                  left: 0,
+                  blur: 4,
+                  opacity: 0.35
+                }
+              },
+              dataLabels: {
+                show: true,
+                name: {
+                  offsetY: -10,
+                  show: true,
+                  color: '#888',
+                  fontSize: '17px'
+                },
+                value: {
+                  formatter: (val: number) => `${val}%`, // Displaying percentage
+                  color: '#111',
+                  fontSize: '36px',
+                  show: true,
+                }
+              },
+              min: this.minValueGuage,  // Use user's min value
+              max: this.maxValueGuage
+            }
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shade: 'dark',
+              type: 'horizontal',
+              shadeIntensity: 0.5,
+              gradientToColors: ['#ABE5A1'],
+              inverseColors: true,
+              opacityFrom: 1,
+              opacityTo: 1,
+              stops: [0, 3000]
+            }
+          },
+          stroke: {
+            lineCap: 'round'
+          },
+          labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
+        };
+      }
+      // calculateGuageToPercent(val:any){
+      //    this.maxValueGuage = this.KPINumber+this.KPINumber
+      //    const guagePercentValue = Math.round((this.KPINumber / this.maxValueGuage)*100);
 
+      //    return guagePercentValue
+      // }
+      updateGuageChart() {
+        // const guagePercentValue = Math.round((this.KPINumber / this.maxValueGuage)*100);
+        // let object ={}
+        // object = { }
+
+        // this.updateChart(object);
+      }      
+      // guageChart(){
+      //   this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
+      //   this.guageChartOptions = {
+      //     series: [this.calculateSeries(this.KPINumber)],
+      //     chart: {
+      //     height: 350,
+      //     type: 'radialBar',
+      //     toolbar: {
+      //       show: true
+      //     }
+      //   },
+      //   plotOptions: {
+      //     radialBar: {
+      //       startAngle: -135,
+      //       endAngle: 225,
+      //        hollow: {
+      //         margin: 0,
+      //         size: '70%',
+      //         background: '#fff',
+      //         image: undefined,
+      //         imageOffsetX: 0,
+      //         imageOffsetY: 0,
+      //         position: 'front',
+      //         dropShadow: {
+      //           enabled: true,
+      //           top: 3,
+      //           left: 0,
+      //           blur: 4,
+      //           opacity: 0.24
+      //         }
+      //       },
+      //       track: {
+      //         background: '#fff',
+      //         strokeWidth: '67%',
+      //         margin: 0, // margin is in pixels
+      //         dropShadow: {
+      //           enabled: true,
+      //           top: -3,
+      //           left: 0,
+      //           blur: 4,
+      //           opacity: 0.35
+      //         }
+      //       },
+        
+      //       dataLabels: {
+      //         show: true,
+      //         name: {
+      //           offsetY: -10,
+      //           show: true,
+      //           color: '#888',
+      //           fontSize: '17px'
+      //         },
+      //         value: {
+      //           formatter: (val: number) => {
+      //             console.log('Formatter value:', val);
+    
+      //             if (isNaN(val) || !isFinite(val)) {
+      //               console.error('Invalid value detected in formatter:', val);
+      //               return '0'; // Handle NaN by returning '0'
+      //             }
+      //                 const originalValue = Math.round((val / 100) * this.maxValueGuage);
+      //             console.log('Original Value:', originalValue);
+      //             return originalValue.toString(); 
+      //           },
+      //           color: '#111',
+      //           fontSize: '36px',
+      //           show: true,
+      //         }
+      //       }
+      //     }
+      //   },
+      
+      //   fill: {
+      //     type: 'gradient',
+      //     gradient: {
+      //       shade: 'dark',
+      //       type: 'horizontal',
+      //       shadeIntensity: 0.5,
+      //       gradientToColors: ['#ABE5A1'],
+      //       inverseColors: true,
+      //       opacityFrom: 1,
+      //       opacityTo: 1,
+      //       stops: [0, 100]
+      //     }
+      //   },
+      //   stroke: {
+      //     lineCap: 'round'
+      //   },
+      //   labels: [this.tablePreviewRow[0].col], 
+      // }
+      // }
+      // updateGuageChart() {
+      //   this.guageChartOptions.series = [this.calculateSeries(this.KPINumber)];
+    
+      // }
+      // calculateSeries(value: number): number {
+      //   console.log('Series Value:', value);
+      //       if (isNaN(value) || value < 0 || isNaN(this.maxValueGuage) || this.maxValueGuage <= 0) {
+      //     console.error('Invalid series or maxValue:', value, this.maxValueGuage);
+      //     return 0; 
+      //   }
+        
+      //   const calculatedValue = (value / this.maxValueGuage) * 100;
+      //   console.log('Calculated Series Value:', calculatedValue);
+    
+      //   return calculatedValue;
+      // }
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
@@ -2848,6 +3062,7 @@ bar["type"]="line";
               this.radar = false;
               this.kpi = false;
               this.heatMap = false;
+              this.guage = false;
               this.funnel = false;
             } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
               this.table = false;
@@ -2867,9 +3082,9 @@ bar["type"]="line";
               this.kpi = false;
               this.heatMap = false;
               this.funnel = false;
+              this.guage = false;
               this.sidebysideBar();
             }
-           
           },
           error: (error) => {
             console.log(error);
@@ -2984,6 +3199,8 @@ bar["type"]="line";
             rowCount = this.tablePreviewColumn[0]?.result_data?.length;
           } else {
             rowCount = this.tablePreviewRow[0]?.result_data?.length;
+            this.guagechartRowData = rowCount
+            console.log('guage length',this.guagechartRowData)
           }
           //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
           // Extract column names
@@ -3050,13 +3267,15 @@ bar["type"]="line";
           this.KPIChart();
         } else if (this.funnel){
           this.funnelChart();
+        }else if(this.guage){
+          this.guageChart();
         }
+        
       }
 
       KPIChart(){
         this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
       }
-
       tableNameMethod(schemaname: any, tablename: any, tableAlias: any){
         this.schemaName = '';
         this.tableName = '';
@@ -3242,8 +3461,9 @@ bar["type"]="line";
   kpi = false;
   heatMap = false;
   funnel = false;
+  guage = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -3261,6 +3481,7 @@ bar["type"]="line";
     this.kpi = kpi;
     this.heatMap = heatMap;
     this.funnel = funnel;
+    this.guage = guage;
     // this.dataExtraction();
     this.chartsOptionsSet(); 
   }
@@ -3740,6 +3961,12 @@ sheetSave(){
   if(this.funnel && this.chartId == 27){
     savedChartOptions = this.funnelChartOptions;
   }
+  if(this.guage && this.chartId == 28){
+    savedChartOptions = this.guageChartOptions;
+    // savedChartOptions['max1'] = this.maxValue
+    // savedChartOptions['min1'] = this.minValue
+
+  }
   let customizeObject = {
     isZoom : this.isZoom,
     xGridColor : this.xGridColor,
@@ -4053,6 +4280,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce.results.kpiData;
@@ -4083,6 +4311,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = true;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -4137,6 +4366,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 24){
         // this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -4182,6 +4412,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
           this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
           this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
        }
@@ -4234,6 +4465,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 17){
         // this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -4269,6 +4501,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 7){
         // this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -4301,6 +4534,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 5){
         // this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -4333,6 +4567,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 4){
         // this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
@@ -4367,6 +4602,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 12){
         this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
@@ -4387,6 +4623,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
           if(this.isApexCharts){
           
           } else {
@@ -4424,6 +4661,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 3){
         // this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
@@ -4456,6 +4694,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 8){
         // this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
@@ -4488,6 +4727,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 10){
         // this.chartsRowData = this.sheetResponce.results.donutYaxis
@@ -4535,6 +4775,10 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.guage = false;
+          this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
+          this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
+          this.label = this.sheetResponce.savedChartOptions.plotOptions.pie.donut.labels.show
        }
        if(responce.chart_id == 26){
         this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
@@ -4554,6 +4798,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = true;
           this.funnel = false;
+          this.guage = false;
        }
        if(responce.chart_id == 27){
         this.funnelChartOptions = this.sheetResponce.savedChartOptions;
@@ -4578,6 +4823,30 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = true;
+          this.guage = false;
+       }
+       if(responce.chart_id == 28){
+        this.guageChartOptions = this.sheetResponce.savedChartOptions;
+        this.maxValueGuage = this.guageChartOptions.plotOptions.radialBar.max;
+        this.minValueGuage =  this.guageChartOptions.plotOptions.radialBar.min;
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = false;
+          this.guage = true;
+        
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
@@ -6169,6 +6438,10 @@ renameColumns(){
       this.funnelCharts.updateOptions(object);
       console.log(this.funnelCharts);
     }
+    else if(this.guage){
+      this.guageCharts.updateOptions(object);
+      console.log(this.guageCharts);
+    }
   }
   dataLabels:boolean = true;
   label : boolean = true;
@@ -6595,15 +6868,15 @@ fetchChartData(chartData: any){
           console.log("This is ShaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,10);
           }
           this.dataExtraction();
 
