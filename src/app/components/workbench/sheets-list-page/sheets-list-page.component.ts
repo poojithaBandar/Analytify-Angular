@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-sheets-list-page',
@@ -34,11 +35,12 @@ export class SheetsListPageComponent implements OnInit {
   qrysetId:any;
   datasourceQuerysetId:any;
   selectedSheet = '0';
-constructor(private workbechService:WorkbenchService,private router:Router,private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService){
+constructor(private workbechService:WorkbenchService,private router:Router,private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService){
   this.viewSheetList = this.viewTemplateService.viewSheets()
 }
 
   ngOnInit() {
+    this.loaderService.hide();
     if (this.viewSheetList) {
       this.fetchSheetsList();
       // this.getUserSheetsList();

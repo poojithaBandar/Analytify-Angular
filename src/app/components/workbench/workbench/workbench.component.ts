@@ -22,6 +22,7 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
+import { LoaderService } from '../../../shared/services/loader.service';
 @Component({
   selector: 'app-workbench',
   standalone: true,
@@ -76,7 +77,7 @@ export class WorkbenchComponent implements OnInit{
   fileData:any;
   viewDatasourceList = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document){ 
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('workbench/work-bench/view-connections')){
@@ -736,6 +737,7 @@ export class WorkbenchComponent implements OnInit{
     //         .querySelector('html')
     //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
     // }
+    this.loaderService.hide();
     if(this.viewDatasourceList){
    this.getDbConnectionList();
     }

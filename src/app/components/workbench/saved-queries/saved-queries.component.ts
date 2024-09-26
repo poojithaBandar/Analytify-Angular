@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-saved-queries',
@@ -26,11 +27,12 @@ export class SavedQueriesComponent {
   savedQueryList:any[]=[];
   gridView = true;
   viewSavedQueries = false;
-constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService){
+constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
 }
 
   ngOnInit(){
+    this.loaderService.hide();
     if(this.viewSavedQueries){
     this.getSavedQueries();
     }

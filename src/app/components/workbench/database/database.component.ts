@@ -21,6 +21,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { tickStep } from 'd3';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 
 @Component({
@@ -129,7 +130,7 @@ export class DatabaseComponent {
   fromSheetEditDb = false;
   fromQuickbooks = false;
   queryBuilt:any;
-  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService){
+  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
       this.fromDatabasId=true
@@ -211,7 +212,7 @@ export class DatabaseComponent {
     //         .querySelector('html')
     //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
     // }
-
+    this.loaderService.hide();
     if(!this.updateQuery && !this.fromSheetEditDb){
       if(this.fromDatabasId){
     // this.getTablesFromConnectedDb();

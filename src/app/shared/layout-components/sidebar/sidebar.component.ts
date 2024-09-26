@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { checkHoriMenu,switcherArrowFn} from './sidebar';
 import { ViewTemplateDrivenService } from '../../../components/workbench/view-template-driven.service';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -74,7 +75,8 @@ export class SidebarComponent{
     public router: Router,
     public renderer: Renderer2,
     private elementRef: ElementRef,
-    private viewTemplateService:ViewTemplateDrivenService
+    private viewTemplateService:ViewTemplateDrivenService,
+    private loaderService:LoaderService
   ) {
     this.screenWidth = window.innerWidth;
 
@@ -156,6 +158,7 @@ export class SidebarComponent{
   } 
 //Active Nav State
 setNavActive(item: any) {
+  this.loaderService.show();
   console.log('item',item)
   this.menuItems?.filter((menuItem) => {
     if (menuItem !== item) {

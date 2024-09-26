@@ -38,6 +38,7 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { series } from '../../charts/apexcharts/data';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { LoaderService } from '../../../shared/services/loader.service';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -269,7 +270,7 @@ export class SheetsComponent {
   maxValueGuage: number = 100; // Default maximum value
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService){   
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -370,6 +371,7 @@ export class SheetsComponent {
   }
 
   ngOnInit(): void {
+    this.loaderService.hide();
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
@@ -623,10 +625,10 @@ if(this.fromFileId){
               colors: [this.color],
             },
           },
-          fill: {
-            type: 'gradient',
-          },
-          colors: [this.color]
+          // fill: {
+          //   type: 'gradient',
+          // },
+          // colors: [this.color]
         };
     } else {
       this.eBarChartOptions = {
@@ -873,7 +875,7 @@ if(this.fromFileId){
               },
             }
           },
-            colors: [this.color],
+            // colors: [this.color],
             dataLabels: {
               enabled: true,
               formatter: this.formatNumber.bind(this),
@@ -1121,7 +1123,7 @@ if(this.fromFileId){
                 color: this.color,
               },
             },
-            colors: [this.color],
+            // colors: [this.color],
             xaxis: {
               type: "",
               labels: {
@@ -3772,6 +3774,13 @@ bar["type"]="line";
       this.GridColor = undefined;
       this.apexbBgColor = undefined;
       this.color = '';
+      this.bandingSwitch = false;
+      this.xLabelSwitch = true;
+      this.yLabelSwitch = true;
+      this.xGridSwitch = false;
+      this.yGridSwitch = false;
+      this.color1 = undefined;
+      this.color2 = undefined;
    // }
   }
   saveTableData = [] as any;
@@ -5287,7 +5296,7 @@ renameColumns(){
       supportAllValues: true
     },
     fontSize: {
-      options: [9, 11, 13, 'default', 17, 19, 21]
+      options: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
     },
     toolbar: ['heading', '|', 'bold', 'italic', 'underline','|', 'fontSize', 'fontFamily', 'fontColor', '|', 'alignment'],
     plugins: [

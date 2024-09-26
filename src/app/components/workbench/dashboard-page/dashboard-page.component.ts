@@ -11,6 +11,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -46,10 +47,11 @@ export class DashboardPageComponent implements OnInit{
   @ViewChild('propertiesModal') propertiesModal : any;
 
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
-  private modalService:NgbModal,private toasterservice:ToastrService){
+  private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
 }
 ngOnInit(){
+  this.loaderService.hide();
   if(this.viewDashboardList){
   this.getuserDashboardsListput();
   }

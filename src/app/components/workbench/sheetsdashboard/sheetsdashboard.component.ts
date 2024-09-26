@@ -321,6 +321,7 @@ export class SheetsdashboardComponent {
     }
   }
   ngOnInit() {  
+    this.loaderService.hide();
     if(!this.isPublicUrl){
     if(this.fileId.length > 0 || this.databaseId.length > 0){
       this.sheetsDataWithQuerysetIdTest();
@@ -3012,7 +3013,7 @@ dropTest2(event: any) {
       supportAllValues: true
     },
     fontSize: {
-      options: [9, 11, 13, 'default', 17, 19, 21]
+      options: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
     },
     toolbar: ['undo', 'redo', '|', 'selectAll', '|', 'heading', '|', 'bold', 'italic', 'underline', 
       '|', 'removeformat', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'alignment'],

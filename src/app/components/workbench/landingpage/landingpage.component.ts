@@ -9,6 +9,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -52,7 +53,7 @@ publishedDashboard = false;
 testVariableToChange! : string ;
 @ViewChild('propertiesModal') propertiesModal : any;
 
-constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService){
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService){
   localStorage.setItem('QuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
   this.viewSheets = this.templateService.viewSheets();
@@ -61,6 +62,7 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
 }
 
 ngOnInit(){
+  this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();
   }if(this.viewSheets){
@@ -189,11 +191,13 @@ getSavedQueries(){
 viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   // const encodedServerId = btoa(serverId.toString());
   // const encodedQuerySetId = btoa(querysetId.toString());
+  this.loaderService.show();
   const encodedDashboardId = btoa(dashboardId.toString());
 
   this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
 }
 viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
+  this.loaderService.show();
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
@@ -211,9 +215,11 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
 }
 
  sheetsRoute(){
+    this.loaderService.show();
     this.router.navigate(['/workbench/sheets'])  
   }
   newConnections(){
+    this.loaderService.show();
     this.router.navigate(['workbench/work-bench/new-connections']) 
   }
   goToConnections(){
@@ -223,6 +229,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   getTablesFromConnectedDb(dbId:any,fileId:any){
     // const encodedId = btoa(id.toString());
     // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+    this.loaderService.show();
     if(dbId === null){
       const encodedId = btoa(fileId.toString());
       this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
@@ -414,6 +421,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     // const encodedQuerySetId = btoa(qrySetId.toString());
 
     // this.router.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    this.loaderService.show();
     if(fileId === null){
       const encodedServerId = btoa(dbId.toString());
       const encodedQuerySetId = btoa(qrySetId.toString());
@@ -428,6 +436,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
       }
   }
   loadNewDashboard(){
+    this.loaderService.show();
     this.router.navigate(['/workbench/sheetsdashboard'])
     }
 
