@@ -232,15 +232,8 @@ if(this.roleTitle === ''){
   this.workbechService.addPrevilage(Obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.addRoleDiv = false;
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: 'Done!',
-      //   text: data.message,
-      //   width: '400px',
-      // })
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.getSavedRolesList();
+      this.router.navigate(['/workbench/roles-list/dashboard'])
      },
     error:(error)=>{
       console.log(error);

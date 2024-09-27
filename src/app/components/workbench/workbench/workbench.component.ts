@@ -498,11 +498,11 @@ export class WorkbenchComponent implements OnInit{
       const file:File = event.target.files[0];
       this.fileData = file;
       if(this.fileData){
-        this.csvUpload();
+        this.csvUpload(event.target);
       }
 
     }
-    csvUpload(){
+    csvUpload(fileInput: any){
     const formData: FormData = new FormData();
       formData.append('file_path', this.fileData,this.fileData.name); 
       formData.append('file_type','csv');
@@ -527,6 +527,9 @@ export class WorkbenchComponent implements OnInit{
               text: error.error.message,
               width: '300px',
             })
+          },
+          complete: () => {
+            fileInput.value = '';
           }
         }
       )
@@ -535,11 +538,11 @@ export class WorkbenchComponent implements OnInit{
       const file:File = event.target.files[0];
       this.fileData = file;
       if(this.fileData){
-        this.excelUpload();
+        this.excelUpload(event.target);
       }
 
     }
-    excelUpload(){
+    excelUpload(fileInput: any){
       const formData: FormData = new FormData();
         formData.append('file_path', this.fileData,this.fileData.name); 
         formData.append('file_type','excel');
@@ -565,6 +568,9 @@ export class WorkbenchComponent implements OnInit{
                 text: error.error.message,
                 width: '300px',
               })
+            },
+            complete: () => {
+              fileInput.value = '';
             }
           }
         )
@@ -596,7 +602,32 @@ export class WorkbenchComponent implements OnInit{
             )
           }}) 
       }
-
+      connectSalesforce(){
+        Swal.fire({
+        title: 'Are you sure?',
+        text: 'This will redirect to Salesforce SignIn page',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Connect it!'
+      }).then((result)=>{
+        if(result.isConfirmed){
+          this.workbechService.connectSalesforce()
+          .subscribe(
+            {
+              next: (data) => {
+                console.log(data);
+                // this.routeUrl = data.redirection_url
+                this.document.location.href = data.redirection_url;
+              },
+              error: (error) => {
+                console.log(error);
+              }
+            }
+          )
+        }}) 
+      }
 
     deleteDbConnection(dbId:any,fileId:any){
       // const obj ={

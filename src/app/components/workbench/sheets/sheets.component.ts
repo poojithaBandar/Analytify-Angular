@@ -268,7 +268,7 @@ export class SheetsComponent {
   guagechartRowData:any;
   minValueGuage: number = 0; // Default minimum value
   maxValueGuage: number = 100; // Default maximum value
-
+  guageNumber:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
@@ -2681,19 +2681,12 @@ bar["type"]="line";
         };
       }
       guageChart() {
-        // Ensure maxValueGuage and KPINumber are set before building the chart
-        // if (!this.maxValueGuage || this.maxValueGuage <= 0) {
-        //   console.error('Invalid maxValueGuage:', this.maxValueGuage);
-        //   return;
-        // }
-      
-        // Deep clone the result_data and set KPINumber
-        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+        this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
         // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
          const valueToDivide = this.maxValueGuage-this.minValueGuage
         // Initialize the chart options
         this.guageChartOptions = {
-          series: [ Math.round((this.KPINumber / valueToDivide)*100)], // Correct percentage calculation
+          series: [ Math.round((this.guageNumber / valueToDivide)*100)], // Correct percentage calculation
           chart: {
             height: 350,
             type: 'radialBar',
@@ -2703,8 +2696,8 @@ bar["type"]="line";
           },
           plotOptions: {
             radialBar: {
-              startAngle: -135,
-              endAngle: 225,
+              startAngle: -90,
+              endAngle: 90,
               hollow: {
                 margin: 0,
                 size: '70%',
@@ -2762,131 +2755,11 @@ bar["type"]="line";
             }
           },
           stroke: {
-            lineCap: 'round'
+            lineCap: 'butt'
           },
           labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
         };
-      }
-      // calculateGuageToPercent(val:any){
-      //    this.maxValueGuage = this.KPINumber+this.KPINumber
-      //    const guagePercentValue = Math.round((this.KPINumber / this.maxValueGuage)*100);
-
-      //    return guagePercentValue
-      // }
-      updateGuageChart() {
-        // const guagePercentValue = Math.round((this.KPINumber / this.maxValueGuage)*100);
-        // let object ={}
-        // object = { }
-
-        // this.updateChart(object);
-      }      
-      // guageChart(){
-      //   this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
-      //   this.guageChartOptions = {
-      //     series: [this.calculateSeries(this.KPINumber)],
-      //     chart: {
-      //     height: 350,
-      //     type: 'radialBar',
-      //     toolbar: {
-      //       show: true
-      //     }
-      //   },
-      //   plotOptions: {
-      //     radialBar: {
-      //       startAngle: -135,
-      //       endAngle: 225,
-      //        hollow: {
-      //         margin: 0,
-      //         size: '70%',
-      //         background: '#fff',
-      //         image: undefined,
-      //         imageOffsetX: 0,
-      //         imageOffsetY: 0,
-      //         position: 'front',
-      //         dropShadow: {
-      //           enabled: true,
-      //           top: 3,
-      //           left: 0,
-      //           blur: 4,
-      //           opacity: 0.24
-      //         }
-      //       },
-      //       track: {
-      //         background: '#fff',
-      //         strokeWidth: '67%',
-      //         margin: 0, // margin is in pixels
-      //         dropShadow: {
-      //           enabled: true,
-      //           top: -3,
-      //           left: 0,
-      //           blur: 4,
-      //           opacity: 0.35
-      //         }
-      //       },
-        
-      //       dataLabels: {
-      //         show: true,
-      //         name: {
-      //           offsetY: -10,
-      //           show: true,
-      //           color: '#888',
-      //           fontSize: '17px'
-      //         },
-      //         value: {
-      //           formatter: (val: number) => {
-      //             console.log('Formatter value:', val);
-    
-      //             if (isNaN(val) || !isFinite(val)) {
-      //               console.error('Invalid value detected in formatter:', val);
-      //               return '0'; // Handle NaN by returning '0'
-      //             }
-      //                 const originalValue = Math.round((val / 100) * this.maxValueGuage);
-      //             console.log('Original Value:', originalValue);
-      //             return originalValue.toString(); 
-      //           },
-      //           color: '#111',
-      //           fontSize: '36px',
-      //           show: true,
-      //         }
-      //       }
-      //     }
-      //   },
-      
-      //   fill: {
-      //     type: 'gradient',
-      //     gradient: {
-      //       shade: 'dark',
-      //       type: 'horizontal',
-      //       shadeIntensity: 0.5,
-      //       gradientToColors: ['#ABE5A1'],
-      //       inverseColors: true,
-      //       opacityFrom: 1,
-      //       opacityTo: 1,
-      //       stops: [0, 100]
-      //     }
-      //   },
-      //   stroke: {
-      //     lineCap: 'round'
-      //   },
-      //   labels: [this.tablePreviewRow[0].col], 
-      // }
-      // }
-      // updateGuageChart() {
-      //   this.guageChartOptions.series = [this.calculateSeries(this.KPINumber)];
-    
-      // }
-      // calculateSeries(value: number): number {
-      //   console.log('Series Value:', value);
-      //       if (isNaN(value) || value < 0 || isNaN(this.maxValueGuage) || this.maxValueGuage <= 0) {
-      //     console.error('Invalid series or maxValue:', value, this.maxValueGuage);
-      //     return 0; 
-      //   }
-        
-      //   const calculatedValue = (value / this.maxValueGuage) * 100;
-      //   console.log('Calculated Series Value:', calculatedValue);
-    
-      //   return calculatedValue;
-      // }
+      }     
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
@@ -3103,6 +2976,11 @@ bar["type"]="line";
 
       pageChangeTableDisplay(page:any){
         this.pageNo=page;
+        this.tableDisplayPagination();
+      }
+      tableDisplayPaginationSearch(){
+        this.pageNo = 1;
+        this.page = 1;
         this.tableDisplayPagination();
       }
       tableDisplayPagination() {
@@ -7356,6 +7234,7 @@ fetchChartData(chartData: any){
         this.modalService.open(modal, {
           centered: true,
           windowClass: 'animate__animated animate__zoomIn',
+          size: 'lg'
         });
       }
       copyQuery(){

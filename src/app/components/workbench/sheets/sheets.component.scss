@@ -433,7 +433,7 @@ button.viewQueryImg {
   align-items: center;
 }
 .viewQuery-hgt {
-  height: 200px;
+  max-height: 200px;
   overflow-y: scroll;
 }
 

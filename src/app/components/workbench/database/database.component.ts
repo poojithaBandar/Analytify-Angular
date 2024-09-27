@@ -1627,6 +1627,7 @@ viewQuery(modal:any){
   this.modalService.open(modal, {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
+    size: 'lg'
   });
 }
 copyQuery(){
