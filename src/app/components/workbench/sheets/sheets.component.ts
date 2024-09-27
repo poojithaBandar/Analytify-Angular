@@ -39,6 +39,7 @@ import { ToastrService } from 'ngx-toastr';
 import { series } from '../../charts/apexcharts/data';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { LoaderService } from '../../../shared/services/loader.service';
+import { MapEchartComponent } from '../map-echart/map-echart.component';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -63,7 +64,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MapEchartComponent],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -161,6 +162,7 @@ export class SheetsComponent {
   guageChartOptions:any;
   eBarChartOptions: any;
   eStackedBarChartOptions: any;
+  eMapChartOptions :  any;
   eGroupedBarChartOptions: any;
   eMultiBarChartOptions: any;
   ehorizontalStackedBarChartOptions: any;
@@ -268,6 +270,7 @@ export class SheetsComponent {
   guagechartRowData:any;
   minValueGuage: number = 0; // Default minimum value
   maxValueGuage: number = 100; // Default maximum value
+  map: boolean = false;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService){   
@@ -372,7 +375,7 @@ export class SheetsComponent {
 
   ngOnInit(): void {
     this.loaderService.hide();
-    this.columnsData();
+    // this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
     this.getDashboardsList();
@@ -3173,7 +3176,9 @@ bar["type"]="line";
         
         this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
-        this.tableDisplayPagination();
+        if(this.table){
+          this.tableDisplayPagination();
+        }
         console.log(this.tablePreviewColumn);
         console.log(this.tablePreviewRow);
         if (this.tablePreviewColumn && this.tablePreviewRow) {
@@ -3494,7 +3499,7 @@ bar["type"]="line";
   funnel = false;
   guage = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -3513,6 +3518,7 @@ bar["type"]="line";
     this.heatMap = heatMap;
     this.funnel = funnel;
     this.guage = guage;
+    this.map = map
     // this.dataExtraction();
     this.chartsOptionsSet(); 
   }
@@ -4299,6 +4305,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.draggedRowsData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
+        this.table = false;
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           this.tableData = this.sheetResponce.results.tableData;
@@ -6910,15 +6917,15 @@ fetchChartData(chartData: any){
           console.log("This is ShaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,10);
           }
           this.dataExtraction();
 
