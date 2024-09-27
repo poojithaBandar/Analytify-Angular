@@ -375,7 +375,7 @@ export class SheetsComponent {
 
   ngOnInit(): void {
     this.loaderService.hide();
-    // this.columnsData();
+    this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
     this.getDashboardsList();
