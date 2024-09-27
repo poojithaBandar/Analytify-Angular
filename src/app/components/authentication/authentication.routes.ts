@@ -45,6 +45,16 @@ export const admin: Routes = [
     loadComponent: () =>
       import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
   },
+  {
+    path: 'quickbooks/?code=',
+    loadComponent: () =>
+      import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
+  },
+  {
+    path: 'quickbooks',
+    loadComponent: () =>
+      import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
+  },
 
 ]}
 ];

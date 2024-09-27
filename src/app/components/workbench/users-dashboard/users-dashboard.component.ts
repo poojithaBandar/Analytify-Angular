@@ -216,16 +216,16 @@ toggleClass1 = "off-line";
     });
 
     this.allSelected = shouldSelectAll;
-    this.getSelectedRoles();
+    // this.getSelectedRoles();
 
   }
 
   onCheckboxChange() {
     const rolesArray = this.addUserForm.get('role') as FormArray;
     if (rolesArray && rolesArray instanceof FormArray) {
-      const allSelected = rolesArray.controls.every(control => control.value);
-      this.allSelected = allSelected;
-    }
+      const allChecked = rolesArray.controls.every(control => control.value);
+      this.allSelected = allChecked;
+    } 
     // this.getSelectedRoles();
   }
   getSelectedRoles() {
