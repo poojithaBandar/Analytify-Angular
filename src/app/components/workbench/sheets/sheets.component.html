@@ -1073,8 +1073,8 @@
                 @if(map && chartId){
                     <div class="card-body">
                         <div id="bar-chart">
-                            <app-map-echart [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart>
-                            <!-- <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div> -->
+                            <!-- <app-map-echart  [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart> -->
+                            <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
                         </div>
                     </div>
                     }
@@ -1368,7 +1368,7 @@
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,27)"><img src="./assets/images/charts/funnel-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,28)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="World Map Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,29)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
                                                     </div>
                                                 </div>

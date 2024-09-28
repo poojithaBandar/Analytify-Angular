@@ -40,6 +40,7 @@ import { series } from '../../charts/apexcharts/data';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { MapEchartComponent } from '../map-echart/map-echart.component';
+import { HttpClient } from '@angular/common/http';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -86,7 +87,6 @@ export class SheetsComponent {
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
-  tableData: TableRow[] = [];  
   tableDataStore: TableRow[] = [];  
   storeTableRow = [] as any;
   storeTableColumn = [] as any;
@@ -131,7 +131,6 @@ export class SheetsComponent {
   // The radius of the pie chart is half the smallest side
   public radius = Math.min(this.width, this.height) / 2 - this.margin;
   public colors:any;
-  public chartsData = [] as any;
   chartsColumnData = [] as any;
   chartsRowData = [] as any;
   public lineChartOptions!: Partial<EChartsOption>;
@@ -144,7 +143,6 @@ export class SheetsComponent {
   databaseId:any;
   fileId:any;
   qrySetId:any;
-  chartsEnableDisable = [] as any;
   chartId = 1;
   sheetResponce = [] as any;
   SheetIndex = 0;
@@ -162,7 +160,6 @@ export class SheetsComponent {
   guageChartOptions:any;
   eBarChartOptions: any;
   eStackedBarChartOptions: any;
-  eMapChartOptions :  any;
   eGroupedBarChartOptions: any;
   eMultiBarChartOptions: any;
   ehorizontalStackedBarChartOptions: any;
@@ -176,8 +173,7 @@ export class SheetsComponent {
   dimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
-  sidebysideBarColumnData = [] as any;
-  sidebysideBarRowData = [] as any;
+  dualAxisRowData = [] as any;
   measureValue:any;
   retriveDataSheet_id: any;
   sheetfilter_querysets_id = null;
@@ -185,7 +181,7 @@ export class SheetsComponent {
   isValuePresent: any;
   color = '#00a5a2';
   database_name: any;
-  sidebysideBarColumnData1 = [] as any;
+  dualAxisColumnData = [] as any;
   filterQuerySetId: any;
   measureValues = [] as any;
   SheetSavePlusEnabled = ['Sheet 1'];
@@ -273,7 +269,7 @@ export class SheetsComponent {
   map: boolean = false;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService){   
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -1248,11 +1244,11 @@ if(this.fromFileId){
       }
     }
     sidebysideBar(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions2 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           annotations: {
             points: [{
               x: 'zoom',
@@ -1363,7 +1359,7 @@ if(this.fromFileId){
           },
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="bar";
       });
@@ -1455,11 +1451,11 @@ bar["type"]="bar";
       });
     }
     stockedBar(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions6 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           annotations: {
             points: [{
               x: 'zoom',
@@ -1562,7 +1558,7 @@ bar["type"]="bar";
           }
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="bar";
 bar["stack"]="total";
@@ -1651,20 +1647,20 @@ bar["stack"]="total";
     }
 
     barLineChart(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if (this.isApexCharts) {
           this.chartOptions5 = {
             series: [
               {
-                name: this.sidebysideBarRowData[0]?.name,
+                name: this.dualAxisRowData[0]?.name,
                 type: "column",
-                data: this.sidebysideBarRowData[0]?.data
+                data: this.dualAxisRowData[0]?.data
               },
               {
-                name: this.sidebysideBarRowData[1]?.name,
+                name: this.dualAxisRowData[1]?.name,
                 type: "line",
-                data: this.sidebysideBarRowData[1]?.data,
+                data: this.dualAxisRowData[1]?.data,
               }
             ],
             annotations: {
@@ -1871,7 +1867,7 @@ bar["stack"]="total";
           // ],
           series: [
             {
-              name: this.sidebysideBarRowData[0]?.name,
+              name: this.dualAxisRowData[0]?.name,
               type: 'bar',
               // xAxisIndex: 1,
               yAxisIndex: 1,
@@ -1880,11 +1876,11 @@ bar["stack"]="total";
               //     return value + ' ml';
               //   }
               // },
-              data: this.sidebysideBarRowData[0]?.data
+              data: this.dualAxisRowData[0]?.data
             },
 
             {
-              name: this.sidebysideBarRowData[1]?.name,
+              name: this.dualAxisRowData[1]?.name,
               type: 'line',
               // xAxisIndex: 1,
               yAxisIndex: 1,
@@ -1896,14 +1892,14 @@ bar["stack"]="total";
               lineStyle: {
                 color: "red"
               },
-              data: this.sidebysideBarRowData[1]?.data
+              data: this.dualAxisRowData[1]?.data
             }
           ]
         };
       }
     }
     radarChart(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       let radarArray = categories.map((value: any, index: number) => ({
         name: categories[index]
@@ -1943,11 +1939,11 @@ bar["stack"]="total";
       }
     }
     horizentalStockedBar(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions7 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           chart: {
             type: "bar",
             height: 350,
@@ -2033,7 +2029,7 @@ bar["stack"]="total";
           }
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="bar";
 bar["stack"]="total";
@@ -2120,11 +2116,11 @@ bar["stack"]="total";
     }
     }
     hGrouped(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions8 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           chart: {
             type: "bar",
             height: 430
@@ -2191,7 +2187,7 @@ bar["stack"]="total";
           },
         };
      } else {
-        let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+        let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
         yaxisOptions.forEach((bar : any)=>{
   bar["type"]="bar";
         });
@@ -2277,11 +2273,11 @@ bar["stack"]="total";
       }
     }
     multiLineChart(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions9 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           annotations: {
             points: [{
               x: 'zoom',
@@ -2402,7 +2398,7 @@ bar["stack"]="total";
           }
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="line";
       });
@@ -2596,10 +2592,10 @@ bar["type"]="line";
       }
     
       heatMapChart() {
-        const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+        const dimensions: Dimension[] = this.dualAxisColumnData;
         const categories = this.flattenDimensions(dimensions);
         this.heatMapChartOptions = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           chart: {
             height: 350,
             type: 'heatmap',
@@ -2641,10 +2637,10 @@ bar["type"]="line";
       }
 
       funnelChart(){
-        const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+        const dimensions: Dimension[] = this.dualAxisColumnData;
         const categories = this.flattenDimensions(dimensions);
         this.funnelChartOptions = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           chart: {
             type: "bar",
             height: 350
@@ -2919,19 +2915,16 @@ bar["type"]="line";
       }
 
       dataExtraction(){
-        this.sidebysideBarColumnData1 = [];
+        this.dualAxisColumnData = [];
         this.tablePreviewColumn = [];
         this.tablePreviewRow = [];
         this.storeTableRow = [];
         this.storeTableColumn = [];
         this.tableDataStore = [];
-        this.tableData = [];
-        this.chartsData = [];
         this.displayedColumns = [];
         this.chartsColumnData = [];
         this.chartsRowData = [];
-        this.sidebysideBarColumnData = [];
-        this.sidebysideBarRowData = [];
+        this.dualAxisRowData = [];
         this.radarRowData = [];
         let draggedColumnsObj;
         if (this.dateDrillDownSwitch) {
@@ -2960,7 +2953,6 @@ bar["type"]="line";
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
-            console.log(responce);
             this.tablePaginationRows=responce.rows;
             this.tablePaginationColumn=responce.columns;
             this.tablePaginationCustomQuery=responce.custom_query;
@@ -2968,18 +2960,18 @@ bar["type"]="line";
             this.mulColData = responce.columns;
             this.mulRowData = responce.rows;
             if (this.chartsRowData.length > 0) {
-              this.enableDisableCharts();
+              // this.enableDisableCharts();
               // this.chartsOptionsSet();
               if (this.retriveDataSheet_id) {
-                const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+                const dimensions: Dimension[] = this.dualAxisColumnData;
                 const categories = this.flattenDimensions(dimensions);
                 let object : any;
                 if (this.barchart) {
                   this.chartOptions3.series[0].data = this.chartsRowData;
                   this.chartOptions3.xaxis.categories = this.chartsColumnData;
                   this.chartOptions3.xaxis.convertedCatToNumeric = true;
-                  console.log(this.chartOptions3.xaxis.categories);
-                  console.log(this.chartOptions3);
+                  // console.log(this.chartOptions3.xaxis.categories);
+                  // console.log(this.chartOptions3);
                   object = [{data : this.chartsRowData}];
                   this.barchart.updateSeries(object);
                   object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
@@ -3011,30 +3003,30 @@ bar["type"]="line";
                   console.log(this.linechart);
                 }
                 else if (this.sidebysideChart) {
-                  this.chartOptions2.series = this.sidebysideBarRowData;
+                  this.chartOptions2.series = this.dualAxisRowData;
                   this.chartOptions2.xaxis.categories = categories;
                 }
                 else if (this.stockedChart) {
-                  this.chartOptions6.series = this.sidebysideBarRowData;
+                  this.chartOptions6.series = this.dualAxisRowData;
                   this.chartOptions6.xaxis.categories = categories;
                 }
                 else if (this.barlineChart) {
-                  // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
-                  // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
-                  this.chartOptions5.series = this.sidebysideBarRowData;
+                  // this.chartOptions5.series[0] = {name: this.dualAxisRowData[0]?.name,type: "column",data: this.dualAxisRowData[0]?.data};
+                  // this.chartOptions5.series[1] = {name: this.dualAxisRowData[1]?.name,type: "line",data: this.dualAxisRowData[1]?.data};
+                  this.chartOptions5.series = this.dualAxisRowData;
                   this.chartOptions5.labels = categories;
                   this.chartOptions5.xaxis.categories = categories;
                 }
                 else if (this.horizontolstockedChart) {
-                  this.chartOptions7.series = this.sidebysideBarRowData;
+                  this.chartOptions7.series = this.dualAxisRowData;
                   this.chartOptions7.xaxis.categories = categories;
                 }
                 else if (this.groupedChart) {
-                  this.chartOptions8.series = this.sidebysideBarRowData;
+                  this.chartOptions8.series = this.dualAxisRowData;
                   this.chartOptions8.xaxis.categories = categories;
                 }
                 else if (this.multilineChart) {
-                  this.chartOptions9.series = this.sidebysideBarRowData;
+                  this.chartOptions9.series = this.dualAxisRowData;
                   this.chartOptions9.xaxis.categories = categories;
                 }
                 else if (this.donutchart) {
@@ -3042,12 +3034,14 @@ bar["type"]="line";
                   this.chartOptions10.labels = this.chartsColumnData;
                 }
                 else if (this.heatMap) {
-                  this.chartOptions9.series = this.sidebysideBarRowData;
+                  this.chartOptions9.series = this.dualAxisRowData;
                   this.chartOptions9.xaxis.categories = categories;
                 }
                 else if (this.funnel) {
-                  this.funnelChartOptions.series = this.sidebysideBarRowData;
+                  this.funnelChartOptions.series = this.dualAxisRowData;
                   this.funnelChartOptions.xaxis.categories = categories;
+                } else if(this.map){
+                  this.mapChart();
                 }
                 // this.updateChart();
               }
@@ -3169,6 +3163,7 @@ bar["type"]="line";
       }
 
       chartsDataSet(data: any) {
+        let sidebysideBarColumnData = [];
         this.sheetCustomQuery = data.custom_query;
         // this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
@@ -3183,22 +3178,22 @@ bar["type"]="line";
         console.log(this.tablePreviewRow);
         if (this.tablePreviewColumn && this.tablePreviewRow) {
           this.tablePreviewColumn.forEach((res: any) => {
-            let obj = {
-              data: res.result_data
-            }
-            this.sidebysideBarColumnData.push(res.result_data);
+            // let obj = {
+            //   data: res.result_data
+            // }
+            sidebysideBarColumnData.push(res.result_data);
             let obj1 = {
               name: res.column,
               values: res.result_data
             }
-            this.sidebysideBarColumnData1.push(obj1);
+            this.dualAxisColumnData.push(obj1);
           });
           this.tablePreviewRow.forEach((res: any) => {
             let obj = {
               name: res.col,
               data: res.result_data
             }
-            this.sidebysideBarRowData.push(obj);
+            this.dualAxisRowData.push(obj);
           });
           this.tablePreviewRow.forEach((res: any) => {
             let obj = {
@@ -3207,9 +3202,8 @@ bar["type"]="line";
             }
             this.radarRowData.push(obj);
           });
-          console.log(this.sidebysideBarColumnData)
-          console.log('sidebysideBarColumnData1this', this.sidebysideBarColumnData1)
-          console.log(this.sidebysideBarRowData);
+          console.log('dualAxisColumnDatathis', this.dualAxisColumnData)
+          console.log(this.dualAxisRowData);
           let rowCount: any;
           if (this.tablePreviewColumn[0]?.result_data?.length) {
             rowCount = this.tablePreviewColumn[0]?.result_data?.length;
@@ -3223,17 +3217,17 @@ bar["type"]="line";
           this.displayedColumns = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.col));
           // Create table data
           console.log(this.displayedColumns)
-          for (let i = 0; i < rowCount; i++) {
-            const row: TableRow = {};
-            this.tablePreviewColumn.forEach((col: any) => {
-              row[col.column] = col.result_data[i];
-            });
-            this.tablePreviewRow.forEach((rowData: any) => {
-              row[rowData.col] = rowData.result_data[i];
-            });
-            this.tableData.push(row);
+          // for (let i = 0; i < rowCount; i++) {
+          //   const row: TableRow = {};
+          //   this.tablePreviewColumn.forEach((col: any) => {
+          //     row[col.column] = col.result_data[i];
+          //   });
+          //   this.tablePreviewRow.forEach((rowData: any) => {
+          //     row[rowData.col] = rowData.result_data[i];
+          //   });
+          //   this.tableData.push(row);
 
-          }
+          // }
           //storing table
           let rowCountStore: any;
           if (this.storeTableColumn[0]?.result_data?.length) {
@@ -3263,12 +3257,11 @@ bar["type"]="line";
           });
           console.log(this.chartsColumnData)
           console.log(this.chartsRowData)
-          const length = Math.min(this.chartsColumnData.length, this.chartsRowData.length);
-          for (let i = 0; i < length; i++) {
-            const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
-            this.chartsData.push(aa);
-          }
-          console.log(this.chartsData)
+          // const length = Math.min(this.chartsColumnData.length, this.chartsRowData.length);
+          // for (let i = 0; i < length; i++) {
+          //   const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
+          //   this.chartsData.push(aa);
+          // }
         }
       }
 
@@ -3305,8 +3298,81 @@ bar["type"]="line";
           this.funnelChart();
         }else if(this.guage){
           this.guageChart();
+        } else if(this.map){
+          this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+            echarts.registerMap('world', geoJson);  // Register the map data
+      
+            // Initialize the chart after the map is registered
+            this.mapChart();
+          });
         }
         
+      }
+
+      mapChart(){
+       let minData = 0;
+       const maxData = Math.max(...this.chartsRowData);
+       let result:any[] = [];
+
+       // Loop through the countries (assuming both data sets align by index)
+       this.dualAxisColumnData[0].values.forEach((country: string, index: number) => {
+         // Create an object for each country
+         const countryData: any = { name: country , value : this.chartsRowData[index]};
+     
+         // Add each measure to the country object
+         this.dualAxisRowData.forEach((measure:any) => {
+           const measureName = measure.name; // e.g., sum(Sales), sum(Quantity)
+           const measureValue = measure.data[index]; // Value for that measure
+           countryData[measureName] = measureValue;
+         });
+     
+         result.push(countryData);
+       });
+    if(this.chartsColumnData && this.chartsColumnData.length > 1){
+    minData = Math.min(...this.chartsRowData);
+    }
+
+    
+    this.eMapChartOptions = {
+      tooltip: {
+        formatter: (params: any) => {
+          const { name, data } = params;
+          if (data) {
+            const keys = Object.keys(data);
+      const values = Object.values(data);
+      let formattedString = '';
+      keys.forEach((key, index) => {
+        if(key)
+        formattedString += `${key}: ${values[index]}<br/>`;
+      });
+
+      return formattedString;
+           
+          } else {
+            return `${name}: No Data`;
+          }
+        },
+            trigger: 'item',
+            showDelay: 0,
+            transitionDuration: 0.2
+          },
+      visualMap: {
+        min: minData,
+        max: maxData,
+        text: ['High', 'Low'],
+        realtime: false,
+        calculable: true,
+        inRange: {
+         color: ['lightskyblue', 'yellow', 'orangered']
+        }
+      },
+      series: [{
+        type: 'map',
+        map: 'world',
+        roam: true,  
+        data: result
+      }]
+    };
       }
 
       KPIChart(){
@@ -3522,24 +3588,24 @@ bar["type"]="line";
     // this.dataExtraction();
     this.chartsOptionsSet(); 
   }
-  enableDisableCharts(){
-    console.log(this.draggedColumnsData);
-    console.log(this.draggedRowsData);
-    const obj={
-        "db_id":this.databaseId,
-        "col":this.draggedColumnsData,
-        "row":this.draggedRowsData,
-  }
-    this.workbechService.getChartsEnableDisable(obj).subscribe({next: (responce:any) => {
-          console.log(responce);
-          this.chartsEnableDisable = responce;
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      }
-    )
-  }
+  // enableDisableCharts(){
+  //   console.log(this.draggedColumnsData);
+  //   console.log(this.draggedRowsData);
+  //   const obj={
+  //       "db_id":this.databaseId,
+  //       "col":this.draggedColumnsData,
+  //       "row":this.draggedRowsData,
+  // }
+  //   this.workbechService.getChartsEnableDisable(obj).subscribe({next: (responce:any) => {
+  //         console.log(responce);
+  //         this.chartsEnableDisable = responce;
+  //       },
+  //       error: (error) => {
+  //         console.log(error);
+  //       }
+  //     }
+  //   )
+  // }
   tabs : any [] = [];
   selected = new FormControl(0);
   addSheet() {
@@ -3679,7 +3745,6 @@ bar["type"]="line";
         this.draggedRows = [];
         this.draggedRowsData = [];
         this.displayedColumns = [];
-        this.tableData = [];
         this.getChartData();
        if(this.retriveDataSheet_id){
           this.sheetRetrive();
@@ -3704,9 +3769,8 @@ bar["type"]="line";
     this.draggedRowsData = [];
     // this.retriveDataSheet_id = '';
     this.dimetionMeasure = [];
-    this.sidebysideBarColumnData = [];
-    this.sidebysideBarColumnData1 = [];
-    this.sidebysideBarRowData = [];
+    this.dualAxisColumnData = [];
+    this.dualAxisRowData = [];
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
@@ -3723,12 +3787,10 @@ bar["type"]="line";
       this.storeTableRow = [];
       this.storeTableColumn = [];
       this.tableDataStore = [];
-      this.tableData = [];
       this.totalItems = 0;
       this.tableDataDisplay = [];
       this.tableColumnsDisplay = [];
       this.displayedColumns = [];
-      this.chartsData = [];
       this.chartsRowData = [];
       this.chartsColumnData = [];
       this.draggedColumnsData = [];
@@ -3761,6 +3823,7 @@ bar["type"]="line";
       this.donut = false;
       this.radar = false;
       this.kpi = false;
+      this.map = false;
       this.heatMap = false;
       this.funnel = false;
       this.banding = false;
@@ -3825,6 +3888,7 @@ bar["type"]="line";
   donutYaxis = [] as any;
   donutXaxis = [] as any;
   donutOptions : any = undefined;
+  eMapChartOptions : any;
 
 sheetSave(){
   let savedChartOptions ;
@@ -3907,8 +3971,8 @@ sheetSave(){
     }
   }
   if(this.sidebyside && this.chartId == 7){
-    this.sidebysideBarYaxis = this.sidebysideBarRowData;
-    this.sidebysideBarXaxis = this.sidebysideBarColumnData1;
+    this.sidebysideBarYaxis = this.dualAxisRowData;
+    this.sidebysideBarXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.sidebysideBarOptions = this.chartOptions2;
     savedChartOptions = this.chartOptions2;
@@ -3918,8 +3982,8 @@ sheetSave(){
     
   }
   if(this.stocked && this.chartId == 5){
-    this.stokedBarYaxis = this.sidebysideBarRowData;
-    this.stokedBarXaxis = this.sidebysideBarColumnData1;
+    this.stokedBarYaxis = this.dualAxisRowData;
+    this.stokedBarXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.stokedOptions = this.chartOptions6;
     savedChartOptions = this.chartOptions6;
@@ -3929,8 +3993,8 @@ sheetSave(){
     
   }
   if(this.barLine && this.chartId == 4){
-    this.barLineYaxis = this.sidebysideBarRowData;
-    this.barLineXaxis = this.sidebysideBarColumnData1;
+    this.barLineYaxis = this.dualAxisRowData;
+    this.barLineXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions5;
       this.barLineOptions = this.chartOptions5;
@@ -3939,8 +4003,8 @@ sheetSave(){
     }
   }
   if(this.horizentalStocked && this.chartId == 2){
-    this.hStockedYaxis = this.sidebysideBarRowData;
-    this.hStockedXaxis = this.sidebysideBarColumnData1;
+    this.hStockedYaxis = this.dualAxisRowData;
+    this.hStockedXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.hStockedOptions = this.chartOptions7;
     savedChartOptions = this.chartOptions7;
@@ -3950,8 +4014,8 @@ sheetSave(){
     
   }
   if(this.grouped && this.chartId == 3){
-    this.hgroupedYaxis = this.sidebysideBarRowData;
-    this.hgroupedXaxis = this.sidebysideBarColumnData1;
+    this.hgroupedYaxis = this.dualAxisRowData;
+    this.hgroupedXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.hgroupedOptions = this.chartOptions8;
       savedChartOptions = this.chartOptions8;
@@ -3961,8 +4025,8 @@ sheetSave(){
     
   }
   if(this.multiLine && this.chartId == 8){
-    this.multiLineYaxis = this.sidebysideBarRowData;
-    this.multiLineXaxis = this.sidebysideBarColumnData1;
+    this.multiLineYaxis = this.dualAxisRowData;
+    this.multiLineXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.multiLineOptions = this.chartOptions9;
     savedChartOptions = this.chartOptions9;
@@ -3995,7 +4059,7 @@ sheetSave(){
     }
   }
   if(this.radar && this.chartId == 12){
-    this.barLineXaxis = this.sidebysideBarColumnData1;
+    this.barLineXaxis = this.dualAxisColumnData;
       savedChartOptions = this.eRadarChartOptions;
   }
   if(this.kpi && this.chartId == 25){
@@ -4014,6 +4078,9 @@ sheetSave(){
     // savedChartOptions['max1'] = this.maxValue
     // savedChartOptions['min1'] = this.minValue
 
+  }
+  if(this.map && this.chartId == 29){
+    savedChartOptions = this.eMapChartOptions;
   }
   let customizeObject = {
     isZoom : this.isZoom,
@@ -4305,10 +4372,10 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.draggedRowsData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
-        this.table = false;
+        // this.table = false;
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
-          this.tableData = this.sheetResponce.results.tableData;
+          // this.tableData = this.sheetResponce.results.tableData;
           this.displayedColumns = this.sheetResponce.results.tableColumns;
           this.bandingSwitch = this.sheetResponce.results.banding;
           this.color1 = this.sheetResponce.results.color1;
@@ -4361,6 +4428,54 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+        }
+        if(responce.chart_id == 29){
+          this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+            echarts.registerMap('world', geoJson);  // Register the map data
+      
+            // Initialize the chart after the map is registered
+            this.eMapChartOptions = this.sheetResponce.savedChartOptions;
+            this.eMapChartOptions.tooltip = {
+              formatter: (params: any) => {
+                const { name, data } = params;
+                if (data) {
+                  const keys = Object.keys(data);
+                  const values = Object.values(data);
+                  let formattedString = '';
+                  keys.forEach((key, index) => {
+                    if (key)
+                      formattedString += `${key}: ${values[index]}<br/>`;
+                  });
+  
+                  return formattedString;
+  
+                } else {
+                  return `${name}: No Data`;
+                }
+              },
+              trigger: 'item',
+              showDelay: 0,
+              transitionDuration: 0.2
+            }
+          });
+          this.table = false;
+          this.bar = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = true;
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -4416,6 +4531,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 24){
         // this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -4461,6 +4577,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.map = false;
           this.guage = false;
           this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
           this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
@@ -4515,6 +4632,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 17){
         // this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -4551,10 +4669,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 7){
-        // this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.sidebysideBarXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.sidebysideBarYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.sidebysideBarXaxis;
         if(this.isApexCharts){
         this.chartOptions2 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions2?.xaxis?.labels?.show;
@@ -4584,10 +4703,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 5){
-        // this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.stokedBarXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.stokedBarYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.stokedBarXaxis;
         if(this.isApexCharts){
         this.chartOptions6 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions6?.xaxis?.labels?.show;
@@ -4616,11 +4736,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.map = false;
           this.guage = false;
        }
        if(responce.chart_id == 4){
-        // this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.barLineYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         if(this.isApexCharts){
           this.chartOptions5 = this.sheetResponce.savedChartOptions;
           this.xLabelSwitch = this.chartOptions5?.xaxis?.labels?.show;
@@ -4651,10 +4772,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.map = false;
           this.guage = false;
        }
        if(responce.chart_id == 12){
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
+        this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.radarChart();
         this.bar = false;
         this.table = false;
@@ -4673,6 +4795,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
           if(this.isApexCharts){
           
           } else {
@@ -4680,8 +4803,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
        }
        if(responce.chart_id == 2){
-        // this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.hStockedXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.hStockedYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.hStockedXaxis;
         if(this.isApexCharts){
         this.chartOptions7 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions7?.xaxis?.labels?.show;
@@ -4710,11 +4833,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.kpi = false;
           this.heatMap = false;
           this.funnel = false;
+          this.map = false;
           this.guage = false;
        }
        if(responce.chart_id == 3){
-        // this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.hgroupedXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.hgroupedYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.hgroupedXaxis;
         if(this.isApexCharts){
         this.chartOptions8 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions8?.xaxis?.labels?.show;
@@ -4744,10 +4868,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 8){
-        // this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.multiLineXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.multiLineYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.multiLineXaxis;
         if(this.isApexCharts){
         this.chartOptions9 = this.sheetResponce.savedChartOptions;
         this.xLabelSwitch = this.chartOptions9?.xaxis?.labels?.show;
@@ -4777,6 +4902,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 10){
         // this.chartsRowData = this.sheetResponce.results.donutYaxis
@@ -4825,6 +4951,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
           this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
           this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
           this.label = this.sheetResponce.savedChartOptions.plotOptions.pie.donut.labels.show
@@ -4848,6 +4975,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = true;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 27){
         this.funnelChartOptions = this.sheetResponce.savedChartOptions;
@@ -4873,6 +5001,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = true;
           this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 28){
         this.guageChartOptions = this.sheetResponce.savedChartOptions;
@@ -4895,6 +5024,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = true;
+          this.map = false;
         
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
@@ -5192,7 +5322,7 @@ viewDashboard(){
 barColor : any;
 lineColor : any;
 marksColor2(color:any){
-console.log(this.sidebysideBarRowData);
+console.log(this.dualAxisRowData);
 console.log(color)
 let object : any;
 if(this.barchart){
@@ -5208,7 +5338,7 @@ else if(this.linechart){
   object = {colors: [color]};
 }
 else if(this.sidebysideChart){
-  if(this.sidebysideBarRowData){
+  if(this.dualAxisRowData){
   }
   this.chartOptions2.colors = color;
   object = {colors: [color]};
@@ -6506,7 +6636,7 @@ renameColumns(){
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
       object = { xaxis: {labels: {show: this.xLabelSwitch}, categories: this.chartsColumnData}};
