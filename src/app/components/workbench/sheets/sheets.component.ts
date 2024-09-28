@@ -39,7 +39,6 @@ import { ToastrService } from 'ngx-toastr';
 import { series } from '../../charts/apexcharts/data';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { LoaderService } from '../../../shared/services/loader.service';
-import { MapEchartComponent } from '../map-echart/map-echart.component';
 import { HttpClient } from '@angular/common/http';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
@@ -65,7 +64,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MapEchartComponent],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
