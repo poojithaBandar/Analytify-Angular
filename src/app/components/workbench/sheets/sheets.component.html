@@ -1063,6 +1063,13 @@
                     </div>
                 </div>
                 }
+                @if(multiLine && chartId){
+                    <div class="card-body">
+                        <div id="bar-chart">
+                            <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
+                        </div>
+                    </div>
+                    }
             @if(radar && chartId){
                 <div class="card-body">
                     <div id="bar-chart">

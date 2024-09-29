@@ -160,7 +160,7 @@ export class SheetsComponent {
   eBarChartOptions: any;
   eStackedBarChartOptions: any;
   eGroupedBarChartOptions: any;
-  eMultiBarChartOptions: any;
+  eMultiLineChartOptions: any;
   ehorizontalStackedBarChartOptions: any;
   eSideBySideBarChartOptions: any;
   eAreaChartOptions: any;
@@ -2400,8 +2400,9 @@ bar["stack"]="total";
       let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="line";
+bar["stack"]="Total";
       });
-      this.eMultiBarChartOptions = {
+      this.eMultiLineChartOptions = {
         backgroundColor: this.backgroundColor,
         legend: {
           orient: 'vertical',
@@ -2434,7 +2435,8 @@ bar["type"]="line";
           containLabel: true,
         },
         xAxis: {
-          type: 'value',
+          type: 'category',
+          data: categories,
          
           splitLine: {
             lineStyle: {
@@ -2456,8 +2458,7 @@ bar["type"]="line";
         },
         toggleGridLines: true,
         yAxis: {
-          type: 'category',
-          data: categories,
+          type:'value',
           axisLine: {
             lineStyle: {
               color: this.yLabelColor
@@ -2961,7 +2962,7 @@ bar["type"]="line";
             if (this.chartsRowData.length > 0) {
               // this.enableDisableCharts();
               // this.chartsOptionsSet();
-              if (this.retriveDataSheet_id) {
+              if (this.retriveDataSheet_id && !this.isEChatrts) {
                 const dimensions: Dimension[] = this.dualAxisColumnData;
                 const categories = this.flattenDimensions(dimensions);
                 let object : any;
@@ -4030,7 +4031,7 @@ sheetSave(){
       this.multiLineOptions = this.chartOptions9;
     savedChartOptions = this.chartOptions9;
     } else {
-      savedChartOptions = this.eMultiBarChartOptions;
+      savedChartOptions = this.eMultiLineChartOptions;
     }
     
   }
@@ -4881,7 +4882,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.GridColor = this.chartOptions9?.grid?.borderColor;
         this.apexbBgColor = this.chartOptions9?.chart?.background;
         } else {
-          this.eMultiBarChartOptions = this.sheetResponce.savedChartOptions;
+          this.eMultiLineChartOptions = this.sheetResponce.savedChartOptions;
         }
         // this.multiLineChart();
         this.bar = false;
@@ -7082,6 +7083,8 @@ fetchChartData(chartData: any){
     this.sidebysideBar();
     this.horizentalStockedBar();
     this.donutChart();
+    this.multiLineChart();
+    this.mapChart();
   }
   marksColor(color: any, colorCase: number) {
     console.log(color)

@@ -44,6 +44,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
+import { HttpClient } from '@angular/common/http';
 
 interface TableRow {
   [key: string]: any;
@@ -173,9 +174,12 @@ export class SheetsdashboardComponent {
   isDraggingDisabled = false;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient){
     this.dashboard = [];
     const currentUrl = this.router.url; 
+    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+      echarts.registerMap('world', geoJson); 
+    });
     if(currentUrl.includes('public/dashboard')){
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
@@ -322,6 +326,7 @@ export class SheetsdashboardComponent {
   }
   ngOnInit() {  
     this.loaderService.hide();
+    
     if(!this.isPublicUrl){
     if(this.fileId.length > 0 || this.databaseId.length > 0){
       this.sheetsDataWithQuerysetIdTest();
@@ -683,9 +688,29 @@ export class SheetsdashboardComponent {
               }
             }
           };
+        } else if(sheet.chartId == 29){
+          sheet.echartOptions.tooltip= {
+            formatter: (params: any) => {
+              const { name, data } = params;
+              if (data) {
+                const keys = Object.keys(data);
+          const values = Object.values(data);
+          let formattedString = '';
+          keys.forEach((key, index) => {
+            if(key)
+            formattedString += `${key}: ${values[index]}<br/>`;
+          });
+    
+          return formattedString;
+               
+              } else {
+                return `${name}: No Data`;
+              }
+            }
         }
+      }
           console.log('After sanitization:', sheet.data.sheetTagName);
-        })
+        });
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
           // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
@@ -1208,6 +1233,9 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
     }
+    if(sheet.chart_id === 29){
+      return sheet.sheet_data.savedChartOptions;
+    }
     if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
       let yaxis = sheet.sheet_data?.results?.areaYaxis;
@@ -1457,7 +1485,27 @@ allowDrop(ev : any): void {
             }
           }
         };
+      }else if(element.chartId == 29 && element.echartOptions){
+        element.echartOptions.tooltip= {
+          formatter: (params: any) => {
+            const { name, data } = params;
+            if (data) {
+              const keys = Object.keys(data);
+        const values = Object.values(data);
+        let formattedString = '';
+        keys.forEach((key, index) => {
+          if(key)
+          formattedString += `${key}: ${values[index]}<br/>`;
+        });
+  
+        return formattedString;
+             
+            } else {
+              return `${name}: No Data`;
+            }
+          }
       }
+    }
         this.dashboard.push(element);
       }
     //  } else {
@@ -1465,7 +1513,7 @@ allowDrop(ev : any): void {
     //  }
      
     //  this.initializeChartData(element);  // Initialize chart after adding
-    this.dashboard.forEach((sheet)=>{
+    this.dashboard.forEach((sheet:any)=>{
       console.log('Before sanitization:', sheet.data.sheetTagName);
       this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
       console.log('After sanitization:', sheet.data.sheetTagName);
@@ -2580,6 +2628,21 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
     }
       if(item.chart_id == '6' || item.chartId == '6'){//bar
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.xAxis.data , data:item1.echartOptions.series };
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+
+        };
+        } else {
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
@@ -2590,6 +2653,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
       }
+    }
       if(item.chart_id == '25'){//KPI
         if(!item1.originalData ){
           item1['originalData'] = _.cloneDeep(item1['kpiData']);
@@ -2599,6 +2663,23 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
       }
       if(item.chart_id == '24' || item.chartId == '24'){//pie
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {data:item1.echartOptions.series };
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          let combinedArray = this.filteredRowData[0].data.map((value : any, index :number) => ({
+            value: value,
+            name: this.filteredColumnData[0].values[index]
+          }));
+        item1.echartOptions.series[0].data = combinedArray;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
         if(!item1.originalData ){
           item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
         }
@@ -2609,7 +2690,25 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
+    }
       if(item.chart_id == '10'|| item.chartId == '10'){//donut
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {data:item1.echartOptions.series };
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          let combinedArray = this.filteredRowData[0].data.map((value : any, index :number) => ({
+            value: value,
+            name: this.filteredColumnData[0].values[index]
+          }));
+        item1.echartOptions.series[0].data = combinedArray;
+        item1.echartOptions = {
+          ...item1.echartOptions
+        };
+        } else {
         if(!item1.originalData ){
           item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
         }
@@ -2620,73 +2719,192 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
+    }
       if(item.chart_id == '13'|| item.chartId == '13'){//line
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.xAxis.data , data:item1.echartOptions.series };
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+
+        };
+        } else {
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
+        }
       }
       if(item.chart_id == '17'|| item.chartId == '17'){//area
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.xAxis.data , data:item1.echartOptions.series };
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+
+        };
+        } else {
         if(!item1.originalData){
           item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
         }
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
       }
+    }
       if(item.chart_id == '7'){//sidebyside
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.xAxis.data , data:item1.echartOptions.series };
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="bar";
+                  });
+        item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+       
         if(!item1.originalData ){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
       }
       if(item.chart_id == '2'){//hstacked
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.yAxis.data , data:item1.echartOptions.series };
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="bar";
+            bar["stack"]="total";
+                  });
+        item1.echartOptions.yAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
       }
+      }
       if(item.chart_id == '5'){//stacked
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.xAxis.data , data:item1.echartOptions.series };
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="bar";
+            bar["stack"]="total";
+                  });
+        item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
         if(!item1.originalData ){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
       }
+      }
       if(item.chart_id == '4'){//barline
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.xAxis.data , data:item1.echartOptions.series };
+          }
+          item1.echartOptions.xAxis.data = categories;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions.series[1].data = this.filteredRowData[1].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.label = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
       }
+      }
       if(item.chart_id == '3'){//hgrouped
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+            if(!item1.originalData){
+              item1['originalData'] = {categories: item1.echartOptions.yAxis.data , data:item1.echartOptions.series };
+            }
+            this.filteredRowData.forEach((bar : any)=>{
+              bar["type"]="bar";
+                    });
+          item1.echartOptions.yAxis.data = _.cloneDeep(categories);
+          item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+          item1.echartOptions = {
+            ...item1.echartOptions,
+          };
+        } else {
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
       }
+      }
       if(item.chart_id == '8'){//multiline
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {categories: item1.echartOptions.xAxis.data , data:item1.echartOptions.series };
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="line";
+            bar["stack"]="total";
+                  });
+        item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
       }
       if(item.chart_id == '28'){//guage
         if(!item1.originalData){
@@ -2694,6 +2912,84 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         }
         let seriesval =[Math.round(( this.filteredRowData[0]?.data[0]/ (item1.chartOptions.plotOptions.radialBar.max-item1.chartOptions.plotOptions.radialBar.min))*100)]
         item1.chartOptions.series = seriesval;
+      }
+      if(item.chart_id == '12'){//radar
+        const dimensions: Dimension[] = this.filteredColumnData;
+        const categories = this.flattenDimensions(dimensions);
+        let radarArray = categories.map((value: any, index: number) => ({
+          name: categories[index]
+        }));
+        let legendArray = this.filteredRowData.map((data: any) => ({
+          name: data.name
+        }));
+        const transformedArray = this.filteredRowData.map((obj: any) => ({
+          name: obj.name,   
+          value: obj.data   
+        }));
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = {radarData : item1.echartOptions};
+          }
+        item1.echartOptions.radar.indicator = radarArray;
+        item1.echartOptions.legend = legendArray;
+        item1.echartOptions.series[0].data = transformedArray;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+      }
+      }
+      if(item.chart_id == '29'){//world MAP
+        let minData = 0;
+       const maxData = Math.max(...this.filteredRowData[0].data);
+       let result:any[] = [];
+
+       // Loop through the countries (assuming both data sets align by index)
+       this.filteredColumnData[0].values.forEach((country: string, index: number) => {
+         // Create an object for each country
+         const countryData: any = { name: country , value : this.filteredRowData[0].data[index]};
+     
+         // Add each measure to the country object
+         this.filteredRowData.forEach((measure:any) => {
+           const measureName = measure.name; // e.g., sum(Sales), sum(Quantity)
+           const measureValue = measure.data[index]; // Value for that measure
+           countryData[measureName] = measureValue;
+         });
+     
+         result.push(countryData);
+       });
+    if(this.filteredRowData && this.filteredRowData[0]?.length > 1){
+    minData = Math.min(...this.filteredRowData[0].data);
+    }
+    item1.echartOptions.tooltip = {
+      formatter: (params: any) => {
+        const { name, data } = params;
+        if (data) {
+          const keys = Object.keys(data);
+    const values = Object.values(data);
+    let formattedString = '';
+    keys.forEach((key, index) => {
+      if(key)
+      formattedString += `${key}: ${values[index]}<br/>`;
+    });
+
+    return formattedString;
+         
+        } else {
+          return `${name}: No Data`;
+        }
+      },
+          trigger: 'item',
+          showDelay: 0,
+          transitionDuration: 0.2
+        };
+        item1.echartOptions.visualMap.min = minData;
+        item1.echartOptions.visualMap.max = maxData;
+        item1.echartOptions.series[0].data = result;
+    item1.echartOptions = {
+      ...item1.echartOptions,
+    };
+
       }
 
           // this.initializeChart(item1);
@@ -3225,6 +3521,26 @@ kpiData?: KpiData;
                 }
               }
             };
+          } else if(sheet.chartId == 29){
+            sheet.echartOptions.tooltip= {
+              formatter: (params: any) => {
+                const { name, data } = params;
+                if (data) {
+                  const keys = Object.keys(data);
+            const values = Object.values(data);
+            let formattedString = '';
+            keys.forEach((key, index) => {
+              if(key)
+              formattedString += `${key}: ${values[index]}<br/>`;
+            });
+      
+            return formattedString;
+                 
+                } else {
+                  return `${name}: No Data`;
+                }
+              }
+          }
           }
           console.log('After sanitization:', sheet.data.sheetTagName);
         })
