@@ -1329,7 +1329,7 @@
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,25)"><img src="./assets/images/charts/kpi-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0 || guagechartRowData > 1 }">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,28)"><img src="./assets/images/charts/kpi-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,28)"><img src="./assets/images/charts/guage-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
@@ -1338,7 +1338,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': stocked}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>2 ||  ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length !== 2 || draggedColumns.length<1}">
                                                             <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': barLine}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
@@ -1357,7 +1357,7 @@
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,26)"><img src="./assets/images/charts/heatmap_icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,27)"><img src="./assets/images/charts/heatmap_icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,27)"><img src="./assets/images/charts/funnel-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
                                                     </div>
                                                 </div>
