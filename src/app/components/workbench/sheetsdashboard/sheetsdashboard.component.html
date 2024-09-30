@@ -1158,7 +1158,7 @@
                     <apx-chart
                     [series]="item.chartOptions.series!"
                     [chart]="item.chartOptions.chart!"
-                    [xaxis]="item.chartOptions.xaxis!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                     [stroke]="item.chartOptions.stroke!"
                     [tooltip]="item.chartOptions.tooltip!"
                     [dataLabels]="item.chartOptions.dataLabels!"
