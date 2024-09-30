@@ -327,29 +327,29 @@ export class SheetsdashboardComponent {
     }
   }
   ngOnInit() {  
-    this.loaderService.hide();
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
+      this.loaderService.hide(); 
+      if(!this.isPublicUrl){
+        if(this.fileId.length > 0 || this.databaseId.length > 0){
+          this.sheetsDataWithQuerysetIdTest();
+        }
+      }
+      if(this.isPublicUrl){
+        // this.dashboardId = 145
+        this.getSavedDashboardDataPublic();
+        this.getDashboardFilterredListPublic();
+      }
+        // if(this.sheetsNewDashboard){
+        //   this.sheetsDataWithQuerysetId();
+        // }
+        if(this.dashboardView){
+    
+          this.getSavedDashboardData();
+          // this.sheetsDataWithQuerysetId();
+          this.getDashboardFilterredList();
+        }
     });    
-    if(!this.isPublicUrl){
-    if(this.fileId.length > 0 || this.databaseId.length > 0){
-      this.sheetsDataWithQuerysetIdTest();
-    }
-  }
-  if(this.isPublicUrl){
-    // this.dashboardId = 145
-    this.getSavedDashboardDataPublic();
-    this.getDashboardFilterredListPublic();
-  }
-    // if(this.sheetsNewDashboard){
-    //   this.sheetsDataWithQuerysetId();
-    // }
-    if(this.dashboardView){
-
-      this.getSavedDashboardData();
-      // this.sheetsDataWithQuerysetId();
-      this.getDashboardFilterredList();
-    }
    
     //this.getSheetData();
     this.options = {
