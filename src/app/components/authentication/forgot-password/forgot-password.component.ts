@@ -23,7 +23,7 @@ export class ForgotPasswordComponent {
   token:any
   constructor(
     @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router:Router,private formBuilder:FormBuilder,
-    private renderer: Renderer2,private sanitizer: DomSanitizer,private authService:AuthService,    private activatedRoute: ActivatedRoute
+    private renderer: Renderer2,private sanitizer: DomSanitizer,private authService:AuthService,private activatedRoute: ActivatedRoute
 
   ) {
     const currentUrl = this.router.url;
@@ -147,6 +147,7 @@ submitForgotPasswordForm(){
           text: 'please check your mail to reset password',
           width: '400px',
          })
+         this.router.navigate(['authentication/login']);
       }
     },
     error:(error:any)=>{

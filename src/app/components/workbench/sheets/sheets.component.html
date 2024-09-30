@@ -368,7 +368,7 @@
                                     (btnClickEvent)="sheetSave(); editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                    <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="18" [isBtn]="true"
+                                    <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
                                     </app-insights-button>
@@ -751,8 +751,8 @@
                     <div class="">
                     </div>
                     <div *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" class="input-group mt-1 p-1 sheet-table-search">
-                        <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPagination()" class="form-control border-end-0 ">
-                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="tableDisplayPagination()" style="border-radius: 0px 4px 4px 0px;">
+                        <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPaginationSearch()" class="form-control border-end-0 ">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="tableDisplayPaginationSearch()" style="border-radius: 0px 4px 4px 0px;">
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>
@@ -1949,6 +1949,10 @@
                                                                 <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5" (ngModelChange)="changeSize()">
                                                             </div>
                                                         </div>
+                                                        <div *ngIf="donut" style="display: flex;">
+                                                            <label for="decimalInput">Decimal Places: </label>
+                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" (input)="updateDonut()" min="0" />
+                                                        </div>
                                                     </div>
 
                                                     <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
@@ -1983,7 +1987,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Chart Color </p>
                                                         </div>
@@ -2019,7 +2023,7 @@
                                                     <div *ngIf="funnel">
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <label for="sorting">Sort by:</label>
-                                                            <select id="sorting" (change)="sortFunnel($event)">
+                                                            <select id="sorting" (change)="sortSeries($event)">
                                                                 <option value="0" selected disabled>select</option>
                                                                 <option value="ascending">Ascending</option>
                                                                 <option value="descending">Descending</option>
@@ -2135,6 +2139,14 @@
                                                             <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="guageChart()" />
                                                         </div>
                                                     </div>
+                                                    <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <label for="sorting">Sort by:</label>
+                                                        <select id="sorting" (change)="sortSeries($event)">
+                                                            <option value="0" selected disabled>select</option>
+                                                            <option value="ascending">Ascending</option>
+                                                            <option value="descending">Descending</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </ng-template>
@@ -2235,6 +2247,9 @@
            
         </div>
         <ng-template #viewQueryModal let-modal>
+            <div id="largemodal" tabindex="-1" role="dialog">
+                <div class=" modal-lg " role="document">
+                <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Query</h6>
             </div>
@@ -2251,5 +2266,8 @@
                 </button>
                 <button type="button" class="btn ripple btn-primary" (click)="copyQuery(); modal.close('Save click')">Copy <i class="fa fa-copy"></i></button>
             </div>
+            </div>
+        </div>
+        </div>
         </ng-template>
     </div>

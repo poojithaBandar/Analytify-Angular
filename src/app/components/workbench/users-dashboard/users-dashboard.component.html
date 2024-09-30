@@ -288,9 +288,9 @@
                             <div
                               ngbAccordionCollapse
                               id="collapse"
-                              class="accordion-collapse collapse" 
+                              class="accordion-collapse collapse select-roles-height" 
                               aria-labelledby="heading"
-                              data-bs-parent="#accordionExample"
+                              data-bs-parent="#accordionExample" 
                                >
                               <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style=" height: auto; max-height: 350px;">
                                 <ng-template>
@@ -298,7 +298,7 @@
                                       </div>
                                       <div formArrayName="role">
                                          <label >
-                                          <input type="checkbox" ng-reflect-name="0" id="selectAll" (change)="toggleSelectAll()" class="ng-untouched ng-pristine ng-valid"> Select all roles </label>
+                                          <input type="checkbox" ng-reflect-name="0" id="selectAll" [checked]="allSelected" (change)="toggleSelectAll()" class="ng-untouched ng-pristine ng-valid"> Select all roles </label>
                                         <div *ngFor="let role of userAddedRolesList; let i = index">
                                           <label>
                                             <input type="checkbox" [formControlName]="i" (change)="onCheckboxChange()" />
