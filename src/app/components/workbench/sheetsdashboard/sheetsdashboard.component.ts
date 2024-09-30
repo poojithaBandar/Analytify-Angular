@@ -44,6 +44,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
+import { series } from '../../charts/apexcharts/data';
 
 interface TableRow {
   [key: string]: any;
@@ -58,6 +59,7 @@ export type ChartOptions = {
   labels: string[];
   stroke: ApexStroke;
   title: ApexTitleSubtitle;
+  plotOptions: ApexPlotOptions;
 };
 type DashboardItem = GridsterItem & { 
   data?: { title: string, content: string }, 
@@ -659,6 +661,7 @@ export class SheetsdashboardComponent {
         this.sheetIdsDataSet = data.selected_sheet_ids;
         this.usersForUpdateDashboard = data.user_ids;
         this.rolesForUpdateDashboard = data.role_ids;
+        this.donutDecimalPlaces = data.donutDecimalPlaces;
         let self = this;
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
@@ -685,6 +688,14 @@ export class SheetsdashboardComponent {
           };
         }
           console.log('After sanitization:', sheet.data.sheetTagName);
+
+          if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
+            sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
+              return w.globals.seriesTotals.reduce((a:any, b:any) => {
+                return +a + b
+              }, 0).toFixed(this.donutDecimalPlaces);
+            };
+          }
         })
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
@@ -740,7 +751,8 @@ selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
       data:this.dashboard,
-      file_id : this.fileId
+      file_id : this.fileId,
+      donutDecimalPlaces : this.donutDecimalPlaces
     }as any;
     if(this.fromFileId){
       delete obj.server_id;
@@ -888,7 +900,8 @@ selected_sheet_ids :this.sheetIdsDataSet,
           sheetTabs : this.sheetTabs,
           file_id : this.fileId,
           user_ids:this.usersForUpdateDashboard,
-          role_ids:this.rolesForUpdateDashboard
+          role_ids:this.rolesForUpdateDashboard,
+          donutDecimalPlaces : this.donutDecimalPlaces
         }as any;
       } else {
         obj ={
@@ -1302,6 +1315,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.donutXaxis;
       let yaxis = sheet.sheet_data?.results?.donutYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.donutDecimalPlaces = sheet.sheet_data?.results?.decimalplaces;
       return this.donutChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 26){
@@ -1469,6 +1483,14 @@ allowDrop(ev : any): void {
       console.log('Before sanitization:', sheet.data.sheetTagName);
       this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
       console.log('After sanitization:', sheet.data.sheetTagName);
+
+      if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
+        sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
+          return w.globals.seriesTotals.reduce((a:any, b:any) => {
+            return +a + b
+          }, 0).toFixed(this.donutDecimalPlaces);
+        };
+      }
     });
      console.log('draggedDashboard',this.dashboard)
     }
@@ -1960,7 +1982,7 @@ barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
     return savedOptions;
   } else {
     savedOptions.series.data = yaxis;
-    savedOptions.xaxis.categories = xaxis;
+    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
     return savedOptions;
   }
 }
@@ -1971,7 +1993,7 @@ areaChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
   return savedOptions;
   } else {
     savedOptions.series.data = yaxis;
-    savedOptions.labels = xaxis;
+    savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
     return savedOptions;
   }
 }
@@ -1982,7 +2004,7 @@ lineChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
     return savedOptions;
   } else {
     savedOptions.series.data = yaxis;
-    savedOptions.xaxis.categories = xaxis;
+    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
     return savedOptions;
   }
 }
@@ -1996,7 +2018,7 @@ pieChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
     return savedOptions;
   } else {
   savedOptions.series = yaxis;
-  savedOptions.labels = xaxis;
+  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
   return savedOptions;
   }
 }
@@ -2010,7 +2032,7 @@ sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boole
     return savedOptions;
   } else {
   savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
+  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
   return savedOptions;
   }
 }
@@ -2036,7 +2058,7 @@ stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean)
     return savedOptions;
   } else {
   savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
+  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
   return savedOptions;
   }
 }
@@ -2068,7 +2090,7 @@ hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean
     return savedOptions;
   } else {
     savedOptions.series = yaxis;
-    savedOptions.xaxis.categories = xaxis;
+    savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
     return savedOptions;
   }
 }
@@ -2083,7 +2105,7 @@ hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
     return savedOptions;
   } else {
   savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
+  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
   return savedOptions;
   }
 }
@@ -2102,7 +2124,7 @@ donutChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
     return savedOptions;
   } else {
   savedOptions.series = yaxis;
-  savedOptions.labels = xaxis;
+  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
   return savedOptions;
   }
 }
@@ -3572,6 +3594,7 @@ updateGridsterOptions() {
 stopDragging(event: MouseEvent) {
   event.stopPropagation(); // Prevent the event from triggering dragging
 }
+donutDecimalPlaces:number = 2;
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

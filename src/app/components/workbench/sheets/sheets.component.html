@@ -1931,6 +1931,10 @@
                                                                 <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5" (ngModelChange)="changeSize()">
                                                             </div>
                                                         </div>
+                                                        <div *ngIf="donut" style="display: flex;">
+                                                            <label for="decimalInput">Decimal Places: </label>
+                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" (input)="updateDonut()" min="0" />
+                                                        </div>
                                                     </div>
 
                                                     <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
@@ -1965,7 +1969,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Chart Color </p>
                                                         </div>
@@ -2001,7 +2005,7 @@
                                                     <div *ngIf="funnel">
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <label for="sorting">Sort by:</label>
-                                                            <select id="sorting" (change)="sortFunnel($event)">
+                                                            <select id="sorting" (change)="sortSeries($event)">
                                                                 <option value="0" selected disabled>select</option>
                                                                 <option value="ascending">Ascending</option>
                                                                 <option value="descending">Descending</option>
@@ -2116,6 +2120,14 @@
                                                             <label for="maxValue">Enter Maximum Value:</label>
                                                             <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="guageChart()" />
                                                         </div>
+                                                    </div>
+                                                    <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <label for="sorting">Sort by:</label>
+                                                        <select id="sorting" (change)="sortSeries($event)">
+                                                            <option value="0" selected disabled>select</option>
+                                                            <option value="ascending">Ascending</option>
+                                                            <option value="descending">Descending</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
