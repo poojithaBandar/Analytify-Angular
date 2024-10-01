@@ -13,7 +13,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { of } from 'rxjs';
-import { data } from '../../charts/echarts/echarts';
+// import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';

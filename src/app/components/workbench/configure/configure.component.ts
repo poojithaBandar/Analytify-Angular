@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from "../../../shared/sharedmodule";
-import { data } from '../../charts/echarts/echarts';
+// import { data } from '../../charts/echarts/echarts';
 import Swal from 'sweetalert2';
 
 

@@ -144,14 +144,14 @@ export class DatabaseComponent {
       if(currentUrl.includes('/workbench/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
         this.fileId = +atob(route.snapshot.params['id1']);
         this.fromFileId = true;
-        this.qurtySetId = +atob(route.snapshot.params['id2']);
+        this.custumQuerySetid = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
         this.getTablesFromFileId();
       }
       if (currentUrl.includes('/workbench/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
-        this.qurtySetId = +atob(route.snapshot.params['id2']);
+        this.custumQuerySetid = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
         this.getSchemaTablesFromConnectedDb();
         }
@@ -1559,7 +1559,7 @@ updateCustmQuery(){
   }else{
   const obj ={
     database_id:this.databaseId,
-    queryset_id:this.qurtySetId,
+    queryset_id:this.custumQuerySetid,
     query_name:this.saveQueryName,
     custom_query:this.sqlQuery
   }as any

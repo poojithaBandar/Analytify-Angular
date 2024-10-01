@@ -19,7 +19,7 @@ import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, t
 import { WorkbenchService } from '../workbench.service';
 import { SharedModule } from '../../../shared/sharedmodule';
 import * as _ from 'lodash';
-import { chartOptions } from '../../../shared/data/dashboard';
+// import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
 import { debounceTime, fromEvent, map } from 'rxjs';
@@ -45,7 +45,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
 import { HttpClient } from '@angular/common/http';
-import { series } from '../../charts/apexcharts/data';
+// import { series } from '../../charts/apexcharts/data';
 
 interface TableRow {
   [key: string]: any;

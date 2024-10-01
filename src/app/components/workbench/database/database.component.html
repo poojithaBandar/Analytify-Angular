@@ -1,9 +1,9 @@
 <app-page-header title="Database" title1="home" activeitem="Database"></app-page-header>
 
-<div class="main-container container-fluid"> 
+<div class="main-container container-fluid">
 
     @if(tableJoiningUI){
-    <div class="row main-container" >
+    <div class="row main-container">
         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
             <div class="card p-4 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
@@ -21,113 +21,111 @@
             <div class="card mb-0 br-0 pt-2" style="height: 581px">
                 <div class="card mb-0 p-1 border-bottom-0">
                     <div class="input-group ">
-                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"  [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
-                        <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"
+                            [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
+                        <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()"
+                            class="btn input-group-text btn-primary tx-fixed-white border-start-0">
                             <i class="fe fe-search" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-            
+
                 <div class="card-body p-1">
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                      <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0" class="accordion-item">
-                        <h6 ngbAccordionHeader class="accordion-header" id="heading{{i}}">
-                          <button
-                            ngbAccordionButton
-                            class="accordion-button p-3 fw-500"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapse"
-                            aria-expanded="true"
-                            aria-controls="collapse"
-                            >
-                            {{ menu.schema }}
-                          </button>
-                        </h6>
-                        <div
-                          ngbAccordionCollapse
-                          id="collapse{{i}}"
-                          class="accordion-collapse collapse" 
-                          [class.show]="i === 0"
-                          aria-labelledby="heading"
-                          data-bs-parent="#accordionExample"
-                           >
-                          <div class="accordion-body p-2 overflow-scroll database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
-                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                        <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
+                            class="accordion-item">
+                            <h6 ngbAccordionHeader class="accordion-header" id="heading{{i}}">
+                                <button ngbAccordionButton class="accordion-button p-3 fw-500" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="true"
+                                    aria-controls="collapse">
+                                    {{ menu.schema }}
+                                </button>
+                            </h6>
+                            <div ngbAccordionCollapse id="collapse{{i}}" class="accordion-collapse collapse"
+                                [class.show]="i === 0" aria-labelledby="heading" data-bs-parent="#accordionExample">
+                                <div class="accordion-body p-2 overflow-scroll database-dropdown" ngbAccordionBody
+                                    style="    height: auto;max-height: 350px;">
+                                    <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                             </button> -->
-                            <ng-template>
-                              <div class="sub-menu" cdkDropList
-                                #originList="cdkDropList"
-                                [cdkDropListData]="menu.tables"
-                                [cdkDropListConnectedTo]="[destinationList]"
-                                (cdkDropListDropped)="drop($event)">
-                                <div *ngFor="let submenu of menu.tables" class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
-                                  <i class="fa fa-table" style="padding-right:10px;"></i>
-                                  <span ngbTooltip="{{submenu.table}}">{{ submenu.table | slice:0:20}}</span>
+                                    <ng-template>
+                                        <div class="sub-menu" cdkDropList #originList="cdkDropList"
+                                            [cdkDropListData]="menu.tables" [cdkDropListConnectedTo]="[destinationList]"
+                                            (cdkDropListDropped)="drop($event)">
+                                            <div *ngFor="let submenu of menu.tables"
+                                                class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
+                                                <i class="fa fa-table" style="padding-right:10px;"></i>
+                                                <span ngbTooltip="{{submenu.table}}">{{ submenu.table |
+                                                    slice:0:20}}</span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
                                 </div>
-                              </div>
-                            </ng-template>
-                          </div>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                  </div>
-                  
-              </div>
+                </div>
+
+            </div>
         </div>
         <div class="col-xl-10 col-md-12 p-1">
-                <div class="card-body p-0 ">
-                    <div class="col-xl-12 col-md-12 p-0">
-                        <div class="card mb-0 p-4 br-0" style="display: flex;flex-direction: row;">
-                            <div class="flex-grow-1 ">
-                                <input  type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title" aria-label="Sheet" class="form-control" >
-                            </div>
-                            <div class="right">
-                                @if(draggedtables.length){
-                                <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" (click)="openSuperScaled(applyFiltersModal);getFilteredList()" class="modal-effect btn btn-primary m-1">
-                                    <i class="fa fa-filter"></i> Apply Filters
-                                </a>
-                                }
-                                <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light m-1'" [previledgeId]="54"
-                                    [isBtn]="true" (btnClickEvent)="customSql=true;tableJoiningUI=false" [isIcon]="false"></app-insights-button>
-                                        <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [gotoSheetButton]="draggedtables.length === 0" [isBtn]="true" [isIcon]="false"
-                                        (btnClickEvent)="viewQuery(viewQueryModal)" [toolTip]="' View Query'" [imageUrl]="'./assets/images/icons/view-query.png'">
-                                        </app-insights-button>
-                                <!-- <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a> -->
-                            </div>
+            <div class="card-body p-0 ">
+                <div class="col-xl-12 col-md-12 p-0">
+                    <div class="card mb-0 p-4 br-0" style="display: flex;flex-direction: row;">
+                        <div class="flex-grow-1 ">
+                            <input type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title"
+                                aria-label="Sheet" class="form-control">
                         </div>
-                        <div class="d-flex">
+                        <div class="right">
+                            @if(draggedtables.length){
+                            <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
+                                (click)="openSuperScaled(applyFiltersModal);getFilteredList()"
+                                class="modal-effect btn btn-primary m-1">
+                                <i class="fa fa-filter"></i> Apply Filters
+                            </a>
+                            }
+                            <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light m-1'"
+                                [previledgeId]="54" [isBtn]="true" (btnClickEvent)="customSql=true;tableJoiningUI=false"
+                                [isIcon]="false"></app-insights-button>
+                            <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72"
+                                [gotoSheetButton]="draggedtables.length === 0" [isBtn]="true" [isIcon]="false"
+                                (btnClickEvent)="viewQuery(viewQueryModal)" [toolTip]="' View Query'"
+                                [imageUrl]="'./assets/images/icons/view-query.png'">
+                            </app-insights-button>
+                            <!-- <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a> -->
+                        </div>
+                    </div>
+                    <div class="d-flex">
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
-                           <div class="card card-body databse-T-H mb-0 br-0 p-0">
-                            <div class="card-body example-list-drop  mb-0"
-                            cdkDropList 
-                            #destinationList="cdkDropList" 
-                            [cdkDropListData]="draggedtables" 
-                           (cdkDropListDropped)="drop($event)">
-                           @for(item of draggedtables;track $index){
-                               <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
-                                   <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
+                            <div class="card card-body databse-T-H mb-0 br-0 p-0">
+                                <div class="card-body example-list-drop  mb-0" cdkDropList
+                                    #destinationList="cdkDropList" [cdkDropListData]="draggedtables"
+                                    (cdkDropListDropped)="drop($event)">
+                                    @for(item of draggedtables;track $index){
+                                    <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias |
+                                        slice:0:16}}({{item.schema | slice:0:12}})
+                                        <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
-                                    <a aria-label="anchor" (click)="onDeleteItem($index)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
-                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
-                        </a>
-                               </div>
-                               <!-- <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                        <a aria-label="anchor" (click)="onDeleteItem($index)"
+                                            class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                            <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
+                                        </a>
+                                    </div>
+                                    <!-- <a aria-label="anchor" (click)="deleteDbConnection(database.database_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                 <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                         </a> -->
-                               }
-                               @if(!draggedtables.length){
-                               <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
-                               }
-                           </div>
-                           </div>
+                                    }
+                                    @if(!draggedtables.length){
+                                    <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
+                                    }
+                                </div>
+                            </div>
                         </div>
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                             <div class="card databse-T-H mb-0 br-0">
-                            <div class="card-body overflow-scroll ">
-                                @if(relationOfTables.length){                                   
-                                    <ul class="tags"> 
+                                <div class="card-body overflow-scroll ">
+                                    @if(relationOfTables.length){
+                                    <ul class="tags">
                                         @for(relation of displayJoiningCndnsList;track relation;let i = $index){
                                         <!-- <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
                                             <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
@@ -136,44 +134,58 @@
                                             <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
                                         </li> -->
                                         <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
-                                            <span *ngIf="relation.type === 'full Outer'" ngbTooltip="Full Outer Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            <span *ngIf="relation.type === 'full Outer'" ngbTooltip="Full Outer Join"
+                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/full-outer.png"
+                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
                                             </span>
-                                            <span *ngIf="relation.type === 'Right'" ngbTooltip="Right Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/right-join.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            <span *ngIf="relation.type === 'Right'" ngbTooltip="Right Join"
+                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/right-join.png"
+                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
                                             </span>
-                                            <span *ngIf="relation.type === 'Left'" ngbTooltip="Left Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/left-join.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            <span *ngIf="relation.type === 'Left'" ngbTooltip="Left Join"
+                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/left-join.png"
+                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
                                             </span>
-                                            <span *ngIf="relation.type === 'inner'" ngbTooltip="Inner Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
+                                            <span *ngIf="relation.type === 'inner'" ngbTooltip="Inner Join"
+                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                <img src="./assets/images/charts/inner-join.png"
+                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
                                             </span>
-                                                 <span style="margin-top: 4px;">{{relation.condition}}</span>
-                                            <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a>
+                                            <span style="margin-top: 4px;">{{relation.condition}}</span>
+                                            <a class="tag-addon rounded-pill bg-white-transparent"
+                                                data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)"
+                                                aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a>
                                         </li>
                                         }
-                                    </ul>                            
-                                } 
+                                    </ul>
+                                    }
+                                </div>
                             </div>
                         </div>
-                        </div>
-                        </div>
                     </div>
+                </div>
 
-                    <div class="col-xl-12 col-md-12 p-1">
-                        <div class="card-body p-1 ">
-                            <div class="row p-1">
-                                <div [@toggle]="isOpen ? 'open' : 'closed'" class="table-joining-card p-0 col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                <div class="col-xl-12 col-md-12 p-1">
+                    <div class="card-body p-1 ">
+                        <div class="row p-1">
+                            <div [@toggle]="isOpen ? 'open' : 'closed'"
+                                class="table-joining-card p-0 col-xxl-6 col-xl-6 col-lg-6 col-md-6">
 
                                 <div class="">
                                     <div class="card br-0 joining-T-H br-0">
-                                        <div class="card-header d-flex align-items-center justify-content-between" style="padding: 21px;">
+                                        <div class="card-header d-flex align-items-center justify-content-between"
+                                            style="padding: 21px;">
                                             <h6 class="m-0">Table Custom Join</h6>
-                                            <i data-bs-toggle="tooltip" (click)="toggleCard()" ngbtooltip="fa fa-chevron-left" style="border: none;" class="fa fa-chevron-left chevron-left-icon "></i>
+                                            <i data-bs-toggle="tooltip" (click)="toggleCard()"
+                                                ngbtooltip="fa fa-chevron-left" style="border: none;"
+                                                class="fa fa-chevron-left chevron-left-icon "></i>
                                         </div>
-                                    
+
                                         <div class="card-body">
-                                                @if(isOpen){
+                                            @if(isOpen){
                                             <div class=" gap-1 d-flex flex-wrap p-2">
                                                 <!-- <ng-select [items]="dropdownOptions"
                                                        bindLabel="value"
@@ -197,52 +209,82 @@
                                             
                                             </ng-select> -->
                                                 <div ngbDropdown class="btn-group my-2 dropdown">
-                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false" class="dropdown-toggle btn btn-info-light"> {{(selectedClmnT1 ? selectedClmnT1:'Select Column') | slice:0:13}}</button>
+                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
+                                                        style="width: 124px;" aria-expanded="false"
+                                                        class="dropdown-toggle btn btn-info-light"> {{(selectedClmnT1 ?
+                                                        selectedClmnT1:'Select Column') | slice:0:13}}</button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         @for(table of draggedtables;track table){
-                                                            <li class="dropdown-plus-title">
-                                                                {{ table.schema }}.{{ table.alias }}  
-                                                             </li>
-                                                             @for(column of table.columns;track column){
+                                                        <li class="dropdown-plus-title">
+                                                            {{ table.schema }}.{{ table.alias }}
+                                                        </li>
+                                                        @for(column of table.columns;track column){
                                                         <li>
-                                                            <a ngbDropdownItem class="dropdown-item" (click)="selectedClmnT1 = column.column;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables(table)">{{ column.column }}</a>
-                                                        </li>    
-                                                    }
-                                                    }       
+                                                            <a ngbDropdownItem class="dropdown-item"
+                                                                (click)="selectedClmnT1 = column.column;getSelectedT1 = table.table;selectedAliasT1 = table.alias;selectedSchema1 = table.schema;updateRemainingTables(table)">{{
+                                                                column.column }}</a>
+                                                        </li>
+                                                        }
+                                                        }
                                                     </ul>
                                                 </div>
-                                                   <div ngbDropdown class="btn-group my-2 dropdown">
-                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 93px;" aria-expanded="false" class="dropdown-toggle btn btn-info-light">{{ selectedJoin ? selectedJoin : 'Condition' }}</button>
-                                                    <ul ngbDropdownMenu class="dropdown-menu" style="background-color: #ffffff;">
-                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'Left'" ngbDropdownItem >Left</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'Right'" ngbDropdownItem >Right</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'inner'" ngbDropdownItem >Inner</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'Self'" ngbDropdownItem >Self</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'full Outer'" ngbDropdownItem >Full Outer</a></li>         
+                                                <div ngbDropdown class="btn-group my-2 dropdown">
+                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
+                                                        style="width: 93px;" aria-expanded="false"
+                                                        class="dropdown-toggle btn btn-info-light">{{ selectedJoin ?
+                                                        selectedJoin : 'Condition' }}</button>
+                                                    <ul ngbDropdownMenu class="dropdown-menu"
+                                                        style="background-color: #ffffff;">
+                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'Left'"
+                                                                ngbDropdownItem>Left</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'Right'"
+                                                                ngbDropdownItem>Right</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'inner'"
+                                                                ngbDropdownItem>Inner</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedJoin = 'Self'"
+                                                                ngbDropdownItem>Self</a></li>
+                                                        <li><a class="dropdown-item"
+                                                                (click)="selectedJoin = 'full Outer'"
+                                                                ngbDropdownItem>Full Outer</a></li>
                                                     </ul>
                                                 </div>
-                                                   <div ngbDropdown class="btn-group my-2 dropdown">
-                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 93px;" aria-expanded="false" class="dropdown-toggle btn btn-info-light">{{ selectedCndn ? selectedCndn : 'Operator' }}</button>
-                                                    <ul ngbDropdownMenu class="dropdown-menu" style="background-color: #ffffff;">
-                                                        <li><a class="dropdown-item" (click)="selectedCndn = '='" ngbDropdownItem >Equals</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedCndn = '>'" ngbDropdownItem >Greater than</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedCndn = '<'" ngbDropdownItem >Less than</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedCndn = '>='" ngbDropdownItem >Greater than equals</a></li>
-                                                        <li><a class="dropdown-item" (click)="selectedCndn = '<='" ngbDropdownItem >Less than equals</a></li>         
+                                                <div ngbDropdown class="btn-group my-2 dropdown">
+                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
+                                                        style="width: 93px;" aria-expanded="false"
+                                                        class="dropdown-toggle btn btn-info-light">{{ selectedCndn ?
+                                                        selectedCndn : 'Operator' }}</button>
+                                                    <ul ngbDropdownMenu class="dropdown-menu"
+                                                        style="background-color: #ffffff;">
+                                                        <li><a class="dropdown-item" (click)="selectedCndn = '='"
+                                                                ngbDropdownItem>Equals</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedCndn = '>'"
+                                                                ngbDropdownItem>Greater than</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedCndn = '<'"
+                                                                ngbDropdownItem>Less than</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedCndn = '>='"
+                                                                ngbDropdownItem>Greater than equals</a></li>
+                                                        <li><a class="dropdown-item" (click)="selectedCndn = '<='"
+                                                                ngbDropdownItem>Less than equals</a></li>
                                                     </ul>
                                                 </div>
-                                                   <div ngbDropdown class="btn-group my-2 dropdown">
-                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" style="width: 124px;" aria-expanded="false"  [disabled]="!selectedClmnT1" class="dropdown-toggle btn btn-info-light">{{ (selectedClmnT2 ? selectedClmnT2 : 'Select Column') | slice:0:13 }}
+                                                <div ngbDropdown class="btn-group my-2 dropdown">
+                                                    <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
+                                                        style="width: 124px;" aria-expanded="false"
+                                                        [disabled]="!selectedClmnT1"
+                                                        class="dropdown-toggle btn btn-info-light">{{ (selectedClmnT2 ?
+                                                        selectedClmnT2 : 'Select Column') | slice:0:13 }}
                                                     </button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         @for(table of remainingTables;track table){
-                                                            <li class="dropdown-plus-title">
-                                                                {{ table.schema }}.{{ table.alias }}  
-                                                             </li>
-                                                             @for(column of table.columns;track column){
-                                                            <li><a class="dropdown-item" ngbDropdownItem (click)="selectedClmnT2= column.column;getSelectedT2 = table.table;selectedAliasT2 = table.alias;selectedSchema2 = table.schema" >{{ column.column }}</a></li>
-                                                             }
-                                                        }         
+                                                        <li class="dropdown-plus-title">
+                                                            {{ table.schema }}.{{ table.alias }}
+                                                        </li>
+                                                        @for(column of table.columns;track column){
+                                                        <li><a class="dropdown-item" ngbDropdownItem
+                                                                (click)="selectedClmnT2= column.column;getSelectedT2 = table.table;selectedAliasT2 = table.alias;selectedSchema2 = table.schema">{{
+                                                                column.column }}</a></li>
+                                                        }
+                                                        }
                                                     </ul>
                                                 </div>
                                                 <!-- <ng-select [items]="remainingDropdownOptions"
@@ -268,14 +310,16 @@
                                      </ng-select> -->
                                             </div>
                                             <div class="modal-footer" style="border-block-start:none">
-                                                <button class="btn btn-secondary" (click)="clearJoinCondns()" aria-expanded="false">
+                                                <button class="btn btn-secondary" (click)="clearJoinCondns()"
+                                                    aria-expanded="false">
                                                     clear
                                                 </button>
-                                                <button class="btn btn-primary" [disabled]="!selectedClmnT2" (click)="customTableJoin()" aria-expanded="false">
+                                                <button class="btn btn-primary" [disabled]="!selectedClmnT2"
+                                                    (click)="customTableJoin()" aria-expanded="false">
                                                     Join
-                                                </button>                       
-                                             </div>
-                                        }
+                                                </button>
+                                            </div>
+                                            }
 
 
 
@@ -305,67 +349,88 @@
                                                     </ul>                            
                                                 }
                                             </div> -->
-                                           
+
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
-                            <div class="p-0" [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
-                                <div class="card br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''" [class.expanded]="!isOpen">
-                                    <div class="card-header d-flex align-items-center" style="display: flex; justify-content: space-between;">
+                            <div class="p-0"
+                                [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
+                                <div class="card br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''"
+                                    [class.expanded]="!isOpen">
+                                    <div class="card-header d-flex align-items-center"
+                                        style="display: flex; justify-content: space-between;">
                                         <div class="d-flex">
-                                        @if(draggedtables.length > 1){
-                                        @if(!isOpen){
-                                        <i data-bs-toggle="tooltip" (click)="toggleCard()" ngbtooltip="fa fa-chevron-left" style="border: none;" class="fa fa-chevron-right chevron-right-icon p-2 ">
-                                            <button class="TextTransform"><h6>Table Custom Join</h6></button> 
-                                        </i>
-                                        }
-                                    }
-                                        <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
-                                        <p *ngIf="qurtySetId != 0" class="border mb-0 bg-light" style="line-height: 2;">Showing {{showingRows}} rows of {{totalRows}}</p>
+                                            @if(draggedtables.length > 1){
+                                            @if(!isOpen){
+                                            <i data-bs-toggle="tooltip" (click)="toggleCard()"
+                                                ngbtooltip="fa fa-chevron-left" style="border: none;"
+                                                class="fa fa-chevron-right chevron-right-icon p-2 ">
+                                                <button class="TextTransform">
+                                                    <h6>Table Custom Join</h6>
+                                                </button>
+                                            </i>
+                                            }
+                                            }
+                                            <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
+                                            <p *ngIf="qurtySetId != 0" class="border mb-0 bg-light"
+                                                style="line-height: 2;">Showing {{showingRows}} rows of {{totalRows}}
+                                            </p>
                                         </div>
                                         <div class="result-rows d-flex justify-content-end">
-                                           
+
                                             @if(TabledataJoining){
-                                                <input type="number" [(ngModel)]="rowLimit" id="input-text" style="border-radius: 4px 0px 0px 4px;" (keydown.enter)="getJoiningTableData()" placeholder="rows" class="form-control w-30"> 
-                                                <a  [class.disabled]="!rowLimit || rowLimit <= 0" [style.pointer-events]="!rowLimit || rowLimit <= 0 ? 'none' : 'auto'" (click)="getJoiningTableData()"><i class="mdi mdi-arrow-right-thick result-icon"></i></a>
-                                            <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary ms-2'" [previledgeId]="17" [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable"
+                                            <input type="number" [(ngModel)]="rowLimit" id="input-text"
+                                                style="border-radius: 4px 0px 0px 4px;"
+                                                (keydown.enter)="getJoiningTableData()" placeholder="rows"
+                                                class="form-control w-30">
+                                            <a [class.disabled]="!rowLimit || rowLimit <= 0"
+                                                [style.pointer-events]="!rowLimit || rowLimit <= 0 ? 'none' : 'auto'"
+                                                (click)="getJoiningTableData()"><i
+                                                    class="mdi mdi-arrow-right-thick result-icon"></i></a>
+                                            <app-insights-button [buttonName]="' Go to sheet '"
+                                                [classesList]="'btn btn-primary ms-2'" [previledgeId]="17"
+                                                [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable"
                                                 (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
                                             }
-                                    </div>
+                                        </div>
                                     </div>
                                     <div class="card-body d-flex align-items-center justify-content-center p-0">
                                         @if(TabledataJoining.length){
                                         <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                         }@else{
-                                         <div class="table-responsive" style="overflow-y: scroll;height: 233px;" [class.table-left]="draggedtables.length > 1 && !isOpen" [class.table-right]="draggedtables.length === 1 || (draggedtables.length > 1 && isOpen)">
-                                            <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                            <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
-                                                <tr>
-                                                    @for(data of TabledataJoining.column_data;track data){
-                                                    <th>{{data}}</th>
-                                                    }
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                                        <div class="table-responsive" style="overflow-y: scroll;height: 233px;"
+                                            [class.table-left]="draggedtables.length > 1 && !isOpen"
+                                            [class.table-right]="draggedtables.length === 1 || (draggedtables.length > 1 && isOpen)">
+                                            <table
+                                                class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                                <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
+                                                    <tr>
+                                                        @for(data of TabledataJoining.column_data;track data){
+                                                        <th>{{data}}</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
 
-                                                @for(rowss of TabledataJoining.row_data;track rowss;){
-                                                <tr>
-                                                    @for(rowdata of rowss;track rowdata;let i = $index){
-                                        
-                                                    <td>{{rowdata}}</td>
+                                                    @for(rowss of TabledataJoining.row_data;track rowss;){
+                                                    <tr>
+                                                        @for(rowdata of rowss;track rowdata;let i = $index){
+
+                                                        <td>{{rowdata}}</td>
+                                                        }
+                                                    </tr>
                                                     }
-                                                </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        }
                                     </div>
                                     <div class="modal-footer border-0">
                                         @if(qryTime){
-                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{qryTime}}s</span> Rows effected:{{qryRows}}</span>
+                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span
+                                                class="time">{{qryTime}}s</span> Rows effected:{{qryRows}}</span>
                                         }
                                         <!-- @if(qurtySetId && qurtySetId){
                                         <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'" [previledgeId]="17" [isBtn]="true"
@@ -374,312 +439,320 @@
                                     </div>
                                 </div>
                             </div>
-                            </div> 
                         </div>
-                  </div>  
-                </div>
-          </div>            
-        </div>
-    }
-        @if(customSql){
-        <div class="row main-container" >
-            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-                <div class="card  p-4 mb-0 br-0 border-bottom d-block">
-                    <div class="d-flex align-items-center justify-content-between ">
-                        <h6 class="mb-0">Connections</h6>
-                        <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                     </div>
-                    <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
                 </div>
-                <div class="card mb-0 p-4 br-0 border-bottom">
-                    <h6 class="mb-0">Database</h6>
-                    <p class="mb-0">{{databaseName}}</p>
+            </div>
+        </div>
+    </div>
+    }
+    @if(customSql){
+    <div class="row main-container">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+            <div class="card  p-4 mb-0 br-0 border-bottom d-block">
+                <div class="d-flex align-items-center justify-content-between ">
+                    <h6 class="mb-0">Connections</h6>
+                    <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
-                <div class="card mb-0  br-0" style="height: 504px;overflow-y: scroll;">
-                    <div class="sidebar">
-                        @for(menu of schematableList;track menu){
-                        <div  class="menu-item">
-                            
-                          <div class="menu-title" class=""  (click)="toggleSubMenu(menu)">
-                            <span class="arrow d-flex"> 
+                <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
+            </div>
+            <div class="card mb-0 p-4 br-0 border-bottom">
+                <h6 class="mb-0">Database</h6>
+                <p class="mb-0">{{databaseName}}</p>
+            </div>
+            <div class="card mb-0  br-0" style="height: 504px;overflow-y: scroll;">
+                <div class="sidebar">
+                    @for(menu of schematableList;track menu){
+                    <div class="menu-item">
+
+                        <div class="menu-title" class="" (click)="toggleSubMenu(menu)">
+                            <span class="arrow d-flex">
                                 @if(menu.expanded){
-                                    <i class="fa fa-chevron-down" style="font-size: 11px; color: #333335; margin-top: 7px !important;
+                                <i class="fa fa-chevron-down" style="font-size: 11px; color: #333335; margin-top: 7px !important;
                                     margin-right: 5px;"></i>
                                 }@else{
-                                    <i class="fa fa-chevron-right" style="font-size: 11px; color: #333335; margin-top: 7px !important;
+                                <i class="fa fa-chevron-right" style="font-size: 11px; color: #333335; margin-top: 7px !important;
                                     margin-right: 5px;"></i>
                                 }
                                 <h6>{{ menu.schema }}</h6>
                             </span>
-                            
-                          </div>
-                          @if(menu.expanded){
-                          <div class="sub-menu" >
-                            @for(submenu of menu?.tables;track submenu){
-                            <div  class="sub-menu-item example-box subMenuFlex" >
-                                <i class="fa fa-table" style="padding-right: 10px;"></i>   <span>{{ submenu.table }}</span>
-                            </div>
-                        }
-                          </div>
-                        }
-                        </div>
-                    }
-                      </div>
-                   
-                </div>
-            </div>
-            <div class="col-xl-10 col-md-12 p-1">
-                    <div class="card-body p-0 ">
-                        <div class="card mb-0" style="height: 250px;">
-                            <div class="card-header d-flex align-items-center justify-content-between">
-                                <div class="flex-grow-1">
-                                    <input  type="text" (change)="markDirty()"  placeholder="Title" [(ngModel)]="saveQueryName"  aria-label="Sheet" class="form-control" >
-                                    </div>                               
-                                     <div class="right">
-                                     <a *ngIf="!fromSavedQuery" class="btn btn-blue-light m-1" (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
-                                    <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal" (click)="openSuperScaled(applyFiltersModal);getFilteredList()" class="modal-effect btn btn-primary m-1">
-                                        <i class="fa fa-filter"></i> Apply Filters
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="card-body p-2">
-                                <!-- <h6 class="fs-12 mt-2 mb-0 drag-txt">Enter your query here</h6> -->
-                                <textarea class="query-text" [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here" style="outline: none;border: none;width: 100%;"></textarea>
 
+                        </div>
+                        @if(menu.expanded){
+                        <div class="sub-menu">
+                            @for(submenu of menu?.tables;track submenu){
+                            <div class="sub-menu-item example-box subMenuFlex">
+                                <i class="fa fa-table" style="padding-right: 10px;"></i> <span>{{ submenu.table
+                                    }}</span>
                             </div>
-                            <div class="modal-footer p-1 me-4 border-0">
-                                <!-- <app-insights-button *ngIf="!updateQuery" [buttonName]="' Save Query '" [classesList]="'btn btn-primary'"
+                            }
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+        <div class="col-xl-10 col-md-12 p-1">
+            <div class="card-body p-0 ">
+                <div class="card mb-0" style="height: 250px;">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="flex-grow-1">
+                            <input type="text" (change)="markDirty()" placeholder="Title" [(ngModel)]="saveQueryName"
+                                aria-label="Sheet" class="form-control">
+                        </div>
+                        <div class="right">
+                            <a *ngIf="!fromSavedQuery" class="btn btn-blue-light m-1"
+                                (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
+                            <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
+                                (click)="openSuperScaled(applyFiltersModal);getFilteredList()"
+                                class="modal-effect btn btn-primary m-1">
+                                <i class="fa fa-filter"></i> Apply Filters
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <!-- <h6 class="fs-12 mt-2 mb-0 drag-txt">Enter your query here</h6> -->
+                        <textarea class="query-text" [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here"
+                            style="outline: none;border: none;width: 100%;"></textarea>
+
+                    </div>
+                    <div class="modal-footer p-1 me-4 border-0">
+                        <!-- <app-insights-button *ngIf="!updateQuery" [buttonName]="' Save Query '" [classesList]="'btn btn-primary'"
                                     [previledgeId]="51" [isBtn]="true" (btnClickEvent)="saveQuery()" [isIcon]="false"></app-insights-button> -->
-                                <app-insights-button *ngIf="updateQuery" [buttonName]="' Update Query '" [classesList]="'btn btn-primary'"
-                                    [previledgeId]="52" [isBtn]="true" (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
-                                <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length" (click)="executeQuery()"> Run Query </button>
-                                <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query </button>
+                        <app-insights-button *ngIf="updateQuery" [buttonName]="' Update Query '"
+                            [classesList]="'btn btn-primary'" [previledgeId]="52" [isBtn]="true"
+                            (btnClickEvent)="updateCustmQuery()" [isIcon]="false"></app-insights-button>
+                        <button aria-expanded="false" class="btn btn-primary" [disabled]="!sqlQuery.length"
+                            (click)="executeQuery()"> Run Query </button>
+                        <button aria-expanded="false" class="btn btn-secondary" (click)="clrQuery()"> Clear Query
+                        </button>
+                    </div>
+                </div>
+                <div class="col-xl-12 col-md-12 p-0 mt-1">
+                    <div class="card mb-0" style="height: 349px;">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="d-flex">
+                                <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
+                                <p *ngIf="custmQryTime" class="border mb-0 bg-light" style="line-height: 2;">Showing
+                                    {{showingRowsCustomQuery}} rows of {{totalRowsCustomQuery}}</p>
+                            </div>
+                            <div class="result-rows d-flex justify-content-end">
+
+                                @if(custmQryTime){
+                                <input type="number" [(ngModel)]="rowLimit" id="input-text"
+                                    style="border-radius: 4px 0px 0px 4px;" (keydown.enter)="executeQuery()"
+                                    placeholder="rows" class="form-control w-30">
+                                <a (click)="executeQuery()"><i
+                                        class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
+                                <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'"
+                                    [previledgeId]="17" [isBtn]="true" (btnClickEvent)="goToSheet()"
+                                    [isIcon]="false"></app-insights-button>
+                                }
                             </div>
                         </div>
-                        <div class="col-xl-12 col-md-12 p-0 mt-1">
-                            <div class="card mb-0" style="height: 349px;">
-                                <div class="card-header d-flex align-items-center justify-content-between">
-                                    <div class="d-flex">
-                                    <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
-                                    <p *ngIf="custmQryTime" class="border mb-0 bg-light" style="line-height: 2;">Showing {{showingRowsCustomQuery}} rows of {{totalRowsCustomQuery}}</p>
-                                </div>
-                                <div class="result-rows d-flex justify-content-end">
-                                           
-                                    @if(custmQryTime){
-                                        <input type="number" [(ngModel)]="rowLimit" id="input-text" style="border-radius: 4px 0px 0px 4px;" (keydown.enter)="executeQuery()" placeholder="rows" class="form-control w-30"> 
-                                        <a (click)="executeQuery()"><i class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
-                                        <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'" [previledgeId]="17" [isBtn]="true"
-                                        (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
-                                    }
+                        <div class="card-body d-flex align-items-center justify-content-center p-0">
+
+                            <div *ngIf="cutmquryTable" class="table-responsive"
+                                style="overflow-y: scroll;height: 233px;">
+                                <table
+                                    class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
+                                    <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
+                                        <tr>
+                                            @for(data of cutmquryTable.column_data;track data){
+                                            <th>{{data}}</th>
+                                            }
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        @for(rowss of cutmquryTable.row_data;track rowss;){
+                                        <tr>
+                                            @for(rowdata of rowss;track rowdata;let i = $index){
+
+                                            <td>{{rowdata}}</td>
+                                            }
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
-                                </div>
-                                <div class="card-body d-flex align-items-center justify-content-center p-0">
-                        
-                                        <div *ngIf="cutmquryTable" class="table-responsive" style="overflow-y: scroll;height: 233px;">
-                                            <table class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                                <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
-                                                    <tr>
-                                                        @for(data of cutmquryTable.column_data;track data){
-                                                        <th>{{data}}</th>
-                                                        }
-                                                    </tr>
-                                            
-                                                </thead>
-                                                <tbody>
-                                                    @for(rowss of cutmquryTable.row_data;track rowss;){
-                                                    <tr>
-                                                        @for(rowdata of rowss;track rowdata;let i = $index){
-                                            
-                                                        <td>{{rowdata}}</td>
-                                                        }
-                                                    </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    <!-- } -->
-                                </div>
-                                <div class="modal-footer border-0">
-                                    @if(custmQryTime){
-                                        <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span class="time">{{custmQryTime}} </span>,Rows effected:{{custmQryRows}}</span>
-                                    }
-                                    <!-- @if(qurtySetId && qurtySetId){
+                            <!-- } -->
+                        </div>
+                        <div class="modal-footer border-0">
+                            @if(custmQryTime){
+                            <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span
+                                    class="time">{{custmQryTime}} </span>,Rows effected:{{custmQryRows}}</span>
+                            }
+                            <!-- @if(qurtySetId && qurtySetId){
                                         <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'" [previledgeId]="17" [isBtn]="true"
                                                 (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
                                     } -->
-                                </div>
-                            </div>
+                        </div>
                     </div>
-              </div>            
+                </div>
             </div>
+        </div>
     </div>
-        }
+    }
 
 
     <ng-template #content let-modal>
         <!-- table column filter -->
         @if(tableColumnFilter){
         <div class="modal-header">
-          <h6 class="modal-title">Filters  (select Column)</h6>
-          <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
-          </button>
+            <h6 class="modal-title">Filters (select Column)</h6>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            </button>
         </div>
         <div class="modal-body p-0">
             <div class="input-group">
                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="columnSearch"
                     (keyup.enter)="callColumnWithTable()" aria-describedby="button-addon2">
-                <button class="btn btn-primary border me-2" (click)="callColumnWithTable()" type="button" id="button-addon2"
-                    style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                <button class="btn btn-primary border me-2" (click)="callColumnWithTable()" type="button"
+                    id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             </div>
             <div class="table-responsive" style="max-height: 210px;">
-                <table class="table table-bordered text-nowrap mb-0 custom-table" >
+                <table class="table table-bordered text-nowrap mb-0 custom-table">
                     @if(columnWithTablesData?.length){
                     <tbody>
                         @for(column of columnWithTablesData;track column){
-                         <tr class="border-bottom user-list" >
-                            <td (click)="selectedColumnGetRows(column.column,column.data_type)" style="cursor: pointer;">{{ column.column }} ({{column.data_type}}) </td>
-                         </tr>
-                        }             
+                        <tr class="border-bottom user-list">
+                            <td (click)="selectedColumnGetRows(column.column,column.data_type)"
+                                style="cursor: pointer;">{{ column.column }} ({{column.data_type}}) </td>
+                        </tr>
+                        }
                     </tbody>
-                }@else{
+                    }@else{
                     <h6>No data in selected column</h6>
-                }
+                    }
                 </table>
             </div>
         </div>
 
-       
+
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn ripple btn-secondary"
-            (click)="columnSearch = '';modal.close('Save click')"
-          >
-            Close
-          </button>
+            <button type="button" class="btn ripple btn-secondary"
+                (click)="columnSearch = '';modal.close('Save click')">
+                Close
+            </button>
         </div>
-    }
-     <!-- column Data filter -->
-    @if(columnRowFilter){
-            <div class="modal-header">
-                <h6 class="modal-title">Filters</h6>
-                <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
-                </button>
-              </div>
-              <div class="modal-body p-0" >
-                <div class="input-group">
-                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="columnDataSearch"
-                        (keyup.enter)="seachColumnDataFilter()" aria-describedby="button-addon2">
-                    <button class="btn btn-primary border me-2" (click)="seachColumnDataFilter()" type="button" id="button-addon2"
-                        style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                </div>
-                <div class="table-responsive" style="max-height: 210px;">
-                    <table class="table table-bordered text-nowrap mb-0 custom-table" >
-                        @if(columnsInFilters?.length){
-                        <tbody>
-                            <tr>
-                                <td>
+        }
+        <!-- column Data filter -->
+        @if(columnRowFilter){
+        <div class="modal-header">
+            <h6 class="modal-title">Filters</h6>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            </button>
+        </div>
+        <div class="modal-body p-0">
+            <div class="input-group">
+                <input type="text" class="form-control border-end-0 " placeholder="Search"
+                    [(ngModel)]="columnDataSearch" (keyup.enter)="seachColumnDataFilter()"
+                    aria-describedby="button-addon2">
+                <button class="btn btn-primary border me-2" (click)="seachColumnDataFilter()" type="button"
+                    id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+            </div>
+            <div class="table-responsive" style="max-height: 210px;">
+                <table class="table table-bordered text-nowrap mb-0 custom-table">
+                    @if(columnsInFilters?.length){
+                    <tbody>
+                        <tr>
+                            <td>
                                 <div class="form-check">
-                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
+                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected"
+                                        (change)="toggleAllRows($event)" class="form-check-input">
                                 </div>
-                                </td>
-                                <td>
-                                    <label for="selectAll" class="form-check-label">Select All</label>
-                                </td>
-                               </tr>
-                            @for(rows of columnsInFilters;track rows;let i = $index){
-                             <tr class="border-bottom user-list" >
-                                <td style="width: 46px;">
-                                    <div class="form-check">
-                                        <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected"(change)="updateSelectedRows()" class="form-check-input">    
-                                    </div>
-                                </td>
-                                <td>
-                                    <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{ rows.label }} </label>                                </td>
-                             </tr>
-                            }             
-                        </tbody>
+                            </td>
+                            <td>
+                                <label for="selectAll" class="form-check-label">Select All</label>
+                            </td>
+                        </tr>
+                        @for(rows of columnsInFilters;track rows;let i = $index){
+                        <tr class="border-bottom user-list">
+                            <td style="width: 46px;">
+                                <div class="form-check">
+                                    <input type="checkbox" [id]="'defaultCheck' + i" name="rows{{i}}"
+                                        [(ngModel)]="rows.selected" (change)="updateSelectedRows()"
+                                        class="form-check-input">
+                                </div>
+                            </td>
+                            <td>
+                                <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{
+                                    rows.label }} </label>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
                     }@else{
-                        <h6>No data in selected column</h6>
+                    <h6>No data in selected column</h6>
                     }
-                    </table>
-                </div>
+                </table>
+            </div>
 
-              </div>
-              
-              <div class="modal-footer">
-                <button type="button" (click)="getSelectedRows()" [disabled]="!isAnyRowSelected()" class="btn ripple btn-primary">Filter Data</button>
-                <button
-                  type="button"
-                  class="btn ripple btn-secondary"
-                  (click)="modal.close('Save click')"
-                >
-                  Close
-                </button>
         </div>
-    }
-      </ng-template>
+
+        <div class="modal-footer">
+            <button type="button" (click)="getSelectedRows()" [disabled]="!isAnyRowSelected()"
+                class="btn ripple btn-primary">Filter Data</button>
+            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                Close
+            </button>
+        </div>
+        }
+    </ng-template>
 
 
 
-      <ng-template #applyFiltersModal let-modal>
+    <ng-template #applyFiltersModal let-modal>
         <div class="modal-header p-2">
-          <h6 class="modal-title">Filters</h6>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            (click)="modal.dismiss('Cross click')"
-          >
-          </button>
+            <h6 class="modal-title">Filters</h6>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            </button>
         </div>
         <div class="modal-body p-0">
             <div class="table-responsive" style="max-height: 210px;">
-                <table class="table table-bordered text-nowrap mb-0 custom-table" >
+                <table class="table table-bordered text-nowrap mb-0 custom-table">
                     <tbody>
                         @for(data of filteredList;track data){
-                         <tr class="border-bottom user-list" >
+                        <tr class="border-bottom user-list">
                             <td>{{data.column_name }} </td>
-                             <td>
-                                 <div class="hstack justify-content-center fs-1">
-                                     <a aria-label="anchor" (click)="editFilter(data.filter_id);openSuperScaled(editFilters)"
-                                         class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
-                                         <i class="ri-edit-line"></i></a>
-                                         <a aria-label="anchor" (click)="deleteFilter(data.filter_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light" style="margin-left: 4px;" >
-                                             <i class="ri-delete-bin-7-line"></i>
-                                     </a>
-                                 </div>
-                             </td>
-                         </tr>
-                        }             
+                            <td>
+                                <div class="hstack justify-content-center fs-1">
+                                    <a aria-label="anchor"
+                                        (click)="editFilter(data.filter_id);openSuperScaled(editFilters)"
+                                        class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                                        <i class="ri-edit-line"></i></a>
+                                    <a aria-label="anchor" (click)="deleteFilter(data.filter_id)"
+                                        class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light"
+                                        style="margin-left: 4px;">
+                                        <i class="ri-delete-bin-7-line"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        }
                     </tbody>
                 </table>
             </div>
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn ripple btn-primary" (click)="openSuperScaledGetColunmns(content)">Add</button>
-          <button
-            type="button"
-            class="btn ripple btn-secondary"
-            (click)="modal.close('Save click')"
-          >
-            Close
-          </button>
+            <button type="button" class="btn ripple btn-primary"
+                (click)="openSuperScaledGetColunmns(content)">Add</button>
+            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                Close
+            </button>
         </div>
-      </ng-template>
+    </ng-template>
 
-      <ng-template #editFilters let-modal>
+    <ng-template #editFilters let-modal>
         <div class="modal-header">
-          <h6 class="modal-title">Edit Filters</h6>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            (click)="modal.dismiss('Cross click')"
-          >
-          </button>
+            <h6 class="modal-title">Edit Filters</h6>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            </button>
         </div>
         <div class="modal-body p-0">
             <!-- @for(rows of editFilterList;track rows;let i = $index){
@@ -687,76 +760,77 @@
                     <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" class="form-check-input">    <label for="defaultCheck1" class="form-check-label"> {{ rows.label }} </label>
                 </div>
               }  -->
-              <div class="input-group">
-                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="columnDataSearch"
-                    (keyup.enter)="editFilter(editFilterId)" aria-describedby="button-addon2">
-                <button class="btn btn-primary border me-2" (click)="editFilter(editFilterId)" type="button" id="button-addon2"
-                    style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+            <div class="input-group">
+                <input type="text" class="form-control border-end-0 " placeholder="Search"
+                    [(ngModel)]="columnDataSearch" (keyup.enter)="editFilter(editFilterId)"
+                    aria-describedby="button-addon2">
+                <button class="btn btn-primary border me-2" (click)="editFilter(editFilterId)" type="button"
+                    id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             </div>
-              <div class="table-responsive" style="max-height: 210px;">
-                <table class="table table-bordered text-nowrap mb-0 custom-table" >
+            <div class="table-responsive" style="max-height: 210px;">
+                <table class="table table-bordered text-nowrap mb-0 custom-table">
                     <tbody>
-                       <tr>
-                        <td>
-                        <div class="form-check">
-                            <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                        </div>
-                        </td>
-                        <td>
-                            <label for="selectAll" class="form-check-label">Select All</label>
-                        </td>
-                       </tr>
-                        @for(rows of editFilterList;track rows;let i = $index){
-                         <tr class="border-bottom user-list" >
-                           
-                            <td style="width: 46px;">
+                        <tr>
+                            <td>
                                 <div class="form-check">
-                                    <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateEditSelectedRows()" class="form-check-input">    
+                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected"
+                                        (change)="toggleEditAllRows($event)" class="form-check-input">
                                 </div>
                             </td>
                             <td>
-                                <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{ rows.label }} </label>
+                                <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
-                         </tr>
-                        }             
+                        </tr>
+                        @for(rows of editFilterList;track rows;let i = $index){
+                        <tr class="border-bottom user-list">
+
+                            <td style="width: 46px;">
+                                <div class="form-check">
+                                    <input type="checkbox" [id]="'defaultCheck' + i" name="rows{{i}}"
+                                        [(ngModel)]="rows.selected" (change)="updateEditSelectedRows()"
+                                        class="form-check-input">
+                                </div>
+                            </td>
+                            <td>
+                                <label for="defaultCheck1" [for]="'defaultCheck' + i" class="form-check-label"> {{
+                                    rows.label }} </label>
+                            </td>
+                        </tr>
+                        }
                     </tbody>
                 </table>
             </div>
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn ripple btn-primary" [disabled]="!isAnyEditRowSelected()" (click)="getSelectedRowsFromEdit()">Apply</button>
-          <button
-            type="button"
-            class="btn ripple btn-secondary"
-            (click)="columnDataSearch = '';
-            this.columnSearch = '';modal.close('Save click')"
-          >
-            Close
-          </button>
+            <button type="button" class="btn ripple btn-primary" [disabled]="!isAnyEditRowSelected()"
+                (click)="getSelectedRowsFromEdit()">Apply</button>
+            <button type="button" class="btn ripple btn-secondary" (click)="columnDataSearch = '';
+            this.columnSearch = '';modal.close('Save click')">
+                Close
+            </button>
         </div>
-      </ng-template>
-      <ng-template #viewQueryModal let-modal>
+    </ng-template>
+    <ng-template #viewQueryModal let-modal>
         <div id="largemodal" tabindex="-1" role="dialog">
             <div class=" modal-lg " role="document">
-        <div class="modal-header">
-            <h6 class="modal-title">Query</h6>
-        </div>
-        <div class="modal-body viewQuery-hgt">
-            
-            <div class="form-group select2-sm">
-               <p>{{queryBuilt}}</p>
+                <div class="modal-header">
+                    <h6 class="modal-title">Query</h6>
+                </div>
+                <div class="modal-body viewQuery-hgt">
+
+                    <div class="form-group select2-sm">
+                        <p>{{queryBuilt}}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                        close
+                    </button>
+                    <button type="button" class="btn ripple btn-primary"
+                        (click)="copyQuery(); modal.close('Save click')">Copy <i class="fa fa-copy"></i></button>
+                </div>
             </div>
         </div>
-        <div class="modal-footer">
-                        
-            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
-                close
-            </button>
-            <button type="button" class="btn ripple btn-primary" (click)="copyQuery(); modal.close('Save click')">Copy <i class="fa fa-copy"></i></button>
-        </div>
-    </div>
-    </div>
     </ng-template>
-
-   

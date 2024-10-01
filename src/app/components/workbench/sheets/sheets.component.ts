@@ -36,7 +36,7 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options } from '@angular-slider/ngx-slider';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
-import { series } from '../../charts/apexcharts/data';
+// import { series } from '../../charts/apexcharts/data';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { HttpClient } from '@angular/common/http';

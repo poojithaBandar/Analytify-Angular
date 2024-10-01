@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/sharedmodule';
-import { PagesService } from '../pages/pages.service';
+// import { PagesService } from '../pages/pages.service';
 import { authGuard } from '../../auth.guard';
 import { canDeactivateGuard } from '../../can-deactivate.guard';
 
