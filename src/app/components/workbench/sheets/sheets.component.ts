@@ -584,7 +584,7 @@ if(this.fromFileId){
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 12,
               },
-              // formatter: this.formatNumber.bind(this)
+              formatter: this.formatNumber.bind(this)
             },
             axisBorder: {
               show: false,
@@ -883,6 +883,9 @@ if(this.fromFileId){
                 fontSize: '12px',
                 colors: [this.color],
               },
+              background: {
+                enabled: false,
+              }
             },
             stroke: {
               curve: 'straight',
@@ -1085,6 +1088,9 @@ if(this.fromFileId){
                 fontSize: '12px',
                 colors: [this.color],
               },
+              background: {
+                enabled: false,
+              }
             },
             stroke: {
               curve: "straight",
@@ -1288,6 +1294,9 @@ if(this.fromFileId){
             bar: {
               horizontal: false,
               columnWidth: '55%',
+              dataLabels: {
+                position: 'top',
+              }
             },
           },
           dataLabels: {
@@ -1296,7 +1305,7 @@ if(this.fromFileId){
             offsetY: -20,
             style: {
               fontSize: '12px',
-              colors: ['#f43f63'],
+              colors: [this.color],
             },
           },
           stroke: {
@@ -1497,7 +1506,10 @@ bar["type"]="bar";
           ],
           plotOptions: {
             bar: {
-              horizontal: false
+              horizontal: false,
+              dataLabels: {
+                position: 'top',
+              }
             }
           },
           xaxis: {
@@ -1678,7 +1690,7 @@ bar["stack"]="total";
                 }
               }]
             },
-            colors: ['#00a5a2', '#31d1ce'],
+            // colors: ['#00a5a2', '#31d1ce'],
             chart: {
               toolbar: {
                 show: true,
@@ -1728,8 +1740,11 @@ bar["stack"]="total";
               offsetY: -20,
               style: {
                 fontSize: '12px',
-                colors: [this.color],
+                // colors: [this.color],
               },
+              background: {
+                enabled: false,
+              }
             },
             labels: categories,
             xaxis: {
@@ -1789,7 +1804,14 @@ bar["stack"]="total";
                   formatter: this.formatNumber.bind(this)
                 }
               }
-            ]
+            ],
+            plotOptions: {
+              bar: {
+                dataLabels: {
+                  position: 'top',
+                }
+              }
+            }
 
           };
       } else {
@@ -1969,7 +1991,10 @@ bar["stack"]="total";
           ],
           plotOptions: {
             bar: {
-              horizontal: true
+              horizontal: true,
+              dataLabels: {
+                position: 'top',
+              }
             }
           },
           xaxis: {
@@ -2139,7 +2164,7 @@ bar["stack"]="total";
             offsetY: -6,
             style: {
               fontSize: '12px',
-              colors: ["#fff"],
+              colors: [this.color],
             },
           },
           stroke: {
@@ -2318,8 +2343,11 @@ bar["stack"]="total";
             offsetY: -20,
             style: {
               fontSize: '12px',
-              colors: [this.color],
+              // colors: [this.color],
             },
+            background: {
+              enabled: false,
+            }
           },
           stroke: {
             width: 5,
@@ -3308,6 +3336,7 @@ bar["stack"]="Total";
     dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz'];
     integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double'];
     boolList = ['bool', 'boolean'];
+    stringList = ['varchar','bp char','text','varchar2','NVchar2','char','Nchar','character varying'];
     rowdrop(event: CdkDragDrop<string[]>){
       console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -3749,6 +3778,10 @@ bar["stack"]="Total";
       this.yGridSwitch = false;
       this.color1 = undefined;
       this.color2 = undefined;
+      this.displayUnits = 'none';
+      this.suffix = '';
+      this.prefix = '';
+      this.tableSearch = '';
    // }
   }
   saveTableData = [] as any;
@@ -4092,7 +4125,13 @@ const obj={
   "isApexChart" : this.isApexCharts,
   "isEChart" : this.isEChatrts,
   "savedChartOptions" : savedChartOptions,
-  "customizeOptions" : customizeObject
+  "customizeOptions" : customizeObject,
+  "numberFormat" : {
+    "decimalPlaces" : this.decimalPlaces,
+    "displayUnits" : this.displayUnits,
+    "prefix" : this.prefix,
+    "suffix" : this.suffix
+  }
 }
 }as any;
 if(this.fromFileId){
@@ -4228,6 +4267,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id || responce.sheet_filter_quereyset_ids;
         this.tablePaginationCustomQuery = responce.custom_query;
         this.donutDecimalPlaces = this.sheetResponce.results.decimalplaces;
+        if(this.sheetResponce?.numberFormat?.decimalPlaces){ 
+          this.decimalPlaces = this.sheetResponce?.numberFormat?.decimalPlaces;
+        }
+        if(this.sheetResponce?.numberFormat?.displayUnits){
+          this.displayUnits = this.sheetResponce?.numberFormat?.displayUnits;
+        }
+        if(this.sheetResponce?.numberFormat?.prefix){
+          this.prefix = this.sheetResponce?.numberFormat?.prefix;
+        }
+        if(this.sheetResponce?.numberFormat?.suffix){
+          this.suffix = this.sheetResponce?.numberFormat?.suffix;
+        }
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
         responce.filters_data.forEach((filter: any)=>{
@@ -4255,7 +4306,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.sheetTagName = responce.sheet_tag_name;
         }
         this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
-        this.displayUnits = 'none';
+        // this.displayUnits = 'none';
         
         if(this.sheetResponce.column_data){
           this.draggedColumnsData = this.sheetResponce.column_data;
@@ -4387,6 +4438,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartOptions3.xaxis.convertedCatToNumeric = true;
         this.barchart?.updateOptions(this.chartOptions3);
         this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
+        this.chartOptions3.yaxis.labels.formatter = this.formatNumber.bind(this);
         this.chartOptions3.chart.events = {
           dataPointSelection: function (event: any, chartContext: any, config: any) {
             const selectedXValue = self.chartOptions3.xaxis.categories[config.dataPointIndex];
@@ -7455,5 +7507,259 @@ fetchChartData(chartData: any){
 
       updateDonut(){
         this.donutchart.updateOptions(this.chartOptions10);
+      }
+
+      dataLabelsFontFamily(event:any){
+        let font = event.target.value;
+        let object = {};
+        if(this.bar){
+          this.chartOptions3.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions3;
+        }
+        else if(this.area){
+          this.chartOptions1.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions1;
+        }
+        else if(this.line){
+          this.chartOptions.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions;
+        }
+        else if(this.sidebyside){
+          this.chartOptions2.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions2;
+        }
+        else if(this.stocked){
+          this.chartOptions6.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions6;
+        }
+        else if(this.barLine){
+          this.chartOptions5.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions5;
+        }
+        else if(this.horizentalStocked){
+          this.chartOptions7.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions7;
+        }
+        else if(this.grouped){
+          this.chartOptions8.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions8;
+        }
+        else if(this.multiLine){
+          this.chartOptions9.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions9;
+        }
+        this.updateChart(object);
+      }
+
+      dataLabelsFontSize(event:any){
+        let font = event.target.value;
+        let object = {};
+        if(this.bar){
+          this.chartOptions3.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions3;
+        }
+        else if(this.area){
+          this.chartOptions1.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions1;
+        }
+        else if(this.line){
+          this.chartOptions.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions;
+        }
+        else if(this.sidebyside){
+          this.chartOptions2.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions2;
+        }
+        else if(this.stocked){
+          this.chartOptions6.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions6;
+        }
+        else if(this.barLine){
+          this.chartOptions5.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions5;
+        }
+        else if(this.horizentalStocked){
+          this.chartOptions7.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions7;
+        }
+        else if(this.grouped){
+          this.chartOptions8.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions8;
+        }
+        else if(this.multiLine){
+          this.chartOptions9.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions9;
+        }
+        this.updateChart(object);
+      }
+      isBold:boolean = false;
+      isItalic:boolean = false;
+      isUnderline:boolean = false;
+
+      dataLabelsFontStyle(fontStyle:any){
+        let font;
+        let object;
+        if(fontStyle === 'B'){
+          this.isBold = !this.isBold;
+          font = 'bold'
+          if(this.bar){
+            this.chartOptions3.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions3;
+          }
+          else if(this.area){
+            this.chartOptions1.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions1;
+          }
+          else if(this.line){
+            this.chartOptions.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions;
+          }
+          else if(this.sidebyside){
+            this.chartOptions2.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions2;
+          }
+          else if(this.stocked){
+            this.chartOptions6.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions6;
+          }
+          else if(this.barLine){
+            this.chartOptions5.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions5;
+          }
+          else if(this.horizentalStocked){
+            this.chartOptions7.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions7;
+          }
+          else if(this.grouped){
+            this.chartOptions8.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions8;
+          }
+          else if(this.multiLine){
+            this.chartOptions9.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions9;
+          }
+          this.updateChart(object);
+        }
+        else if(fontStyle === 'I'){
+          this.isItalic = !this.isItalic;
+        }
+        else if(fontStyle === 'U'){
+          this.isUnderline = !this.isUnderline;
+        }
+      }
+      selectedElement!: HTMLElement;
+      dataLabelsFontColor(event:any){
+        if (this.selectedElement) {
+          this.selectedElement.style.border = 'none';
+        }
+        const element = event.target as HTMLElement;
+        this.selectedElement = event.target as HTMLElement;
+        const color = window.getComputedStyle(element).backgroundColor;
+        let object;
+        if(this.bar){
+          this.chartOptions3.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions3;
+        }
+        else if(this.area){
+          this.chartOptions1.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions1;
+        }
+        else if(this.line){
+          this.chartOptions.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions;
+        }
+        else if(this.sidebyside){
+          this.chartOptions2.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions2;
+        }
+        else if(this.stocked){
+          this.chartOptions6.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions6;
+        }
+        else if(this.barLine){
+          this.chartOptions5.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions5;
+        }
+        else if(this.horizentalStocked){
+          this.chartOptions7.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions7;
+        }
+        else if(this.grouped){
+          this.chartOptions8.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions8;
+        }
+        else if(this.multiLine){
+          this.chartOptions9.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions9;
+        }
+        element.style.border = `1px solid black`;
+        this.selectedElement = element;
+        this.updateChart(object);
+      }
+
+      dataLabelsFontPosition(event:any){
+        let position = event.target.value;
+        let object: any;
+        if(this.bar){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions3.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.sidebyside){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions2.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.stocked){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions6.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.barLine){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions5.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.horizentalStocked){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions7.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.grouped){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions8.plotOptions.bar.dataLabels.position = position;
+        }
+        this.updateChart(object);
       }
 }

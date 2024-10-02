@@ -668,7 +668,7 @@ export class SheetsdashboardComponent {
         this.sheetIdsDataSet = data.selected_sheet_ids;
         this.usersForUpdateDashboard = data.user_ids;
         this.rolesForUpdateDashboard = data.role_ids;
-        this.donutDecimalPlaces = data.donutDecimalPlaces;
+        this.donutDecimalPlaces = data?.donutDecimalPlaces;
         let self = this;
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
@@ -3052,6 +3052,23 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       ...item1.echartOptions,
     };
 
+      if(item.chart_id == '27'){//funnel
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+      if(item.chart_id == '26'){//heatmap
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(!item1.originalData){
+          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+        }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
       }
 
           // this.initializeChart(item1);
@@ -3060,7 +3077,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       console.log('filtered dashboard-data',item1)
     }
-  })
+}})
 }
 
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {

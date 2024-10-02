@@ -156,14 +156,18 @@ export class SidebarComponent{
   getSanitizedSVG(svgContent: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(svgContent);
   } 
+previousNav:any;
 //Active Nav State
 setNavActive(item: any) {
-  this.loaderService.show();
+  if(this.previousNav && this.previousNav !== item.title){
+    this.loaderService.show();
+  }
   console.log('item',item)
   this.menuItems?.filter((menuItem) => {
     if (menuItem !== item) {
       menuItem.active = false;
       this.navServices.collapseSidebar = false;
+      this.previousNav = item.title;
     }
     if (menuItem.children && menuItem.children.includes(item)) {
       menuItem.active = true;

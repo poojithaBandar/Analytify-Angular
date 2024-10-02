@@ -542,10 +542,10 @@
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
@@ -874,8 +874,10 @@
                       [plotOptions]="chartOptions6.plotOptions"
                       [responsive]="chartOptions6.responsive"
                       [xaxis]="chartOptions6.xaxis"
+                      [yaxis]="chartOptions6.yaxis"
                       [legend]="chartOptions6.legend"
                       [fill]="chartOptions6.fill"
+                      [grid]="chartOptions6.grid"
                     ></apx-chart>
                   </div>
               }
@@ -900,6 +902,8 @@
                       [plotOptions]="chartOptions7.plotOptions"
                       [responsive]="chartOptions7.responsive"
                       [xaxis]="chartOptions7.xaxis"
+                      [yaxis]="chartOptions7.yaxis"
+                      [grid]="chartOptions7.grid"
                       [legend]="chartOptions7.legend"
                       [fill]="chartOptions7.fill"
                     ></apx-chart>
@@ -914,6 +918,8 @@
                       [plotOptions]="chartOptions8.plotOptions"
                       [responsive]="chartOptions8.responsive"
                       [xaxis]="chartOptions8.xaxis"
+                      [yaxis]="chartOptions7.yaxis"
+                      [grid]="chartOptions7.grid"
                       [legend]="chartOptions8.legend"
                       [fill]="chartOptions8.fill"
                     ></apx-chart>
@@ -1676,7 +1682,7 @@
                                                                             
                                                                             <div class="buttons">
                                                                                 <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                                <button class="btn btn-primary" (click)="updateChart({ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}})">Update</button>
+                                                                                <button class="btn btn-primary" (click)="updateChart({ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}}); numberPopupTrigger()">Update</button>
                                                                             </div>
                                                                           </div>
                                                                       }
@@ -1687,6 +1693,171 @@
                                                               </div>
                                                             </div>
                                                     </div>
+
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                          <button
+                                                            ngbAccordionButton
+                                                            class="accordion-button p-3 fw-500"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse"
+                                                            >
+                                                            Measure Values
+                                                          </button>
+                                                          
+                                                        </h6>
+                                                        <div
+                                                          ngbAccordionCollapse
+                                                          id="collapse"
+                                                          class="accordion-collapse collapse" 
+                                                          aria-labelledby="heading"
+                                                          data-bs-parent="#accordionExample"
+                                                           >
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                                                <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                                                            </button> -->
+                                                            <ng-template>
+                                                                <div class="sub-menu-item  p-2" >
+                                                                  <div class="row">
+                                                                    <div class="card-body" style=" padding: 2px 12px;">
+                                                                        <div class="font-color-card">
+                                                                            <p>Fonts</p>
+                                                                            <div class="dropup" ngbDropdown>
+                                                                                <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                    <div class="dropup" ngbDropdown >
+                                                                                        <div class="form-group mb-0 p-1">
+                                                                                            <select class="form-select form-select select2 fs-14" (change)="dataLabelsFontFamily($event)">
+                                                                                                <option value="0" selected disabled>family</option>
+                                                                                                <option value="'Arial', sans-serif">Arial</option>
+                                                                                                <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                <option value="'Georgia', serif">Georgia</option>
+                                                                                                <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="bold-italic p-1">
+                                                                                            <div class="row">
+                                                                                                <div class="form-group mb-0 d-flex">
+                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" (change)="dataLabelsFontSize($event)">
+                                                                                                        <option value="0" selected disabled>size</option>
+                                                                                                        <option value="10px">10px</option>
+                                                                                                        <option value="11px">11px</option>
+                                                                                                        <option value="12px">12px</option>
+                                                                                                        <option value="13px">13px</option>
+                                                                                                        <option value="14px">14px</option>
+                                                                                                        <option value="15px">15px</option>
+                                                                                                        <option value="16px">16px</option>
+                                                                                                        <option value="17px">17px</option>
+                                                                                                        <option value="18px">18px</option>
+                                                                                                        <option value="19px">19px</option>
+                                                                                                        <option value="20px">20px</option>
+                                                                                                     </select>
+                                                                                                     <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('B')">
+                                                                                                        <p>B</p>
+                                                                                                    </div>
+                                                                                                    <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
+                                                                                                        <p>I</p>
+                                                                                                    </div>
+                                                                                                    <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('U')">
+                                                                                                        <p>U</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                               
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="color-shade-card p-1">
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-white" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-orange" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DarkKhaki" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-ForestGreen" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-CadetBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SteelBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-light-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-orange-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DarkKhaki-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-ForestGreen-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-CadetBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SteelBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SlateGray-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-DimGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-orange-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DarkKhaki-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-ForestGreen-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-CadetBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SteelBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SlateGray-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4 mt-2">
+                                                                                                <div class="color-DimGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Orchid" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-PaleVioletRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-IndianRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SaddleBrown" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DimGray-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-PaleTurquoise" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-Silver" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Plum" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightCoral" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Peru" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightSlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-HotPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-Silver-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Plum-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightPink-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightCoral-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Peru-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightSlateGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-yellow" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                      
+                                                                                    </div>
+                                                                                    <li> <p class="more-color-text">More colors...</p></li>
+                                                                                </ul>
+                                                                            </div>
+                                                                    </div>
+                                                                  </div>
+                                                                  <span ngbTooltip=""></span>
+                                                                </div>
+                                                              </div>
+                                                              <div style="display: flex;justify-content: space-between;">
+                                                                <label>Position</label>
+                                                                <select class="form-select form-select select2 fs-14" (change)="dataLabelsFontPosition($event)" style="width: 40%; height: 30px;">
+                                                                    <option value="0" selected disabled>select</option>
+                                                                    <option value="top">TOP</option>
+                                                                    <option value="center">CENTER</option>
+                                                                    <option value="bottom">BOTTOM</option>
+                                                                </select>
+                                                              </div>
+                                                            </ng-template>
+                                                          </div>
+                                                        </div>
+                                                  </div>
 
                                                     <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
@@ -1976,8 +2147,9 @@
                                                          ></ngx-colors>
                                                     </div>
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <label for="font-size">Font Size</label>
-                                                        <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider>
+                                                        <label for="font-size" step="1" >Font Size</label>
+                                                        <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;">
+                                                        <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="color">Color:</label>
