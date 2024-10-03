@@ -740,6 +740,11 @@ export class SheetsdashboardComponent {
               sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
             }
           }
+          if([26, 27].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
+            if (sheet.chartOptions?.dataLabels) {
+              sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+            }
+          }
         })
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
@@ -1291,7 +1296,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
     });
   }
   getChartOptionsBasedOnType(sheet:any){
-    if(![10,24,27].includes(sheet.chart_id)){
+    if(![10,24].includes(sheet.chart_id)){
       this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
       this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
       this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
@@ -1601,6 +1606,11 @@ allowDrop(ev : any): void {
       if (![10, 24].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)) {
         if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
           sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+          sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+      }
+      if([26, 27].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
+        if (sheet.chartOptions?.dataLabels) {
           sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
         }
       }

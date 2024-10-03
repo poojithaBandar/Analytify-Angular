@@ -918,8 +918,8 @@
                       [plotOptions]="chartOptions8.plotOptions"
                       [responsive]="chartOptions8.responsive"
                       [xaxis]="chartOptions8.xaxis"
-                      [yaxis]="chartOptions7.yaxis"
-                      [grid]="chartOptions7.grid"
+                      [yaxis]="chartOptions8.yaxis"
+                      [grid]="chartOptions8.grid"
                       [legend]="chartOptions8.legend"
                       [fill]="chartOptions8.fill"
                     ></apx-chart>
@@ -1378,7 +1378,7 @@
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,26)"><img src="./assets/images/charts/heatmap_icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,27)"><img src="./assets/images/charts/funnel-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
+                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
                                                             <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="World Map Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,29)"><img src="./assets/images/charts/world-map.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
@@ -1919,7 +1919,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && xLabelSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-label Color </p>
                                                         </div>
@@ -1929,7 +1929,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && xGridSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-Grid Line Color </p>
                                                         </div>
@@ -1939,7 +1939,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && yLabelSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-label Color </p>
                                                         </div>
@@ -1949,7 +1949,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && yGridSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-Grid Line Color </p>
                                                         </div>
