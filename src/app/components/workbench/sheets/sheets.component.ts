@@ -3335,7 +3335,7 @@ bar["stack"]="Total";
     dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz'];
     integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double'];
     boolList = ['bool', 'boolean'];
-    stringList = ['varchar','bp char','text','varchar2','NVchar2','char','Nchar','character varying'];
+    stringList = ['varchar','bp char','text','varchar2','NVchar2','char','Nchar','character varying','string'];
     rowdrop(event: CdkDragDrop<string[]>){
       console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
