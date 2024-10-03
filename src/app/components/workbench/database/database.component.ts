@@ -130,6 +130,10 @@ export class DatabaseComponent {
   fromSheetEditDb = false;
   fromQuickbooks = false;
   queryBuilt:any;
+
+  searchTermT1:string = '';
+  searchTermT2:string = '';
+  filteredTablesT1: any[] = [];
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -285,6 +289,8 @@ export class DatabaseComponent {
           if (this.draggedtables.length > 0) {
             this.joiningTables();
             this.dropdownOptions = this.buildDropdownOptions(this.draggedtables);
+            //for custom join dropdown
+            this.filterColumnsT1();
           }
         },
         error: (error) => {
@@ -453,6 +459,8 @@ pushToDraggedTables(newTable:any): void {
     newTable['alias']=tableName;
     this.draggedtables.push(newTable);
     this.dropdownOptions = this.buildDropdownOptions(this.draggedtables);
+    this.filterColumnsT1();
+
 }
 
 getTablerowclms(table:any,schema:any){
@@ -504,6 +512,7 @@ onDeleteItem(index: number) {
    this.joiningTablesFromDelete();
    this.isOpen = false;
   //  }
+  this.filterColumnsT1();
 }
 buildCustomRelation(){
   const parts = this.selectedClmnT1.split('(');
@@ -574,11 +583,49 @@ executeQuery(){
     }
     })
 }
+filterColumnsT1() {
+  if (this.searchTermT1.trim() === '') {
+    this.filteredTablesT1 = this.draggedtables;
+    return;
+  }
+  this.filteredTablesT1 = this.draggedtables.map((table: { columns: any[]; }) => {
+    const filteredColumns = table.columns.filter(column =>
+      column.column.toLowerCase().includes(this.searchTermT1.toLowerCase())
+    );
+
+    return filteredColumns.length > 0 ? { 
+      ...table, 
+      columns: filteredColumns 
+    } : null;
+  }).filter((table: null) => table !== null);
+
+}
 
 updateRemainingTables(item:any) {
   this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
   this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
   this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
+}
+filterColumnsT2() {
+  // If search term is empty, return all tables excluding the selected one
+  if (this.searchTermT2.trim() === '') {
+    this.remainingTables = this.remainingTables.filter((table: { alias: any; }) => 
+      table.alias !== this.selectedClmnT1  // Exclude the selected table from the first dropdown
+    );
+    return;
+  }
+
+  // Filter logic
+  this.remainingTables = this.remainingTables.map((table: { columns: any[]; alias: any; }) => {
+    const filteredColumns = table.columns.filter(column =>
+      column.column.toLowerCase().includes(this.searchTermT2.toLowerCase())
+    );
+
+    return filteredColumns.length > 0 && table.alias !== this.selectedClmnT1 ? { 
+      ...table, 
+      columns: filteredColumns 
+    } : null;
+  }).filter((table:null) => table !== null);
 }
 
 joiningTablesWithoutQuerySetId(){

@@ -214,7 +214,10 @@
                                                         class="dropdown-toggle btn btn-info-light"> {{(selectedClmnT1 ?
                                                         selectedClmnT1:'Select Column') | slice:0:13}}</button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
-                                                        @for(table of draggedtables;track table){
+                                                        <li>
+                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT1" (keydown.enter)="filterColumnsT1()" placeholder="Search columns..." />
+                                                          </li>
+                                                        @for(table of filteredTablesT1;track table){
                                                         <li class="dropdown-plus-title">
                                                             {{ table.schema }}.{{ table.alias }}
                                                         </li>
@@ -275,6 +278,9 @@
                                                         selectedClmnT2 : 'Select Column') | slice:0:13 }}
                                                     </button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
+                                                        <li>
+                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT2" (keydown.enter)="filterColumnsT2()" placeholder="Search columns..." />
+                                                          </li>
                                                         @for(table of remainingTables;track table){
                                                         <li class="dropdown-plus-title">
                                                             {{ table.schema }}.{{ table.alias }}

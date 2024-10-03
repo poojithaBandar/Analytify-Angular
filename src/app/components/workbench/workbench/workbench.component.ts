@@ -97,10 +97,21 @@ export class WorkbenchComponent implements OnInit{
     displayName ='';
     path='';
 
+  emptyVariables(){
+    this.postGrePortName = '';
+    this.postGreDatabaseName = '';
+    this.postGreServerName = '';
+    this.postGreUserName = '';
+    this.PostGrePassword = '';
+    this.OracleServiceName = '';
+    this.displayName ='';
+    this.path='';
+  }  
     openPostgreSql(){
     this.openPostgreSqlForm=true;
     this.databaseconnectionsList= false;
     this.viewNewDbs = false;
+      this.emptyVariables();
     }
     postgreSignIn(){
       const obj={
@@ -189,6 +200,7 @@ export class WorkbenchComponent implements OnInit{
       this.openOracleForm=true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
+      this.emptyVariables();
     }
 
 
@@ -236,6 +248,7 @@ export class WorkbenchComponent implements OnInit{
       this.openMySqlForm=true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
+      this.emptyVariables();
     }
     mySqlSignIn(){
       const obj={
@@ -279,6 +292,7 @@ export class WorkbenchComponent implements OnInit{
       this.openMicrosoftSqlServerForm=true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
+      this.emptyVariables();
     }
     microsoftSqlSignIn(){
       const obj={
@@ -320,6 +334,7 @@ export class WorkbenchComponent implements OnInit{
       this.openSnowflakeServerForm=true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
+      this.emptyVariables();
     }
     snowflakeSignIn(){
       const obj={
@@ -362,6 +377,7 @@ export class WorkbenchComponent implements OnInit{
       this.openMongoDbForm=true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
+      this.emptyVariables();
     }
     mongoDbSignIn(){
       const obj={
@@ -404,6 +420,7 @@ export class WorkbenchComponent implements OnInit{
       this.ibmDb2Form=true;
       this.databaseconnectionsList= false;
       this.viewNewDbs = false;
+      this.emptyVariables();
     }
     ibmDb2SignIn(){
       const obj={

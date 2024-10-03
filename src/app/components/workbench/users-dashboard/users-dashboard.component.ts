@@ -260,34 +260,49 @@ getAddedRolesList(){
 }
 
 addUser(){
-  const selectedRoles = this.getSelectedRoles(); // Get the selected roles
-  const userData = {
-      ...this.addUserForm.value,
-      role: selectedRoles // Replace the roles array with the selected roles
-  };
-    this.workbechService.addUserwithRoles(userData  ).subscribe({
-    next:(data)=>{
-      console.log(data);
-      this.addUserDivForm = false;
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: 'Done!',
-      //   text: data.message,
-      //   width: '400px',
-      // })
-      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.getUserList();
-     },
-    error:(error)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-    }
-  }) 
+  if (!this.addUserForm.value.is_active) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "User will not be active if Is-actice is not selected",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ok'
+    }).then((result)=>{ 
+      if(result.isConfirmed){  
+        const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+        const userData = {
+            ...this.addUserForm.value,
+            role: selectedRoles // Replace the roles array with the selected roles
+        };
+          this.workbechService.addUserwithRoles(userData  ).subscribe({
+          next:(data)=>{
+            console.log(data);
+            this.addUserDivForm = false;
+            // Swal.fire({
+            //   icon: 'success',
+            //   title: 'Done!',
+            //   text: data.message,
+            //   width: '400px',
+            // })
+            this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+            this.getUserList();
+           },
+          error:(error)=>{
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'oops!',
+              text: error.error.message,
+              width: '400px',
+            })
+          }
+        }) 
+      }} 
+    )
+  }
+
 }
 deleteUser(id:any){
   Swal.fire({
