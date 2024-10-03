@@ -228,7 +228,7 @@ export class SheetsdashboardComponent {
   options!: GridsterConfig;
   nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
-  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
+  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}
   }>;
   dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
@@ -634,7 +634,14 @@ export class SheetsdashboardComponent {
          ... this.getTableData(sheet.sheet_data)
   
         }
-         : undefined
+         : undefined,
+        numberFormat: {
+          donutDecimalPlaces:this.donutDecimalPlaces,
+          decimalPlaces:this.decimalPlaces,
+          displayUnits:this.displayUnits,
+          prefix:this.prefix,
+          suffix:this.suffix
+        }
       }));
       this.setSelectedSheetData();
        this.isSheetsView = false;
@@ -668,7 +675,6 @@ export class SheetsdashboardComponent {
         this.sheetIdsDataSet = data.selected_sheet_ids;
         this.usersForUpdateDashboard = data.user_ids;
         this.rolesForUpdateDashboard = data.role_ids;
-        this.donutDecimalPlaces = data?.donutDecimalPlaces;
         let self = this;
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
@@ -715,13 +721,24 @@ export class SheetsdashboardComponent {
         }
       }
           console.log('After sanitization:', sheet.data.sheetTagName);
-
+          this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
+          this.decimalPlaces = sheet?.numberFormat?.decimalPlaces;
+          this.displayUnits = sheet?.numberFormat?.displayUnits;
+          this.prefix = sheet?.numberFormat?.prefix;
+          this.suffix = sheet?.numberFormat?.suffix;
           if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
             sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
               return w.globals.seriesTotals.reduce((a:any, b:any) => {
                 return +a + b
               }, 0).toFixed(this.donutDecimalPlaces);
             };
+          }
+          let chartId : number = sheet['chartId'];
+          if(![10,24].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
+            if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
+              sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+              sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+            }
           }
         })
         console.log(this.sheetTagTitle);
@@ -1274,6 +1291,12 @@ selected_sheet_ids :this.sheetIdsDataSet,
     });
   }
   getChartOptionsBasedOnType(sheet:any){
+    if(![10,24,27].includes(sheet.chart_id)){
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
+    }
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
@@ -1481,7 +1504,8 @@ allowDrop(ev : any): void {
       row_Data : copy.row_Data,
       drillDownObject : [],
       drillDownIndex : 0,
-      isDrillDownData : copy.isDrillDownData
+      isDrillDownData : copy.isDrillDownData,
+      numberFormat : copy.numberFormat
       };
       this.qrySetId.push(copy.qrySetId);
       if(copy.fileId){
@@ -1572,6 +1596,13 @@ allowDrop(ev : any): void {
             return +a + b
           }, 0).toFixed(this.donutDecimalPlaces);
         };
+      }
+      let chartId: number = sheet['chartId'];
+      if (![10, 24].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)) {
+        if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
+          sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+          sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
       }
     });
      console.log('draggedDashboard',this.dashboard)
@@ -3968,6 +3999,32 @@ stopDragging(event: MouseEvent) {
   event.stopPropagation(); // Prevent the event from triggering dragging
 }
 donutDecimalPlaces:number = 2;
+decimalPlaces : number = 2;
+displayUnits:string = 'none';
+prefix:string = '';
+suffix:string = '';
+
+formatNumber(value: number): string {
+  let formattedNumber = value+'';
+
+  if (this.displayUnits !== 'none') {
+    switch (this.displayUnits) {
+      case 'K':
+        formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
+        break;
+      case 'M':
+        formattedNumber = (value / 1_000_000).toFixed(this.decimalPlaces) + 'M';
+        break;
+      case 'B':
+        formattedNumber = (value / 1_000_000_000).toFixed(this.decimalPlaces) + 'B';
+        break;
+      case 'G':
+        formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
+        break;
+    }
+  }
+  return this.prefix + formattedNumber + this.suffix;
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
