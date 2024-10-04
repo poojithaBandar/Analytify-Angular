@@ -134,6 +134,8 @@ export class DatabaseComponent {
   searchTermT1:string = '';
   searchTermT2:string = '';
   filteredTablesT1: any[] = [];
+  filteredTablesT2: any[] = [];
+
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/workbench/database-connection/tables/')){
@@ -604,19 +606,18 @@ filterColumnsT1() {
 updateRemainingTables(item:any) {
   this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
   this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
+  this.filteredTablesT2 = this.remainingTables;
   this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
 }
 filterColumnsT2() {
   // If search term is empty, return all tables excluding the selected one
   if (this.searchTermT2.trim() === '') {
-    this.remainingTables = this.remainingTables.filter((table: { alias: any; }) => 
-      table.alias !== this.selectedClmnT1  // Exclude the selected table from the first dropdown
-    );
+    this.filteredTablesT2 = this.remainingTables
     return;
   }
 
   // Filter logic
-  this.remainingTables = this.remainingTables.map((table: { columns: any[]; alias: any; }) => {
+  this.filteredTablesT2 = this.remainingTables.map((table: { columns: any[]; alias: any; }) => {
     const filteredColumns = table.columns.filter(column =>
       column.column.toLowerCase().includes(this.searchTermT2.toLowerCase())
     );
@@ -1369,7 +1370,7 @@ getSelectedRowsFromEdit() {
   console.log('selected rows',this.selectedRows);
 
   const obj = {
-    filter_id:this.datasourceFilterId,
+    filter_id:this.datasourceFilterId || this.editFilterId,
     database_id:this.databaseId,
     queryset_id:this.qurtySetId,
     type_of_filter:'datasource',

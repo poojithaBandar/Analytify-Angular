@@ -354,7 +354,9 @@ a.dashboard-tab-padding.nav-link {
   padding: 8px 6px; 
   box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
 }
-
+.header-visibile{
+  margin-top: 65px;
+}
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
   .dashboard-title-card{

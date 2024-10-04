@@ -215,8 +215,8 @@
                                                         selectedClmnT1:'Select Column') | slice:0:13}}</button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         <li>
-                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT1" (keydown.enter)="filterColumnsT1()" placeholder="Search columns..." />
-                                                          </li>
+                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT1" (input)="filterColumnsT1()" placeholder="Search columns..." />                                                          
+                                                        </li>
                                                         @for(table of filteredTablesT1;track table){
                                                         <li class="dropdown-plus-title">
                                                             {{ table.schema }}.{{ table.alias }}
@@ -279,9 +279,9 @@
                                                     </button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         <li>
-                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT2" (keydown.enter)="filterColumnsT2()" placeholder="Search columns..." />
-                                                          </li>
-                                                        @for(table of remainingTables;track table){
+                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT2" (input)="filterColumnsT2()" placeholder="Search columns..." />
+                                                        </li>
+                                                        @for(table of filteredTablesT2;track table){
                                                         <li class="dropdown-plus-title">
                                                             {{ table.schema }}.{{ table.alias }}
                                                         </li>

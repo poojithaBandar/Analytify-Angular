@@ -2753,43 +2753,24 @@ bar["stack"]="Total";
           },
           plotOptions: {
             radialBar: {
-              startAngle: -90,
-              endAngle: 90,
-              hollow: {
-                margin: 0,
-                size: '70%',
-                background: '#fff',
-                dropShadow: {
-                  enabled: true,
-                  top: 3,
-                  left: 0,
-                  blur: 4,
-                  opacity: 0.24
-                }
-              },
+              startAngle: -120,
+              endAngle: 120,
               track: {
-                background: '#fff',
-                strokeWidth: '67%',
-                margin: 0,
-                dropShadow: {
-                  enabled: true,
-                  top: -3,
-                  left: 0,
-                  blur: 4,
-                  opacity: 0.35
-                }
+                background: '#333',
+                startAngle: -120,
+                endAngle: 120,
               },
               dataLabels: {
                 show: true,
                 name: {
-                  offsetY: -10,
+                  offsetY: -20,
                   show: true,
                   color: '#888',
-                  fontSize: '17px'
+                  fontSize: '16px'
                 },
                 value: {
                   formatter: (val: number) => `${val}%`, // Displaying percentage
-                  color: '#111',
+                  color: '#333',
                   fontSize: '36px',
                   show: true,
                 }
@@ -2799,20 +2780,16 @@ bar["stack"]="Total";
             }
           },
           fill: {
-            type: 'gradient',
+            type: "gradient",
             gradient: {
-              shade: 'dark',
-              type: 'horizontal',
-              shadeIntensity: 0.5,
-              gradientToColors: ['#ABE5A1'],
-              inverseColors: true,
-              opacityFrom: 1,
-              opacityTo: 1,
-              stops: [0, 3000]
+              shade: "dark",
+              type: "horizontal",
+              gradientToColors: ["#87D4F9"],
+              stops: [0, 100]
             }
           },
           stroke: {
-            lineCap: 'butt'
+            lineCap: "round"
           },
           labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
         };
