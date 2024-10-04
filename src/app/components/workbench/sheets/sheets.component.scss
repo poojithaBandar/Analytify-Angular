@@ -856,4 +856,58 @@ th, td {
   .color-yellow {
     padding: 8px; background-color: #edc948; width: 5px;  cursor: pointer;  
   }
+  .Automatic-btn {
+    margin-top: 10px;
+    width: 150px;
+  }
+  .alignment-sides{
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+  }
+  .align-left {
+    padding: 5px 12px;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .align-center {
+    padding: 5px 13px;
+    margin-left: 11px;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .align-right  {
+    padding: 5px 13px;
+    margin-left: 11px;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .justify-bottom {
+    padding: 5px 12px;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .justify-middle {
+    padding: 5px 13px;
+    margin-left: 11px;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .justify-top  {
+    padding: 5px 13px;
+    margin-left: 11px;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
   

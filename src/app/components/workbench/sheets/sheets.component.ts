@@ -195,15 +195,15 @@ export class SheetsComponent {
   sheetList : any [] = [];
   dashboardId : any;
   selectedDashboardId : any = 0;
-  GridColor : any;
-  apexbBgColor : any;
+  GridColor : any = '#089ffc';
+  apexbBgColor : any = '#fcfcfc';
   dateValue : any = "-Select-";
   Editor = ClassicEditor;
   editor : boolean = false;
   bandingSwitch: boolean = false; 
-  legendSwitch: boolean = false;
-  xLabelSwitch: boolean = false;
-  yLabelSwitch: boolean = false;
+  legendSwitch: boolean = true;
+  xLabelSwitch: boolean = true;
+  yLabelSwitch: boolean = true;
   xGridSwitch: boolean = false; 
   yGridSwitch: boolean = false;
   numberPopup : boolean = false;
@@ -232,6 +232,7 @@ export class SheetsComponent {
   @ViewChild('donutchart') donutchart!: ChartComponent;
   @ViewChild('funnelChart') funnelCharts!: ChartComponent;
   @ViewChild('guageChart') guageCharts!: ChartComponent;
+  @ViewChild('heatmapchart') heatmapcharts!: ChartComponent;
 
   radar: boolean = false;
   radarRowData: any = [];
@@ -512,7 +513,7 @@ if(this.fromFileId){
             },
             type: 'bar',
             height: 320,
-            foreColor: this.color, 
+            background: this.apexbBgColor, 
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -543,7 +544,7 @@ if(this.fromFileId){
             tickPlacement: 'on',
             position: 'bottom',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               trim: true,
               hideOverlappingLabels: false,
               style: {
@@ -577,7 +578,7 @@ if(this.fromFileId){
           yaxis:{
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -598,12 +599,12 @@ if(this.fromFileId){
             borderColor: '#90A4AE',
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
@@ -627,7 +628,7 @@ if(this.fromFileId){
           // fill: {
           //   type: 'gradient',
           // },
-          // colors: [this.color]
+          colors: [this.color]
         };
     } else {
       this.eBarChartOptions = {
@@ -736,6 +737,7 @@ if(this.fromFileId){
           chart: {
             height: 300,
             type: 'pie',
+            background: this.apexbBgColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -756,11 +758,11 @@ if(this.fromFileId){
           colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
           labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
           legend: {
-            show: true,
-            position: "bottom"
+            show: this.legendSwitch,
+            position: this.legendsAllignment
           },
           dataLabels: {
-            enabled: true,
+            enabled: this.dataLabels,
             dropShadow: {
               enabled: false
             }
@@ -850,8 +852,9 @@ if(this.fromFileId){
               },
               autoSelected: 'zoom' 
             },
-            height: 200,
+            height: 350,
             type: 'line',
+            background: this.apexbBgColor,
             reponsive: true,
             zoom: {
               enabled: true
@@ -874,7 +877,7 @@ if(this.fromFileId){
               },
             }
           },
-            // colors: [this.color],
+            colors: [this.color],
             dataLabels: {
               enabled: true,
               formatter: this.formatNumber.bind(this),
@@ -892,11 +895,11 @@ if(this.fromFileId){
               width: 3,
             },
             grid: {
-              borderColor: "rgba(119, 119, 142, 0.05)",
+              borderColor: this.GridColor,
               show: true,
               xaxis: {
                 lines: {
-                  show: false
+                  show: this.xGridSwitch
                 }
               },
               tooltip: {
@@ -906,7 +909,7 @@ if(this.fromFileId){
               markers: { size: 10 },
               yaxis: {
                 lines: {
-                  show: false
+                  show: this.yGridSwitch
                 }
               },
             },
@@ -923,7 +926,7 @@ if(this.fromFileId){
               categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
               tickPlacement: 'on',
               labels: {
-                show: true,
+                show: this.xLabelSwitch,
                 hideOverlappingLabels: false,
                 trim: true,
                 style: {
@@ -936,7 +939,8 @@ if(this.fromFileId){
             },
             yaxis: {
               labels: {
-                show: true,
+                show: 
+                this.yLabelSwitch,
                 style: {
                   colors: this.color,
                   fontSize: '11px',
@@ -1075,7 +1079,8 @@ if(this.fromFileId){
                 autoSelected: 'zoom' 
               },
               type: "area",
-              height: 200,
+              height: 350,
+              background: this.apexbBgColor,
               zoom: {
                 enabled: true,
               },
@@ -1109,12 +1114,14 @@ if(this.fromFileId){
               show: true,
               xaxis: {
                 lines: {
-                  show: false
+                  show: 
+                  this.xGridSwitch
                 }
               },
               yaxis: {
                 lines: {
-                  show: false
+                  show: 
+                  this.yGridSwitch
                 }
               },
             },
@@ -1128,11 +1135,11 @@ if(this.fromFileId){
                 color: this.color,
               },
             },
-            // colors: [this.color],
+            colors: [this.color],
             xaxis: {
               type: "",
               labels: {
-                show: true,
+                show: this.xLabelSwitch,
                 style: {
                   colors: this.color,
                   fontSize: "11px",
@@ -1143,9 +1150,8 @@ if(this.fromFileId){
               tickPlacement: 'on'
             },
             yaxis: {
-              opposite: true,
               labels: {
-                show: true,
+                show: this.yLabelSwitch,
                 style: {
                   colors: this.color,
                   fontSize: "11px",
@@ -1154,9 +1160,6 @@ if(this.fromFileId){
                 },
                 formatter: this.formatNumber.bind(this)
               },
-            },
-            legend: {
-              horizontalAlign: "left",
             },
           };
       } else {
@@ -1317,7 +1320,7 @@ if(this.fromFileId){
             categories: categories,
             tickPlacement: 'on',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: this.color,
                 fontSize: "11px",
@@ -1331,7 +1334,7 @@ if(this.fromFileId){
               text: '',
             },
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: this.color,
                 fontSize: "11px",
@@ -1353,16 +1356,16 @@ if(this.fromFileId){
             },
           },
           grid: {
-            borderColor: "rgba(119, 119, 142, 0.05)",
+            borderColor: this.GridColor,
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
@@ -1517,7 +1520,7 @@ bar["type"]="bar";
             categories: categories,
             tickPlacement: 'on',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -1529,7 +1532,7 @@ bar["type"]="bar";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -1550,12 +1553,12 @@ bar["type"]="bar";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
@@ -1667,12 +1670,14 @@ bar["stack"]="total";
               {
                 name: this.dualAxisRowData[0]?.name,
                 type: "column",
-                data: this.dualAxisRowData[0]?.data
+                data: this.dualAxisRowData[0]?.data,
+                color: this.barColor
               },
               {
                 name: this.dualAxisRowData[1]?.name,
                 type: "line",
                 data: this.dualAxisRowData[1]?.data,
+                color: this.lineColor
               }
             ],
             annotations: {
@@ -1714,12 +1719,12 @@ bar["stack"]="total";
               show: true,
               xaxis: {
                 lines: {
-                  show: false
+                  show: this.xGridSwitch
                 }
               },
               yaxis: {
                 lines: {
-                  show: false
+                  show: this.yGridSwitch
                 }
               },
             },
@@ -1751,7 +1756,7 @@ bar["stack"]="total";
               type: "",
               tickPlacement: 'on',
               labels: {
-                show: true,
+                show: this.xLabelSwitch,
                 style: {
                   colors: [],
                   fontSize: '12px',
@@ -1772,7 +1777,7 @@ bar["stack"]="total";
                   },
                 },
                 labels: {
-                  show: true,
+                  show: this.yLabelSwitch,
                   style: {
                     colors: [],
                     fontSize: '12px',
@@ -1794,7 +1799,7 @@ bar["stack"]="total";
                   },
                 },
                 labels: {
-                  show: true,
+                  show: this.yLabelSwitch,
                   style: {
                     colors: [],
                     fontSize: '12px',
@@ -2001,7 +2006,7 @@ bar["stack"]="total";
             type: "category",
             categories: categories,
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2014,7 +2019,7 @@ bar["stack"]="total";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2034,12 +2039,12 @@ bar["stack"]="total";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
@@ -2175,7 +2180,7 @@ bar["stack"]="total";
           xaxis: {
             categories: categories,
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2188,7 +2193,7 @@ bar["stack"]="total";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2201,12 +2206,12 @@ bar["stack"]="total";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: true
+                show: this.yGridSwitch
               }
             },
           },
@@ -2378,7 +2383,7 @@ bar["stack"]="total";
             categories: categories,
             tickPlacement: 'on',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2390,7 +2395,7 @@ bar["stack"]="total";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2415,12 +2420,12 @@ bar["stack"]="total";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           }
@@ -2549,16 +2554,16 @@ bar["stack"]="Total";
             }
           ],
           legend: {
-            show: true,
+            show: this.legendSwitch,
           },
           dataLabels: {
-            enabled: true,
+            enabled: this.dataLabels,
           },
           plotOptions: {
             pie: {
               donut: {
                 labels: {
-                  show: false,
+                  show: this.label,
                   name: {
                     show: true
                   },
@@ -2582,8 +2587,7 @@ bar["stack"]="Total";
             }
           },
         };
-        this.changeLegendsAllignment('right');
-        this.label = this.chartOptions10.plotOptions.pie.donut.labels.show;
+        this.changeLegendsAllignment('bottom');
       } else {
           let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
             value: value,
@@ -2648,10 +2652,29 @@ bar["stack"]="Total";
           xaxis: {
             type: 'category',
             categories: categories,
+            labels: {
+              show: this.xLabelSwitch,
+              style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+              },
+            }
           },
           yaxis: {
             title: {
               text: ''
+            },
+            show: true,
+            labels: {
+              show: this.yLabelSwitch,
+              style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+              },
             }
           },
           legend: {
@@ -2661,6 +2684,13 @@ bar["stack"]="Total";
           grid: {
             padding: {
               right: 20
+            },
+            show:true,
+            xaxis: {
+              lines:this.xGridSwitch
+            },
+            yaxis:{
+              lines:this.yGridSwitch
             }
           }
         };
@@ -3767,9 +3797,9 @@ bar["stack"]="Total";
       this.donutOptions = undefined;
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
-      this.GridColor = undefined;
-      this.apexbBgColor = undefined;
-      this.color = '00a5a2';
+      this.GridColor = '#089ffc';
+      this.apexbBgColor = '#fcfcfc';
+      this.color = '#00a5a2';
       this.bandingSwitch = false;
       this.xLabelSwitch = true;
       this.yLabelSwitch = true;
@@ -3781,6 +3811,15 @@ bar["stack"]="Total";
       this.suffix = '';
       this.prefix = '';
       this.tableSearch = '';
+      this.legendsAllignment = 'bottom';
+      this.dataLabels = true;
+      this.legendSwitch = true;
+      this.label = true;
+      this.donutSize = 50;
+      this.donutDecimalPlaces = 0;
+      this.decimalPlaces = 0;
+      this.barColor = '#4382f7';
+      this.lineColor = '#38ff98';
    // }
   }
   saveTableData = [] as any;
@@ -5294,8 +5333,8 @@ viewDashboard(){
   }
 
 }
-barColor : any;
-lineColor : any;
+barColor : any = '#4382f7';
+lineColor : any = '#38ff98';
 marksColor2(color:any){
 console.log(this.dualAxisRowData);
 console.log(color)
@@ -5485,6 +5524,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '12px';
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '12px';
+        }
       }
       if (event.target.value === 'calibri') {
         object = {xaxis: {labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}, categories: this.chartsColumnData}}
@@ -5532,6 +5576,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '14px';
         }
       }
       if (event.target.value === 'times') {
@@ -5581,6 +5630,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '16px';
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '16px';
+        }
       }
       if (event.target.value === 'verdana') {
         object = {xaxis: {labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}, categories: this.chartsColumnData}}
@@ -5628,6 +5682,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '12px';
         }
       }
     }
@@ -5761,6 +5820,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontSize = '12px';
           }
         }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '12px';
+          }
+        }
       }
       if(event.target.value === 'calibri'){
         object = {yaxis: [{labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}}]};
@@ -5888,6 +5961,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
             this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
             this.chartOptions9.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '14px';
           }
         }
       }
@@ -6019,6 +6106,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontSize = '16px';
           }
         }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '16px';
+          }
+        }
       }
       if(event.target.value === 'verdana'){
         object = {yaxis: [{labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}}]};
@@ -6148,6 +6249,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontSize = '12px';
           }
         }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '12px';
+          }
+        }
       }
     }
     
@@ -6186,6 +6301,9 @@ renameColumns(){
         else if(this.multilineChart){
           this.chartOptions9.xaxis.labels.offsetX = 0;
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.offsetX = 0;
+        }
 
       }
       if (event.target.value === 'left') {
@@ -6217,6 +6335,9 @@ renameColumns(){
         else if(this.multilineChart){
           this.chartOptions9.xaxis.labels.offsetX = -10;
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.offsetX = -10;
+        }
       }
       if (event.target.value === 'right') {
         object = {xaxis: {labels : {offsetX : 10}, categories: this.chartsColumnData}};
@@ -6246,6 +6367,9 @@ renameColumns(){
         }
         else if(this.multilineChart){
           this.chartOptions9.xaxis.labels.offsetX = 10;
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.offsetX = 10;
         }
       }
     }
@@ -6342,6 +6466,16 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.offsetY = 0;
           }
         }
+        else if(this.heatMap){
+          if (this.heatMapChartOptions.yaxis.length > 0) {
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.heatMapChartOptions.yaxis.labels.offsetY = 0;
+          }
+        }
       }
       if (event.target.value === 'up') {
         object = {yaxis: {labels : {offsetY : -10}}};
@@ -6433,6 +6567,16 @@ renameColumns(){
           }
           else {
             this.chartOptions9.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.heatMap){
+          if (this.heatMapChartOptions.yaxis.length > 0) {
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.heatMapChartOptions.yaxis.labels.offsetY = -10;
           }
         }
       }
@@ -6528,6 +6672,16 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.offsetY = 10;
           }
         }
+        else if(this.heatMap){
+          if (this.heatMapChartOptions.yaxis.length > 0) {
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.heatMapChartOptions.yaxis.labels.offsetY = 10;
+          }
+        }
       }
     }
     this.updateChart(object);
@@ -6596,6 +6750,10 @@ renameColumns(){
       this.guageCharts.updateOptions(object);
       console.log(this.guageCharts);
     }
+    else if(this.heatMap){
+      this.heatmapcharts.updateOptions(object);
+      console.log(this.heatmapcharts);
+    }
   }
   dataLabels:boolean = true;
   label : boolean = true;
@@ -6650,6 +6808,10 @@ renameColumns(){
       else if(this.multilineChart){
         this.chartOptions9.xaxis.labels.show = this.xLabelSwitch;
         this.chartOptions9.xaxis.categories = categories;
+      }
+      else if(this.heatMap){
+        this.heatMapChartOptions.xaxis.labels.show = this.xLabelSwitch;
+        this.heatMapChartOptions.xaxis.categories = categories;
       }
     } else {
       this.changeAlignment();
@@ -6749,6 +6911,16 @@ renameColumns(){
           this.chartOptions9.yaxis.labels.show = this.yLabelSwitch;
         }
       }
+      else if(this.heatMap){
+        if(this.heatMapChartOptions.yaxis.length >0){
+          (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.heatMapChartOptions.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
     } else {
       this.changeAlignment();
     }
@@ -6784,6 +6956,9 @@ renameColumns(){
       else if(this.multilineChart){
         this.chartOptions9.grid.xaxis.lines.show = this.xGridSwitch;
       }
+      else if(this.heatMap){
+        this.heatMapChartOptions.grid.xaxis.lines.show = this.xGridSwitch;
+      }
     } else {
       this.changeAlignment();
     }
@@ -6818,6 +6993,9 @@ renameColumns(){
       }
       else if(this.multilineChart){
         this.chartOptions9.grid.yaxis.lines.show = this.yGridSwitch;
+      }
+      else if(this.heatMap){
+        this.heatMapChartOptions.grid.yaxis.lines.show = this.yGridSwitch;
       }
     } else {
       this.changeAlignment();
@@ -7283,6 +7461,12 @@ fetchChartData(chartData: any){
       else if(this.donutchart){
         this.chartOptions10.chart.background = color;
       }
+      else if(this.heatMap){
+        this.heatMapChartOptions.chart.background = color;
+      }
+      else if(this.funnel){
+        this.funnelChartOptions.chart.background = color;
+      }
       this.updateChart(object);
     }
   }
@@ -7383,7 +7567,7 @@ fetchChartData(chartData: any){
             }         
           }
   titleShow : boolean = true;
-  legendsAllignment : any;
+  legendsAllignment : any = 'bottom'
   changeLegendsAllignment(allignment:any){
     this.legendsAllignment = allignment;
     let object : any = {legend: {position: allignment}};
@@ -7521,7 +7705,7 @@ fetchChartData(chartData: any){
         }
         document.body.removeChild(textArea);
       }
-      donutDecimalPlaces: number = 2;
+      donutDecimalPlaces: number = 0;
 
       updateDonut(){
         this.donutchart.updateOptions(this.chartOptions10);

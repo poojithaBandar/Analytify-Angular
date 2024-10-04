@@ -1658,6 +1658,7 @@ dataNotSaveAlert(): Promise<boolean> {
       return true;
     } else {
       // User clicked "No", prevent navigation
+      this.loaderService.hide();
       return false;
     }
   });
