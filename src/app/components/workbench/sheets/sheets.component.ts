@@ -4452,8 +4452,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartOptions3 = this.sheetResponce.savedChartOptions;
         this.chartOptions3.xaxis.convertedCatToNumeric = true;
         this.barchart?.updateOptions(this.chartOptions3);
-        this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions3.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions3?.datalabels){
+          this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions3.yaxis.labels){
+          this.chartOptions3.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.chartOptions3.chart.events = {
           dataPointSelection: function (event: any, chartContext: any, config: any) {
             const selectedXValue = self.chartOptions3.xaxis.categories[config.dataPointIndex];
@@ -4558,8 +4562,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.chartOptions = this.sheetResponce.savedChartOptions;
           this.chartOptions.xaxis.convertedCatToNumeric = true;
           this.linechart?.updateOptions(this.chartOptions);
-          this.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
-          this.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+          if(this.chartOptions?.datalabels){
+            this.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions.yaxis.labels){
+            this.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+          }
           this.chartOptions.events = {
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
@@ -4611,8 +4619,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.chartOptions1 = this.sheetResponce.savedChartOptions;
           this.chartOptions1.xaxis.convertedCatToNumeric = true;
           this.areachart?.updateOptions(this.chartOptions1);
-          this.chartOptions1.dataLabels.formatter = this.formatNumber.bind(this);
-          this.chartOptions1.yaxis.labels.formatter = this.formatNumber.bind(this);
+          if(this.chartOptions1?.datalabels){
+            this.chartOptions1.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions1.yaxis.labels){
+            this.chartOptions1.yaxis.labels.formatter = this.formatNumber.bind(this);
+          }
           this.xLabelSwitch = this.chartOptions1?.xaxis?.labels?.show;
           this.yLabelSwitch = this.chartOptions1?.yaxis?.labels?.show;
           this.xGridSwitch = this.chartOptions1?.grid?.xaxis?.lines?.show;
@@ -4648,8 +4660,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.sidebysideBarXaxis;
         if(this.isApexCharts){
         this.chartOptions2 = this.sheetResponce.savedChartOptions;
-        this.chartOptions2.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions2.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions2?.datalabels){
+          this.chartOptions2.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions2.yaxis.labels){
+          this.chartOptions2.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions2?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions2?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions2?.grid?.xaxis?.lines?.show;
@@ -4684,8 +4700,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.stokedBarXaxis;
         if(this.isApexCharts){
         this.chartOptions6 = this.sheetResponce.savedChartOptions;
-        this.chartOptions6.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions6.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions6?.datalabels){
+          this.chartOptions6.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions6.yaxis.labels){
+          this.chartOptions6.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions6?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions6?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions6?.grid?.xaxis?.lines?.show;
@@ -4721,8 +4741,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.isApexCharts){
           this.chartOptions5 = this.sheetResponce.savedChartOptions;
           this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
-          this.chartOptions5.yaxis[0].labels.formatter = this.formatNumber.bind(this);
-          this.chartOptions5.yaxis[1].labels.formatter = this.formatNumber.bind(this);
+          if(this.chartOptions5?.datalabels){
+            this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions5.yaxis.labels){
+            this.chartOptions5.yaxis[0].labels.formatter = this.formatNumber.bind(this);
+            this.chartOptions5.yaxis[1].labels.formatter = this.formatNumber.bind(this);
+          }
           this.xLabelSwitch = this.chartOptions5?.xaxis?.labels?.show;
           this.yLabelSwitch = this.chartOptions5?.yaxis?.labels?.show;
           this.xGridSwitch = this.chartOptions5?.grid?.xaxis?.lines?.show;
@@ -4786,8 +4811,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.hStockedXaxis;
         if(this.isApexCharts){
         this.chartOptions7 = this.sheetResponce.savedChartOptions;
-        this.chartOptions7.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions7.xaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions7?.datalabels){
+          this.chartOptions7.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions7.yaxis.labels){
+          this.chartOptions7.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions7?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions7?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions7?.grid?.xaxis?.lines?.show;
@@ -4822,8 +4851,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.hgroupedXaxis;
         if(this.isApexCharts){
         this.chartOptions8 = this.sheetResponce.savedChartOptions;
-        this.chartOptions8.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions8.xaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions8?.datalabels){
+          this.chartOptions8.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions8.yaxis.labels){
+          this.chartOptions8.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions8?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions8?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions8?.grid?.xaxis?.lines?.show;
@@ -4858,8 +4891,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.multiLineXaxis;
         if(this.isApexCharts){
         this.chartOptions9 = this.sheetResponce.savedChartOptions;
-        this.chartOptions9.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions9.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions9?.datalabels){
+          this.chartOptions9.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions9.yaxis.labels){
+          this.chartOptions9.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions9?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions9?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions9?.grid?.xaxis?.lines?.show;
@@ -4945,7 +4982,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 26){
         this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
-        this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        if(this.heatMapChartOptions?.datalabels){
+          this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4967,7 +5006,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 27){
         this.funnelChartOptions = this.sheetResponce.savedChartOptions;
-        this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        if(this.funnelChartOptions?.datalabels){
+          this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
         this.isDistributed = this.funnelChartOptions?.plotOptions?.bar?.distributed;
         this.funnelDLAllign = this.funnelChartOptions?.plotOptions?.bar?.dataLabels?.position;
         this.funnelDLFontFamily = this.funnelChartOptions?.dataLabels?.style?.fontFamily;
