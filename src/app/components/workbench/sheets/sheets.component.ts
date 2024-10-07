@@ -269,6 +269,8 @@ export class SheetsComponent {
   map: boolean = false;
 
   guageNumber:any;
+  eHeatMapChartOptions: any;
+  eFunnelChartOptions: any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/workbench/sheets/dbId')){
@@ -2624,9 +2626,13 @@ bar["stack"]="Total";
         }
       }
     
+     
       heatMapChart() {
         const dimensions: Dimension[] = this.dualAxisColumnData;
         const categories = this.flattenDimensions(dimensions);
+        if(this.isEChatrts){
+          this.eHeatMapChartOptions = {};
+        } else {
         this.heatMapChartOptions = {
           series: this.dualAxisRowData,
           chart: {
@@ -2695,10 +2701,40 @@ bar["stack"]="Total";
           }
         };
       }
+      }
 
       funnelChart(){
         const dimensions: Dimension[] = this.dualAxisColumnData;
         const categories = this.flattenDimensions(dimensions);
+        if(this.isEChatrts){
+          const combinedArray:any[] = [];
+this.dualAxisColumnData.forEach((item:any) => {
+  this.dualAxisRowData.forEach((categoryObj:any) => {
+    item.values.forEach((value:any, index:number) => {
+      combinedArray.push({
+        value: value,
+        name: categoryObj.data[index] 
+      });
+    });
+  });
+});
+          this.eFunnelChartOptions = {
+            tooltip: {
+              trigger: 'item',
+            },
+            series: [
+              {
+                name: '',
+                type: 'funnel',
+                data: combinedArray,
+                label: {
+                  show: true,
+                  formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
+                },
+              },
+            ],
+          };
+        } else {
         this.funnelChartOptions = {
           series: this.dualAxisRowData,
           chart: {
@@ -2736,6 +2772,7 @@ bar["stack"]="Total";
             show: false
           }
         };
+      }
       }
       guageChart() {
         this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
@@ -7215,6 +7252,8 @@ fetchChartData(chartData: any){
     this.donutChart();
     this.multiLineChart();
     this.mapChart();
+    this.funnelChart();
+    this.heatMapChart();
   }
   marksColor(color: any, colorCase: number) {
     console.log(color)
