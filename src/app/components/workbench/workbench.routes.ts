@@ -8,14 +8,15 @@ import { canDeactivateGuard } from '../../can-deactivate.guard';
 
 export const admin: Routes = [
 
-  {path:'workbench',children:[ {
-   path: 'work-bench/new-connections',
+  {path:'insights',children:[ 
+    {
+   path: 'datasources/new-connections',
    canActivate:[authGuard],
    loadComponent: () =>
      import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
  },
  {
-  path: 'work-bench/view-connections',
+  path: 'datasources/view-connections',
   loadComponent: () =>
     import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
 },
@@ -24,7 +25,7 @@ export const admin: Routes = [
 //   path: 'database-connection/tables/:id',
 //   canActivate:[authGuard],
 //   loadComponent: () =>
-//     import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+//     import('./insights/workbench.component').then((m) => m.WorkbenchComponent),
 // },
 
 {
@@ -116,46 +117,46 @@ export const admin: Routes = [
    pathMatch: 'full',
 },
 {
-  path: 'landingpage/sheetsdashboard/:id1/:id2/:id3',
+  path: 'home/sheetsdashboard/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
   pathMatch: 'full',
 },{
-  path: 'landingpage/sheetsdashboard/:id1',
+  path: 'home/sheetsdashboard/:id1',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
   pathMatch: 'full',
 },
 {
-  path: 'landingpage/sheets/:id1/:id2/:id3',
+  path: 'home/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 
 {
-  path: 'landingpage/dbId/sheets/:id1/:id2/:id3',
+  path: 'home/dbId/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
-  path: 'landingpage/fileId/sheets/:id1/:id2/:id3',
+  path: 'home/fileId/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 
 {
-  path: 'landingpage',
+  path: 'home',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./landingpage/landingpage.component').then((m)=> m.LandingpageComponent)
 },
 {
-  path: 'dashboard-page',
+  path: 'dashboards',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./dashboard-page/dashboard-page.component').then((m)=> m.DashboardPageComponent)
