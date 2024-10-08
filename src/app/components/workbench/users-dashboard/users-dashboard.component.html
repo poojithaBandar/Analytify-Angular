@@ -390,7 +390,7 @@
                 <div class="justify-conent-between mt-1">
                     <div class="add-role-save-btn" style="float: right;">
                       <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" (click)="closeAddUserForm()">Close</button>
-                        <button *ngIf="!userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!addUserForm.valid">
+                        <button *ngIf="!userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!isFormValidWithoutIsActive">
                             Save <i class="fa fa-file-text-o"></i>
                         </button>
                         <button *ngIf="userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="editUser()" >

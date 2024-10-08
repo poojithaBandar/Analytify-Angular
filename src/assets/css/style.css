@@ -14585,8 +14585,8 @@ pre code {
 }
 .container-fluid {
   width: 100%;
-  padding-inline-end: 0.75rem;
-  padding-inline-start: 0.75rem;
+  padding-inline-end: 0.5rem;
+  padding-inline-start: 0.50rem;
   margin-inline-end: auto;
   margin-inline-start: auto;
 }

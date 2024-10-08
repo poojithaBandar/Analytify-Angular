@@ -271,7 +271,7 @@ export class SheetsComponent {
   guageNumber:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
-    if(this.router.url.includes('/workbench/sheets/dbId')){
+    if(this.router.url.includes('/insights/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -288,7 +288,7 @@ export class SheetsComponent {
           }
         }
      }
-     if(this.router.url.includes('/workbench/sheets/fileId')){
+     if(this.router.url.includes('/insights/sheets/fileId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.fileId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -306,7 +306,7 @@ export class SheetsComponent {
           }
         }      
   }
- // if(this.router.url.includes('/workbench/landingpage/sheets/')){ //old landing page to sheet 
+ // if(this.router.url.includes('/insights/home/sheets/')){ //old landing page to sheet 
   //   console.log("landing page")
   //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
   //     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -317,7 +317,7 @@ export class SheetsComponent {
   //     // this.sheetRetrive();
   //     }
   //  }
-  if(this.router.url.includes('/workbench/landingpage/dbId/sheets/')){
+  if(this.router.url.includes('/insights/home/dbId/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -327,7 +327,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    }
-   if(this.router.url.includes('/workbench/landingpage/fileId/sheets/')){
+   if(this.router.url.includes('/insights/home/fileId/sheets/')){
     this.fromFileId = true;
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.fileId = +atob(route.snapshot.params['id1']);
@@ -340,7 +340,7 @@ export class SheetsComponent {
    }
 
 
-   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/fileId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/fileId/')){
     this.sheetsDashboard = true;
     this.fromFileId = true;
     console.log("landing page")
@@ -353,7 +353,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    } 
-   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/dbId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/dbId/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
     console.log("landing page")
@@ -431,12 +431,12 @@ if(this.fromFileId){
       if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
         // Encode 'null' to represent a null value
        const encodedDsQuerySetId = btoa('null');
-       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
   
       } else {
         // Convert to string and encode
        const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
     
       } 
      }
@@ -444,7 +444,7 @@ if(this.fromFileId){
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
     const encodedFileId = btoa(this.fileId?.toString());
-    // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+    // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
     const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
     const fromSource = this.fromFileId ? 'fileId' : 'dbId'
@@ -452,19 +452,19 @@ if(this.fromFileId){
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
   }
 
   }
   goToConnections(){
-    this.router.navigate(['/workbench/work-bench/view-connections'])
+    this.router.navigate(['/insights/datasources/view-connections'])
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -5328,12 +5328,12 @@ gotoDashboard(){
   if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
   }
 if(this.fromFileId){
   const encodedFileId = btoa(this.fileId.toString())
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
 }
 }
 viewDashboard(){
@@ -5341,13 +5341,13 @@ viewDashboard(){
     const encodedDatabaseId = btoa(this.fileId.toString());
     const encodedQuerySetId = btoa(this.qrySetId.toString());
     const encodedDashboardId = btoa(this.dashboardId.toString());
-    this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+    this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
 
   } else {
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
-  this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
   }
 
 }
@@ -7187,9 +7187,9 @@ renameColumns(){
         localStorage.setItem('previousUrl', this.router.url);
         this.chartSuggestions = null;
         // API Key is missing or empty, show the message and navigate to the configure page on click
-        // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+        // this.errorMessage = `The GPT API Key is missing. Please <a href="/insights/configure-page/configure">add the GPT API Key</a> to proceed.`;
         this.errorMessage1 = 'the GPT API key is missing. Please'
-        // this.router.navigate(['/workbench/configure-page/configure']);
+        // this.router.navigate(['/insights/configure-page/configure']);
       } else {
         // Handle other errors
         console.log("Error:", error.message);
@@ -7201,7 +7201,7 @@ renameColumns(){
   );
 }
 routeConfigure(){
-  this.router.navigate(['/workbench/configure-page/configure'])
+  this.router.navigate(['/insights/configure-page/configure'])
 }
 
 fetchChartData(chartData: any){
@@ -7316,9 +7316,9 @@ fetchChartData(chartData: any){
           else if  (!apiKey || apiKey.trim() === '') {
             this.chartSuggestions = null;
             // API Key is missing or empty, show the message and navigate to the configure page
-            // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+            // this.errorMessage = `The GPT API Key is missing. Please <a href="/insights/configure-page/configure">add the GPT API Key</a> to proceed.`;
             this.errorMessage1 = 'the GPT API key is missing. Please'
-            // this.router.navigate(['/workbench/configure-page/configure']);
+            // this.router.navigate(['/insights/configure-page/configure']);
           } else {
             // Handle other errors
             console.log("Error:", error.message);

@@ -38,7 +38,7 @@ getToken(url:any){
             // this.getCompanyDetails();
             // const quickBooksId = data.quickbooks_id;
             const quickBooksId = btoa(data.quickbooks_id.toString());
-            this.router.navigate(['/workbench/database-connection/tables/quickbooks/'+quickBooksId]);
+            this.router.navigate(['/insights/database-connection/tables/quickbooks/'+quickBooksId]);
           }
         },
         error: (error: any) => {

@@ -5,7 +5,7 @@
 <app-page-header title="Dashboard" title1="home" activeitem="Dashboard"></app-page-header>
 </div>
 <div *ngIf="sheetsNewDashboard">
-  <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/workbench/sheets" activeitem="Dashboard"></app-page-header>
+  <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
   </div>
   <!-- <div *ngIf="publicHeader">
     <app-page-header [publicHeader]="true"></app-page-header>
@@ -137,7 +137,8 @@
       </div>
     </div>
   } @else {
-<div class="row main-container" [ngClass]="{ 'header-visibile': isPublicUrl, }">
+    <div class="main-container container-fluid">
+<div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }">
         <div class="card mb-0">
@@ -1240,6 +1241,7 @@
           <img [src]="screenshotSrc" alt="Screenshot">
         </div> -->
     </div>
+</div>
 </div>
   }
 
