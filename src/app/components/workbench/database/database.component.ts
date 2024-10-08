@@ -287,6 +287,7 @@ export class DatabaseComponent {
           console.log('tablerelation', this.relationOfTables)
           this.draggedtables = data.dragged_data.json_data
           this.joinTypes = data.dragged_data.join_type;
+          this.saveQueryName= data.dragged_data.queryset_name;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
             this.joiningTables();
@@ -954,7 +955,7 @@ if(obj.row_limit === null || obj.row_limit === undefined){
         this.totalRows = data.total_rows;
         this.showingRows = data.no_of_rows;
         this.gotoSheetButtonDisable = false;
-        this.saveQueryName = data.queryset_name;
+        // this.saveQueryName = data.queryset_name;
         this.queryBuilt = data.custom_query;
         if(this.TabledataJoining?.column_data?.length === 0){
           this.gotoSheetButtonDisable = true;
@@ -1417,7 +1418,7 @@ getfilteredCustomSqlData(){
           this.cutmquryTable = data;
           this.custmQryTime = data.query_exection_time;
           this.custmQryRows = data.no_of_rows;
-          this.saveQueryName = data.queryset_name;
+          // this.saveQueryName = data.queryset_name;
           this.showingRowsCustomQuery=data.no_of_rows
           this.totalRowsCustomQuery=data.total_rows
         },
@@ -1572,14 +1573,6 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          // Swal.fire({
-          //   icon: 'success',
-          //   title: 'Done!',
-          //   text: 'Query Saved Successfully',
-          //   width: '400px',
-          //   timer: 2000, 
-          //   showConfirmButton: false 
-          // })
           this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
