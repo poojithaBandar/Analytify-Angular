@@ -2629,6 +2629,8 @@ getFilteredData(){
       // console.log(this.tablePreviewRow);
       // localStorage.removeItem('filterid')
       data.forEach((item: any) => {
+        this.filteredRowData = [];
+        this.filteredColumnData = [];
       this.tablePreviewColumn.push(item.columns);
       this.tablePreviewRow.push(item.rows);
       item.columns.forEach((res:any) => {      
