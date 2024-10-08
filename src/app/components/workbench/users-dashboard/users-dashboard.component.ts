@@ -73,6 +73,13 @@ export class UsersDashboardComponent {
   ngOnInit(){
     this.getUserList()
   }
+  get isFormValidWithoutIsActive() {
+    const form = this.addUserForm;
+        return Object.keys(form.controls).every(key => {
+      if (key === 'is_active') return true; 
+      return form.controls[key].valid; 
+    });
+  }
   get role(): FormArray {
     return this.addUserForm .get('role') as FormArray;
   }
@@ -238,7 +245,7 @@ toggleClass1 = "off-line";
     return selectedRoles;
   }
   gotoAddRole(){
-    this.router.navigate(['/workbench/dashboard/role-add'])
+    this.router.navigate(['/insights/dashboard/role-add'])
   }
 getAddedRolesList(){
   this.workbechService.getAddedRolesList().subscribe({
