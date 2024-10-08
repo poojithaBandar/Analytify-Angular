@@ -215,6 +215,16 @@ export const admin: Routes = [
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
+  path: 'home/help-guide',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent),
+},
+
+
+
+
+{
   path: 'public/dashboard/:id1',
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
@@ -224,6 +234,7 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./configure/configure.component').then((m) => m.ConfigureComponent),
 },
+
  ]}
  ];
 
