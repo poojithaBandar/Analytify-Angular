@@ -668,8 +668,12 @@ export class SheetsdashboardComponent {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        this.fileId = data.file_id;
-        this.databaseId = data.server_id;
+        if(data.file_id && data.file_id.length){
+          this.fileId = data.file_id;
+        }
+        if(data.server_id && data.server_id.length){
+          this.databaseId = data.server_id;
+        }
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
@@ -789,6 +793,7 @@ export class SheetsdashboardComponent {
     }else{
       this.takeScreenshot();
       this.assignOriginalDataToDashboard();
+      this.setQuerySetIds()
     let obj ={
       grid : this.gridType,
       height: this.heightGrid,
@@ -835,6 +840,12 @@ selected_sheet_ids :this.sheetIdsDataSet,
       }
     })
   }
+  }
+  setQuerySetIds() {
+    this.qrySetId = [];
+    this.dashboard.forEach((sheet: any) =>{
+      this.qrySetId.push(sheet.qrySetId);
+    })
   }
   takeScreenshot() {
    this.startMethod();
@@ -934,6 +945,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       })
     }else{
       let dashboardData = this.assignOriginalDataToDashboard();
+      this.setQuerySetIds();
       let obj;
       if(this.fileId && this.fileId.length){
         obj ={
@@ -1512,7 +1524,7 @@ allowDrop(ev : any): void {
       isDrillDownData : copy.isDrillDownData,
       numberFormat : copy.numberFormat
       };
-      this.qrySetId.push(copy.qrySetId);
+      // this.qrySetId.push(copy.qrySetId);
       if(copy.fileId){
         this.fileId.push(copy.fileId);
       } else {
@@ -1738,7 +1750,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
-        this.qrySetId.splice(popqryIndex, 1);
+        // this.qrySetId.splice(popqryIndex, 1);
         if(this.dashboardId){
           this.deleteSheetFilter(item.sheetId);
         }
