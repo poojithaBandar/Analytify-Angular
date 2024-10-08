@@ -739,9 +739,17 @@ export class SheetsdashboardComponent {
           }
           let chartId : number = sheet['chartId'];
           if(![10,24].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
-            if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
-              sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
-              sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+            if([2,3].includes(chartId)){
+              if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.xaxis.labels.formatter = this.formatNumber.bind(this);
+                sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+              }
+            }
+            else{
+              if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+                sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+              }
             }
           }
           if([26, 27].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
@@ -1308,16 +1316,20 @@ selected_sheet_ids :this.sheetIdsDataSet,
     });
   }
   getChartOptionsBasedOnType(sheet:any){
-    if(![10,24].includes(sheet.chart_id)){
-      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
-      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
-      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
-      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
-    }
+    // if(![10,24].includes(sheet.chart_id)){
+    //   this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+    //   this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+    //   this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+    //   this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
+    // }
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
       return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
     }
     if(sheet.chart_id === 29){
@@ -1327,12 +1339,20 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
       let yaxis = sheet.sheet_data?.results?.areaYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
       return this.areaChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 13){
       let xaxis = sheet.sheet_data?.results?.lineXaxis;
       let yaxis = sheet.sheet_data?.results?.lineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
       return this.lineChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 24){
@@ -1346,6 +1366,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
       let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
 
       const dimensions: Dimension[] =xaxis
       const categories = this.flattenDimensions(dimensions)
@@ -1367,6 +1391,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.stokedBarXaxis;
       let yaxis = sheet.sheet_data?.results?.stokedBarYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
@@ -1377,6 +1405,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.barLineXaxis;
       let yaxis = sheet.sheet_data?.results?.barLineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
       console.log('barlinexaxis',xaxis)
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
@@ -1388,6 +1420,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.hStockedXaxis;
       let yaxis = sheet.sheet_data?.results?.hStockedYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
@@ -1397,6 +1433,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
       let yaxis = sheet.sheet_data?.results?.hgroupedYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
@@ -1407,6 +1447,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
       let yaxis = sheet.sheet_data?.results?.multiLineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
@@ -1422,10 +1466,18 @@ selected_sheet_ids :this.sheetIdsDataSet,
     }
     if(sheet.chart_id === 26){
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
       return savedOptions;
     }
     if(sheet.chart_id === 27){
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
+      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
+      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
+      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
       return savedOptions;
     }
     if(sheet.chart_id === 28){
@@ -1616,9 +1668,17 @@ allowDrop(ev : any): void {
       }
       let chartId: number = sheet['chartId'];
       if (![10, 24].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)) {
-        if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
-          sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
-          sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        if([2,3].includes(chartId)){
+          if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.xaxis.labels.formatter = this.formatNumber.bind(this);
+            sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+        }
+        else{
+          if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+            sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          }
         }
       }
       if([26, 27].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
@@ -4031,7 +4091,7 @@ suffix:string = '';
 formatNumber(value: number): string {
   let formattedNumber = value+'';
 
-  if (this.displayUnits !== 'none') {
+  // if (this.displayUnits !== 'none') {
     switch (this.displayUnits) {
       case 'K':
         formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
@@ -4045,8 +4105,11 @@ formatNumber(value: number): string {
       case 'G':
         formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
         break;
+      case 'none':
+        formattedNumber = (value/1).toFixed(this.decimalPlaces);
+        break;
     }
-  }
+  // }
   return this.prefix + formattedNumber + this.suffix;
 }
 }
