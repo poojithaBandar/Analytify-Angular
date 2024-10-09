@@ -4334,6 +4334,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetCustomQuery = responce.custom_query;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
+        this.filterQuerySetId = responce.datasource_queryset_id;
         this.draggedRows = this.sheetResponce.rows;
         this.mulColData = responce.col_data;
         this.mulRowData = responce.row_data;
