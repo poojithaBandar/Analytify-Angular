@@ -208,7 +208,7 @@ toggleClass1 = "off-line";
     this.userAddedRolesList.forEach(() => {
       rolesArray.push(this.formBuilder.control(false)); // Add a control for each role
     });
-
+    console.log('all roles',this.userAddedRolesList)
     rolesArray.valueChanges.subscribe(values => {
       this.allSelected = values.every((val: boolean) => val === true);
     });
@@ -368,9 +368,10 @@ getUserIdDetails(id:any){
           email:data.email,
           is_active:data.is_active,
         })     
-        this.userAddedRolesList = data.role;
+        this.userAddedRolesList = data.existing_roles;
         this.setRoles();
-        this.patchRoles(data.role);
+        this.patchRoles(data.selected_roles);
+
       },
       error:(error:any)=>{
         Swal.fire({
@@ -390,14 +391,19 @@ patchRoles(selectedRoles: string[]) {
     rolesArray.clear(); // Clear the current FormArray
 
     // Add only the selected roles
-    selectedRoles.forEach((role) => {
-      if (this.userAddedRolesList.includes(role)) {
-        rolesArray.push(this.formBuilder.control(true));
-      }
-    });
+    // selectedRoles.forEach((role) => {
+    //   if (this.userAddedRolesList.includes(role)) {
+    //     rolesArray.push(this.formBuilder.control(true));
+    //   }
+    // });
 
-    // Sync the 'allSelected' flag based on whether all roles are selected
-    this.allSelected = selectedRoles.length === this.userAddedRolesList.length;
+    this.userAddedRolesList.forEach((role: string) => {
+      // Check if the role is in selectedRoles
+      const isSelected = selectedRoles.includes(role);
+      rolesArray.push(this.formBuilder.control(isSelected)); 
+  });
+console.log('selectedroles',selectedRoles)
+    this.allSelected = selectedRoles.length === this.userAddedRolesList.length  && selectedRoles.length > 0;
   }
 }
 
