@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <div class="card-body p-1">
+                <div class="card-body p-1" style="overflow: scroll;">
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
                         <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
                             class="accordion-item">
