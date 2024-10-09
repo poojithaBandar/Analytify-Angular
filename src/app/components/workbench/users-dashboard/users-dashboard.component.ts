@@ -287,12 +287,6 @@ addUser(){
           next:(data)=>{
             console.log(data);
             this.addUserDivForm = false;
-            // Swal.fire({
-            //   icon: 'success',
-            //   title: 'Done!',
-            //   text: data.message,
-            //   width: '400px',
-            // })
             this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
             this.getUserList();
            },
@@ -308,6 +302,29 @@ addUser(){
         }) 
       }} 
     )
+  }else{
+    const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+    const userData = {
+        ...this.addUserForm.value,
+        role: selectedRoles // Replace the roles array with the selected roles
+    };
+      this.workbechService.addUserwithRoles(userData  ).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.addUserDivForm = false;
+        this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+        this.getUserList();
+       },
+      error:(error)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    }) 
   }
 
 }

@@ -223,6 +223,9 @@ export class HeaderComponent implements OnInit {
       }
     });
   }
+  routehelpGuide(){
+    this.router.navigate(['/insights/home/help-guide']);
+  }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];
       // items array which stores the elements

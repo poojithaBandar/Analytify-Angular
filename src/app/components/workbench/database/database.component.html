@@ -649,7 +649,7 @@
         <!-- column Data filter -->
         @if(columnRowFilter){
         <div class="modal-header">
-            <h6 class="modal-title">Filters</h6>
+            <h6 class="modal-title">Filters1</h6>
             <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');columnDataSearch =''">
             </button>
         </div>
@@ -663,7 +663,7 @@
             </div>
             <div class="table-responsive" style="max-height: 210px;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table">
-                    @if(columnsInFilters?.length){
+                    @if(searchFiltereredData?.length){
                     <tbody>
                         <tr>
                             <td>
@@ -676,7 +676,7 @@
                                 <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
                         </tr>
-                        @for(rows of columnsInFilters;track rows;let i = $index){
+                        @for(rows of searchFiltereredData;track rows;let i = $index){
                         <tr class="border-bottom user-list">
                             <td style="width: 46px;">
                                 <div class="form-check">
@@ -768,7 +768,7 @@
               }  -->
             <div class="input-group">
                 <input type="text" class="form-control border-end-0 " placeholder="Search"
-                    [(ngModel)]="columnDataSearch" (keyup.enter)="editFilter(editFilterId)"
+                    [(ngModel)]="columnDataSearch" (keyup.enter)="seachColumnDataFilterEdit()"
                     aria-describedby="button-addon2">
                 <button class="btn btn-primary border me-2" (click)="editFilter(editFilterId)" type="button"
                     id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
@@ -787,7 +787,7 @@
                                 <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
                         </tr>
-                        @for(rows of editFilterList;track rows;let i = $index){
+                        @for(rows of searchEditFilterList;track rows;let i = $index){
                         <tr class="border-bottom user-list">
 
                             <td style="width: 46px;">
