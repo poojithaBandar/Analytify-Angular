@@ -215,14 +215,17 @@
                             }
                         </div>
                         <div class="modal-footer">
-                          <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataPut(); modal.dismiss('Cross click')">Apply</button>
-                          <button
-                            type="button"
-                            class="btn ripple btn-secondary"
-                            (click)="modal.close('Save click')"
-                          >
-                            Close
-                          </button>
+                            <div class="col text-left p-0">
+                                <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
+                                <label for="exclude" class="form-check-label">Exclude</label>
+                            </div>
+                            <div class="text-right">
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                    class="btn ripple btn-primary me-2" (click)="filterDataPut(); modal.dismiss('Cross click')">Apply</button>
+                                <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                    Close
+                                </button>
+                            </div>
                         </div>
                       </ng-template>
 
@@ -314,14 +317,17 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                          <button [disabled]="!(filterDataArray?.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
-                          <button
-                            type="button"
-                            class="btn ripple btn-secondary"
-                            (click)="modal.close('Save click')"
-                          >
-                            Close
-                          </button>
+                            <div class="col text-left p-0">
+                                <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
+                                <label for="exclude" class="form-check-label">Exclude</label>
+                            </div>
+                            <div class="text-right">
+                                <button [disabled]="!(filterDataArray?.length > 0)" type="button" class="btn ripple btn-primary me-2"
+                                    (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
+                                <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                    Close
+                                </button>
+                            </div>
                         </div>
                       </ng-template>
                      
@@ -1007,28 +1013,28 @@
             }
             @if(stocked && chartId){         
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="stockedbar-chart">
                         <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
                 }
                 @if(sidebyside && chartId){         
                     <div class="card-body">
-                        <div id="bar-chart">
+                        <div id="sidebysidebar-chart">
                             <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
                         </div>
                     </div>
                     }
             @if(grouped && chartId){         
                     <div class="card-body">
-                        <div id="bar-chart">
+                        <div id="groupedbar-chart">
                             <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
                         </div>
                     </div>
             }
             @if(horizentalStocked && chartId){         
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="bhstockedar-chart">
                         <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
@@ -1036,56 +1042,56 @@
                 
             @if(area && chartId){
             <div class="card-body">
-                <div id="bar-chart">
+                <div id="area-chart">
                     <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
                 </div>
             </div>
             }
             @if(line && chartId){
             <div class="card-body">
-                <div id="bar-chart">
+                <div id="line-chart">
                     <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
                 </div>
             </div>
             }
             @if(pie && chartId){
             <div class="card-body">
-                <div id="bar-chart">
+                <div id="pie-chart">
                     <div id="echartsBar" echarts [options]="ePieChartOptions" class="echart-charts"></div>
                 </div>
             </div>
             }
             @if(donut && chartId){
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="donut-chart">
                         <div id="echartsBar" echarts [options]="eDonutChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
                 }
             @if(barLine && chartId){
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="barline-chart">
                         <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
                 }
                 @if(multiLine && chartId){
                     <div class="card-body">
-                        <div id="bar-chart">
+                        <div id="multiline-chart">
                             <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
                         </div>
                     </div>
                     }
             @if(radar && chartId){
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
                 }
                 @if(map && chartId){
                     <div class="card-body">
-                        <div id="bar-chart">
+                        <div id="map-chart">
                             <!-- <app-map-echart  [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart> -->
                             <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
                         </div>
@@ -1094,7 +1100,7 @@
                     
                 @if(calendar){
                     <div class="card-body">
-                        <div id="bar-chart">
+                        <div id="calender-chart">
                             <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="echart-charts"></div>  
                         </div>
                     </div>
@@ -1318,14 +1324,17 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                      <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
-                                                      <button
-                                                        type="button"
-                                                        class="btn ripple btn-secondary"
-                                                        (click)="modal.close('Save click')"
-                                                      >
-                                                        Close
-                                                      </button>
+                                                        <div class="col text-left p-0">
+                                                            <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
+                                                            <label for="exclude" class="form-check-label">Exclude</label>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                                                class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
+                                                            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                                                Close
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                   </ng-template>
                                             </div>
@@ -1958,7 +1967,7 @@
                                                             </select>
                                                          </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && !(pie || donut)" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Zoom </p>
                                                         </div>
@@ -2167,7 +2176,7 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                             <div class="" > 
                                                                 <p >Label </p>
                                                             </div>
