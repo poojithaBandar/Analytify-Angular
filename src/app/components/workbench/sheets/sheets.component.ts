@@ -7793,25 +7793,36 @@ fetchChartData(chartData: any){
           }
         }
       }
-      sort(event:any,numbers:any){
+      sort(event: any, numbers: any, labels: any) {
+        const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+      
         if (event.target.value === 'ascending') {
-          numbers.sort((a: any, b: any) => a - b);
+          pairedData.sort((a: any, b: any) => a[0] - b[0]);
+        } else if (event.target.value === 'descending') {
+          pairedData.sort((a: any, b: any) => b[0] - a[0]);
         }
-        else if (event.target.value === 'descending') {
-          numbers.sort((a: any, b: any) => b - a);
-        }
+
+        const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+        const sortedLabels = pairedData.map((pair: any) => pair[1]);
+      
+        return { sortedNumbers, sortedLabels };
       }
-      sortSeries(event:any){
+      
+      sortSeries(event: any) {
         if (this.funnel) {
           const numbers = this.funnelChartOptions.series[0].data;
-          this.sort(event,numbers);
-          console.log(numbers);
-          this.funnelChartOptions.series[0].data = numbers;
-          this.funnelCharts.updateSeries([{ data: numbers }]);
-        }
-        else if(this.bar){
+          const labels = this.funnelChartOptions.xaxis.categories;
+          const sortedData = this.sort(event, numbers, labels);
+
+          this.funnelChartOptions.series[0].data = sortedData.sortedNumbers;
+          this.funnelChartOptions.xaxis.categories = sortedData.sortedLabels;
+          this.funnelCharts.updateSeries([{ data: sortedData.sortedNumbers }]);
+          this.funnelCharts.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
+        } 
+        else if (this.bar) {
           const numbers = this.chartOptions3.series[0].data;
-          this.sort(event,numbers);
+          const labels = this.chartOptions3.xaxis.categories;
+          const sortedData = this.sort(event, numbers, labels);
           console.log(numbers);
           if(this.isEChatrts){
             // this.eBarchart.setOption({
@@ -7826,11 +7837,13 @@ fetchChartData(chartData: any){
             // });
             this.eBarChartOptions.series[0].data = numbers;
           } else {
-          this.chartOptions3.series[0].data = numbers;
-          this.barchart.updateSeries([{ data: numbers }]);
+            this.chartOptions3.series[0].data = sortedData.sortedNumbers;
+            this.chartOptions3.xaxis.categories = sortedData.sortedLabels;
+            this.barchart.updateSeries([{ data: sortedData.sortedNumbers }]);
+            this.barchart.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
           }
         }
-      }
+      }      
       funnelDLAllign:any;
       funnelDLFontFamily:any;
       funnelDLFontSize:any;
@@ -8163,5 +8176,52 @@ fetchChartData(chartData: any){
           this.chartOptions8.plotOptions.bar.dataLabels.position = position;
         }
         this.updateChart(object);
+      }
+      resetColor(){
+        this.color = '#00A5A2';
+        this.barColor = '#4382F7';
+        this.lineColor = '#38FF98';
+        if(this.table){
+          this.color1 = '#d4d3d2';
+          this.color2 = '#ffffff'; 
+        }
+        this.GridColor = '#0f0f0f';
+        this.apexbBgColor = '#ffffff';
+        if(this.kpi){
+          this.kpiColor = '#0f0f0f';
+        }
+        this.marksColor2(this.color);
+        this.funnelColorChange(this.color);
+        this.gridLineColor(this.GridColor);
+        this.apexbBackgroundColor(this.apexbBgColor);
+      }
+
+      sheetNotSaveAlert(): Promise<boolean> {
+        // if (this.goToSheetButtonClicked) {
+        //   // If the "Go to Sheet" button is clicked, skip the alert
+        //   return Promise.resolve(true);
+        // }
+        return Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "Your work has not been saved, Do you want to continue?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // User clicked "Yes", allow navigation
+            return true;
+          } else {
+            // User clicked "No", prevent navigation
+            this.loaderService.hide();
+            return false;
+          }
+        });
+      }
+      canNavigate(): boolean {
+        // This is handled in the functional guard
+        return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
       }
 }

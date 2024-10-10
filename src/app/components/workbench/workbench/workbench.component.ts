@@ -868,5 +868,76 @@ export class WorkbenchComponent implements OnInit{
   this.displayName ='';
   }
 
-  
+  serverError:boolean = false;
+  portError:boolean = false;
+  databaseError:boolean = false;
+  userNameError:boolean = false;
+  displayNameError:boolean = false;
+  passwordError:boolean = false;
+  pathError:boolean = false;
+  serverConditionError(){
+    if(this.postGreServerName){
+      this.serverError = false;
+    }else{
+      this.serverError = true;
+    }
+  }
+  portConditionError(){
+    if(this.postGrePortName){
+      this.portError = false;
+    }else{
+      this.portError = true;
+    }
+    this.serverConditionError();
+  }
+  databaseConditionError(){
+    if(this.postGreDatabaseName){
+      this.databaseError = false;
+    }else{
+      this.databaseError = true;
+    }
+    this.portConditionError();
+  }
+  userNameConditionError(){
+    if(this.postGreUserName){
+      this.userNameError = false;
+    }else{
+      this.userNameError = true;
+    }
+    this.databaseConditionError();
+  }
+  displayNameConditionError(){
+    if(this.displayName){
+      this.displayNameError = false;
+    }else{
+      this.displayNameError = true;
+    }
+    if(this.sqlLiteForm){
+      this.pathConditionError();
+    } else{
+      this.userNameConditionError();
+    }
+  }
+  passwordConditionError(){
+    if(this.PostGrePassword){
+      this.passwordError = false;
+    }else{
+      this.passwordError = true;
+    }
+    this.displayNameConditionError();
+  }
+  pathConditionError(){
+    if(this.fileData){
+      this.pathError = false;
+    } else{
+      this.pathError = true;
+    }
+  }
+  errorCheck(){
+    if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
+      return true;
+    } else{
+      return false;
+    }
+  }
 }

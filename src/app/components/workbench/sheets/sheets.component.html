@@ -1370,7 +1370,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0 || guagechartRowData > 1 }">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,28)"><img src="./assets/images/charts/guage-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
                                                         </div>
-                                                        <div *ngIf="false" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !dateList.includes(draggedColumnsData[0]?.[1]) && (draggedRows.length !== 1 || draggedColumns !== 1)}">
+                                                        <div *ngIf="true" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !dateList.includes(draggedColumnsData[0]?.[1]) && (draggedRows.length !== 1 || draggedColumns !== 1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Calendar Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,30)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Dual Axis</div>
@@ -1944,6 +1944,7 @@
                                                         <div class=""> 
                                                             <p >Banding color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="color1"
@@ -2068,7 +2069,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
@@ -2124,7 +2125,7 @@
                                                                     </div>
                                                                 </div>
  
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
@@ -2206,6 +2207,7 @@
                                                         <div class=""> 
                                                             <p >Grid Line Color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="GridColor"  (change)="gridLineColor($event)"
@@ -2216,6 +2218,7 @@
                                                         <div class=""> 
                                                             <p >Background Color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="apexbBgColor"  (change)="apexbBackgroundColor($event)"
@@ -2229,6 +2232,7 @@
                                                     </div>
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="color">Color:</label>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="kpiColor"
@@ -2239,6 +2243,7 @@
                                                         <div class=""> 
                                                             <p >Chart Color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="color" 
@@ -2249,6 +2254,7 @@
                                                         <div class=""> 
                                                             <p >bar color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="barColor" 
@@ -2260,7 +2266,7 @@
                                                         <div class=""> 
                                                             <p >line color </p>
                                                         </div>
-                                                        
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="lineColor" 
@@ -2317,6 +2323,7 @@
                                                         </div>
                                                         <div style="display: flex;justify-content: space-between;" *ngIf="!isDistributed">
                                                             <label>color</label>
+                                                            <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                             <ngx-colors [(ngModel)]="funnelColor" ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
                                                             </ngx-colors>
                                                         </div>

@@ -81,18 +81,21 @@ export const admin: Routes = [
 {
   path: 'sheets/fileId/:id1/:id2/:id3',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
   path: 'sheets/dbId/:id1/:id2/:id3',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
   path: 'sheets',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
@@ -132,6 +135,7 @@ export const admin: Routes = [
 {
   path: 'home/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
@@ -139,12 +143,14 @@ export const admin: Routes = [
 {
   path: 'home/dbId/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
   path: 'home/fileId/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
@@ -206,11 +212,13 @@ export const admin: Routes = [
 {
   path: 'sheetsdashboard/sheets/fileId/:id1/:id2/:id3/:id4',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },{
   path: 'sheetsdashboard/sheets/dbId/:id1/:id2/:id3/:id4',
   canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },

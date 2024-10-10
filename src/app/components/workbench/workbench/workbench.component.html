@@ -444,33 +444,33 @@
                   <div class="card-body">
                       <form>
                               <div class="form-group">
-                                  <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                                  <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                  <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER {{postGreServerName}}<span class="text-danger ms-1" >*</span></label>
+                                  <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
                               </div>
                               <div class="form-group">
-                                  <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                                  <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
+                                  <label [ngClass]="{'error-label': portError}" for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                  <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432" (input)="portConditionError()">
                               </div>
                               <div class="form-group">
-                                  <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                                  <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL">
+                                  <label [ngClass]="{'error-label': databaseError}" class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                  <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL" (input)="databaseConditionError()">
                               </div>
                               <div class="form-group">
-                                  <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                                  <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                  <label [ngClass]="{'error-label': userNameError}" class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                  <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
                               </div>
                               <div class="mb-2">
-                                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                               </div>
                               <div class="form-group">
-                                  <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                                  <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                  <label [ngClass]="{'error-label': passwordError}" class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                  <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                                   <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
                           </div>
                           <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Connect</button>
+                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="errorCheck()">Connect</button>
                           </div>
                       </form>
                   </div>
@@ -512,33 +512,33 @@
                     <div class="card-body">
                         <form>
                                 <div class="form-group">
-                                    <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                    <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                    <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
+                                    <label [ngClass]="{'error-label': portError}" for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                    <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432" (input)="portConditionError()">
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Mysql">
+                                    <label [ngClass]="{'error-label': databaseError}" class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                    <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. Mysql" (input)="databaseConditionError()">
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                    <label [ngClass]="{'error-label': userNameError}" class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                    <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
                                 </div>
                                 <div class="mb-2">
-                                  <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                                  <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                                    <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                    <label [ngClass]="{'error-label': passwordError}" class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                    <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                                     <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Connect</button>
+                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="errorCheck()">Connect</button>
                             </div>
                         </form>
                     </div>
@@ -581,33 +581,33 @@
                       <div class="card-body">
                           <form>
                                   <div class="form-group">
-                                      <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                                      <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                      <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
                                   </div>
                                   <div class="form-group">
-                                      <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                                      <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1521">
+                                      <label [ngClass]="{'error-label': portError}" for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1521" (input)="portConditionError()">
                                   </div>
                                   <div class="form-group">
-                                      <label class="col-form-label">SERVICE NAME:<span class="text-danger ms-1" >*</span></label>
-                                      <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. orcl">
+                                      <label [ngClass]="{'error-label': databaseError}" class="col-form-label">SERVICE NAME:<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. orcl" (input)="databaseConditionError()">
                                   </div>
                                   <div class="form-group">
-                                      <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                                      <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                      <label [ngClass]="{'error-label': userNameError}" class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
                                   </div>
                                   <div class="mb-2">
-                                    <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                                    <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                    <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                    <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                                   </div>
                                   <div class="form-group">
-                                      <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                                      <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                      <label [ngClass]="{'error-label': passwordError}" class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                                       <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="errorCheck()">Connect</button>
                               </div>
                           </form>
                       </div>
@@ -649,33 +649,33 @@
                         <div class="card-body">
                             <form>
                                     <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                                        <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                        <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                        <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
                                     </div>
                                     <div class="form-group">
-                                        <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                                        <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1433">
+                                        <label [ngClass]="{'error-label': portError}" for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                        <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 1433" (input)="portConditionError()">
                                     </div>
                                     <div class="form-group">
-                                      <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                                      <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver">
+                                      <label [ngClass]="{'error-label': databaseError}" class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver" (input)="databaseConditionError()">
                                   </div>
                                     <div class="form-group">
-                                        <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                                        <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                        <label [ngClass]="{'error-label': userNameError}" class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                        <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
                                     </div>
                                     <div class="mb-2">
-                                      <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                                      <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                      <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                      <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                                        <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                        <label [ngClass]="{'error-label': passwordError}" class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                        <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                                         <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()">Connect</button>
+                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="errorCheck()">Connect</button>
                                 </div>
                             </form>
                         </div>
@@ -727,33 +727,33 @@
                           <div class="card-body">
                               <form>
                                       <div class="form-group">
-                                          <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                                          <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                                          <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                                          <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
                                       </div>
                                       <div class="form-group">
-                                          <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                                          <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 433">
+                                          <label [ngClass]="{'error-label': portError}" for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                                          <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 433" (input)="portConditionError()">
                                       </div>
                                       <div class="form-group">
-                                        <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                                        <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver">
+                                        <label [ngClass]="{'error-label': databaseError}" class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                                        <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver" (input)="databaseConditionError()">
                                     </div>
                                       <div class="form-group">
-                                          <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                                          <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                          <label [ngClass]="{'error-label': userNameError}" class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                                          <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
                                       </div>
                                       <div class="mb-2">
-                                        <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                                        <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-mrwwyname" placeholder="e.g. InsignApps">
+                                        <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-mrwwyname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                                       </div>
                                       <div class="form-group">
-                                          <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                                          <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                                          <label [ngClass]="{'error-label': passwordError}" class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                                          <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                                           <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()">Connect</button>
+                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="errorCheck()">Connect</button>
                                   </div>
                               </form>
                           </div>
@@ -935,19 +935,19 @@
                                 <form>
                                  
                                   <div class="form-group">
-                                    <label class="col-form-label">path <span class="text-danger ms-1" >*</span></label>
-                                    <input type="file" class="form-control" [(ngModel)]="path" (change)="uploadfile($event)" [ngModelOptions]="{standalone: true}" autocomplete="fileselet" placeholder="select file">
+                                    <label [ngClass]="{'error-label': pathError}" class="col-form-label">path <span class="text-danger ms-1" >*</span></label>
+                                    <input [ngClass]="{'error-input': pathError}" type="file" class="form-control" [(ngModel)]="path" (change)="uploadfile($event)" [ngModelOptions]="{standalone: true}" autocomplete="fileselet" placeholder="select file" (input)="pathConditionError()">
                                     <label for="image">
                                     </label>
                                   </div>
                                         <div class="mb-2">
-                                          <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                                          <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                                          <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                                          <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                                         </div>
                                         
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()">Connect</button>
+                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()" [disabled]="pathError || displayNameError">Connect</button>
                                     </div>
                                 </form>
                             </div>

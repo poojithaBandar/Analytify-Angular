@@ -548,6 +548,7 @@ clrQuery(){
   this.cutmquryTable=[];
   this.custmQryTime='';
   this.custmQryRows='';
+  this.gotoSheetButtonDisable = true;
 }
 executeQuery(){
   const obj ={
@@ -575,6 +576,7 @@ executeQuery(){
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows
         console.log('dkjshd',this.cutmquryTable)
+        this.gotoSheetButtonDisable = false;
       },
       error:(error:any)=>{
       console.log(error);
@@ -585,6 +587,7 @@ executeQuery(){
         width: '400px',
       })
       this.cutmquryTableError = error;
+      this.gotoSheetButtonDisable = true;
     }
     })
 }
@@ -1676,7 +1679,7 @@ dataNotSaveAlert(): Promise<boolean> {
   return Swal.fire({
     position: "center",
     icon: "warning",
-    title: "Your work has not been saved, Do you want to continnue?",
+    title: "Your work has not been saved, Do you want to continue?",
     showConfirmButton: true,
     showCancelButton: true, // Add a "No" button
     confirmButtonText: 'Yes', // Text for "Yes" button
