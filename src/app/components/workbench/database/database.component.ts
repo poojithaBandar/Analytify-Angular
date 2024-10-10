@@ -103,6 +103,7 @@ export class DatabaseComponent {
   isOpen = false;
   searchTables : any;
   columnsInFilters = [] as any;
+  searchFiltereredData = [] as any;
   tableColumnFilter!:boolean;
   columnRowFilter!:any;
   datasourceFilterId:any;
@@ -113,6 +114,7 @@ export class DatabaseComponent {
   datasourceQuerysetId :string | null =null;
   filteredList = [] as any;
   editFilterList = [] as any;
+  searchEditFilterList = [] as any;
   columnWithTablesData = [] as any;
   isAllSelected: boolean = false;
   saveQueryName = '';
@@ -1066,41 +1068,60 @@ callColumnWithTable(){
     }
     })
 }
+seachColumnDataFilter() {
+  // Filter the columns based on the search input
+  // if (this.columnDataSearch) {
+  //     this.searchFiltereredData = this.columnsInFilters.filter((column: { label: string; }) => 
+  //         column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+  //     );
+  // } else {
+  //     this.searchFiltereredData = this.columnsInFilters; // Reset to original data if search is empty
+  // }
 
-seachColumnDataFilter(){
-  const obj ={
-    database_id:this.databaseId,
-    query_set_id:this.qurtySetId,
-    datasource_queryset_id:this.datasourceQuerysetId,
-    type_of_filter:'datasource',
-    col_name:this.colName,
-    data_type:this.dataType,
-    search : this.columnDataSearch
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
-  }
-  this.workbechService.selectedColumnGetRows(obj).subscribe(
-    {
-      next:(data:any) =>{
-        console.log(data)
-        this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
-        this.tableColumnFilter =false;
-        this.columnRowFilter = true;
-        console.log('colmnfilterrows',this.columnsInFilters)
-      },
-      error:(error:any)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-    }
-    })
+  if (this.columnDataSearch) {
+    // Perform local filtering based on the search input
+    this.searchFiltereredData = this.columnsInFilters.filter((column: { label: string; }) => 
+        column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+    );
+} else {
+    // If the search input is empty, reset to show all data
+    this.searchFiltereredData = this.columnsInFilters;
 }
+}
+// seachColumnDataFilter(){
+//   const obj ={
+//     database_id:this.databaseId,
+//     query_set_id:this.qurtySetId,
+//     datasource_queryset_id:this.datasourceQuerysetId,
+//     type_of_filter:'datasource',
+//     col_name:this.colName,
+//     data_type:this.dataType,
+//     search : this.columnDataSearch
+//   }as any;
+//   if(this.fromFileId){
+//     delete obj.database_id
+//     obj.file_id = this.fileId
+//   }
+//   this.workbechService.selectedColumnGetRows(obj).subscribe(
+//     {
+//       next:(data:any) =>{
+//         console.log(data)
+//         this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
+//         this.tableColumnFilter =false;
+//         this.columnRowFilter = true;
+//         console.log('colmnfilterrows',this.columnsInFilters)
+//       },
+//       error:(error:any)=>{
+//       console.log(error);
+//       Swal.fire({
+//         icon: 'error',
+//         title: 'oops!',
+//         text: error.error.message,
+//         width: '400px',
+//       })
+//     }
+//     })
+// }
 selectedColumnGetRows(col:any,datatype:any){
   const obj ={
     database_id:this.databaseId,
@@ -1126,6 +1147,7 @@ selectedColumnGetRows(col:any,datatype:any){
         this.tableColumnFilter =false;
         this.columnRowFilter = true;
         console.log('colmnfilterrows',this.columnsInFilters)
+        this.searchFiltereredData = this.columnsInFilters
       },
       error:(error:any)=>{
       console.log(error);
@@ -1262,6 +1284,18 @@ getFilteredList(){
     }
     })
 }
+
+seachColumnDataFilterEdit() {
+  if (this.columnDataSearch) {
+    // Perform local filtering based on the search input
+    this.searchEditFilterList = this.editFilterList.filter((column: { label: string; }) => 
+        column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+    );
+} else {
+    // If the search input is empty, reset to show all data
+    this.searchEditFilterList = this.editFilterList;
+}
+}
 editFilter(id:any){
   this.editFilterId = id;
   const obj ={
@@ -1281,6 +1315,7 @@ editFilter(id:any){
         this.editFilterList = data.result;
         this.colName=data.column_name,
         this.dataType = data.data_type
+        this.searchEditFilterList = this.editFilterList
       },
       error:(error:any)=>{
       console.log(error);
