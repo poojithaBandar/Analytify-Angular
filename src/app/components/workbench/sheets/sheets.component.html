@@ -388,7 +388,7 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
                                 style="position: relative;min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
@@ -507,7 +507,7 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
                            
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" style="
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" style="
                                 position: relative; min-height: 33px; padding: 2px;"
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
@@ -697,7 +697,7 @@
                                                    </div> 
                                                 </div>
                                             <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
-                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
+                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
                                                     style="position: relative;min-height: 33px; padding: 2px;" 
                                                 #drilldownList="cdkDropList" 
                                                     [cdkDropListData]="draggedDrillDownColumns" 
@@ -734,7 +734,8 @@
                 </div>
                 @if(pie || bar || line || donut || area){
                                     <div class="col-lg-3 col-md-3 p-1">
-                                        <button class="btn btn-primary " (click)="goDrillDownBack()"><i class="fa fa-arrow-left "></i> </button>
+                                        <button class="btn btn-primary " (click)="goDrillDownBack()" style="padding: 4px;">
+                                            <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
                                    </div>
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 d-flex mt-2" >
