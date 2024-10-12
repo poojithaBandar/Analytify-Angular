@@ -1072,24 +1072,20 @@ callColumnWithTable(){
     })
 }
 seachColumnDataFilter() {
-  // Filter the columns based on the search input
-  // if (this.columnDataSearch) {
-  //     this.searchFiltereredData = this.columnsInFilters.filter((column: { label: string; }) => 
-  //         column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
-  //     );
-  // } else {
-  //     this.searchFiltereredData = this.columnsInFilters; // Reset to original data if search is empty
-  // }
 
   if (this.columnDataSearch) {
     // Perform local filtering based on the search input
     this.searchFiltereredData = this.columnsInFilters.filter((column: { label: string; }) => 
-        column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+        // column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+    String(column.label).toLowerCase().includes(this.columnDataSearch.toLowerCase())
+
     );
 } else {
     // If the search input is empty, reset to show all data
     this.searchFiltereredData = this.columnsInFilters;
 }
+
+
 }
 // seachColumnDataFilter(){
 //   const obj ={
@@ -1292,7 +1288,8 @@ seachColumnDataFilterEdit() {
   if (this.columnDataSearch) {
     // Perform local filtering based on the search input
     this.searchEditFilterList = this.editFilterList.filter((column: { label: string; }) => 
-        column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+        // column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+    String(column.label).toLowerCase().includes(this.columnDataSearch.toLowerCase())
     );
 } else {
     // If the search input is empty, reset to show all data
