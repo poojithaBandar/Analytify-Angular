@@ -5,8 +5,12 @@
 <app-page-header title="Dashboard" title1="home" activeitem="Dashboard"></app-page-header>
 </div>
 <div *ngIf="sheetsNewDashboard">
-  <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/workbench/sheets" activeitem="Dashboard"></app-page-header>
+  <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
   </div>
+  
+  <div *ngIf="isPublicUrl" id="htmlContent" style="margin-top: 60px;">
+    <app-page-header title="{{dashboardName}}" title1="public" activeitem="Dashboard"></app-page-header>
+    </div>
   <!-- <div *ngIf="publicHeader">
     <app-page-header [publicHeader]="true"></app-page-header>
     </div> -->
@@ -18,7 +22,7 @@
 
   @if(isSheetsView){
     <div class="main-container container-fluid">
-      <div class="row" class="card " style="padding: 20px;">
+      <div class="row" class="card " style="padding-top: 15px;">
         <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
           <div class="d-flex justify-content-between px-5">
             <div class="connect-txt"><h1 class="page-title">Sheets</h1> 
@@ -137,16 +141,17 @@
       </div>
     </div>
   } @else {
-<div class="row main-container" [ngClass]="{ 'header-visibile': isPublicUrl, }">
-    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0" id="sticky-sidebar">
+    <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
+<div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }">
-        <div class="card mb-0">
-          <div class="card-body p-0">
+        <!-- <div class="card mb-0"> -->
+          <!-- <div class="card-body p-0"> -->
             <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
               <i class="fa fa-filter"></i>
             </div>
             <div class="panel panel-primary "[class.hidden]="isPanelHidden">
-              <div class="card panel panel-primary p-0">
+              <div class="panel panel-primary p-0">
                 <div class="tab-menu-heading tab-menu-heading-boxed">
                     <div class="tabs-menu-boxed">
                         <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
@@ -577,11 +582,11 @@
             </div>
           </div>
 
-          </div>
-      </div>
+          <!-- </div> -->
+      <!-- </div> -->
       </div>
     </div>
-    <div class="col-xl-10 col-md-12 p-1 ">
+    <div class="col-xl-10 col-md-12">
          <div class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
@@ -832,7 +837,7 @@
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
-              <div class="card mb-0" style="height: 100%;">
+              <div class="card mb-0 grid-item-border" style="height: 100%;">
                 <div class="card-header d-flex justify-content-between p-1">
                   @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10) && item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                     <!-- <div class="col-lg-3 col-md-3"> -->
@@ -1240,6 +1245,7 @@
           <img [src]="screenshotSrc" alt="Screenshot">
         </div> -->
     </div>
+</div>
 </div>
   }
 

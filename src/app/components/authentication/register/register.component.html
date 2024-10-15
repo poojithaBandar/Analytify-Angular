@@ -20,14 +20,18 @@
                                             <div class="mb-3">
                                                 <label class="mb-2 fw-500">User Name<span class="text-danger ms-1">*</span></label>
                                                 <input class="form-control ms-0" type="text" formControlName="username" placeholder="Enter User Name">
-                                                <!-- <div @if="signupForm.get('username').invalid && signupForm.get('username').touched">
-                                                    <div @if{"signupForm.get('username').errors?.required"}>Email is required.</div>
-                                                    <div @if="signupForm.get('username').errors?.username">Invalid email format.</div>
-                                                  </div> -->
-                                                  @if(signupForm.get('username')?.errors && signupForm.get('username')?.touched){
+                                        
+                                                  @if(signupForm.get('username')?.hasError('required') && signupForm.get('username')?.touched){
                                                     <div class="text-danger">username required</div>
                                                   }
-                                                
+                                                  @if(signupForm.get('username')?.hasError('maxlength') && signupForm.get('username')?.touched){
+                                                    <div class="text-danger">Username cannot exceed 64 characters.</div>
+                                                  }
+                                                  <!-- <div *ngIf="signupForm.get('username')?.hasError('maxlength') && signupForm.get('username')?.touched" class="text-danger">
+                                                    Username cannot exceed 64 characters.
+                                                  </div> -->
+                                                  <!-- <div *ngIf="signupForm.get('username')?.hasError('maxLength')" class="text-danger">Username cannot exceed 64 characters.</div> -->
+
                                             </div>
                                         </div>
                                         <div class="col-sm-12">
@@ -96,8 +100,8 @@
                                             <div class="mb-3">
                                                 <label class="mb-2 fw-500">Confirm Password<span class="text-danger ms-1">*</span></label>
                                                 <div class="input-group has-validation">
-                                                    <input type="password" class="form-control ms-0 border-end-0" placeholder="Confirm your Password" formControlName="conformpassword" id="signup-confirmpassword"
-                                                    [type]="showPassword1 ? 'text' : 'password'" autocomplete="off">
+                                                    <input type="password" class="form-control ms-0 border-end-0" placeholder="Confirm your Password" name="confirmPasswordField"  (paste)="onPaste($event)" formControlName="conformpassword" autocomplete="new-1234e4dq" id="signup-confirmpassword"
+                                                    [type]="showPassword1 ? 'text' : 'password'" >
                                                         <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
                                                 </div>
                                                 @if(confirmPasswordError){

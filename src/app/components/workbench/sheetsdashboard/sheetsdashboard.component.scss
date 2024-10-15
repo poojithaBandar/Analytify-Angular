@@ -50,12 +50,19 @@
 //     right: -4px;
 //   }
 
-
+::ng-deep .gridster {
+  border: 1px solid #edebeb !important;
+  border-radius: 10px !important;
+}
 :host{
   grister{
     background-color: transparent;
+    border: 1px solid #edebeb !important;
+    border-radius: 10px !important;
     .gridster-item {
       background-color: grey;
+      border: 1px solid #edebeb;
+      border-radius: 10px;
      .item-container{
         width: 100%;
         height: 100%;
@@ -72,12 +79,20 @@
 gridster {
   background: #f8f9fa;
   margin-top:9px;
+  border: 1px solid #edebeb !important;
+  border-radius: 10px !important;
 }
-
+// gridster-item{
+//   border: 1px solid #ddd;
+//   border-radius: 10px;
+// }
+.grid-item-border{
+  border: 1px solid #edebeb !important;
+  border-radius: 10px !important;
+}
 mat-card {
   height: 100%;
 }
-
 mat-card-content {
   display: flex;
   flex-direction: column;
@@ -86,16 +101,14 @@ mat-card-content {
 }
 .card {
   padding: 10px;
-  background: #fff;
+  // background: #fff;
   border: 1px solid #ccc;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   border-radius: 4px;
 }
-
 .card h3 {
   margin: 0 0 10px;
 }
-
 .card p {
   margin: 0 0 20px;
 }
@@ -104,31 +117,26 @@ mat-card-content {
   flex-direction: column;
   height: 100%;
 }
-
 .chart-container {
   flex: 1;
   overflow-y: auto; /* Add scrollbar if content exceeds height */
   padding: 10px; /* Optional: Add padding to the scrollable area */
 }
-
 apx-chart {
   width: 100%;
   height: 100%;
 }
-
 .dropdown-menu{
-    // min-width:auto;
-    box-shadow:none;
+   // min-width:auto;
+  box-shadow:none;
 }
 .dropdown-toggle::after{
-    display: none;
+  display: none;
 }
 .hidden-overflow {
   overflow-x: hidden !important;
   overflow-y: hidden !important;
-
 }
-
 .scroll-overflow {
   overflow: scroll !important;
 }
@@ -153,11 +161,10 @@ apx-chart {
 }
 .filter-popup-right{
   position: relative !important;
-    inset: -70px auto auto 128px !important;
-    margin: 0px !important;
-    transform: translate3d(4.16667px, 39.1667px, 0px);
+  inset: -70px auto auto 128px !important;
+  margin: 0px !important;
+  transform: translate3d(4.16667px, 39.1667px, 0px);
  }
-
  .checkbox-color{
   border: 1px solid #00a5a2;
  }
@@ -173,32 +180,34 @@ apx-chart {
 .card-content{
   border: none !important;
 }
-
 .hide-scrollbar {
   overflow: hidden;
 }
 .filterColumnbtn{
   width: 100%;
-    margin-top: 0px;
-    padding: 3px 6px;
-    text-align: left;
-    font-size: 12px;
+  margin-top: 0px;
+  padding: 3px 6px;
+  text-align: left;
+  font-size: 12px;
 }
 .fa-angle-down{
   float: right;
-    font-size: 16px;
+  font-size: 16px;
 }
+.public-mtop{
+  margin-top: -58px;
+}
+
 @media ( 1420px <= width <= 1560px) {
-  .dropdown-menu.filter-popover{
-    left: 191px !important;
+.dropdown-menu.filter-popover{
+  left: 191px !important;
   }
 }
 @media ( 1280px <= width <= 1420px) {
-  .dropdown-menu.filter-popover{
-    left: 167px !important;
+.dropdown-menu.filter-popover{
+  left: 167px !important;
   }
 }
-
 .custom-size-txt {
   font-size: 13px;
   text-decoration: underline;
@@ -212,16 +221,12 @@ apx-chart {
 .sheet-bold{
   opacity: 0.5;
 }
-
-
-
 button.BtnNewStyle {
   margin-inline: 0px !important;
   border-radius: 0px !important;
   background-color: #ccedec45;
   border: 1px solid #0000003b;
 }
-
 .popup {
   position: fixed;
   top: 34%;
@@ -235,18 +240,15 @@ button.BtnNewStyle {
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
 .popup-content {
   position: relative;
 }
-
 .buttons {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 10px;
 }
-
 .title-container{
   display: flex;
   align-items: center; 
@@ -256,12 +258,10 @@ button.BtnNewStyle {
   border: 1px solid gainsboro;
   border-radius: 6px;
 }
-
 #htmlContent{
   flex: 1;
   padding-left: 4px;
 }
-
 .title-editor{
   cursor: pointer;
 }
@@ -269,20 +269,18 @@ button.BtnNewStyle {
   line-height: 1;
   margin-bottom: 10px;
 }
-
 .accordion-button:not(.collapsed) {
   background: var(--background);
   border-color: var(--background);
   color: #333335;
 }   
-
 .accordion-button::after {
-margin-inline-start: inherit !important;
-position: absolute !important;
-left: 3px !important;
+  margin-inline-start: inherit !important;
+  position: absolute !important;
+  left: 3px !important;
 }
 .accordion-button {
-padding-left: 25px;
+  padding-left: 25px;
 }
 .select-text-accordion {
   font-size: 12px;
@@ -324,7 +322,10 @@ a.dashboard-tab-padding.nav-link {
   display: flex;
 }
 #sticky-sidebar {
+  // background-color: #fff;
   background-color: #fff;
+  border: 1px solid #edebeb;
+  border-radius: 10px;
 }
 .ng-untouched.ng-valid {
   color: #aeb1b6;
@@ -359,11 +360,11 @@ a.dashboard-tab-padding.nav-link {
 }
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
-  .dashboard-title-card{
-    display: flex;
+.dashboard-title-card{
+  display: flex;
   }
-  .flex-grow-1 {
-    margin-bottom: 5px;
+.flex-grow-1 {
+  margin-bottom: 5px;
 }
 #capture-element {
   width: 100% !important;
@@ -417,10 +418,10 @@ gridster-item {
 
 // for Tab Resolution //
 @media ( 768px <= width <= 1198px) {
-  .row.main-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+.row.main-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 .category-text {
   font-size: 8px;
@@ -467,25 +468,25 @@ div#sticky-sidebar {
   }
   .btn, .button-slide-out__above {
     font-size: 10px !important;
-}
-a.cdk-drag.dropdown-item.sheet-bold {
-  font-size: 12px;
-}
-a.cdk-drag.dropdown-item {
-  font-size: 12px;
-}
-.size-text {
-  font-size: 13px;
-}
-.card-header {
-  font-size: 12px;
-}
-.table tbody td {
-  font-size: 13px;
-}
-.table thead th {
-  font-size: 13px;
-}
+  }
+  a.cdk-drag.dropdown-item.sheet-bold {
+    font-size: 12px;
+  }
+  a.cdk-drag.dropdown-item {
+    font-size: 12px;
+  }
+  .size-text {
+    font-size: 13px;
+  }
+  .card-header {
+    font-size: 12px;
+  }
+  .table tbody td {
+    font-size: 13px;
+  }
+  .table thead th {
+    font-size: 13px;
+  }
 }
 
 // for 100% Resolution //
@@ -503,23 +504,23 @@ a.cdk-drag.dropdown-item {
   }
   .btn, .button-slide-out__above {
     font-size: 8px !important;
-}
-a.cdk-drag.dropdown-item.sheet-bold {
-  font-size: 12px;
-}
-a.cdk-drag.dropdown-item {
-  font-size: 12px;
-}
-.size-text {
-  font-size: 12px;
-}
-.card-header {
-  font-size: 12px;
-}
-.table tbody td {
-  font-size: 13px;
-}
-.table thead th {
-  font-size: 13px;
-}
+  }
+  a.cdk-drag.dropdown-item.sheet-bold {
+    font-size: 12px;
+  }
+  a.cdk-drag.dropdown-item {
+    font-size: 12px;
+  }
+  .size-text {
+    font-size: 12px;
+  }
+  .card-header {
+    font-size: 12px;
+  }
+  .table tbody td {
+    font-size: 13px;
+  }
+  .table thead th {
+    font-size: 13px;
+  }
 }

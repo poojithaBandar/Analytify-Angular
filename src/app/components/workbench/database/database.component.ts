@@ -103,6 +103,7 @@ export class DatabaseComponent {
   isOpen = false;
   searchTables : any;
   columnsInFilters = [] as any;
+  searchFiltereredData = [] as any;
   tableColumnFilter!:boolean;
   columnRowFilter!:any;
   datasourceFilterId:any;
@@ -113,6 +114,7 @@ export class DatabaseComponent {
   datasourceQuerysetId :string | null =null;
   filteredList = [] as any;
   editFilterList = [] as any;
+  searchEditFilterList = [] as any;
   columnWithTablesData = [] as any;
   isAllSelected: boolean = false;
   saveQueryName = '';
@@ -138,23 +140,23 @@ export class DatabaseComponent {
 
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
-    if(currentUrl.includes('/workbench/database-connection/tables/')){
+    if(currentUrl.includes('/insights/database-connection/tables/')){
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);
     }
-    else if(currentUrl.includes('/workbench/database-connection/files/tables/')){
+    else if(currentUrl.includes('/insights/database-connection/files/tables/')){
       this.fromFileId=true;
       this.fileId = +atob(route.snapshot.params['id']);
      }
-    else if(currentUrl.includes('/workbench/database-connection/savedQuery/')){
-      if(currentUrl.includes('/workbench/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
+    else if(currentUrl.includes('/insights/database-connection/savedQuery/')){
+      if(currentUrl.includes('/insights/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
         this.fileId = +atob(route.snapshot.params['id1']);
         this.fromFileId = true;
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
         this.getTablesFromFileId();
       }
-      if (currentUrl.includes('/workbench/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      if (currentUrl.includes('/insights/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
@@ -167,7 +169,7 @@ export class DatabaseComponent {
       this.fromSavedQuery = true;
       this.getSavedQueryData();
      }
-     else if(currentUrl.includes('/workbench/database-connection/sheets/dbId')){
+     else if(currentUrl.includes('/insights/database-connection/sheets/dbId')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -185,7 +187,7 @@ export class DatabaseComponent {
         }
       }
     }
-    else if(currentUrl.includes('/workbench/database-connection/sheets/fileId')){
+    else if(currentUrl.includes('/insights/database-connection/sheets/fileId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
        this.fileId = +atob(route.snapshot.params['id1']);
        this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -203,7 +205,7 @@ export class DatabaseComponent {
          }
        }
      }
-     if(currentUrl.includes('/workbench/database-connection/tables/quickbooks/')){
+     if(currentUrl.includes('/insights/database-connection/tables/quickbooks/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
@@ -287,6 +289,7 @@ export class DatabaseComponent {
           console.log('tablerelation', this.relationOfTables)
           this.draggedtables = data.dragged_data.json_data
           this.joinTypes = data.dragged_data.join_type;
+          this.saveQueryName= data.dragged_data.queryset_name;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
             this.joiningTables();
@@ -545,6 +548,7 @@ clrQuery(){
   this.cutmquryTable=[];
   this.custmQryTime='';
   this.custmQryRows='';
+  this.gotoSheetButtonDisable = true;
 }
 executeQuery(){
   const obj ={
@@ -572,6 +576,7 @@ executeQuery(){
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows
         console.log('dkjshd',this.cutmquryTable)
+        this.gotoSheetButtonDisable = false;
       },
       error:(error:any)=>{
       console.log(error);
@@ -582,6 +587,7 @@ executeQuery(){
         width: '400px',
       })
       this.cutmquryTableError = error;
+      this.gotoSheetButtonDisable = true;
     }
     })
 }
@@ -954,7 +960,7 @@ if(obj.row_limit === null || obj.row_limit === undefined){
         this.totalRows = data.total_rows;
         this.showingRows = data.no_of_rows;
         this.gotoSheetButtonDisable = false;
-        this.saveQueryName = data.queryset_name;
+        // this.saveQueryName = data.queryset_name;
         this.queryBuilt = data.custom_query;
         if(this.TabledataJoining?.column_data?.length === 0){
           this.gotoSheetButtonDisable = true;
@@ -1065,41 +1071,56 @@ callColumnWithTable(){
     }
     })
 }
+seachColumnDataFilter() {
 
-seachColumnDataFilter(){
-  const obj ={
-    database_id:this.databaseId,
-    query_set_id:this.qurtySetId,
-    datasource_queryset_id:this.datasourceQuerysetId,
-    type_of_filter:'datasource',
-    col_name:this.colName,
-    data_type:this.dataType,
-    search : this.columnDataSearch
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
-  }
-  this.workbechService.selectedColumnGetRows(obj).subscribe(
-    {
-      next:(data:any) =>{
-        console.log(data)
-        this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
-        this.tableColumnFilter =false;
-        this.columnRowFilter = true;
-        console.log('colmnfilterrows',this.columnsInFilters)
-      },
-      error:(error:any)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-    }
-    })
+  if (this.columnDataSearch) {
+    // Perform local filtering based on the search input
+    this.searchFiltereredData = this.columnsInFilters.filter((column: { label: string; }) => 
+        // column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+    String(column.label).toLowerCase().includes(this.columnDataSearch.toLowerCase())
+
+    );
+} else {
+    // If the search input is empty, reset to show all data
+    this.searchFiltereredData = this.columnsInFilters;
 }
+
+
+}
+// seachColumnDataFilter(){
+//   const obj ={
+//     database_id:this.databaseId,
+//     query_set_id:this.qurtySetId,
+//     datasource_queryset_id:this.datasourceQuerysetId,
+//     type_of_filter:'datasource',
+//     col_name:this.colName,
+//     data_type:this.dataType,
+//     search : this.columnDataSearch
+//   }as any;
+//   if(this.fromFileId){
+//     delete obj.database_id
+//     obj.file_id = this.fileId
+//   }
+//   this.workbechService.selectedColumnGetRows(obj).subscribe(
+//     {
+//       next:(data:any) =>{
+//         console.log(data)
+//         this.columnsInFilters= data.col_data.map((item: any) => ({ label: item, selected: false }))
+//         this.tableColumnFilter =false;
+//         this.columnRowFilter = true;
+//         console.log('colmnfilterrows',this.columnsInFilters)
+//       },
+//       error:(error:any)=>{
+//       console.log(error);
+//       Swal.fire({
+//         icon: 'error',
+//         title: 'oops!',
+//         text: error.error.message,
+//         width: '400px',
+//       })
+//     }
+//     })
+// }
 selectedColumnGetRows(col:any,datatype:any){
   const obj ={
     database_id:this.databaseId,
@@ -1125,6 +1146,7 @@ selectedColumnGetRows(col:any,datatype:any){
         this.tableColumnFilter =false;
         this.columnRowFilter = true;
         console.log('colmnfilterrows',this.columnsInFilters)
+        this.searchFiltereredData = this.columnsInFilters
       },
       error:(error:any)=>{
       console.log(error);
@@ -1261,6 +1283,19 @@ getFilteredList(){
     }
     })
 }
+
+seachColumnDataFilterEdit() {
+  if (this.columnDataSearch) {
+    // Perform local filtering based on the search input
+    this.searchEditFilterList = this.editFilterList.filter((column: { label: string; }) => 
+        // column.label && column.label.toLowerCase().includes(this.columnDataSearch.toLowerCase())
+    String(column.label).toLowerCase().includes(this.columnDataSearch.toLowerCase())
+    );
+} else {
+    // If the search input is empty, reset to show all data
+    this.searchEditFilterList = this.editFilterList;
+}
+}
 editFilter(id:any){
   this.editFilterId = id;
   const obj ={
@@ -1280,6 +1315,7 @@ editFilter(id:any){
         this.editFilterList = data.result;
         this.colName=data.column_name,
         this.dataType = data.data_type
+        this.searchEditFilterList = this.editFilterList
       },
       error:(error:any)=>{
       console.log(error);
@@ -1417,7 +1453,7 @@ getfilteredCustomSqlData(){
           this.cutmquryTable = data;
           this.custmQryTime = data.query_exection_time;
           this.custmQryRows = data.no_of_rows;
-          this.saveQueryName = data.queryset_name;
+          // this.saveQueryName = data.queryset_name;
           this.showingRowsCustomQuery=data.no_of_rows
           this.totalRowsCustomQuery=data.total_rows
         },
@@ -1434,7 +1470,7 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  this.router.navigate(['/workbench/work-bench/view-connections'])
+  this.router.navigate(['/insights/datasources/view-connections'])
 }
 
 markDirty(){
@@ -1461,7 +1497,7 @@ markDirty(){
             let payload = { file_id: this.fileId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1474,7 +1510,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         } else {
           // Convert to string and encode
@@ -1483,7 +1519,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1496,7 +1532,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/workbench/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         }
       } else if (this.fromDatabasId) {
@@ -1509,7 +1545,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1522,7 +1558,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         } else {
           // Convert to string and encode
@@ -1531,7 +1567,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1544,7 +1580,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/workbench/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         }
       }
@@ -1572,14 +1608,6 @@ saveQuery(){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          // Swal.fire({
-          //   icon: 'success',
-          //   title: 'Done!',
-          //   text: 'Query Saved Successfully',
-          //   width: '400px',
-          //   timer: 2000, 
-          //   showConfirmButton: false 
-          // })
           this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
 
         }
@@ -1648,7 +1676,7 @@ dataNotSaveAlert(): Promise<boolean> {
   return Swal.fire({
     position: "center",
     icon: "warning",
-    title: "Your work has not been saved, Do you want to continnue?",
+    title: "Your work has not been saved, Do you want to continue?",
     showConfirmButton: true,
     showCancelButton: true, // Add a "No" button
     confirmButtonText: 'Yes', // Text for "Yes" button

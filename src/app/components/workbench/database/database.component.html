@@ -3,23 +3,24 @@
 <div class="main-container container-fluid">
 
     @if(tableJoiningUI){
-    <div class="row main-container">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-            <div class="card p-4 br-0 mb-0  border-bottom d-block">
+        <div class="main-container container-fluid">
+    <div class="row">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card left-sidebar border">
+            <div class="p-4 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0 border-bottom">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
             </div>
-            <div class="card mb-0 p-4 br-0 border-bottom">
+            <div class="mb-0 p-4 br-0 border-bottom">
                 <h6 class="mb-0">Database</h6>
                 <p class="mb-0">{{databaseName}}</p>
             </div>
-            <div class="card mb-0 br-0">
-            </div>
-            <div class="card mb-0 br-0 pt-2" style="height: 581px">
-                <div class="card mb-0 p-1 border-bottom-0">
+            <!-- <div class="card mb-0 br-0">
+            </div> -->
+            <div class="mb-0 br-0 pt-2" style="height: 581px">
+                <div class="mb-0 p-1 border-bottom-0">
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"
                             [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
@@ -30,7 +31,7 @@
                     </div>
                 </div>
 
-                <div class="card-body p-1">
+                <div class="card-body p-1" style="overflow: scroll;">
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
                         <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
                             class="accordion-item">
@@ -69,7 +70,7 @@
             </div>
         </div>
         <div class="col-xl-10 col-md-12 p-1">
-            <div class="card-body p-0 ">
+            <div class=" p-0 ">
                 <div class="col-xl-12 col-md-12 p-0">
                     <div class="card mb-0 p-4 br-0" style="display: flex;flex-direction: row;">
                         <div class="flex-grow-1 ">
@@ -167,7 +168,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-xl-12 col-md-12 p-1">
                     <div class="card-body p-1 ">
                         <div class="row p-1">
@@ -451,6 +451,7 @@
             </div>
         </div>
     </div>
+    </div>
     }
     @if(customSql){
     <div class="row main-container">
@@ -649,8 +650,8 @@
         <!-- column Data filter -->
         @if(columnRowFilter){
         <div class="modal-header">
-            <h6 class="modal-title">Filters</h6>
-            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <h6 class="modal-title">Filters1</h6>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');columnDataSearch =''">
             </button>
         </div>
         <div class="modal-body p-0">
@@ -663,7 +664,7 @@
             </div>
             <div class="table-responsive" style="max-height: 210px;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table">
-                    @if(columnsInFilters?.length){
+                    @if(searchFiltereredData?.length){
                     <tbody>
                         <tr>
                             <td>
@@ -676,7 +677,7 @@
                                 <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
                         </tr>
-                        @for(rows of columnsInFilters;track rows;let i = $index){
+                        @for(rows of searchFiltereredData;track rows;let i = $index){
                         <tr class="border-bottom user-list">
                             <td style="width: 46px;">
                                 <div class="form-check">
@@ -703,7 +704,7 @@
         <div class="modal-footer">
             <button type="button" (click)="getSelectedRows()" [disabled]="!isAnyRowSelected()"
                 class="btn ripple btn-primary">Filter Data</button>
-            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');columnDataSearch =''">
                 Close
             </button>
         </div>
@@ -768,9 +769,9 @@
               }  -->
             <div class="input-group">
                 <input type="text" class="form-control border-end-0 " placeholder="Search"
-                    [(ngModel)]="columnDataSearch" (keyup.enter)="editFilter(editFilterId)"
+                    [(ngModel)]="columnDataSearch" (keyup.enter)="seachColumnDataFilterEdit()"
                     aria-describedby="button-addon2">
-                <button class="btn btn-primary border me-2" (click)="editFilter(editFilterId)" type="button"
+                <button class="btn btn-primary border me-2" (click)="seachColumnDataFilterEdit()" type="button"
                     id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             </div>
             <div class="table-responsive" style="max-height: 210px;">
@@ -787,7 +788,7 @@
                                 <label for="selectAll" class="form-check-label">Select All</label>
                             </td>
                         </tr>
-                        @for(rows of editFilterList;track rows;let i = $index){
+                        @for(rows of searchEditFilterList;track rows;let i = $index){
                         <tr class="border-bottom user-list">
 
                             <td style="width: 46px;">

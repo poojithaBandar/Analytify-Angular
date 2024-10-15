@@ -1,7 +1,9 @@
 .app-sidebar {
     z-index: 1100;
 }
-
+.logo-width{
+  max-width: 75% !important;
+}
 // for 90% Resolution //
 @media ( 1420px <= width <= 1560px) {
    

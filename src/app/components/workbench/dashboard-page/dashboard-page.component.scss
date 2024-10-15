@@ -1,26 +1,26 @@
 .card-icon-top{
-    height: 100px;
-    background-color: #86b8b7;
+  height: 100px;
+   background-color: #86b8b7;
   }
-  .table thead th{
-    color: #fff;
+.table thead th{
+  color: #fff;
 }
 .dropdown-toggle::after{
-    display: none;
+  display: none;
 }
 a {
-    cursor: pointer;
+ cursor: pointer;
 }
 .user-card .user-image .card-icon-top{
-    width: 100%;
-    height: auto;
-  }
-  .user-card .user-image::before{
-    background-color: transparent !important;
-  }
-  .card-box-shadow{
-    box-shadow: 5px 10px 10px 5px #0000001a;
-  }
-  .img-cursor{
-    cursor: pointer;
-  }
+   width: 100%;
+   height: auto;
+}
+.user-card .user-image::before{
+  background-color: transparent !important;
+ }
+.card-box-shadow{
+ box-shadow: 5px 10px 10px 5px #0000001a;
+}
+.img-cursor{
+ cursor: pointer;
+}

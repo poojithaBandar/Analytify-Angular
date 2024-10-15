@@ -194,21 +194,21 @@ export class SheetsdashboardComponent {
     if(!this.isPublicUrl){
       this.editDashboard = this.viewTemplateService.editDashboard();
     }
-    if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard/dbId')){
+    if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/dbId')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId.push(+atob(route.snapshot.params['id1']));
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
         }
     }
-    else if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard/fileId')){
+    else if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/fileId')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.fileId.push(+atob(route.snapshot.params['id1']));
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
         this.fromFileId = true;
         }
-    }else if(currentUrl.includes('workbench/landingpage/sheetsdashboard')){
+    }else if(currentUrl.includes('insights/home/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
       if (route.snapshot.params['id3']) {
@@ -220,7 +220,7 @@ export class SheetsdashboardComponent {
           this.dashboardId = +atob(route.snapshot.params['id1'])
         }
       }
-        else if(currentUrl.includes('workbench/sheetsdashboard')){
+        else if(currentUrl.includes('insights/sheetsdashboard')){
           this.sheetsNewDashboard = true;
     }
     
@@ -637,10 +637,10 @@ export class SheetsdashboardComponent {
          : undefined,
         numberFormat: {
           donutDecimalPlaces:this.donutDecimalPlaces,
-          decimalPlaces:this.decimalPlaces,
-          displayUnits:this.displayUnits,
-          prefix:this.prefix,
-          suffix:this.suffix
+          decimalPlaces:sheet?.sheet_data?.numberFormat?.decimalPlaces,
+          displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
+          prefix:sheet?.sheet_data?.numberFormat?.prefix,
+          suffix:sheet?.sheet_data?.numberFormat?.suffix
         }
       }));
       this.setSelectedSheetData();
@@ -668,8 +668,12 @@ export class SheetsdashboardComponent {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        this.fileId = data.file_id;
-        this.databaseId = data.server_id;
+        if(data.file_id && data.file_id.length){
+          this.fileId = data.file_id;
+        }
+        if(data.server_id && data.server_id.length){
+          this.databaseId = data.server_id;
+        }
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
@@ -722,10 +726,6 @@ export class SheetsdashboardComponent {
       }
           console.log('After sanitization:', sheet.data.sheetTagName);
           this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
-          this.decimalPlaces = sheet?.numberFormat?.decimalPlaces;
-          this.displayUnits = sheet?.numberFormat?.displayUnits;
-          this.prefix = sheet?.numberFormat?.prefix;
-          this.suffix = sheet?.numberFormat?.suffix;
           if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
             sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
               return w.globals.seriesTotals.reduce((a:any, b:any) => {
@@ -734,15 +734,42 @@ export class SheetsdashboardComponent {
             };
           }
           let chartId : number = sheet['chartId'];
-          if(![10,24].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
-            if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
-              sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
-              sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          const numberFormat = sheet?.numberFormat;
+          if(![10,24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
+            if([2,3].includes(chartId)){
+              if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+                sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
+            }
+            else{
+              if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+                sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
+              else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+                sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
             }
           }
-          if([26, 27].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
+          if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
             if (sheet.chartOptions?.dataLabels) {
-              sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+              sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              };
             }
           }
         })
@@ -789,6 +816,7 @@ export class SheetsdashboardComponent {
     }else{
       this.takeScreenshot();
       this.assignOriginalDataToDashboard();
+      this.setQuerySetIds()
     let obj ={
       grid : this.gridType,
       height: this.heightGrid,
@@ -821,7 +849,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
         // })
         this.toasterService.success('Dashboard Saved Successfully','success',{ positionClass: 'toast-top-right'});
         const encodedDashboardId = btoa(this.dashboardId.toString());
-        this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
+        this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
   
       },
       error:(error)=>{
@@ -835,6 +863,12 @@ selected_sheet_ids :this.sheetIdsDataSet,
       }
     })
   }
+  }
+  setQuerySetIds() {
+    this.qrySetId = [];
+    this.dashboard.forEach((sheet: any) =>{
+      this.qrySetId.push(sheet.qrySetId);
+    })
   }
   takeScreenshot() {
    this.startMethod();
@@ -934,6 +968,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       })
     }else{
       let dashboardData = this.assignOriginalDataToDashboard();
+      this.setQuerySetIds();
       let obj;
       if(this.fileId && this.fileId.length){
         obj ={
@@ -1296,12 +1331,6 @@ selected_sheet_ids :this.sheetIdsDataSet,
     });
   }
   getChartOptionsBasedOnType(sheet:any){
-    if(![10,24].includes(sheet.chart_id)){
-      this.decimalPlaces = sheet?.sheet_data?.numberFormat?.decimalPlaces;
-      this.displayUnits = sheet?.sheet_data?.numberFormat?.displayUnits;
-      this.prefix = sheet?.sheet_data?.numberFormat?.prefix;
-      this.suffix = sheet?.sheet_data?.numberFormat?.suffix;
-    }
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
@@ -1512,7 +1541,7 @@ allowDrop(ev : any): void {
       isDrillDownData : copy.isDrillDownData,
       numberFormat : copy.numberFormat
       };
-      this.qrySetId.push(copy.qrySetId);
+      // this.qrySetId.push(copy.qrySetId);
       if(copy.fileId){
         this.fileId.push(copy.fileId);
       } else {
@@ -1603,15 +1632,42 @@ allowDrop(ev : any): void {
         };
       }
       let chartId: number = sheet['chartId'];
-      if (![10, 24].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)) {
-        if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
-          sheet.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
-          sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+      const numberFormat = sheet?.numberFormat;
+      if (![10, 24].includes(chartId) && (numberFormat.decimalPlaces || numberFormat.displayUnits || numberFormat.prefix || numberFormat.suffix)) {
+        if([2,3].includes(chartId)){
+          if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };            
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+        }
+        else{
+          if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+          else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
+            sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
         }
       }
-      if([26, 27].includes(chartId) && (this.decimalPlaces || this.displayUnits || this.prefix || this.suffix)){
+      if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
         if (sheet.chartOptions?.dataLabels) {
-          sheet.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          sheet.chartOptions.dataLabels.formatter = (val: number) => {
+            return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          };
         }
       }
     });
@@ -1702,7 +1758,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/workbench/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/insights/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         } else {
           this.databaseId = sheetdata.databaseId;
           this.qrySetId = sheetdata.qrySetId;
@@ -1711,7 +1767,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/insights/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         }
       }
     } else {
@@ -1738,7 +1794,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
-        this.qrySetId.splice(popqryIndex, 1);
+        // this.qrySetId.splice(popqryIndex, 1);
         if(this.dashboardId){
           this.deleteSheetFilter(item.sheetId);
         }
@@ -2629,6 +2685,8 @@ getFilteredData(){
       // console.log(this.tablePreviewRow);
       // localStorage.removeItem('filterid')
       data.forEach((item: any) => {
+        this.filteredRowData = [];
+        this.filteredColumnData = [];
       this.tablePreviewColumn.push(item.columns);
       this.tablePreviewRow.push(item.rows);
       item.columns.forEach((res:any) => {      
@@ -3590,7 +3648,7 @@ kpiData?: KpiData;
     this.dashboardName = doc.body.textContent+'';
   }
   sheetsRoute(){
-    this.router.navigate(['/workbench/sheets']);  
+    this.router.navigate(['/insights/sheets']);  
   }
 
 
@@ -4009,31 +4067,28 @@ stopDragging(event: MouseEvent) {
   event.stopPropagation(); // Prevent the event from triggering dragging
 }
 donutDecimalPlaces:number = 2;
-decimalPlaces : number = 2;
-displayUnits:string = 'none';
-prefix:string = '';
-suffix:string = '';
 
-formatNumber(value: number): string {
+formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:string,suffix:string): string {
   let formattedNumber = value+'';
 
-  if (this.displayUnits !== 'none') {
-    switch (this.displayUnits) {
+    switch (displayUnits) {
       case 'K':
-        formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
+        formattedNumber = (value / 1_000).toFixed(decimalPlaces) + 'K';
         break;
       case 'M':
-        formattedNumber = (value / 1_000_000).toFixed(this.decimalPlaces) + 'M';
+        formattedNumber = (value / 1_000_000).toFixed(decimalPlaces) + 'M';
         break;
       case 'B':
-        formattedNumber = (value / 1_000_000_000).toFixed(this.decimalPlaces) + 'B';
+        formattedNumber = (value / 1_000_000_000).toFixed(decimalPlaces) + 'B';
         break;
       case 'G':
-        formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
+        formattedNumber = (value / 1_000_000_000_000).toFixed(decimalPlaces) + 'G';
+        break;
+      case 'none':
+        formattedNumber = (value/1).toFixed(decimalPlaces);
         break;
     }
-  }
-  return this.prefix + formattedNumber + this.suffix;
+  return prefix + formattedNumber + suffix;
 }
 }
 // export interface CustomGridsterItem extends GridsterItem {

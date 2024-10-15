@@ -8,15 +8,30 @@
             <div class="header-content-left align-items-center">
 
                 <div class="header-element">
+                    <div style="        padding: 0.85rem 0;
+                        display: block;">
+                        <a routerLink="/insights/home" class="header-logo">
+                            <img *ngIf="isPublicUrl" src="./assets/images/brand/insightApps-logo-Public.png" alt="logo" class="public-logo-header">
+                        </a>
+                    </div>
+                  
+
                     <div class="horizontal-logo">
                         <a routerLink="/dashboard" class="header-logo">
+                            <!-- <img *ngIf="isPublicUrl" src="./assets/images/brand/insightApps-logo.png" alt="logo" class="desktop-dark logo-width"> -->
                             <img src="./assets/images/brand/desktop-logo.png" alt="logo" class="desktop-logo">
-                            <img src="./assets/images/brand/toggle-logo.png" alt="logo" class="toggle-logo">
+                            <img src="./assets/images/brand/insightApps-logo-Public.png" alt="logo" class="toggle-logo mobile-icon-public">
                             <img src="./assets/images/brand/desktop-dark.png" alt="logo" class="desktop-dark">
                             <img src="./assets/images/brand/toggle-dark.png" alt="logo" class="toggle-dark">
                         </a>
-                    </div>
+                    </div>                            
                 </div>
+                <!-- <div class="main-sidebar-header">
+                    <a routerLink="/insights/home" class="header-logo">
+                        <img *ngIf="isPublicUrl" src="./assets/images/brand/insightApps-logo.png" alt="logo" class="desktop-dark logo-width">
+
+                    </a>
+                  </div> -->
                 <!-- Start::header-element -->
                 <div *ngIf="!isPublicUrl" class="header-element">
                     <!-- Start::header-link -->
@@ -860,8 +875,8 @@
                                                 href="javascript:void(0);">Privacy Policy</a></span>
                                         <span><a class="fs-12 px-2 border-end"
                                                 href="javascript:void(0);">Terms</a></span>
-                                        <span><a class="fs-12 px-2"
-                                                href="javascript:void(0);">Cookies</a></span>
+                                        <span><a class="fs-12 px-2 cursor"
+                                                (click)="routehelpGuide()">Help</a></span>
                                     </li>
                                 </ul>
                             </div>

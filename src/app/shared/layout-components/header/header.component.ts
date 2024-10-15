@@ -223,6 +223,9 @@ export class HeaderComponent implements OnInit {
       }
     });
   }
+  routehelpGuide(){
+    this.router.navigate(['/insights/home/help-guide']);
+  }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];
       // items array which stores the elements
@@ -308,14 +311,14 @@ export class HeaderComponent implements OnInit {
   }
 
   routeToUserDashboard(){
-    this.router.navigate(['/workbench/list-users/dashboard'])
+    this.router.navigate(['/insights/list-users/dashboard'])
   }
   routeToRolesDashboard(){
-    this.router.navigate(['/workbench/roles-list/dashboard'])
+    this.router.navigate(['/insights/roles-list/dashboard'])
   }
 
   routeToConfigurePage() {
-    this.router.navigate(['/workbench/configure-page/configure']);
+    this.router.navigate(['/insights/configure-page/configure']);
   }
 
 }

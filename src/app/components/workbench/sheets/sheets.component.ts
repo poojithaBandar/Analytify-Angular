@@ -76,6 +76,7 @@ export class SheetsComponent {
   dimentions = [] as any;
   measurments = [] as any;
   columnData = [] as any;
+  isExclude: boolean = false;
   rowData = [] as any;
   tableName: any;
   schemaName: any;
@@ -169,6 +170,7 @@ export class SheetsComponent {
   eDonutChartOptions: any;
   eBarLineChartOptions: any;
   eRadarChartOptions: any;
+  eCalendarChartOptions:any
   dimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
@@ -220,6 +222,7 @@ export class SheetsComponent {
   canDrop = true;
   createdBy : any;
   @ViewChild('barChart') barchart!: ChartComponent;
+  @ViewChild(' bar-chart') eBarchart!: any;
   @ViewChild('areaChart') areachart!: ChartComponent;
   @ViewChild('lineChart') linechart!: ChartComponent;
   @ViewChild('sidebyside') sidebysideChart!: ChartComponent;
@@ -273,7 +276,7 @@ export class SheetsComponent {
   eFunnelChartOptions: any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
-    if(this.router.url.includes('/workbench/sheets/dbId')){
+    if(this.router.url.includes('/insights/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -290,7 +293,7 @@ export class SheetsComponent {
           }
         }
      }
-     if(this.router.url.includes('/workbench/sheets/fileId')){
+     if(this.router.url.includes('/insights/sheets/fileId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.fileId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -308,7 +311,7 @@ export class SheetsComponent {
           }
         }      
   }
- // if(this.router.url.includes('/workbench/landingpage/sheets/')){ //old landing page to sheet 
+ // if(this.router.url.includes('/insights/home/sheets/')){ //old landing page to sheet 
   //   console.log("landing page")
   //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
   //     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -319,7 +322,7 @@ export class SheetsComponent {
   //     // this.sheetRetrive();
   //     }
   //  }
-  if(this.router.url.includes('/workbench/landingpage/dbId/sheets/')){
+  if(this.router.url.includes('/insights/home/dbId/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -329,7 +332,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    }
-   if(this.router.url.includes('/workbench/landingpage/fileId/sheets/')){
+   if(this.router.url.includes('/insights/home/fileId/sheets/')){
     this.fromFileId = true;
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.fileId = +atob(route.snapshot.params['id1']);
@@ -342,7 +345,7 @@ export class SheetsComponent {
    }
 
 
-   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/fileId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/fileId/')){
     this.sheetsDashboard = true;
     this.fromFileId = true;
     console.log("landing page")
@@ -355,7 +358,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    } 
-   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/dbId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/dbId/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
     console.log("landing page")
@@ -433,12 +436,12 @@ if(this.fromFileId){
       if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
         // Encode 'null' to represent a null value
        const encodedDsQuerySetId = btoa('null');
-       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
   
       } else {
         // Convert to string and encode
        const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
     
       } 
      }
@@ -446,7 +449,7 @@ if(this.fromFileId){
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
     const encodedFileId = btoa(this.fileId?.toString());
-    // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+    // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
     const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
     const fromSource = this.fromFileId ? 'fileId' : 'dbId'
@@ -454,19 +457,19 @@ if(this.fromFileId){
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
   }
 
   }
   goToConnections(){
-    this.router.navigate(['/workbench/work-bench/view-connections'])
+    this.router.navigate(['/insights/datasources/view-connections'])
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -731,6 +734,38 @@ if(this.fromFileId){
       };
     }
   }
+
+  setEchartLegendAlignment(){
+    switch(this.legendsAllignment) {
+      case 'left': return {
+        show: this.legendSwitch,
+        orient: 'vertical',
+        top : 'center',
+        left: 'left'
+      };
+      case 'right': return {
+        show: this.legendSwitch,
+        orient: 'vertical',
+        top : 'center',
+        right: 'right'
+      };
+      case 'top': return {
+        show: this.legendSwitch,
+        orient: 'horizontal',
+        top: 'top'
+      };
+      case 'bottom': return {
+        show: this.legendSwitch,
+        orient: 'horizontal',
+        bottom: 'bottom'
+      };
+      default: return {
+        show: this.legendSwitch,
+        orient: 'horizontal',
+        bottom: 'bottom'
+      };
+    }
+  }
   pieChart(){
     if(this.isApexCharts){
       const self = this;
@@ -785,21 +820,19 @@ if(this.fromFileId){
         value: value,
         name: this.chartsColumnData[index]
       }));
+      let legendObject = this.setEchartLegendAlignment();
       this.ePieChartOptions = {
         backgroundColor: this.backgroundColor,
-        title: {
-          left: 'center'
-        },
         tooltip: {
           trigger: 'item'
         },
-        legend: {
-          orient: 'horizontal',
-          left: 'left'
+        legend: legendObject,
+        label: {
+          show : this.dataLabels,
+          formatter: '{b}: {d}%',
         },
         series: [
           {
-            name: 'Access From',
             type: 'pie',
             radius: '50%',
             data: combinedArray,
@@ -809,8 +842,11 @@ if(this.fromFileId){
                 shadowOffsetX: 0,
                 shadowColor: 'rgba(0, 0, 0, 0.5)'
               }
-            }
+            },
+            label: {
+              show: this.dataLabels, // Dynamically show or hide data labels            }
           }
+        }
         ]
       };
     }
@@ -2595,23 +2631,21 @@ bar["stack"]="Total";
             value: value,
             name: this.chartsColumnData[index]
           }));
+          let legendObject = this.setEchartLegendAlignment();
           this.eDonutChartOptions = {
             backgroundColor: this.backgroundColor,
-            title: {
-              left: 'center'
-            },
             tooltip: {
               trigger: 'item'
             },
-            legend: {
-              orient: 'horizontal',
-              left: 'left'
+            legend: legendObject,
+            label: {
+              show : this.dataLabels,
+              formatter: '{b}: {d}%',
             },
             series: [
               {
-                name: 'Access From',
                 type: 'pie',
-                radius: ['40%' , '70%'],
+                radius: [this.donutSize+'%' , '100%'],
                 data: combinedArray,
                 emphasis: {
                   itemStyle: {
@@ -2619,7 +2653,10 @@ bar["stack"]="Total";
                     shadowOffsetX: 0,
                     shadowColor: 'rgba(0, 0, 0, 0.5)'
                   }
-                }
+                },
+                label: {
+                  show: this.dataLabels, // Dynamically show or hide data labels            }
+              }
               }
             ]
           };
@@ -2831,6 +2868,63 @@ this.dualAxisColumnData.forEach((item:any) => {
           labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
         };
       }     
+      calendarChart(){
+        let calendarData:any[] = []
+        console.log(this.chartsColumnData);
+        console.log(this.chartsRowData);
+        this.chartsColumnData.forEach((data:any,index:any)=>{
+          let arr = [data,this.chartsRowData[index]]
+          calendarData.push(arr);
+        });
+        const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b));
+        const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b));
+        
+        const minDate = this.chartsColumnData.reduce((a: any, b: any) => (a < b ? a : b));
+        const maxDate = this.chartsColumnData.reduce((a: any, b: any) => (a > b ? a : b));
+
+        console.log(calendarData);
+        this.eCalendarChartOptions = {
+          tooltip: {
+            position: 'top',
+            formatter: function (params: any) {
+              const date = params.data[0];  // The date value
+              const value = params.data[1]; // The heatmap value
+              return `Date: ${date}<br/>Value: ${value}`; // Customize how you want the tooltip to display
+            }
+          },
+          visualMap: {
+            min: minValue,
+            max: maxValue,
+            calculable: true,
+            orient: 'horizontal',
+            left: 'center',
+            top: 'bottom'
+          },
+          calendar:  {
+            range: [minDate,maxDate], // You can specify the range (year, month, etc.)
+            cellSize: ['auto', 20],
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: '#000',
+                width: 2,
+                type: 'solid'
+              }
+            },
+            itemStyle: {
+              borderWidth: 1,
+              borderColor: '#ccc'
+            }
+          },
+          series: [
+            {
+              type: 'heatmap',
+              coordinateSystem: 'calendar',
+              data: calendarData
+            }
+          ]
+        }
+      } 
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
@@ -2995,7 +3089,7 @@ this.dualAxisColumnData.forEach((item:any) => {
               }
             }
            
-            if ((this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!this.kpi &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1))) {
+            if ((this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!this.kpi &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -3014,6 +3108,9 @@ this.dualAxisColumnData.forEach((item:any) => {
               this.heatMap = false;
               this.guage = false;
               this.funnel = false;
+              this.calendar = false;
+              this.map = false;
+              this.tableDisplayPagination();
             } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
               this.table = false;
               this.bar = false;
@@ -3033,6 +3130,8 @@ this.dualAxisColumnData.forEach((item:any) => {
               this.heatMap = false;
               this.funnel = false;
               this.guage = false;
+              this.calendar = false;
+              this.map = false;
               this.sidebysideBar();
             }
           },
@@ -3255,6 +3354,8 @@ this.dualAxisColumnData.forEach((item:any) => {
             // Initialize the chart after the map is registered
             this.mapChart();
           });
+        } else if(this.calendar){
+          this.calendarChart();
         }
         
       }
@@ -3529,8 +3630,9 @@ this.dualAxisColumnData.forEach((item:any) => {
   heatMap = false;
   funnel = false;
   guage = false;
+  calendar = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -3549,7 +3651,8 @@ this.dualAxisColumnData.forEach((item:any) => {
     this.heatMap = heatMap;
     this.funnel = funnel;
     this.guage = guage;
-    this.map = map
+    this.map = map;
+    this.calendar = calendar;
     // this.dataExtraction();
     if(!this.bar|| !this.pie || !this.donut){
       this.draggedDrillDownColumns = [];
@@ -4079,7 +4182,10 @@ sheetSave(){
     xLabelFontFamily : this.xLabelFontFamily,
     xLabelFontSize : this.xLabelFontSize,
     xlabelFontWeight : this.xlabelFontWeight,
-    labelAlignment : this.labelAlignment
+    labelAlignment : this.labelAlignment,
+    backgroundColor : this.backgroundColor,
+    color : this.color
+
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4307,6 +4413,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetCustomQuery = responce.custom_query;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
+        this.filterQuerySetId = responce.datasource_queryset_id;
         this.draggedRows = this.sheetResponce.rows;
         this.mulColData = responce.col_data;
         this.mulRowData = responce.row_data;
@@ -4399,6 +4506,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.map = false
           this.funnel = false;
           this.guage = false;
         }
@@ -4432,6 +4540,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
         }
         if(responce.chart_id == 29){
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -4489,8 +4598,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartOptions3 = this.sheetResponce.savedChartOptions;
         this.chartOptions3.xaxis.convertedCatToNumeric = true;
         this.barchart?.updateOptions(this.chartOptions3);
-        this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions3.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions3?.dataLabels){
+          this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions3.yaxis.labels){
+          this.chartOptions3.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.chartOptions3.chart.events = {
           dataPointSelection: function (event: any, chartContext: any, config: any) {
             const selectedXValue = self.chartOptions3.xaxis.categories[config.dataPointIndex];
@@ -4562,8 +4675,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.legendSwitch = this.chartOptions4.legend?.show;
         this.apexbBgColor = this.chartOptions4?.chart?.background;
         this.dataLabels = this.chartOptions4?.dataLabels?.enabled;
+        this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
+        // this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
         } else {
           this.ePieChartOptions = this.sheetResponce.savedChartOptions;
+          this.legendSwitch = this.ePieChartOptions?.legend?.show;
+          this.legendsAllignment = this.ePieChartOptions?.legend?.left || this.ePieChartOptions?.legend?.right || this.ePieChartOptions?.legend?.top || this.ePieChartOptions?.legend?.bottom
+          this.dataLabels = this.ePieChartOptions?.label?.show
         }
         // this.pieChart();
         this.bar = false;
@@ -4584,8 +4702,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
-          this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
-          this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
        }
        if(responce.chart_id == 13){
         // this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -4595,8 +4711,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.chartOptions = this.sheetResponce.savedChartOptions;
           this.chartOptions.xaxis.convertedCatToNumeric = true;
           this.linechart?.updateOptions(this.chartOptions);
-          this.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
-          this.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+          if(this.chartOptions?.dataLabels){
+            this.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions.yaxis.labels){
+            this.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+          }
           this.chartOptions.events = {
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
@@ -4648,8 +4768,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.chartOptions1 = this.sheetResponce.savedChartOptions;
           this.chartOptions1.xaxis.convertedCatToNumeric = true;
           this.areachart?.updateOptions(this.chartOptions1);
-          this.chartOptions1.dataLabels.formatter = this.formatNumber.bind(this);
-          this.chartOptions1.yaxis.labels.formatter = this.formatNumber.bind(this);
+          if(this.chartOptions1?.dataLabels){
+            this.chartOptions1.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions1.yaxis.labels){
+            this.chartOptions1.yaxis.labels.formatter = this.formatNumber.bind(this);
+          }
           this.xLabelSwitch = this.chartOptions1?.xaxis?.labels?.show;
           this.yLabelSwitch = this.chartOptions1?.yaxis?.labels?.show;
           this.xGridSwitch = this.chartOptions1?.grid?.xaxis?.lines?.show;
@@ -4685,8 +4809,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.sidebysideBarXaxis;
         if(this.isApexCharts){
         this.chartOptions2 = this.sheetResponce.savedChartOptions;
-        this.chartOptions2.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions2.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions2?.dataLabels){
+          this.chartOptions2.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions2.yaxis.labels){
+          this.chartOptions2.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions2?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions2?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions2?.grid?.xaxis?.lines?.show;
@@ -4721,8 +4849,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.stokedBarXaxis;
         if(this.isApexCharts){
         this.chartOptions6 = this.sheetResponce.savedChartOptions;
-        this.chartOptions6.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions6.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions6?.dataLabels){
+          this.chartOptions6.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions6.yaxis.labels){
+          this.chartOptions6.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions6?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions6?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions6?.grid?.xaxis?.lines?.show;
@@ -4758,8 +4890,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.isApexCharts){
           this.chartOptions5 = this.sheetResponce.savedChartOptions;
           this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
-          this.chartOptions5.yaxis[0].labels.formatter = this.formatNumber.bind(this);
-          this.chartOptions5.yaxis[1].labels.formatter = this.formatNumber.bind(this);
+          if(this.chartOptions5?.dataLabels){
+            this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions5.yaxis.labels){
+            this.chartOptions5.yaxis[0].labels.formatter = this.formatNumber.bind(this);
+            this.chartOptions5.yaxis[1].labels.formatter = this.formatNumber.bind(this);
+          }
           this.xLabelSwitch = this.chartOptions5?.xaxis?.labels?.show;
           this.yLabelSwitch = this.chartOptions5?.yaxis?.labels?.show;
           this.xGridSwitch = this.chartOptions5?.grid?.xaxis?.lines?.show;
@@ -4823,8 +4960,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.hStockedXaxis;
         if(this.isApexCharts){
         this.chartOptions7 = this.sheetResponce.savedChartOptions;
-        this.chartOptions7.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions7.xaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions7?.dataLabels){
+          this.chartOptions7.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions7.xaxis.labels){
+          this.chartOptions7.xaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions7?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions7?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions7?.grid?.xaxis?.lines?.show;
@@ -4859,8 +5000,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.hgroupedXaxis;
         if(this.isApexCharts){
         this.chartOptions8 = this.sheetResponce.savedChartOptions;
-        this.chartOptions8.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions8.xaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions8?.dataLabels){
+          this.chartOptions8.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions8.xaxis.labels){
+          this.chartOptions8.xaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions8?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions8?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions8?.grid?.xaxis?.lines?.show;
@@ -4895,8 +5040,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.multiLineXaxis;
         if(this.isApexCharts){
         this.chartOptions9 = this.sheetResponce.savedChartOptions;
-        this.chartOptions9.dataLabels.formatter = this.formatNumber.bind(this);
-        this.chartOptions9.yaxis.labels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions9?.dataLabels){
+          this.chartOptions9.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions9.yaxis.labels){
+          this.chartOptions9.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.xLabelSwitch = this.chartOptions9?.xaxis?.labels?.show;
         this.yLabelSwitch = this.chartOptions9?.yaxis?.labels?.show;
         this.xGridSwitch = this.chartOptions9?.grid?.xaxis?.lines?.show;
@@ -4959,6 +5108,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       }
         else {
           this.eDonutChartOptions = this.sheetResponce.savedChartOptions;
+          this.legendSwitch = this.eDonutChartOptions?.legend?.show;
+          this.legendsAllignment = this.eDonutChartOptions?.legend?.left || this.eDonutChartOptions?.legend?.right || this.eDonutChartOptions?.legend?.top || this.eDonutChartOptions?.legend?.bottom
+          this.dataLabels = this.eDonutChartOptions?.label?.show;
+          this.donutSize = parseInt(this.eDonutChartOptions?.series[0]?.radius[0]?.replace('%', '').trim());
+
         }
         // this.donutChart();
         this.bar = false;
@@ -4982,7 +5136,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 26){
         this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
-        this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        if(this.heatMapChartOptions?.dataLabels){
+          this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -5004,7 +5160,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 27){
         this.funnelChartOptions = this.sheetResponce.savedChartOptions;
-        this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        if(this.funnelChartOptions?.dataLabels){
+          this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
         this.isDistributed = this.funnelChartOptions?.plotOptions?.bar?.distributed;
         this.funnelDLAllign = this.funnelChartOptions?.plotOptions?.bar?.dataLabels?.position;
         this.funnelDLFontFamily = this.funnelChartOptions?.dataLabels?.style?.fontFamily;
@@ -5065,7 +5223,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   filterName:any
   filterType:any;
   openSuperScaled(modal: any,data:any) {
+    this.filterSearch = '';
     this.filterDataArray = [];
+    this.isExclude = false;
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -5171,7 +5331,8 @@ if(this.fromFileId){
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
        "data_type":this.filterType,
-       "parent_user":this.createdBy
+       "parent_user":this.createdBy,
+       "is_exclude":this.isExclude
 }as any;
 if(this.fromFileId){
   delete obj.database_id;
@@ -5209,6 +5370,7 @@ if(this.fromFileId){
         this.filter_id = responce.filter_id;
         this.filterName=responce.column_name;
         this.filterType=responce.data_type;
+        this.isExclude = responce.is_exclude;
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
         });
@@ -5239,7 +5401,8 @@ if(this.fromFileId){
       "range_values": this.filterDateRange,
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
-      "data_type":this.filterType
+      "data_type":this.filterType,
+      "is_exclude":this.isExclude
 
   }as any;
   if(this.fromFileId){
@@ -5284,6 +5447,7 @@ if(this.fromFileId){
     });
 }
 openSuperScalededitFilter(modal: any,data:any) {
+  this.editFilterSearch = '';
   this.modalService.open(modal, {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
@@ -5324,12 +5488,12 @@ gotoDashboard(){
   if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
   }
 if(this.fromFileId){
   const encodedFileId = btoa(this.fileId.toString())
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
 }
 }
 viewDashboard(){
@@ -5337,19 +5501,23 @@ viewDashboard(){
     const encodedDatabaseId = btoa(this.fileId.toString());
     const encodedQuerySetId = btoa(this.qrySetId.toString());
     const encodedDashboardId = btoa(this.dashboardId.toString());
-    this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+    this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
 
   } else {
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
-  this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
   }
 
 }
 barColor : any = '#4382f7';
 lineColor : any = '#38ff98';
 marksColor2(color:any){
+  if(this.isEChatrts){
+    this.color = color;
+    this.reAssignChartData();
+  }
 console.log(this.dualAxisRowData);
 console.log(color)
 let object : any;
@@ -7017,6 +7185,9 @@ renameColumns(){
     }
     else if(type === 'legend'){
       this.legendSwitch = !this.legendSwitch;
+      if(this.isEChatrts){
+        this.reAssignChartData();
+      } else {
       object = {legend: {show: this.legendSwitch}};
       if(this.piechart){
         this.chartOptions4.legend.show = this.legendSwitch;
@@ -7025,8 +7196,12 @@ renameColumns(){
         this.chartOptions10.legend.show = this.legendSwitch;
       }
     }
+    }
     else if(type === 'dataLabels'){
       this.dataLabels = !this.dataLabels;
+      if(this.isEChatrts){
+        this.reAssignChartData();
+      } else {
       object = {dataLabels: {enabled: this.dataLabels}}; 
       if(this.piechart){
         this.chartOptions4.dataLabels.enabled = this.dataLabels;
@@ -7034,6 +7209,7 @@ renameColumns(){
       else if(this.donutchart){
         this.chartOptions10.dataLabels.enabled = this.dataLabels;
       }
+    }
     }
     else if(type === 'label'){
       this.label = !this.label;
@@ -7096,7 +7272,7 @@ renameColumns(){
   formatNumber(value: number): string {
     let formattedNumber = value+'';
 
-    if (this.displayUnits !== 'none') {
+    // if (this.displayUnits !== 'none') {
       switch (this.displayUnits) {
         case 'K':
           formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
@@ -7110,8 +7286,11 @@ renameColumns(){
         case 'G':
           formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
           break;
+        case 'none':
+          formattedNumber = (value/1).toFixed(this.decimalPlaces);
+          break;
       }
-    }
+    // }
     this.formattedData.push(this.prefix + formattedNumber + this.suffix);
     return this.prefix + formattedNumber + this.suffix;
   }
@@ -7183,9 +7362,9 @@ renameColumns(){
         localStorage.setItem('previousUrl', this.router.url);
         this.chartSuggestions = null;
         // API Key is missing or empty, show the message and navigate to the configure page on click
-        // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+        // this.errorMessage = `The GPT API Key is missing. Please <a href="/insights/configure-page/configure">add the GPT API Key</a> to proceed.`;
         this.errorMessage1 = 'the GPT API key is missing. Please'
-        // this.router.navigate(['/workbench/configure-page/configure']);
+        // this.router.navigate(['/insights/configure-page/configure']);
       } else {
         // Handle other errors
         console.log("Error:", error.message);
@@ -7197,7 +7376,7 @@ renameColumns(){
   );
 }
 routeConfigure(){
-  this.router.navigate(['/workbench/configure-page/configure'])
+  this.router.navigate(['/insights/configure-page/configure'])
 }
 
 fetchChartData(chartData: any){
@@ -7214,15 +7393,15 @@ fetchChartData(chartData: any){
           console.log("This is ShaetData",chartData)
           this.sheetTitle = chartData.chart_title
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
           }
           this.dataExtraction();
 
@@ -7239,22 +7418,43 @@ fetchChartData(chartData: any){
     this.reAssignChartData();
   }
   reAssignChartData() {
-    this.barChart();
-    this.pieChart();
-    this.lineChart();
-    this.areaChart();
-    this.barLineChart();
-    this.radarChart();
-    this.stockedBar();
-    this.hGrouped();
-    this.sidebysideBar();
-    this.horizentalStockedBar();
-    this.donutChart();
-    this.multiLineChart();
-    this.mapChart();
-    this.funnelChart();
-    this.heatMapChart();
+    if (this.bar) {
+      this.barChart();
+    } else if (this.area) {
+      this.areaChart();
+    } else if (this.line) {
+      this.lineChart();
+    } else if (this.pie) {
+      this.pieChart();
+    } else if (this.sidebyside) {
+      this.sidebysideBar();
+    } else if (this.stocked) {
+      this.stockedBar();
+    } else if (this.barLine) {
+      this.barLineChart();
+    } else if (this.horizentalStocked) {
+      this.horizentalStockedBar();
+    } else if (this.grouped) {
+      this.hGrouped();
+    } else if (this.multiLine) {
+      this.multiLineChart();
+    } else if (this.donut) {
+      this.donutChart();
+    } else if (this.radar) {
+      this.radarChart();
+    } else if (this.heatMap) {
+      this.heatMapChart();
+    } else if (this.kpi){
+      this.KPIChart();
+    } else if (this.funnel){
+      this.funnelChart();
+    }else if(this.guage){
+      this.guageChart();
+    } else if(this.map){
+      this.mapChart();
+    }
   }
+
   marksColor(color: any, colorCase: number) {
     console.log(color)
     switch (colorCase) {
@@ -7272,7 +7472,7 @@ fetchChartData(chartData: any){
     this.isZoom = data.isZoom;
     this.xGridColor = data.xGridColor;
     this.xGridSwitch = data.xGridSwitch;
-    // this.xLabelSwitch = data.xLabelSwitch;
+    this.xLabelSwitch = data.xLabelSwitch;
     this.xLabelColor = data.xLabelColor;
     this.yLabelSwitch = data.yLabelSwitch;
     this.yGridColor = data.yGridColor;
@@ -7282,6 +7482,8 @@ fetchChartData(chartData: any){
     this.xLabelFontSize = data.xLabelFontSize;
     this.xlabelFontWeight = data.xlabelFontWeight;
     this.labelAlignment = data.labelAlignment;
+    this.backgroundColor = data.backgroundColor;
+    this.color = data.color;
   }
 
   sendPrompt() {
@@ -7314,9 +7516,9 @@ fetchChartData(chartData: any){
           else if  (!apiKey || apiKey.trim() === '') {
             this.chartSuggestions = null;
             // API Key is missing or empty, show the message and navigate to the configure page
-            // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+            // this.errorMessage = `The GPT API Key is missing. Please <a href="/insights/configure-page/configure">add the GPT API Key</a> to proceed.`;
             this.errorMessage1 = 'the GPT API key is missing. Please'
-            // this.router.navigate(['/workbench/configure-page/configure']);
+            // this.router.navigate(['/insights/configure-page/configure']);
           } else {
             // Handle other errors
             console.log("Error:", error.message);
@@ -7542,7 +7744,9 @@ fetchChartData(chartData: any){
   drillDownColumndrop(event: CdkDragDrop<string[]>){
         console.log(event)
         let item: any = event.previousContainer.data[event.previousIndex];
-        this.draggedDrillDownColumns.push(item.column);
+        if(item && item.column) {
+          this.draggedDrillDownColumns.push(item.column);
+        }
   }
   removeDrillDownColumn(index:any,column:any){
        
@@ -7586,22 +7790,30 @@ fetchChartData(chartData: any){
   legendsAllignment : any = 'bottom'
   changeLegendsAllignment(allignment:any){
     this.legendsAllignment = allignment;
-    let object : any = {legend: {position: allignment}};
-    if(this.pie){
-      this.legendsAllignment = allignment;
-      this.chartOptions4.legend.position = allignment;
+    if(this.isEChatrts){
+      this.reAssignChartData();
+    } else {
+      let object : any = {legend: {position: allignment}};
+      if(this.pie){
+        this.legendsAllignment = allignment;
+        this.chartOptions4.legend.position = allignment;
+      }
+      else if(this.donut){
+        this.legendsAllignment = allignment;
+        this.chartOptions10.legend.position = allignment;
+      }
+      this.updateChart(object);
     }
-    else if(this.donut){
-      this.legendsAllignment = allignment;
-      this.chartOptions10.legend.position = allignment;
-    }
-    this.updateChart(object);
   }
   donutSize:any = 50;
   changeSize(){
+    if(this.isEChatrts){
+      this.donutChart();
+    } else {
     let object : any = {plotOptions: { pie: {donut: {size: this.donutSize+'%'}}}};
     this.chartOptions10.plotOptions.pie.donut.size = this.donutSize+'%';
     this.updateChart(object);
+    }
   }
   color1:any;
   color2:any;
@@ -7623,30 +7835,57 @@ fetchChartData(chartData: any){
           }
         }
       }
-      sort(event:any,numbers:any){
+      sort(event: any, numbers: any, labels: any) {
+        const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+      
         if (event.target.value === 'ascending') {
-          numbers.sort((a: any, b: any) => a - b);
+          pairedData.sort((a: any, b: any) => a[0] - b[0]);
+        } else if (event.target.value === 'descending') {
+          pairedData.sort((a: any, b: any) => b[0] - a[0]);
         }
-        else if (event.target.value === 'descending') {
-          numbers.sort((a: any, b: any) => b - a);
-        }
+
+        const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+        const sortedLabels = pairedData.map((pair: any) => pair[1]);
+      
+        return { sortedNumbers, sortedLabels };
       }
-      sortSeries(event:any){
+      
+      sortSeries(event: any) {
         if (this.funnel) {
           const numbers = this.funnelChartOptions.series[0].data;
-          this.sort(event,numbers);
-          console.log(numbers);
-          this.funnelChartOptions.series[0].data = numbers;
-          this.funnelCharts.updateSeries([{ data: numbers }]);
-        }
-        else if(this.bar){
+          const labels = this.funnelChartOptions.xaxis.categories;
+          const sortedData = this.sort(event, numbers, labels);
+
+          this.funnelChartOptions.series[0].data = sortedData.sortedNumbers;
+          this.funnelChartOptions.xaxis.categories = sortedData.sortedLabels;
+          this.funnelCharts.updateSeries([{ data: sortedData.sortedNumbers }]);
+          this.funnelCharts.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
+        } 
+        else if (this.bar) {
           const numbers = this.chartOptions3.series[0].data;
-          this.sort(event,numbers);
+          const labels = this.chartOptions3.xaxis.categories;
+          const sortedData = this.sort(event, numbers, labels);
           console.log(numbers);
-          this.chartOptions3.series[0].data = numbers;
-          this.barchart.updateSeries([{ data: numbers }]);
+          if(this.isEChatrts){
+            // this.eBarchart.setOption({
+            //   xAxis: {
+            //     data: this.chartsColumnData.map(item => item.name),
+            //   },
+            //   series: [
+            //     {
+            //       data: thiss.barData.map(item => item.value),
+            //     },
+            //   ],
+            // });
+            this.eBarChartOptions.series[0].data = numbers;
+          } else {
+            this.chartOptions3.series[0].data = sortedData.sortedNumbers;
+            this.chartOptions3.xaxis.categories = sortedData.sortedLabels;
+            this.barchart.updateSeries([{ data: sortedData.sortedNumbers }]);
+            this.barchart.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
+          }
         }
-      }
+      }      
       funnelDLAllign:any;
       funnelDLFontFamily:any;
       funnelDLFontSize:any;
@@ -7979,5 +8218,52 @@ fetchChartData(chartData: any){
           this.chartOptions8.plotOptions.bar.dataLabels.position = position;
         }
         this.updateChart(object);
+      }
+      resetColor(){
+        this.color = '#00A5A2';
+        this.barColor = '#4382F7';
+        this.lineColor = '#38FF98';
+        if(this.table){
+          this.color1 = '#d4d3d2';
+          this.color2 = '#ffffff'; 
+        }
+        this.GridColor = '#0f0f0f';
+        this.apexbBgColor = '#ffffff';
+        if(this.kpi){
+          this.kpiColor = '#0f0f0f';
+        }
+        this.marksColor2(this.color);
+        this.funnelColorChange(this.color);
+        this.gridLineColor(this.GridColor);
+        this.apexbBackgroundColor(this.apexbBgColor);
+      }
+
+      sheetNotSaveAlert(): Promise<boolean> {
+        // if (this.goToSheetButtonClicked) {
+        //   // If the "Go to Sheet" button is clicked, skip the alert
+        //   return Promise.resolve(true);
+        // }
+        return Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "Your work has not been saved, Do you want to continue?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // User clicked "Yes", allow navigation
+            return true;
+          } else {
+            // User clicked "No", prevent navigation
+            this.loaderService.hide();
+            return false;
+          }
+        });
+      }
+      canNavigate(): boolean {
+        // This is handled in the functional guard
+        return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
       }
 }

@@ -80,10 +80,10 @@ export class WorkbenchComponent implements OnInit{
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('workbench/work-bench/view-connections')){
+    if(currentUrl.includes('insights/datasources/view-connections')){
       this.databaseconnectionsList= true;   
     } 
-    if(currentUrl.includes('workbench/work-bench/new-connections')){
+    if(currentUrl.includes('insights/datasources/new-connections')){
       this.viewNewDbs = true;
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
@@ -138,7 +138,7 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseId=responce.database?.database_id
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -212,6 +212,7 @@ export class WorkbenchComponent implements OnInit{
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "display_name":this.displayName,
+          "service_name":this.postGreDatabaseName
 
       }
         this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
@@ -230,7 +231,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openOracleForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -274,7 +275,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMySqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -316,7 +317,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMicrosoftSqlServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -359,7 +360,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openSnowflakeServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -402,7 +403,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMongoDbForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -445,7 +446,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -488,7 +489,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -534,7 +535,7 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.fileId=responce.file_id
               const encodedId = btoa(this.fileId.toString());
-              this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
+              this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
             }
           },
           error: (error) => {
@@ -575,7 +576,7 @@ export class WorkbenchComponent implements OnInit{
                 this.fileId=responce.file_id
                
                 const encodedId = btoa(this.fileId.toString());
-                this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
+                this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -834,11 +835,11 @@ export class WorkbenchComponent implements OnInit{
   getTablesFromConnectedDb(dbId:any,fileId:any){
     if(dbId === null){
     const encodedId = btoa(fileId.toString());
-    this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
+    this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
     }
     if(fileId === null){
       const encodedId = btoa(dbId.toString());
-      this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+      this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
       }
 }
 
@@ -867,5 +868,76 @@ export class WorkbenchComponent implements OnInit{
   this.displayName ='';
   }
 
-  
+  serverError:boolean = false;
+  portError:boolean = false;
+  databaseError:boolean = false;
+  userNameError:boolean = false;
+  displayNameError:boolean = false;
+  passwordError:boolean = false;
+  pathError:boolean = false;
+  serverConditionError(){
+    if(this.postGreServerName){
+      this.serverError = false;
+    }else{
+      this.serverError = true;
+    }
+  }
+  portConditionError(){
+    if(this.postGrePortName){
+      this.portError = false;
+    }else{
+      this.portError = true;
+    }
+    this.serverConditionError();
+  }
+  databaseConditionError(){
+    if(this.postGreDatabaseName){
+      this.databaseError = false;
+    }else{
+      this.databaseError = true;
+    }
+    this.portConditionError();
+  }
+  userNameConditionError(){
+    if(this.postGreUserName){
+      this.userNameError = false;
+    }else{
+      this.userNameError = true;
+    }
+    this.databaseConditionError();
+  }
+  displayNameConditionError(){
+    if(this.displayName){
+      this.displayNameError = false;
+    }else{
+      this.displayNameError = true;
+    }
+    if(this.sqlLiteForm){
+      this.pathConditionError();
+    } else{
+      this.userNameConditionError();
+    }
+  }
+  passwordConditionError(){
+    if(this.PostGrePassword){
+      this.passwordError = false;
+    }else{
+      this.passwordError = true;
+    }
+    this.displayNameConditionError();
+  }
+  pathConditionError(){
+    if(this.fileData){
+      this.pathError = false;
+    } else{
+      this.pathError = true;
+    }
+  }
+  errorCheck(){
+    if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
+      return true;
+    } else{
+      return false;
+    }
+  }
 }

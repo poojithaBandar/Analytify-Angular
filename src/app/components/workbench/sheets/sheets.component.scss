@@ -121,11 +121,11 @@ margin-right: 5px;
 .example-list {
   width: 1000px;
   max-width: 100%;
-  border: solid 2px #eef1f8;
+  // border: solid 2px #eef1f8;
   min-height: 60px;
   display: flex;
   flex-direction: row;
-  background: white;
+  // background: white;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -909,5 +909,13 @@ th, td {
     border-radius: 6px;
     cursor: pointer;
     margin-bottom: 20px;
+  }
+  .resetColorButton{
+    height: 20px;
+    width: 50px;
+    background-color: #00A5A2;
+    border-radius: 5px;
+    border: none;
+    color: white;
   }
   
