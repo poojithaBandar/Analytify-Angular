@@ -3072,6 +3072,7 @@ bar["stack"]="Total";
               this.guage = false;
               this.funnel = false;
               this.calendar = false;
+              this.tableDisplayPagination();
             } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
               this.table = false;
               this.bar = false;

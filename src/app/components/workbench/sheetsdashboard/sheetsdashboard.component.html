@@ -7,6 +7,10 @@
 <div *ngIf="sheetsNewDashboard">
   <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
   </div>
+  
+  <div *ngIf="isPublicUrl" id="htmlContent" style="margin-top: 60px;">
+    <app-page-header title="{{dashboardName}}" title1="public" activeitem="Dashboard"></app-page-header>
+    </div>
   <!-- <div *ngIf="publicHeader">
     <app-page-header [publicHeader]="true"></app-page-header>
     </div> -->
@@ -137,7 +141,7 @@
       </div>
     </div>
   } @else {
-    <div class="main-container container-fluid">
+    <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
 <div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }">

@@ -219,8 +219,14 @@
                         @if(addUserForm.get('username')?.errors && addUserForm.get('username')?.touched){
                             <div class="text-danger">username required</div>
                           }
-                        @else{<label for="input-label" class="form-label">User name valid for authentication on DB or LDAP,
-                            unused for OID auth </label>}
+                          @else if(addUserForm.get('username')?.hasError('maxlength')){
+                            <div class="text-danger">Username cannot exceed 64 characters.</div>
+                          }
+                          <!-- @if(signupForm.get('username')?.hasError('maxlength') && signupForm.get('username')?.touched){
+                            <div class="text-danger">Username cannot exceed 64 characters.</div>
+                          } -->
+                        <!-- @else{<label for="input-label" class="form-label">User name valid for authentication on DB or LDAP,
+                            unused for OID auth </label>} -->
                     </div>
 
                     <div class="col-md-2 border p-2">
