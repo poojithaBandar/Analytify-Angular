@@ -3052,7 +3052,7 @@ bar["stack"]="Total";
               }
             }
            
-            if ((this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!this.kpi &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1))) {
+            if ((this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!this.kpi &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -3072,6 +3072,7 @@ bar["stack"]="Total";
               this.guage = false;
               this.funnel = false;
               this.calendar = false;
+              this.map = false;
               this.tableDisplayPagination();
             } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
               this.table = false;
@@ -3093,6 +3094,7 @@ bar["stack"]="Total";
               this.funnel = false;
               this.guage = false;
               this.calendar = false;
+              this.map = false;
               this.sidebysideBar();
             }
           },
@@ -4467,6 +4469,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.map = false
           this.funnel = false;
           this.guage = false;
         }
@@ -4500,6 +4503,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.heatMap = false;
           this.funnel = false;
           this.guage = false;
+          this.map = false;
         }
         if(responce.chart_id == 29){
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
