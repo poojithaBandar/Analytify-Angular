@@ -179,9 +179,7 @@ getTokenQuickbook(data:any){
   return this.http.post<any>(`${environment.apiUrl}/quickbooks_token/`+this.accessToken,data); 
 }
 resendOtpApi(obj:any){
-  const currentUser = localStorage.getItem( 'currentUser' );
-  this.accessToken = JSON.parse( currentUser! )['Token'];
-  return this.http.post<any>(`${environment.apiUrl}/resendotp/`+this.accessToken,obj); 
+  return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
 }
 logOut(){
 localStorage.removeItem('username');

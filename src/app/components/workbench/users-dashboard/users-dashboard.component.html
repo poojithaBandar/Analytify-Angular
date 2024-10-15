@@ -219,8 +219,14 @@
                         @if(addUserForm.get('username')?.errors && addUserForm.get('username')?.touched){
                             <div class="text-danger">username required</div>
                           }
-                        @else{<label for="input-label" class="form-label">User name valid for authentication on DB or LDAP,
-                            unused for OID auth </label>}
+                          @else if(addUserForm.get('username')?.hasError('maxlength')){
+                            <div class="text-danger">Username cannot exceed 64 characters.</div>
+                          }
+                          <!-- @if(signupForm.get('username')?.hasError('maxlength') && signupForm.get('username')?.touched){
+                            <div class="text-danger">Username cannot exceed 64 characters.</div>
+                          } -->
+                        <!-- @else{<label for="input-label" class="form-label">User name valid for authentication on DB or LDAP,
+                            unused for OID auth </label>} -->
                     </div>
 
                     <div class="col-md-2 border p-2">
@@ -288,9 +294,9 @@
                             <div
                               ngbAccordionCollapse
                               id="collapse"
-                              class="accordion-collapse collapse" 
+                              class="accordion-collapse collapse select-roles-height" 
                               aria-labelledby="heading"
-                              data-bs-parent="#accordionExample"
+                              data-bs-parent="#accordionExample" 
                                >
                               <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style=" height: auto; max-height: 350px;">
                                 <ng-template>
@@ -298,7 +304,7 @@
                                       </div>
                                       <div formArrayName="role">
                                          <label >
-                                          <input type="checkbox" ng-reflect-name="0" id="selectAll" (change)="toggleSelectAll()" class="ng-untouched ng-pristine ng-valid"> Select all roles </label>
+                                          <input type="checkbox" ng-reflect-name="0" id="selectAll" [checked]="allSelected" (change)="toggleSelectAll()" class="ng-untouched ng-pristine ng-valid"> Select all roles </label>
                                         <div *ngFor="let role of userAddedRolesList; let i = index">
                                           <label>
                                             <input type="checkbox" [formControlName]="i" (change)="onCheckboxChange()" />
@@ -390,7 +396,7 @@
                 <div class="justify-conent-between mt-1">
                     <div class="add-role-save-btn" style="float: right;">
                       <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" (click)="closeAddUserForm()">Close</button>
-                        <button *ngIf="!userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!addUserForm.valid">
+                        <button *ngIf="!userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="addUser()" [disabled]="!isFormValidWithoutIsActive">
                             Save <i class="fa fa-file-text-o"></i>
                         </button>
                         <button *ngIf="userEditHidePassword" type="button" class="btn btn-primary" style="border-radius: 4px 4px 4px 4px;" (click)="editUser()" >

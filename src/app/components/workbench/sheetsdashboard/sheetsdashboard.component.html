@@ -1,21 +1,28 @@
 
+<app-header *ngIf="publicHeader" [isPublicUrl]="publicHeader"></app-header>
+
 <div *ngIf="dashboardView">
 <app-page-header title="Dashboard" title1="home" activeitem="Dashboard"></app-page-header>
 </div>
 <div *ngIf="sheetsNewDashboard">
-  <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/workbench/sheets" activeitem="Dashboard"></app-page-header>
+  <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
   </div>
+  
+  <div *ngIf="isPublicUrl" id="htmlContent" style="margin-top: 60px;">
+    <app-page-header title="{{dashboardName}}" title1="public" activeitem="Dashboard"></app-page-header>
+    </div>
   <!-- <div *ngIf="publicHeader">
     <app-page-header [publicHeader]="true"></app-page-header>
     </div> -->
-    <div *ngIf="publicHeader" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
+    <!-- <div *ngIf="publicHeader" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
       <a class="header-logo">
       <img src="./assets/images/brand/insightApps-logo-Public.png" alt="logo" class="desktop-dark">
   </a>
-  </div>
+  </div> -->
+
   @if(isSheetsView){
     <div class="main-container container-fluid">
-      <div class="row" class="card " style="padding: 20px;">
+      <div class="row" class="card " style="padding-top: 15px;">
         <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
           <div class="d-flex justify-content-between px-5">
             <div class="connect-txt"><h1 class="page-title">Sheets</h1> 
@@ -134,16 +141,17 @@
       </div>
     </div>
   } @else {
-<div class="row main-container" >
-    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0" id="sticky-sidebar">
+    <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
+<div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }">
-        <div class="card mb-0">
-          <div class="card-body p-0">
+        <!-- <div class="card mb-0"> -->
+          <!-- <div class="card-body p-0"> -->
             <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
-              <i class="fa fa-navicon"></i>
+              <i class="fa fa-filter"></i>
             </div>
             <div class="panel panel-primary "[class.hidden]="isPanelHidden">
-              <div class="card panel panel-primary p-0">
+              <div class="panel panel-primary p-0">
                 <div class="tab-menu-heading tab-menu-heading-boxed">
                     <div class="tabs-menu-boxed">
                         <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
@@ -220,11 +228,11 @@
                                                        <div class="row">
                                                         <div class="col-6">
                                                           <label for="input-rounded-pill" class="form-label">Width</label>
-                                                          <input  type="number" name="number" [(ngModel)]="widthGrid" class="form-control">
+                                                          <input  type="number" step="100" name="number" [(ngModel)]="widthGrid" class="form-control">
                                                         </div>
                                                         <div class="col-6">
                                                           <label for="input-rounded-pill" class="form-label">Height </label>
-                                                          <input  type="number" name="number" [(ngModel)]="heightGrid" class="form-control">
+                                                          <input  type="number" step="100" name="number" [(ngModel)]="heightGrid" class="form-control">
                                                         </div>
                                                        </div>
                                                      </div>
@@ -314,7 +322,7 @@
                                             </div>
                                               <label class="form-label">Apply to Selected worksheets</label>
                                            
-                                            <div class="form body border p-2" style="height: 200px;  overflow: scroll;">
+                                            <div class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
 
                                               <div class="form-check">
 
@@ -374,6 +382,8 @@
                                                 }
                                               </ul>
                                           </div> -->
+                                          <label class="form-label">Column <span class="text-red">*</span>
+                                          </label>
                                           <ng-select [items]="dropdownOptions" bindLabel="value" [(ngModel)]="selectedOption" [groupBy]="'group'"
                                             [searchable]="true" [searchFn]="customSearch.bind(this)" (change)="onOptionSelected(selectedOption)"
                                             placeholder="Select column" [clearable]="true">
@@ -392,7 +402,7 @@
                                           </div>
                                             <label class="form-label">Apply to Selected worksheets</label>
                                          
-                                          <div class="form body border p-2" style="height: 200px;  overflow: scroll;">
+                                          <div class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
 
                                             <div class="form-check">
 
@@ -510,7 +520,7 @@
                                                                   <!-- } -->
                                                                 </div>
 
-                                                                  <div class="fixed-buttons p-2" style="position: sticky; bottom: 0; left: 0; width: 100%; background-color: #ffffff; padding: 8px 6px; box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);">
+                                                                  <div class="fixed-buttons p-2">
                                                                     <button type="button"  (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-danger me-2">Clear</button>
                                                                     <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">Save</button>
                                                                 </div>
@@ -532,7 +542,7 @@
                                                                 </div> -->
                                                               </div>
                                                             <!-- } -->
-                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData" > 
+                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData"  class="p-2"> 
                                                                 <button class="btn ripple btn-danger"
                                                                   (click)="clearAllFilters()">Clear filters</button>
                                                               
@@ -572,21 +582,22 @@
             </div>
           </div>
 
-          </div>
-      </div>
+          <!-- </div> -->
+      <!-- </div> -->
       </div>
     </div>
-    <div class="col-xl-10 col-md-12 p-1 ">
+    <div class="col-xl-10 col-md-12">
          <div class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
-                    <div class="title-container">
-                      <input *ngIf="!dashboardId"  type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
-                      <div *ngIf="dashboardId" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
+                    <div class="title-container" *ngIf="!editor">
+                      <input *ngIf="!dashboardId && !editor" (click)="editor =true && !isPublicUrl" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
+                      <div *ngIf="dashboardId && !editor" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
                        
                         </div>
-                        <div *ngIf="editor" class="popup">
+                        <ckeditor *ngIf="editor && !isPublicUrl" placeholder="dashbaord Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName" (ngModelChange)="updatedashboardName(dashboardTagName)" style="color: black;"></ckeditor>
+                        <!-- <div *ngIf="editor" class="popup">
                           <div class="popup-content">
                             <ckeditor placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="dashboardTagName">
                             </ckeditor>
@@ -595,15 +606,15 @@
                               <button class="btn btn-primary" (click)="updateSheetName(); toggleEditor()">Update</button>
                             </div>
                           </div>
-                        </div>
+                        </div> -->
                         </div>
 
                         <div class="min-w-fit-content ms-1">              
                         <span *ngIf="!isPublicUrl" class="title-editor ms-1" (click)="toggleEditor()">
                           <button  class="btn btn-primary me-1" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
                         </span>
-                            <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard()">Save </button>
-                            <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard()">Update </button>
+                            <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button>
+                            <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard();editor =false">Update </button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             <button *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button>
                             <!-- <button class="btn btn-primary mt-0" (click)="startMethod()">hide </button> -->
@@ -674,7 +685,7 @@
                     [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
                     <div class="card mb-0" style="height: 100%;overflow: scroll;">
                       <div class="card-header d-flex justify-content-between p-1">
-                        <h6>{{ item.data?.title }}</h6>
+                        <h6>{{ item.data?.title }}</h6>       
                         <div class="dashboard-option">
                           <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -826,14 +837,24 @@
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
-              <div class="card mb-0" style="height: 100%;">
+              <div class="card mb-0 grid-item-border" style="height: 100%;">
                 <div class="card-header d-flex justify-content-between p-1">
                   @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10) && item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                     <!-- <div class="col-lg-3 col-md-3"> -->
-                        <button style="margin-right: 10px;" class="btn btn-primary" (click)="goDrillDownBack(item)"> Back</button>
+                      <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i class="fa fa-arrow-left "></i> </button>
                    <!-- </div> -->
                   }
                   <div style="width: 100%;" [innerHtml]="sheetTagTitle[item.data?.title]?sheetTagTitle[item.data?.title]:item.data?.sheetTagName"></div>
+                  <div *ngIf="item['chartType'] === 'Table'"  class="sheet-search">
+                    <div class="">
+                    </div>
+                    <div  class="input-group mt-1 p-1 sheet-table-search">
+                        <input type="text" placeholder="Search" aria-describedby="button-addon2"      (mousedown)="disableDragging($event)"
+                        (mouseup)="enableDragging($event)" [(ngModel)]="tableSearch" (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)" class="form-control border-end-0 ">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)" style="border-radius: 0px 4px 4px 0px;">
+                        <i class="fe fe-search"></i></button>
+                    </div>
+                   </div>
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -856,6 +877,12 @@
                         </div>
                       </div>
                 </div>
+                @if(item['isEChart']){
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
+                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" class="echart-charts"></div>
+                    </div>
+                
+              } @else{
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
     
                   <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
@@ -1015,15 +1042,31 @@
                               </tr>
                             </thead>
                             <tbody>
-                                 @for(row of item.tableData?.rows;track row){
-                          <tr>
-                            @for(column of item.tableData?.headers;track column){
+                                 <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
+                          <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
+                          [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                          [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}">
+                            <!-- @for(column of item.tableData?.headers;track column){
                             <td>{{ row[column] }}</td>
-                            }
+                            } -->
+                            <td *ngFor="let column of item.tableData?.headers">
+                              {{ row[column] }}
+                            </td>
                           </tr>
-                        }
+                        
                             </tbody>
                         </table>
+                        <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,(tablePage = $event)) : pageChangeTableDisplay(item,(tablePage = $event))"></pagination-controls>
+                        <div  style="float: right;font-size: 15px; margin-top: -41px;">
+                          <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,tablePage) : pageChangeTableDisplay(item,tablePage)" (mousedown)="stopDragging($event)"class="form-control cursor">
+                                <option  value="10"> 10</option>
+                                <option  value="50"> 50</option>
+                                <option  value="100"> 100</option>
+                                <option  value="500"> 500</option>
+                                <option  value="1000"> 1000</option>
+
+                          </select>
+                       </div>
                     </div>
                     <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
                     </div>
@@ -1035,7 +1078,8 @@
                     [chart]="item.chartOptions.chart!"
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
+                    [yaxis]="item.chartOptions.yaxis!"
                    (chartInit)="onChartInit($event, item)">
                  </apx-chart> 
                   </div>
@@ -1043,15 +1087,15 @@
                  </div>
                  <div *ngIf="item.chartOptions && item['chartId'] === 17">
                     <apx-chart [series]="item.chartOptions.series!" [chart]="item.chartOptions.chart!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" [stroke]="item.chartOptions.stroke!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }" [stroke]="item.chartOptions.stroke!"
                     [dataLabels]="item.chartOptions.dataLabels!" [yaxis]="item.chartOptions.yaxis!"
                     [labels]="item.chartOptions.labels!" [legend]="item.chartOptions.legend!"  [grid]="item.chartOptions.grid!"
                     [title]="item.chartOptions.title!" [subtitle]="item.chartOptions.subtitle!"[colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 13">
                     <apx-chart [series]="item.chartOptions.series! || []" [chart]="item.chartOptions.chart!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" [dataLabels]="item.chartOptions.dataLabels!"
-                        [grid]="item.chartOptions.grid!" [stroke]="item.chartOptions.stroke!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }" [dataLabels]="item.chartOptions.dataLabels!"
+                    [grid]="item.chartOptions.grid!" [stroke]="item.chartOptions.stroke!" [yaxis]="item.chartOptions.yaxis!"
                         [title]="item.chartOptions.title!" [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 24">
@@ -1063,12 +1107,12 @@
                         [dataLabels]="item.chartOptions.dataLabels!" [plotOptions]="item.chartOptions.plotOptions!"
                         [yaxis]="item.chartOptions.yaxis!" [legend]="item.chartOptions.legend!" [fill]="item.chartOptions.fill!"
                         [stroke]="item.chartOptions.stroke!" [tooltip]="item.chartOptions.tooltip!" [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" 
-                        [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }" (chartInit)="onChartInit($event, item)"></apx-chart>
+                        [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"  (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
                     <div class="big-number-container">
                         @for(row of item['kpiData'].rows;track row){
-                          <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ row?.result_data[0] }}</h1>
+                          <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                           }
                     </div>
                   }
@@ -1079,7 +1123,8 @@
                       [dataLabels]="item.chartOptions.dataLabels!"
                       [plotOptions]="item.chartOptions.plotOptions!"
                       [responsive]="item.chartOptions.responsive!"
-                      [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                      [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
+                      [yaxis]="item.chartOptions.yaxis!"
                       [legend]="item.chartOptions.legend!"
                       [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                     ></apx-chart>
@@ -1098,7 +1143,8 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
                     [responsive]="item.chartOptions.responsive!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
+                    [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!"
                     (chartInit)="onChartInit($event, item)"></apx-chart>
@@ -1110,7 +1156,8 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
                     [responsive]="item.chartOptions.responsive!"
-                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories }"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
+                    [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
@@ -1119,7 +1166,7 @@
                     <apx-chart
                     [series]="item.chartOptions.series!"
                     [chart]="item.chartOptions.chart!"
-                    [xaxis]="item.chartOptions.xaxis!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                     [stroke]="item.chartOptions.stroke!"
                     [tooltip]="item.chartOptions.tooltip!"
                     [dataLabels]="item.chartOptions.dataLabels!"
@@ -1135,7 +1182,10 @@
                     [series]="item?.chartOptions?.series!"
                     [chart]="item?.chartOptions?.chart!"
                     [labels]="item?.chartOptions?.labels!"
-                    [responsive]="item?.chartOptions?.responsive!"(chartInit)="onChartInit($event, item)" >
+                    [responsive]="item?.chartOptions?.responsive!"
+                    [legend]="item.chartOptions.legend!"
+                    [plotOptions]="item.chartOptions.plotOptions!"
+                    [dataLabels]="item.chartOptions.dataLabels!" (chartInit)="onChartInit($event, item)" >
                 </apx-chart>
                   </div>
 
@@ -1151,12 +1201,41 @@
                   ></apx-chart>
                   </div>
 
+                  <div *ngIf="item.chartOptions && item['chartId'] === 27">
+                    <apx-chart
+                    [series]="item.chartOptions.series!"
+                    [chart]="item.chartOptions.chart!"
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [plotOptions]="item.chartOptions.plotOptions!"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [colors]="item.chartOptions.colors!"
+                    [title]="item.chartOptions.title!"
+                    [legend]="item.chartOptions.legend!"
+                    (chartInit)="onChartInit($event, item)"
+                  ></apx-chart>
+                  </div>
+                  <div *ngIf="item.chartOptions && item['chartId'] === 28">
+                    <apx-chart
+                    [series]="item.chartOptions.series!"
+                    [chart]="item.chartOptions.chart!"
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [plotOptions]="item.chartOptions.plotOptions!"
+                    [xaxis]="item.chartOptions.xaxis!"
+                    [colors]="item.chartOptions.colors!"
+                    [title]="item.chartOptions.title!"
+                    [legend]="item.chartOptions.legend!"
+                    [labels]="item.chartOptions.labels!"
+                    (chartInit)="onChartInit($event, item)"
+                  ></apx-chart>
+                  </div>
                 </div>
-                <div class="card-footer p-1">
+              }
+
+                <!-- <div class="card-footer p-1"> -->
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">
                       Delete
                     </button> -->
-                  </div>
+                  <!-- </div> -->
               </div>
             </gridster-item>
           </gridster>
@@ -1166,6 +1245,7 @@
           <img [src]="screenshotSrc" alt="Screenshot">
         </div> -->
     </div>
+</div>
 </div>
   }
 

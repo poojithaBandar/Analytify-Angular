@@ -41,7 +41,17 @@ export const admin: Routes = [
       import('./email-reactivation/email-reactivation.component').then((m) => m.EmailReactivationComponent),
   },
   {
-    path: 'quickbooks/code=',
+    path: 'quickbooks/:id',
+    loadComponent: () =>
+      import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
+  },
+  {
+    path: 'quickbooks/?code=',
+    loadComponent: () =>
+      import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
+  },
+  {
+    path: 'quickbooks',
     loadComponent: () =>
       import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
   },

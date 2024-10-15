@@ -36,7 +36,10 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options } from '@angular-slider/ngx-slider';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
-import { series } from '../../charts/apexcharts/data';
+// import { series } from '../../charts/apexcharts/data';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { LoaderService } from '../../../shared/services/loader.service';
+import { HttpClient } from '@angular/common/http';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -60,7 +63,8 @@ interface RangeSliderModel {
     },
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
-    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,InsightsButtonComponent,NgxSliderModule],
+    CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -72,15 +76,20 @@ export class SheetsComponent {
   dimentions = [] as any;
   measurments = [] as any;
   columnData = [] as any;
+  isExclude: boolean = false;
   rowData = [] as any;
   tableName: any;
   schemaName: any;
   table_alias: any;
   draggedColumnsData = [] as any;
+  mulColData = [] as any;
+  mulRowData = [] as any;
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
-  tableData: TableRow[] = [];
+  tableDataStore: TableRow[] = [];  
+  storeTableRow = [] as any;
+  storeTableColumn = [] as any;
   displayedColumns: string[] = [];
   chartEnable = true;
   dimensionExpand = false;
@@ -122,7 +131,6 @@ export class SheetsComponent {
   // The radius of the pie chart is half the smallest side
   public radius = Math.min(this.width, this.height) / 2 - this.margin;
   public colors:any;
-  public chartsData = [] as any;
   chartsColumnData = [] as any;
   chartsRowData = [] as any;
   public lineChartOptions!: Partial<EChartsOption>;
@@ -135,7 +143,6 @@ export class SheetsComponent {
   databaseId:any;
   fileId:any;
   qrySetId:any;
-  chartsEnableDisable = [] as any;
   chartId = 1;
   sheetResponce = [] as any;
   SheetIndex = 0;
@@ -149,22 +156,25 @@ export class SheetsComponent {
   chartOptions9:any;
   chartOptions10:any;
   heatMapChartOptions: any;
+  funnelChartOptions:any;
+  guageChartOptions:any;
   eBarChartOptions: any;
   eStackedBarChartOptions: any;
   eGroupedBarChartOptions: any;
-  eMultiBarChartOptions: any;
+  eMultiLineChartOptions: any;
   ehorizontalStackedBarChartOptions: any;
   eSideBySideBarChartOptions: any;
   eAreaChartOptions: any;
   eLineChartOptions: any;
   ePieChartOptions: any;
+  eDonutChartOptions: any;
   eBarLineChartOptions: any;
   eRadarChartOptions: any;
+  eCalendarChartOptions:any
   dimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
-  sidebysideBarColumnData = [] as any;
-  sidebysideBarRowData = [] as any;
+  dualAxisRowData = [] as any;
   measureValue:any;
   retriveDataSheet_id: any;
   sheetfilter_querysets_id = null;
@@ -172,7 +182,7 @@ export class SheetsComponent {
   isValuePresent: any;
   color = '#00a5a2';
   database_name: any;
-  sidebysideBarColumnData1 = [] as any;
+  dualAxisColumnData = [] as any;
   filterQuerySetId: any;
   measureValues = [] as any;
   SheetSavePlusEnabled = ['Sheet 1'];
@@ -187,15 +197,15 @@ export class SheetsComponent {
   sheetList : any [] = [];
   dashboardId : any;
   selectedDashboardId : any = 0;
-  GridColor : any;
-  apexbBgColor : any;
+  GridColor : any = '#089ffc';
+  apexbBgColor : any = '#fcfcfc';
   dateValue : any = "-Select-";
   Editor = ClassicEditor;
   editor : boolean = false;
   bandingSwitch: boolean = false; 
-  legendSwitch: boolean = false;
-  xLabelSwitch: boolean = false;
-  yLabelSwitch: boolean = false;
+  legendSwitch: boolean = true;
+  xLabelSwitch: boolean = true;
+  yLabelSwitch: boolean = true;
   xGridSwitch: boolean = false; 
   yGridSwitch: boolean = false;
   numberPopup : boolean = false;
@@ -203,10 +213,16 @@ export class SheetsComponent {
   displayUnits: string = 'none';
   prefix: string = '';
   suffix: string = '';
+  KPIDecimalPlaces: number = 0;
+  KPIRoundPlaces: number = 0;
+  KPIDisplayUnits: string = 'none';
+  KPIPrefix: string = '';
+  KPISuffix: string = '';
   isCustomSql = false;
   canDrop = true;
   createdBy : any;
   @ViewChild('barChart') barchart!: ChartComponent;
+  @ViewChild(' bar-chart') eBarchart!: any;
   @ViewChild('areaChart') areachart!: ChartComponent;
   @ViewChild('lineChart') linechart!: ChartComponent;
   @ViewChild('sidebyside') sidebysideChart!: ChartComponent;
@@ -217,6 +233,10 @@ export class SheetsComponent {
   @ViewChild('multiline') multilineChart!: ChartComponent;
   @ViewChild('piechart') piechart!: ChartComponent;
   @ViewChild('donutchart') donutchart!: ChartComponent;
+  @ViewChild('funnelChart') funnelCharts!: ChartComponent;
+  @ViewChild('guageChart') guageCharts!: ChartComponent;
+  @ViewChild('heatmapchart') heatmapcharts!: ChartComponent;
+
   radar: boolean = false;
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
@@ -228,10 +248,33 @@ export class SheetsComponent {
   dateDrillDownSwitch : boolean = false;
   drillDownLevel : any[] = [];
   drillDownObject: any[] = [];
+  sheetCustomQuery: any;
+  KPINumber: any;
 
+  tableDataDisplay: TableRow[] = [];
+  tableColumnsDisplay: string[] = [];
+  tableRowDisplayPreview = [] as any;
+  tableColumnDisplayPreview = [] as any;
+
+  itemsPerPage!:number;
+  pageNo = 1;
+  page: number = 1;
+  totalItems:any;
+  tableChartSearch:any;
+
+  tablePaginationCustomQuery:any;
+  tablePaginationColumn =[] as any;
+  tablePaginationRows =[] as any;
+
+  guagechartRowData:any;
+  minValueGuage: number = 0; // Default minimum value
+  maxValueGuage: number = 100; // Default maximum value
+  map: boolean = false;
+
+  guageNumber:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService){   
-    if(this.router.url.includes('/workbench/sheets/dbId')){
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
+    if(this.router.url.includes('/insights/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -248,7 +291,7 @@ export class SheetsComponent {
           }
         }
      }
-     if(this.router.url.includes('/workbench/sheets/fileId')){
+     if(this.router.url.includes('/insights/sheets/fileId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.fileId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -266,7 +309,7 @@ export class SheetsComponent {
           }
         }      
   }
- // if(this.router.url.includes('/workbench/landingpage/sheets/')){ //old landing page to sheet 
+ // if(this.router.url.includes('/insights/home/sheets/')){ //old landing page to sheet 
   //   console.log("landing page")
   //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
   //     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -277,7 +320,7 @@ export class SheetsComponent {
   //     // this.sheetRetrive();
   //     }
   //  }
-  if(this.router.url.includes('/workbench/landingpage/dbId/sheets/')){
+  if(this.router.url.includes('/insights/home/dbId/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -287,7 +330,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    }
-   if(this.router.url.includes('/workbench/landingpage/fileId/sheets/')){
+   if(this.router.url.includes('/insights/home/fileId/sheets/')){
     this.fromFileId = true;
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.fileId = +atob(route.snapshot.params['id1']);
@@ -300,7 +343,7 @@ export class SheetsComponent {
    }
 
 
-   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/fileId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/fileId/')){
     this.sheetsDashboard = true;
     this.fromFileId = true;
     console.log("landing page")
@@ -313,7 +356,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    } 
-   if(this.router.url.includes('/workbench/sheetsdashboard/sheets/dbId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/dbId/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
     console.log("landing page")
@@ -331,6 +374,7 @@ export class SheetsComponent {
   }
 
   ngOnInit(): void {
+    this.loaderService.hide();
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
@@ -390,12 +434,12 @@ if(this.fromFileId){
       if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
         // Encode 'null' to represent a null value
        const encodedDsQuerySetId = btoa('null');
-       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
   
       } else {
         // Convert to string and encode
        const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-       this.router.navigate(['/workbench/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
     
       } 
      }
@@ -403,7 +447,7 @@ if(this.fromFileId){
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
     const encodedFileId = btoa(this.fileId?.toString());
-    // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+    // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
     const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
     const fromSource = this.fromFileId ? 'fileId' : 'dbId'
@@ -411,19 +455,19 @@ if(this.fromFileId){
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
   }
 
   }
   goToConnections(){
-    this.router.navigate(['/workbench/work-bench/view-connections'])
+    this.router.navigate(['/insights/datasources/view-connections'])
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -472,7 +516,7 @@ if(this.fromFileId){
             },
             type: 'bar',
             height: 320,
-            foreColor: this.color, 
+            background: this.apexbBgColor, 
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -503,7 +547,7 @@ if(this.fromFileId){
             tickPlacement: 'on',
             position: 'bottom',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               trim: true,
               hideOverlappingLabels: false,
               style: {
@@ -537,7 +581,7 @@ if(this.fromFileId){
           yaxis:{
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -558,12 +602,12 @@ if(this.fromFileId){
             borderColor: '#90A4AE',
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
@@ -584,9 +628,9 @@ if(this.fromFileId){
               colors: [this.color],
             },
           },
-          fill: {
-            type: 'gradient',
-          },
+          // fill: {
+          //   type: 'gradient',
+          // },
           colors: [this.color]
         };
     } else {
@@ -688,6 +732,38 @@ if(this.fromFileId){
       };
     }
   }
+
+  setEchartLegendAlignment(){
+    switch(this.legendsAllignment) {
+      case 'left': return {
+        show: this.legendSwitch,
+        orient: 'vertical',
+        top : 'center',
+        left: 'left'
+      };
+      case 'right': return {
+        show: this.legendSwitch,
+        orient: 'vertical',
+        top : 'center',
+        right: 'right'
+      };
+      case 'top': return {
+        show: this.legendSwitch,
+        orient: 'horizontal',
+        top: 'top'
+      };
+      case 'bottom': return {
+        show: this.legendSwitch,
+        orient: 'horizontal',
+        bottom: 'bottom'
+      };
+      default: return {
+        show: this.legendSwitch,
+        orient: 'horizontal',
+        bottom: 'bottom'
+      };
+    }
+  }
   pieChart(){
     if(this.isApexCharts){
       const self = this;
@@ -696,6 +772,7 @@ if(this.fromFileId){
           chart: {
             height: 300,
             type: 'pie',
+            background: this.apexbBgColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -716,11 +793,11 @@ if(this.fromFileId){
           colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
           labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
           legend: {
-            show: true,
-            position: "bottom"
+            show: this.legendSwitch,
+            position: this.legendsAllignment
           },
           dataLabels: {
-            enabled: true,
+            enabled: this.dataLabels,
             dropShadow: {
               enabled: false
             }
@@ -741,21 +818,19 @@ if(this.fromFileId){
         value: value,
         name: this.chartsColumnData[index]
       }));
+      let legendObject = this.setEchartLegendAlignment();
       this.ePieChartOptions = {
         backgroundColor: this.backgroundColor,
-        title: {
-          left: 'center'
-        },
         tooltip: {
           trigger: 'item'
         },
-        legend: {
-          orient: 'horizontal',
-          left: 'left'
+        legend: legendObject,
+        label: {
+          show : this.dataLabels,
+          formatter: '{b}: {d}%',
         },
         series: [
           {
-            name: 'Access From',
             type: 'pie',
             radius: '50%',
             data: combinedArray,
@@ -765,8 +840,11 @@ if(this.fromFileId){
                 shadowOffsetX: 0,
                 shadowColor: 'rgba(0, 0, 0, 0.5)'
               }
-            }
+            },
+            label: {
+              show: this.dataLabels, // Dynamically show or hide data labels            }
           }
+        }
         ]
       };
     }
@@ -810,8 +888,9 @@ if(this.fromFileId){
               },
               autoSelected: 'zoom' 
             },
-            height: 200,
+            height: 350,
             type: 'line',
+            background: this.apexbBgColor,
             reponsive: true,
             zoom: {
               enabled: true
@@ -843,17 +922,20 @@ if(this.fromFileId){
                 fontSize: '12px',
                 colors: [this.color],
               },
+              background: {
+                enabled: false,
+              }
             },
             stroke: {
               curve: 'straight',
               width: 3,
             },
             grid: {
-              borderColor: "rgba(119, 119, 142, 0.05)",
+              borderColor: this.GridColor,
               show: true,
               xaxis: {
                 lines: {
-                  show: false
+                  show: this.xGridSwitch
                 }
               },
               tooltip: {
@@ -863,7 +945,7 @@ if(this.fromFileId){
               markers: { size: 10 },
               yaxis: {
                 lines: {
-                  show: false
+                  show: this.yGridSwitch
                 }
               },
             },
@@ -880,7 +962,7 @@ if(this.fromFileId){
               categories: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
               tickPlacement: 'on',
               labels: {
-                show: true,
+                show: this.xLabelSwitch,
                 hideOverlappingLabels: false,
                 trim: true,
                 style: {
@@ -893,7 +975,8 @@ if(this.fromFileId){
             },
             yaxis: {
               labels: {
-                show: true,
+                show: 
+                this.yLabelSwitch,
                 style: {
                   colors: this.color,
                   fontSize: '11px',
@@ -1032,7 +1115,8 @@ if(this.fromFileId){
                 autoSelected: 'zoom' 
               },
               type: "area",
-              height: 200,
+              height: 350,
+              background: this.apexbBgColor,
               zoom: {
                 enabled: true,
               },
@@ -1045,6 +1129,9 @@ if(this.fromFileId){
                 fontSize: '12px',
                 colors: [this.color],
               },
+              background: {
+                enabled: false,
+              }
             },
             stroke: {
               curve: "straight",
@@ -1063,12 +1150,14 @@ if(this.fromFileId){
               show: true,
               xaxis: {
                 lines: {
-                  show: false
+                  show: 
+                  this.xGridSwitch
                 }
               },
               yaxis: {
                 lines: {
-                  show: false
+                  show: 
+                  this.yGridSwitch
                 }
               },
             },
@@ -1086,7 +1175,7 @@ if(this.fromFileId){
             xaxis: {
               type: "",
               labels: {
-                show: true,
+                show: this.xLabelSwitch,
                 style: {
                   colors: this.color,
                   fontSize: "11px",
@@ -1097,9 +1186,8 @@ if(this.fromFileId){
               tickPlacement: 'on'
             },
             yaxis: {
-              opposite: true,
               labels: {
-                show: true,
+                show: this.yLabelSwitch,
                 style: {
                   colors: this.color,
                   fontSize: "11px",
@@ -1108,9 +1196,6 @@ if(this.fromFileId){
                 },
                 formatter: this.formatNumber.bind(this)
               },
-            },
-            legend: {
-              horizontalAlign: "left",
             },
           };
       } else {
@@ -1204,11 +1289,11 @@ if(this.fromFileId){
       }
     }
     sidebysideBar(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions2 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           annotations: {
             points: [{
               x: 'zoom',
@@ -1248,6 +1333,9 @@ if(this.fromFileId){
             bar: {
               horizontal: false,
               columnWidth: '55%',
+              dataLabels: {
+                position: 'top',
+              }
             },
           },
           dataLabels: {
@@ -1256,7 +1344,7 @@ if(this.fromFileId){
             offsetY: -20,
             style: {
               fontSize: '12px',
-              colors: ['#f43f63'],
+              colors: [this.color],
             },
           },
           stroke: {
@@ -1268,7 +1356,7 @@ if(this.fromFileId){
             categories: categories,
             tickPlacement: 'on',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: this.color,
                 fontSize: "11px",
@@ -1282,7 +1370,7 @@ if(this.fromFileId){
               text: '',
             },
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: this.color,
                 fontSize: "11px",
@@ -1304,22 +1392,22 @@ if(this.fromFileId){
             },
           },
           grid: {
-            borderColor: "rgba(119, 119, 142, 0.05)",
+            borderColor: this.GridColor,
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="bar";
       });
@@ -1411,11 +1499,11 @@ bar["type"]="bar";
       });
     }
     stockedBar(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions6 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           annotations: {
             points: [{
               x: 'zoom',
@@ -1457,7 +1545,10 @@ bar["type"]="bar";
           ],
           plotOptions: {
             bar: {
-              horizontal: false
+              horizontal: false,
+              dataLabels: {
+                position: 'top',
+              }
             }
           },
           xaxis: {
@@ -1465,7 +1556,7 @@ bar["type"]="bar";
             categories: categories,
             tickPlacement: 'on',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -1477,7 +1568,7 @@ bar["type"]="bar";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -1498,12 +1589,12 @@ bar["type"]="bar";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
@@ -1518,7 +1609,7 @@ bar["type"]="bar";
           }
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="bar";
 bar["stack"]="total";
@@ -1607,20 +1698,22 @@ bar["stack"]="total";
     }
 
     barLineChart(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if (this.isApexCharts) {
           this.chartOptions5 = {
             series: [
               {
-                name: this.sidebysideBarRowData[0]?.name,
+                name: this.dualAxisRowData[0]?.name,
                 type: "column",
-                data: this.sidebysideBarRowData[0]?.data
+                data: this.dualAxisRowData[0]?.data,
+                color: this.barColor
               },
               {
-                name: this.sidebysideBarRowData[1]?.name,
+                name: this.dualAxisRowData[1]?.name,
                 type: "line",
-                data: this.sidebysideBarRowData[1]?.data,
+                data: this.dualAxisRowData[1]?.data,
+                color: this.lineColor
               }
             ],
             annotations: {
@@ -1638,7 +1731,7 @@ bar["stack"]="total";
                 }
               }]
             },
-            colors: ['#00a5a2', '#31d1ce'],
+            // colors: ['#00a5a2', '#31d1ce'],
             chart: {
               toolbar: {
                 show: true,
@@ -1662,12 +1755,12 @@ bar["stack"]="total";
               show: true,
               xaxis: {
                 lines: {
-                  show: false
+                  show: this.xGridSwitch
                 }
               },
               yaxis: {
                 lines: {
-                  show: false
+                  show: this.yGridSwitch
                 }
               },
             },
@@ -1688,15 +1781,18 @@ bar["stack"]="total";
               offsetY: -20,
               style: {
                 fontSize: '12px',
-                colors: [this.color],
+                // colors: [this.color],
               },
+              background: {
+                enabled: false,
+              }
             },
             labels: categories,
             xaxis: {
               type: "",
               tickPlacement: 'on',
               labels: {
-                show: true,
+                show: this.xLabelSwitch,
                 style: {
                   colors: [],
                   fontSize: '12px',
@@ -1717,7 +1813,7 @@ bar["stack"]="total";
                   },
                 },
                 labels: {
-                  show: true,
+                  show: this.yLabelSwitch,
                   style: {
                     colors: [],
                     fontSize: '12px',
@@ -1739,7 +1835,7 @@ bar["stack"]="total";
                   },
                 },
                 labels: {
-                  show: true,
+                  show: this.yLabelSwitch,
                   style: {
                     colors: [],
                     fontSize: '12px',
@@ -1749,7 +1845,14 @@ bar["stack"]="total";
                   formatter: this.formatNumber.bind(this)
                 }
               }
-            ]
+            ],
+            plotOptions: {
+              bar: {
+                dataLabels: {
+                  position: 'top',
+                }
+              }
+            }
 
           };
       } else {
@@ -1827,7 +1930,7 @@ bar["stack"]="total";
           // ],
           series: [
             {
-              name: this.sidebysideBarRowData[0]?.name,
+              name: this.dualAxisRowData[0]?.name,
               type: 'bar',
               // xAxisIndex: 1,
               yAxisIndex: 1,
@@ -1836,11 +1939,11 @@ bar["stack"]="total";
               //     return value + ' ml';
               //   }
               // },
-              data: this.sidebysideBarRowData[0]?.data
+              data: this.dualAxisRowData[0]?.data
             },
 
             {
-              name: this.sidebysideBarRowData[1]?.name,
+              name: this.dualAxisRowData[1]?.name,
               type: 'line',
               // xAxisIndex: 1,
               yAxisIndex: 1,
@@ -1852,14 +1955,14 @@ bar["stack"]="total";
               lineStyle: {
                 color: "red"
               },
-              data: this.sidebysideBarRowData[1]?.data
+              data: this.dualAxisRowData[1]?.data
             }
           ]
         };
       }
     }
     radarChart(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       let radarArray = categories.map((value: any, index: number) => ({
         name: categories[index]
@@ -1877,10 +1980,13 @@ bar["stack"]="total";
           show: true,
 
         },
-        axisName: {
-          color: 'rgb(238, 197, 102)'
-        },
         radar: {
+          axisName: {
+            color: this.xLabelColor
+          },
+          axisLabel : {
+            color : this.xLabelColor
+          },
           // shape: 'circle',
           indicator:
             radarArray
@@ -1888,7 +1994,6 @@ bar["stack"]="total";
         },
         series: [
           {
-            name: 'Budget vs spending',
             type: 'radar',
             data: this.radarRowData,
 
@@ -1897,11 +2002,11 @@ bar["stack"]="total";
       }
     }
     horizentalStockedBar(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions7 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           chart: {
             type: "bar",
             height: 350,
@@ -1927,14 +2032,17 @@ bar["stack"]="total";
           ],
           plotOptions: {
             bar: {
-              horizontal: true
+              horizontal: true,
+              dataLabels: {
+                position: 'top',
+              }
             }
           },
           xaxis: {
             type: "category",
             categories: categories,
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -1947,7 +2055,7 @@ bar["stack"]="total";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -1967,12 +2075,12 @@ bar["stack"]="total";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           },
@@ -1987,7 +2095,7 @@ bar["stack"]="total";
           }
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="bar";
 bar["stack"]="total";
@@ -2074,11 +2182,11 @@ bar["stack"]="total";
     }
     }
     hGrouped(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions8 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           chart: {
             type: "bar",
             height: 430
@@ -2097,7 +2205,7 @@ bar["stack"]="total";
             offsetY: -6,
             style: {
               fontSize: '12px',
-              colors: ["#fff"],
+              colors: [this.color],
             },
           },
           stroke: {
@@ -2108,7 +2216,7 @@ bar["stack"]="total";
           xaxis: {
             categories: categories,
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2121,7 +2229,7 @@ bar["stack"]="total";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2134,18 +2242,18 @@ bar["stack"]="total";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: true
+                show: this.yGridSwitch
               }
             },
           },
         };
      } else {
-        let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+        let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
         yaxisOptions.forEach((bar : any)=>{
   bar["type"]="bar";
         });
@@ -2231,11 +2339,11 @@ bar["stack"]="total";
       }
     }
     multiLineChart(){
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
         this.chartOptions9 = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           annotations: {
             points: [{
               x: 'zoom',
@@ -2276,8 +2384,11 @@ bar["stack"]="total";
             offsetY: -20,
             style: {
               fontSize: '12px',
-              colors: [this.color],
+              // colors: [this.color],
             },
+            background: {
+              enabled: false,
+            }
           },
           stroke: {
             width: 5,
@@ -2308,7 +2419,7 @@ bar["stack"]="total";
             categories: categories,
             tickPlacement: 'on',
             labels: {
-              show: true,
+              show: this.xLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2320,7 +2431,7 @@ bar["stack"]="total";
           yaxis: {
             show: true,
             labels: {
-              show: true,
+              show: this.yLabelSwitch,
               style: {
                 colors: [],
                 fontSize: '12px',
@@ -2345,22 +2456,23 @@ bar["stack"]="total";
             show: true,
             xaxis: {
               lines: {
-                show: false
+                show: this.xGridSwitch
               }
             },
             yaxis: {
               lines: {
-                show: false
+                show: this.yGridSwitch
               }
             },
           }
         };
     } else {
-      let yaxisOptions = _.cloneDeep(this.sidebysideBarRowData);
+      let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
       yaxisOptions.forEach((bar : any)=>{
 bar["type"]="line";
+bar["stack"]="Total";
       });
-      this.eMultiBarChartOptions = {
+      this.eMultiLineChartOptions = {
         backgroundColor: this.backgroundColor,
         legend: {
           orient: 'vertical',
@@ -2393,7 +2505,8 @@ bar["type"]="line";
           containLabel: true,
         },
         xAxis: {
-          type: 'value',
+          type: 'category',
+          data: categories,
          
           splitLine: {
             lineStyle: {
@@ -2415,8 +2528,7 @@ bar["type"]="line";
         },
         toggleGridLines: true,
         yAxis: {
-          type: 'category',
-          data: categories,
+          type:'value',
           axisLine: {
             lineStyle: {
               color: this.yLabelColor
@@ -2443,6 +2555,7 @@ bar["type"]="line";
     }
     donutChart(){
       const self = this;
+      if(this.isApexCharts){
         this.chartOptions10 = {
           series: this.chartsRowData,
           chart: {
@@ -2477,16 +2590,16 @@ bar["type"]="line";
             }
           ],
           legend: {
-            show: true,
+            show: this.legendSwitch,
           },
           dataLabels: {
-            enabled: true,
+            enabled: this.dataLabels,
           },
           plotOptions: {
             pie: {
               donut: {
                 labels: {
-                  show: false,
+                  show: this.label,
                   name: {
                     show: true
                   },
@@ -2502,7 +2615,7 @@ bar["type"]="line";
                     formatter: (w:any) => {
                       return w.globals.seriesTotals.reduce((a:any, b:any) => {
                         return +a + b
-                      }, 0)
+                      }, 0).toFixed(this.donutDecimalPlaces);
                     }
                   }
                 }
@@ -2510,14 +2623,49 @@ bar["type"]="line";
             }
           },
         };
-        this.changeLegendsAllignment('right');
-        this.label = this.chartOptions10.plotOptions.pie.donut.labels.show;
-    }
+        this.changeLegendsAllignment('bottom');
+      } else {
+          let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
+            value: value,
+            name: this.chartsColumnData[index]
+          }));
+          let legendObject = this.setEchartLegendAlignment();
+          this.eDonutChartOptions = {
+            backgroundColor: this.backgroundColor,
+            tooltip: {
+              trigger: 'item'
+            },
+            legend: legendObject,
+            label: {
+              show : this.dataLabels,
+              formatter: '{b}: {d}%',
+            },
+            series: [
+              {
+                type: 'pie',
+                radius: [this.donutSize+'%' , '100%'],
+                data: combinedArray,
+                emphasis: {
+                  itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+                },
+                label: {
+                  show: this.dataLabels, // Dynamically show or hide data labels            }
+              }
+              }
+            ]
+          };
+        }
+      }
+    
       heatMapChart() {
-        const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+        const dimensions: Dimension[] = this.dualAxisColumnData;
         const categories = this.flattenDimensions(dimensions);
         this.heatMapChartOptions = {
-          series: this.sidebysideBarRowData,
+          series: this.dualAxisRowData,
           chart: {
             height: 350,
             type: 'heatmap',
@@ -2535,15 +2683,35 @@ bar["type"]="line";
             }
           },
           dataLabels: {
-            enabled: true
+            enabled: true,
+            formatter: this.formatNumber.bind(this)
           },
           xaxis: {
             type: 'category',
             categories: categories,
+            labels: {
+              show: this.xLabelSwitch,
+              style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+              },
+            }
           },
           yaxis: {
             title: {
               text: ''
+            },
+            show: true,
+            labels: {
+              show: this.yLabelSwitch,
+              style: {
+                colors: [],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12
+              },
             }
           },
           legend: {
@@ -2553,11 +2721,173 @@ bar["type"]="line";
           grid: {
             padding: {
               right: 20
+            },
+            show:true,
+            xaxis: {
+              lines:this.xGridSwitch
+            },
+            yaxis:{
+              lines:this.yGridSwitch
             }
           }
         };
       }
 
+      funnelChart(){
+        const dimensions: Dimension[] = this.dualAxisColumnData;
+        const categories = this.flattenDimensions(dimensions);
+        this.funnelChartOptions = {
+          series: this.dualAxisRowData,
+          chart: {
+            type: "bar",
+            height: 350
+          },
+          plotOptions: {
+            bar: {
+              borderRadius: 0,
+              horizontal: true,
+              barHeight: "80%",
+              isFunnel: true,
+              dataLabels: {
+                position: "center",
+              }
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: this.formatNumber.bind(this),
+            dropShadow: {
+              enabled: true,
+            },
+            style: {
+              fontSize: "8px",
+              fontFamily: "Helvetica, Arial, sans-serif",
+            },
+          },
+          title: {
+          },
+          xaxis: {
+            categories: categories
+          },
+          legend: {
+            show: false
+          }
+        };
+      }
+      guageChart() {
+        this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+        // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
+         const valueToDivide = this.maxValueGuage-this.minValueGuage
+        // Initialize the chart options
+        this.guageChartOptions = {
+          series: [ Math.round((this.guageNumber / valueToDivide)*100)], // Correct percentage calculation
+          chart: {
+            height: 350,
+            type: 'radialBar',
+            toolbar: {
+              show: true
+            }
+          },
+          plotOptions: {
+            radialBar: {
+              startAngle: -120,
+              endAngle: 120,
+              track: {
+                background: '#333',
+                startAngle: -120,
+                endAngle: 120,
+              },
+              dataLabels: {
+                show: true,
+                name: {
+                  offsetY: -20,
+                  show: true,
+                  color: '#888',
+                  fontSize: '16px'
+                },
+                value: {
+                  formatter: (val: number) => `${val}%`, // Displaying percentage
+                  color: '#333',
+                  fontSize: '36px',
+                  show: true,
+                }
+              },
+              min: this.minValueGuage,  // Use user's min value
+              max: this.maxValueGuage
+            }
+          },
+          fill: {
+            type: "gradient",
+            gradient: {
+              shade: "dark",
+              type: "horizontal",
+              gradientToColors: ["#87D4F9"],
+              stops: [0, 100]
+            }
+          },
+          stroke: {
+            lineCap: "round"
+          },
+          labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
+        };
+      }     
+      calendarChart(){
+        let calendarData:any[] = []
+        console.log(this.chartsColumnData);
+        console.log(this.chartsRowData);
+        this.chartsColumnData.forEach((data:any,index:any)=>{
+          let arr = [data,this.chartsRowData[index]]
+          calendarData.push(arr);
+        });
+        const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b));
+        const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b));
+        
+        const minDate = this.chartsColumnData.reduce((a: any, b: any) => (a < b ? a : b));
+        const maxDate = this.chartsColumnData.reduce((a: any, b: any) => (a > b ? a : b));
+
+        console.log(calendarData);
+        this.eCalendarChartOptions = {
+          tooltip: {
+            position: 'top',
+            formatter: function (params: any) {
+              const date = params.data[0];  // The date value
+              const value = params.data[1]; // The heatmap value
+              return `Date: ${date}<br/>Value: ${value}`; // Customize how you want the tooltip to display
+            }
+          },
+          visualMap: {
+            min: minValue,
+            max: maxValue,
+            calculable: true,
+            orient: 'horizontal',
+            left: 'center',
+            top: 'bottom'
+          },
+          calendar:  {
+            range: [minDate,maxDate], // You can specify the range (year, month, etc.)
+            cellSize: ['auto', 20],
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: '#000',
+                width: 2,
+                type: 'solid'
+              }
+            },
+            itemStyle: {
+              borderWidth: 1,
+              borderColor: '#ccc'
+            }
+          },
+          series: [
+            {
+              type: 'heatmap',
+              coordinateSystem: 'calendar',
+              data: calendarData
+            }
+          ]
+        }
+      } 
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
@@ -2587,16 +2917,16 @@ bar["type"]="line";
       }
 
       dataExtraction(){
-        this.sidebysideBarColumnData1 = [];
+        this.dualAxisColumnData = [];
         this.tablePreviewColumn = [];
         this.tablePreviewRow = [];
-        this.tableData = [];
-        this.chartsData = [];
+        this.storeTableRow = [];
+        this.storeTableColumn = [];
+        this.tableDataStore = [];
         this.displayedColumns = [];
         this.chartsColumnData = [];
         this.chartsRowData = [];
-        this.sidebysideBarColumnData = [];
-        this.sidebysideBarRowData = [];
+        this.dualAxisRowData = [];
         this.radarRowData = [];
         let draggedColumnsObj;
         if (this.dateDrillDownSwitch) {
@@ -2625,21 +2955,25 @@ bar["type"]="line";
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
-            console.log(responce);
+            this.tablePaginationRows=responce.rows;
+            this.tablePaginationColumn=responce.columns;
+            this.tablePaginationCustomQuery=responce.custom_query;
             this.chartsDataSet(responce);
+            this.mulColData = responce.columns;
+            this.mulRowData = responce.rows;
             if (this.chartsRowData.length > 0) {
-              this.enableDisableCharts();
+              // this.enableDisableCharts();
               // this.chartsOptionsSet();
-              if (this.retriveDataSheet_id) {
-                const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+              if (this.retriveDataSheet_id && !this.isEChatrts) {
+                const dimensions: Dimension[] = this.dualAxisColumnData;
                 const categories = this.flattenDimensions(dimensions);
                 let object : any;
                 if (this.barchart) {
                   this.chartOptions3.series[0].data = this.chartsRowData;
                   this.chartOptions3.xaxis.categories = this.chartsColumnData;
                   this.chartOptions3.xaxis.convertedCatToNumeric = true;
-                  console.log(this.chartOptions3.xaxis.categories);
-                  console.log(this.chartOptions3);
+                  // console.log(this.chartOptions3.xaxis.categories);
+                  // console.log(this.chartOptions3);
                   object = [{data : this.chartsRowData}];
                   this.barchart.updateSeries(object);
                   object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
@@ -2671,35 +3005,46 @@ bar["type"]="line";
                   console.log(this.linechart);
                 }
                 else if (this.sidebysideChart) {
-                  this.chartOptions2.series = this.sidebysideBarRowData;
+                  this.chartOptions2.series = this.dualAxisRowData;
                   this.chartOptions2.xaxis.categories = categories;
                 }
                 else if (this.stockedChart) {
-                  this.chartOptions6.series = this.sidebysideBarRowData;
+                  this.chartOptions6.series = this.dualAxisRowData;
                   this.chartOptions6.xaxis.categories = categories;
                 }
                 else if (this.barlineChart) {
-                  // this.chartOptions5.series[0] = {name: this.sidebysideBarRowData[0]?.name,type: "column",data: this.sidebysideBarRowData[0]?.data};
-                  // this.chartOptions5.series[1] = {name: this.sidebysideBarRowData[1]?.name,type: "line",data: this.sidebysideBarRowData[1]?.data};
-                  this.chartOptions5.series = this.sidebysideBarRowData;
+                  // this.chartOptions5.series[0] = {name: this.dualAxisRowData[0]?.name,type: "column",data: this.dualAxisRowData[0]?.data};
+                  // this.chartOptions5.series[1] = {name: this.dualAxisRowData[1]?.name,type: "line",data: this.dualAxisRowData[1]?.data};
+                  this.chartOptions5.series[0].data = this.dualAxisRowData[0].data;
+                  this.chartOptions5.series[1].data = this.dualAxisRowData[1].data;
                   this.chartOptions5.labels = categories;
                   this.chartOptions5.xaxis.categories = categories;
                 }
                 else if (this.horizontolstockedChart) {
-                  this.chartOptions7.series = this.sidebysideBarRowData;
+                  this.chartOptions7.series = this.dualAxisRowData;
                   this.chartOptions7.xaxis.categories = categories;
                 }
                 else if (this.groupedChart) {
-                  this.chartOptions8.series = this.sidebysideBarRowData;
+                  this.chartOptions8.series = this.dualAxisRowData;
                   this.chartOptions8.xaxis.categories = categories;
                 }
                 else if (this.multilineChart) {
-                  this.chartOptions9.series = this.sidebysideBarRowData;
+                  this.chartOptions9.series = this.dualAxisRowData;
                   this.chartOptions9.xaxis.categories = categories;
                 }
                 else if (this.donutchart) {
                   this.chartOptions10.series = this.chartsRowData;
                   this.chartOptions10.labels = this.chartsColumnData;
+                }
+                else if (this.heatMap) {
+                  this.chartOptions9.series = this.dualAxisRowData;
+                  this.chartOptions9.xaxis.categories = categories;
+                }
+                else if (this.funnel) {
+                  this.funnelChartOptions.series = this.dualAxisRowData;
+                  this.funnelChartOptions.xaxis.categories = categories;
+                } else if(this.map){
+                  this.mapChart();
                 }
                 // this.updateChart();
               }
@@ -2708,7 +3053,7 @@ bar["type"]="line";
               }
             }
            
-            if ((this.draggedColumns.length < 1 || this.draggedRows.length < 1) && !this.kpi) {
+            if ((this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!this.kpi &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -2725,24 +3070,33 @@ bar["type"]="line";
               this.radar = false;
               this.kpi = false;
               this.heatMap = false;
-            }
-            if(this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length > 1)){
-              this.table = true;
+              this.guage = false;
+              this.funnel = false;
+              this.calendar = false;
+              this.map = false;
+              this.tableDisplayPagination();
+            } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
+              this.table = false;
               this.bar = false;
               this.area = false;
               this.line = false;
               this.pie = false;
-              this.sidebyside = false;
+              this.sidebyside = true;
               this.stocked = false;
               this.barLine = false;
               this.horizentalStocked = false;
               this.grouped = false;
               this.multiLine = false;
               this.donut = false;
-              this.chartId = 1;
+              this.chartId = 7;
               this.radar = false;
               this.kpi = false;
               this.heatMap = false;
+              this.funnel = false;
+              this.guage = false;
+              this.calendar = false;
+              this.map = false;
+              this.sidebysideBar();
             }
           },
           error: (error) => {
@@ -2752,30 +3106,107 @@ bar["type"]="line";
         )
       }
 
+      pageChangeTableDisplay(page:any){
+        this.pageNo=page;
+        this.tableDisplayPagination();
+      }
+      tableDisplayPaginationSearch(){
+        this.pageNo = 1;
+        this.page = 1;
+        this.tableDisplayPagination();
+      }
+      tableDisplayPagination() {
+        if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
+          const obj = {
+            database_id: this.databaseId,
+            file_id: this.fileId,
+            sheetqueryset_id: this.sheetfilter_querysets_id,
+            queryset_id: this.qrySetId,
+            page_no: this.pageNo,
+            page_count: this.itemsPerPage,
+            search: this.tableChartSearch,
+            rows: this.tablePaginationRows,
+            columns: this.tablePaginationColumn,
+            custom_query: this.tablePaginationCustomQuery
+          }
+          if (obj.search === '' || obj.search === null) {
+            delete obj.search;
+          }
+          this.tableDataDisplay = []
+          this.tableColumnsDisplay = []
+          this.workbechService.tablePaginationSearch(obj).subscribe(
+            {
+              next: (data: any) => {
+                console.log(data);
+                this.itemsPerPage = data.items_per_page;
+                this.totalItems = data.total_items;
+                this.tableColumnDisplayPreview = data.data?.col
+                this.tableRowDisplayPreview = data.data?.row
+
+                let rowCountData: any;
+                if (this.tableColumnDisplayPreview[0]?.result_data?.length) {
+                  rowCountData = this.tableColumnDisplayPreview[0]?.result_data?.length;
+                } else {
+                  rowCountData = this.tableRowDisplayPreview[0]?.result_data?.length;
+                }
+                this.tableColumnsDisplay = this.tableColumnDisplayPreview.map((col: any) => col.column).concat(this.tableRowDisplayPreview.map((row: any) => row.col));
+
+                for (let i = 0; i < rowCountData; i++) {
+                  const tableRow: TableRow = {};
+                  this.tableColumnDisplayPreview?.forEach((col: any) => {
+                    tableRow[col.column] = col.result_data[i];
+                  });
+                  this.tableRowDisplayPreview?.forEach((rowData: any) => {
+                    tableRow[rowData.col] = rowData.result_data[i];
+                  });
+                  this.tableDataDisplay.push(tableRow);
+                 // console.log('display row data ', this.tableDataDisplay)
+                }
+              },
+              error: (error) => {
+                console.log(error);
+              }
+            }
+          )
+        } else {
+          this.tableDataDisplay = []
+          this.tableColumnsDisplay = []
+          this.totalItems = 0
+        }
+      }
+
       chartsDataSet(data: any) {
-        this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
+        let sidebysideBarColumnData = [];
+        this.sheetCustomQuery = data.custom_query;
+        // this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        
+        this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
+        this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        if(this.table){
+          this.tableDisplayPagination();
+        }
         console.log(this.tablePreviewColumn);
         console.log(this.tablePreviewRow);
         if (this.tablePreviewColumn && this.tablePreviewRow) {
           this.tablePreviewColumn.forEach((res: any) => {
-            let obj = {
-              data: res.result_data
-            }
-            this.sidebysideBarColumnData.push(res.result_data);
+            // let obj = {
+            //   data: res.result_data
+            // }
+            sidebysideBarColumnData.push(res.result_data);
             let obj1 = {
               name: res.column,
               values: res.result_data
             }
-            this.sidebysideBarColumnData1.push(obj1);
+            this.dualAxisColumnData.push(obj1);
           });
           this.tablePreviewRow.forEach((res: any) => {
             let obj = {
               name: res.col,
               data: res.result_data
             }
-            this.sidebysideBarRowData.push(obj);
+            this.dualAxisRowData.push(obj);
           });
           this.tablePreviewRow.forEach((res: any) => {
             let obj = {
@@ -2784,32 +3215,53 @@ bar["type"]="line";
             }
             this.radarRowData.push(obj);
           });
-          console.log(this.sidebysideBarColumnData)
-          console.log('sidebysideBarColumnData1this', this.sidebysideBarColumnData1)
-          console.log(this.sidebysideBarRowData);
+          console.log('dualAxisColumnDatathis', this.dualAxisColumnData)
+          console.log(this.dualAxisRowData);
           let rowCount: any;
           if (this.tablePreviewColumn[0]?.result_data?.length) {
             rowCount = this.tablePreviewColumn[0]?.result_data?.length;
           } else {
             rowCount = this.tablePreviewRow[0]?.result_data?.length;
+            this.guagechartRowData = rowCount
+            console.log('guage length',this.guagechartRowData)
           }
           //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
           // Extract column names
           this.displayedColumns = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.col));
           // Create table data
           console.log(this.displayedColumns)
-          for (let i = 0; i < rowCount; i++) {
+          // for (let i = 0; i < rowCount; i++) {
+          //   const row: TableRow = {};
+          //   this.tablePreviewColumn.forEach((col: any) => {
+          //     row[col.column] = col.result_data[i];
+          //   });
+          //   this.tablePreviewRow.forEach((rowData: any) => {
+          //     row[rowData.col] = rowData.result_data[i];
+          //   });
+          //   this.tableData.push(row);
+
+          // }
+          //storing table
+          let rowCountStore: any;
+          if (this.storeTableColumn[0]?.result_data?.length) {
+            rowCountStore = this.storeTableColumn[0]?.result_data?.length;
+          } else {
+            rowCountStore = this.storeTableRow[0]?.result_data?.length;
+          }
+          rowCountStore = rowCountStore > 10 ? 10:rowCountStore;
+          for (let i = 0; i < rowCountStore; i++) {
             const row: TableRow = {};
-            this.tablePreviewColumn.forEach((col: any) => {
+            this.storeTableColumn.forEach((col: any) => {
               row[col.column] = col.result_data[i];
             });
-            this.tablePreviewRow.forEach((rowData: any) => {
+            this.storeTableRow.forEach((rowData: any) => {
               row[rowData.col] = rowData.result_data[i];
             });
-            this.tableData.push(row);
-
+            this.tableDataStore.push(row);
           }
-          console.log(this.tableData);
+          console.log('only table store',this.tableDataStore);
+          //store table data close
+
           this.tablePreviewColumn.forEach((col: any) => {
             this.chartsColumnData = col.result_data;
           });
@@ -2818,12 +3270,11 @@ bar["type"]="line";
           });
           console.log(this.chartsColumnData)
           console.log(this.chartsRowData)
-          const length = Math.min(this.chartsColumnData.length, this.chartsRowData.length);
-          for (let i = 0; i < length; i++) {
-            const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
-            this.chartsData.push(aa);
-          }
-          console.log(this.chartsData)
+          // const length = Math.min(this.chartsColumnData.length, this.chartsRowData.length);
+          // for (let i = 0; i < length; i++) {
+          //   const aa = { col: this.chartsColumnData[i], row: this.chartsRowData[i] };
+          //   this.chartsData.push(aa);
+          // }
         }
       }
 
@@ -2854,9 +3305,94 @@ bar["type"]="line";
           this.radarChart();
         } else if (this.heatMap) {
           this.heatMapChart();
+        } else if (this.kpi){
+          this.KPIChart();
+        } else if (this.funnel){
+          this.funnelChart();
+        }else if(this.guage){
+          this.guageChart();
+        } else if(this.map){
+          this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+            echarts.registerMap('world', geoJson);  // Register the map data
+      
+            // Initialize the chart after the map is registered
+            this.mapChart();
+          });
+        } else if(this.calendar){
+          this.calendarChart();
         }
+        
       }
 
+      mapChart(){
+       let minData = 0;
+       const maxData = Math.max(...this.chartsRowData);
+       let result:any[] = [];
+
+       // Loop through the countries (assuming both data sets align by index)
+       this.dualAxisColumnData[0].values.forEach((country: string, index: number) => {
+         // Create an object for each country
+         const countryData: any = { name: country , value : this.chartsRowData[index]};
+     
+         // Add each measure to the country object
+         this.dualAxisRowData.forEach((measure:any) => {
+           const measureName = measure.name; // e.g., sum(Sales), sum(Quantity)
+           const measureValue = measure.data[index]; // Value for that measure
+           countryData[measureName] = measureValue;
+         });
+     
+         result.push(countryData);
+       });
+    if(this.chartsColumnData && this.chartsColumnData.length > 1){
+    minData = Math.min(...this.chartsRowData);
+    }
+
+    
+    this.eMapChartOptions = {
+      tooltip: {
+        formatter: (params: any) => {
+          const { name, data } = params;
+          if (data) {
+            const keys = Object.keys(data);
+      const values = Object.values(data);
+      let formattedString = '';
+      keys.forEach((key, index) => {
+        if(key)
+        formattedString += `${key}: ${values[index]}<br/>`;
+      });
+
+      return formattedString;
+           
+          } else {
+            return `${name}: No Data`;
+          }
+        },
+            trigger: 'item',
+            showDelay: 0,
+            transitionDuration: 0.2
+          },
+      visualMap: {
+        min: minData,
+        max: maxData,
+        text: ['High', 'Low'],
+        realtime: false,
+        calculable: true,
+        inRange: {
+         color: ['lightskyblue', 'yellow', 'orangered']
+        }
+      },
+      series: [{
+        type: 'map',
+        map: 'world',
+        roam: true,  
+        data: result
+      }]
+    };
+      }
+
+      KPIChart(){
+        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
+      }
       tableNameMethod(schemaname: any, tablename: any, tableAlias: any){
         this.schemaName = '';
         this.tableName = '';
@@ -2908,6 +3444,7 @@ bar["type"]="line";
     dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz'];
     integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double'];
     boolList = ['bool', 'boolean'];
+    stringList = ['varchar','bp char','text','varchar2','NVchar2','char','Nchar','character varying','string'];
     rowdrop(event: CdkDragDrop<string[]>){
       console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -2954,7 +3491,12 @@ bar["type"]="line";
   }
   rowMeasuresCount(rows:any,index:any,type:any){
       this.measureValues = [];
-      this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""]
+      if(type){
+        this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
+      }
+      else{
+        this.measureValues = [rows.column,rows.data_type,'',rows.alias ? rows.alias : ""];
+      }
      if(type === ''){
       this.draggedRowsData[index] = [rows.column,rows.data_type,type,rows.alias ? rows.alias : ""];
       this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
@@ -2992,15 +3534,24 @@ bar["type"]="line";
     console.log(this.draggedColumns);
     console.log(this.draggedColumnsData);
     console.log(index);
-    this.draggedColumns.splice(index, 1);
-    (this.draggedColumnsData as any[]).forEach((data,index)=>{
-      (data as any[]).forEach((aa)=>{ 
-        if(column === aa){
-          console.log(aa);
-          this.draggedColumnsData.splice(index, 1);
+    // this.draggedColumns.splice(index, 1);
+    (this.draggedColumnsData as any[]).forEach((data,index1)=>{
+      if(this.dateList.includes(data[1])){
+        if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
+          && this.draggedColumns[index].type === data[2]){
+            this.draggedColumnsData.splice(index, 1);
         }
-      } );
-    });   
+      }
+      else{
+        (data as any[]).forEach((aa)=>{ 
+          if(column === aa){
+            console.log(aa);
+            this.draggedColumnsData.splice(index1, 1);
+          }
+        } );
+      }
+    });
+    this.draggedColumns.splice(index, 1);   
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
@@ -3041,8 +3592,11 @@ bar["type"]="line";
   donut = false;
   kpi = false;
   heatMap = false;
+  funnel = false;
+  guage = false;
+  calendar = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,chartId:any){
     this.table = table;
     this.bar=bar;
     this.area=area;
@@ -3059,27 +3613,37 @@ bar["type"]="line";
     this.radar = radar;
     this.kpi = kpi;
     this.heatMap = heatMap;
+    this.funnel = funnel;
+    this.guage = guage;
+    this.map = map;
+    this.calendar = calendar;
     // this.dataExtraction();
+    if(!this.bar|| !this.pie || !this.donut){
+      this.draggedDrillDownColumns = [];
+      this.drillDownObject = [];
+      this.drillDownIndex = 0;
+      this.dateDrillDownSwitch = false;
+    }
     this.chartsOptionsSet(); 
   }
-  enableDisableCharts(){
-    console.log(this.draggedColumnsData);
-    console.log(this.draggedRowsData);
-    const obj={
-        "db_id":this.databaseId,
-        "col":this.draggedColumnsData,
-        "row":this.draggedRowsData,
-  }
-    this.workbechService.getChartsEnableDisable(obj).subscribe({next: (responce:any) => {
-          console.log(responce);
-          this.chartsEnableDisable = responce;
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      }
-    )
-  }
+  // enableDisableCharts(){
+  //   console.log(this.draggedColumnsData);
+  //   console.log(this.draggedRowsData);
+  //   const obj={
+  //       "db_id":this.databaseId,
+  //       "col":this.draggedColumnsData,
+  //       "row":this.draggedRowsData,
+  // }
+  //   this.workbechService.getChartsEnableDisable(obj).subscribe({next: (responce:any) => {
+  //         console.log(responce);
+  //         this.chartsEnableDisable = responce;
+  //       },
+  //       error: (error) => {
+  //         console.log(error);
+  //       }
+  //     }
+  //   )
+  // }
   tabs : any [] = [];
   selected = new FormControl(0);
   addSheet() {
@@ -3090,6 +3654,11 @@ bar["type"]="line";
     this.dateDrillDownSwitch = false;
     delete this.originalData;
     this.sheetName = ''; this.sheetTitle = '';
+    this.KPIDecimalPlaces = 0;
+    this.KPIRoundPlaces = 0;
+    this.KPIDisplayUnits = 'none';
+    this.KPIPrefix = '';
+    this.KPISuffix = '';
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
@@ -3214,7 +3783,6 @@ bar["type"]="line";
         this.draggedRows = [];
         this.draggedRowsData = [];
         this.displayedColumns = [];
-        this.tableData = [];
         this.getChartData();
        if(this.retriveDataSheet_id){
           this.sheetRetrive();
@@ -3239,9 +3807,8 @@ bar["type"]="line";
     this.draggedRowsData = [];
     // this.retriveDataSheet_id = '';
     this.dimetionMeasure = [];
-    this.sidebysideBarColumnData = [];
-    this.sidebysideBarColumnData1 = [];
-    this.sidebysideBarRowData = [];
+    this.dualAxisColumnData = [];
+    this.dualAxisRowData = [];
     this.sheetfilter_querysets_id = null;
       this.saveTableData = [] ;
       this.savedisplayedColumns = [];
@@ -3255,9 +3822,13 @@ bar["type"]="line";
       this.draggedRows = [];
       this.tablePreviewColumn = [];
       this.tablePreviewRow = [];
-      this.tableData = [];
+      this.storeTableRow = [];
+      this.storeTableColumn = [];
+      this.tableDataStore = [];
+      this.totalItems = 0;
+      this.tableDataDisplay = [];
+      this.tableColumnsDisplay = [];
       this.displayedColumns = [];
-      this.chartsData = [];
       this.chartsRowData = [];
       this.chartsColumnData = [];
       this.draggedColumnsData = [];
@@ -3289,6 +3860,10 @@ bar["type"]="line";
       this.multiLine = false;
       this.donut = false;
       this.radar = false;
+      this.kpi = false;
+      this.map = false;
+      this.heatMap = false;
+      this.funnel = false;
       this.banding = false;
       this.barOptions = undefined;
       this.lineOptions = undefined;
@@ -3303,6 +3878,29 @@ bar["type"]="line";
       this.donutOptions = undefined;
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
+      this.GridColor = '#089ffc';
+      this.apexbBgColor = '#fcfcfc';
+      this.color = '#00a5a2';
+      this.bandingSwitch = false;
+      this.xLabelSwitch = true;
+      this.yLabelSwitch = true;
+      this.xGridSwitch = false;
+      this.yGridSwitch = false;
+      this.color1 = undefined;
+      this.color2 = undefined;
+      this.displayUnits = 'none';
+      this.suffix = '';
+      this.prefix = '';
+      this.tableSearch = '';
+      this.legendsAllignment = 'bottom';
+      this.dataLabels = true;
+      this.legendSwitch = true;
+      this.label = true;
+      this.donutSize = 50;
+      this.donutDecimalPlaces = 0;
+      this.decimalPlaces = 0;
+      this.barColor = '#4382f7';
+      this.lineColor = '#38ff98';
    // }
   }
   saveTableData = [] as any;
@@ -3341,6 +3939,7 @@ bar["type"]="line";
   donutYaxis = [] as any;
   donutXaxis = [] as any;
   donutOptions : any = undefined;
+  eMapChartOptions : any;
 
 sheetSave(){
   let savedChartOptions ;
@@ -3352,7 +3951,8 @@ sheetSave(){
   let tablePreviewRow = this.tablePreviewRow;
   let tablePreviewCol = this.tablePreviewColumn;
   if(this.table && this.chartId == 1){
-   this.saveTableData =  this.tableData;
+  //  this.saveTableData =  this.tableData;
+   this.saveTableData =  this.tableDataStore;
    this.savedisplayedColumns = this.displayedColumns;
    this.banding = this.bandingSwitch;
    bandColor1 = this.color1;
@@ -3422,8 +4022,8 @@ sheetSave(){
     }
   }
   if(this.sidebyside && this.chartId == 7){
-    this.sidebysideBarYaxis = this.sidebysideBarRowData;
-    this.sidebysideBarXaxis = this.sidebysideBarColumnData1;
+    this.sidebysideBarYaxis = this.dualAxisRowData;
+    this.sidebysideBarXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.sidebysideBarOptions = this.chartOptions2;
     savedChartOptions = this.chartOptions2;
@@ -3433,8 +4033,8 @@ sheetSave(){
     
   }
   if(this.stocked && this.chartId == 5){
-    this.stokedBarYaxis = this.sidebysideBarRowData;
-    this.stokedBarXaxis = this.sidebysideBarColumnData1;
+    this.stokedBarYaxis = this.dualAxisRowData;
+    this.stokedBarXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.stokedOptions = this.chartOptions6;
     savedChartOptions = this.chartOptions6;
@@ -3444,8 +4044,8 @@ sheetSave(){
     
   }
   if(this.barLine && this.chartId == 4){
-    this.barLineYaxis = this.sidebysideBarRowData;
-    this.barLineXaxis = this.sidebysideBarColumnData1;
+    this.barLineYaxis = this.dualAxisRowData;
+    this.barLineXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       savedChartOptions = this.chartOptions5;
       this.barLineOptions = this.chartOptions5;
@@ -3454,8 +4054,8 @@ sheetSave(){
     }
   }
   if(this.horizentalStocked && this.chartId == 2){
-    this.hStockedYaxis = this.sidebysideBarRowData;
-    this.hStockedXaxis = this.sidebysideBarColumnData1;
+    this.hStockedYaxis = this.dualAxisRowData;
+    this.hStockedXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.hStockedOptions = this.chartOptions7;
     savedChartOptions = this.chartOptions7;
@@ -3465,8 +4065,8 @@ sheetSave(){
     
   }
   if(this.grouped && this.chartId == 3){
-    this.hgroupedYaxis = this.sidebysideBarRowData;
-    this.hgroupedXaxis = this.sidebysideBarColumnData1;
+    this.hgroupedYaxis = this.dualAxisRowData;
+    this.hgroupedXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.hgroupedOptions = this.chartOptions8;
       savedChartOptions = this.chartOptions8;
@@ -3476,13 +4076,13 @@ sheetSave(){
     
   }
   if(this.multiLine && this.chartId == 8){
-    this.multiLineYaxis = this.sidebysideBarRowData;
-    this.multiLineXaxis = this.sidebysideBarColumnData1;
+    this.multiLineYaxis = this.dualAxisRowData;
+    this.multiLineXaxis = this.dualAxisColumnData;
     if(this.isApexCharts) {
       this.multiLineOptions = this.chartOptions9;
     savedChartOptions = this.chartOptions9;
     } else {
-      savedChartOptions = this.eMultiBarChartOptions;
+      savedChartOptions = this.eMultiLineChartOptions;
     }
     
   }
@@ -3490,8 +4090,7 @@ sheetSave(){
     
     this.donutYaxis = this.chartsRowData;
     this.donutXaxis = this.chartsColumnData;
-    this.donutOptions = this.chartOptions10;
-    savedChartOptions = _.cloneDeep(this.chartOptions10);
+    
     if (this.originalData) {
       this.donutYaxis = this.originalData.data;
       this.donutXaxis = this.originalData.categories;
@@ -3503,9 +4102,15 @@ sheetSave(){
       tablePreviewCol[0].result_data = this.originalData.categories;
       delete this.originalData;
     }
+    if(this.isApexCharts) {
+      savedChartOptions = _.cloneDeep(this.chartOptions10);
+      this.donutOptions = this.chartOptions10;
+    } else {
+      savedChartOptions = this.eDonutChartOptions;
+    }
   }
   if(this.radar && this.chartId == 12){
-    this.barLineXaxis = this.sidebysideBarColumnData1;
+    this.barLineXaxis = this.dualAxisColumnData;
       savedChartOptions = this.eRadarChartOptions;
   }
   if(this.kpi && this.chartId == 25){
@@ -3515,6 +4120,18 @@ sheetSave(){
   }
   if(this.heatMap && this.chartId == 26){
     savedChartOptions = this.heatMapChartOptions;
+  }
+  if(this.funnel && this.chartId == 27){
+    savedChartOptions = this.funnelChartOptions;
+  }
+  if(this.guage && this.chartId == 28){
+    savedChartOptions = this.guageChartOptions;
+    // savedChartOptions['max1'] = this.maxValue
+    // savedChartOptions['min1'] = this.minValue
+
+  }
+  if(this.map && this.chartId == 29){
+    savedChartOptions = this.eMapChartOptions;
   }
   let customizeObject = {
     isZoom : this.isZoom,
@@ -3529,23 +4146,37 @@ sheetSave(){
     xLabelFontFamily : this.xLabelFontFamily,
     xLabelFontSize : this.xLabelFontSize,
     xlabelFontWeight : this.xlabelFontWeight,
-    labelAlignment : this.labelAlignment
+    labelAlignment : this.labelAlignment,
+    backgroundColor : this.backgroundColor,
+    color : this.color
+
   }
   // this.sheetTagName = this.sheetTitle;
+  let draggedColumnsObj;
+  if (this.dateDrillDownSwitch) {
+    draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
+    draggedColumnsObj[0][2] = 'year'
+  } else {
+    draggedColumnsObj = this.draggedColumnsData
+  }
 const obj={
   "chart_id": this.chartId,
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
   "sheet_name": this.sheetTitle,
   "sheet_tag_name": this.sheetTagName,
-  "filterId":this.filterId,
+  "filter_id":this.filterId,
   "sheetfilter_querysets_id":this.sheetfilter_querysets_id,
   "filter_data": this.dimetionMeasure,
+  "datasource_querysetid": this.filterQuerySetId,
+  "col": this.mulColData,
+  "row": this.mulRowData,
+  "custom_query":this.sheetCustomQuery,
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
     "isDrillDownData" : this.dateDrillDownSwitch,
   "columns": this.draggedColumns,
-  "columns_data":this.draggedColumnsData,
+  "columns_data":draggedColumnsObj,
   "rows": this.draggedRows,
   "rows_data":this.draggedRowsData,
   "col":tablePreviewCol,
@@ -3556,6 +4187,8 @@ const obj={
     "banding":this.banding,
     "color1":bandColor1,
     "color2":bandColor2,
+    "items_per_page":this.itemsPerPage,
+    "total_items":this.totalItems,
 
     "barYaxis":this.saveBar,
     "barXaxis":this.barXaxis,
@@ -3599,16 +4232,28 @@ const obj={
 
       "donutYaxis": this.donutYaxis,
       "donutXaxis": this.donutXaxis,
+      "decimalplaces": this.donutDecimalPlaces,
   //     "donutOptions":this.donutOptions,
 
       "kpiData": kpiData,
       "kpiFontSize": kpiFontSize,
-      "kpicolor": kpiColor
+      "kpicolor": kpiColor,
+      "kpiNumber" : this.KPINumber,
+      "kpiPrefix" : this.KPIPrefix,
+      "kpiSuffix" : this.KPISuffix,
+      "kpiDecimalUnit" : this.KPIDisplayUnits,
+      "kpiDecimalPlaces" : this.KPIDecimalPlaces
   },
   "isApexChart" : this.isApexCharts,
   "isEChart" : this.isEChatrts,
   "savedChartOptions" : savedChartOptions,
-  "customizeOptions" : customizeObject
+  "customizeOptions" : customizeObject,
+  "numberFormat" : {
+    "decimalPlaces" : this.decimalPlaces,
+    "displayUnits" : this.displayUnits,
+    "prefix" : this.prefix,
+    "suffix" : this.suffix
+  }
 }
 }as any;
 if(this.fromFileId){
@@ -3726,17 +4371,37 @@ if(this.fromFileId){
 this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
           console.log(responce);
         this.retriveDataSheet_id = responce.sheet_id;
-        this.sheetfilter_querysets_id = responce.sheet_filter_quereyset_ids;
         this.chartId = responce.chart_id;
         this.sheetName = responce.sheet_name;
         this.sheetTitle = responce.sheet_name;
+        this.sheetCustomQuery = responce.custom_query;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
+        this.filterQuerySetId = responce.datasource_queryset_id;
         this.draggedRows = this.sheetResponce.rows;
+        this.mulColData = responce.col_data;
+        this.mulRowData = responce.row_data;
+        this.tablePaginationRows=responce.row_data;
+        this.tablePaginationColumn=responce.col_data;
         this.dimetionMeasure = responce.filters_data;
         this.createdBy = responce.created_by;
         this.color1 = responce.sheet_data?.results?.color1;
         this.color2 = responce.sheet_data?.results?.color2;
+        this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id || responce.sheet_filter_quereyset_ids;
+        this.tablePaginationCustomQuery = responce.custom_query;
+        this.donutDecimalPlaces = this.sheetResponce.results.decimalplaces;
+        if(this.sheetResponce?.numberFormat?.decimalPlaces){ 
+          this.decimalPlaces = this.sheetResponce?.numberFormat?.decimalPlaces;
+        }
+        if(this.sheetResponce?.numberFormat?.displayUnits){
+          this.displayUnits = this.sheetResponce?.numberFormat?.displayUnits;
+        }
+        if(this.sheetResponce?.numberFormat?.prefix){
+          this.prefix = this.sheetResponce?.numberFormat?.prefix;
+        }
+        if(this.sheetResponce?.numberFormat?.suffix){
+          this.suffix = this.sheetResponce?.numberFormat?.suffix;
+        }
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
         responce.filters_data.forEach((filter: any)=>{
@@ -3764,7 +4429,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.sheetTagName = responce.sheet_tag_name;
         }
         this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
-        this.displayUnits = 'none';
+        // this.displayUnits = 'none';
         
         if(this.sheetResponce.column_data){
           this.draggedColumnsData = this.sheetResponce.column_data;
@@ -3782,11 +4447,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.draggedRowsData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
+        // this.table = false;
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
-          this.tableData = this.sheetResponce.results.tableData;
+          // this.tableData = this.sheetResponce.results.tableData;
           this.displayedColumns = this.sheetResponce.results.tableColumns;
           this.bandingSwitch = this.sheetResponce.results.banding;
+          this.color1 = this.sheetResponce.results.color1;
+          this.color2 = this.sheetResponce.results.color2;
           this.table = true;
           this.bar = false;
           this.pie = false;
@@ -3802,11 +4470,23 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.map = false
+          this.funnel = false;
+          this.guage = false;
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce.results.kpiData;
+          this.KPINumber = this.sheetResponce.results.kpiNumber;
           this.kpiFontSize = this.sheetResponce.results.kpiFontSize;
           this.kpiColor = this.sheetResponce.results.kpicolor;
+          if(this.sheetResponce.results.kpiPrefix) {
+            this.KPIPrefix = this.sheetResponce.results.kpiPrefix;
+          }
+          if(this.sheetResponce.results.kpiSuffix) {
+            this.KPISuffix = this.sheetResponce.results.kpiSuffix;
+          }
+          this.KPIDisplayUnits = this.sheetResponce.results.kpiDecimalUnit,
+          this.KPIDecimalPlaces = this.sheetResponce.results.kpiDecimalPlaces,
           this.table = false;
           this.bar = false;
           this.pie = false;
@@ -3822,6 +4502,57 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = true;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
+        }
+        if(responce.chart_id == 29){
+          this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+            echarts.registerMap('world', geoJson);  // Register the map data
+      
+            // Initialize the chart after the map is registered
+            this.eMapChartOptions = this.sheetResponce.savedChartOptions;
+            this.eMapChartOptions.tooltip = {
+              formatter: (params: any) => {
+                const { name, data } = params;
+                if (data) {
+                  const keys = Object.keys(data);
+                  const values = Object.values(data);
+                  let formattedString = '';
+                  keys.forEach((key, index) => {
+                    if (key)
+                      formattedString += `${key}: ${values[index]}<br/>`;
+                  });
+  
+                  return formattedString;
+  
+                } else {
+                  return `${name}: No Data`;
+                }
+              },
+              trigger: 'item',
+              showDelay: 0,
+              transitionDuration: 0.2
+            }
+          });
+          this.table = false;
+          this.bar = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = true;
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -3831,7 +4562,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartOptions3 = this.sheetResponce.savedChartOptions;
         this.chartOptions3.xaxis.convertedCatToNumeric = true;
         this.barchart?.updateOptions(this.chartOptions3);
-        this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
+        if(this.chartOptions3?.dataLabels){
+          this.chartOptions3.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions3.yaxis.labels){
+          this.chartOptions3.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
         this.chartOptions3.chart.events = {
           dataPointSelection: function (event: any, chartContext: any, config: any) {
             const selectedXValue = self.chartOptions3.xaxis.categories[config.dataPointIndex];
@@ -3847,10 +4583,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             }
           }
         };
-        this.xLabelSwitch = this.chartOptions3.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions3.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions3.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions3.grid.yaxis.lines.show;
+        this.xLabelSwitch = this.chartOptions3?.xaxis?.labels?.show;
+        this.yLabelSwitch = this.chartOptions3?.yaxis?.labels?.show;
+        this.xGridSwitch = this.chartOptions3?.grid?.xaxis?.lines?.show;
+        this.yGridSwitch = this.chartOptions3?.grid?.yaxis?.lines?.show;
+        this.GridColor = this.chartOptions3?.grid?.borderColor;
+        this.apexbBgColor = this.chartOptions3?.chart?.background;
+        this.color = this.chartOptions3?.colors;
         console.log(this.chartOptions3.xaxis.convertedCatToNumeric);
         console.log(this.chartOptions3);
        } else {
@@ -3872,6 +4611,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 24){
         // this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -3879,7 +4621,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.isApexCharts){
           const self = this;
           this.chartOptions4 = this.sheetResponce.savedChartOptions;
-          this.changeLegendsAllignment('bottom');
+          this.changeLegendsAllignment(this.chartOptions4.legend.position);
           this.chartOptions4.chart.events =  {
           dataPointSelection: function(event:any, chartContext:any, config:any) {
            if(self.drillDownIndex < self.draggedDrillDownColumns.length - 1  ){
@@ -3895,8 +4637,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
         };
         this.legendSwitch = this.chartOptions4.legend?.show;
+        this.apexbBgColor = this.chartOptions4?.chart?.background;
+        this.dataLabels = this.chartOptions4?.dataLabels?.enabled;
+        this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
+        // this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
         } else {
           this.ePieChartOptions = this.sheetResponce.savedChartOptions;
+          this.legendSwitch = this.ePieChartOptions?.legend?.show;
+          this.legendsAllignment = this.ePieChartOptions?.legend?.left || this.ePieChartOptions?.legend?.right || this.ePieChartOptions?.legend?.top || this.ePieChartOptions?.legend?.bottom
+          this.dataLabels = this.ePieChartOptions?.label?.show
         }
         // this.pieChart();
         this.bar = false;
@@ -3914,8 +4663,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
-          this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
-          this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
+          this.funnel = false;
+          this.map = false;
+          this.guage = false;
        }
        if(responce.chart_id == 13){
         // this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -3925,6 +4675,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.chartOptions = this.sheetResponce.savedChartOptions;
           this.chartOptions.xaxis.convertedCatToNumeric = true;
           this.linechart?.updateOptions(this.chartOptions);
+          if(this.chartOptions?.dataLabels){
+            this.chartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions.yaxis.labels){
+            this.chartOptions.yaxis.labels.formatter = this.formatNumber.bind(this);
+          }
           this.chartOptions.events = {
             dataPointSelection: function (event: any, chartContext: any, config: any) {
               if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
@@ -3939,10 +4695,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               }
             }
           }
-          this.xLabelSwitch = this.chartOptions.xaxis.labels.show;
-          // this.yLabelSwitch = this.chartOptions.yaxis.labels.show;
-          this.xGridSwitch = this.chartOptions.grid.xaxis.lines.show;
-          this.yGridSwitch = this.chartOptions.grid.yaxis.lines.show;
+          this.xLabelSwitch = this.chartOptions?.xaxis?.labels?.show;
+          this.yLabelSwitch = this.chartOptions?.yaxis?.labels?.show;
+          this.xGridSwitch = this.chartOptions?.grid?.xaxis?.lines?.show;
+          this.yGridSwitch = this.chartOptions?.grid?.yaxis?.lines?.show;
+          this.GridColor = this.chartOptions?.grid?.borderColor;
+          this.apexbBgColor = this.chartOptions?.chart?.background;
+          this.color = this.chartOptions?.colors;
         } else {
           this.eLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -3962,6 +4721,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 17){
         // this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -3970,10 +4732,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.chartOptions1 = this.sheetResponce.savedChartOptions;
           this.chartOptions1.xaxis.convertedCatToNumeric = true;
           this.areachart?.updateOptions(this.chartOptions1);
-          this.xLabelSwitch = this.chartOptions1.xaxis.labels.show;
-          // this.yLabelSwitch = this.chartOptions1.yaxis.labels.show;
-          this.xGridSwitch = this.chartOptions1.grid.xaxis.lines.show;
-          this.yGridSwitch = this.chartOptions1.grid.yaxis.lines.show;
+          if(this.chartOptions1?.dataLabels){
+            this.chartOptions1.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions1.yaxis.labels){
+            this.chartOptions1.yaxis.labels.formatter = this.formatNumber.bind(this);
+          }
+          this.xLabelSwitch = this.chartOptions1?.xaxis?.labels?.show;
+          this.yLabelSwitch = this.chartOptions1?.yaxis?.labels?.show;
+          this.xGridSwitch = this.chartOptions1?.grid?.xaxis?.lines?.show;
+          this.yGridSwitch = this.chartOptions1?.grid?.yaxis?.lines?.show;
+          this.GridColor = this.chartOptions1?.grid?.borderColor;
+          this.apexbBgColor = this.chartOptions1?.chart?.background;
+          this.color = this.chartOptions1?.colors;
         } else {
           this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -3993,15 +4764,30 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 7){
-        // this.sidebysideBarRowData = this.sheetResponce.results.sidebysideBarYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.sidebysideBarXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.sidebysideBarYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.sidebysideBarXaxis;
+        if(this.isApexCharts){
         this.chartOptions2 = this.sheetResponce.savedChartOptions;
-        this.xLabelSwitch = this.chartOptions2.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions2.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions2.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions2.grid.yaxis.lines.show;
+        if(this.chartOptions2?.dataLabels){
+          this.chartOptions2.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions2.yaxis.labels){
+          this.chartOptions2.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
+        this.xLabelSwitch = this.chartOptions2?.xaxis?.labels?.show;
+        this.yLabelSwitch = this.chartOptions2?.yaxis?.labels?.show;
+        this.xGridSwitch = this.chartOptions2?.grid?.xaxis?.lines?.show;
+        this.yGridSwitch = this.chartOptions2?.grid?.yaxis?.lines?.show;
+        this.GridColor = this.chartOptions2?.grid?.borderColor;
+        this.apexbBgColor = this.chartOptions2?.chart?.background;
+        } else {
+          this.eSideBySideBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.sidebysideBar();
         this.bar = false;
         this.table = false;
@@ -4018,14 +4804,30 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 5){
-        // this.sidebysideBarRowData = this.sheetResponce.results.stokedBarYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.stokedBarXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.stokedBarYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.stokedBarXaxis;
+        if(this.isApexCharts){
         this.chartOptions6 = this.sheetResponce.savedChartOptions;
-        this.xLabelSwitch = this.chartOptions6.xaxis.labels.show;
-        this.xGridSwitch = this.chartOptions6.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions6.grid.yaxis.lines.show;
+        if(this.chartOptions6?.dataLabels){
+          this.chartOptions6.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions6.yaxis.labels){
+          this.chartOptions6.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
+        this.xLabelSwitch = this.chartOptions6?.xaxis?.labels?.show;
+        this.yLabelSwitch = this.chartOptions6?.yaxis?.labels?.show;
+        this.xGridSwitch = this.chartOptions6?.grid?.xaxis?.lines?.show;
+        this.yGridSwitch = this.chartOptions6?.grid?.yaxis?.lines?.show;
+        this.GridColor = this.chartOptions6?.grid?.borderColor;
+        this.apexbBgColor = this.chartOptions6?.chart?.background;
+        } else {
+          this.eStackedBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.stockedBar();
         this.bar = false;
         this.table = false;
@@ -4042,16 +4844,31 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.map = false;
+          this.guage = false;
        }
        if(responce.chart_id == 4){
-        // this.sidebysideBarRowData = this.sheetResponce.results.barLineYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.barLineYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         if(this.isApexCharts){
           this.chartOptions5 = this.sheetResponce.savedChartOptions;
-          this.xLabelSwitch = this.chartOptions5.xaxis.labels.show;
-          // this.yLabelSwitch = this.chartOptions5.yaxis.labels.show;
-          this.xGridSwitch = this.chartOptions5.grid.xaxis.lines.show;
-          this.yGridSwitch = this.chartOptions5.grid.yaxis.lines.show;
+          this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
+          if(this.chartOptions5?.dataLabels){
+            this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+          if(this.chartOptions5.yaxis.labels){
+            this.chartOptions5.yaxis[0].labels.formatter = this.formatNumber.bind(this);
+            this.chartOptions5.yaxis[1].labels.formatter = this.formatNumber.bind(this);
+          }
+          this.xLabelSwitch = this.chartOptions5?.xaxis?.labels?.show;
+          this.yLabelSwitch = this.chartOptions5?.yaxis?.labels?.show;
+          this.xGridSwitch = this.chartOptions5?.grid?.xaxis?.lines?.show;
+          this.yGridSwitch = this.chartOptions5?.grid?.yaxis?.lines?.show;
+          this.GridColor = this.chartOptions5?.grid?.borderColor;
+          this.apexbBgColor = this.chartOptions5?.chart?.background;
+          this.barColor = this.chartOptions5?.series[0]?.color;
+          this.lineColor = this.chartOptions5?.series[1]?.color;
         } else {
           this.eBarLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -4071,9 +4888,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.map = false;
+          this.guage = false;
        }
        if(responce.chart_id == 12){
-        this.sidebysideBarColumnData1 = this.sheetResponce.results.barLineXaxis;
+        this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.radarChart();
         this.bar = false;
         this.table = false;
@@ -4090,6 +4910,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = true;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
           if(this.isApexCharts){
           
           } else {
@@ -4097,13 +4920,25 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
        }
        if(responce.chart_id == 2){
-        // this.sidebysideBarRowData = this.sheetResponce.results.hStockedYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.hStockedXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.hStockedYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.hStockedXaxis;
+        if(this.isApexCharts){
         this.chartOptions7 = this.sheetResponce.savedChartOptions;
-        this.xLabelSwitch = this.chartOptions7.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions7.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions7.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions7.grid.yaxis.lines.show;
+        if(this.chartOptions7?.dataLabels){
+          this.chartOptions7.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions7.xaxis.labels){
+          this.chartOptions7.xaxis.labels.formatter = this.formatNumber.bind(this);
+        }
+        this.xLabelSwitch = this.chartOptions7?.xaxis?.labels?.show;
+        this.yLabelSwitch = this.chartOptions7?.yaxis?.labels?.show;
+        this.xGridSwitch = this.chartOptions7?.grid?.xaxis?.lines?.show;
+        this.yGridSwitch = this.chartOptions7?.grid?.yaxis?.lines?.show;
+        this.GridColor = this.chartOptions7?.grid?.borderColor;
+        this.apexbBgColor = this.chartOptions7?.chart?.background;
+        } else {
+          this.ehorizontalStackedBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
@@ -4120,15 +4955,30 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.map = false;
+          this.guage = false;
        }
        if(responce.chart_id == 3){
-        // this.sidebysideBarRowData = this.sheetResponce.results.hgroupedYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.hgroupedXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.hgroupedYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.hgroupedXaxis;
+        if(this.isApexCharts){
         this.chartOptions8 = this.sheetResponce.savedChartOptions;
-        this.xLabelSwitch = this.chartOptions8.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions8.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions8.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions8.grid.yaxis.lines.show;
+        if(this.chartOptions8?.dataLabels){
+          this.chartOptions8.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions8.xaxis.labels){
+          this.chartOptions8.xaxis.labels.formatter = this.formatNumber.bind(this);
+        }
+        this.xLabelSwitch = this.chartOptions8?.xaxis?.labels?.show;
+        this.yLabelSwitch = this.chartOptions8?.yaxis?.labels?.show;
+        this.xGridSwitch = this.chartOptions8?.grid?.xaxis?.lines?.show;
+        this.yGridSwitch = this.chartOptions8?.grid?.yaxis?.lines?.show;
+        this.GridColor = this.chartOptions8?.grid?.borderColor;
+        this.apexbBgColor = this.chartOptions8?.chart?.background;
+        } else {
+          this.eGroupedBarChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.hGrouped();
         this.bar = false;
         this.table = false;
@@ -4145,15 +4995,30 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 8){
-        // this.sidebysideBarRowData = this.sheetResponce.results.multiLineYaxis;
-        // this.sidebysideBarColumnData1 = this.sheetResponce.results.multiLineXaxis;
+        // this.dualAxisRowData = this.sheetResponce.results.multiLineYaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.multiLineXaxis;
+        if(this.isApexCharts){
         this.chartOptions9 = this.sheetResponce.savedChartOptions;
-        this.xLabelSwitch = this.chartOptions9.xaxis.labels.show;
-        // this.yLabelSwitch = this.chartOptions9.yaxis.labels.show;
-        this.xGridSwitch = this.chartOptions9.grid.xaxis.lines.show;
-        this.yGridSwitch = this.chartOptions9.grid.yaxis.lines.show;
+        if(this.chartOptions9?.dataLabels){
+          this.chartOptions9.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        if(this.chartOptions9.yaxis.labels){
+          this.chartOptions9.yaxis.labels.formatter = this.formatNumber.bind(this);
+        }
+        this.xLabelSwitch = this.chartOptions9?.xaxis?.labels?.show;
+        this.yLabelSwitch = this.chartOptions9?.yaxis?.labels?.show;
+        this.xGridSwitch = this.chartOptions9?.grid?.xaxis?.lines?.show;
+        this.yGridSwitch = this.chartOptions9?.grid?.yaxis?.lines?.show;
+        this.GridColor = this.chartOptions9?.grid?.borderColor;
+        this.apexbBgColor = this.chartOptions9?.chart?.background;
+        } else {
+          this.eMultiLineChartOptions = this.sheetResponce.savedChartOptions;
+        }
         // this.multiLineChart();
         this.bar = false;
         this.table = false;
@@ -4170,11 +5035,25 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 10){
         // this.chartsRowData = this.sheetResponce.results.donutYaxis
         // this.chartsColumnData = this.sheetResponce.results.donutXaxis;
+        if(this.isApexCharts){
         this.chartOptions10 = this.sheetResponce.savedChartOptions;
+        this.legendSwitch = this.chartOptions10?.legend?.show;
+        this.changeLegendsAllignment(this.chartOptions10?.legend?.position);
+        this.dataLabels = this.chartOptions10?.dataLabels?.enabled;
+        this.label = this.chartOptions10?.plotOptions?.pie?.donut?.labels?.show;
+        this.donutSize = parseInt(this.chartOptions10?.plotOptions?.pie?.donut?.size?.replace('%', '').trim());
+        this.chartOptions10.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
+          return w.globals.seriesTotals.reduce((a:any, b:any) => {
+            return +a + b
+          }, 0).toFixed(this.donutDecimalPlaces);
+        };
         const self = this;
         this.chartOptions10.chart.events = {
           dataPointSelection: function (event: any, chartContext: any, config: any) {
@@ -4190,7 +5069,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             }
           }
         }
-        this.legendSwitch = this.chartOptions10.legend.show;
+      }
+        else {
+          this.eDonutChartOptions = this.sheetResponce.savedChartOptions;
+          this.legendSwitch = this.eDonutChartOptions?.legend?.show;
+          this.legendsAllignment = this.eDonutChartOptions?.legend?.left || this.eDonutChartOptions?.legend?.right || this.eDonutChartOptions?.legend?.top || this.eDonutChartOptions?.legend?.bottom
+          this.dataLabels = this.eDonutChartOptions?.label?.show;
+          this.donutSize = parseInt(this.eDonutChartOptions?.series[0]?.radius[0]?.replace('%', '').trim());
+
+        }
         // this.donutChart();
         this.bar = false;
         this.table = false;
@@ -4207,12 +5094,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = false;
-          this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
-          this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
-          this.label = this.sheetResponce.savedChartOptions.plotOptions.pie.donut.labels.show
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
        }
        if(responce.chart_id == 26){
         this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
+        if(this.heatMapChartOptions?.dataLabels){
+          this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -4228,6 +5118,62 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.radar = false;
           this.kpi = false;
           this.heatMap = true;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
+       }
+       if(responce.chart_id == 27){
+        this.funnelChartOptions = this.sheetResponce.savedChartOptions;
+        if(this.funnelChartOptions?.dataLabels){
+          this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        }
+        this.isDistributed = this.funnelChartOptions?.plotOptions?.bar?.distributed;
+        this.funnelDLAllign = this.funnelChartOptions?.plotOptions?.bar?.dataLabels?.position;
+        this.funnelDLFontFamily = this.funnelChartOptions?.dataLabels?.style?.fontFamily;
+        this.funnelDLFontSize = this.funnelChartOptions?.dataLabels?.style?.fontSize;
+        this.funnelColor = this.funnelChartOptions?.series[0]?.color;
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = true;
+          this.guage = false;
+          this.map = false;
+       }
+       if(responce.chart_id == 28){
+        this.guageChartOptions = this.sheetResponce.savedChartOptions;
+        this.maxValueGuage = this.guageChartOptions.plotOptions.radialBar.max;
+        this.minValueGuage =  this.guageChartOptions.plotOptions.radialBar.min;
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = false;
+          this.guage = true;
+          this.map = false;
+        
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
@@ -4241,7 +5187,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   filterName:any
   filterType:any;
   openSuperScaled(modal: any,data:any) {
+    this.filterSearch = '';
     this.filterDataArray = [];
+    this.isExclude = false;
     this.modalService.open(modal, {
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
@@ -4262,12 +5210,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   filterDateRange : any[] = [];
   updateDateRange() {
     const format: Intl.DateTimeFormatOptions = { 
+      year: 'numeric',
       month: '2-digit', 
-      day: '2-digit', 
-      year: 'numeric' 
+      day: '2-digit',  
     };
-    this.minDate = new Date(this.minValue).toLocaleDateString('en-US', format);
-    this.maxDate = new Date(this.maxValue).toLocaleDateString('en-US', format);
+    const minDateObj = new Date(this.minValue);
+    const maxDateObj = new Date(this.maxValue);
+    this.minDate = `${minDateObj.getFullYear()}/${(minDateObj.getMonth() + 1).toString().padStart(2, '0')}/${minDateObj.getDate().toString().padStart(2, '0')}`;
+    this.maxDate = `${maxDateObj.getFullYear()}/${(maxDateObj.getMonth() + 1).toString().padStart(2, '0')}/${maxDateObj.getDate().toString().padStart(2, '0')}`;
     this.filterDateRange = [this.minDate, this.maxDate];
   }
   filterDataGet(){
@@ -4345,7 +5295,8 @@ if(this.fromFileId){
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
        "data_type":this.filterType,
-       "parent_user":this.createdBy
+       "parent_user":this.createdBy,
+       "is_exclude":this.isExclude
 }as any;
 if(this.fromFileId){
   delete obj.database_id;
@@ -4383,6 +5334,7 @@ if(this.fromFileId){
         this.filter_id = responce.filter_id;
         this.filterName=responce.column_name;
         this.filterType=responce.data_type;
+        this.isExclude = responce.is_exclude;
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
         });
@@ -4413,7 +5365,8 @@ if(this.fromFileId){
       "range_values": this.filterDateRange,
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
-      "data_type":this.filterType
+      "data_type":this.filterType,
+      "is_exclude":this.isExclude
 
   }as any;
   if(this.fromFileId){
@@ -4458,6 +5411,7 @@ if(this.fromFileId){
     });
 }
 openSuperScalededitFilter(modal: any,data:any) {
+  this.editFilterSearch = '';
   this.modalService.open(modal, {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
@@ -4498,24 +5452,37 @@ gotoDashboard(){
   if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
   }
 if(this.fromFileId){
   const encodedFileId = btoa(this.fileId.toString())
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/workbench/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
 }
 }
 viewDashboard(){
+  if(this.fromFileId){
+    const encodedDatabaseId = btoa(this.fileId.toString());
+    const encodedQuerySetId = btoa(this.qrySetId.toString());
+    const encodedDashboardId = btoa(this.dashboardId.toString());
+    this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+
+  } else {
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
-  this.router.navigate(['workbench/landingpage/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  }
+
 }
-barColor : any;
-lineColor : any;
+barColor : any = '#4382f7';
+lineColor : any = '#38ff98';
 marksColor2(color:any){
-console.log(this.sidebysideBarRowData);
+  if(this.isEChatrts){
+    this.color = color;
+    this.reAssignChartData();
+  }
+console.log(this.dualAxisRowData);
 console.log(color)
 let object : any;
 if(this.barchart){
@@ -4531,7 +5498,7 @@ else if(this.linechart){
   object = {colors: [color]};
 }
 else if(this.sidebysideChart){
-  if(this.sidebysideBarRowData){
+  if(this.dualAxisRowData){
   }
   this.chartOptions2.colors = color;
   object = {colors: [color]};
@@ -4626,7 +5593,7 @@ renameColumns(){
       supportAllValues: true
     },
     fontSize: {
-      options: [9, 11, 13, 'default', 17, 19, 21]
+      options: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
     },
     toolbar: ['heading', '|', 'bold', 'italic', 'underline','|', 'fontSize', 'fontFamily', 'fontColor', '|', 'alignment'],
     plugins: [
@@ -4703,6 +5670,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '12px';
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '12px';
+        }
       }
       if (event.target.value === 'calibri') {
         object = {xaxis: {labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}, categories: this.chartsColumnData}}
@@ -4750,6 +5722,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '14px';
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '14px';
         }
       }
       if (event.target.value === 'times') {
@@ -4799,6 +5776,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '16px';
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '16px';
+        }
       }
       if (event.target.value === 'verdana') {
         object = {xaxis: {labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}, categories: this.chartsColumnData}}
@@ -4846,6 +5828,11 @@ renameColumns(){
           this.chartOptions9.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
           this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
           this.chartOptions9.xaxis.labels.style.fontSize = '12px';
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
+          this.heatMapChartOptions.xaxis.labels.style.fontSize = '12px';
         }
       }
     }
@@ -4979,6 +5966,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontSize = '12px';
           }
         }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Arial, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '12px';
+          }
+        }
       }
       if(event.target.value === 'calibri'){
         object = {yaxis: [{labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}}]};
@@ -5106,6 +6107,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
             this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
             this.chartOptions9.yaxis.labels.style.fontSize = '14px';
+          }
+        }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Calibri, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '14px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '14px';
           }
         }
       }
@@ -5237,6 +6252,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontSize = '16px';
           }
         }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Times New Roman, serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '16px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '16px';
+          }
+        }
       }
       if(event.target.value === 'verdana'){
         object = {yaxis: [{labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}}]};
@@ -5366,6 +6395,20 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.style.fontSize = '12px';
           }
         }
+        else if(this.heatMap){
+          if(this.heatMapChartOptions.yaxis.length >0){
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+              data.labels.style.fontFamily = 'Verdana, sans-serif';
+              data.labels.style.fontWeight = 'bold';
+              data.labels.style.fontSize = '12px';
+            })
+          }
+          else{
+            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
+            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
+            this.heatMapChartOptions.yaxis.labels.style.fontSize = '12px';
+          }
+        }
       }
     }
     
@@ -5404,6 +6447,9 @@ renameColumns(){
         else if(this.multilineChart){
           this.chartOptions9.xaxis.labels.offsetX = 0;
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.offsetX = 0;
+        }
 
       }
       if (event.target.value === 'left') {
@@ -5435,6 +6481,9 @@ renameColumns(){
         else if(this.multilineChart){
           this.chartOptions9.xaxis.labels.offsetX = -10;
         }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.offsetX = -10;
+        }
       }
       if (event.target.value === 'right') {
         object = {xaxis: {labels : {offsetX : 10}, categories: this.chartsColumnData}};
@@ -5464,6 +6513,9 @@ renameColumns(){
         }
         else if(this.multilineChart){
           this.chartOptions9.xaxis.labels.offsetX = 10;
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.xaxis.labels.offsetX = 10;
         }
       }
     }
@@ -5560,6 +6612,16 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.offsetY = 0;
           }
         }
+        else if(this.heatMap){
+          if (this.heatMapChartOptions.yaxis.length > 0) {
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 0;
+            })
+          }
+          else {
+            this.heatMapChartOptions.yaxis.labels.offsetY = 0;
+          }
+        }
       }
       if (event.target.value === 'up') {
         object = {yaxis: {labels : {offsetY : -10}}};
@@ -5651,6 +6713,16 @@ renameColumns(){
           }
           else {
             this.chartOptions9.yaxis.labels.offsetY = -10;
+          }
+        }
+        else if(this.heatMap){
+          if (this.heatMapChartOptions.yaxis.length > 0) {
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = -10;
+            })
+          }
+          else {
+            this.heatMapChartOptions.yaxis.labels.offsetY = -10;
           }
         }
       }
@@ -5746,6 +6818,16 @@ renameColumns(){
             this.chartOptions9.yaxis.labels.offsetY = 10;
           }
         }
+        else if(this.heatMap){
+          if (this.heatMapChartOptions.yaxis.length > 0) {
+            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+              data.labels.offsetY = 10;
+            })
+          }
+          else {
+            this.heatMapChartOptions.yaxis.labels.offsetY = 10;
+          }
+        }
       }
     }
     this.updateChart(object);
@@ -5806,9 +6888,22 @@ renameColumns(){
       console.log(this.chartOptions10);
       console.log(this.donutchart);
     }
+    else if(this.funnel){
+      this.funnelCharts.updateOptions(object);
+      console.log(this.funnelCharts);
+    }
+    else if(this.guage){
+      this.guageCharts.updateOptions(object);
+      console.log(this.guageCharts);
+    }
+    else if(this.heatMap){
+      this.heatmapcharts.updateOptions(object);
+      console.log(this.heatmapcharts);
+    }
   }
   dataLabels:boolean = true;
   label : boolean = true;
+  isDistributed : boolean = false;
   toggleSwitch(type : string) {
     let object:any;
     if(type === 'banding'){
@@ -5820,7 +6915,7 @@ renameColumns(){
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
-      const dimensions: Dimension[] = this.sidebysideBarColumnData1;
+      const dimensions: Dimension[] = this.dualAxisColumnData;
       const categories = this.flattenDimensions(dimensions);
       if(this.isApexCharts){
       object = { xaxis: {labels: {show: this.xLabelSwitch}, categories: this.chartsColumnData}};
@@ -5859,6 +6954,10 @@ renameColumns(){
       else if(this.multilineChart){
         this.chartOptions9.xaxis.labels.show = this.xLabelSwitch;
         this.chartOptions9.xaxis.categories = categories;
+      }
+      else if(this.heatMap){
+        this.heatMapChartOptions.xaxis.labels.show = this.xLabelSwitch;
+        this.heatMapChartOptions.xaxis.categories = categories;
       }
     } else {
       this.changeAlignment();
@@ -5958,6 +7057,16 @@ renameColumns(){
           this.chartOptions9.yaxis.labels.show = this.yLabelSwitch;
         }
       }
+      else if(this.heatMap){
+        if(this.heatMapChartOptions.yaxis.length >0){
+          (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
+            data.labels.show = this.yLabelSwitch;
+          })
+        }
+        else{
+          this.heatMapChartOptions.yaxis.labels.show = this.yLabelSwitch;
+        }
+      }
     } else {
       this.changeAlignment();
     }
@@ -5992,6 +7101,9 @@ renameColumns(){
       }
       else if(this.multilineChart){
         this.chartOptions9.grid.xaxis.lines.show = this.xGridSwitch;
+      }
+      else if(this.heatMap){
+        this.heatMapChartOptions.grid.xaxis.lines.show = this.xGridSwitch;
       }
     } else {
       this.changeAlignment();
@@ -6028,12 +7140,18 @@ renameColumns(){
       else if(this.multilineChart){
         this.chartOptions9.grid.yaxis.lines.show = this.yGridSwitch;
       }
+      else if(this.heatMap){
+        this.heatMapChartOptions.grid.yaxis.lines.show = this.yGridSwitch;
+      }
     } else {
       this.changeAlignment();
     }
     }
     else if(type === 'legend'){
       this.legendSwitch = !this.legendSwitch;
+      if(this.isEChatrts){
+        this.reAssignChartData();
+      } else {
       object = {legend: {show: this.legendSwitch}};
       if(this.piechart){
         this.chartOptions4.legend.show = this.legendSwitch;
@@ -6042,8 +7160,12 @@ renameColumns(){
         this.chartOptions10.legend.show = this.legendSwitch;
       }
     }
+    }
     else if(type === 'dataLabels'){
       this.dataLabels = !this.dataLabels;
+      if(this.isEChatrts){
+        this.reAssignChartData();
+      } else {
       object = {dataLabels: {enabled: this.dataLabels}}; 
       if(this.piechart){
         this.chartOptions4.dataLabels.enabled = this.dataLabels;
@@ -6052,12 +7174,18 @@ renameColumns(){
         this.chartOptions10.dataLabels.enabled = this.dataLabels;
       }
     }
+    }
     else if(type === 'label'){
       this.label = !this.label;
       object = {plotOptions: {pie: {donut: {labels: {show: this.label}}}}}
       if(this.donutchart){
         this.chartOptions10.plotOptions.pie.donut.labels.show = this.label;
       }
+    }
+    else if(type === 'distributed'){
+      this.isDistributed = !this.isDistributed;
+      object = {plotOptions: {bar: {distributed: this.isDistributed}}};
+      this.funnelChartOptions.plotOptions.bar.distributed = this.isDistributed;
     }
     this.updateChart(object);
   }
@@ -6104,11 +7232,11 @@ renameColumns(){
       this.barLineChart();
     }
   }
-
+  formattedData : any[] = [];
   formatNumber(value: number): string {
     let formattedNumber = value+'';
 
-    if (this.displayUnits !== 'none') {
+    // if (this.displayUnits !== 'none') {
       switch (this.displayUnits) {
         case 'K':
           formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
@@ -6122,10 +7250,38 @@ renameColumns(){
         case 'G':
           formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
           break;
+        case 'none':
+          formattedNumber = (value/1).toFixed(this.decimalPlaces);
+          break;
       }
+    // }
+    this.formattedData.push(this.prefix + formattedNumber + this.suffix);
+    return this.prefix + formattedNumber + this.suffix;
+  }
+
+  formatKPINumber() {
+    let formattedNumber = this.tablePreviewRow[0].result_data[0]+'';
+    let value = this.tablePreviewRow[0].result_data[0];
+    if (this.KPIDisplayUnits !== 'none') {
+      switch (this.KPIDisplayUnits) {
+        case 'K':
+          formattedNumber = (value / 1_000).toFixed(this.KPIDecimalPlaces) + 'K';
+          break;
+        case 'M':
+          formattedNumber = (value / 1_000_000).toFixed(this.KPIDecimalPlaces) + 'M';
+          break;
+        case 'B':
+          formattedNumber = (value / 1_000_000_000).toFixed(this.KPIDecimalPlaces) + 'B';
+          break;
+        case 'G':
+          formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
+          break;
+      }
+    } else {
+      formattedNumber = (value).toFixed(this.KPIDecimalPlaces)
     }
 
-    return this.prefix + formattedNumber + this.suffix;
+    this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
   }
   numberPopupTrigger(){
     this.numberPopup = !this.numberPopup;
@@ -6170,9 +7326,9 @@ renameColumns(){
         localStorage.setItem('previousUrl', this.router.url);
         this.chartSuggestions = null;
         // API Key is missing or empty, show the message and navigate to the configure page on click
-        // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+        // this.errorMessage = `The GPT API Key is missing. Please <a href="/insights/configure-page/configure">add the GPT API Key</a> to proceed.`;
         this.errorMessage1 = 'the GPT API key is missing. Please'
-        // this.router.navigate(['/workbench/configure-page/configure']);
+        // this.router.navigate(['/insights/configure-page/configure']);
       } else {
         // Handle other errors
         console.log("Error:", error.message);
@@ -6184,7 +7340,7 @@ renameColumns(){
   );
 }
 routeConfigure(){
-  this.router.navigate(['/workbench/configure-page/configure'])
+  this.router.navigate(['/insights/configure-page/configure'])
 }
 
 fetchChartData(chartData: any){
@@ -6198,16 +7354,18 @@ fetchChartData(chartData: any){
           this.filterQuerySetId = null,
           this.sheetfilter_querysets_id = null;
           
-          console.log("This is ChaetData",chartData)
+          console.log("This is ShaetData",chartData)
           this.sheetTitle = chartData.chart_title
-          if (chartData.chart_type==="Bar Chart"){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
-          }else if (chartData.chart_type==="Pie Chart"){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,24);
-          }else if (chartData.chart_type==="Line Chart"){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,13);
-          }else if (chartData.chart_type==="Area Chart"){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,17);
+          if (chartData.chart_type.toLowerCase().includes("bar")){
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+          }else if (chartData.chart_type.toLowerCase().includes("pie")){
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+          }else if (chartData.chart_type.toLowerCase().includes("line")){
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+          }else if (chartData.chart_type.toLowerCase().includes("area")){
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+          }else if (chartData.chart_type.toLowerCase().includes("donut")){
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
           }
           this.dataExtraction();
 
@@ -6224,17 +7382,43 @@ fetchChartData(chartData: any){
     this.reAssignChartData();
   }
   reAssignChartData() {
-    this.barChart();
-    this.pieChart();
-    this.lineChart();
-    this.areaChart();
-    this.barLineChart();
-    this.radarChart();
-    this.stockedBar();
-    this.hGrouped();
-    this.sidebysideBar();
-    this.horizentalStockedBar();
+    if (this.bar) {
+      this.barChart();
+    } else if (this.area) {
+      this.areaChart();
+    } else if (this.line) {
+      this.lineChart();
+    } else if (this.pie) {
+      this.pieChart();
+    } else if (this.sidebyside) {
+      this.sidebysideBar();
+    } else if (this.stocked) {
+      this.stockedBar();
+    } else if (this.barLine) {
+      this.barLineChart();
+    } else if (this.horizentalStocked) {
+      this.horizentalStockedBar();
+    } else if (this.grouped) {
+      this.hGrouped();
+    } else if (this.multiLine) {
+      this.multiLineChart();
+    } else if (this.donut) {
+      this.donutChart();
+    } else if (this.radar) {
+      this.radarChart();
+    } else if (this.heatMap) {
+      this.heatMapChart();
+    } else if (this.kpi){
+      this.KPIChart();
+    } else if (this.funnel){
+      this.funnelChart();
+    }else if(this.guage){
+      this.guageChart();
+    } else if(this.map){
+      this.mapChart();
+    }
   }
+
   marksColor(color: any, colorCase: number) {
     console.log(color)
     switch (colorCase) {
@@ -6252,7 +7436,7 @@ fetchChartData(chartData: any){
     this.isZoom = data.isZoom;
     this.xGridColor = data.xGridColor;
     this.xGridSwitch = data.xGridSwitch;
-    // this.xLabelSwitch = data.xLabelSwitch;
+    this.xLabelSwitch = data.xLabelSwitch;
     this.xLabelColor = data.xLabelColor;
     this.yLabelSwitch = data.yLabelSwitch;
     this.yGridColor = data.yGridColor;
@@ -6262,6 +7446,8 @@ fetchChartData(chartData: any){
     this.xLabelFontSize = data.xLabelFontSize;
     this.xlabelFontWeight = data.xlabelFontWeight;
     this.labelAlignment = data.labelAlignment;
+    this.backgroundColor = data.backgroundColor;
+    this.color = data.color;
   }
 
   sendPrompt() {
@@ -6294,9 +7480,9 @@ fetchChartData(chartData: any){
           else if  (!apiKey || apiKey.trim() === '') {
             this.chartSuggestions = null;
             // API Key is missing or empty, show the message and navigate to the configure page
-            // this.errorMessage = `The GPT API Key is missing. Please <a href="/workbench/configure-page/configure">add the GPT API Key</a> to proceed.`;
+            // this.errorMessage = `The GPT API Key is missing. Please <a href="/insights/configure-page/configure">add the GPT API Key</a> to proceed.`;
             this.errorMessage1 = 'the GPT API key is missing. Please'
-            // this.router.navigate(['/workbench/configure-page/configure']);
+            // this.router.navigate(['/insights/configure-page/configure']);
           } else {
             // Handle other errors
             console.log("Error:", error.message);
@@ -6457,6 +7643,12 @@ fetchChartData(chartData: any){
       else if(this.donutchart){
         this.chartOptions10.chart.background = color;
       }
+      else if(this.heatMap){
+        this.heatMapChartOptions.chart.background = color;
+      }
+      else if(this.funnel){
+        this.funnelChartOptions.chart.background = color;
+      }
       this.updateChart(object);
     }
   }
@@ -6516,7 +7708,9 @@ fetchChartData(chartData: any){
   drillDownColumndrop(event: CdkDragDrop<string[]>){
         console.log(event)
         let item: any = event.previousContainer.data[event.previousIndex];
-        this.draggedDrillDownColumns.push(item.column);
+        if(item && item.column) {
+          this.draggedDrillDownColumns.push(item.column);
+        }
   }
   removeDrillDownColumn(index:any,column:any){
        
@@ -6557,25 +7751,33 @@ fetchChartData(chartData: any){
             }         
           }
   titleShow : boolean = true;
-  legendsAllignment : any;
+  legendsAllignment : any = 'bottom'
   changeLegendsAllignment(allignment:any){
     this.legendsAllignment = allignment;
-    let object : any = {legend: {position: allignment}};
-    if(this.pie){
-      this.legendsAllignment = allignment;
-      this.chartOptions4.legend.position = allignment;
+    if(this.isEChatrts){
+      this.reAssignChartData();
+    } else {
+      let object : any = {legend: {position: allignment}};
+      if(this.pie){
+        this.legendsAllignment = allignment;
+        this.chartOptions4.legend.position = allignment;
+      }
+      else if(this.donut){
+        this.legendsAllignment = allignment;
+        this.chartOptions10.legend.position = allignment;
+      }
+      this.updateChart(object);
     }
-    else if(this.donut){
-      this.legendsAllignment = allignment;
-      this.chartOptions10.legend.position = allignment;
-    }
-    this.updateChart(object);
   }
   donutSize:any = 50;
   changeSize(){
+    if(this.isEChatrts){
+      this.donutChart();
+    } else {
     let object : any = {plotOptions: { pie: {donut: {size: this.donutSize+'%'}}}};
     this.chartOptions10.plotOptions.pie.donut.size = this.donutSize+'%';
     this.updateChart(object);
+    }
   }
   color1:any;
   color2:any;
@@ -6596,5 +7798,436 @@ fetchChartData(chartData: any){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
           }
         }
+      }
+      sort(event: any, numbers: any, labels: any) {
+        const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+      
+        if (event.target.value === 'ascending') {
+          pairedData.sort((a: any, b: any) => a[0] - b[0]);
+        } else if (event.target.value === 'descending') {
+          pairedData.sort((a: any, b: any) => b[0] - a[0]);
+        }
+
+        const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+        const sortedLabels = pairedData.map((pair: any) => pair[1]);
+      
+        return { sortedNumbers, sortedLabels };
+      }
+      
+      sortSeries(event: any) {
+        if (this.funnel) {
+          const numbers = this.funnelChartOptions.series[0].data;
+          const labels = this.funnelChartOptions.xaxis.categories;
+          const sortedData = this.sort(event, numbers, labels);
+
+          this.funnelChartOptions.series[0].data = sortedData.sortedNumbers;
+          this.funnelChartOptions.xaxis.categories = sortedData.sortedLabels;
+          this.funnelCharts.updateSeries([{ data: sortedData.sortedNumbers }]);
+          this.funnelCharts.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
+        } 
+        else if (this.bar) {
+          const numbers = this.chartOptions3.series[0].data;
+          const labels = this.chartOptions3.xaxis.categories;
+          const sortedData = this.sort(event, numbers, labels);
+          console.log(numbers);
+          if(this.isEChatrts){
+            // this.eBarchart.setOption({
+            //   xAxis: {
+            //     data: this.chartsColumnData.map(item => item.name),
+            //   },
+            //   series: [
+            //     {
+            //       data: thiss.barData.map(item => item.value),
+            //     },
+            //   ],
+            // });
+            this.eBarChartOptions.series[0].data = numbers;
+          } else {
+            this.chartOptions3.series[0].data = sortedData.sortedNumbers;
+            this.chartOptions3.xaxis.categories = sortedData.sortedLabels;
+            this.barchart.updateSeries([{ data: sortedData.sortedNumbers }]);
+            this.barchart.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
+          }
+        }
+      }      
+      funnelDLAllign:any;
+      funnelDLFontFamily:any;
+      funnelDLFontSize:any;
+      funnelFontChange(event:any,type:any){
+        let font = event.target.value;
+        let object = {};
+        if(type === 'family'){
+          this.funnelChartOptions.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.funnelChartOptions
+        } else if(type === 'size'){
+          let size = event.target.value;
+          this.funnelChartOptions.dataLabels.style.fontSize = size;
+          object = { datalabels: { style: { fontSize: size } } };
+          object = this.funnelChartOptions;
+        } else if(type === 'allign'){
+          let allign = event.target.value;
+          this.funnelChartOptions.plotOptions.bar.dataLabels.position = allign;
+          object = { plotOptions: { bar: { dataLabels: { position: allign } } } }
+        }
+        this.updateChart(object);
+      }
+      funnelColor:any;
+      funnelColorChange(event:any){
+      if(this.funnelColor){
+        let selectedColor = event;
+        this.funnelChartOptions.series[0].color = selectedColor;
+        let object = {series: [{color: selectedColor}]}
+        object = this.funnelChartOptions;
+        this.updateChart(object);
+      }
+      }
+      viewQuery(modal:any){
+        this.modalService.open(modal, {
+          centered: true,
+          windowClass: 'animate__animated animate__zoomIn',
+          size: 'lg'
+        });
+      }
+      copyQuery(){
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(this.tablePaginationCustomQuery).then(() => {
+            console.log(this.tablePaginationCustomQuery);
+            this.toasterService.success('Query Copied', 'success', { positionClass: 'toast-top-right' });
+          }).catch(err => {
+            console.error('Could not copy text: ', err);
+            this.fallbackCopyTextToClipboard(this.tablePaginationCustomQuery);
+          });
+        } else {
+          // Fallback if navigator.clipboard is not available
+          this.fallbackCopyTextToClipboard(this.tablePaginationCustomQuery);
+        }
+      }
+
+      fallbackCopyTextToClipboard(text: string): void {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';  // Avoid scrolling to bottom
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            this.toasterService.success('Query Copied', 'success', { positionClass: 'toast-top-right' });
+          } else {
+            console.error('Fallback: Could not copy text');
+          }
+        } catch (err) {
+          console.error('Fallback: Unable to copy', err);
+        }
+        document.body.removeChild(textArea);
+      }
+      donutDecimalPlaces: number = 0;
+
+      updateDonut(){
+        this.donutchart.updateOptions(this.chartOptions10);
+      }
+
+      dataLabelsFontFamily(event:any){
+        let font = event.target.value;
+        let object = {};
+        if(this.bar){
+          this.chartOptions3.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions3;
+        }
+        else if(this.area){
+          this.chartOptions1.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions1;
+        }
+        else if(this.line){
+          this.chartOptions.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions;
+        }
+        else if(this.sidebyside){
+          this.chartOptions2.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions2;
+        }
+        else if(this.stocked){
+          this.chartOptions6.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions6;
+        }
+        else if(this.barLine){
+          this.chartOptions5.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions5;
+        }
+        else if(this.horizentalStocked){
+          this.chartOptions7.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions7;
+        }
+        else if(this.grouped){
+          this.chartOptions8.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions8;
+        }
+        else if(this.multiLine){
+          this.chartOptions9.dataLabels.style.fontFamily = font;
+          object = { datalabels: { style: { fontFamily: font } } };
+          object = this.chartOptions9;
+        }
+        this.updateChart(object);
+      }
+
+      dataLabelsFontSize(event:any){
+        let font = event.target.value;
+        let object = {};
+        if(this.bar){
+          this.chartOptions3.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions3;
+        }
+        else if(this.area){
+          this.chartOptions1.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions1;
+        }
+        else if(this.line){
+          this.chartOptions.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions;
+        }
+        else if(this.sidebyside){
+          this.chartOptions2.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions2;
+        }
+        else if(this.stocked){
+          this.chartOptions6.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions6;
+        }
+        else if(this.barLine){
+          this.chartOptions5.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions5;
+        }
+        else if(this.horizentalStocked){
+          this.chartOptions7.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions7;
+        }
+        else if(this.grouped){
+          this.chartOptions8.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions8;
+        }
+        else if(this.multiLine){
+          this.chartOptions9.dataLabels.style.fontSize = font;
+          object = { datalabels: { style: { fontSize: font } } };
+          object = this.chartOptions9;
+        }
+        this.updateChart(object);
+      }
+      isBold:boolean = false;
+      isItalic:boolean = false;
+      isUnderline:boolean = false;
+
+      dataLabelsFontStyle(fontStyle:any){
+        let font;
+        let object;
+        if(fontStyle === 'B'){
+          this.isBold = !this.isBold;
+          font = 'bold'
+          if(this.bar){
+            this.chartOptions3.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions3;
+          }
+          else if(this.area){
+            this.chartOptions1.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions1;
+          }
+          else if(this.line){
+            this.chartOptions.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions;
+          }
+          else if(this.sidebyside){
+            this.chartOptions2.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions2;
+          }
+          else if(this.stocked){
+            this.chartOptions6.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions6;
+          }
+          else if(this.barLine){
+            this.chartOptions5.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions5;
+          }
+          else if(this.horizentalStocked){
+            this.chartOptions7.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions7;
+          }
+          else if(this.grouped){
+            this.chartOptions8.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions8;
+          }
+          else if(this.multiLine){
+            this.chartOptions9.dataLabels.style.fontWeight = font;
+            object = { datalabels: { style: { fontWeight: font } } };
+            object = this.chartOptions9;
+          }
+          this.updateChart(object);
+        }
+        else if(fontStyle === 'I'){
+          this.isItalic = !this.isItalic;
+        }
+        else if(fontStyle === 'U'){
+          this.isUnderline = !this.isUnderline;
+        }
+      }
+      selectedElement!: HTMLElement;
+      dataLabelsFontColor(event:any){
+        if (this.selectedElement) {
+          this.selectedElement.style.border = 'none';
+        }
+        const element = event.target as HTMLElement;
+        this.selectedElement = event.target as HTMLElement;
+        const color = window.getComputedStyle(element).backgroundColor;
+        let object;
+        if(this.bar){
+          this.chartOptions3.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions3;
+        }
+        else if(this.area){
+          this.chartOptions1.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions1;
+        }
+        else if(this.line){
+          this.chartOptions.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions;
+        }
+        else if(this.sidebyside){
+          this.chartOptions2.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions2;
+        }
+        else if(this.stocked){
+          this.chartOptions6.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions6;
+        }
+        else if(this.barLine){
+          this.chartOptions5.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions5;
+        }
+        else if(this.horizentalStocked){
+          this.chartOptions7.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions7;
+        }
+        else if(this.grouped){
+          this.chartOptions8.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions8;
+        }
+        else if(this.multiLine){
+          this.chartOptions9.dataLabels.style.colors = [color];
+          object = { datalabels: { style: { colors : [color] } } };
+          object = this.chartOptions9;
+        }
+        element.style.border = `1px solid black`;
+        this.selectedElement = element;
+        this.updateChart(object);
+      }
+
+      dataLabelsFontPosition(event:any){
+        let position = event.target.value;
+        let object: any;
+        if(this.bar){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions3.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.sidebyside){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions2.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.stocked){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions6.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.barLine){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions5.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.horizentalStocked){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions7.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.grouped){
+          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          this.chartOptions8.plotOptions.bar.dataLabels.position = position;
+        }
+        this.updateChart(object);
+      }
+      resetColor(){
+        this.color = '#00A5A2';
+        this.barColor = '#4382F7';
+        this.lineColor = '#38FF98';
+        if(this.table){
+          this.color1 = '#d4d3d2';
+          this.color2 = '#ffffff'; 
+        }
+        this.GridColor = '#0f0f0f';
+        this.apexbBgColor = '#ffffff';
+        if(this.kpi){
+          this.kpiColor = '#0f0f0f';
+        }
+        this.marksColor2(this.color);
+        this.funnelColorChange(this.color);
+        this.gridLineColor(this.GridColor);
+        this.apexbBackgroundColor(this.apexbBgColor);
+      }
+
+      sheetNotSaveAlert(): Promise<boolean> {
+        // if (this.goToSheetButtonClicked) {
+        //   // If the "Go to Sheet" button is clicked, skip the alert
+        //   return Promise.resolve(true);
+        // }
+        return Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "Your work has not been saved, Do you want to continue?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // User clicked "Yes", allow navigation
+            return true;
+          } else {
+            // User clicked "No", prevent navigation
+            this.loaderService.hide();
+            return false;
+          }
+        });
+      }
+      canNavigate(): boolean {
+        // This is handled in the functional guard
+        return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
       }
 }

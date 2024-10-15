@@ -12,14 +12,14 @@ import {CompactType, GridsterConfig, GridsterItem, GridsterItemComponent, Gridst
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { EChartsOption, number } from 'echarts';
-import { NgxEchartsModule } from 'ngx-echarts';
+import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
 import { ApexOptions, ChartComponent, ChartType, NgApexchartsModule } from 'ng-apexcharts';
 import ApexCharts from 'apexcharts';
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { WorkbenchService } from '../workbench.service';
 import { SharedModule } from '../../../shared/sharedmodule';
 import * as _ from 'lodash';
-import { chartOptions } from '../../../shared/data/dashboard';
+// import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
 import { debounceTime, fromEvent, map } from 'rxjs';
@@ -43,6 +43,10 @@ import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
+import * as echarts from 'echarts';
+import { HttpClient } from '@angular/common/http';
+// import { series } from '../../charts/apexcharts/data';
+
 interface TableRow {
   [key: string]: any;
 }
@@ -56,6 +60,7 @@ export type ChartOptions = {
   labels: string[];
   stroke: ApexStroke;
   title: ApexTitleSubtitle;
+  plotOptions: ApexPlotOptions;
 };
 type DashboardItem = GridsterItem & { 
   data?: { title: string, content: string }, 
@@ -70,12 +75,23 @@ interface KpiData {
   rows: any[];
   fontSize: string;
   color: string;
+  kpiNumber: any;
+  kpiPrefix : string;
+  kpiSuffix: string;
+  kpiDecimalUnit : string;
+  kpiDecimalPlaces: number;
 }
 
 @Component({
   selector: 'app-sheetsdashboard',
   standalone: true,
-  imports: [SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
+  providers: [
+    {
+      provide: NGX_ECHARTS_CONFIG,
+      useFactory: () => ({ echarts: echarts }),
+    },
+  ],
+  imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule],
   templateUrl: './sheetsdashboard.component.html',
@@ -125,7 +141,7 @@ export class SheetsdashboardComponent {
  colData = [] as any;
  heightGrid : number = 800;
  widthGrid : number = 800;
- gridItemSize : number = 100;
+ gridItemSize : number = 50;
  dataArray = [] as any;
  keysArray = [] as any;
  tablePreviewRow = [] as any;
@@ -151,10 +167,21 @@ export class SheetsdashboardComponent {
   tableNameSelectedForFilter:any;
   isPanelHidden: boolean = true;
 
+
+  tableItemsPerPage:any;
+  tablePageNo = 1;
+  tablePage: number = 1;
+  tableTotalItems:any;
+  tableSearch:any;
+  isDraggingDisabled = false;
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient){
     this.dashboard = [];
     const currentUrl = this.router.url; 
+    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+      echarts.registerMap('world', geoJson); 
+    });
     if(currentUrl.includes('public/dashboard')){
       this.updateDashbpardBoolen= true;
       this.isPublicUrl = true;
@@ -167,21 +194,21 @@ export class SheetsdashboardComponent {
     if(!this.isPublicUrl){
       this.editDashboard = this.viewTemplateService.editDashboard();
     }
-    if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard/dbId')){
+    if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/dbId')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId.push(+atob(route.snapshot.params['id1']));
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
         }
     }
-    else if(currentUrl.includes('workbench/sheetscomponent/sheetsdashboard/fileId')){
+    else if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/fileId')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.fileId.push(+atob(route.snapshot.params['id1']));
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
         this.fromFileId = true;
         }
-    }else if(currentUrl.includes('workbench/landingpage/sheetsdashboard')){
+    }else if(currentUrl.includes('insights/home/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
       if (route.snapshot.params['id3']) {
@@ -193,21 +220,21 @@ export class SheetsdashboardComponent {
           this.dashboardId = +atob(route.snapshot.params['id1'])
         }
       }
-        else if(currentUrl.includes('workbench/sheetsdashboard')){
+        else if(currentUrl.includes('insights/sheetsdashboard')){
           this.sheetsNewDashboard = true;
     }
     
   }
   options!: GridsterConfig;
-  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
-  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}
   }>;
-  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }> = [];
-  dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
   }>;
-  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[] }
+  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
 }>;
   pushNewSheet =[] as any;
   sheetData = [] as any;
@@ -300,26 +327,29 @@ export class SheetsdashboardComponent {
     }
   }
   ngOnInit() {  
-    if(!this.isPublicUrl){
-    if(this.fileId.length > 0 || this.databaseId.length > 0){
-      this.sheetsDataWithQuerysetIdTest();
-    }
-  }
-  if(this.isPublicUrl){
-    // this.dashboardId = 145
-    this.getSavedDashboardDataPublic();
-    this.getDashboardFilterredListPublic();
-
-  }
-    // if(this.sheetsNewDashboard){
-    //   this.sheetsDataWithQuerysetId();
-    // }
-    if(this.dashboardView){
-
-      this.getSavedDashboardData();
-      // this.sheetsDataWithQuerysetId();
-      this.getDashboardFilterredList();
-    }
+    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+      echarts.registerMap('world', geoJson); 
+      this.loaderService.hide(); 
+      if(!this.isPublicUrl){
+        if(this.fileId.length > 0 || this.databaseId.length > 0){
+          this.sheetsDataWithQuerysetIdTest();
+        }
+      }
+      if(this.isPublicUrl){
+        // this.dashboardId = 145
+        this.getSavedDashboardDataPublic();
+        this.getDashboardFilterredListPublic();
+      }
+        // if(this.sheetsNewDashboard){
+        //   this.sheetsDataWithQuerysetId();
+        // }
+        if(this.dashboardView){
+    
+          this.getSavedDashboardData();
+          // this.sheetsDataWithQuerysetId();
+          this.getDashboardFilterredList();
+        }
+    });    
    
     //this.getSheetData();
     this.options = {
@@ -334,9 +364,9 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      fixedColWidth: 100,
-      fixedRowHeight: 100,
-      margin : 10,
+      fixedColWidth: this.gridItemSize,
+      fixedRowHeight: this.gridItemSize,
+      // margin : 10,
       // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
@@ -348,7 +378,11 @@ export class SheetsdashboardComponent {
       // },
       pushItems: true,
       draggable: {
-        enabled: this.editDashboard,
+        enabled: this.editDashboard && !this.isDraggingDisabled,
+        stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+          // Optional logic when dragging stops
+          console.log('Drag stopped for item', item);
+        }
         
       },
       resizable: {
@@ -398,10 +432,10 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      fixedColWidth: 100,
-      fixedRowHeight: 100,
-      margin : 10,
-      outerMarginBottom: 20,
+      fixedColWidth: this.gridItemSize,
+      fixedRowHeight: this.gridItemSize,
+      // margin : 10,
+      // outerMarginBottom: 20,
       // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
@@ -435,9 +469,9 @@ export class SheetsdashboardComponent {
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
-      fixedColWidth: 100,
-      fixedRowHeight: 100,
-      margin : 10,
+      fixedColWidth: this.gridItemSize,
+      fixedRowHeight: this.gridItemSize,
+      // margin : 10,
       // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
       //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
       
@@ -475,7 +509,7 @@ export class SheetsdashboardComponent {
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
         fixedRowHeight: this.gridItemSize,
-        margin : 10,
+        // margin : 10,
         // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
         //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
         
@@ -510,7 +544,7 @@ export class SheetsdashboardComponent {
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
         fixedRowHeight: this.gridItemSize,
-        margin : 10,
+        // margin : 10,
         // itemChangeCallback: SheetsdashboardComponent.itemChangesss,
         //   // itemResizeCallback: SheetsdashboardComponent.itemResize,
         
@@ -568,6 +602,7 @@ export class SheetsdashboardComponent {
         chartId:sheet.chart_id,
         qrySetId : sheet.queryset_id,
         databaseId: sheet.server_id,
+        isEChart : sheet.sheet_data.isEChart,
         column_Data : sheet.sheet_data.columns_data,
         row_Data : sheet.sheet_data.rows_data,
         drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
@@ -577,6 +612,11 @@ export class SheetsdashboardComponent {
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
+              kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -584,7 +624,7 @@ export class SheetsdashboardComponent {
             return this.kpiData; // Return the kpi object to kpiData
           })()
         : undefined,
-        chartOptions: sheet.sheet_type === 'Chart' ? {
+        chartOptions: sheet.sheet_type === 'Chart' && !sheet.sheet_data.isEchart ? {
           // ...this.getChartOptions(sheet.chart,sheet?.sheet_data.x_values,sheet?.sheet_data.y_values),
           ... this.getChartOptionsBasedOnType(sheet) as unknown as ApexOptions,
           // chart: { type: sheet.chart, height: 300 },
@@ -594,7 +634,14 @@ export class SheetsdashboardComponent {
          ... this.getTableData(sheet.sheet_data)
   
         }
-         : undefined
+         : undefined,
+        numberFormat: {
+          donutDecimalPlaces:this.donutDecimalPlaces,
+          decimalPlaces:sheet?.sheet_data?.numberFormat?.decimalPlaces,
+          displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
+          prefix:sheet?.sheet_data?.numberFormat?.prefix,
+          suffix:sheet?.sheet_data?.numberFormat?.suffix
+        }
       }));
       this.setSelectedSheetData();
        this.isSheetsView = false;
@@ -621,8 +668,12 @@ export class SheetsdashboardComponent {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        this.fileId = data.file_id;
-        this.databaseId = data.server_id;
+        if(data.file_id && data.file_id.length){
+          this.fileId = data.file_id;
+        }
+        if(data.server_id && data.server_id.length){
+          this.databaseId = data.server_id;
+        }
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
@@ -652,8 +703,75 @@ export class SheetsdashboardComponent {
               }
             }
           };
+        } else if(sheet.chartId == 29){
+          sheet.echartOptions.tooltip= {
+            formatter: (params: any) => {
+              const { name, data } = params;
+              if (data) {
+                const keys = Object.keys(data);
+          const values = Object.values(data);
+          let formattedString = '';
+          keys.forEach((key, index) => {
+            if(key)
+            formattedString += `${key}: ${values[index]}<br/>`;
+          });
+    
+          return formattedString;
+               
+              } else {
+                return `${name}: No Data`;
+              }
+            }
         }
+      }
           console.log('After sanitization:', sheet.data.sheetTagName);
+          this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
+          if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
+            sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
+              return w.globals.seriesTotals.reduce((a:any, b:any) => {
+                return +a + b
+              }, 0).toFixed(this.donutDecimalPlaces);
+            };
+          }
+          let chartId : number = sheet['chartId'];
+          const numberFormat = sheet?.numberFormat;
+          if(![10,24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
+            if([2,3].includes(chartId)){
+              if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+                sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
+            }
+            else{
+              if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+                sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
+              else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
+                sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+                sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
+            }
+          }
+          if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
+            if (sheet.chartOptions?.dataLabels) {
+              sheet.chartOptions.dataLabels.formatter = (val: number) => {
+                return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              };
+            }
+          }
         })
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
@@ -698,6 +816,7 @@ export class SheetsdashboardComponent {
     }else{
       this.takeScreenshot();
       this.assignOriginalDataToDashboard();
+      this.setQuerySetIds()
     let obj ={
       grid : this.gridType,
       height: this.heightGrid,
@@ -709,7 +828,8 @@ selected_sheet_ids :this.sheetIdsDataSet,
       dashboard_name:this.dashboardName,
       dashboard_tag_name:this.dashboardTagName,
       data:this.dashboard,
-      file_id : this.fileId
+      file_id : this.fileId,
+      donutDecimalPlaces : this.donutDecimalPlaces
     }as any;
     if(this.fromFileId){
       delete obj.server_id;
@@ -729,7 +849,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
         // })
         this.toasterService.success('Dashboard Saved Successfully','success',{ positionClass: 'toast-top-right'});
         const encodedDashboardId = btoa(this.dashboardId.toString());
-        this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
+        this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
   
       },
       error:(error)=>{
@@ -743,6 +863,12 @@ selected_sheet_ids :this.sheetIdsDataSet,
       }
     })
   }
+  }
+  setQuerySetIds() {
+    this.qrySetId = [];
+    this.dashboard.forEach((sheet: any) =>{
+      this.qrySetId.push(sheet.qrySetId);
+    })
   }
   takeScreenshot() {
    this.startMethod();
@@ -842,6 +968,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       })
     }else{
       let dashboardData = this.assignOriginalDataToDashboard();
+      this.setQuerySetIds();
       let obj;
       if(this.fileId && this.fileId.length){
         obj ={
@@ -857,7 +984,8 @@ selected_sheet_ids :this.sheetIdsDataSet,
           sheetTabs : this.sheetTabs,
           file_id : this.fileId,
           user_ids:this.usersForUpdateDashboard,
-          role_ids:this.rolesForUpdateDashboard
+          role_ids:this.rolesForUpdateDashboard,
+          donutDecimalPlaces : this.donutDecimalPlaces
         }as any;
       } else {
         obj ={
@@ -910,72 +1038,104 @@ selected_sheet_ids :this.sheetIdsDataSet,
         item1.drillDownObject = [];
       }
         if(item1.chartId == '6' && item1['originalData']){//bar
-        item1.chartOptions.xaxis.categories = item1['originalData'].categories;
-        item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
         delete item1['originalData'];
-        }if(item1.chartId == '1' && item1['originalData']){//bar
+        }if(item1.chartId == '1' && item1['originalData']){//table
           item1['tableData'] = item1['originalData']['tableData'];
           delete item1['originalData'];
           }
-        if(item1.chartId == '25' && item1['originalData']){//bar
+        if(item1.chartId == '25' && item1['originalData']){//KPI
           item1['kpiData'] = item1['originalData'];
           delete item1['originalData'];
           }
         if(item1.chartId == '24' && item1['originalData']){//pie
-          item1.chartOptions.labels = item1['originalData'].categories;
-        item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
         delete item1['originalData'];
         }
         if(item1.chartId == '13' && item1['originalData']){//line
-          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
-        item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
         delete item1['originalData'];
         }
         if(item1.chartId == '17' && item1['originalData']){//area
-          item1.chartOptions.labels = item1['originalData'].categories;
-        item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
         delete item1['originalData'];
         }
         if(item1.chartId == '7' && item1['originalData']){//sidebyside
-          const dimensions: Dimension[] = this.filteredColumnData
-          const categories = this.flattenDimensions(dimensions)
-          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
-          item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
           delete item1['originalData'];
         }
         if(item1.chartId == '2' && item1['originalData']){//hstacked
-          const dimensions: Dimension[] = this.filteredColumnData
-          const categories = this.flattenDimensions(dimensions)
-          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
-          item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
           delete item1['originalData'];
         }
         if(item1.chartId == '5' && item1['originalData']){//stacked
-          const dimensions: Dimension[] = this.filteredColumnData
-          const categories = this.flattenDimensions(dimensions)
-          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
-          item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
           delete item1['originalData'];
         }
         if(item1.chartId == '4' && item1['originalData']){//barline
-          const dimensions: Dimension[] = this.filteredColumnData
-          const categories = this.flattenDimensions(dimensions)
-          item1.chartOptions.label = item1['originalData'].categories;
-          item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
           delete item1['originalData'];
         }
         if(item1.chartId == '3' && item1['originalData']){//hgrouped
-          const dimensions: Dimension[] = this.filteredColumnData
-          const categories = this.flattenDimensions(dimensions)
-          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
-          item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
           delete item1['originalData'];
         }
         if(item1.chartId == '8' && item1['originalData']){//multiline
-          const dimensions: Dimension[] = this.filteredColumnData
-          const categories = this.flattenDimensions(dimensions)
-          item1.chartOptions.xaxis.categories = item1['originalData'].categories;
-          item1.chartOptions.series = item1['originalData'].data;
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '12' && item1['originalData']){//radar
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          } else {
+            item1.chartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '29' && item1['originalData']){//world map
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          }
           delete item1['originalData'];
         }
     });
@@ -1019,12 +1179,18 @@ selected_sheet_ids :this.sheetIdsDataSet,
       chartId:sheet.chart_id,
       column_Data : sheet.sheet_data.columns_data,
       row_Data : sheet.sheet_data.rows_data,
+      isEChart : sheet.sheet_data.isEChart,
       drillDownHierarchy : sheet.sheet_data.drillDownHierarchy,
       isDrillDownData : sheet.sheet_data.isDrillDownData,
       data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
       kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
       ? (() => {
           this.kpiData = {
+            kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -1079,6 +1245,11 @@ selected_sheet_ids :this.sheetIdsDataSet,
       kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
       ? (() => {
           this.kpiData = {
+            kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
             rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
             fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
             color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -1164,25 +1335,28 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.barChartOptions(xaxis,yaxis,savedOptions) 
+      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
+    }
+    if(sheet.chart_id === 29){
+      return sheet.sheet_data.savedChartOptions;
     }
     if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
       let yaxis = sheet.sheet_data?.results?.areaYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.areaChartOptions(xaxis,yaxis,savedOptions)
+      return this.areaChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 13){
       let xaxis = sheet.sheet_data?.results?.lineXaxis;
       let yaxis = sheet.sheet_data?.results?.lineYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.lineChartOptions(xaxis,yaxis,savedOptions)
+      return this.lineChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 24){
       let xaxis = sheet.sheet_data?.results?.pieXaxis;
       let yaxis = sheet.sheet_data?.results?.pieYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.pieChartOptions(xaxis,yaxis,savedOptions)
+      return this.pieChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     //sidebyside
     if(sheet.chart_id === 7){
@@ -1192,7 +1366,18 @@ selected_sheet_ids :this.sheetIdsDataSet,
 
       const dimensions: Dimension[] =xaxis
       const categories = this.flattenDimensions(dimensions)
-      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions)
+      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
+
+    }
+    if(sheet.chart_id === 12){//radar
+      return sheet.sheet_data.savedChartOptions;
+      let xaxis = sheet.sheet_data?.results?.sidebysideBarXaxis;
+      let yaxis = sheet.sheet_data?.results?.sidebysideBarYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+
+      const dimensions: Dimension[] =xaxis
+      const categories = this.flattenDimensions(dimensions)
+      return this.sidebySideBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
 
     }
     if(sheet.chart_id === 5){
@@ -1203,7 +1388,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
-      return this.stockedBarChartOptions(categories,yaxis,savedOptions)
+      return this.stockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 4){
       let xaxis = sheet.sheet_data?.results?.barLineXaxis;
@@ -1223,7 +1408,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
 
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
-      return this.hStockedBarChartOptions(categories,yaxis,savedOptions);
+      return this.hStockedBarChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart);
     }
     if(sheet.chart_id === 3){
       let xaxis = sheet.sheet_data?.results?.hgroupedXaxis;
@@ -1233,7 +1418,7 @@ selected_sheet_ids :this.sheetIdsDataSet,
       const dimensions: Dimension[] = xaxis;
       const categories = this.flattenDimensions(dimensions);
 
-      return this.hGroupedChartOptions(categories,yaxis,savedOptions)
+      return this.hGroupedChartOptions(categories,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 8){
       let xaxis = sheet.sheet_data?.results?.multiLineXaxis;
@@ -1249,13 +1434,21 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let xaxis = sheet.sheet_data?.results?.donutXaxis;
       let yaxis = sheet.sheet_data?.results?.donutYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
-      return this.donutChartOptions(xaxis,yaxis,savedOptions)
+      this.donutDecimalPlaces = sheet.sheet_data?.results?.decimalplaces;
+      return this.donutChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart)
     }
     if(sheet.chart_id === 26){
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return savedOptions;
     }
-    
+    if(sheet.chart_id === 27){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
+    if(sheet.chart_id === 28){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
   }
 
   getChartData(results: any, chartType: string): any[] | undefined{
@@ -1271,11 +1464,16 @@ selected_sheet_ids :this.sheetIdsDataSet,
         return undefined;        
     }
   }
-getTableData(tableData: any): { headers: any[], rows: any[] } {
+getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any } {
     // Example implementation for table data extraction
+    this.tableItemsPerPage=tableData.results.items_per_page
+    this.tableTotalItems = tableData.results.total_items
     return {
       headers: tableData.results.tableColumns,
-      rows: tableData.results.tableData
+      rows: tableData.results.tableData,
+      banding: tableData.results.banding,
+      color1: tableData.results.color1,
+      color2: tableData.results.color2,
     };
   }
 
@@ -1333,14 +1531,17 @@ allowDrop(ev : any): void {
         selectedSheet : true,
         chartData:copy.chartOptions?.chartData || [],
         kpiData:copy.kpiData,
+        isEChart : copy.isEChart,
+        echartOptions :  copy.chartOptions,
         drillDownHierarchy : copy.drillDownHierarchy,
         column_Data : copy.column_Data,
       row_Data : copy.row_Data,
       drillDownObject : [],
       drillDownIndex : 0,
-      isDrillDownData : copy.isDrillDownData
+      isDrillDownData : copy.isDrillDownData,
+      numberFormat : copy.numberFormat
       };
-      this.qrySetId.push(copy.qrySetId);
+      // this.qrySetId.push(copy.qrySetId);
       if(copy.fileId){
         this.fileId.push(copy.fileId);
       } else {
@@ -1390,7 +1591,27 @@ allowDrop(ev : any): void {
             }
           }
         };
+      }else if(element.chartId == 29 && element.echartOptions){
+        element.echartOptions.tooltip= {
+          formatter: (params: any) => {
+            const { name, data } = params;
+            if (data) {
+              const keys = Object.keys(data);
+        const values = Object.values(data);
+        let formattedString = '';
+        keys.forEach((key, index) => {
+          if(key)
+          formattedString += `${key}: ${values[index]}<br/>`;
+        });
+  
+        return formattedString;
+             
+            } else {
+              return `${name}: No Data`;
+            }
+          }
       }
+    }
         this.dashboard.push(element);
       }
     //  } else {
@@ -1398,10 +1619,57 @@ allowDrop(ev : any): void {
     //  }
      
     //  this.initializeChartData(element);  // Initialize chart after adding
-    this.dashboard.forEach((sheet)=>{
+    this.dashboard.forEach((sheet:any)=>{
       console.log('Before sanitization:', sheet.data.sheetTagName);
       this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
       console.log('After sanitization:', sheet.data.sheetTagName);
+
+      if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
+        sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
+          return w.globals.seriesTotals.reduce((a:any, b:any) => {
+            return +a + b
+          }, 0).toFixed(this.donutDecimalPlaces);
+        };
+      }
+      let chartId: number = sheet['chartId'];
+      const numberFormat = sheet?.numberFormat;
+      if (![10, 24].includes(chartId) && (numberFormat.decimalPlaces || numberFormat.displayUnits || numberFormat.prefix || numberFormat.suffix)) {
+        if([2,3].includes(chartId)){
+          if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };            
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+        }
+        else{
+          if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+          else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
+            sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+        }
+      }
+      if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
+        if (sheet.chartOptions?.dataLabels) {
+          sheet.chartOptions.dataLabels.formatter = (val: number) => {
+            return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          };
+        }
+      }
     });
      console.log('draggedDashboard',this.dashboard)
     }
@@ -1490,7 +1758,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/workbench/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/insights/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         } else {
           this.databaseId = sheetdata.databaseId;
           this.qrySetId = sheetdata.qrySetId;
@@ -1499,7 +1767,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/workbench/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/insights/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         }
       }
     } else {
@@ -1525,10 +1793,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       let removeIndex = this.dashboard.findIndex((sheet:any) => item.sheetId == sheet.sheetId);
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
-        this.loaderService.show();
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
-        this.qrySetId.splice(popqryIndex, 1);
-        this.deleteSheetFilter(item.sheetId);
+        // this.qrySetId.splice(popqryIndex, 1);
+        if(this.dashboardId){
+          this.deleteSheetFilter(item.sheetId);
+        }
       if(item.fileId){
         let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
         this.fileId.splice(popIndex, 1);
@@ -1545,7 +1814,8 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     let reqObj = {
       "dashboard_id": this.dashboardId,
       "sheet_ids": sheetId
-    }
+    };
+    this.loaderService.show();
     this.workbechService.deleteSheetFilter(reqObj).subscribe({
       next:(data)=>{
         console.log(data);
@@ -1729,24 +1999,24 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       }
     }
   }
-  saveItemDimensions(item: GridsterItem) {
-    // Assuming you have a backend service to save dimensions
-    // this.workbenchService.saveItemDimensions(item)
-    //   .subscribe({
-    //     next: (response) => console.log('Item dimensions saved', response),
-    //     error: (error) => console.error('Error saving item dimensions', error)
-    //   });
+  // saveItemDimensions(item: GridsterItem) {
+  //   // Assuming you have a backend service to save dimensions
+  //   // this.workbenchService.saveItemDimensions(item)
+  //   //   .subscribe({
+  //   //     next: (response) => console.log('Item dimensions saved', response),
+  //   //     error: (error) => console.error('Error saving item dimensions', error)
+  //   //   });
   
-    // For local storage:
-    const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
-    const index = savedItems.findIndex((i: any) => i.id === item['id']);
-    if (index > -1) {
-      this.dashboard[index] = item;
-    } else {
-      this.dashboard.push(item);
-    }
-    localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
-  }  // onResizeStop(item: GridsterItem, itemComponent: GridsterItemComponent) {
+  //   // For local storage:
+  //   const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
+  //   const index = savedItems.findIndex((i: any) => i.id === item['id']);
+  //   if (index > -1) {
+  //     this.dashboard[index] = item;
+  //   } else {
+  //     this.dashboard.push(item);
+  //   }
+  //   localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
+  // }  // onResizeStop(item: GridsterItem, itemComponent: GridsterItemComponent) {
   //   // Handle resize stop event here
   //   //this.updateChartDimensions(item);
   // }
@@ -1884,35 +2154,92 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   }
 
 /////chartOptions
-barChartOptions(xaxis:any,yaxis:any,savedOptions : any){
+barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
+  if (isEchart) {
+    savedOptions.series.data = yaxis;
+    savedOptions.xAxis.data = xaxis;
+    return savedOptions;
+  } else {
+    savedOptions.series.data = yaxis;
+    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
+    return savedOptions;
+  }
+}
+areaChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
+  if (isEchart) {
   savedOptions.series.data = yaxis;
-  savedOptions.xaxis.categories = xaxis;
+  savedOptions.xAxis.data = xaxis;
   return savedOptions;
+  } else {
+    savedOptions.series.data = yaxis;
+    savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
+    return savedOptions;
+  }
 }
-areaChartOptions(xaxis:any,yaxis:any,savedOptions : any){
+lineChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    savedOptions.series.data = yaxis;
+    savedOptions.xAxis.data = xaxis;
+    return savedOptions;
+  } else {
+    savedOptions.series.data = yaxis;
+    savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
+    return savedOptions;
+  }
+}
+pieChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    let combinedArray = yaxis.map((value : any, index :number) => ({
+      value: value,
+      name: xaxis[index]
+    }));
+    savedOptions.series.data = combinedArray;
+    return savedOptions;
+  } else {
+  savedOptions.series = yaxis;
+  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
+  return savedOptions;
+  }
+}
+sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+    });
+    savedOptions.series = yaxis;
+    savedOptions.xAxis.categories = xaxis;
+    return savedOptions;
+  } else {
+  savedOptions.series = yaxis;
+  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
+  return savedOptions;
+  }
+}
+
+eRadarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  const dimensions: Dimension[] = xaxis;
+      const categories = this.flattenDimensions(dimensions);
+      let radarArray = categories.map((value: any, index: number) => ({
+        name: categories[index]
+      }));
   savedOptions.series.data = yaxis;
-  savedOptions.labels = xaxis;
-  return savedOptions;
+    savedOptions.radar.indicator = radarArray;
+    return savedOptions;
 }
-lineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series.data = yaxis;
-  savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
-}
-pieChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+      bar["stack"]="total";
+    });
+    savedOptions.series = yaxis;
+    savedOptions.xAxis.data = xaxis;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
-  savedOptions.labels = xaxis;
+  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
   return savedOptions;
-}
-sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
-}
-stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
+  }
 }
 barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   // savedOptions.series = [
@@ -1930,26 +2257,55 @@ barLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   // savedOptions.labels = xaxis;
   return savedOptions;
 }
-hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any){
-  savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
-  return savedOptions;
+hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  
+  if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+      bar["stack"]="total";
+    });
+    savedOptions.series = yaxis;
+    savedOptions.yAxis.data = xaxis;
+    return savedOptions;
+  } else {
+    savedOptions.series = yaxis;
+    savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
+    return savedOptions;
+  }
 }
 
-hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    yaxis.forEach((bar: any) => {
+      bar["type"] = "bar";
+    });
+    savedOptions.series = yaxis;
+    savedOptions.yAxis.data = xaxis;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
-  savedOptions.xaxis.categories = xaxis;
+  savedOptions.xaxis.categories = xaxis.map((category : any)  => (category === null || category === '') ? 'null' : category);
   return savedOptions;
+  }
 }
 multiLineChartOptions(xaxis:any,yaxis:any,savedOptions:any){
   // savedOptions.series = yaxis;
   // savedOptions.xaxis.categories = xaxis;
   return savedOptions;
 }
-donutChartOptions(xaxis:any,yaxis:any,savedOptions:any){
+donutChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
+  if (isEchart) {
+    let combinedArray = yaxis.map((value : any, index :number) => ({
+      value: value,
+      name: xaxis[index]
+    }));
+    savedOptions.series.data = combinedArray;
+    return savedOptions;
+  } else {
   savedOptions.series = yaxis;
-  savedOptions.labels = xaxis;
+  savedOptions.labels = xaxis.map((category : any)  => category === null ? 'null' : category);
   return savedOptions;
+  }
 }
 heatMapChartOptions(savedOptions:any){
   return savedOptions;
@@ -2094,7 +2450,7 @@ getColumnSelectionLabel(filterList: any): string {
   const selectedColumns = filteredColumns.filter((col: any) => col.selected);
   
   if (selectedColumns.length === 0) {
-    return 'Select Column';
+    return 'Select Data';
   } else if (selectedColumns.length === 1) {
     return selectedColumns[0].label; // Display the label of the single selected column
   } else if (selectedColumns.length === filteredColumns.length) {
@@ -2329,6 +2685,8 @@ getFilteredData(){
       // console.log(this.tablePreviewRow);
       // localStorage.removeItem('filterid')
       data.forEach((item: any) => {
+        this.filteredRowData = [];
+        this.filteredColumnData = [];
       this.tablePreviewColumn.push(item.columns);
       this.tablePreviewRow.push(item.rows);
       item.columns.forEach((res:any) => {      
@@ -2347,7 +2705,13 @@ getFilteredData(){
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
+      if(item.chart_id === 1){
+        this.pageChangeTableDisplay(item,1)
+        // this.tablePageNo =1;
+        this.tablePage=1
+      }else{
       this.setDashboardSheetData(item, true , true);
+      }
     });
       },
     error:(error)=>{
@@ -2376,7 +2740,11 @@ clearAllFilters(): void {
       });
       localStorage.removeItem('storeSelectedColData'); 
       console.log('All filters cleared');
-      this.getFilteredData();
+      if(this.isPublicUrl){
+        this.getFilteredDataPublic()
+      }else{
+        this.getFilteredData();
+      }
   } else {
       console.warn('DahboardListFilters is not defined or not an array');
   }
@@ -2415,8 +2783,23 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
     }
       if(item.chart_id == '6' || item.chartId == '6'){//bar
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+
+        };
+        } else {
         if(!item1.originalData){
-          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
+          item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
         }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
           item1.drillDownIndex = 0;
@@ -2425,17 +2808,36 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
       }
+    }
       if(item.chart_id == '25'){//KPI
         if(!item1.originalData ){
           item1['originalData'] = _.cloneDeep(item1['kpiData']);
         }
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
         item1['kpiData'].rows = [obj];
+        item1.kpiData.kpiNumber = this.formatKPINumber(item.rows[0].result[0], item1.kpiData.kpiDecimalUnit , item1.kpiData.kpiDecimalPlaces, item1.kpiData.kpiPrefix, item1.kpiData.kpiSuffix);
       }
       if(item.chart_id == '24' || item.chartId == '24'){//pie
-        if(!item1.originalData ){
-          item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          let combinedArray = this.filteredRowData[0].data.map((value : any, index :number) => ({
+            value: value,
+            name: this.filteredColumnData[0].values[index]
+          }));
+        item1.echartOptions.series[0].data = combinedArray;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
@@ -2443,10 +2845,28 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
+    }
       if(item.chart_id == '10'|| item.chartId == '10'){//donut
-        if(!item1.originalData ){
-          item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          let combinedArray = this.filteredRowData[0].data.map((value : any, index :number) => ({
+            value: value,
+            name: this.filteredColumnData[0].values[index]
+          }));
+        item1.echartOptions.series[0].data = combinedArray;
+        item1.echartOptions = {
+          ...item1.echartOptions
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
@@ -2454,57 +2874,284 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
+    }
       if(item.chart_id == '13'|| item.chartId == '13'){//line
-        if(!item1.originalData){
-          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
+        }
       }
       if(item.chart_id == '17'|| item.chartId == '17'){//area
-        if(!item1.originalData){
-          item1['originalData'] = {categories:item1.chartOptions.labels , data:item1.chartOptions.series};
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
+            item1.drillDownIndex = 0;
+            item1.drillDownObject = [];
+          }
+          item1.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         item1.chartOptions.labels = this.filteredColumnData[0].values;
       item1.chartOptions.series = this.filteredRowData;
       }
+    }
       if(item.chart_id == '7'){//sidebyside
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData ){
-          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="bar";
+                  });
+        item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+       
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
       }
       if(item.chart_id == '2'){//hstacked
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData){
-          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="bar";
+            bar["stack"]="total";
+                  });
+        item1.echartOptions.yAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
       }
       if(item.chart_id == '5'){//stacked
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData ){
-          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="bar";
+            bar["stack"]="total";
+                  });
+        item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
       }
       if(item.chart_id == '4'){//barline
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData){
-          item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
-        }
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          item1.echartOptions.xAxis.data = categories;
+        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.echartOptions.series[1].data = this.filteredRowData[1].data;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
         item1.chartOptions.label = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
       }
+      }
       if(item.chart_id == '3'){//hgrouped
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+            this.filteredRowData.forEach((bar : any)=>{
+              bar["type"]="bar";
+                    });
+          item1.echartOptions.yAxis.data = _.cloneDeep(categories);
+          item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+          item1.echartOptions = {
+            ...item1.echartOptions,
+          };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.series = this.filteredRowData;
+      }
+      }
+      if(item.chart_id == '8'){//multiline
+        const dimensions: Dimension[] = this.filteredColumnData
+        const categories = this.flattenDimensions(dimensions)
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          this.filteredRowData.forEach((bar : any)=>{
+            bar["type"]="line";
+            bar["stack"]="total";
+                  });
+        item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+        item1.echartOptions.series = _.cloneDeep(this.filteredRowData);
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
+          }
+        item1.chartOptions.xaxis.categories = categories;
+        item1.chartOptions.series = this.filteredRowData;
+        item1.chartOptions = {
+          ...item1.chartOptions,
+        };
+      }
+      }
+      if(item.chart_id == '28'){//guage
+        if(!item1.originalData){
+          item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+        }
+        let seriesval =[Math.round(( this.filteredRowData[0]?.data[0]/ (item1.chartOptions.plotOptions.radialBar.max-item1.chartOptions.plotOptions.radialBar.min))*100)]
+        item1.chartOptions.series = seriesval;
+      }
+      if(item.chart_id == '12'){//radar
+        const dimensions: Dimension[] = this.filteredColumnData;
+        const categories = this.flattenDimensions(dimensions);
+        let radarArray = categories.map((value: any, index: number) => ({
+          name: categories[index]
+        }));
+        let legendArray = this.filteredRowData.map((data: any) => ({
+          name: data.name
+        }));
+        const transformedArray = this.filteredRowData.map((obj: any) => ({
+          name: obj.name,   
+          value: obj.data   
+        }));
+        if(item1.isEChart){ 
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+        item1.echartOptions.radar.indicator = radarArray;
+        item1.echartOptions.legend = legendArray;
+        item1.echartOptions.series[0].data = transformedArray;
+        item1.echartOptions = {
+          ...item1.echartOptions,
+        };
+        } else {
+      }
+      }
+      if(item.chart_id == '29'){//world MAP
+        if(!item1.originalData){
+          item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+        }
+        let minData = 0;
+       const maxData = Math.max(...this.filteredRowData[0].data);
+       let result:any[] = [];
+
+       // Loop through the countries (assuming both data sets align by index)
+       this.filteredColumnData[0].values.forEach((country: string, index: number) => {
+         // Create an object for each country
+         const countryData: any = { name: country , value : this.filteredRowData[0].data[index]};
+     
+         // Add each measure to the country object
+         this.filteredRowData.forEach((measure:any) => {
+           const measureName = measure.name; // e.g., sum(Sales), sum(Quantity)
+           const measureValue = measure.data[index]; // Value for that measure
+           countryData[measureName] = measureValue;
+         });
+     
+         result.push(countryData);
+       });
+    if(this.filteredRowData && this.filteredRowData[0]?.length > 1){
+    minData = Math.min(...this.filteredRowData[0].data);
+    }
+    item1.echartOptions.tooltip = {
+      formatter: (params: any) => {
+        const { name, data } = params;
+        if (data) {
+          const keys = Object.keys(data);
+    const values = Object.values(data);
+    let formattedString = '';
+    keys.forEach((key, index) => {
+      if(key)
+      formattedString += `${key}: ${values[index]}<br/>`;
+    });
+
+    return formattedString;
+         
+        } else {
+          return `${name}: No Data`;
+        }
+      },
+          trigger: 'item',
+          showDelay: 0,
+          transitionDuration: 0.2
+        };
+        item1.echartOptions.visualMap.min = minData;
+        item1.echartOptions.visualMap.max = maxData;
+        item1.echartOptions.series[0].data = result;
+    item1.echartOptions = {
+      ...item1.echartOptions,
+    };
+
+      if(item.chart_id == '27'){//funnel
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(!item1.originalData){
@@ -2513,7 +3160,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
       }
-      if(item.chart_id == '8'){//multiline
+      if(item.chart_id == '26'){//heatmap
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(!item1.originalData){
@@ -2529,7 +3176,32 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       console.log('filtered dashboard-data',item1)
     }
-  })
+}})
+}
+
+formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
+  let formattedNumber = value+'';
+  let KPINumber;
+  if (KPIDisplayUnits !== 'none') {
+    switch (KPIDisplayUnits) {
+      case 'K':
+        formattedNumber = (value / 1_000).toFixed(KPIDecimalPlaces) + 'K';
+        break;
+      case 'M':
+        formattedNumber = (value / 1_000_000).toFixed(KPIDecimalPlaces) + 'M';
+        break;
+      case 'B':
+        formattedNumber = (value / 1_000_000_000).toFixed(KPIDecimalPlaces) + 'B';
+        break;
+      case 'G':
+        formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
+        break;
+    }
+  } else {
+    formattedNumber = (value).toFixed(KPIDecimalPlaces)
+  }
+
+  return KPINumber = KPIPrefix + formattedNumber + KPISuffix;
 }
 
 closeFilterModal(){
@@ -2815,7 +3487,7 @@ dropTest2(event: any) {
       supportAllValues: true
     },
     fontSize: {
-      options: [9, 11, 13, 'default', 17, 19, 21]
+      options: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
     },
     toolbar: ['undo', 'redo', '|', 'selectAll', '|', 'heading', '|', 'bold', 'italic', 'underline', 
       '|', 'removeformat', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'alignment'],
@@ -2856,11 +3528,17 @@ kpiData?: KpiData;
         databaseId : sheet.server_id,
         fileId : sheet.file_id,
         qrySetId : sheet.queryset_id,
+        isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
         selectedSheet : sheet.selectedSheet,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
+              kpiNumber : sheet.sheet_data?.results?.kpiNumber || 0,
+            kpiPrefix : sheet.sheet_data?.results?.kpiPrefix || '',
+            kpiSuffix : sheet.sheet_data?.results?.kpiSuffix || '',
+            kpiDecimalUnit : sheet.sheet_data?.results?.kpiDecimalUnit || 'none',
+            kpiDecimalPlaces : sheet.sheet_data?.results?.kpiDecimalPlaces || 0,
               rows: sheet.sheet_data?.results?.kpiData || [],       // Default to an empty array if not provided
               fontSize: sheet.sheet_data?.results?.kpiFontSize || '16px', // Default font size
               color: sheet.sheet_data?.results?.kpicolor || '#000000',    // Default color (black)
@@ -2964,9 +3642,13 @@ kpiData?: KpiData;
   }
   updatedashboardName(name:any){
     this.dashboardTagName = name;
+    this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
+    this.dashboardName = doc.body.textContent+'';
   }
   sheetsRoute(){
-    this.router.navigate(['/workbench/sheets']);  
+    this.router.navigate(['/insights/sheets']);  
   }
 
 
@@ -3017,6 +3699,26 @@ kpiData?: KpiData;
                 }
               }
             };
+          } else if(sheet.chartId == 29){
+            sheet.echartOptions.tooltip= {
+              formatter: (params: any) => {
+                const { name, data } = params;
+                if (data) {
+                  const keys = Object.keys(data);
+            const values = Object.values(data);
+            let formattedString = '';
+            keys.forEach((key, index) => {
+              if(key)
+              formattedString += `${key}: ${values[index]}<br/>`;
+            });
+      
+            return formattedString;
+                 
+                } else {
+                  return `${name}: No Data`;
+                }
+              }
+          }
           }
           console.log('After sanitization:', sheet.data.sheetTagName);
         })
@@ -3096,7 +3798,12 @@ kpiData?: KpiData;
           this.filteredRowData.push(obj);
           console.log('filterowData',this.filteredRowData)
         });
-        this.setDashboardSheetData(item, true, true);
+        // this.setDashboardSheetData(item, true, true);
+        if(item.chart_id === 1){
+          this.pageChangeTableDisplayPublic(item,1)
+        }else{
+        this.setDashboardSheetData(item, true , true);
+        }
       });
         },
       error:(error)=>{
@@ -3276,7 +3983,113 @@ kpiData?: KpiData;
     this.cdr.detectChanges();  // Force change detection
 
   }
+//tablePagination
+tableSearchDashboard(item:any){
+  this.tablePageNo=1;
+  this.pageChangeTableDisplay(item,1);
+}
+pageChangeTableDisplay(item:any,page:any){
+  const obj={
+    sheet_id:item.sheetId ?? item.sheet_id,
+    id:this.keysArray,
+    input_list:this.dataArray,
+    database_id: item.databaseId,
+    file_id: item.fileId,
+    page_no: page,
+    page_count: this.tableItemsPerPage,
+    dashboard_id:this.dashboardId,
+    search:this.tableSearch
+  }
+  if(obj.search === '' || obj.search === null){
+    delete obj.search;
+  }
+  this.workbechService.paginationTableDashboard(obj).subscribe({
+    next:(data)=>{
+      data.data['chart_id']=1,
+      data.data['sheet_id']=item.sheetId ?? item.sheet_id,
+      this.tableItemsPerPage = data.items_per_page;
+      this.tableTotalItems = data.total_items;
+      this.setDashboardSheetData(data.data, false , false);
+    },error:(error)=>{
+      console.log(error.error.message);
+    }
+  })  
+}
+tableSearchDashboardPublic(item:any){
+  this.tablePageNo=1;
+  this.pageChangeTableDisplayPublic(item,1);
+}
+pageChangeTableDisplayPublic(item:any,page:any){
+  const obj={
+    sheet_id:item.sheetId ?? item.sheet_id,
+    id:this.keysArray,
+    input_list:this.dataArray,
+    database_id: item.databaseId,
+    file_id: item.fileId,
+    page_no: page,
+    page_count: this.tableItemsPerPage,
+    dashboard_id:this.dashboardId,
+    search:this.tableSearch
+  }
+  if(obj.search === '' || obj.search === null){
+    delete obj.search;
+  }
+  this.workbechService.paginationTableDashboardPublic(obj).subscribe({
+    next:(data)=>{
+      data.data['chart_id']=1,
+      data.data['sheet_id']=item.sheetId ?? item.sheet_id,
+      this.tableItemsPerPage = data.items_per_page;
+      this.tableTotalItems = data.total_items;
+      this.setDashboardSheetData(data.data, false , false);
+    },error:(error)=>{
+      console.log(error.error.message);
+    }
+  }) 
+}
+disableDragging(event: MouseEvent) {
+  event.stopPropagation();
+  this.isDraggingDisabled = true;  // Disable dragging
+  this.updateGridsterOptions();     // Update Gridster options
+}
 
+enableDragging(event: MouseEvent) {
+  event.stopPropagation();
+  this.isDraggingDisabled = false;  // Re-enable dragging
+  this.updateGridsterOptions();      // Update Gridster options
+}
+
+updateGridsterOptions() {
+  if (this.options && this.options.draggable) {
+    this.options.draggable.enabled = this.editDashboard && !this.isDraggingDisabled;
+  }
+}
+stopDragging(event: MouseEvent) {
+  event.stopPropagation(); // Prevent the event from triggering dragging
+}
+donutDecimalPlaces:number = 2;
+
+formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:string,suffix:string): string {
+  let formattedNumber = value+'';
+
+    switch (displayUnits) {
+      case 'K':
+        formattedNumber = (value / 1_000).toFixed(decimalPlaces) + 'K';
+        break;
+      case 'M':
+        formattedNumber = (value / 1_000_000).toFixed(decimalPlaces) + 'M';
+        break;
+      case 'B':
+        formattedNumber = (value / 1_000_000_000).toFixed(decimalPlaces) + 'B';
+        break;
+      case 'G':
+        formattedNumber = (value / 1_000_000_000_000).toFixed(decimalPlaces) + 'G';
+        break;
+      case 'none':
+        formattedNumber = (value/1).toFixed(decimalPlaces);
+        break;
+    }
+  return prefix + formattedNumber + suffix;
+}
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

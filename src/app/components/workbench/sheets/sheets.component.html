@@ -1,9 +1,5 @@
-
-
-   <!-- CONTAINER -->
- 
-   <div class="main-container container-fluid mt-5"> 
-    <div class="row main-container" style="position: fixed; width: -webkit-fill-available;">
+<div class="main-container container-fluid mt-5"> 
+    <div class="row" style="position: fixed; width: -webkit-fill-available; margin-inline-start:auto !important">
         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-3">
             <div class="card mb-0" >
                 <div class="card-body p-0 ">
@@ -219,14 +215,17 @@
                             }
                         </div>
                         <div class="modal-footer">
-                          <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataPut(); modal.dismiss('Cross click')">Apply</button>
-                          <button
-                            type="button"
-                            class="btn ripple btn-secondary"
-                            (click)="modal.close('Save click')"
-                          >
-                            Close
-                          </button>
+                            <div class="col text-left p-0">
+                                <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
+                                <label for="exclude" class="form-check-label">Exclude</label>
+                            </div>
+                            <div class="text-right">
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                    class="btn ripple btn-primary me-2" (click)="filterDataPut(); modal.dismiss('Cross click')">Apply</button>
+                                <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                    Close
+                                </button>
+                            </div>
                         </div>
                       </ng-template>
 
@@ -318,14 +317,17 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                          <button [disabled]="!(filterDataArray?.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
-                          <button
-                            type="button"
-                            class="btn ripple btn-secondary"
-                            (click)="modal.close('Save click')"
-                          >
-                            Close
-                          </button>
+                            <div class="col text-left p-0">
+                                <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
+                                <label for="exclude" class="form-check-label">Exclude</label>
+                            </div>
+                            <div class="text-right">
+                                <button [disabled]="!(filterDataArray?.length > 0)" type="button" class="btn ripple btn-primary me-2"
+                                    (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
+                                <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                    Close
+                                </button>
+                            </div>
                         </div>
                       </ng-template>
                      
@@ -337,9 +339,10 @@
            <div class="card p-0 mb-1">
            
                 <div class="card p-0 mb-1">
-                    <div class="card-body title-padding">
+                    <div class="card-body title-padding" style="padding: 4px 4px 4px 17px;">
                         <div class="row align-items-center">
-                            <div class="col-lg-11 col-md-11 col-sm-11 col-xl-11 p-1" >
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12 maind-flex" >
+                            <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-1" >
                                 <div class="title-container" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
                                     <span *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="{'padding-top': sheetTagName[0] === '<' ? '1.5%' : '0'}"></span>
@@ -360,20 +363,30 @@
                                     </div>
                                 </div> -->
                             </div>
-                            <div class="col-lg-1 col-md-1 col-sm-1 col-xl-0 p-0" [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
-                                <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
-                                <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
-                                (btnClickEvent)="sheetSave()"></app-insights-button>
-                                <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
-                                (btnClickEvent)="sheetSave()"></app-insights-button>
+
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-1" style="display: flex;justify-content: space-evenly;">
+                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
+                                    <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
+                                    <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
+                                    <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
+                                    (btnClickEvent)="sheetSave(); editor=false"></app-insights-button>
+                                    <app-insights-button *ngIf="retriveDataSheet_id" [buttonName]="'Update'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="18" [isBtn]="true"
+                                    (btnClickEvent)="sheetSave(); editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
+                                </div>
+                                <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
+                                    <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
+                                        (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
+                                        [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
+                                    </app-insights-button>
+                                </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
         
                 <div class="card-body" style="padding: 2px 16px;" (click)="editor =false">
-                    <div class="row align-items-center mb-2">
+                    <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
                                 <label for="inputName" class="form-control mb-0 column-text">Columns</label>
@@ -381,7 +394,7 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
                                 style="position: relative;min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
@@ -492,7 +505,7 @@
                             
                         </div>
                     </div>
-                    <div class="row align-items-center">
+                    <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                             <div class="card-area d-flex gap-2">
                                 <label for="inputName" class="form-control mb-0 row-text">Rows</label>
@@ -500,7 +513,7 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
                            
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" style="
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" style="
                                 position: relative; min-height: 33px; padding: 2px;"
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
@@ -519,19 +532,56 @@
                                         <div class="dropup" ngbDropdown>
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                <div class="dropup" ngbDropdown style="display: flex; align-items: center;">
-                                                    <li  *ngIf="!isMeasureEdit">@if(rows.alias){
+                                                <div class="dropup" ngbDropdown >
+                                                    <li  *ngIf="!isMeasureEdit" style="    padding: 0.5rem 0.5rem 0.5rem 2.8rem !important;">@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
                                                     @else if(rows.type){
                                                         {{ rows.type }} ({{rows.column}})
                                                     }@else{   
                                                          {{ rows.column }}
-                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil"></i> </li>
-                                                <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
-                                                </li>
+                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1" style="float: right; padding-top: 5px;"></i> </li>
+                                                    <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
+                                                    </li>
+                                                    <div class="d-flex" style="align-items: center;">
                                                     <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                </div>
+                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
+                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
+                                                    </ul>
+                                                </div>
+                                                <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
+                                            </ul>
+                                        </div>
+                                        <!-- <div class="dropup" ngbDropdown>
+                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                <div class="dropup" ngbDropdown>
+                                                   
+                                                    <li  *ngIf="!isMeasureEdit" class=" text-center">@if(rows.alias){
+                                                        {{ rows.alias }}
+                                                    }
+                                                    @else if(rows.type){
+                                                        {{ rows.type }} ({{rows.column}})
+                                                    }@else{   
+                                                         {{ rows.column }}
+                                                    }  <i (click)="isMeasureEdit = true;" class="fa fa-pencil "></i> 
+                                                    </li>
+                                                   
+                                               
+                                                    <li  *ngIf="isMeasureEdit"><input  type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color" style="cursor: auto;">
+                                                    </li>
+                                                    <div class="d-flex" style="align-items: center;">
+                                                        <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
+                                                        <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
                                                         <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
@@ -544,7 +594,7 @@
                                                 </div>
                                                 <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
-                                        </div>
+                                        </div> -->
 
                                         <!-- <div class="" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
@@ -653,7 +703,7 @@
                                                    </div> 
                                                 </div>
                                             <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
-                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
+                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
                                                     style="position: relative;min-height: 33px; padding: 2px;" 
                                                 #drilldownList="cdkDropList" 
                                                     [cdkDropListData]="draggedDrillDownColumns" 
@@ -664,8 +714,8 @@
                                                             <div class="" ngbDropdown style="margin-top: 5px;">
                                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                                     aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
-                                                                <div class="dropdown-menu p-1 cu" ngbDropdownMenu>
-                                                                        <a class="btn btn-outline-light mx-0" style="text-align: left !important;" (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
+                                                                <div class="dropdown-menu  cu" ngbDropdownMenu>
+                                                                        <a class="btn btn-secondary-light mx-0" style="text-align: left !important;" (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
                                                                     </div>
                                                                 </a>
                                                         </div>
@@ -681,7 +731,7 @@
             <div class="card mb-0 show-chart-card">
                 @if(!(table || kpi)){
                     <div class="input-group">
-                <div class="col-lg-3 col-md-3">
+                <div class="col-lg-3 col-md-3 p-1">
                     <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
                         (change)="changeChartPlugin()">
                         <option value="apex">Apex</option>
@@ -689,18 +739,30 @@
                     </select>
                 </div>
                 @if(pie || bar || line || donut || area){
-                                    <div class="col-lg-3 col-md-3">
-                                        <button class="btn btn-primary" (click)="goDrillDownBack()"> Back</button>
+                                    <div class="col-lg-3 col-md-3 p-1">
+                                        <button class="btn btn-primary " (click)="goDrillDownBack()" style="padding: 4px;">
+                                            <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
                                    </div>
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
-                                    <div class="col-lg-3 col-md-3" style="display: inline-flex;">
+                                    <div class="col-lg-3 col-md-3 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
-                                       <h4 > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h4> ->
+                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span style="padding-top: 3px;">-></span>
                                    }
                                     </div>
                                 }
                                 }
                                    </div>
+                }
+                @if(table && chartId){
+                <div class="sheet-search">
+                    <div class="">
+                    </div>
+                    <div *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" class="input-group mt-1 p-1 sheet-table-search">
+                        <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPaginationSearch()" class="form-control border-end-0 ">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="tableDisplayPaginationSearch()" style="border-radius: 0px 4px 4px 0px;">
+                        <i class="fe fe-search"></i></button>
+                    </div>
+                   </div>
                 }
                  <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: scroll;">
                     @for(tab of tabs;track tab; let index = $index){
@@ -713,28 +775,31 @@
                                 <table>
                                     <thead>
                                       <tr>
-                                        @for(column of displayedColumns;track column){
+                                        @for(column of tableColumnsDisplay;track column){
                                         <th>{{ column }}</th>
                                         }
                                       </tr>
                                     </thead>
                                     <tbody>
-                                        @for(row of tableData;track row;let i = $index){
-                                      <tr [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                      [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}">
-                                        @for(column of displayedColumns;track column){
+                                    <tr *ngFor="let row of (tableDataDisplay | paginate: { itemsPerPage: itemsPerPage,
+                                                                currentPage: page,
+                                                                totalItems: totalItems }) ; let i = index"
+                                        [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}">
+                                        @for(column of tableColumnsDisplay;track column){
                                         <td>{{ row[column] }}</td>
                                         }
-                                      </tr>
-                                    }
+                                    </tr>
+                                    
                                     </tbody>
                                   </table>
+                                  <pagination-controls *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeTableDisplay((page = $event))"></pagination-controls>
                                 }
                                 @if(kpi && chartId){
                                     <div class="big-number-container">
-                                        @for(data of tablePreviewRow;track data){
-                                            <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ data.result_data[0] }}</h1>
-                                        }
+                                        <!-- @for(data of tablePreviewRow;track data){ -->
+                                            <h1 class="big-number" [style.font-size]="getFontSize()" [style.color]="kpiColor">{{ KPINumber }}</h1>
+                                        <!-- } -->
                                     </div>
                                 }
                                 @if(isApexCharts){
@@ -776,7 +841,7 @@
                     <div id="line-chart">
                         <apx-chart #lineChart
                         [series]="chartOptions.series || []" [chart]="chartOptions.chart"
-                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels"
+                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels" [yaxis]="chartOptions.yaxis"
                         [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
                         [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
                     </div>
@@ -816,8 +881,10 @@
                       [plotOptions]="chartOptions6.plotOptions"
                       [responsive]="chartOptions6.responsive"
                       [xaxis]="chartOptions6.xaxis"
+                      [yaxis]="chartOptions6.yaxis"
                       [legend]="chartOptions6.legend"
                       [fill]="chartOptions6.fill"
+                      [grid]="chartOptions6.grid"
                     ></apx-chart>
                   </div>
               }
@@ -842,6 +909,8 @@
                       [plotOptions]="chartOptions7.plotOptions"
                       [responsive]="chartOptions7.responsive"
                       [xaxis]="chartOptions7.xaxis"
+                      [yaxis]="chartOptions7.yaxis"
+                      [grid]="chartOptions7.grid"
                       [legend]="chartOptions7.legend"
                       [fill]="chartOptions7.fill"
                     ></apx-chart>
@@ -856,6 +925,8 @@
                       [plotOptions]="chartOptions8.plotOptions"
                       [responsive]="chartOptions8.responsive"
                       [xaxis]="chartOptions8.xaxis"
+                      [yaxis]="chartOptions8.yaxis"
+                      [grid]="chartOptions8.grid"
                       [legend]="chartOptions8.legend"
                       [fill]="chartOptions8.fill"
                     ></apx-chart>
@@ -885,13 +956,15 @@
                     [chart]="chartOptions10.chart"
                     [labels]="chartOptions10.labels"
                     [responsive]="chartOptions10.responsive"
-                    [plotOptions] = "chartOptions10.plotOptions" >
+                    [plotOptions] = "chartOptions10.plotOptions"
+                    [dataLabels]="chartOptions10.dataLabels"
+                    [legend]="chartOptions10.legend" >
                 </apx-chart>
                   </div>
               }
               @if(heatMap){
                 <div id="chart">
-                    <apx-chart #heatchart
+                    <apx-chart #heatmapchart
                       [series]="heatMapChartOptions.series"
                       [chart]="heatMapChartOptions.chart"   
                       [xaxis]="heatMapChartOptions.xaxis"
@@ -900,6 +973,34 @@
                       [dataLabels]="heatMapChartOptions.dataLabels"
                       [legend]="heatMapChartOptions.legend"
                       [grid]="heatMapChartOptions.grid"
+                    ></apx-chart>
+                  </div>
+              }
+              @if(funnel){
+                <div id="chart">
+                    <apx-chart #funnelChart
+                      [series]="funnelChartOptions.series"
+                      [chart]="funnelChartOptions.chart"
+                      [dataLabels]="funnelChartOptions.dataLabels"
+                      [plotOptions]="funnelChartOptions.plotOptions"
+                      [xaxis]="funnelChartOptions.xaxis"
+                      [colors]="funnelChartOptions.colors"
+                      [title]="funnelChartOptions.title"
+                      [legend]="funnelChartOptions.legend"></apx-chart>
+                      </div>
+                    }
+              @if(guage){
+                <div id="chart">
+                    <apx-chart #guageChart
+                      [series]="guageChartOptions.series"
+                      [chart]="guageChartOptions.chart"   
+                      [xaxis]="guageChartOptions.xaxis"
+                      [yaxis]="guageChartOptions.yaxis"
+                      [plotOptions]="guageChartOptions.plotOptions"
+                      [dataLabels]="guageChartOptions.dataLabels"
+                      [legend]="guageChartOptions.legend"
+                      [grid]="guageChartOptions.grid"
+                      [labels]="guageChartOptions.labels"
                     ></apx-chart>
                   </div>
               }
@@ -913,28 +1014,28 @@
             }
             @if(stocked && chartId){         
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="stockedbar-chart">
                         <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
                 }
                 @if(sidebyside && chartId){         
                     <div class="card-body">
-                        <div id="bar-chart">
+                        <div id="sidebysidebar-chart">
                             <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
                         </div>
                     </div>
                     }
             @if(grouped && chartId){         
                     <div class="card-body">
-                        <div id="bar-chart">
+                        <div id="groupedbar-chart">
                             <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
                         </div>
                     </div>
             }
             @if(horizentalStocked && chartId){         
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="bhstockedar-chart">
                         <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
@@ -942,38 +1043,68 @@
                 
             @if(area && chartId){
             <div class="card-body">
-                <div id="bar-chart">
+                <div id="area-chart">
                     <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
                 </div>
             </div>
             }
             @if(line && chartId){
             <div class="card-body">
-                <div id="bar-chart">
+                <div id="line-chart">
                     <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
                 </div>
             </div>
             }
             @if(pie && chartId){
             <div class="card-body">
-                <div id="bar-chart">
+                <div id="pie-chart">
                     <div id="echartsBar" echarts [options]="ePieChartOptions" class="echart-charts"></div>
                 </div>
             </div>
             }
+            @if(donut && chartId){
+                <div class="card-body">
+                    <div id="donut-chart">
+                        <div id="echartsBar" echarts [options]="eDonutChartOptions" class="echart-charts"></div>
+                    </div>
+                </div>
+                }
             @if(barLine && chartId){
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="barline-chart">
                         <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
                 }
+                @if(multiLine && chartId){
+                    <div class="card-body">
+                        <div id="multiline-chart">
+                            <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
+                        </div>
+                    </div>
+                    }
             @if(radar && chartId){
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
                     </div>
                 </div>
+                }
+                @if(map && chartId){
+                    <div class="card-body">
+                        <div id="map-chart">
+                            <!-- <app-map-echart  [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart> -->
+                            <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
+                        </div>
+                    </div>
+                    }
+                    
+                @if(calendar){
+                    <div class="card-body">
+                        <div id="calender-chart">
+                            <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="echart-charts"></div>  
+                        </div>
+                    </div>
                 }
             }
             </div>
@@ -1056,7 +1187,7 @@
                                     <p>Add to Dashboard</p>
                                     <div class="form-group select2-sm">
                                         <select id="inputGroupSelect013" class="form-select form-select select2 fs-14"  [(ngModel)]="selectedDashboardId">
-                                            <option value="1">Select a Dashboard</option>
+                                            <option value="0" disabled selected>Select a Dashboard</option>
                                             <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
                                         </select>
                                     </div>
@@ -1194,69 +1325,84 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                      <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)"  type="button" class="btn ripple btn-primary" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
-                                                      <button
-                                                        type="button"
-                                                        class="btn ripple btn-secondary"
-                                                        (click)="modal.close('Save click')"
-                                                      >
-                                                        Close
-                                                      </button>
+                                                        <div class="col text-left p-0">
+                                                            <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
+                                                            <label for="exclude" class="form-check-label">Exclude</label>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                                                class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); modal.dismiss('Cross click')">Apply</button>
+                                                            <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                                                                Close
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                   </ng-template>
                                             </div>
                                             <div class="card mb-1 charts-card-height">
                                                 <div class="card-header justify-content-between align-items-center">
-                                                    <div class="card-title fs-12">Charts </div>
+                                                    <div class="card-title fs-12">Charts</div>
                                                 </div>
                                                 <div class="card-body" style=" padding: 2px 12px;">
                                                     <div class="row">
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Single Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)} ">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': area}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': area}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': line}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': line}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': pie}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': pie}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': donut}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': donut}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,25)"><img src="./assets/images/charts/kpi-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,25)"><img src="./assets/images/charts/kpi-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0 || guagechartRowData > 1 }">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,28)"><img src="./assets/images/charts/guage-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
+                                                        </div>
+                                                        <div *ngIf="true" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !dateList.includes(draggedColumnsData[0]?.[1]) && (draggedRows.length !== 1 || draggedColumns !== 1)}">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Calendar Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,30)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': sidebyside}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': sidebyside}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': stocked}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Stacked-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,5)"><img src="./assets/images/charts/stocked_bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': stocked}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>2 ||  ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': barLine}"></a>
-                                                        </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': horizentalStocked}"></a>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length !== 2 || draggedColumns.length<1}">
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,4)"><img src="./assets/images/charts/Bar-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': barLine}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': grouped}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="HStacked" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,2)"><img src="./assets/images/charts/horizental-stacked.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': horizentalStocked}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);" data-bs-toggle="tooltip" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': multiLine}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="HGrouped" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,3)"><img src="./assets/images/charts/Bar-bar-horizental.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': grouped}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,12)"><img src="./assets/images/charts/spider.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': radar}"></a>
+                                                            <a href="javascript:void(0);" triggers="hover" ngbTooltip="Multi-Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,8)"><img src="./assets/images/charts/multi-line.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': multiLine}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
-                                                            <a href="javascript:void(0);"  data-bs-toggle="tooltip" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,26)"><img src="./assets/images/charts/heatmap_icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Radar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,12)"><img src="./assets/images/charts/spider.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': radar}"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Heat Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,26)"><img src="./assets/images/charts/heatmap_icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': heatMap}"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
+                                                        </div>
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length!=1)}">
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="World Map Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,29)"><img src="./assets/images/charts/world-map.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': map}"></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1325,7 +1471,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -1441,7 +1587,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -1470,6 +1616,9 @@
                                                                 <ng-template>
                                                                   <div >
                                                                     <div class="sub-menu-item  p-2" >
+                                                                        <div class="row">
+                                                                            
+                                                                        </div>
                                                                       <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Font</label>
                                                                           <div class="col-md-8">
@@ -1483,6 +1632,30 @@
                                                                               </div>
                                                                           </div>
                                                                       </div>
+                                                                      @if(kpi){
+                                                                        <div class="row">
+                                                                          <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
+                                                                          <input type="number" id="decimal-places" [(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <label for="display-units">Display Units:</label>
+                                                                          <select id="display-units" [(ngModel)]="KPIDisplayUnits" (change)="formatKPINumber()">
+                                                                            <option value="none">None</option>
+                                                                            <option value="K">Thousands (K)</option>
+                                                                            <option value="M">Millions (M)</option>
+                                                                            <option value="B">Billions (B)</option>
+                                                                            <option value="G">Billions (G)</option>
+                                                                          </select>
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <label for="prefix">Prefix:</label>
+                                                                          <input type="text" id="prefix" [(ngModel)]="KPIPrefix" (input)="formatKPINumber()">
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <label for="suffix">Suffix:</label>
+                                                                          <input type="text" id="suffix" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
+                               </div>
+                                                                      }
                                                                       <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                           <div class="col-md-8">
@@ -1495,6 +1668,7 @@
                                                                               </div>
                                                                           </div>
                                                                       </div>
+                                                                      @if(!kpi){
                                                                       <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
                                                                           <div class="col-md-8">
@@ -1506,6 +1680,7 @@
                                                                               </div>
                                                                           </div>
                                                                       </div>
+                                                                    }
                                                                       @if(numberPopup){
                                                                         <div class="number-formatting number-popup popup-content">
                                                                             <label for="decimal-places">Decimal places:</label>
@@ -1528,7 +1703,7 @@
                                                                             
                                                                             <div class="buttons">
                                                                                 <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                                <button class="btn btn-primary" (click)="updateChart({ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}})">Update</button>
+                                                                                <button class="btn btn-primary" (click)="updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}}); numberPopupTrigger()">Update</button>
                                                                             </div>
                                                                           </div>
                                                                       }
@@ -1539,6 +1714,220 @@
                                                               </div>
                                                             </div>
                                                     </div>
+
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                          <button
+                                                            ngbAccordionButton
+                                                            class="accordion-button p-3 fw-500"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse"
+                                                            >
+                                                            Measure Values
+                                                          </button>
+                                                          
+                                                        </h6>
+                                                        <div
+                                                          ngbAccordionCollapse
+                                                          id="collapse"
+                                                          class="accordion-collapse collapse" 
+                                                          aria-labelledby="heading"
+                                                          data-bs-parent="#accordionExample"
+                                                           >
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
+                                                                <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
+                                                            </button> -->
+                                                            <ng-template>
+                                                                <div class="sub-menu-item  p-2 mb-0" >
+                                                                  <div class="row">
+                                                                    <div class="" >
+                                                                        <div class="font-color-card">
+                                                                            <p class="mb-0">Fonts</p>
+                                                                            <div class="dropup" ngbDropdown>
+                                                                                <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                    <div class="dropup" ngbDropdown >
+                                                                                        <div class="form-group mb-0 p-1">
+                                                                                            <select class="form-select form-select select2 fs-14" (change)="dataLabelsFontFamily($event)">
+                                                                                                <option value="0" selected disabled>family</option>
+                                                                                                <option value="'Arial', sans-serif">Arial</option>
+                                                                                                <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                <option value="'Georgia', serif">Georgia</option>
+                                                                                                <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="bold-italic p-1">
+                                                                                            <div class="row">
+                                                                                                <div class="form-group mb-0 d-flex">
+                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" (change)="dataLabelsFontSize($event)">
+                                                                                                        <option value="0" selected disabled>size</option>
+                                                                                                        <option value="10px">10px</option>
+                                                                                                        <option value="11px">11px</option>
+                                                                                                        <option value="12px">12px</option>
+                                                                                                        <option value="13px">13px</option>
+                                                                                                        <option value="14px">14px</option>
+                                                                                                        <option value="15px">15px</option>
+                                                                                                        <option value="16px">16px</option>
+                                                                                                        <option value="17px">17px</option>
+                                                                                                        <option value="18px">18px</option>
+                                                                                                        <option value="19px">19px</option>
+                                                                                                        <option value="20px">20px</option>
+                                                                                                     </select>
+                                                                                                     <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('B')">
+                                                                                                        <p>B</p>
+                                                                                                    </div>
+                                                                                                    <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
+                                                                                                        <p>I</p>
+                                                                                                    </div>
+                                                                                                    <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('U')">
+                                                                                                        <p>U</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                               
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="color-shade-card p-1">
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-white" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-orange" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DarkKhaki" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-ForestGreen" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-CadetBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SteelBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-light-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-orange-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DarkKhaki-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-ForestGreen-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-CadetBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SteelBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SlateGray-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-DimGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-orange-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DarkKhaki-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-ForestGreen-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-CadetBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SteelBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SlateGray-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4 mt-2">
+                                                                                                <div class="color-DimGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Orchid" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-PaleVioletRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-IndianRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-SaddleBrown" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-DimGray-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-PaleTurquoise" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-Silver" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Plum" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightCoral" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Peru" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightSlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-HotPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                            <div class="row px-4">
+                                                                                                <div class="color-Silver-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Gainsboro-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Plum-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightPink-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightCoral-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-Peru-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-LightSlateGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-yellow" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                      
+                                                                                    </div>
+                                                                                    <li> <p class="more-color-text">More colors...</p></li>
+                                                                                </ul>
+                                                                            </div>
+                                                                    </div>
+                                                                  </div>
+                                                                  <span ngbTooltip=""></span>
+                                                                </div>
+                                                              </div>
+                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="false" >
+                                                                <div class="row">
+                                                                  <div class="">
+                                                                      <div class="font-color-card">
+                                                                          <p class="mb-0">Alignments</p>
+                                                                          <div class="dropup" ngbDropdown>
+                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                              <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                  <div class="dropup" ngbDropdown >
+                                                                                   
+                                                                                      <div class=" p-1">
+                                                                                              <div class="form-group mb-0 text-center">
+                                                                                                <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                              </div>
+                                                                                              <div class="form-group mb-0 alignment-sides">
+                                                                                                 <div class="align-left">
+                                                                                                    <i class="fa fa-align-left"></i>
+                                                                                                </div>
+                                                                                                <div  class="align-center">
+                                                                                                    <i class="fa fa-align-center"></i>
+                                                                                                </div>
+                                                                                                <div class="align-right">
+                                                                                                    <i class="fa fa-align-right"></i>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>   
+                                                                                        <div class=" p-1 mt-2 mb-2">
+                                                                                            <div class="form-group mb-0 text-center">
+                                                                                              <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                            </div>
+                                                                                            <div class="form-group mb-0 alignment-sides">
+                                                                                               <div class="justify-bottom">
+                                                                                                  <i class="fa fa-align-justify"></i>
+                                                                                              </div>
+                                                                                              <div  class="justify-middle">
+                                                                                                  <i class="fa fa-align-justify"></i>
+                                                                                              </div>
+                                                                                              <div class="justify-top">
+                                                                                                  <i class="fa fa-align-justify"></i>
+                                                                                              </div>
+                                                                                          </div>
+                                                                                      </div>                                                                                  
+                                                                                  </div>
+                                                                              </ul>
+                                                                          </div>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                              <div class="p-2" style="display: flex;justify-content: space-between;" *ngIf="bar || sidebyside || stocked || horizentalStocked || grouped">
+                                                                <label>Position</label>
+                                                                <select class="form-select form-select select2 fs-14" (change)="dataLabelsFontPosition($event)" style="width: 40%; height: 30px;">
+                                                                    <option value="0" selected disabled>select</option>
+                                                                    <option value="top">TOP</option>
+                                                                    <option value="center">CENTER</option>
+                                                                    <option value="bottom">BOTTOM</option>
+                                                                </select>
+                                                              </div>
+                                                            </ng-template>
+                                                          </div>
+                                                        </div>
+                                                  </div>
 
                                                     <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
@@ -1555,6 +1944,7 @@
                                                         <div class=""> 
                                                             <p >Banding color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="color1"
@@ -1566,7 +1956,20 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                        <div  style="font-size: 15px;">
+                                                            <label>Page Length</label>
+                                                            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="tableDisplayPagination()" class="form-control cursor">
+                                                                <option  [ngValue]="''" disabled> select page length</option>
+                                                                  <option  [ngValue]="10"> 10</option>
+                                                                  <option  value="50"> 50</option>
+                                                                  <option  value="100"> 100</option>
+                                                                  <option  value="500"> 500</option>
+                                                                  <option  value="1000"> 1000</option>
+                                                            </select>
+                                                         </div>
+                                                    </div>
+                                                    <div *ngIf="!isApexCharts && !(pie || donut)" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Zoom </p>
                                                         </div>
@@ -1587,7 +1990,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-label Color </p>
                                                         </div>
@@ -1597,7 +2000,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-Grid Line Color </p>
                                                         </div>
@@ -1607,7 +2010,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-label Color </p>
                                                         </div>
@@ -1617,7 +2020,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-Grid Line Color </p>
                                                         </div>
@@ -1627,7 +2030,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1666,7 +2069,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
@@ -1683,7 +2086,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1722,7 +2125,7 @@
                                                                     </div>
                                                                 </div>
  
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!heatMap" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Grid Line </p>
                                                                     </div>
@@ -1738,71 +2141,84 @@
                                                           </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="((pie && chartId) || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >Legends </p>
+                                                    <div *ngIf="((pie && chartId) || donut)">
+                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                            <div class=""> 
+                                                                <p >Legends </p>
+                                                            </div>
+                                                            <div *ngIf="legendSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('legend')">
+                                                                <span></span>
+                                                            </div>
+                                                            <div *ngIf="!legendSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('legend')">
+                                                                <span></span>
+                                                            </div>
                                                         </div>
-                                                        <div *ngIf="legendSwitch" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('legend')">
-                                                            <span></span>
+                                                        <div *ngIf="legendSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                            <div class="">Allignment</div>
+                                                            <div class="btn-group my-2" ngbDropdown>
+                                                                <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    {{legendsAllignment}}
+                                                                </button>
+                                                                <ul class="dropdown-menu" ngbDropdownMenu>
+                                                                    <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('top')">Top</a></li>
+                                                                    <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('bottom')">Bottom</a></li>
+                                                                    <li><a  ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('left')">Left</a></li>
+                                                                    <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('right')">Right</a></li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
-                                                        <div *ngIf="!legendSwitch" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('legend')">
-                                                            <span></span>
+                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                            <div class=""> 
+                                                                <p >Data Labels </p>
+                                                            </div>
+                                                            <div *ngIf="dataLabels" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('dataLabels')">
+                                                                <span></span>
+                                                            </div>
+                                                            <div *ngIf="!dataLabels" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('dataLabels')">
+                                                                <span></span>
+                                                            </div>
                                                         </div>
-                                                        <div class="">Allignment</div>
-                                                        <div class="btn-group my-2" ngbDropdown>
-                                                            <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                              {{legendsAllignment}}
-                                                            </button>
-                                                            <ul class="dropdown-menu" ngbDropdownMenu>
-                                                                <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('top')">Top</a></li>
-                                                                <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('bottom')">Bottom</a></li>
-                                                                <li><a  ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('left')">Left</a></li>
-                                                                <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="changeLegendsAllignment('right')">Right</a></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class=""> 
-                                                            <p >Data Labels </p>
-                                                        </div>
-                                                        <div *ngIf="dataLabels" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('dataLabels')">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="!dataLabels" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('dataLabels')">
-                                                            <span></span>
-                                                        </div>
-                                                        <div *ngIf="donut" style="display: flex;">
+                                                        <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                             <div class="" > 
                                                                 <p >Label </p>
                                                             </div>
-                                                            <div *ngIf="label" style="margin-left: 100px;" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('label')">
+                                                            <div *ngIf="label" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('label')">
                                                                 <span></span>
                                                             </div>
-                                                            <div *ngIf="!label" style="margin-left: 100px;" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('label')">
+                                                            <div *ngIf="!label" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('label')">
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut" style="display: flex;">
-                                                            <div>
+                                                        <div *ngIf="donut" sclass="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                            <div style="display: flex;justify-content: space-between;">
                                                                 <label>Donut Size</label>
-                                                            </div>
-                                                            <div style="margin-left: 100px;">
                                                                 <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5" (ngModelChange)="changeSize()">
                                                             </div>
                                                         </div>
+                                                        <div *ngIf="donut" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                            <div style="display: flex;justify-content: space-between;">
+                                                                <label for="decimalInput">Decimal Places: </label>
+                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" (input)="updateDonut()" min="0" />
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId) || donut || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+
+                                                    <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Grid Line Color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="GridColor"  (change)="gridLineColor($event)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="isApexCharts  && !((table && chartId) || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="isApexCharts  && !((table && chartId) || kpi || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
-                                                            <p >background Color </p>
+                                                            <p >Background Color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="apexbBgColor"  (change)="apexbBackgroundColor($event)"
@@ -1810,21 +2226,24 @@
                                                          ></ngx-colors>
                                                     </div>
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <label for="font-size">Font Size</label>
-                                                        <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider>
+                                                        <label for="font-size" step="1" >Font Size</label>
+                                                        <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;">
+                                                        <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="color">Color:</label>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="kpiColor"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="isApexCharts && !((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
-                                                            <p >chart Color </p>
+                                                            <p >Chart Color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="color" 
@@ -1835,6 +2254,7 @@
                                                         <div class=""> 
                                                             <p >bar color </p>
                                                         </div>
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="barColor" 
@@ -1846,7 +2266,7 @@
                                                         <div class=""> 
                                                             <p >line color </p>
                                                         </div>
-                                                        
+                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="lineColor" 
@@ -1854,7 +2274,61 @@
                                                         [format]="'hex'">
                                                         </ngx-colors>
                                                     </div>
-                                                    <div *ngIf="((area && chartId) || (pie && chartId) || donut || bar || line)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="funnel">
+                                                        <div style="display: flex; justify-content: space-between;">
+                                                            <label for="sorting">Sort by:</label>
+                                                            <select id="sorting" (change)="sortSeries($event)">
+                                                                <option value="0" selected disabled>select</option>
+                                                                <option value="ascending">Ascending</option>
+                                                                <option value="descending">Descending</option>
+                                                            </select>
+                                                        </div>
+                                                        <div style="display: flex; justify-content: space-between;">
+                                                            <label>Distribution</label>
+                                                            <div *ngIf="isDistributed" style="margin-left: 100px;" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
+                                                                <span></span>
+                                                            </div>
+                                                            <div *ngIf="!isDistributed" style="margin-left: 100px;" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('distributed')">
+                                                                <span></span>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex;justify-content: space-between;">
+                                                            <label>Font</label>
+                                                            <select [(ngModel)]="funnelDLFontFamily" style="width: 30%;" (change)="funnelFontChange($event,'family')">
+                                                                <option value="0" selected disabled>family</option>
+                                                                <option value="'Arial', sans-serif">Arial</option>
+                                                                <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                <option value="'Verdana', sans-serif">Verdana</option>
+                                                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                <option value="'Georgia', serif">Georgia</option>
+                                                                <option value="'Merriweather', serif">Merriweather</option>
+                                                                <option value="'Roboto', sans-serif">Roboto</option>
+                                                            </select>
+                                                            <select [(ngModel)]="funnelDLFontSize" (change)="funnelFontChange($event,'size')" style="width: 30%;">
+                                                                <option value="0" selected disabled>size</option>
+                                                                <option value="10px">10px</option>
+                                                                <option value="12px">12px</option>
+                                                                <option value="14px">14px</option>
+                                                                <option value="16px">16px</option>
+                                                                <option value="18px">18px</option>
+                                                                <option value="20px">20px</option>
+                                                            </select>
+                                                            <select [(ngModel)]="funnelDLAllign" (change)="funnelFontChange($event,'allign')">
+                                                                <option value="0" selected disabled>allign</option>
+                                                                <option value="top">Right</option>
+                                                                <option value="center">center</option>
+                                                                <option value="bottom">Left</option>
+                                                            </select>
+                                                        </div>
+                                                        <div style="display: flex;justify-content: space-between;" *ngIf="!isDistributed">
+                                                            <label>color</label>
+                                                            <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                            <ngx-colors [(ngModel)]="funnelColor" ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
+                                                            </ngx-colors>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="((area && chartId) || (pie && chartId) || donut || bar || line)  && draggedColumns && draggedColumns.length == 1 && draggedColumns[0]['data_type']== 'date'" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1911,7 +2385,23 @@
                                                           </div>
                                                         </div>
                                                     </div>
-                                                   
+                                                    <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div>
+                                                            <label for="minValue">Enter Minimum Value:</label>
+                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="guageChart()" />
+                                                          
+                                                            <label for="maxValue">Enter Maximum Value:</label>
+                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="guageChart()" />
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <label for="sorting">Sort by:</label>
+                                                        <select id="sorting" (change)="sortSeries($event)">
+                                                            <option value="0" selected disabled>select</option>
+                                                            <option value="ascending">Ascending</option>
+                                                            <option value="descending">Descending</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </ng-template>
@@ -2011,6 +2501,28 @@
             </div>
            
         </div>
+        <ng-template #viewQueryModal let-modal>
+            <div id="largemodal" tabindex="-1" role="dialog">
+                <div class=" modal-lg " role="document">
+                <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Query</h6>
+            </div>
+            <div class="modal-body viewQuery-hgt">
+                
+                <div class="form-group select2-sm">
+                   <p>{{tablePaginationCustomQuery}}</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                            
+                <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
+                    close
+                </button>
+                <button type="button" class="btn ripple btn-primary" (click)="copyQuery(); modal.close('Save click')">Copy <i class="fa fa-copy"></i></button>
+            </div>
+            </div>
+        </div>
+        </div>
+        </ng-template>
     </div>
-
-    <!-- CONTAINER CLOSED -->

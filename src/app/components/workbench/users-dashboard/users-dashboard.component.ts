@@ -38,7 +38,7 @@ export class UsersDashboardComponent {
 
   constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,private router:Router,private toasterservice:ToastrService){
     this.addUserForm = this.formBuilder.group({
-      username: ['', Validators.required],
+      username: ['', [Validators.required, Validators.maxLength(64)]],
       firstname:['', Validators.required],
       lastname:['', Validators.required],
       role: this.formBuilder.array([]),
@@ -72,6 +72,13 @@ export class UsersDashboardComponent {
 
   ngOnInit(){
     this.getUserList()
+  }
+  get isFormValidWithoutIsActive() {
+    const form = this.addUserForm;
+        return Object.keys(form.controls).every(key => {
+      if (key === 'is_active') return true; 
+      return form.controls[key].valid; 
+    });
   }
   get role(): FormArray {
     return this.addUserForm .get('role') as FormArray;
@@ -201,7 +208,7 @@ toggleClass1 = "off-line";
     this.userAddedRolesList.forEach(() => {
       rolesArray.push(this.formBuilder.control(false)); // Add a control for each role
     });
-
+    console.log('all roles',this.userAddedRolesList)
     rolesArray.valueChanges.subscribe(values => {
       this.allSelected = values.every((val: boolean) => val === true);
     });
@@ -216,16 +223,16 @@ toggleClass1 = "off-line";
     });
 
     this.allSelected = shouldSelectAll;
-    this.getSelectedRoles();
+    // this.getSelectedRoles();
 
   }
 
   onCheckboxChange() {
     const rolesArray = this.addUserForm.get('role') as FormArray;
     if (rolesArray && rolesArray instanceof FormArray) {
-      const allSelected = rolesArray.controls.every(control => control.value);
-      this.allSelected = allSelected;
-    }
+      const allChecked = rolesArray.controls.every(control => control.value);
+      this.allSelected = allChecked;
+    } 
     // this.getSelectedRoles();
   }
   getSelectedRoles() {
@@ -238,7 +245,7 @@ toggleClass1 = "off-line";
     return selectedRoles;
   }
   gotoAddRole(){
-    this.router.navigate(['/workbench/dashboard/role-add'])
+    this.router.navigate(['/insights/dashboard/role-add'])
   }
 getAddedRolesList(){
   this.workbechService.getAddedRolesList().subscribe({
@@ -260,34 +267,66 @@ getAddedRolesList(){
 }
 
 addUser(){
-  const selectedRoles = this.getSelectedRoles(); // Get the selected roles
-  const userData = {
-      ...this.addUserForm.value,
-      role: selectedRoles // Replace the roles array with the selected roles
-  };
-    this.workbechService.addUserwithRoles(userData  ).subscribe({
-    next:(data)=>{
-      console.log(data);
-      this.addUserDivForm = false;
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: 'Done!',
-      //   text: data.message,
-      //   width: '400px',
-      // })
-      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.getUserList();
-     },
-    error:(error)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-    }
-  }) 
+  if (!this.addUserForm.value.is_active) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "User will not be active if Is-actice is not selected",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ok'
+    }).then((result)=>{ 
+      if(result.isConfirmed){  
+        const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+        const userData = {
+            ...this.addUserForm.value,
+            role: selectedRoles // Replace the roles array with the selected roles
+        };
+          this.workbechService.addUserwithRoles(userData  ).subscribe({
+          next:(data)=>{
+            console.log(data);
+            this.addUserDivForm = false;
+            this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+            this.getUserList();
+           },
+          error:(error)=>{
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'oops!',
+              text: error.error.message,
+              width: '400px',
+            })
+          }
+        }) 
+      }} 
+    )
+  }else{
+    const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+    const userData = {
+        ...this.addUserForm.value,
+        role: selectedRoles // Replace the roles array with the selected roles
+    };
+      this.workbechService.addUserwithRoles(userData  ).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.addUserDivForm = false;
+        this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+        this.getUserList();
+       },
+      error:(error)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    }) 
+  }
+
 }
 deleteUser(id:any){
   Swal.fire({
@@ -346,9 +385,10 @@ getUserIdDetails(id:any){
           email:data.email,
           is_active:data.is_active,
         })     
-        this.userAddedRolesList = data.role;
+        this.userAddedRolesList = data.existing_roles;
         this.setRoles();
-        this.patchRoles(data.role);
+        this.patchRoles(data.selected_roles);
+
       },
       error:(error:any)=>{
         Swal.fire({
@@ -368,47 +408,68 @@ patchRoles(selectedRoles: string[]) {
     rolesArray.clear(); // Clear the current FormArray
 
     // Add only the selected roles
-    selectedRoles.forEach((role) => {
-      if (this.userAddedRolesList.includes(role)) {
-        rolesArray.push(this.formBuilder.control(true));
-      }
-    });
+    // selectedRoles.forEach((role) => {
+    //   if (this.userAddedRolesList.includes(role)) {
+    //     rolesArray.push(this.formBuilder.control(true));
+    //   }
+    // });
 
-    // Sync the 'allSelected' flag based on whether all roles are selected
-    this.allSelected = selectedRoles.length === this.userAddedRolesList.length;
+    this.userAddedRolesList.forEach((role: string) => {
+      // Check if the role is in selectedRoles
+      const isSelected = selectedRoles.includes(role);
+      rolesArray.push(this.formBuilder.control(isSelected)); 
+  });
+console.log('selectedroles',selectedRoles)
+    this.allSelected = selectedRoles.length === this.userAddedRolesList.length  && selectedRoles.length > 0;
   }
 }
 
 editUser(){
-  const selectedRoles = this.getSelectedRoles(); // Get the selected roles
-  const userData = {
-      ...this.addUserForm.value,
-      role: selectedRoles // Replace the roles array with the selected roles
-  };
-  delete userData.password;
-    delete userData.conformpassword;
-    this.workbechService.editUser(this.userId,userData).subscribe({
-    next:(data)=>{
-      console.log(data);
-      this.addUserDivForm = false;
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: 'Done!',
-      //   text: data.message,
-      //   width: '400px',
-      // })
-      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.getUserList();
-     },
-    error:(error)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+  if (!this.addUserForm.value.is_active) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "User will not be active if Is-actice is not selected",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ok'
+    }).then((result)=>{ 
+      if(result.isConfirmed){ 
+
+
+        const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+        const userData = {
+            ...this.addUserForm.value,
+            role: selectedRoles // Replace the roles array with the selected roles
+        };
+        delete userData.password;
+          delete userData.conformpassword;
+          this.workbechService.editUser(this.userId,userData).subscribe({
+          next:(data)=>{
+            console.log(data);
+            this.addUserDivForm = false;
+            // Swal.fire({
+            //   icon: 'success',
+            //   title: 'Done!',
+            //   text: data.message,
+            //   width: '400px',
+            // })
+            this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+            this.getUserList();
+           },
+          error:(error)=>{
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'oops!',
+              text: error.error.message,
+              width: '400px',
+            })
+          }
+        }) 
+      } })
     }
-  }) 
+
 }
 }

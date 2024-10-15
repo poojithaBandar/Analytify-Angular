@@ -40,9 +40,13 @@ toggleVisibility1() {
   }
 }
   constructor(
-    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,    private router: Router,
+    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,
     private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService
   ) {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      this.router.navigate(['insights/home']);
+    }
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]],
       password: ['', Validators.required],    })
@@ -75,7 +79,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }
     if(data.accessToken){
-      this.router.navigate(['workbench/landingpage'])
+      this.router.navigate(['insights/home'])
     }
   },
   error:(error:any)=>{

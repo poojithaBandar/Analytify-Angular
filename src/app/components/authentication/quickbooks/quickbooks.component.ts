@@ -12,7 +12,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 export class QuickbooksComponent implements OnInit {
 constructor(private router:Router,private authService:AuthService){
   const currentUrl = this.router.url;
-  if ((currentUrl.includes('integrations/quickbooks?code='))) {
+  if ((currentUrl.includes('/authentication/quickbooks'))) {
     let url = this.router.url;
     console.log(url);
     this.getToken(url);
@@ -36,8 +36,9 @@ getToken(url:any){
             //localStorage.setItem('connectedToQuickbooks', JSON.stringify(connectedToQuickbooks));
             // this.connectionSuccess = true;
             // this.getCompanyDetails();
-            const quickBooksId = data.quickbooks_id;
-            this.router.navigate(['/workbench/database-connection/tables/quickbooks'+quickBooksId]);
+            // const quickBooksId = data.quickbooks_id;
+            const quickBooksId = btoa(data.quickbooks_id.toString());
+            this.router.navigate(['/insights/database-connection/tables/quickbooks/'+quickBooksId]);
           }
         },
         error: (error: any) => {

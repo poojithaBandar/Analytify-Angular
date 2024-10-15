@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-saved-queries',
@@ -26,11 +27,12 @@ export class SavedQueriesComponent {
   savedQueryList:any[]=[];
   gridView = true;
   viewSavedQueries = false;
-constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService){
+constructor(private workbechService:WorkbenchService,private route:Router,private viewTemplateService:ViewTemplateDrivenService, private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewSavedQueries = this.viewTemplateService.viewCustomSql();
 }
 
   ngOnInit(){
+    this.loaderService.hide();
     if(this.viewSavedQueries){
     this.getSavedQueries();
     }
@@ -134,13 +136,13 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
 
-    this.route.navigate(['workbench/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
+    this.route.navigate(['insights/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
     }
     if(dbId === null){
       const encodedFileId = btoa(fileId.toString());
       const encodedQuerySetId = btoa(qrySetId.toString());
   
-      this.route.navigate(['workbench/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+      this.route.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
     }
 
   }
@@ -148,7 +150,7 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     const encodeddbId = btoa(dbId?.toString());
     const encodedqurysetId = btoa(qrySetId.toString());
     const encodedFileId = btoa(fileId?.toString());
-    // this.router.navigate(['/workbench/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+    // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
     const idToPass = fileId ? encodedFileId : encodeddbId;
     const fromSource = fileId ? 'fileId' : 'dbId';
@@ -156,17 +158,17 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
   ? btoa('null') 
   : btoa(dsQrySetId.toString()); 
-   this.route.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+   this.route.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     // if (dsQrySetId === null || dsQrySetId === undefined) {
     //   // Encode 'null' to represent a null value
     //  const encodedDsQuerySetId = btoa('null');
-    //  this.route.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+    //  this.route.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     // } else {
     //   // Convert to string and encode
     //  const encodedDsQuerySetId = btoa(dsQrySetId.toString());
-    //  this.route.navigate(['/workbench/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+    //  this.route.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     // }
   }

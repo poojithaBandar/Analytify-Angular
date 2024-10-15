@@ -99,7 +99,11 @@
     font-weight: 100;
     color: #c1c1c1;
 }
-
+.left-sidebar{
+  // border: 1px solid rgba(255, 255, 255, 0.1)!important;
+  border: 1px solid #edebeb !important;
+  border-radius: 10px !important;
+}
 // /* width */
 // ::-webkit-scrollbar {
 //   width: 5px;
@@ -165,7 +169,10 @@ background-color: aliceblue;
   padding-left: 35px !important;
   cursor: pointer;
 }
-
+.viewQuery-hgt {
+  max-height: 200px;
+  overflow-y: scroll;
+}
 
 // .side-card {
 //   padding: 10px;

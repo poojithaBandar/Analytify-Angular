@@ -26,7 +26,7 @@ export class RegisterComponent {
     private renderer: Renderer2,private formBuilder:FormBuilder,private router:Router
   ) {
     this.signupForm = this.formBuilder.group({
-      username: ['', Validators.required],
+      username: ['', [Validators.required, Validators.maxLength(64)]],
       // username: ['', Validators.required],
       email: [
         '',
@@ -116,6 +116,10 @@ get requiresLowercaseValid() {
 
 get requiresSpecialCharsValid() {
   return !this.signupForm.controls["password"].hasError("requiresSpecialChars");
+}
+
+onPaste(event: ClipboardEvent) {
+  event.preventDefault(); // Prevent paste action
 }
 checkConfirmPassword(){
   if(this.signupForm.value.conformpassword === this.signupForm.value.password ){

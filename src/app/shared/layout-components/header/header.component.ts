@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
 import { Menu, NavService } from '../../services/navservice';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
@@ -24,6 +24,8 @@ export class HeaderComponent implements OnInit {
   collapse: any;
   viewRoles = false;
   viewUsers = false;
+  @Input() isPublicUrl!: true; 
+
   constructor(public navServices: NavService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private authService:AuthService,private router:Router,
     private elementRef: ElementRef,public renderer:Renderer2,private viewTemplateService:ViewTemplateDrivenService) {
       this.viewRoles=this.viewTemplateService.ViewRoles();
@@ -211,8 +213,8 @@ export class HeaderComponent implements OnInit {
     });
     const currentUser = localStorage.getItem( 'username' );
     this.userName = JSON.parse( currentUser! )['userName'];
-    let html = this.elementRef.nativeElement.ownerDocument.documentElement;
-    html.setAttribute('data-toggled', 'icon-overlay-close');
+    // let html = this.elementRef.nativeElement.ownerDocument.documentElement;
+    // html.setAttribute('data-toggled', 'icon-overlay-close');
   }
   logOut() {
     this.authService.logOut().subscribe((res) => {
@@ -220,6 +222,9 @@ export class HeaderComponent implements OnInit {
         this.router.navigate(['/authentication/signin']);
       }
     });
+  }
+  routehelpGuide(){
+    this.router.navigate(['/insights/home/help-guide']);
   }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];
@@ -306,14 +311,14 @@ export class HeaderComponent implements OnInit {
   }
 
   routeToUserDashboard(){
-    this.router.navigate(['/workbench/list-users/dashboard'])
+    this.router.navigate(['/insights/list-users/dashboard'])
   }
   routeToRolesDashboard(){
-    this.router.navigate(['/workbench/roles-list/dashboard'])
+    this.router.navigate(['/insights/roles-list/dashboard'])
   }
 
   routeToConfigurePage() {
-    this.router.navigate(['/workbench/configure-page/configure']);
+    this.router.navigate(['/insights/configure-page/configure']);
   }
 
 }

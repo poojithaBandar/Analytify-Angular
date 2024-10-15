@@ -9,6 +9,7 @@ import { InsightsButtonComponent } from '../insights-button/insights-button.comp
 import { ViewTemplateDrivenService } from '../view-template-driven.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -52,7 +53,7 @@ publishedDashboard = false;
 testVariableToChange! : string ;
 @ViewChild('propertiesModal') propertiesModal : any;
 
-constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService){
+constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService){
   localStorage.setItem('QuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
   this.viewSheets = this.templateService.viewSheets();
@@ -61,6 +62,7 @@ constructor(private router:Router,private workbechService:WorkbenchService,priva
 }
 
 ngOnInit(){
+  this.loaderService.hide();
   if(this.viewDatabbses){
     this.getDbConnectionList();
   }if(this.viewSheets){
@@ -110,7 +112,7 @@ getDbConnectionList(){
 getuserSheets(){
   const Obj ={
     search:this.wholeSearch,
-    // page_count:'12'
+    page_count:'12'
   }
   if(Obj.search === '' || Obj.search === null || Obj.search === ' '){
     delete Obj.search;
@@ -189,47 +191,52 @@ getSavedQueries(){
 viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   // const encodedServerId = btoa(serverId.toString());
   // const encodedQuerySetId = btoa(querysetId.toString());
+  this.loaderService.show();
   const encodedDashboardId = btoa(dashboardId.toString());
 
-  this.router.navigate(['/workbench/landingpage/sheetsdashboard/'+encodedDashboardId])
+  this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
 }
 viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
+  this.loaderService.show();
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
   if (serverId === null || serverId ==='') {
     const encodedFileId = btoa(fileId.toString());
-    this.router.navigate(['/workbench/landingpage/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+    this.router.navigate(['/insights/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
   }
   else if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
-    this.router.navigate(['/workbench/landingpage/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+    this.router.navigate(['/insights/home/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
   }
  
 }
 
  sheetsRoute(){
-    this.router.navigate(['/workbench/sheets'])  
+    this.loaderService.show();
+    this.router.navigate(['/insights/sheets'])  
   }
   newConnections(){
-    this.router.navigate(['workbench/work-bench/new-connections']) 
+    this.loaderService.show();
+    this.router.navigate(['insights/datasources/new-connections']) 
   }
   goToConnections(){
-    this.router.navigate(['workbench/work-bench/view-connections']) 
+    this.router.navigate(['insights/datasources/view-connections']) 
 
   }
   getTablesFromConnectedDb(dbId:any,fileId:any){
     // const encodedId = btoa(id.toString());
-    // this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+    // this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+    this.loaderService.show();
     if(dbId === null){
       const encodedId = btoa(fileId.toString());
-      this.router.navigate(['/workbench/database-connection/files/tables/'+encodedId]);
+      this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
       }
       if(fileId === null){
         const encodedId = btoa(dbId.toString());
-        this.router.navigate(['/workbench/database-connection/tables/'+encodedId]);
+        this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
         }
   }
   deleteDashboard(dashboardId:any){
@@ -398,37 +405,39 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
   }
 
   viewAllSheets(){
-    this.router.navigate(['/workbench/sheets-dashboard']) 
+    this.router.navigate(['/insights/sheets-dashboard']) 
 
   }
   viewAllDashboards(){
-    this.router.navigate(['/workbench/dashboard-page']) 
+    this.router.navigate(['/insights/dashboarda']) 
 
   }
   viewAllSavedQueries(){
-    this.router.navigate(['/workbench/saved-queries']) 
+    this.router.navigate(['/insights/saved-queries']) 
 
   }
   gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
     // const encodedServerId = btoa(dbId.toString());
     // const encodedQuerySetId = btoa(qrySetId.toString());
 
-    // this.router.navigate(['workbench/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    // this.router.navigate(['insights/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    this.loaderService.show();
     if(fileId === null){
       const encodedServerId = btoa(dbId.toString());
       const encodedQuerySetId = btoa(qrySetId.toString());
   
-      this.router.navigate(['workbench/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
+      this.router.navigate(['insights/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
       }
       if(dbId === null){
         const encodedFileId = btoa(fileId.toString());
         const encodedQuerySetId = btoa(qrySetId.toString());
     
-        this.router.navigate(['workbench/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+        this.router.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
       }
   }
   loadNewDashboard(){
-    this.router.navigate(['/workbench/sheetsdashboard'])
+    this.loaderService.show();
+    this.router.navigate(['/insights/sheetsdashboard'])
     }
 
   viewPropertiesTab(name :any,dashboardId:any){

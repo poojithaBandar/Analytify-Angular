@@ -40,11 +40,11 @@ export class RolesDashboardComponent {
   assaignedUsers =[] as any;
   addRoleDiv = false;
 constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private toasterservice:ToastrService){
-  if(this.router.url.includes('/workbench/dashboard/role-add')){
+  if(this.router.url.includes('/insights/dashboard/role-add')){
     this.addRoleDiv = true;
     this.getPrevilagesList();
   }
-  if(this.router.url.includes('/workbench/dashboard/role-edit')){
+  if(this.router.url.includes('/insights/dashboard/role-edit')){
     // this.addRoleDiv = true;
     // this.getPrevilagesList();
     if (route.snapshot.params['id1'] ) {
@@ -55,7 +55,7 @@ constructor(public modalService:NgbModal,private workbechService:WorkbenchServic
       this.getRoleIdDetails(roleId);
     }
   }
-  if(this.router.url.includes('/workbench/roles-list/dashboard')){
+  if(this.router.url.includes('/insights/roles-list/dashboard')){
     this.addRoleDiv = false;
   }
 }
@@ -70,12 +70,12 @@ ngOnInit(){
 // }
 addRolesDivOpen(){
 // this.addRoleDiv = true;
-this.router.navigate(['/workbench/dashboard/role-add'])
+this.router.navigate(['/insights/dashboard/role-add'])
 }
 updateRolesDivOpen(id:any){
   const encodedRoleId = btoa(id.toString());
   // this.addRoleDiv = true;
-  this.router.navigate(['/workbench/dashboard/role-edit/'+encodedRoleId]);
+  this.router.navigate(['/insights/dashboard/role-edit/'+encodedRoleId]);
   // this.updateRole = true;
   }
 
@@ -232,15 +232,8 @@ if(this.roleTitle === ''){
   this.workbechService.addPrevilage(Obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.addRoleDiv = false;
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: 'Done!',
-      //   text: data.message,
-      //   width: '400px',
-      // })
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.getSavedRolesList();
+      this.router.navigate(['/insights/roles-list/dashboard'])
      },
     error:(error)=>{
       console.log(error);
@@ -353,6 +346,6 @@ editRoles(){
   }) 
 }
 viewSavedRoles(){
-  this.router.navigate(['/workbench/roles-list/dashboard'])
+  this.router.navigate(['/insights/roles-list/dashboard'])
 }
 }

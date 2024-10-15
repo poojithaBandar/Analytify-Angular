@@ -3,7 +3,7 @@
 
 <div class="main-container container-fluid">
 
-    <div class="row" class="card" style="padding: 20px;">
+    <div class="row" class="card" style="padding-top: 15px;">
     <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
       <div class="d-flex justify-content-between px-5">
         <div class="connect-txt">
@@ -45,9 +45,10 @@
                     <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
                         <tr>
                             <th>Title</th>
-                            <th>Created On</th>
+                            <!-- <th>Created On</th> -->
                             <th>Last Modified</th>
                             <th>DataBase Name</th>
+                            <th>Queryset Name</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -81,6 +82,9 @@
                                             <img *ngIf="sheets.chart_id === 12" src="./assets/images/charts/spider.png" alt="" class="w-7 h-7 border rounded-3  me-4">
                                             <img *ngIf="sheets.chart_id === 25" src="./assets/images/charts/kpi-icon.png" alt="" class="w-7 h-7 border rounded-3  me-4">
                                             <img *ngIf="sheets.chart_id === 26" src="./assets/images/charts/heatmap_icon.png" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 27" src="./assets/images/charts/funnelChart-icon.png" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 28" src="./assets/images/charts/guage-icon.png" alt="" class="w-7 h-7 border rounded-3  me-4">
+                                            <img *ngIf="sheets.chart_id === 29" src="./assets/images/charts/world-map.png" alt="" class="w-7 h-7 border rounded-3  me-4">
                               </div>
                               <div class="content">
                                 <span>Sheet Name : </span>
@@ -89,9 +93,9 @@
                               </div>
                           </div>                                  
                             </td>
-                               <td>{{sheets.created}}</td>  
                             <td>{{sheets.Modified}}</td>
-                            <td>{{sheets.database_name}}</td>
+                            <td [ngbTooltip]="sheets.database_name.length > 15 ? sheets.database_name : null" [container]="'body'">  {{ sheets.database_name.length > 15 ? (sheets.database_name | slice: 0: 15) + '...' : sheets.database_name }}</td>
+                            <td [ngbTooltip]="sheets.queryset_name.length > 15 ? sheets.queryset_name : null" [container]="'body'">{{ sheets.queryset_name.length > 15 ? (sheets.queryset_name | slice: 0: 15) + '...' : sheets.queryset_name }}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
@@ -203,6 +207,9 @@
                       <img *ngIf="sheets.chart_id === 12" src="./assets/images/charts/spider.png" alt="" class="rounded-circle">
                       <img *ngIf="sheets.chart_id === 25" src="./assets/images/charts/kpi-icon.png" alt="" class="rounded-circle">
                       <img *ngIf="sheets.chart_id === 26" src="./assets/images/charts/heatmap_icon.png" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 27" src="./assets/images/charts/funnelChart-icon.png" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 28" src="./assets/images/charts/guage-icon.png" alt="" class="rounded-circle">
+                      <img *ngIf="sheets.chart_id === 29" src="./assets/images/charts/world-map.png" alt="" class="rounded-circle">
                     </span>
                 </div>
                   <div class="ms-2 mt-sm-0 mt-2">
@@ -238,20 +245,20 @@
                     <div  class="col-md-12">
                       <div class="row">
                             <div class="col-md-6">
-                                <span class="fw-semibold fs-14">Created by  </span>
+                                <span class="fw-semibold fs-14">Created by : </span>
                             </div>
                             <div class="col-md-6">
                                 <span class="fs-14">{{sheets.created_by}}</span>
                             </div>
                         </div>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-6">
                                 <span class="fw-semibold fs-14">Created on :</span>
                             </div>
                             <div class="col-md-6">
                                 <span class="fs-14">{{sheets.created}}</span>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="row">
                           <div class="col-md-6">
                               <span class="fw-semibold fs-14">Last Modified : </span>
@@ -265,9 +272,17 @@
                             <span class="fw-semibold fs-14">DataBase Name : </span>
                         </div>
                         <div class="col-md-6">
-                            <span class="fs-14">{{sheets.database_name}}</span>
+                            <span class="fs-14" [ngbTooltip]="sheets.database_name.length > 13 ? sheets.database_name : null">  {{ sheets.database_name.length > 13 ? (sheets.database_name | slice: 0: 13) + '...' : sheets.database_name }}</span>
                         </div>
                     </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                          <span class="fw-semibold fs-14">Queryset Name : </span>
+                      </div>
+                      <div class="col-md-6">
+                          <span class="fs-14" [ngbTooltip]="sheets.queryset_name.length > 13 ? sheets.queryset_name : null" >{{sheets.queryset_name.length > 13 ? (sheets.queryset_name | slice: 0: 13)+ '...' : sheets.queryset_name}}</span>
+                      </div>
+                  </div>
                     
                     </div>
                   

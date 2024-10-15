@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, Inject, Renderer2 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgOtpInputModule } from 'ng-otp-input';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -31,8 +31,9 @@ export class EmailActivationComponent {
   resendOtp: boolean = false;
   displayTimer: boolean = false;
   otp:any;
+  emailActivationToken:any;
 constructor( @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private authService:AuthService,private router:Router,private toasterService:ToastrService,
-private renderer: Renderer2,private sanitizer: DomSanitizer){}
+private renderer: Renderer2,private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute){}
 
 ngOnInit(): void {
  
@@ -124,10 +125,13 @@ validateOtp(){
   )
 }
 resendOtpApi(){
-const obj={
-  token:this.authService.emailActivationToken
-
-}
+  this.activatedRoute.queryParams.subscribe(params => {
+    this.emailActivationToken = this.activatedRoute.snapshot.params['token'];
+    // console.log(this.token);
+  });
+  const obj={
+  token:this.emailActivationToken
+  }
   this.authService.resendOtpApi(obj)
   .subscribe(
     {
