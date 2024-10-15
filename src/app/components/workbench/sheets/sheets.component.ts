@@ -3015,7 +3015,8 @@ bar["stack"]="Total";
                 else if (this.barlineChart) {
                   // this.chartOptions5.series[0] = {name: this.dualAxisRowData[0]?.name,type: "column",data: this.dualAxisRowData[0]?.data};
                   // this.chartOptions5.series[1] = {name: this.dualAxisRowData[1]?.name,type: "line",data: this.dualAxisRowData[1]?.data};
-                  this.chartOptions5.series = this.dualAxisRowData;
+                  this.chartOptions5.series[0].data = this.dualAxisRowData[0].data;
+                  this.chartOptions5.series[1].data = this.dualAxisRowData[1].data;
                   this.chartOptions5.labels = categories;
                   this.chartOptions5.xaxis.categories = categories;
                 }
