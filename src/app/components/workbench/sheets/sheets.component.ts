@@ -2740,77 +2740,78 @@ bar["stack"]="Total";
       }
       }
 
-      funnelChart(){
-        const dimensions: Dimension[] = this.dualAxisColumnData;
-        const categories = this.flattenDimensions(dimensions);
-        if(this.isEChatrts){
-          const combinedArray:any[] = [];
-this.dualAxisColumnData.forEach((item:any) => {
-  this.dualAxisRowData.forEach((categoryObj:any) => {
-    item.values.forEach((value:any, index:number) => {
-      combinedArray.push({
-        value: value,
-        name: categoryObj.data[index] 
+  funnelChart() {
+    const dimensions: Dimension[] = this.dualAxisColumnData;
+    const categories = this.flattenDimensions(dimensions);
+    if (this.isEChatrts) {
+      const combinedArray: any[] = [];
+      this.dualAxisColumnData.forEach((item: any) => {
+        this.dualAxisRowData.forEach((categoryObj: any) => {
+          item.values.forEach((value: any, index: number) => {
+            combinedArray.push({
+              name: value,
+              value: categoryObj.data[index]
+            });
+          });
+        });
       });
-    });
-  });
-});
-          this.eFunnelChartOptions = {
-            tooltip: {
-              trigger: 'item',
+      this.eFunnelChartOptions = {
+        color:[this.color],
+        tooltip: {
+          trigger: 'item',
+        },
+        series: [
+          {
+            name: '',
+            type: 'funnel',
+            data: combinedArray,
+            label: {
+              show: true,
+              formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
             },
-            series: [
-              {
-                name: '',
-                type: 'funnel',
-                data: combinedArray,
-                label: {
-                  show: true,
-                  formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
-                },
-              },
-            ],
-          };
-        } else {
-        this.funnelChartOptions = {
-          series: this.dualAxisRowData,
-          chart: {
-            type: "bar",
-            height: 350
           },
-          plotOptions: {
-            bar: {
-              borderRadius: 0,
-              horizontal: true,
-              barHeight: "80%",
-              isFunnel: true,
-              dataLabels: {
-                position: "center",
-              }
+        ],
+      };
+    } else {
+      this.funnelChartOptions = {
+        series: this.dualAxisRowData,
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 0,
+            horizontal: true,
+            barHeight: "80%",
+            isFunnel: true,
+            dataLabels: {
+              position: "center",
             }
-          },
-          dataLabels: {
-            enabled: true,
-            formatter: this.formatNumber.bind(this),
-            dropShadow: {
-              enabled: true,
-            },
-            style: {
-              fontSize: "8px",
-              fontFamily: "Helvetica, Arial, sans-serif",
-            },
-          },
-          title: {
-          },
-          xaxis: {
-            categories: categories
-          },
-          legend: {
-            show: false
           }
-        };
-      }
-      }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: this.formatNumber.bind(this),
+          dropShadow: {
+            enabled: true,
+          },
+          style: {
+            fontSize: "8px",
+            fontFamily: "Helvetica, Arial, sans-serif",
+          },
+        },
+        title: {
+        },
+        xaxis: {
+          categories: categories
+        },
+        legend: {
+          show: false
+        }
+      };
+    }
+  }
       guageChart() {
         this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
         // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
@@ -3420,7 +3421,7 @@ this.dualAxisColumnData.forEach((item:any) => {
       series: [{
         type: 'map',
         map: 'world',
-        roam: true,  
+        roam: this.isZoom,  
         data: result
       }]
     };
@@ -4158,7 +4159,11 @@ sheetSave(){
     savedChartOptions = this.heatMapChartOptions;
   }
   if(this.funnel && this.chartId == 27){
-    savedChartOptions = this.funnelChartOptions;
+    if(this.isApexCharts) {
+      savedChartOptions = this.funnelChartOptions;
+    } else {
+      savedChartOptions = this.eFunnelChartOptions;
+    }
   }
   if(this.guage && this.chartId == 28){
     savedChartOptions = this.guageChartOptions;
@@ -5159,6 +5164,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false;
        }
        if(responce.chart_id == 27){
+         if(this.isEChatrts){
+          this.eFunnelChartOptions = this.sheetResponce.savedChartOptions;
+         } else {
         this.funnelChartOptions = this.sheetResponce.savedChartOptions;
         if(this.funnelChartOptions?.dataLabels){
           this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
@@ -5168,6 +5176,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.funnelDLFontFamily = this.funnelChartOptions?.dataLabels?.style?.fontFamily;
         this.funnelDLFontSize = this.funnelChartOptions?.dataLabels?.style?.fontSize;
         this.funnelColor = this.funnelChartOptions?.series[0]?.color;
+      }
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -7227,30 +7236,7 @@ renameColumns(){
   }
   enableZoom(){
     this.isZoom = !this.isZoom;
-    if(this.bar){
-      this.barChart();
-    }
-    else if(this.area){
-      this.areaChart();
-    }
-    else if(this.line){
-      this.lineChart();
-    }
-    else if(this.barLine){
-      this.barLineChart();
-    } else if(this.stocked){
-      this.stockedBar();
-    }
-    else if(this.grouped){
-      this.hGrouped();
-    }
-    else if(this.sidebyside){
-      this.sidebysideBar();
-    } else if(this.horizentalStocked){
-      this.horizentalStockedBar();
-    } else if(this.multiLine){
-      this.multiLineChart();
-    }
+   this.reAssignChartData();
   }
 
   changeAlignment(){
