@@ -2481,7 +2481,12 @@ closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
   localStorage.setItem(id, JSON.stringify(colData));
   dropdown.close();
 }
-clearSelectedData(dropdown: NgbDropdown,colData :any,id: any){
+clearSelectedData(dropdown: NgbDropdown,colData :any,id: any, filterData: any){
+  filterData.isExclude = false;
+  let index = this.excludeFilterIdArray.indexOf(id);
+  if (index > -1) {
+    this.excludeFilterIdArray.splice(index, 1);
+  }
   colData.forEach((col: any) => {
     col.selected = false;
   });
@@ -2731,6 +2736,7 @@ getFilteredData(){
 clearAllFilters(): void {
   if (this.DahboardListFilters && Array.isArray(this.DahboardListFilters)) {
       this.DahboardListFilters.forEach(filterList => {
+        filterList.isExclude = false;
           if (filterList && Array.isArray(filterList.colData)) {
               filterList.colData.forEach((col: { selected: boolean }) => {
                   col.selected = false;
@@ -2740,6 +2746,7 @@ clearAllFilters(): void {
             this.storeSelectedColData["test"][filterList.dashboard_filter_id] = [];
           }
       });
+      this.excludeFilterIdArray = [];
       localStorage.removeItem('storeSelectedColData'); 
       console.log('All filters cleared');
       if(this.isPublicUrl){

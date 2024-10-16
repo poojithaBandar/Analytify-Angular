@@ -505,7 +505,7 @@
                                                                       <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;">
                                                                         <i class="fe fe-search"></i>
                                                                       </button>
-                                                                      <button (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn btn-primary " style="padding: 4px;">
+                                                                      <button (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id, filterList)" class="btn btn-primary " style="padding: 4px;">
                                                                         <img src="./assets/images/icons/filter-clear.png" alt="logo" class="w-5 h-5">
                                                                       </button>
                                                                     </div>
@@ -524,7 +524,7 @@
                                                                 </div>
 
                                                                   <div class="fixed-buttons p-2">
-                                                                      <input type="checkbox" id="exclude" (click)="excludeFilterIdList(filterList,$event);" class="form-check-input">
+                                                                      <input type="checkbox" id="exclude" (click)="excludeFilterIdList(filterList,$event);" [(ngModel)]="filterList.isExclude" class="form-check-input">
                                                                       <label for="exclude" class="form-check-label">Exclude</label>
                                                                     <button type="button" (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)"
                                                                       class="btn ripple btn-primary me-2">Save</button>
