@@ -735,7 +735,7 @@ export class SheetsdashboardComponent {
           }
           let chartId : number = sheet['chartId'];
           const numberFormat = sheet?.numberFormat;
-          if(![10,24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
+          if(![10,24,26,27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
             if([2,3].includes(chartId)){
               if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
                 sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
@@ -1133,6 +1133,12 @@ selected_sheet_ids :this.sheetIdsDataSet,
           delete item1['originalData'];
         }
         if(item1.chartId == '29' && item1['originalData']){//world map
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '27' && item1['originalData']){//funnel
           if(item1.isEChart){
             item1.echartOptions = item1['originalData'].chartOptions;
           }
@@ -1633,7 +1639,7 @@ allowDrop(ev : any): void {
       }
       let chartId: number = sheet['chartId'];
       const numberFormat = sheet?.numberFormat;
-      if (![10, 24].includes(chartId) && (numberFormat.decimalPlaces || numberFormat.displayUnits || numberFormat.prefix || numberFormat.suffix)) {
+      if (![10, 24, 26, 27].includes(chartId) && (numberFormat.decimalPlaces || numberFormat.displayUnits || numberFormat.prefix || numberFormat.suffix)) {
         if([2,3].includes(chartId)){
           if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
             sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
@@ -2809,7 +2815,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       item1.chartOptions.series = this.filteredRowData;
       }
     }
-      if(item.chart_id == '25'){//KPI
+      if(item.chart_id == '25' || item.chartId == '25'){//KPI
         if(!item1.originalData ){
           item1['originalData'] = _.cloneDeep(item1['kpiData']);
         }
@@ -3150,8 +3156,29 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     item1.echartOptions = {
       ...item1.echartOptions,
     };
+  }
 
       if(item.chart_id == '27'){//funnel
+        if(item1.isEChart){
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+            const combinedArray: any[] = [];
+            this.filteredColumnData.forEach((item: any) => {
+              this.filteredRowData.forEach((categoryObj: any) => {
+                item.values.forEach((value: any, index: number) => {
+                  combinedArray.push({
+                    name: value,
+                    value: categoryObj.data[index]
+                  });
+                });
+              });
+            });
+            item1.echartOptions.series[0].data = combinedArray;
+            item1.echartOptions = {
+              ...item1.echartOptions,
+            };
+        } else {
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(!item1.originalData){
@@ -3159,6 +3186,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
       }
       if(item.chart_id == '26'){//heatmap
         const dimensions: Dimension[] = this.filteredColumnData
@@ -3176,7 +3204,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       console.log('filtered dashboard-data',item1)
     }
-}})
+})
 }
 
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
