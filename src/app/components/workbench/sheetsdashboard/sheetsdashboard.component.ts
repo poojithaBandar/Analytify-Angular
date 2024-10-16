@@ -144,6 +144,7 @@ export class SheetsdashboardComponent {
  gridItemSize : number = 50;
  dataArray = [] as any;
  keysArray = [] as any;
+ excludeFilterIdArray = [] as any;
  tablePreviewRow = [] as any;
  tablePreviewColumn =[] as any;
  filteredColumnData = [] as any;
@@ -2673,6 +2674,7 @@ getFilteredData(){
   this.extractKeysAndData();
   const Obj ={
     id:this.keysArray,
+    exclude_ids:this.excludeFilterIdArray,
     input_list:this.dataArray
   }
   if(this.keysArray && this.keysArray.length > 0){
@@ -3768,6 +3770,7 @@ kpiData?: KpiData;
     this.extractKeysAndData();
     const Obj ={
       id:this.keysArray,
+      exclude_ids:this.excludeFilterIdArray,
       input_list:this.dataArray
     }
     if(this.keysArray && this.keysArray.length > 0){
@@ -4090,6 +4093,17 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
   return prefix + formattedNumber + suffix;
 }
+
+  excludeFilterIdList(filterData: any, event : any) {
+    if (filterData && event?.target?.checked) {
+      this.excludeFilterIdArray.push(filterData.dashboard_filter_id);
+    } else {
+      let index = this.excludeFilterIdArray.indexOf(filterData.dashboard_filter_id);
+      if (index > -1) {
+        this.excludeFilterIdArray.splice(index, 1);
+      }
+    }
+  }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
