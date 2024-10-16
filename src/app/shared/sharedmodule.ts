@@ -19,6 +19,7 @@ import { AuthenticationLayoutComponent } from './layout-components/layouts/authe
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterComponent } from './layout-components/footer/footer.component';
 import { TabToTopComponent } from './layout-components/tab-to-top/tab-to-top.component';
+import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboard/sheetsdashboard.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { TabToTopComponent } from './layout-components/tab-to-top/tab-to-top.com
     // LandingpageLayoutComponent,
     LandingSwitcherComponent,
     AuthenticationLayoutComponent,
-    FooterComponent
+    FooterComponent,
+    
 
   ],
   imports: [
@@ -44,7 +46,8 @@ import { TabToTopComponent } from './layout-components/tab-to-top/tab-to-top.com
     SimplebarAngularModule,
     NgbModule,
   ColorPickerModule,
-  FormsModule,ReactiveFormsModule
+  FormsModule,ReactiveFormsModule,
+  SheetsdashboardComponent
   
    
   ],
@@ -63,7 +66,8 @@ import { TabToTopComponent } from './layout-components/tab-to-top/tab-to-top.com
     FullscreenDirective,
     LandingSwitcherComponent,
     AuthenticationLayoutComponent,
-    FooterComponent
+    FooterComponent,
+    SheetsdashboardComponent
 
   ],
 })

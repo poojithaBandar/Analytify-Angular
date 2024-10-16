@@ -1001,6 +1001,9 @@
                       [legend]="guageChartOptions.legend"
                       [grid]="guageChartOptions.grid"
                       [labels]="guageChartOptions.labels"
+                       [tooltip]="guageChartOptions.tooltip"
+                         [fill]="guageChartOptions.fill"
+                        [stroke]="guageChartOptions.stroke"
                     ></apx-chart>
                   </div>
               }
@@ -2388,10 +2391,10 @@
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
-                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="guageChart()" />
+                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="customMinMaxGuage()" />
                                                           
                                                             <label for="maxValue">Enter Maximum Value:</label>
-                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="guageChart()" />
+                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
                                                         </div>
                                                     </div>
                                                     <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">

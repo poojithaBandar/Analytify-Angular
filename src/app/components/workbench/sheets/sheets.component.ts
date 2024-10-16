@@ -272,6 +272,7 @@ export class SheetsComponent {
   map: boolean = false;
 
   guageNumber:any;
+  valueToDivide:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/insights/sheets/dbId')){
@@ -2774,19 +2775,55 @@ bar["stack"]="Total";
           }
         };
       }
+
       guageChart() {
+        // Clone the gauge number from the API response
         this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+    
+        // Define thresholds and corresponding max values
+        const thresholds = [
+          { limit: 1000, max: 1000 },       // Up to 1,000
+          { limit: 10000, max: 10000 },     // Up to 10,000
+          { limit: 100000, max: 100000 },    // Up to 1 lakh
+          { limit: 500000, max: 500000 },    // Up to 5 lakhs
+          { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
+            { limit: Infinity, max: Math.ceil(this.guageNumber / 1000000) * 1000000 } // Above 10 lakhs
+        ];
+    
+        // Determine maxValueGuage based on guageNumber
+        const determineMaxValue = (value: number) => {
+            for (const threshold of thresholds) {
+                if (value <= threshold.limit) {
+                    return threshold.max;
+                }
+            }
+        };
+    
+        // Set maxValueGuage based on guageNumber
+        this.maxValueGuage = determineMaxValue(this.guageNumber)!;
+    
+        // Calculate the value to divide
+        this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+        this.guageChart1()
+      }
+    customMinMaxGuage(){
+       this.valueToDivide = this.maxValueGuage-this.minValueGuage;
+       this.guageChart1();
+    }
+  
+      guageChart1() {
+        // this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
         // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
-         const valueToDivide = this.maxValueGuage-this.minValueGuage
+        //  const valueToDivide = this.maxValueGuage-this.minValueGuage
         // Initialize the chart options
         this.guageChartOptions = {
-          series: [ Math.round((this.guageNumber / valueToDivide)*100)], // Correct percentage calculation
+          series: [ ((this.guageNumber / this.valueToDivide)*100)], // Correct percentage calculation
           chart: {
             height: 350,
             type: 'radialBar',
             toolbar: {
               show: true
-            }
+            },
           },
           plotOptions: {
             radialBar: {
@@ -2806,16 +2843,27 @@ bar["stack"]="Total";
                   fontSize: '16px'
                 },
                 value: {
-                  formatter: (val: number) => `${val}%`, // Displaying percentage
+                  formatter: (val:any) => `${val.toFixed(2)}%`, // Displaying percentage
                   color: '#333',
                   fontSize: '36px',
                   show: true,
-                }
+                },
               },
               min: this.minValueGuage,  // Use user's min value
               max: this.maxValueGuage
             }
           },
+          
+          tooltip: {
+            enabled: true,
+            shared: false, // Set to false for individual tooltips
+            custom: ({ series }: { series: number[] }) => {
+                return `<div style="padding: 10px;">
+                            <strong>Value:</strong> ${this.guageNumber}<br>
+                            <strong>Percentage:</strong> ${series[0].toFixed(2)}%
+                        </div>`;
+            }
+        },
           fill: {
             type: "gradient",
             gradient: {
@@ -3073,8 +3121,8 @@ bar["stack"]="Total";
               this.guage = false;
               this.funnel = false;
               this.calendar = false;
-              this.map = false;
-              this.tableDisplayPagination();
+              this.map=false;
+              // this.tableDisplayPagination();
             } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
               this.table = false;
               this.bar = false;

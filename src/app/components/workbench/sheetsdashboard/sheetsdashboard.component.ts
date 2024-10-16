@@ -45,6 +45,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
 import { HttpClient } from '@angular/common/http';
+import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
 
 interface TableRow {
@@ -177,7 +178,8 @@ export class SheetsdashboardComponent {
   isDraggingDisabled = false;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
+     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -392,30 +394,15 @@ export class SheetsdashboardComponent {
       }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
-//     this.dashboard = savedItems.map((item: { chartOptions: {
-//       xaxis: any;
-//       series: any; chart: {
-//         type: ChartType; sheet: string; 
-// }; 
-// }; sheet_data: { x_values: any; y_values: any; }; }) => ({
-//       ...item,
-//       chartOptions: this.restoreChartOptions(item.chartOptions.chart.type as ChartType,item.chartOptions.xaxis.categories,item.chartOptions.series[0].data,)
-//     }));
-    // this.dashboard = [
-    //   {cols: 2, rows: 1, y: 0, x: 0, data: { title: 'Card 1', content: 'Content of card 1' },
-    //   chartOptions: {
-    //     ...this.getChartOptions('pie'),
-    //     chart: { type: 'pie', height: 300 } // Example of another chart type
-    //   }
-    // },
-    //   {cols: 2, rows: 2, y: 0, x: 2,data: { title: 'Card 2', content: 'Content of card 2' },
-    //   chartOptions: {
-    //     ...this.getChartOptions('line'),
-    //     chart: { type: 'line', height: 300 } // Example of another chart type
-    //   }
-    // },
-    // ];
- 
+
+    this.sharedService.downloadRequested$.subscribe(() => {
+      this.downloadImageInPublic();
+    });
+
+    // Subscribe to refresh requests
+    this.sharedService.refreshRequested$.subscribe(() => {
+      this.getSavedDashboardDataPublic();
+    });
 
   }
   changeGridType(gridType : string){
@@ -3584,19 +3571,26 @@ kpiData?: KpiData;
     this.pageNo=page;
     this.fetchSheetsList();
     }
-
+  fetchSheetsListSearch() {
+    this.pageNo = 1;
+    this.fetchSheetsList();
+  }
   fetchSheetsList(){
     let obj;
     if( this.searchSheets && this.searchSheets.trim() != '' && this.searchSheets.length > 0){
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
-        search : this.searchSheets
+        search : this.searchSheets,
+        page_count:this.itemsPerPage
       }
     } else {
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
+        search : this.searchSheets,
+        page_count:this.itemsPerPage
+
       }
     }
 
