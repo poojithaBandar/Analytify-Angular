@@ -1,6 +1,6 @@
 <div class="main-container container-fluid mt-5"> 
-    <div class="row" style="position: fixed; width: -webkit-fill-available; padding-right: 15px;">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-3">
+    <div class="row" style="position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;">
+        <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
             <div class="card mb-0" >
                 <div class="card-body p-0 ">
                     <div class="card mb-0 p-3 br-0 border-bottom">
@@ -59,8 +59,8 @@
                                             aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(dimensions.column)"><i
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
-                                        <div class="dropdown-menu" ngbDropdownMenu>
-                                            <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                        <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
+                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="openSuperScaled(content,dimensions)"> Apply Filters </button>
                                             <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                            <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                             <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
@@ -335,7 +335,7 @@
                 
             </div>
         </div>
-        <div class="col-xl-8 col-md-12 p-1 mt-3">
+        <div class="col-xxl-8 col-xl-8 col-lg-7 col-md-7 p-1 mt-3">
            <div class="card p-0 mb-1">
            
                 <div class="card p-0 mb-1">
@@ -1111,8 +1111,8 @@
                     
                 @if(calendar){
                     <div class="card-body">
-                        <div id="calender-chart">
-                            <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="echart-charts"></div>  
+                        <div id="calender-chart" style="height: 100%; overflow-y: scroll;">
+                            <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="chart-container"></div>  
                         </div>
                     </div>
                 }
@@ -1186,7 +1186,7 @@
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2">Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>

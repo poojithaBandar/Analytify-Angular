@@ -2916,63 +2916,98 @@ bar["stack"]="Total";
           labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
         };
       }     
-      calendarChart(){
-        let calendarData:any[] = []
-        console.log(this.chartsColumnData);
-        console.log(this.chartsRowData);
-        this.chartsColumnData.forEach((data:any,index:any)=>{
-          let arr = [data,this.chartsRowData[index]]
-          calendarData.push(arr);
+      calendarChart() {
+        let calendarData: any[] = [];
+        let years: Set<any> = new Set();
+    
+        // Populate calendarData and collect years
+        this.chartsColumnData.forEach((data: any, index: any) => {
+            let arr = [data, this.chartsRowData[index]];
+            calendarData.push(arr);
+    
+            const year = new Date(data).getFullYear();
+            years.add(year);
         });
-        const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b));
-        const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b));
-        
-        const minDate = this.chartsColumnData.reduce((a: any, b: any) => (a < b ? a : b));
-        const maxDate = this.chartsColumnData.reduce((a: any, b: any) => (a > b ? a : b));
-
-        console.log(calendarData);
-        this.eCalendarChartOptions = {
-          tooltip: {
-            position: 'top',
-            formatter: function (params: any) {
-              const date = params.data[0];  // The date value
-              const value = params.data[1]; // The heatmap value
-              return `Date: ${date}<br/>Value: ${value}`; // Customize how you want the tooltip to display
-            }
-          },
-          visualMap: {
-            min: minValue,
-            max: maxValue,
-            calculable: true,
-            orient: 'horizontal',
-            left: 'center',
-            top: 'bottom'
-          },
-          calendar:  {
-            range: [minDate,maxDate], // You can specify the range (year, month, etc.)
-            cellSize: ['auto', 20],
+    
+        const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
+        const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
+    
+        // Convert years set to array and sort it in ascending order
+        let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+    
+        // Define the height for each calendar
+        const calendarHeight = 100;  // Adjust height for better visibility
+        const yearGap = 20;  // Reduced gap between years
+        const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+    
+        // Create multiple calendar instances, one for each year
+        let calendars = yearArray.map((year: any, idx: any) => ({
+            top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+            range: year.toString(),
+            cellSize: ['auto', 10],
             splitLine: {
-              show: true,
-              lineStyle: {
-                color: '#000',
-                width: 2,
-                type: 'solid'
-              }
+                show: true,
+                lineStyle: {
+                    color: '#000',
+                    width: 1
+                }
             },
-            itemStyle: {
-              borderWidth: 1,
-              borderColor: '#ccc'
+            yearLabel: {
+                margin: 20
             }
-          },
-          series: [
-            {
-              type: 'heatmap',
-              coordinateSystem: 'calendar',
-              data: calendarData
-            }
-          ]
-        }
-      } 
+        }));
+    
+        // Extract data for each year and assign to different series
+        let series = yearArray.map((year: any) => {
+            const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
+            return {
+                type: 'heatmap',
+                coordinateSystem: 'calendar',
+                calendarIndex: yearArray.indexOf(year),
+                data: yearData
+            };
+        });
+
+        let dataZoomConfig = [
+          {
+              type: 'slider',
+              yAxisIndex: 0,
+              start: 0,  // Starting position of the scroll
+              end: 100,  // The scroll window size (adjustable)
+              orient: 'vertical',  // Allow vertical scrolling
+              zoomLock: false,  // Disable zoom lock for flexibility
+          }
+      ];
+    
+        this.eCalendarChartOptions = {
+            tooltip: {
+                position: 'top',
+                formatter: function (params: any) {
+                    const date = params.data[0];
+                    const value = params.data[1];
+                    return `Date: ${date}<br/>Value: ${value}`;
+                }
+            },
+            visualMap: {
+                min: minValue,
+                max: maxValue,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                top: 'bottom'
+            },
+            calendar: calendars,
+            series: series,  // Assign filtered data series to the chart
+            grid: {
+                height: totalHeight,
+                containLabel: true
+            },
+            dataZoom: dataZoomConfig 
+        };
+    
+        console.log(this.eCalendarChartOptions);
+    }
+
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){

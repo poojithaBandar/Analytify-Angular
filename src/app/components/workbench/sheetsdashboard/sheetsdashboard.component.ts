@@ -1627,7 +1627,7 @@ allowDrop(ev : any): void {
       }
       let chartId: number = sheet['chartId'];
       const numberFormat = sheet?.numberFormat;
-      if (![10, 24, 26, 27].includes(chartId) && (numberFormat.decimalPlaces || numberFormat.displayUnits || numberFormat.prefix || numberFormat.suffix)) {
+      if (![10, 24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)) {
         if([2,3].includes(chartId)){
           if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
             sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
