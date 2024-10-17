@@ -345,12 +345,6 @@ deleteUser(id:any){
           next:(data:any) => {
             console.log(data);      
             if(data){
-              // Swal.fire({
-              //   icon: 'success',
-              //   title: 'Deleted!',
-              //   text: 'User Deleted Successfully',
-              //   width: '400px',
-              // })
               this.toasterservice.success('User Deleted Successfully','success',{ positionClass: 'toast-top-right'});
             }
             this.getUserList();
@@ -424,6 +418,33 @@ console.log('selectedroles',selectedRoles)
   }
 }
 
+editUserApiCall(){
+  const selectedRoles = this.getSelectedRoles(); // Get the selected roles
+  const userData = {
+      ...this.addUserForm.value,
+      role: selectedRoles // Replace the roles array with the selected roles
+  };
+  delete userData.password;
+    delete userData.conformpassword;
+    this.workbechService.editUser(this.userId,userData).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.addUserDivForm = false;
+      this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
+      this.getUserList();
+     },
+    error:(error)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+}
+
 editUser(){
   if (!this.addUserForm.value.is_active) {
     Swal.fire({
@@ -436,39 +457,10 @@ editUser(){
       confirmButtonText: 'Ok'
     }).then((result)=>{ 
       if(result.isConfirmed){ 
-
-
-        const selectedRoles = this.getSelectedRoles(); // Get the selected roles
-        const userData = {
-            ...this.addUserForm.value,
-            role: selectedRoles // Replace the roles array with the selected roles
-        };
-        delete userData.password;
-          delete userData.conformpassword;
-          this.workbechService.editUser(this.userId,userData).subscribe({
-          next:(data)=>{
-            console.log(data);
-            this.addUserDivForm = false;
-            // Swal.fire({
-            //   icon: 'success',
-            //   title: 'Done!',
-            //   text: data.message,
-            //   width: '400px',
-            // })
-            this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-            this.getUserList();
-           },
-          error:(error)=>{
-            console.log(error);
-            Swal.fire({
-              icon: 'error',
-              title: 'oops!',
-              text: error.error.message,
-              width: '400px',
-            })
-          }
-        }) 
+        this.editUserApiCall();
       } })
+    } else {
+      this.editUserApiCall();
     }
 
 }

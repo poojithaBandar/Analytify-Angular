@@ -37,11 +37,15 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     this.getSavedQueries();
     }
   }
-
+  getSavedQueriesSearch(){
+    this.pageNo=1;
+    this.getSavedQueries()
+  }
   getSavedQueries(){
     const Obj ={
       search : this.searchName,
-      page_no : this.pageNo
+      page_no : this.pageNo,
+      page_count:this.itemsPerPage
     }
     if(Obj.search == '' || Obj.search == null){
       delete Obj.search;

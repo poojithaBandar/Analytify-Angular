@@ -249,7 +249,7 @@ export class DatabaseComponent {
   getSavedQueryData(){
     const obj ={
       database_id:this.databaseId,
-      queryset_id:this.qurtySetId
+      queryset_id:this.qurtySetId || this.custumQuerySetid
     }as any
     if(this.fromFileId){
       delete obj.database_id
@@ -364,7 +364,7 @@ export class DatabaseComponent {
 getSchemaTablesFromConnectedDb(){
   const obj ={
     search:this.searchTables,
-    querySetId:this.qurtySetId
+    querySetId:this.qurtySetId || this.custumQuerySetid
   }
   if(obj.search == '' || obj.search == null){
     delete obj.search;
@@ -555,11 +555,15 @@ executeQuery(){
     database_id: this.databaseId,
     custom_query: this.sqlQuery,
     row_limit:this.rowLimit,
-    queryset_id:this.custumQuerySetid
+    queryset_id:this.custumQuerySetid,
+    query_name:this.saveQueryName,
   }as any
   if(this.fromFileId){
     delete obj.database_id
     obj.file_id = this.fileId
+  }
+  if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
+    delete obj.query_name
   }
   this.workbechService.executeQuery(obj)
   .subscribe(

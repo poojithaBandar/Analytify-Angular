@@ -89,7 +89,9 @@ this.getSavedRolesList();
 }
 getSavedRolesList(){
   const obj ={
-     search:this.roleName
+     search:this.roleName,
+     page_no:this.pageNo,
+     page_count:this.itemsPerPage
   }
   if(obj.search ===''||obj.search === null){
     delete obj.search

@@ -45,6 +45,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
 import { HttpClient } from '@angular/common/http';
+import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
 
 interface TableRow {
@@ -144,6 +145,7 @@ export class SheetsdashboardComponent {
  gridItemSize : number = 50;
  dataArray = [] as any;
  keysArray = [] as any;
+ excludeFilterIdArray = [] as any;
  tablePreviewRow = [] as any;
  tablePreviewColumn =[] as any;
  filteredColumnData = [] as any;
@@ -176,7 +178,8 @@ export class SheetsdashboardComponent {
   isDraggingDisabled = false;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
-    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient){
+    private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
+     private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
     this.dashboard = [];
     const currentUrl = this.router.url; 
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -391,30 +394,15 @@ export class SheetsdashboardComponent {
       }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
-//     this.dashboard = savedItems.map((item: { chartOptions: {
-//       xaxis: any;
-//       series: any; chart: {
-//         type: ChartType; sheet: string; 
-// }; 
-// }; sheet_data: { x_values: any; y_values: any; }; }) => ({
-//       ...item,
-//       chartOptions: this.restoreChartOptions(item.chartOptions.chart.type as ChartType,item.chartOptions.xaxis.categories,item.chartOptions.series[0].data,)
-//     }));
-    // this.dashboard = [
-    //   {cols: 2, rows: 1, y: 0, x: 0, data: { title: 'Card 1', content: 'Content of card 1' },
-    //   chartOptions: {
-    //     ...this.getChartOptions('pie'),
-    //     chart: { type: 'pie', height: 300 } // Example of another chart type
-    //   }
-    // },
-    //   {cols: 2, rows: 2, y: 0, x: 2,data: { title: 'Card 2', content: 'Content of card 2' },
-    //   chartOptions: {
-    //     ...this.getChartOptions('line'),
-    //     chart: { type: 'line', height: 300 } // Example of another chart type
-    //   }
-    // },
-    // ];
- 
+
+    this.sharedService.downloadRequested$.subscribe(() => {
+      this.downloadImageInPublic();
+    });
+
+    // Subscribe to refresh requests
+    this.sharedService.refreshRequested$.subscribe(() => {
+      this.getSavedDashboardDataPublic();
+    });
 
   }
   changeGridType(gridType : string){
@@ -2486,7 +2474,12 @@ closeMainDropdown(dropdown: NgbDropdown,colData :any,id: any){
   localStorage.setItem(id, JSON.stringify(colData));
   dropdown.close();
 }
-clearSelectedData(dropdown: NgbDropdown,colData :any,id: any){
+clearSelectedData(dropdown: NgbDropdown,colData :any,id: any, filterData: any){
+  filterData.isExclude = false;
+  let index = this.excludeFilterIdArray.indexOf(id);
+  if (index > -1) {
+    this.excludeFilterIdArray.splice(index, 1);
+  }
   colData.forEach((col: any) => {
     col.selected = false;
   });
@@ -2679,6 +2672,7 @@ getFilteredData(){
   this.extractKeysAndData();
   const Obj ={
     id:this.keysArray,
+    exclude_ids:this.excludeFilterIdArray,
     input_list:this.dataArray
   }
   if(this.keysArray && this.keysArray.length > 0){
@@ -2735,6 +2729,7 @@ getFilteredData(){
 clearAllFilters(): void {
   if (this.DahboardListFilters && Array.isArray(this.DahboardListFilters)) {
       this.DahboardListFilters.forEach(filterList => {
+        filterList.isExclude = false;
           if (filterList && Array.isArray(filterList.colData)) {
               filterList.colData.forEach((col: { selected: boolean }) => {
                   col.selected = false;
@@ -2744,6 +2739,7 @@ clearAllFilters(): void {
             this.storeSelectedColData["test"][filterList.dashboard_filter_id] = [];
           }
       });
+      this.excludeFilterIdArray = [];
       localStorage.removeItem('storeSelectedColData'); 
       console.log('All filters cleared');
       if(this.isPublicUrl){
@@ -3603,19 +3599,26 @@ kpiData?: KpiData;
     this.pageNo=page;
     this.fetchSheetsList();
     }
-
+  fetchSheetsListSearch() {
+    this.pageNo = 1;
+    this.fetchSheetsList();
+  }
   fetchSheetsList(){
     let obj;
     if( this.searchSheets && this.searchSheets.trim() != '' && this.searchSheets.length > 0){
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
-        search : this.searchSheets
+        search : this.searchSheets,
+        page_count:this.itemsPerPage
       }
     } else {
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
+        search : this.searchSheets,
+        page_count:this.itemsPerPage
+
       }
     }
 
@@ -3796,6 +3799,7 @@ kpiData?: KpiData;
     this.extractKeysAndData();
     const Obj ={
       id:this.keysArray,
+      exclude_ids:this.excludeFilterIdArray,
       input_list:this.dataArray
     }
     if(this.keysArray && this.keysArray.length > 0){
@@ -4118,6 +4122,17 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
   return prefix + formattedNumber + suffix;
 }
+
+  excludeFilterIdList(filterData: any, event : any) {
+    if (filterData && event?.target?.checked) {
+      this.excludeFilterIdArray.push(filterData.dashboard_filter_id);
+    } else {
+      let index = this.excludeFilterIdArray.indexOf(filterData.dashboard_filter_id);
+      if (index > -1) {
+        this.excludeFilterIdArray.splice(index, 1);
+      }
+    }
+  }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

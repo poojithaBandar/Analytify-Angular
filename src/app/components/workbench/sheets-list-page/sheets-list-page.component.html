@@ -1,4 +1,4 @@
-<app-page-header title="Sheets List" title1="home" activeitem="Sheets"></app-page-header>
+<app-page-header title="Sheets List" title1="Home" activeitem="Sheets"></app-page-header>
 
 
 <div class="main-container container-fluid">
@@ -87,9 +87,9 @@
                                             <img *ngIf="sheets.chart_id === 29" src="./assets/images/charts/world-map.png" alt="" class="w-7 h-7 border rounded-3  me-4">
                               </div>
                               <div class="content">
-                                <span>Sheet Name : </span>
+                                <span>Sheet Name: </span>
                                 <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
-                                <p class="mb-0">Created by : {{sheets.created_by}}</p>
+                                <p class="mb-0">Created by: {{sheets.created_by}}</p>
                               </div>
                           </div>                                  
                             </td>
@@ -245,7 +245,7 @@
                     <div  class="col-md-12">
                       <div class="row">
                             <div class="col-md-6">
-                                <span class="fw-semibold fs-14">Created by : </span>
+                                <span class="fw-semibold fs-14">Created by: </span>
                             </div>
                             <div class="col-md-6">
                                 <span class="fs-14">{{sheets.created_by}}</span>
@@ -261,7 +261,7 @@
                         </div> -->
                         <div class="row">
                           <div class="col-md-6">
-                              <span class="fw-semibold fs-14">Last Modified : </span>
+                              <span class="fw-semibold fs-14">Last Modified: </span>
                           </div>
                           <div class="col-md-6">
                               <span class="fs-14">{{sheets.Modified}}</span>
@@ -269,7 +269,7 @@
                       </div>
                       <div class="row">
                         <div class="col-md-6">
-                            <span class="fw-semibold fs-14">DataBase Name : </span>
+                            <span class="fw-semibold fs-14">DataBase Name: </span>
                         </div>
                         <div class="col-md-6">
                             <span class="fs-14" [ngbTooltip]="sheets.database_name.length > 13 ? sheets.database_name : null">  {{ sheets.database_name.length > 13 ? (sheets.database_name | slice: 0: 13) + '...' : sheets.database_name }}</span>
@@ -277,7 +277,7 @@
                     </div>
                     <div class="row">
                       <div class="col-md-6">
-                          <span class="fw-semibold fs-14">Queryset Name : </span>
+                          <span class="fw-semibold fs-14">Queryset Name: </span>
                       </div>
                       <div class="col-md-6">
                           <span class="fs-14" [ngbTooltip]="sheets.queryset_name.length > 13 ? sheets.queryset_name : null" >{{sheets.queryset_name.length > 13 ? (sheets.queryset_name | slice: 0: 13)+ '...' : sheets.queryset_name}}</span>
