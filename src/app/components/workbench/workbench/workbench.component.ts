@@ -790,6 +790,7 @@ export class WorkbenchComponent implements OnInit{
     if(this.viewDatasourceList){
    this.getDbConnectionList();
     }
+    this.errorCheck();
   }
 
   pageChangegetconnectionList(page:any){
@@ -875,6 +876,7 @@ export class WorkbenchComponent implements OnInit{
   displayNameError:boolean = false;
   passwordError:boolean = false;
   pathError:boolean = false;
+  disableConnectBtn = false;
   serverConditionError(){
     if(this.postGreServerName){
       this.serverError = false;
@@ -935,9 +937,11 @@ export class WorkbenchComponent implements OnInit{
   }
   errorCheck(){
     if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
-      return true;
+      this.disableConnectBtn = true;
+    } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
+      this.disableConnectBtn = true;
     } else{
-      return false;
+      this.disableConnectBtn = false;
     }
   }
 }

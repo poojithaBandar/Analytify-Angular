@@ -3190,8 +3190,11 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
-        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
+        item1.chartOptions = {
+          ...item1.chartOptions,
+        };
       }
 
           // this.initializeChart(item1);

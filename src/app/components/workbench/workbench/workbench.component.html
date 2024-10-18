@@ -449,7 +449,7 @@
                           </div>
                           <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="errorCheck()">Connect</button>
+                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">Connect</button>
                           </div>
                       </form>
                   </div>
@@ -524,7 +524,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="errorCheck()">Connect</button>
+                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
                             </div>
                         </form>
                     </div>
@@ -592,7 +592,7 @@
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="errorCheck()">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">Connect</button>
                               </div>
                           </form>
                       </div>
@@ -666,7 +666,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="errorCheck()">Connect</button>
+                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
                                 </div>
                             </form>
                         </div>
@@ -740,7 +740,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="errorCheck()">Connect</button>
+                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">Connect</button>
                                   </div>
                               </form>
                           </div>

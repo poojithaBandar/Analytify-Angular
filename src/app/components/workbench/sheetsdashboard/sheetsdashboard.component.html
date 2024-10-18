@@ -1198,7 +1198,7 @@
                     <apx-chart
                     [series]="item.chartOptions.series!"
                     [chart]="item.chartOptions.chart!"
-                    [xaxis]="item.chartOptions.xaxis!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [legend]="item.chartOptions.legend!"
                     [grid]="item.chartOptions.grid!"

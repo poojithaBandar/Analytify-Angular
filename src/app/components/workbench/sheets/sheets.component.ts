@@ -3244,6 +3244,9 @@ bar["stack"]="Total";
                 } else if(this.map){
                   this.mapChart();
                 }
+                else if(this.calendar){
+                  this.calendarChart();
+                }
                 // this.updateChart();
               }
               else{
@@ -4065,6 +4068,7 @@ bar["stack"]="Total";
       this.map = false;
       this.heatMap = false;
       this.funnel = false;
+      this.calendar = false;
       this.banding = false;
       this.barOptions = undefined;
       this.lineOptions = undefined;
@@ -4341,6 +4345,9 @@ sheetSave(){
   }
   if(this.map && this.chartId == 29){
     savedChartOptions = this.eMapChartOptions;
+  }
+  if(this.calendar && this.chartId == 11){
+    savedChartOptions = this.eCalendarChartOptions;
   }
   let customizeObject = {
     isZoom : this.isZoom,
@@ -4682,6 +4689,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false
           this.funnel = false;
           this.guage = false;
+          this.calendar = false;
           this.tableDisplayPagination();
         }
         if(responce.chart_id == 25){
@@ -4715,6 +4723,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
         }
         if(responce.chart_id == 29){
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -4763,6 +4772,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = true;
+          this.calendar = false;
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -4824,6 +4834,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 24){
         // this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -4876,6 +4887,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 13){
         // this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -4934,6 +4946,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 17){
         // this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -4977,6 +4990,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 7){
         // this.dualAxisRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -5017,6 +5031,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 5){
         // this.dualAxisRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -5057,6 +5072,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 4){
         // this.dualAxisRowData = this.sheetResponce.results.barLineYaxis;
@@ -5101,6 +5117,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 12){
         this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
@@ -5123,6 +5140,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
           if(this.isApexCharts){
           
           } else {
@@ -5168,6 +5186,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 3){
         // this.dualAxisRowData = this.sheetResponce.results.hgroupedYaxis;
@@ -5208,6 +5227,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 8){
         // this.dualAxisRowData = this.sheetResponce.results.multiLineYaxis;
@@ -5248,6 +5268,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 10){
         // this.chartsRowData = this.sheetResponce.results.donutYaxis
@@ -5307,6 +5328,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 26){
         if(this.isApexCharts){
@@ -5336,6 +5358,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 27){
          if(this.isEChatrts){
@@ -5369,6 +5392,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = true;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 28){
         this.guageChartOptions = this.sheetResponce.savedChartOptions;
@@ -5392,7 +5416,29 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = true;
           this.map = false;
-        
+          this.calendar = false;
+       }
+       if(responce.chart_id == 11){
+        this.eCalendarChartOptions = this.sheetResponce.savedChartOptions;
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
+          this.calendar = true;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
