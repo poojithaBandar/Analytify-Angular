@@ -691,17 +691,17 @@
                     <div class="card mb-0" style="height: 100%;overflow: scroll;">
                       <div class="card-header d-flex justify-content-between p-1">
                         <h6>{{ item.data?.title }}</h6>       
-                        <div class="dashboard-option">
+                        <div *ngIf="!isPublicUrl" class="dashboard-option">
                           <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                               aria-haspopup="true" aria-expanded="false" class=""><i
                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Goto Sheet'"
+                              <app-insights-button [classesList]="'dropdown-item'" [buttonName]="'Goto Sheet'"
                                 [previledgeIdsList]="[20,18]" [isBtn]="false" (btnClickEvent)="viewSheet(item)"
                                 [isIcon]="false"></app-insights-button>
-                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'" [previledgeId]="37"
+                              <app-insights-button  [classesList]="'dropdown-item'" [buttonName]="'Remove'" [previledgeId]="37"
                                 [isBtn]="false" (btnClickEvent)="removeItem($event, item, true)" [isIcon]="false"></app-insights-button>
                             </div>
                           </div>
@@ -860,14 +860,14 @@
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>
-                    <div class="dashboard-option">
+                    <div *ngIf="!isPublicUrl" class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                 aria-haspopup="true" aria-expanded="false" class=""><i
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
+                              <app-insights-button [classesList]="'dropdown-item'"
                                                               [buttonName]="'Goto Sheet'"
                                                               [previledgeIdsList]="[20,18]" [isBtn]="false"
                                                               (btnClickEvent)="viewSheet(item)" 

@@ -1520,7 +1520,7 @@ markDirty(){
           // Convert to string and encode
           const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
           if (this.titleMarkDirty) {
-            let payload = { database_id: this.databaseId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
+            let payload = { file_id: this.fileId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
                 this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])

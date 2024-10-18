@@ -170,7 +170,8 @@ export class SheetsComponent {
   eDonutChartOptions: any;
   eBarLineChartOptions: any;
   eRadarChartOptions: any;
-  eCalendarChartOptions:any
+  eCalendarChartOptions:any;
+  eHeatMapChartOptions:any;
   dimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
@@ -272,7 +273,6 @@ export class SheetsComponent {
   map: boolean = false;
 
   guageNumber:any;
-  eHeatMapChartOptions: any;
   eFunnelChartOptions: any;
   valueToDivide:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
@@ -2668,9 +2668,7 @@ bar["stack"]="Total";
       heatMapChart() {
         const dimensions: Dimension[] = this.dualAxisColumnData;
         const categories = this.flattenDimensions(dimensions);
-        if(this.isEChatrts){
-          this.eHeatMapChartOptions = {};
-        } else {
+        if(this.isApexCharts){
         this.heatMapChartOptions = {
           series: this.dualAxisRowData,
           chart: {
@@ -2738,8 +2736,88 @@ bar["stack"]="Total";
             }
           }
         };
+      }else{
+        this.eHeatMapChartOptions = {
+          tooltip: {
+              position: 'top'
+          },
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+          },
+          xAxis: {
+              type: 'category',
+              data: categories,
+              axisLabel: {
+                  show: this.xLabelSwitch,
+                  interval: 0,
+                  rotate: 45,
+                  textStyle: {
+                      color: '#333',
+                      fontSize: 12,
+                      fontFamily: 'Helvetica, Arial, sans-serif',
+                      fontWeight: 'normal'
+                  }
+              }
+          },
+          yAxis: {
+              type: 'category',
+              data: this.dualAxisRowData.map((row: { name: any; }) => row.name), // Adjust as necessary
+              axisLabel: {
+                  show: this.yLabelSwitch,
+                  textStyle: {
+                      color:'#333',
+                      fontSize : 12,
+                      fontFamily : 'Helvetica, Arial, sans-serif',
+                      fontWeight : 'normal'
+                  }
+              }
+          },
+          visualMap: {
+              min : 0,
+              max : 100,
+              calculable : true,
+              orient : 'horizontal',
+              left : 'center',
+              // bottom : '15%',
+              top: '5%',
+              inRange : {
+                  color : ['#ffffff', '#ff0000'] // Adjust colors as needed
+              }
+          },
+          series : [{
+            name : this.dualAxisRowData,
+            type : 'heatmap',
+            data : this.prepareHeatmapData(this.dualAxisRowData), // Prepare your data accordingly
+            label : {
+                show : true,
+                formatter : (params: { value: number[]; }) => this.formatNumber(params.value[2]) // Assuming value[2] holds the number to format
+            },
+            emphasis : {
+                itemStyle : {
+                    shadowBlur : 10,
+                    shadowColor : '#333'
+                }
+            }
+        }]
+      };
       }
+      
       }
+      prepareHeatmapData(rowData: any[]) {
+        const heatmapData: any[][] = [];
+        rowData.forEach((row, rowIndex) => {
+            row.data.forEach((value: null | undefined, colIndex: any) => { // Assuming each row has a `data` array
+                if (value !== null && value !== undefined) { // Ensure value is valid
+                    heatmapData.push([colIndex, rowIndex, value]); // [xIndex, yIndex, value]
+                }
+            });
+        });
+        return heatmapData;
+      }
+
 
   funnelChart() {
     const dimensions: Dimension[] = this.dualAxisColumnData;
@@ -3173,7 +3251,7 @@ bar["stack"]="Total";
               }
             }
            
-            if ((this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!this.kpi &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -3217,6 +3295,9 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map = false;
               this.sidebysideBar();
+            }
+            if(this.table){
+              this.tableDisplayPagination();
             }
           },
           error: (error) => {
@@ -3304,9 +3385,9 @@ bar["stack"]="Total";
         
         this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
-        if(this.table){
-          this.tableDisplayPagination();
-        }
+        // if(this.table){
+        //   this.tableDisplayPagination();
+        // }
         console.log(this.tablePreviewColumn);
         console.log(this.tablePreviewRow);
         if (this.tablePreviewColumn && this.tablePreviewRow) {
@@ -4239,7 +4320,11 @@ sheetSave(){
     kpiFontSize = this.kpiFontSize;
   }
   if(this.heatMap && this.chartId == 26){
+    if(this.isApexCharts){
     savedChartOptions = this.heatMapChartOptions;
+    }else{
+      savedChartOptions = this.eHeatMapChartOptions;
+    }
   }
   if(this.funnel && this.chartId == 27){
     if(this.isApexCharts) {
@@ -4597,6 +4682,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false
           this.funnel = false;
           this.guage = false;
+          this.tableDisplayPagination();
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce.results.kpiData;
@@ -5223,10 +5309,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false;
        }
        if(responce.chart_id == 26){
-        this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
-        if(this.heatMapChartOptions?.dataLabels){
-          this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        if(this.isApexCharts){
+          this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
+          if(this.heatMapChartOptions?.dataLabels){
+            this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+        } else {
+          this.eHeatMapChartOptions = this.sheetResponce.savedChartOptions;
         }
+
         this.bar = false;
         this.table = false;
           this.pie = false;
