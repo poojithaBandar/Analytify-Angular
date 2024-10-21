@@ -43,6 +43,14 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
+//salesforce
+{
+  path: 'database-connection/tables/salesforce/:id',
+  canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
+  loadComponent: () =>
+    import('./database/database.component').then((m)=> m.DatabaseComponent)
+},
 {
   path: 'database-connection/files/tables/:id',
   canActivate:[authGuard],

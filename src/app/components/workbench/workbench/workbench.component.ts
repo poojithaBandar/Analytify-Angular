@@ -596,13 +596,12 @@ export class WorkbenchComponent implements OnInit{
       // quickbooks Connection
       connectQuickBooks(){
         Swal.fire({
-          title: 'Are you sure?',
-          text: 'This will redirect to QuickBooks SignIn page',
-          icon: 'warning',
+          title: 'This will redirect to QuickBooks SignIn page',
+          // text: 'This will redirect to QuickBooks SignIn page',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, Connect it!'
+          confirmButtonText: 'Ok'
         }).then((result)=>{
           if(result.isConfirmed){
             this.workbechService.connectQuickBooks()
@@ -612,6 +611,7 @@ export class WorkbenchComponent implements OnInit{
                   console.log(data);
                   // this.routeUrl = data.redirection_url
                   this.document.location.href = data.redirection_url;
+                  this.loaderService.show();
                 },
                 error: (error) => {
                   console.log(error);
@@ -622,13 +622,13 @@ export class WorkbenchComponent implements OnInit{
       }
       connectSalesforce(){
         Swal.fire({
-        title: 'Are you sure?',
-        text: 'This will redirect to Salesforce SignIn page',
-        icon: 'warning',
+        title: 'This will redirect to Salesforce SignIn page',
+        // text: 'This will redirect to Salesforce SignIn page',
+        // icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Connect it!'
+        confirmButtonText: 'Ok'
       }).then((result)=>{
         if(result.isConfirmed){
           this.workbechService.connectSalesforce()

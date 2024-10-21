@@ -210,7 +210,11 @@ export class DatabaseComponent {
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
     }
-
+    if(currentUrl.includes('/insights/database-connection/tables/salesforce/')){
+      this.fromDatabasId=true;
+      this.fromQuickbooks= true;
+      this.databaseId = +atob(route.snapshot.params['id']);
+    }
   }
   ngOnInit(){
     // {

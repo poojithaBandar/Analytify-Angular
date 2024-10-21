@@ -3208,7 +3208,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                     }
                 });
             });          
-          item1.echartOptions.series = heatmapData;
+          item1.echartOptions.series.data = heatmapData;
           item1.echartOptions = {
             ...item1.echartOptions,     
           };
