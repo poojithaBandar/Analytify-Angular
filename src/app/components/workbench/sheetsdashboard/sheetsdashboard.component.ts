@@ -1132,6 +1132,14 @@ selected_sheet_ids :this.sheetIdsDataSet,
           }
           delete item1['originalData'];
         }
+        if(item1.chartId == '26' && item1['originalData']){//heatmap
+        if(item1.isEChart){
+          item1.echartOptions = item1['originalData'].chartOptions;
+        } else {
+          item1.chartOptions = item1['originalData'].chartOptions;
+        }
+        delete item1['originalData'];
+        }
     });
    return  dashboardData;
   }
@@ -3187,15 +3195,31 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       if(item.chart_id == '26'){//heatmap
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData){
+        if(item1.isEChart){
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+            const heatmapData: any[][] = [];
+            this.filteredRowData.forEach((row: { data: (null | undefined)[]; }, rowIndex: any) => {
+                row.data.forEach((value: null | undefined, colIndex: any) => { // Assuming each row has a `data` array
+                    if (value !== null && value !== undefined) { // Ensure value is valid
+                        heatmapData.push([colIndex, rowIndex, value]); // [xIndex, yIndex, value]
+                    }
+                });
+            });          
+          item1.echartOptions.series = heatmapData;
+          item1.echartOptions = {
+            ...item1.echartOptions,     
+          };
+         }
+        else{ if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
-        item1.chartOptions.xaxis.categories = categories;
+        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
-        item1.chartOptions = {
-          ...item1.chartOptions,
-        };
       }
+    }
 
           // this.initializeChart(item1);
           this.filteredColumnData =[]
