@@ -281,9 +281,9 @@
                                               <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"  class="form-select form-select select2 " >
                                                 <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
                                                 @for(querySet of querySetNames;track querySet.queryset_id){
-                                                  <option value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
+                                                  <option [ngbTooltip]="querySet.queryset_name"
+                                                  [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
                                                 }
-                                    
                                             </select>
                                             </div>
                                     

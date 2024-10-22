@@ -271,6 +271,12 @@
                       <td *ngIf="database.server_type === 'CSV'">
                         <img alt="product" src="./assets/images/icons/csv-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'QUICKBOOKS'">
+                        <img alt="product" src="./assets/images/icons/quickbooks-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'SALESFORCE'">
+                        <img alt="product" src="./assets/images/icons/salesforce-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
 
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
@@ -322,6 +328,10 @@
                                       <img src="./assets/images/icons/excel-icon.jpg" alt="" class="rounded-circle"></span>
                                       <span *ngIf="database.server_type === 'CSV'" class="avatar avatar rounded-circle">
                                         <img src="./assets/images/icons/csv-icon.jpg" alt="" class="rounded-circle"></span>
+                                        <span *ngIf="database.server_type === 'SALESFORCE'" class="avatar avatar rounded-circle">
+                                          <img src="./assets/images/icons/salesforce-icon.jpg" alt="" class="rounded-circle"></span>
+                                          <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
+                                            <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
@@ -485,7 +495,6 @@
          </div>
       </div>
   </div>
-  
     }
     @if(openMySqlForm){
       <div class="main-container container-fluid" style="padding-left: 15px; padding-right: 15px;" >
