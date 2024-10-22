@@ -883,8 +883,8 @@
                       </div>
                 </div>
                 @if(item['isEChart']){
-                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
-                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" class="echart-charts"></div>
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'scroll'} : {}">
+                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
                     </div>
                 
               } @else{

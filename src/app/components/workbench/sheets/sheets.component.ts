@@ -5420,6 +5420,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 11){
         this.eCalendarChartOptions = this.sheetResponce.savedChartOptions;
+        this.eCalendarChartOptions.tooltip.formatter =  function (params: any) {
+          const date = params.data[0];
+          const value = params.data[1];
+          return `Date: ${date}<br/>Value: ${value}`;
+      }
         this.bar = false;
         this.table = false;
           this.pie = false;
