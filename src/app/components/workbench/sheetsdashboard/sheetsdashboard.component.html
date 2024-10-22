@@ -414,7 +414,7 @@
 
                                             <div class="form-check">
                                               <input type="checkbox" [id]="'defaultCheck' + i"  name="rows1{{i}}"[(ngModel)]="rows1.selected" (change)="updateSelectedRowsEdit()" class="form-check-input"> 
-                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <p>{{rows1.sheet_name}}</p> </label>
+                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows1.sheet_name}}</p> </label>
                                             </div>
                                           }
                                           </div>
@@ -547,7 +547,7 @@
                                                                 </div> -->
                                                               </div>
                                                             <!-- } -->
-                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData"  class="p-2"> 
+                                                              <div  style="margin-right: 5px; margin-left: 5px;"  *ngIf="DahboardListFilters .length > 0; else noData"> 
                                                                 <button class="btn ripple btn-danger"
                                                                   (click)="clearAllFilters()">Clear filters</button>
                                                               
