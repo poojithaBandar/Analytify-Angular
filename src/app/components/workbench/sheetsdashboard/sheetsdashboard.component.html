@@ -268,7 +268,7 @@
                                         <div class=" mt-2 mb-2">
                                           <ul class="d filter-popover" aria-labelledby="applyfilters" >
                                             <div class="setting-text border-bottom text-center">
-                                              <h6>Add Filters</h6>
+                                              <p>Add Filters</p>
                                             </div>
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Filter Name <span  class="text-red">*</span>
@@ -512,20 +512,20 @@
                                                                     <div class="form-check">
 
                                                                       <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllColumns($event,filterList)" class="form-check-input">
-                                                                      <label for="selectAll" class="form-check-label">Select All</label>
+                                                                      <label for="selectAll" class="form-check-label"><p> Select All</p></label>
                                                                       </div>
                                                                     <!-- @for(col of filterList.colData;track col;let i = $index){ -->
                                                                      
                                                                       <div *ngFor="let col of getFilteredColumns(filterList); let i = index" class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
-                                                                        <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
+                                                                        <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <p class="fs-14">{{col.label}}</p> </label>
                                                                       </div>
                                                                   <!-- } -->
                                                                 </div>
 
                                                                   <div class="fixed-buttons p-2">
                                                                       <input type="checkbox" id="exclude" (click)="excludeFilterIdList(filterList,$event);" [(ngModel)]="filterList.isExclude" class="form-check-input">
-                                                                      <label for="exclude" class="form-check-label">Exclude</label>
+                                                                      <label for="exclude" class="form-check-label"> <p>Exclude</p> </label>
                                                                     <button type="button" (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)"
                                                                       class="btn ripple btn-primary me-2">Save</button>
                                                                   </div>
