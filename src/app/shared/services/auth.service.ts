@@ -178,6 +178,11 @@ getTokenQuickbook(data:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/quickbooks_token/`+this.accessToken,data); 
 }
+getTokensalesforce(data:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/callback/`+this.accessToken,data); 
+}
 resendOtpApi(obj:any){
   return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
 }

@@ -294,11 +294,11 @@
   <!-- End::header-element -->
 
                             <!-- Start::header-element -->
-                            <div class="header-element header-search ">
-                                <!-- Start::header-link -->
+                            <!-- <div class="header-element header-search ">
+                                Start::header-link
                                 <a href="javascript:void(0);" class="header-link d-lg-none d-block"
                                     data-bs-toggle="modal" data-bs-target="#searchModal" (click)="SearchModal(searchModal)">
-                                    <!-- <i class="bi bi-search-alt-2   ps-0"></i> -->
+                                    <i class="bi bi-search-alt-2   ps-0"></i>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="header-link-icon"
                                         viewBox="0 0 24 24" width="24px">
                                         <path d="M0 0h24v24H0V0z" fill="none" />
@@ -306,8 +306,8 @@
                                             d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                                     </svg>
                                 </a>
-                                <!-- End::header-link -->
-                            </div>
+                                End::header-link
+                            </div> -->
                             <!-- End::header-element -->
 
                             <!-- Start::header-element -->
@@ -821,7 +821,24 @@
                                 <!-- End::header-link -->
                             </div>
                             <!-- End::header-element -->
-
+                            <div *ngIf="isPublicUrl" class="header-element">
+                                <!-- Start::header-link -->
+                                <a  href="javascript:void(0);" class="header-link" (click)="refreshPublicDashboard()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" 
+                                    class="header-link-icon refresh-icon" viewBox="0 0 24 24" [ngClass]="{ 'd-none': isFullscreen }">
+                                 <path d="M0 0h24v24H0V0z" fill="none" />
+                                 <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
+                               </svg>
+                                </a>
+                                <a  href="javascript:void(0);" class="header-link" (click)="downloadPublicDashbaord()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" 
+                                    class="header-link-icon " viewBox="0 0 24 24">
+                                 <path d="M0 0h24v24H0V0z" fill="none" />
+                                 <path d="M5 20h14v-2H5v2zm7-18v10l-4-4H7l5 5 5-5h-2l-4 4V2z" />
+                               </svg>
+                                </a>
+                                <!-- End::header-link -->
+                            </div>
                             <!-- Start::header-element|main-profile-user -->
                             <div *ngIf="!isPublicUrl" class="header-element main-profile-user" ngbDropdown>
                                 <!-- Start::header-link|dropdown-toggle -->

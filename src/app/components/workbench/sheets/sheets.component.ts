@@ -170,7 +170,8 @@ export class SheetsComponent {
   eDonutChartOptions: any;
   eBarLineChartOptions: any;
   eRadarChartOptions: any;
-  eCalendarChartOptions:any
+  eCalendarChartOptions:any;
+  eHeatMapChartOptions:any;
   dimetionMeasure = [] as any;
   filterValues:any;
   filterId = [] as any;
@@ -272,6 +273,8 @@ export class SheetsComponent {
   map: boolean = false;
 
   guageNumber:any;
+  eFunnelChartOptions: any;
+  valueToDivide:any;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/insights/sheets/dbId')){
@@ -2661,9 +2664,11 @@ bar["stack"]="Total";
         }
       }
     
+     
       heatMapChart() {
         const dimensions: Dimension[] = this.dualAxisColumnData;
         const categories = this.flattenDimensions(dimensions);
+        if(this.isApexCharts){
         this.heatMapChartOptions = {
           series: this.dualAxisRowData,
           chart: {
@@ -2731,62 +2736,209 @@ bar["stack"]="Total";
             }
           }
         };
+      }else{
+        this.eHeatMapChartOptions = {
+          tooltip: {
+              position: 'top'
+          },
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+          },
+          xAxis: {
+              type: 'category',
+              data: categories,
+              axisLabel: {
+                  show: this.xLabelSwitch,
+                  interval: 0,
+                  rotate: 45,
+                  textStyle: {
+                      color: '#333',
+                      fontSize: 12,
+                      fontFamily: 'Helvetica, Arial, sans-serif',
+                      fontWeight: 'normal'
+                  }
+              }
+          },
+          yAxis: {
+              type: 'category',
+              data: this.dualAxisRowData.map((row: { name: any; }) => row.name), // Adjust as necessary
+              axisLabel: {
+                  show: this.yLabelSwitch,
+                  textStyle: {
+                      color:'#333',
+                      fontSize : 12,
+                      fontFamily : 'Helvetica, Arial, sans-serif',
+                      fontWeight : 'normal'
+                  }
+              }
+          },
+          visualMap: {
+              min : 0,
+              max : 100,
+              calculable : true,
+              orient : 'horizontal',
+              left : 'center',
+              // bottom : '15%',
+              top: '5%',
+              inRange : {
+                  color : ['#ffffff', '#ff0000'] // Adjust colors as needed
+              }
+          },
+          series : [{
+            name : this.dualAxisRowData,
+            type : 'heatmap',
+            data : this.prepareHeatmapData(this.dualAxisRowData), // Prepare your data accordingly
+            label : {
+                show : true,
+                formatter : (params: { value: number[]; }) => this.formatNumber(params.value[2]) // Assuming value[2] holds the number to format
+            },
+            emphasis : {
+                itemStyle : {
+                    shadowBlur : 10,
+                    shadowColor : '#333'
+                }
+            }
+        }]
+      };
+      }
+      
+      }
+      prepareHeatmapData(rowData: any[]) {
+        const heatmapData: any[][] = [];
+        rowData.forEach((row, rowIndex) => {
+            row.data.forEach((value: null | undefined, colIndex: any) => { // Assuming each row has a `data` array
+                if (value !== null && value !== undefined) { // Ensure value is valid
+                    heatmapData.push([colIndex, rowIndex, value]); // [xIndex, yIndex, value]
+                }
+            });
+        });
+        return heatmapData;
       }
 
-      funnelChart(){
-        const dimensions: Dimension[] = this.dualAxisColumnData;
-        const categories = this.flattenDimensions(dimensions);
-        this.funnelChartOptions = {
-          series: this.dualAxisRowData,
-          chart: {
-            type: "bar",
-            height: 350
+
+  funnelChart() {
+    const dimensions: Dimension[] = this.dualAxisColumnData;
+    const categories = this.flattenDimensions(dimensions);
+    if (this.isEChatrts) {
+      const combinedArray: any[] = [];
+      this.dualAxisColumnData.forEach((item: any) => {
+        this.dualAxisRowData.forEach((categoryObj: any) => {
+          item.values.forEach((value: any, index: number) => {
+            combinedArray.push({
+              name: value,
+              value: categoryObj.data[index]
+            });
+          });
+        });
+      });
+      this.eFunnelChartOptions = {
+        color:[this.color],
+        tooltip: {
+          trigger: 'item',
+        },
+        series: [
+          {
+            name: '',
+            type: 'funnel',
+            data: combinedArray,
+            label: {
+              show: true,
+              formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
+            },
           },
-          plotOptions: {
-            bar: {
-              borderRadius: 0,
-              horizontal: true,
-              barHeight: "80%",
-              isFunnel: true,
-              dataLabels: {
-                position: "center",
-              }
+        ],
+      };
+    } else {
+      this.funnelChartOptions = {
+        series: this.dualAxisRowData,
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 0,
+            horizontal: true,
+            barHeight: "80%",
+            isFunnel: true,
+            dataLabels: {
+              position: "center",
             }
-          },
-          dataLabels: {
-            enabled: true,
-            formatter: this.formatNumber.bind(this),
-            dropShadow: {
-              enabled: true,
-            },
-            style: {
-              fontSize: "8px",
-              fontFamily: "Helvetica, Arial, sans-serif",
-            },
-          },
-          title: {
-          },
-          xaxis: {
-            categories: categories
-          },
-          legend: {
-            show: false
           }
-        };
-      }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: this.formatNumber.bind(this),
+          dropShadow: {
+            enabled: true,
+          },
+          style: {
+            fontSize: "8px",
+            fontFamily: "Helvetica, Arial, sans-serif",
+          },
+        },
+        title: {
+        },
+        xaxis: {
+          categories: categories
+        },
+        legend: {
+          show: false
+        }
+      };
+    }
+  }
       guageChart() {
+        // Clone the gauge number from the API response
         this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
+    
+        // Define thresholds and corresponding max values
+        const thresholds = [
+          { limit: 1000, max: 1000 },       // Up to 1,000
+          { limit: 10000, max: 10000 },     // Up to 10,000
+          { limit: 100000, max: 100000 },    // Up to 1 lakh
+          { limit: 500000, max: 500000 },    // Up to 5 lakhs
+          { limit: 1000000, max: 1000000 },   // Up to 10 lakhs
+            { limit: Infinity, max: Math.ceil(this.guageNumber / 1000000) * 1000000 } // Above 10 lakhs
+        ];
+    
+        // Determine maxValueGuage based on guageNumber
+        const determineMaxValue = (value: number) => {
+            for (const threshold of thresholds) {
+                if (value <= threshold.limit) {
+                    return threshold.max;
+                }
+            }
+        };
+    
+        // Set maxValueGuage based on guageNumber
+        this.maxValueGuage = determineMaxValue(this.guageNumber)!;
+    
+        // Calculate the value to divide
+        this.valueToDivide = this.maxValueGuage - this.minValueGuage;
+        this.guageChart1()
+      }
+    customMinMaxGuage(){
+       this.valueToDivide = this.maxValueGuage-this.minValueGuage;
+       this.guageChart1();
+    }
+  
+      guageChart1() {
+        // this.guageNumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data?.[0] ?? 0);
         // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
-         const valueToDivide = this.maxValueGuage-this.minValueGuage
+        //  const valueToDivide = this.maxValueGuage-this.minValueGuage
         // Initialize the chart options
         this.guageChartOptions = {
-          series: [ Math.round((this.guageNumber / valueToDivide)*100)], // Correct percentage calculation
+          series: [ ((this.guageNumber / this.valueToDivide)*100)], // Correct percentage calculation
           chart: {
             height: 350,
             type: 'radialBar',
             toolbar: {
               show: true
-            }
+            },
           },
           plotOptions: {
             radialBar: {
@@ -2806,16 +2958,27 @@ bar["stack"]="Total";
                   fontSize: '16px'
                 },
                 value: {
-                  formatter: (val: number) => `${val}%`, // Displaying percentage
+                  formatter: (val:any) => `${val.toFixed(2)}%`, // Displaying percentage
                   color: '#333',
                   fontSize: '36px',
                   show: true,
-                }
+                },
               },
               min: this.minValueGuage,  // Use user's min value
               max: this.maxValueGuage
             }
           },
+          
+          tooltip: {
+            enabled: true,
+            shared: false, // Set to false for individual tooltips
+            custom: ({ series }: { series: number[] }) => {
+                return `<div style="padding: 10px;">
+                            <strong>Value:</strong> ${this.guageNumber}<br>
+                            <strong>Percentage:</strong> ${series[0].toFixed(2)}%
+                        </div>`;
+            }
+        },
           fill: {
             type: "gradient",
             gradient: {
@@ -2831,63 +2994,98 @@ bar["stack"]="Total";
           labels: [this.tablePreviewRow[0]?.col ?? 'Label'], // Fallback for label
         };
       }     
-      calendarChart(){
-        let calendarData:any[] = []
-        console.log(this.chartsColumnData);
-        console.log(this.chartsRowData);
-        this.chartsColumnData.forEach((data:any,index:any)=>{
-          let arr = [data,this.chartsRowData[index]]
-          calendarData.push(arr);
+      calendarChart() {
+        let calendarData: any[] = [];
+        let years: Set<any> = new Set();
+    
+        // Populate calendarData and collect years
+        this.chartsColumnData.forEach((data: any, index: any) => {
+            let arr = [data, this.chartsRowData[index]];
+            calendarData.push(arr);
+    
+            const year = new Date(data).getFullYear();
+            years.add(year);
         });
-        const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b));
-        const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b));
-        
-        const minDate = this.chartsColumnData.reduce((a: any, b: any) => (a < b ? a : b));
-        const maxDate = this.chartsColumnData.reduce((a: any, b: any) => (a > b ? a : b));
-
-        console.log(calendarData);
-        this.eCalendarChartOptions = {
-          tooltip: {
-            position: 'top',
-            formatter: function (params: any) {
-              const date = params.data[0];  // The date value
-              const value = params.data[1]; // The heatmap value
-              return `Date: ${date}<br/>Value: ${value}`; // Customize how you want the tooltip to display
-            }
-          },
-          visualMap: {
-            min: minValue,
-            max: maxValue,
-            calculable: true,
-            orient: 'horizontal',
-            left: 'center',
-            top: 'bottom'
-          },
-          calendar:  {
-            range: [minDate,maxDate], // You can specify the range (year, month, etc.)
-            cellSize: ['auto', 20],
+    
+        const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
+        const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
+    
+        // Convert years set to array and sort it in ascending order
+        let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+    
+        // Define the height for each calendar
+        const calendarHeight = 100;  // Adjust height for better visibility
+        const yearGap = 20;  // Reduced gap between years
+        const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+    
+        // Create multiple calendar instances, one for each year
+        let calendars = yearArray.map((year: any, idx: any) => ({
+            top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+            range: year.toString(),
+            cellSize: ['auto', 10],
             splitLine: {
-              show: true,
-              lineStyle: {
-                color: '#000',
-                width: 2,
-                type: 'solid'
-              }
+                show: true,
+                lineStyle: {
+                    color: '#000',
+                    width: 1
+                }
             },
-            itemStyle: {
-              borderWidth: 1,
-              borderColor: '#ccc'
+            yearLabel: {
+                margin: 20
             }
-          },
-          series: [
-            {
-              type: 'heatmap',
-              coordinateSystem: 'calendar',
-              data: calendarData
-            }
-          ]
-        }
-      } 
+        }));
+    
+        // Extract data for each year and assign to different series
+        let series = yearArray.map((year: any) => {
+            const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
+            return {
+                type: 'heatmap',
+                coordinateSystem: 'calendar',
+                calendarIndex: yearArray.indexOf(year),
+                data: yearData
+            };
+        });
+
+        let dataZoomConfig = [
+          {
+              type: 'slider',
+              yAxisIndex: 0,
+              start: 0,  // Starting position of the scroll
+              end: 100,  // The scroll window size (adjustable)
+              orient: 'vertical',  // Allow vertical scrolling
+              zoomLock: false,  // Disable zoom lock for flexibility
+          }
+      ];
+    
+        this.eCalendarChartOptions = {
+            tooltip: {
+                position: 'top',
+                formatter: function (params: any) {
+                    const date = params.data[0];
+                    const value = params.data[1];
+                    return `Date: ${date}<br/>Value: ${value}`;
+                }
+            },
+            visualMap: {
+                min: minValue,
+                max: maxValue,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                top: 'bottom'
+            },
+            calendar: calendars,
+            series: series,  // Assign filtered data series to the chart
+            grid: {
+                height: totalHeight,
+                containLabel: true
+            },
+            dataZoom: dataZoomConfig 
+        };
+    
+        console.log(this.eCalendarChartOptions);
+    }
+
       tableDimentions = [] as any;
       tableMeasures = [] as any;
       columnsData(){
@@ -3046,6 +3244,9 @@ bar["stack"]="Total";
                 } else if(this.map){
                   this.mapChart();
                 }
+                else if(this.calendar){
+                  this.calendarChart();
+                }
                 // this.updateChart();
               }
               else{
@@ -3053,7 +3254,7 @@ bar["stack"]="Total";
               }
             }
            
-            if ((this.kpi && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!this.kpi &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -3073,8 +3274,8 @@ bar["stack"]="Total";
               this.guage = false;
               this.funnel = false;
               this.calendar = false;
-              this.map = false;
-              this.tableDisplayPagination();
+              this.map=false;
+              // this.tableDisplayPagination();
             } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
               this.table = false;
               this.bar = false;
@@ -3097,6 +3298,9 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map = false;
               this.sidebysideBar();
+            }
+            if(this.table){
+              this.tableDisplayPagination();
             }
           },
           error: (error) => {
@@ -3184,9 +3388,9 @@ bar["stack"]="Total";
         
         this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
-        if(this.table){
-          this.tableDisplayPagination();
-        }
+        // if(this.table){
+        //   this.tableDisplayPagination();
+        // }
         console.log(this.tablePreviewColumn);
         console.log(this.tablePreviewRow);
         if (this.tablePreviewColumn && this.tablePreviewRow) {
@@ -3384,7 +3588,7 @@ bar["stack"]="Total";
       series: [{
         type: 'map',
         map: 'world',
-        roam: true,  
+        roam: this.isZoom,  
         data: result
       }]
     };
@@ -3864,6 +4068,7 @@ bar["stack"]="Total";
       this.map = false;
       this.heatMap = false;
       this.funnel = false;
+      this.calendar = false;
       this.banding = false;
       this.barOptions = undefined;
       this.lineOptions = undefined;
@@ -4119,10 +4324,18 @@ sheetSave(){
     kpiFontSize = this.kpiFontSize;
   }
   if(this.heatMap && this.chartId == 26){
+    if(this.isApexCharts){
     savedChartOptions = this.heatMapChartOptions;
+    }else{
+      savedChartOptions = this.eHeatMapChartOptions;
+    }
   }
   if(this.funnel && this.chartId == 27){
-    savedChartOptions = this.funnelChartOptions;
+    if(this.isApexCharts) {
+      savedChartOptions = this.funnelChartOptions;
+    } else {
+      savedChartOptions = this.eFunnelChartOptions;
+    }
   }
   if(this.guage && this.chartId == 28){
     savedChartOptions = this.guageChartOptions;
@@ -4132,6 +4345,9 @@ sheetSave(){
   }
   if(this.map && this.chartId == 29){
     savedChartOptions = this.eMapChartOptions;
+  }
+  if(this.calendar && this.chartId == 11){
+    savedChartOptions = this.eCalendarChartOptions;
   }
   let customizeObject = {
     isZoom : this.isZoom,
@@ -4473,6 +4689,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false
           this.funnel = false;
           this.guage = false;
+          this.calendar = false;
+          this.tableDisplayPagination();
         }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce.results.kpiData;
@@ -4505,6 +4723,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
         }
         if(responce.chart_id == 29){
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -4553,6 +4772,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = true;
+          this.calendar = false;
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -4614,6 +4834,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 24){
         // this.chartsRowData = this.sheetResponce.results.pieYaxis;
@@ -4666,6 +4887,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 13){
         // this.chartsRowData = this.sheetResponce.results.lineYaxis;
@@ -4724,6 +4946,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 17){
         // this.chartsRowData = this.sheetResponce.results.areaYaxis;
@@ -4767,6 +4990,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 7){
         // this.dualAxisRowData = this.sheetResponce.results.sidebysideBarYaxis;
@@ -4807,6 +5031,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 5){
         // this.dualAxisRowData = this.sheetResponce.results.stokedBarYaxis;
@@ -4847,6 +5072,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 4){
         // this.dualAxisRowData = this.sheetResponce.results.barLineYaxis;
@@ -4891,6 +5117,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 12){
         this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
@@ -4913,6 +5140,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
           if(this.isApexCharts){
           
           } else {
@@ -4958,6 +5186,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.map = false;
           this.guage = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 3){
         // this.dualAxisRowData = this.sheetResponce.results.hgroupedYaxis;
@@ -4998,6 +5227,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 8){
         // this.dualAxisRowData = this.sheetResponce.results.multiLineYaxis;
@@ -5038,6 +5268,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 10){
         // this.chartsRowData = this.sheetResponce.results.donutYaxis
@@ -5097,12 +5328,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 26){
-        this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
-        if(this.heatMapChartOptions?.dataLabels){
-          this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+        if(this.isApexCharts){
+          this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
+          if(this.heatMapChartOptions?.dataLabels){
+            this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          }
+        } else {
+          this.eHeatMapChartOptions = this.sheetResponce.savedChartOptions;
         }
+
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -5121,8 +5358,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 27){
+         if(this.isEChatrts){
+          this.eFunnelChartOptions = this.sheetResponce.savedChartOptions;
+         } else {
         this.funnelChartOptions = this.sheetResponce.savedChartOptions;
         if(this.funnelChartOptions?.dataLabels){
           this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
@@ -5132,6 +5373,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.funnelDLFontFamily = this.funnelChartOptions?.dataLabels?.style?.fontFamily;
         this.funnelDLFontSize = this.funnelChartOptions?.dataLabels?.style?.fontSize;
         this.funnelColor = this.funnelChartOptions?.series[0]?.color;
+      }
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -5150,6 +5392,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = true;
           this.guage = false;
           this.map = false;
+          this.calendar = false;
        }
        if(responce.chart_id == 28){
         this.guageChartOptions = this.sheetResponce.savedChartOptions;
@@ -5173,7 +5416,34 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = true;
           this.map = false;
-        
+          this.calendar = false;
+       }
+       if(responce.chart_id == 11){
+        this.eCalendarChartOptions = this.sheetResponce.savedChartOptions;
+        this.eCalendarChartOptions.tooltip.formatter =  function (params: any) {
+          const date = params.data[0];
+          const value = params.data[1];
+          return `Date: ${date}<br/>Value: ${value}`;
+      }
+        this.bar = false;
+        this.table = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.funnel = false;
+          this.guage = false;
+          this.map = false;
+          this.calendar = true;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
@@ -7191,30 +7461,7 @@ renameColumns(){
   }
   enableZoom(){
     this.isZoom = !this.isZoom;
-    if(this.bar){
-      this.barChart();
-    }
-    else if(this.area){
-      this.areaChart();
-    }
-    else if(this.line){
-      this.lineChart();
-    }
-    else if(this.barLine){
-      this.barLineChart();
-    } else if(this.stocked){
-      this.stockedBar();
-    }
-    else if(this.grouped){
-      this.hGrouped();
-    }
-    else if(this.sidebyside){
-      this.sidebysideBar();
-    } else if(this.horizentalStocked){
-      this.horizentalStockedBar();
-    } else if(this.multiLine){
-      this.multiLineChart();
-    }
+   this.reAssignChartData();
   }
 
   changeAlignment(){

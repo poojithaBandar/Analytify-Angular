@@ -23,6 +23,21 @@
     background-color: #f1f3fa7a;
     padding: 15px 10px;
 }
+.index-tab-btn{
+    padding: 10px; 
+    background-color: #ddf4f3; 
+    margin-bottom: 3px;
+}
+li.index-tab-btn:hover {
+    background-color: #caf6f4;
+}
+.index-tab-height{
+    height: 100vh;
+    overflow: scroll;
+}
+a {
+    cursor: pointer;
+}
 
 .navbar {
     padding: 15px 10px;

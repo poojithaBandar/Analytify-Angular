@@ -1,4 +1,4 @@
-<app-page-header title="Database Connections" title1="home" activeitem="Data Source"></app-page-header>
+<app-page-header title="Database Connections" title1="Home" activeitem="Data Source"></app-page-header>
 
 <div class="main-container container-fluid">
     <div class="row" class="card" style="padding-top: 15px;">
@@ -14,8 +14,8 @@
           <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
           <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="searchName" aria-describedby="button-addon2" (keyup.enter)="getSavedQueries()">
-            <button class="btn btn-primary border me-2" (click)="getSavedQueries()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="searchName" aria-describedby="button-addon2" (keyup.enter)="getSavedQueriesSearch()">
+            <button class="btn btn-primary border me-2" (click)="getSavedQueriesSearch()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
           </div>
         </div>
     </div>
@@ -32,6 +32,7 @@
                     <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
                         <tr>
                             <th>Query</th>
+                            <th>Database</th>
                             <th>Created at</th>
                             <th>Last Modified</th>
                             <th>Actions</th>
@@ -46,7 +47,7 @@
                             <td>
                                 <a  style="color: #05aff8;" ngbTooltip="{{data.queryset_name}}"> {{data.queryset_name | slice:0:15}}</a>
                                </td>
-                         
+                            <td>{{data.database_name}}</td>
                             <td>{{data.created}}</td>
                             <td>{{data.modified}}</td>
                             <td>
@@ -105,16 +106,24 @@
                       
                         <div  class="col-md-12">
                           <div class="row">
+                            <div class="col-md-6">
+                                <span  class="fw-semibold fs-14">Database:  </span>
+                            </div>
+                            <div class="col-md-6">
+                                <span ngbTooltip="data.database_name" class="fs-14">{{data.database_name | slice:0:15}}</span>
+                            </div>
+                        </div>
+                          <div class="row">
                                 <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created by  </span>
+                                    <span class="fw-semibold fs-14">Created by:  </span>
                                 </div>
                                 <div class="col-md-6">
-                                    <span class="fs-14">{{data.created_by}}</span>
+                                    <span class="fs-14" >{{data.created_by  | slice:0:15}}</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <span class="fw-semibold fs-14">Created on :</span>
+                                    <span class="fw-semibold fs-14">Created on:</span>
                                 </div>
                                 <div class="col-md-6">
                                     <span class="fs-14">{{data.created}}</span>
@@ -122,7 +131,7 @@
                             </div>
                             <div class="row">
                               <div class="col-md-6">
-                                  <span class="fw-semibold fs-14">Last Modified : </span>
+                                  <span class="fw-semibold fs-14">Last Modified: </span>
                               </div>
                               <div class="col-md-6">
                                   <span class="fs-14">{{data.modified}}</span>
@@ -138,7 +147,14 @@
         </div>
       }
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangeSavedQueries((page = $event))"></pagination-controls>
-
+            <div  style="float: right;font-size: 15px; margin-top: -41px;">
+              <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getSavedQueries()" class="form-control">
+                    <option  value="10"> 10</option>
+                    <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                    <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
+                 
+              </select>
+           </div>
         </div>
     </div>
     </div>

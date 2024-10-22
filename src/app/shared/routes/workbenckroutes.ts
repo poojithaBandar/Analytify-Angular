@@ -7,6 +7,10 @@ export const workbench: Routes = [
         path: '',
         loadChildren: () => import('../../components/workbench/workbench.routes').then(r => r.WorkbenchModule)
       },
+      {
+        path: '',
+        loadChildren: () => import('../../components/workbench/help-guides.routes').then(r => r.HelpGuideModule)
+      }
 
   
 ];

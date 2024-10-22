@@ -570,6 +570,19 @@ th, td {
 }
 
 }
+
+@media ( 1280px <= width <= 1570px) {
+  .dropdown-menu.filtersDropDown {
+      min-width: 110px !important;
+  }
+  button.dropdown-item.filtersBtnWidth {
+      padding: 0.5rem 0.5rem !important;
+  }
+
+}
+
+
+
  // for 100% Resolution //
  @media ( 1280px <= width <= 1420px) {
   h6 {
@@ -918,4 +931,8 @@ th, td {
     border: none;
     color: white;
   }
+  .chart-container {
+    width: 100%;
+    height: 100% !important;
+}
   

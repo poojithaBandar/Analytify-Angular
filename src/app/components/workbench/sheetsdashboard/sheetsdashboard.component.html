@@ -2,13 +2,13 @@
 <app-header *ngIf="publicHeader" [isPublicUrl]="publicHeader"></app-header>
 
 <div *ngIf="dashboardView">
-<app-page-header title="Dashboard" title1="home" activeitem="Dashboard"></app-page-header>
+<app-page-header title="Dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
 </div>
 <div *ngIf="sheetsNewDashboard">
-  <app-page-header title="Dashboard" title1="home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
+  <app-page-header title="Dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
   </div>
   
-  <div *ngIf="isPublicUrl" id="htmlContent" style="margin-top: 60px;">
+  <div *ngIf="isPublicUrl" style="margin-top: 60px;">
     <app-page-header title="{{dashboardName}}" title1="public" activeitem="Dashboard"></app-page-header>
     </div>
   <!-- <div *ngIf="publicHeader">
@@ -29,8 +29,8 @@
             </div>
             <div class="new-data-btn d-flex text-align-center">  
               <div class="input-group">
-                <input type="text" class="form-control border-end-0 " [(ngModel)]="searchSheets" placeholder="Search" >
-                <button class="btn btn-primary border me-2 " (click)="fetchSheetsList()"  type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                <input type="text" class="form-control border-end-0 " [(ngModel)]="searchSheets" (keydown.enter)="fetchSheetsListSearch()" placeholder="Search" >
+                <button class="btn btn-primary border me-2 " (click)="fetchSheetsListSearch()"  type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                 <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2" style="border-radius: 4px 4px 4px 4px;">Move To Dashboard</button>
                 <button *ngIf="panelscheckbox?.length<1" type="button" class="btn ripple btn-primary me-2" (click)="sheetsRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Sheet</button>
                 <button type="button" class="btn ripple btn-primary me-2" (click)="isSheetsView = false" style="border-radius: 4px 4px 4px 4px;">Close</button>
@@ -154,7 +154,7 @@
               <div class="panel panel-primary p-0">
                 <div class="tab-menu-heading tab-menu-heading-boxed">
                     <div class="tabs-menu-boxed">
-                        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
+                        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs " >
 
                             <li *ngIf="!isPublicUrl" [ngbNavItem]="1">
                                 <a ngbNavLink class="dashboard-tab-padding">Dashboard</a>
@@ -213,7 +213,7 @@
                                                     <div class="dropdown-menu size-dropdown" ngbDropdownMenu>
                                                         <h6 class="mb-0">Size</h6>
                                                         <div class="form-group mb-1">
-                                                          <select class="form-select form-select select2 fs-14">
+                                                          <select class="form-select form-select select2 ">
                                                             <option value="1">Custom size ({{widthGrid}} * {{heightGrid}})</option>
                                                               <option value="2">Custom size (1200 * 1100)</option>
                                                               <option value="3">Custom size (1000 * 900)</option>
@@ -268,7 +268,7 @@
                                         <div class=" mt-2 mb-2">
                                           <ul class="d filter-popover" aria-labelledby="applyfilters" >
                                             <div class="setting-text border-bottom text-center">
-                                              <h6>Add Filters</h6>
+                                              <p>Add Filters</p>
                                             </div>
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Filter Name <span  class="text-red">*</span>
@@ -278,12 +278,12 @@
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Query Set Name <span class="text-red">*</span>
                                               </label>
-                                              <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"  class="form-select form-select select2 fs-14" >
+                                              <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"  class="form-select form-select select2 " >
                                                 <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
                                                 @for(querySet of querySetNames;track querySet.queryset_id){
-                                                  <option value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
+                                                  <option [ngbTooltip]="querySet.queryset_name"
+                                                  [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
                                                 }
-                                    
                                             </select>
                                             </div>
                                     
@@ -334,7 +334,7 @@
 
                                               <div class="form-check">
                                                 <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
-                                                <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <p>{{rows?.label.name}}</p> </label>
+                                                <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows?.label.name}}</p> </label>
                                               </div>
                                             }
                                             </div>
@@ -414,7 +414,7 @@
 
                                             <div class="form-check">
                                               <input type="checkbox" [id]="'defaultCheck' + i"  name="rows1{{i}}"[(ngModel)]="rows1.selected" (change)="updateSelectedRowsEdit()" class="form-check-input"> 
-                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label fs-14"> <p>{{rows1.sheet_name}}</p> </label>
+                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows1.sheet_name}}</p> </label>
                                             </div>
                                           }
                                           </div>
@@ -505,25 +505,30 @@
                                                                       <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;">
                                                                         <i class="fe fe-search"></i>
                                                                       </button>
+                                                                      <button (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id, filterList)" class="btn btn-primary " style="padding: 4px;">
+                                                                        <img src="./assets/images/icons/filter-clear.png" alt="logo" class="w-5 h-5">
+                                                                      </button>
                                                                     </div>
                                                                     <div class="form-check">
 
                                                                       <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllColumns($event,filterList)" class="form-check-input">
-                                                                      <label for="selectAll" class="form-check-label">Select All</label>
+                                                                      <label for="selectAll" class="form-check-label"><p> Select All</p></label>
                                                                       </div>
                                                                     <!-- @for(col of filterList.colData;track col;let i = $index){ -->
                                                                      
                                                                       <div *ngFor="let col of getFilteredColumns(filterList); let i = index" class="form-check">
                                                                         <input type="checkbox" [id]="'defaultCheck' + i"  name="col{{i}}"[(ngModel)]="col.selected" (change)="updateSelectedColmns(filterList,col)" class="form-check-input"> 
-                                                                        <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <h6 class="fs-14">{{col.label}}</h6> </label>
+                                                                        <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label"> <p >{{col.label}}</p> </label>
                                                                       </div>
                                                                   <!-- } -->
                                                                 </div>
 
                                                                   <div class="fixed-buttons p-2">
-                                                                    <button type="button"  (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-danger me-2">Clear</button>
-                                                                    <button type="button"  (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)" class="btn ripple btn-primary me-2">Save</button>
-                                                                </div>
+                                                                      <input type="checkbox" id="exclude" (click)="excludeFilterIdList(filterList,$event);" [(ngModel)]="filterList.isExclude" class="form-check-input">
+                                                                      <label for="exclude" class="form-check-label"> <p>Exclude</p> </label>
+                                                                    <button type="button" (click)="closeMainDropdown(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id)"
+                                                                      class="btn ripple btn-primary me-2">Save</button>
+                                                                  </div>
                                                                   </ul>
 
                                                               </div>
@@ -542,7 +547,7 @@
                                                                 </div> -->
                                                               </div>
                                                             <!-- } -->
-                                                              <div  *ngIf="DahboardListFilters .length > 0; else noData"  class="p-2"> 
+                                                              <div  style="margin-right: 5px; margin-left: 5px;"  *ngIf="DahboardListFilters .length > 0; else noData"> 
                                                                 <button class="btn ripple btn-danger"
                                                                   (click)="clearAllFilters()">Clear filters</button>
                                                               
@@ -587,7 +592,7 @@
       </div>
     </div>
     <div class="col-xl-10 col-md-12">
-         <div class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
+         <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
@@ -626,7 +631,7 @@
                                   </a>
                                   <div class="dropdown-menu" ngbDropdownMenu>
                                     <a class="dropdown-item" ngbDropdownItem (click)="downloadImageInPublic()">Download Image</a>
-                                    <a class="dropdown-item" ngbDropdownItem (click)="getSavedDashboardData()">Refresh Dashboard</a>
+                                    <a class="dropdown-item" ngbDropdownItem (click)="getSavedDashboardDataPublic()">Refresh Dashboard</a>
 
                                   </div>
                               </div>
@@ -647,7 +652,7 @@
        <!-- <div style="margin: auto 0;overflow: scroll;" [style.height.px]="heightGrid" [style.width.px]="widthGrid" > -->
         <div style="margin: auto 0;height: 100%;" >
          
-        <div class="d-flex align-items-center justify-content-start  mt-3">
+        <div class="d-flex align-items-center justify-content-start  mt-3" [ngClass]="{ 'mt-3': !isPublicUrl }" >
             <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
             <!-- <a mat-mini-fab (click)="addItem()" class="btn btn-blue-light mb-0 me-3" ><i class="fa fa-plus"></i> Add</a>  -->
         </div>
@@ -686,17 +691,17 @@
                     <div class="card mb-0" style="height: 100%;overflow: scroll;">
                       <div class="card-header d-flex justify-content-between p-1">
                         <h6>{{ item.data?.title }}</h6>       
-                        <div class="dashboard-option">
+                        <div *ngIf="!isPublicUrl" class="dashboard-option">
                           <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                               aria-haspopup="true" aria-expanded="false" class=""><i
                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Goto Sheet'"
+                              <app-insights-button [classesList]="'dropdown-item'" [buttonName]="'Goto Sheet'"
                                 [previledgeIdsList]="[20,18]" [isBtn]="false" (btnClickEvent)="viewSheet(item)"
                                 [isIcon]="false"></app-insights-button>
-                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'" [previledgeId]="37"
+                              <app-insights-button  [classesList]="'dropdown-item'" [buttonName]="'Remove'" [previledgeId]="37"
                                 [isBtn]="false" (btnClickEvent)="removeItem($event, item, true)" [isIcon]="false"></app-insights-button>
                             </div>
                           </div>
@@ -855,14 +860,14 @@
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>
-                    <div class="dashboard-option">
+                    <div *ngIf="!isPublicUrl" class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                 aria-haspopup="true" aria-expanded="false" class=""><i
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'"
+                              <app-insights-button [classesList]="'dropdown-item'"
                                                               [buttonName]="'Goto Sheet'"
                                                               [previledgeIdsList]="[20,18]" [isBtn]="false"
                                                               (btnClickEvent)="viewSheet(item)" 
@@ -878,8 +883,8 @@
                       </div>
                 </div>
                 @if(item['isEChart']){
-                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
-                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" class="echart-charts"></div>
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'scroll'} : {}">
+                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
                     </div>
                 
               } @else{
@@ -1193,7 +1198,7 @@
                     <apx-chart
                     [series]="item.chartOptions.series!"
                     [chart]="item.chartOptions.chart!"
-                    [xaxis]="item.chartOptions.xaxis!"
+                    [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [legend]="item.chartOptions.legend!"
                     [grid]="item.chartOptions.grid!"

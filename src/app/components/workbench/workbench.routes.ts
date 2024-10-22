@@ -43,6 +43,14 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
+//salesforce
+{
+  path: 'database-connection/tables/salesforce/:id',
+  canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
+  loadComponent: () =>
+    import('./database/database.component').then((m)=> m.DatabaseComponent)
+},
 {
   path: 'database-connection/files/tables/:id',
   canActivate:[authGuard],
@@ -222,12 +230,12 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
-{
-  path: 'home/help-guide',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent),
-},
+// {
+//   path: 'home/help-guide',
+//   canActivate:[authGuard],
+//   loadComponent: () =>
+//     import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent),
+// },
 
 
 

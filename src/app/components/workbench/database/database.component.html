@@ -1,4 +1,4 @@
-<app-page-header title="Database" title1="home" activeitem="Database"></app-page-header>
+<app-page-header title="Database" title1="Home" activeitem="Database"></app-page-header>
 
 <div class="main-container container-fluid">
 
@@ -11,11 +11,11 @@
                     <h6 class="mb-0 border-bottom">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
-                <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
+                <p class=" mb-0" [ngbTooltip]="hostName && hostName.length > 15 ? hostName : null">{{ hostName ? (hostName.length > 15 ? (hostName | slice: 0: 15) + '...' : hostName) : ''}}</p>
             </div>
             <div class="mb-0 p-4 br-0 border-bottom">
                 <h6 class="mb-0">Database</h6>
-                <p class="mb-0">{{databaseName}}</p>
+                <p class="mb-0" [ngbTooltip]="databaseName && databaseName.length > 15 ? databaseName : null">{{databaseName ? (databaseName.length > 15 ? (databaseName| slice:0:15)+'...':databaseName): ''}}</p>
             </div>
             <!-- <div class="card mb-0 br-0">
             </div> -->
@@ -56,8 +56,7 @@
                                             <div *ngFor="let submenu of menu.tables"
                                                 class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
                                                 <i class="fa fa-table" style="padding-right:10px;"></i>
-                                                <span ngbTooltip="{{submenu.table}}">{{ submenu.table |
-                                                    slice:0:20}}</span>
+                                                <span [ngbTooltip]="submenu.table.length > 15 ? submenu.table : null">{{submenu.table ? (submenu.table.length > 15 ? (submenu.table| slice:0:15)+'...':submenu.table) : ''}}</span>
                                             </div>
                                         </div>
                                     </ng-template>

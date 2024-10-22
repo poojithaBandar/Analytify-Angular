@@ -4,6 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ViewTemplateDrivenService } from '../../../components/workbench/view-template-driven.service';
+import { SheetsdashboardComponent } from '../../../components/workbench/sheetsdashboard/sheetsdashboard.component';
+import { SharedService } from '../../services/shared.service';
 interface Item {
   id: number;
   name: string;
@@ -14,7 +16,7 @@ interface Item {
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
   cartItemCount: number = 5;
@@ -25,9 +27,8 @@ export class HeaderComponent implements OnInit {
   viewRoles = false;
   viewUsers = false;
   @Input() isPublicUrl!: true; 
-
   constructor(public navServices: NavService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private authService:AuthService,private router:Router,
-    private elementRef: ElementRef,public renderer:Renderer2,private viewTemplateService:ViewTemplateDrivenService) {
+    private elementRef: ElementRef,public renderer:Renderer2,private viewTemplateService:ViewTemplateDrivenService,private sharedService: SharedService) {
       this.viewRoles=this.viewTemplateService.ViewRoles();
       this.viewUsers=this.viewTemplateService.viewUsers();
 
@@ -216,6 +217,12 @@ export class HeaderComponent implements OnInit {
     // let html = this.elementRef.nativeElement.ownerDocument.documentElement;
     // html.setAttribute('data-toggled', 'icon-overlay-close');
   }
+  refreshPublicDashboard(){
+    this.sharedService.refresh();
+  }
+  downloadPublicDashbaord(){
+    this.sharedService.download();
+  }
   logOut() {
     this.authService.logOut().subscribe((res) => {
       if (!res.success) {
@@ -224,7 +231,7 @@ export class HeaderComponent implements OnInit {
     });
   }
   routehelpGuide(){
-    this.router.navigate(['/insights/home/help-guide']);
+    this.router.navigate(['/insights/help-guide']);
   }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];

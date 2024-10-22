@@ -55,7 +55,11 @@ export const admin: Routes = [
     loadComponent: () =>
       import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
   },
-
+  {
+    path: 'salesforce',
+    loadComponent: () =>
+      import('./quickbooks/quickbooks.component').then((m) => m.QuickbooksComponent),
+  },
 ]}
 ];
 @NgModule({

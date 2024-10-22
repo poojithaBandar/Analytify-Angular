@@ -1,6 +1,6 @@
 <div class="main-container container-fluid mt-5"> 
-    <div class="row" style="position: fixed; width: -webkit-fill-available; margin-inline-start:auto !important">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-3">
+    <div class="row" style="position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;">
+        <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
             <div class="card mb-0" >
                 <div class="card-body p-0 ">
                     <div class="card mb-0 p-3 br-0 border-bottom">
@@ -59,8 +59,8 @@
                                             aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(dimensions.column)"><i
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
-                                        <div class="dropdown-menu" ngbDropdownMenu>
-                                            <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                        <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
+                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="openSuperScaled(content,dimensions)"> Apply Filters </button>
                                             <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                            <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                             <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
@@ -335,7 +335,7 @@
                 
             </div>
         </div>
-        <div class="col-xl-8 col-md-12 p-1 mt-3">
+        <div class="col-xxl-8 col-xl-8 col-lg-7 col-md-7 p-1 mt-3">
            <div class="card p-0 mb-1">
            
                 <div class="card p-0 mb-1">
@@ -1001,6 +1001,9 @@
                       [legend]="guageChartOptions.legend"
                       [grid]="guageChartOptions.grid"
                       [labels]="guageChartOptions.labels"
+                       [tooltip]="guageChartOptions.tooltip"
+                         [fill]="guageChartOptions.fill"
+                        [stroke]="guageChartOptions.stroke"
                     ></apx-chart>
                   </div>
               }
@@ -1012,6 +1015,13 @@
                 </div>
             </div>
             }
+            @if(funnel && chartId){         
+                <div class="card-body">
+                    <div id="bar-chart">
+                        <div id="echartsBar" echarts [options]="eFunnelChartOptions" class="echart-charts"></div>
+                    </div>
+                </div>
+                }
             @if(stocked && chartId){         
                 <div class="card-body">
                     <div id="stockedbar-chart">
@@ -1101,8 +1111,16 @@
                     
                 @if(calendar){
                     <div class="card-body">
-                        <div id="calender-chart">
-                            <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="echart-charts"></div>  
+                        <div id="calender-chart" style="height: 80vh; overflow-y: scroll;">
+                            <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="chart-container"></div>  
+                        </div>
+                    </div>
+                }
+                @if(heatMap){
+                    <div class="card-body">
+                        <div id="heatmap-chart">
+                            <div id="echartsBar" echarts [options]="eHeatMapChartOptions" class="echart-charts">
+                            </div>
                         </div>
                     </div>
                 }
@@ -1176,7 +1194,7 @@
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2">Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -1371,7 +1389,7 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,28)"><img src="./assets/images/charts/guage-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
                                                         </div>
                                                         <div *ngIf="true" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !dateList.includes(draggedColumnsData[0]?.[1]) && (draggedRows.length !== 1 || draggedColumns !== 1)}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Calendar Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,30)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Calendar Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,11)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
@@ -1402,7 +1420,7 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length!=1)}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="World Map Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,29)"><img src="./assets/images/charts/world-map.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': map}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="World Map" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,29)"><img src="./assets/images/charts/world-map.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': map}"></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1471,7 +1489,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -1587,7 +1605,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -1715,7 +1733,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1969,7 +1987,7 @@
                                                             </select>
                                                          </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && !(pie || donut)" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && !(pie || donut || funnel || calendar)" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Zoom </p>
                                                         </div>
@@ -1980,7 +1998,7 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && !calendar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >background Color </p>
                                                         </div>
@@ -1990,7 +2008,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-label Color </p>
                                                         </div>
@@ -2000,7 +2018,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>  
-                                                    <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-Grid Line Color </p>
                                                         </div>
@@ -2010,7 +2028,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-label Color </p>
                                                         </div>
@@ -2020,7 +2038,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-Grid Line Color </p>
                                                         </div>
@@ -2030,7 +2048,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2086,7 +2104,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2239,7 +2257,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Chart Color </p>
                                                         </div>
@@ -2388,10 +2406,10 @@
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
-                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="guageChart()" />
+                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="customMinMaxGuage()" />
                                                           
                                                             <label for="maxValue">Enter Maximum Value:</label>
-                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="guageChart()" />
+                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
                                                         </div>
                                                     </div>
                                                     <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
