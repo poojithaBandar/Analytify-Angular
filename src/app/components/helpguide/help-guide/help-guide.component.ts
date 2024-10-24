@@ -3,12 +3,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WorkbenchService } from '../workbench.service';
+import { WorkbenchService } from '../../workbench/workbench.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-help-guide',
   standalone: true,
-  imports: [SharedModule,NgbModule,CommonModule],
+  imports: [SharedModule,NgbModule,CommonModule,FormsModule],
   templateUrl: './help-guide.component.html',
   styleUrl: './help-guide.component.scss'
 })
@@ -17,6 +18,9 @@ export class HelpGuideComponent {
   isModules : boolean = true;
   userGuideData : any[] = [];
   ModulesData : any[] = [];
+  isSearch : boolean = false;
+  searchValue : string = '';
+  searchData : any[] = [];
 
   constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService){
   }
@@ -54,5 +58,20 @@ export class HelpGuideComponent {
 
   goToQuestionary(slug:string){
     this.router.navigate(['/insights/help-guide/'+slug])
+  }
+
+  getSearchData(searchValue : string){
+    this.isSearch = true;
+    let object = {
+       "search": searchValue
+    }
+    this.workbenchService.getUserHelpGuideSearch(object).subscribe({next: (responce:any) => {
+      console.log(responce);
+      this.searchData = responce.user_guide_data;
+    },
+    error: (error) => {
+      console.log(error);
+    }
+  })
   }
 }
