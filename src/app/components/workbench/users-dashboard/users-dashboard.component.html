@@ -20,7 +20,7 @@
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="userName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchUserList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary" (click)="addUserDiv()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add User</button>
+            <button type="button" class="btn btn-primary" (click)="addUserRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add User</button>
           </div>
         </div>
     </div>
@@ -183,7 +183,7 @@
             <div class="modal-header justify-conent-between">
               <h1 *ngIf="!userEditHidePassword" class="modal-title fs-5 d-flex justify-conent-between" id="inputModalLabel">Add User</h1>
               <h1 *ngIf="userEditHidePassword" class="modal-title fs-5 d-flex justify-conent-between" id="inputModalLabel">Edit User</h1>        
-              <button  type="button" class="btn btn-primary" (click)="addUserDivForm = false" style="border-radius: 4px 4px 4px 4px;"> View Users</button>    
+              <button  type="button" class="btn btn-primary" (click)="viewUsers()" style="border-radius: 4px 4px 4px 4px;"> View Users</button>    
             </div>
             
             <div class="modal-body p-0">

@@ -110,6 +110,7 @@ export class DatabaseComponent {
   rows: any;
   titleMarkDirty: boolean = false;
   datasourceFilterIdArray:any[] =[];
+  datasourceFilterIdArrayCustomQuery:any[]=[];
   selectedRows = [];
   datasourceQuerysetId :string | null =null;
   filteredList = [] as any;
@@ -137,7 +138,7 @@ export class DatabaseComponent {
   searchTermT2:string = '';
   filteredTablesT1: any[] = [];
   filteredTablesT2: any[] = [];
-
+  filterParamPass:any;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/insights/database-connection/tables/')){
@@ -579,11 +580,11 @@ executeQuery(){
         this.cutmquryTable = data
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
-        this.qurtySetId = data.query_set_id;
+        // this.qurtySetId = data.query_set_id;
         this.custumQuerySetid = data.query_set_id
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows
-        console.log('dkjshd',this.cutmquryTable)
+        console.log('custumQuery Data',this.cutmquryTable)
         this.gotoSheetButtonDisable = false;
       },
       error:(error:any)=>{
@@ -1052,9 +1053,10 @@ openRowsData(modal: any) {
   });
 }
 callColumnWithTable(){
+  let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
     database_id:this.databaseId,
-    query_set_id :this.qurtySetId,
+    query_set_id :querySetIdToPass,
     type_of_filter:'datasource',
     search : this.columnSearch
   }as any;
@@ -1130,9 +1132,10 @@ seachColumnDataFilter() {
 //     })
 // }
 selectedColumnGetRows(col:any,datatype:any){
+  let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
     database_id:this.databaseId,
-    query_set_id:this.qurtySetId,
+    query_set_id:querySetIdToPass,
     datasource_queryset_id:this.datasourceQuerysetId,
     type_of_filter:'datasource',
     col_name:col,
@@ -1191,11 +1194,11 @@ getSelectedRows() {
   .filter((row: { selected: any; }) => row.selected)
   .map((row: { label: any; }) => row.label);
   console.log('selected rows',this.selectedRows);
-
+  let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj = {
     filter_id:null,
     database_id:this.databaseId,
-    queryset_id:this.qurtySetId,
+    queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
     datasource_querysetid:null,
     select_values:this.selectedRows,
@@ -1213,7 +1216,11 @@ getSelectedRows() {
       next:(data:any) =>{
         console.log(data)
         this.datasourceFilterId = data.filter_id;
+        if(this.filterParamPass === 'fromcustomsql'){
+          this.datasourceFilterIdArrayCustomQuery.push(data.filter_id)
+        }else{
          this.datasourceFilterIdArray.push(data.filter_id);
+        }
         this.getDsQuerysetId();
         this.modalService.dismissAll('close')
       },
@@ -1230,10 +1237,11 @@ getSelectedRows() {
 
 }
 getDsQuerysetId(){
+  let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
     datasource_queryset_id:this.datasourceQuerysetId,
-    queryset_id:this.qurtySetId,
-    filter_id:this.datasourceFilterIdArray,
+    queryset_id:querySetIdToPass,
+    filter_id:(this.filterParamPass === 'fromcustomsql') ? this.datasourceFilterIdArrayCustomQuery : this.datasourceFilterIdArray,
     database_id:this.databaseId
   }as any;
   if(this.fromFileId){
@@ -1264,9 +1272,12 @@ getDsQuerysetId(){
     }
     })
 }
-getFilteredList(){
+getFilteredList(fromParam:any){
+
+  let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
+  this.filterParamPass = fromParam
   const obj ={
-    query_set_id:this.qurtySetId,
+    query_set_id:querySetIdToPass,
     database_id:this.databaseId,
     type_of_filter:'datasource'
   }as any
@@ -1366,12 +1377,20 @@ deleteFilter(id:any){
 
         }
         console.log('filter ids',this.datasourceFilterIdArray)
-        this.datasourceFilterIdArray = this.datasourceFilterIdArray.filter(item => item !== id);
-        if(this.datasourceFilterIdArray.length === 0){
-          this.datasourceFilterId = null;
+        if(this.filterParamPass ==='fromcustomsql'){
+          this.datasourceFilterIdArrayCustomQuery = this.datasourceFilterIdArrayCustomQuery.filter(item => item !== id);
+          if(this.datasourceFilterIdArrayCustomQuery.length === 0){
+            this.datasourceFilterId = null;
+          }
+        }else{
+          this.datasourceFilterIdArray = this.datasourceFilterIdArray.filter(item => item !== id);
+          if(this.datasourceFilterIdArray.length === 0){
+            this.datasourceFilterId = null;
+          }
         }
+        
         this.getDsQuerysetId()
-        this.getFilteredList();
+        this.getFilteredList(this.filterParamPass);
       },
       error:(error:any)=>{
       console.log(error);
@@ -1412,11 +1431,12 @@ getSelectedRowsFromEdit() {
   .filter((row: { selected: any; }) => row.selected)
   .map((row: { label: any; }) => row.label);
   console.log('selected rows',this.selectedRows);
+  let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
 
   const obj = {
     filter_id:this.datasourceFilterId || this.editFilterId,
     database_id:this.databaseId,
-    queryset_id:this.qurtySetId,
+    queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
     datasource_querysetid:null,
     select_values:this.selectedRows,
@@ -1451,7 +1471,7 @@ getSelectedRowsFromEdit() {
 getfilteredCustomSqlData(){
     const obj ={
       database_id:this.databaseId,
-      query_id:this.qurtySetId,
+      query_id:this.custumQuerySetid,
       datasource_queryset_id:this.datasourceQuerysetId
     }
     this.workbechService.getTableJoiningData(obj).subscribe(
@@ -1485,8 +1505,11 @@ markDirty(){
   this.titleMarkDirty = true;
 }
 
-  goToSheet() {
+  goToSheet(fromParam: string) {
     this.goToSheetButtonClicked = true;
+
+      let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
+
     if (this.saveQueryName === '' || this.saveQueryName == null || this.saveQueryName == undefined) {
       Swal.fire({
         icon: 'error',
@@ -1497,12 +1520,12 @@ markDirty(){
     } else {
       if (this.fromFileId) {
         const encodedFileId = btoa(this.fileId.toString());
-        const encodedQuerySetId = btoa(this.qurtySetId.toString());
+        const encodedQuerySetId = btoa(querySetIdToPass.toString());
         if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
           // Encode 'null' to represent a null value
           const encodedDsQuerySetId = btoa('null');
           if (this.titleMarkDirty) {
-            let payload = { file_id: this.fileId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
+            let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
                 this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
@@ -1524,7 +1547,7 @@ markDirty(){
           // Convert to string and encode
           const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
           if (this.titleMarkDirty) {
-            let payload = { file_id: this.fileId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
+            let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
                 this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
@@ -1545,12 +1568,12 @@ markDirty(){
         }
       } else if (this.fromDatabasId) {
         const encodedDatabaseId = btoa(this.databaseId.toString());
-        const encodedQuerySetId = btoa(this.qurtySetId.toString());
+        const encodedQuerySetId = btoa(querySetIdToPass.toString());
         if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
           // Encode 'null' to represent a null value
           const encodedDsQuerySetId = btoa('null');
           if (this.titleMarkDirty) {
-            let payload = { database_id: this.databaseId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
+            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
                 this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
@@ -1572,7 +1595,7 @@ markDirty(){
           // Convert to string and encode
           const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
           if (this.titleMarkDirty) {
-            let payload = { database_id: this.databaseId, query_set_id: this.qurtySetId, query_name: this.saveQueryName }
+            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
                 this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
