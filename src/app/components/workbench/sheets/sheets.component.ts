@@ -97,7 +97,7 @@ export class SheetsComponent {
   errorMessage : any;
   errorMessage1:any;
   userPrompt: string = '';
-  selectedChartPlugin : string = 'apex'	
+  selectedChartPlugin : string = '';	
   isApexCharts : boolean = true;
   isEChatrts : boolean = false;
   isZoom : boolean = false;
@@ -382,6 +382,7 @@ export class SheetsComponent {
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
     this.getDashboardsList();
+    this.setChartType();
     // this.sheetRetrive();
   }
  async getSheetNames(){
@@ -3873,6 +3874,7 @@ bar["stack"]="Total";
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
        this.selectedTabIndex = this.tabs.length - 1;
        this.sheetTagName = 'Sheet ' +this.sheetNumber;
+       this.setChartType();
     }
     this.kpi=false;
   }
@@ -8522,5 +8524,10 @@ fetchChartData(chartData: any){
             console.log(error);
           }
       })
+    }
+
+    setChartType(){
+      this.selectedChartPlugin = localStorage.getItem('chartType')+'';
+      this.changeChartPlugin();
     }
 }

@@ -5,9 +5,9 @@
         <div class="card-body">
             <div class="form-group mb-0 mt-sm-0 mt-2">
                 <div class="input-group">
-                    <input type="text" placeholder="Search" aria-label="Example text with button addon" class="form-control" [(ngModel)]="searchValue">
-                    <button type="button" class="btn btn-primary me-1"><i class="fe fe-x"></i></button>
-                    <button  type="button" class="btn btn-primary"><i class="fe fe-search" (click)="getSearchData(searchValue)"></i></button>
+                    <input type="text" placeholder="Search" aria-label="Example text with button addon" class="form-control" [(ngModel)]="searchValue" (keydown.enter)="getSearchData(searchValue)">
+                    <button type="button" class="btn btn-primary me-1" (click)="searchValue = '' ; getSearchData(searchValue)"><i class="fe fe-x"></i></button>
+                    <button  type="button" class="btn btn-primary" (click)="getSearchData(searchValue)"><i class="fe fe-search"></i></button>
                 </div>
             </div>
         </div>
