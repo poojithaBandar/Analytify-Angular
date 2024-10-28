@@ -187,16 +187,16 @@ resendOtpApi(obj:any){
   return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
 }
 logOut(){
-localStorage.removeItem('username');
-       localStorage.removeItem('currentUser');
-      //  this.currentUserSubject.next(this.currentUserValue);
-       localStorage.clear();
-       //this.userSubject.next(null);
-       window.location.reload();
-
-       this.router.navigate(['/authentication/signin']) 
-      //  .then(() => {
-      //  }); 
-       return of({ success: false });
-}
+  localStorage.removeItem('username');
+         localStorage.removeItem('currentUser');
+        //  this.currentUserSubject.next(this.currentUserValue);
+         localStorage.clear();
+         //this.userSubject.next(null);
+         window.location.reload();
+  
+         this.router.navigate(['/authentication/signin']) 
+        //  .then(() => {
+        //  }); 
+         return of({ success: false });
+  }
 }

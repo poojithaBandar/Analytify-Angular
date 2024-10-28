@@ -40,6 +40,8 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { HttpClient } from '@angular/common/http';
+import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatTooltipModule
+
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -64,7 +66,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
