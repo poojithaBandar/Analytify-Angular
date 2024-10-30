@@ -2,14 +2,15 @@ import { Component } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WorkbenchService } from '../workbench.service';
+import { WorkbenchService } from '../../workbench/workbench.service';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-help-guide-questionaries',
   standalone: true,
-  imports: [SharedModule,NgbModule,CommonModule],
+  imports: [SharedModule,NgbModule,CommonModule,FormsModule],
   templateUrl: './help-guide-questionaries.component.html',
   styleUrl: './help-guide-questionaries.component.scss'
 })
@@ -18,6 +19,7 @@ export class HelpGuideQuestionariesComponent {
   userGuideData : any[]=[];
   ModulesData : any[] = [];
   questionariesData : any[] = [];
+  searchValue : string = '';
 
   constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService,private sanitizer: DomSanitizer){
     if (route.snapshot.params['slug']) {
@@ -85,5 +87,18 @@ export class HelpGuideQuestionariesComponent {
     this.router.navigate(['/insights/help-guide/' + slug]);
     this.slug = slug;
     this.getQuestionary();
+  }
+
+  getSearchData(searchValue : string){
+    let object = {
+       "search": searchValue
+    }
+    this.workbenchService.getUserHelpGuideSearch(object).subscribe({next: (responce:any) => {
+      console.log(responce);
+    },
+    error: (error) => {
+      console.log(error);
+    }
+  })
   }
 }

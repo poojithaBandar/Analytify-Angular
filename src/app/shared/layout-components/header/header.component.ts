@@ -318,10 +318,10 @@ export class HeaderComponent implements OnInit {
   }
 
   routeToUserDashboard(){
-    this.router.navigate(['/insights/list-users/dashboard'])
+    this.router.navigate(['/insights/users/users-list'])
   }
   routeToRolesDashboard(){
-    this.router.navigate(['/insights/roles-list/dashboard'])
+    this.router.navigate(['/insights/roles/roles-list'])
   }
 
   routeToConfigurePage() {

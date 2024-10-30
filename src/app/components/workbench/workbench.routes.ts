@@ -188,25 +188,25 @@ export const admin: Routes = [
     import('./saved-queries/saved-queries.component').then((m)=>m.SavedQueriesComponent)
 },
 {
-  path: 'list-users/dashboard',
+  path: 'users/users-list',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
 },
 {
-  path: 'dashboard/user-add',
+  path: 'users/add-user',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
 },
 {
-  path: 'roles-list/dashboard',
+  path: 'roles/roles-list',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
 },
 {
-  path: 'dashboard/role-add',
+  path: 'roles/add-role',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
@@ -247,6 +247,7 @@ export const admin: Routes = [
 },
 {
   path: 'configure-page/configure',
+  canActivate:[authGuard],
   loadComponent: () =>
     import('./configure/configure.component').then((m) => m.ConfigureComponent),
 },

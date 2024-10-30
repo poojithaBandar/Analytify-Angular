@@ -598,5 +598,16 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/userguide/`+this.accessToken,moduleId);
     }
+    getUserHelpGuideSearch(search : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/userguidesearch/`+this.accessToken,search);
+    }
 
+    //chart plug-in setter
+    setChartType(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/userconfig/`+this.accessToken,object);
+    }
 }

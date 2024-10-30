@@ -62,10 +62,10 @@ export class UsersDashboardComponent {
         ])]],
       conformpassword: ['', Validators.required],
     })
-    if(this.router.url.includes('/workbenchdashboard/user-add')){
+    if(this.router.url.includes('/insights/users/add-user')){
       this.addUserDiv();
     }
-    if(this.router.url.includes('/workbenchdashboard/roles-list/dashboard')){
+    if(this.router.url.includes('/workbenchdashboard/users/add-user')){
       this.addUserDivForm= false;
     }
   }
@@ -245,7 +245,7 @@ toggleClass1 = "off-line";
     return selectedRoles;
   }
   gotoAddRole(){
-    this.router.navigate(['/insights/dashboard/role-add'])
+    this.router.navigate(['/insights/roles/add-role'])
   }
 getAddedRolesList(){
   this.workbechService.getAddedRolesList().subscribe({
@@ -265,7 +265,13 @@ getAddedRolesList(){
     }
   }) 
 }
-
+addUserRoute(){
+  this.router.navigate(['/insights/users/add-user'])
+  
+}
+viewUsers(){
+  this.router.navigate(['/insights/users/users-list'])
+}
 addUser(){
   if (!this.addUserForm.value.is_active) {
     Swal.fire({
