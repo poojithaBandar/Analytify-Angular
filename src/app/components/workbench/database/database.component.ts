@@ -51,6 +51,8 @@ import { LoaderService } from '../../../shared/services/loader.service';
 export class DatabaseComponent {
   databaseName:any;
   tableName:any;
+  tableJoiningList : any[] = [];
+  joiningConditions : any[] = [];
   selectedClmnT1:any;
   selectedClmnT2:any;
   getSelectedT1:any;
@@ -619,15 +621,15 @@ updateRemainingTables(item:any) {
   this.filteredTablesT2 = this.remainingTables;
   this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
 }
-filterColumnsT2() {
+filterColumnsT2(relation: any) {
   // If search term is empty, return all tables excluding the selected one
   if (this.searchTermT2.trim() === '') {
-    this.filteredTablesT2 = this.remainingTables
+    relation.table2Data = relation.originalData;
     return;
   }
 
   // Filter logic
-  this.filteredTablesT2 = this.remainingTables.map((table: { columns: any[]; alias: any; }) => {
+  relation.table2Data = relation.originalData.map((table: { columns: any[]; alias: any; }) => {
     const filteredColumns = table.columns.filter(column =>
       column.column.toLowerCase().includes(this.searchTermT2.toLowerCase())
     );
@@ -707,6 +709,7 @@ joiningTables(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
+        this.buildCustomJoin();
         if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
           this.getDsQuerysetId()
         }
@@ -757,6 +760,51 @@ joiningTables(){
   //     })
   // }
 }
+
+buildCustomJoin(){
+  this.tableJoiningList =[];
+  let joiningConditions = [[{
+    table1 : 'user',
+    firstcolumn : 'user_id',
+    operator : '=',
+    secondcolumn : 'role_id',
+    table2 : 'user_guide',
+  },{
+    table1 : 'user',
+    firstcolumn : 'user_id123',
+    operator : '=',
+    secondcolumn : 'role_id123',
+    table2 : 'user_guide',
+  }],[{
+    table1 : 'user',
+  firstcolumn : 'id',
+  operator : '>',
+  secondcolumn : 'user_id',
+  table2 : 'user_profile',
+},
+{
+  table1 : 'user_guide',
+  firstcolumn : 'id456',
+  operator : '>',
+  secondcolumn : 'user_id456',
+  table2 : 'user_profile',
+}]]
+  this.joinTypes.forEach((element : any,index : number) => {
+    let remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias == this.draggedtables[index + 1].table);
+    let object = {
+       join : element,
+       table1 : this.draggedtables[index].table,
+       table2 : this.draggedtables[index + 1].table,
+       conditions : this.relationOfTables[index],
+       table2Data : remainingTables,
+       originalData : remainingTables,
+       searchTermT2 : ''
+    }
+    this.tableJoiningList.push(object);
+  });
+
+}
+
 joiningTablesFromDelete(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
    console.log(schemaTablePairs)
@@ -807,14 +855,14 @@ joiningTablesFromDelete(){
     })
 }
 customTableJoin(){
-  if( this.selectedJoin === undefined || this.selectedJoin === null || this.selectedCndn === undefined || this.selectedCndn === null){
-    Swal.fire({
-      icon: 'error',
-      title: 'oops!',
-      text: 'Please Select Join Condition/Operator',
-      width: '400px',
-    })
-  }else{
+  // if( this.selectedJoin === undefined || this.selectedJoin === null || this.selectedCndn === undefined || this.selectedCndn === null){
+  //   Swal.fire({
+  //     icon: 'error',
+  //     title: 'oops!',
+  //     text: 'Please Select Join Condition/Operator',
+  //     width: '400px',
+  //   })
+  // }else{
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any;alias:any }) => [item.schema, item.table, item.alias]);
   console.log(schemaTablePairs)
   const t1Index = this.draggedtables.findIndex((x: { alias: any; }) => x.alias === this.selectedAliasT1)
@@ -825,11 +873,15 @@ customTableJoin(){
   const customJoinCndn = '"'+this.selectedAliasT1+'"."'+this.selectedClmnT1+'" '+this.selectedCndn+' "'+this.selectedAliasT2+'"."'+this.selectedClmnT2+'"'
    const MaxInex = Math.max(t1Index,t2Index);
   console.log('custcon',customJoinCndn, 'maxind',MaxInex)
-  if (!this.relationOfTables[MaxInex - 1]) {
-    this.relationOfTables[MaxInex - 1] = [];
-  }
-  this.relationOfTables[MaxInex - 1].push(customJoinCndn)
-  console.log('customrelation',this.relationOfTables)
+  // if (!this.relationOfTables[MaxInex - 1]) {
+  //   this.relationOfTables[MaxInex - 1] = [];
+  // }
+  // this.relationOfTables[MaxInex - 1].push(customJoinCndn)
+  // console.log('customrelation',this.relationOfTables)
+  let joiningConditions : any[]= [];
+ this.tableJoiningList.forEach(tableData=>{
+   joiningConditions.push(tableData.conditions);
+ })
   this.joinTypes[MaxInex - 1] = this.selectedJoin
   console.log(this.joinTypes)
   if(schemaTablePairs.length >= 2){
@@ -838,7 +890,7 @@ customTableJoin(){
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
-    joining_conditions:this.relationOfTables,
+    joining_conditions:joiningConditions,
     dragged_array:this.draggedtables
 
   }as any;
@@ -876,7 +928,7 @@ customTableJoin(){
       this.relationOfTables.pop();
     }
     })
-  }
+  // }
 }
 }
 
@@ -1745,5 +1797,11 @@ fallbackCopyTextToClipboard(text: string): void {
     console.error('Fallback: Unable to copy', err);
   }
   document.body.removeChild(textArea);
+}
+
+addNewCondition(relation : any){
+  relation.conditions.push({
+   
+  });
 }
 }
