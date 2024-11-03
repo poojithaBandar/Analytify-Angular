@@ -73,8 +73,12 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     console.log(data);   
     const userToken = { Token: data.accessToken,};
     const userName = { userName: data.username};
+    const chartType = data.chart_type;
+    const userId = data.user_id;
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
+    localStorage.setItem('chartType', chartType);
+    localStorage.setItem('userId', userId);
     if(data.previlages){
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }

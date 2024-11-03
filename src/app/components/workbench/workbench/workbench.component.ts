@@ -876,13 +876,14 @@ export class WorkbenchComponent implements OnInit{
   displayNameError:boolean = false;
   passwordError:boolean = false;
   pathError:boolean = false;
-  disableConnectBtn = false;
+  disableConnectBtn = true;
   serverConditionError(){
     if(this.postGreServerName){
       this.serverError = false;
     }else{
       this.serverError = true;
     }
+    this.errorCheck();
   }
   portConditionError(){
     if(this.postGrePortName){
@@ -891,6 +892,7 @@ export class WorkbenchComponent implements OnInit{
       this.portError = true;
     }
     this.serverConditionError();
+    this.errorCheck();
   }
   databaseConditionError(){
     if(this.postGreDatabaseName){
@@ -899,6 +901,7 @@ export class WorkbenchComponent implements OnInit{
       this.databaseError = true;
     }
     this.portConditionError();
+    this.errorCheck();
   }
   userNameConditionError(){
     if(this.postGreUserName){
@@ -907,6 +910,7 @@ export class WorkbenchComponent implements OnInit{
       this.userNameError = true;
     }
     this.databaseConditionError();
+    this.errorCheck();
   }
   displayNameConditionError(){
     if(this.displayName){
@@ -919,6 +923,7 @@ export class WorkbenchComponent implements OnInit{
     } else{
       this.userNameConditionError();
     }
+    this.errorCheck();
   }
   passwordConditionError(){
     if(this.PostGrePassword){
@@ -927,6 +932,7 @@ export class WorkbenchComponent implements OnInit{
       this.passwordError = true;
     }
     this.displayNameConditionError();
+    this.errorCheck();
   }
   pathConditionError(){
     if(this.fileData){

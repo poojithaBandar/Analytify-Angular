@@ -17,7 +17,7 @@ import * as _ from 'lodash';
 import type { EChartsOption } from 'echarts';
 import { NgApexchartsModule,ChartComponent } from 'ng-apexcharts';
 import {FormControl} from '@angular/forms';
-import {MatTabsModule} from '@angular/material/tabs';
+import {MatTabChangeEvent, MatTabsModule} from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -40,6 +40,8 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { HttpClient } from '@angular/common/http';
+import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatTooltipModule
+
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 interface TableRow {
   [key: string]: any;
@@ -64,7 +66,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -97,7 +99,7 @@ export class SheetsComponent {
   errorMessage : any;
   errorMessage1:any;
   userPrompt: string = '';
-  selectedChartPlugin : string = 'apex'	
+  selectedChartPlugin : string = '';	
   isApexCharts : boolean = true;
   isEChatrts : boolean = false;
   isZoom : boolean = false;
@@ -382,6 +384,7 @@ export class SheetsComponent {
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
     this.getDashboardsList();
+    this.setChartType();
     // this.sheetRetrive();
   }
  async getSheetNames(){
@@ -400,7 +403,7 @@ if(this.fromFileId){
           this.sheetList = responce.data;
           this.sheetNumber = this.sheetList.length+1;
           (responce.data as any[]).forEach((sheet,index)=>{
-            this.tabs.push(sheet.sheet_name);
+            this.tabs.push(sheet);
             if(sheet.id === this.retriveDataSheet_id){
               this.selectedTabIndex = index;
             }
@@ -1360,6 +1363,7 @@ if(this.fromFileId){
             tickPlacement: 'on',
             labels: {
               show: this.xLabelSwitch,
+              hideOverlappingLabels: false,
               style: {
                 colors: this.color,
                 fontSize: "11px",
@@ -3872,6 +3876,7 @@ bar["stack"]="Total";
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
        this.selectedTabIndex = this.tabs.length - 1;
        this.sheetTagName = 'Sheet ' +this.sheetNumber;
+       this.setChartType();
     }
     this.kpi=false;
   }
@@ -3943,7 +3948,11 @@ bar["stack"]="Total";
         }
       )
   }
-  onChange(event:any){
+  onChange(event:MatTabChangeEvent){
+    console.log('tabs',event);
+    const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+    const selectedSheetId = selectedTab.id; // Access the sheet_id
+  
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
     this.drillDownIndex = 0;
@@ -3955,48 +3964,63 @@ bar["stack"]="Total";
      this.retriveDataSheet_id = 1;
     }
     this.SheetIndex = event.index;
-    this.sheetName = event.tab?.textLabel
-    this.sheetTitle = event.tab?.textLabel;
-    const obj = {
-      "server_id": this.databaseId,
-      "queryset_id": this.qrySetId,
-    } as any;
-    if (this.fromFileId) {
-      delete obj.server_id;
-      obj.file_id = this.fileId;
+    this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+    this.sheetTitle = this.sheetName;
+
+    this.sheetTagName = this.sheetName;
+    this.sheetTagTitle = this.sheetName;
+    this.draggedColumns = [];
+    this.draggedColumnsData = [];
+    this.draggedRows = [];
+    this.draggedRowsData = [];
+    this.displayedColumns = [];
+    this.retriveDataSheet_id = '';
+    this.getChartData();
+    if(selectedSheetId){
+      this.retriveDataSheet_id = selectedSheetId;
+      this.sheetRetrive();
     }
-    this.workbechService.getSheetNames(obj).subscribe({
-      next: (responce: any) => {
-        this.sheetList = responce.data;
-        if (!this.sheetList.some(sheet => sheet.sheet_name === this.sheetName)) {
-          this.retriveDataSheet_id = '';
-        } else {
-          this.sheetList.forEach(sheet => {
-            if (sheet.sheet_name === this.sheetName) {
-              this.retriveDataSheet_id = sheet.id;
-            }
-          });
-        }
-        // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-        // inputElement.innerHTML = event.tab?.textLabel;
-        this.sheetTagName = event.tab?.textLabel;
-        console.log(this.sheetName)
-        console.log(this.retriveDataSheet_id);
-        this.draggedColumns = [];
-        this.draggedColumnsData = [];
-        this.draggedRows = [];
-        this.draggedRowsData = [];
-        this.displayedColumns = [];
-        this.getChartData();
-       if(this.retriveDataSheet_id){
-          this.sheetRetrive();
-       }
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    }
-    )
+
+    // const obj = {
+    //   "server_id": this.databaseId,
+    //   "queryset_id": this.qrySetId,
+    // } as any;
+    // if (this.fromFileId) {
+    //   delete obj.server_id;
+    //   obj.file_id = this.fileId;
+    // }
+    // this.workbechService.getSheetNames(obj).subscribe({
+    //   next: (responce: any) => {
+    //     this.sheetList = responce.data;
+    //     if (!this.sheetList.some(sheet => sheet.sheet_name === this.sheetName)) {
+    //       this.retriveDataSheet_id = '';
+    //     } else {
+    //       this.sheetList.forEach(sheet => {
+    //         if (sheet.sheet_name === this.sheetName) {
+    //           this.retriveDataSheet_id = sheet.id;
+    //         }
+    //       });
+    //     }
+    //     // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
+    //     // inputElement.innerHTML = event.tab?.textLabel;
+    //     this.sheetTagName = event.tab?.textLabel;
+    //     console.log(this.sheetName)
+    //     console.log(this.retriveDataSheet_id);
+    //     this.draggedColumns = [];
+    //     this.draggedColumnsData = [];
+    //     this.draggedRows = [];
+    //     this.draggedRowsData = [];
+    //     this.displayedColumns = [];
+    //     this.getChartData();
+    //    if(this.retriveDataSheet_id){
+    //       this.sheetRetrive();
+    //    }
+    //   },
+    //   error: (error) => {
+    //     console.log(error);
+    //   }
+    // }
+    // )
     this.kpi = false;
   }
   getChartData(){
@@ -4480,7 +4504,7 @@ console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
   console.log("Sheet Update")
   this.workbechService.sheetUpdate(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-   this.tabs[this.SheetIndex] = this.sheetTitle;
+   this.tabs[this.SheetIndex].sheet_name = this.sheetTitle;
     if(responce){
       // Swal.fire({
       //   icon: 'success',
@@ -4526,8 +4550,9 @@ if(this.retriveDataSheet_id){
       this.toasterService.success(responce.message,'success',{ positionClass: 'toast-top-right'});
       this.retriveDataSheet_id = responce.sheet_id;
       // this.getSheetNames();
-      this.sheetRetrive();
+      // this.sheetRetrive();
       this.SheetSavePlusEnabled.splice(0, 1);
+      this.getSheetList();
     }
     this.saveTableData= [];
     this.savedisplayedColumns = [];
@@ -8477,4 +8502,34 @@ fetchChartData(chartData: any){
         // This is handled in the functional guard
         return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
       }
+
+      getSheetList(){
+        const obj = {
+          "server_id": this.databaseId,
+          "queryset_id": this.qrySetId,
+        } as any;
+        if (this.fromFileId) {
+          delete obj.server_id;
+          obj.file_id = this.fileId;
+        }
+        this.workbechService.getSheetNames(obj).subscribe({
+          next: (responce: any) => {
+            this.tabs = responce.data;
+            // (responce.data as any[]).forEach((sheet,index)=>{
+            //   this.tabs.push(sheet);
+              // if(sheet.id === this.retriveDataSheet_id){
+              //   this.selectedTabIndex = index;
+              // }
+            // });
+          },
+          error: (error) => {
+            console.log(error);
+          }
+      })
+    }
+
+    setChartType(){
+      this.selectedChartPlugin = localStorage.getItem('chartType')+'';
+      this.changeChartPlugin();
+    }
 }

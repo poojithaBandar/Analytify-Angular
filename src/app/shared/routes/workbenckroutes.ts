@@ -9,7 +9,7 @@ export const workbench: Routes = [
       },
       {
         path: '',
-        loadChildren: () => import('../../components/workbench/help-guides.routes').then(r => r.HelpGuideModule)
+        loadChildren: () => import('../../components/helpguide/help-guides.routes').then(r => r.HelpGuideModule)
       }
 
   

@@ -1,6 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { NavService } from '../../services/navservice';
 import * as switcher from '../switcher/switcher'
+import { WorkbenchService } from '../../../components/workbench/workbench.service';
 @Component({
   selector: 'app-switcher',
   templateUrl: './switcher.component.html',
@@ -10,7 +11,8 @@ export class SwitcherComponent {
   constructor(
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private navServices: NavService
+    private navServices: NavService,
+    private workbenchService: WorkbenchService
   ) {
     
     const htmlElement =
@@ -395,9 +397,34 @@ export class SwitcherComponent {
   ngOnInit(): void {
     switcher.localStorageBackUp();
     this.closeMenu(localStorage.getItem('insightappsMenus'));
+    this.setChartType();
   }
 
   public localdata = localStorage;
 active=1;
+
+  chartType : any;
+  userId : any;
+  setChartType(){
+    this.chartType = localStorage.getItem('chartType');
+    this.userId = localStorage.getItem('userId');
+  }
+
+  changeChartType(event : any){
+    this.chartType = event.target.value;
+    let object = {
+      "user_id": this.userId,
+      "chart_type": this.chartType
+    }
+    this.workbenchService.setChartType(object).subscribe({next: (responce:any) => {
+      console.log(responce);
+      localStorage.removeItem('chartType');
+      localStorage.setItem('chartType',this.chartType)
+    },
+    error: (error) => {
+      console.log(error);
+    }
+  })
+  }
 }
 

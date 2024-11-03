@@ -882,12 +882,12 @@
                         </div>
                       </div>
                 </div>
-                @if(item['isEChart']){
+                @if(item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1) ){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'scroll'} : {}">
                     <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
                     </div>
                 
-              } @else{
+              } @else if(!item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1)){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
     
                   <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
@@ -1036,45 +1036,6 @@
                   [xaxis]="item.chartOptions.xaxis!"[colors]="item.chartOptions.colors!"  [grid]="item.chartOptions.grid!"
                   (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div> -->
-                  <div *ngIf="item['chartType'] === 'Table'">
-                      <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
-                        <table class="table border text-nowrap text-md-nowrap mb-0">
-                            <thead>
-                              <tr>
-                                @for(column of item.tableData?.headers;track column){
-                                <th>{{ column }}</th>
-                                }
-                              </tr>
-                            </thead>
-                            <tbody>
-                                 <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
-                          <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
-                          [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                          [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}">
-                            <!-- @for(column of item.tableData?.headers;track column){
-                            <td>{{ row[column] }}</td>
-                            } -->
-                            <td *ngFor="let column of item.tableData?.headers">
-                              {{ row[column] }}
-                            </td>
-                          </tr>
-                        
-                            </tbody>
-                        </table>
-                        <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,(tablePage = $event)) : pageChangeTableDisplay(item,(tablePage = $event))"></pagination-controls>
-                        <div  style="float: right;font-size: 15px; margin-top: -41px;">
-                          <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,tablePage) : pageChangeTableDisplay(item,tablePage)" (mousedown)="stopDragging($event)"class="form-control cursor">
-                                <option  value="10"> 10</option>
-                                <option  value="50"> 50</option>
-                                <option  value="100"> 100</option>
-                                <option  value="500"> 500</option>
-                                <option  value="1000"> 1000</option>
-
-                          </select>
-                       </div>
-                    </div>
-                    <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
-                    </div>
                   <div *ngIf="item.chartOptions">
                  <div *ngIf="item['chartId'] === 6">
                    
@@ -1114,13 +1075,6 @@
                         [stroke]="item.chartOptions.stroke!" [tooltip]="item.chartOptions.tooltip!" [colors]="item.chartOptions.colors!" [grid]="item.chartOptions.grid!" 
                         [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"  (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
-                  @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                    <div class="big-number-container">
-                        @for(row of item['kpiData'].rows;track row){
-                          <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
-                          }
-                    </div>
-                  }
                   <div *ngIf="item.chartOptions && item['chartId'] === 5">
                     <apx-chart
                       [series]="item.chartOptions.series!"
@@ -1235,6 +1189,54 @@
                   </div>
                 </div>
               }
+              <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
+              @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
+                <div class="big-number-container">
+                    @for(row of item['kpiData'].rows;track row){
+                      <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
+                      }
+                </div>
+              }
+              <div *ngIf="item['chartType'] === 'Table'">
+                <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
+                  <table class="table border text-nowrap text-md-nowrap mb-0">
+                      <thead>
+                        <tr>
+                          @for(column of item.tableData?.headers;track column){
+                          <th>{{ column }}</th>
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
+                           <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
+                    <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
+                    [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                    [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}">
+                      <!-- @for(column of item.tableData?.headers;track column){
+                      <td>{{ row[column] }}</td>
+                      } -->
+                      <td *ngFor="let column of item.tableData?.headers">
+                        {{ row[column] }}
+                      </td>
+                    </tr>
+                  
+                      </tbody>
+                  </table>
+                  <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,(tablePage = $event)) : pageChangeTableDisplay(item,(tablePage = $event))"></pagination-controls>
+                  <div  style="float: right;font-size: 15px; margin-top: -41px;">
+                    <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,tablePage) : pageChangeTableDisplay(item,tablePage)" (mousedown)="stopDragging($event)"class="form-control cursor">
+                          <option  value="10"> 10</option>
+                          <option  value="50"> 50</option>
+                          <option  value="100"> 100</option>
+                          <option  value="500"> 500</option>
+                          <option  value="1000"> 1000</option>
+
+                    </select>
+                 </div>
+              </div>
+              <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+              </div>
+              </div>
 
                 <!-- <div class="card-footer p-1"> -->
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">
