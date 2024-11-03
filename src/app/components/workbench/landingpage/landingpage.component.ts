@@ -52,6 +52,8 @@ host:any;
 publishedDashboard = false;
 testVariableToChange! : string ;
 @ViewChild('propertiesModal') propertiesModal : any;
+@ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
+
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService){
   localStorage.setItem('QuerySetId', '0');
@@ -470,7 +472,13 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.loaderService.show();
     this.router.navigate(['/insights/sheetsdashboard'])
     }
-
+  viewSampleDashbaordPropertiesTab(name: any, dashboardId: any) {
+    this.modalService.open(this.sampleDashboardPropertiesModal);
+    this.dashboardPropertyTitle = name;
+    this.dashboardPropertyId = dashboardId;
+    this.dashboardId = dashboardId;
+    this.publishedDashboard = false;
+  }
   viewPropertiesTab(name :any,dashboardId:any){
   this.modalService.open(this.propertiesModal);
   this.getRoleDetailsDshboard();
