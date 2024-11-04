@@ -43,6 +43,8 @@ import { HttpClient } from '@angular/common/http';
 import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatTooltipModule
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
+declare type VerticalAlign = 'top' | 'center' | 'bottom';
+declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
 interface TableRow {
   [key: string]: any;
 }
@@ -104,8 +106,11 @@ export class SheetsComponent {
   isEChatrts : boolean = false;
   isZoom : boolean = false;
   xLabelFontSize : number = 12;
+  yLabelFontSize : number = 12;
   xLabelFontFamily : string = 'sans-serif';
+  yLabelFontFamily : string = 'sans-serif';
   xlabelFontWeight : number = 400;
+  ylabelFontWeight : number = 400;
   xLabelColor : string = '#00a5a2';
   xGridColor : string = '#00a5a2';
   yLabelColor : string = '#00a5a2';
@@ -201,7 +206,7 @@ export class SheetsComponent {
   dashboardId : any;
   selectedDashboardId : any = 0;
   GridColor : any = '#089ffc';
-  apexbBgColor : any = '#fcfcfc';
+  // apexbBgColor : any = '#fcfcfc';
   dateValue : any = "-Select-";
   Editor = ClassicEditor;
   editor : boolean = false;
@@ -243,6 +248,8 @@ export class SheetsComponent {
   radar: boolean = false;
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
+  ylabelAlignment : VerticalAlign = 'center';
+  dataLabelAlignment : MixedAlign = 'top';
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
@@ -522,7 +529,7 @@ if(this.fromFileId){
             },
             type: 'bar',
             height: 320,
-            background: this.apexbBgColor, 
+            background: this.backgroundColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -558,10 +565,11 @@ if(this.fromFileId){
               hideOverlappingLabels: false,
               style: {
                 colors: this.color,
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
-            },
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
+                },
+                offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
             },
             axisBorder: {
               show: false,
@@ -590,10 +598,11 @@ if(this.fromFileId){
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
+              offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
               formatter: this.formatNumber.bind(this)
             },
             axisBorder: {
@@ -621,7 +630,7 @@ if(this.fromFileId){
             bar: {
               dataLabels: {
                 hideOverflowingLabels:false,
-                position: 'top',
+                position: this.dataLabelAlignment,
               },
             },
           },
@@ -778,7 +787,7 @@ if(this.fromFileId){
           chart: {
             height: 300,
             type: 'pie',
-            background: this.apexbBgColor,
+            background: this.backgroundColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -896,7 +905,7 @@ if(this.fromFileId){
             },
             height: 350,
             type: 'line',
-            background: this.apexbBgColor,
+            background: this.backgroundColor,
             reponsive: true,
             zoom: {
               enabled: true
@@ -973,10 +982,11 @@ if(this.fromFileId){
                 trim: true,
                 style: {
                   colors: this.color,
-                  fontSize: '12px',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12,
+                  fontSize: this.xLabelFontSize,
+                  fontFamily: this.xLabelFontFamily,
+                  fontWeight: this.xlabelFontWeight,
                 },
+                offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
               }
             },
             yaxis: {
@@ -985,10 +995,11 @@ if(this.fromFileId){
                 this.yLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  cssClass: 'apexcharts-yaxis-label',
+                  fontSize: this.yLabelFontSize,
+                  fontFamily: this.yLabelFontFamily,
+                  fontWeight: this.ylabelFontWeight,
                 },
+                offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
                 formatter: this.formatNumber.bind(this)
               }
             }
@@ -1122,7 +1133,7 @@ if(this.fromFileId){
               },
               type: "area",
               height: 350,
-              background: this.apexbBgColor,
+              background: this.backgroundColor,
               zoom: {
                 enabled: true,
               },
@@ -1184,10 +1195,11 @@ if(this.fromFileId){
                 show: this.xLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  cssClass: "apexcharts-xaxis-label",
+                  fontSize: this.xLabelFontSize,
+                  fontFamily: this.xLabelFontFamily,
+                  fontWeight: this.xlabelFontWeight,
                 },
+                offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
               },
               tickPlacement: 'on'
             },
@@ -1196,14 +1208,16 @@ if(this.fromFileId){
                 show: this.yLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  cssClass: "apexcharts-xaxis-label",
+                  fontSize: this.yLabelFontSize,
+                  fontFamily: this.yLabelFontFamily,
+                  fontWeight: this.ylabelFontWeight,
                 },
+                offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
                 formatter: this.formatNumber.bind(this)
               },
             },
           };
+          console.log(this.chartOptions1);
       } else {
         this.eAreaChartOptions = {
           backgroundColor: this.backgroundColor,
@@ -1334,6 +1348,7 @@ if(this.fromFileId){
             },
             type: 'bar',
             height: 320,
+            background: this.backgroundColor
           },
           plotOptions: {
             bar: {
@@ -1366,10 +1381,11 @@ if(this.fromFileId){
               hideOverlappingLabels: false,
               style: {
                 colors: this.color,
-                fontSize: "11px",
-                fontWeight: 600,
-                cssClass: "apexcharts-xaxis-label",
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
+              offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
             },
           },
           yaxis: {
@@ -1380,10 +1396,11 @@ if(this.fromFileId){
               show: this.yLabelSwitch,
               style: {
                 colors: this.color,
-                fontSize: "11px",
-                fontWeight: 600,
-                cssClass: "apexcharts-xaxis-label",
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
+              offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
               formatter: this.formatNumber.bind(this)
             },
           },
@@ -1529,6 +1546,7 @@ bar["type"]="bar";
           chart: {
             type: "bar",
             height: 350,
+            background: this.backgroundColor,
             stacked: true,
             toolbar: {
               show: true
@@ -1566,10 +1584,11 @@ bar["type"]="bar";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
+              offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
             },
           },
           yaxis: {
@@ -1578,10 +1597,11 @@ bar["type"]="bar";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
+              offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
               formatter: this.formatNumber.bind(this)
             }
           },
@@ -1756,7 +1776,8 @@ bar["stack"]="total";
                 autoSelected: 'zoom' 
               },
               height: 350,
-              type: "line"
+              type: "line",
+              background: this.backgroundColor
             },
             grid: {
               show: true,
@@ -1802,10 +1823,11 @@ bar["stack"]="total";
                 show: this.xLabelSwitch,
                 style: {
                   colors: [],
-                  fontSize: '12px',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12
+                  fontSize: this.xLabelFontSize,
+                  fontFamily: this.xLabelFontFamily,
+                  fontWeight: this.xlabelFontWeight,
                 },
+                offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
               }
             },
             yaxis: [
@@ -1823,10 +1845,11 @@ bar["stack"]="total";
                   show: this.yLabelSwitch,
                   style: {
                     colors: [],
-                    fontSize: '12px',
-                    fontFamily: 'Helvetica, Arial, sans-serif',
-                    fontWeight: 12
+                    fontSize: this.yLabelFontSize,
+                    fontFamily: this.yLabelFontFamily,
+                    fontWeight: this.ylabelFontWeight,
                   },
+                  offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
                   formatter: this.formatNumber.bind(this)
                 }
               },
@@ -1845,10 +1868,11 @@ bar["stack"]="total";
                   show: this.yLabelSwitch,
                   style: {
                     colors: [],
-                    fontSize: '12px',
-                    fontFamily: 'Helvetica, Arial, sans-serif',
-                    fontWeight: 12
+                    fontSize: this.yLabelFontSize,
+                    fontFamily: this.yLabelFontFamily,
+                    fontWeight: this.ylabelFontWeight,
                   },
+                  offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
                   formatter: this.formatNumber.bind(this)
                 }
               }
@@ -2017,6 +2041,7 @@ bar["stack"]="total";
           chart: {
             type: "bar",
             height: 350,
+            background: this.backgroundColor,
             stacked: true,
             toolbar: {
               show: true
@@ -2052,10 +2077,11 @@ bar["stack"]="total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
+              offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0),
               formatter: this.formatNumber.bind(this)
             }
           },
@@ -2065,10 +2091,11 @@ bar["stack"]="total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
+              offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
             }
           },
           legend: {
@@ -2196,7 +2223,8 @@ bar["stack"]="total";
           series: this.dualAxisRowData,
           chart: {
             type: "bar",
-            height: 430
+            height: 430,
+            background: this.backgroundColor,
           },
           plotOptions: {
             bar: {
@@ -2226,10 +2254,11 @@ bar["stack"]="total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
+              offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0),
               formatter: this.formatNumber.bind(this)
             },
           },
@@ -2239,10 +2268,11 @@ bar["stack"]="total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
+              offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
             },
           },
           grid: {
@@ -2383,7 +2413,8 @@ bar["stack"]="total";
               autoSelected: 'zoom' 
             },
             height: 350,
-            type: "line"
+            type: "line",
+            background: this.backgroundColor,
           },
           dataLabels: {
             enabled: true,
@@ -2429,10 +2460,11 @@ bar["stack"]="total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
+              offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
             },
           },
           yaxis: {
@@ -2441,10 +2473,11 @@ bar["stack"]="total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
+              offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
               formatter: this.formatNumber.bind(this)
             },
           },
@@ -2567,6 +2600,7 @@ bar["stack"]="Total";
           series: this.chartsRowData,
           chart: {
             type: "donut",
+            background: this.backgroundColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
@@ -2678,6 +2712,7 @@ bar["stack"]="Total";
           chart: {
             height: 350,
             type: 'heatmap',
+            background: this.backgroundColor,
           },
           plotOptions: {
             heatmap: {
@@ -2702,10 +2737,11 @@ bar["stack"]="Total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
-              },
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
+                },
+                offsetX: this.labelAlignment == 'left' ? -10 : (this.labelAlignment == 'right' ? 10 : 0)
             }
           },
           yaxis: {
@@ -2717,10 +2753,11 @@ bar["stack"]="Total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
+              offsetY: this.ylabelAlignment == 'bottom' ? 10 : (this.ylabelAlignment == 'top' ? -10 : 0),
             }
           },
           legend: {
@@ -2860,7 +2897,8 @@ bar["stack"]="Total";
         series: this.dualAxisRowData,
         chart: {
           type: "bar",
-          height: 350
+          height: 350,
+          background: this.backgroundColor,
         },
         plotOptions: {
           bar: {
@@ -3302,6 +3340,7 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map = false;
               this.sidebysideBar();
+              this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
             }
             if(this.table){
               this.tableDisplayPagination();
@@ -3627,21 +3666,23 @@ bar["stack"]="Total";
         }
       }
       this.draggedColumns.splice(event.currentIndex, 0, element);
+      event.currentIndex = this.draggedColumns.indexOf(element);
+      console.log('New element index:', event.currentIndex);
       const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
       //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-      this.draggedColumnsData.push([element.column, element.data_type, "", ""]);
-      this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
-        const indexA = columnIndexMap.get(a[0]) ?? -1;
-        const indexB = columnIndexMap.get(b[0]) ?? -1;
-        return indexA - indexB;
-      });
-      this.draggedColumns.forEach((column: any, index: number) => {
-        if (column.column === element.column) {
-          if (event.currentIndex !== index) {
-            event.currentIndex = index;
-          }
-        }
-      });
+      this.draggedColumnsData.splice(event.currentIndex, 0, [element.column, element.data_type, "", ""]);
+      // this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
+      //   const indexA = columnIndexMap.get(a[0]) ?? -1;
+      //   const indexB = columnIndexMap.get(b[0]) ?? -1;
+      //   return indexA - indexB;
+      // });
+      // this.draggedColumns.forEach((column: any, index: number) => {
+      //   if (column.column === element.column) {
+      //     if (event.currentIndex !== index) {
+      //       event.currentIndex = index;
+      //     }
+      //   }
+      // });
       console.log(this.draggedColumnsData);
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
@@ -3669,21 +3710,22 @@ bar["stack"]="Total";
       }
     }
     this.draggedRows.splice(event.currentIndex, 0, element);
+    event.currentIndex = this.draggedRows.indexOf(element);
     const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
     //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-    this.draggedRowsData.push([element.column, element.data_type, "", ""]);
-    this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
-      const indexA = rowIndexMap.get(a[0]) ?? -1;
-      const indexB = rowIndexMap.get(b[0]) ?? -1;
-      return indexA - indexB;
-    });
-    this.draggedRows.forEach((row: any, index: number) => {
-      if (row.column === element.column) {
-        if (event.currentIndex !== index) {
-          event.currentIndex = index;
-        }
-      }
-    });
+    this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+    // this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
+    //   const indexA = rowIndexMap.get(a[0]) ?? -1;
+    //   const indexB = rowIndexMap.get(b[0]) ?? -1;
+    //   return indexA - indexB;
+    // });
+    // this.draggedRows.forEach((row: any, index: number) => {
+    //   if (row.column === element.column) {
+    //     if (event.currentIndex !== index) {
+    //       event.currentIndex = index;
+    //     }
+    //   }
+    // });
     console.log(this.draggedRowsData);
     if (this.integerList.includes(element.data_type)) {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
@@ -3743,35 +3785,37 @@ bar["stack"]="Total";
     console.log(this.draggedColumnsData);
     console.log(index);
     // this.draggedColumns.splice(index, 1);
-    (this.draggedColumnsData as any[]).forEach((data,index1)=>{
-      if(this.dateList.includes(data[1])){
-        if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
-          && this.draggedColumns[index].type === data[2]){
-            this.draggedColumnsData.splice(index, 1);
-        }
-      }
-      else{
-        (data as any[]).forEach((aa)=>{ 
-          if(column === aa){
-            console.log(aa);
-            this.draggedColumnsData.splice(index1, 1);
-          }
-        } );
-      }
-    });
+    // (this.draggedColumnsData as any[]).forEach((data,index1)=>{
+    //   if(this.dateList.includes(data[1])){
+    //     if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
+    //       && this.draggedColumns[index].type === data[2]){
+    //         this.draggedColumnsData.splice(index, 1);
+    //     }
+    //   }
+    //   else{
+    //     (data as any[]).forEach((aa)=>{ 
+    //       if(column === aa){
+    //         console.log(aa);
+    //         this.draggedColumnsData.splice(index1, 1);
+    //       }
+    //     } );
+    //   }
+    // });
     this.draggedColumns.splice(index, 1);   
+    this.draggedColumnsData.splice(index, 1);
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
     this.draggedRows.splice(index, 1);
-    (this.draggedRowsData as any[]).forEach((data,index)=>{
-     (data as any[]).forEach((aa)=>{ 
-       if(column === aa){
-         console.log(aa);
-         this.draggedRowsData.splice(index, 1);
-       }
-     } );
-   });   
+    this.draggedRowsData.splice(index, 1);
+  //   (this.draggedRowsData as any[]).forEach((data,index)=>{
+  //    (data as any[]).forEach((aa)=>{ 
+  //      if(column === aa){
+  //        console.log(aa);
+  //        this.draggedRowsData.splice(index, 1);
+  //      }
+  //    } );
+  //  });   
    this.dataExtraction();
   }
   rightArrow(){
@@ -4108,7 +4152,7 @@ bar["stack"]="Total";
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
       this.GridColor = '#089ffc';
-      this.apexbBgColor = '#fcfcfc';
+      this.backgroundColor = '#fcfcfc';
       this.color = '#00a5a2';
       this.bandingSwitch = false;
       this.xLabelSwitch = true;
@@ -4672,8 +4716,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
         // this.displayUnits = 'none';
         
-        if(this.sheetResponce.column_data){
-          this.draggedColumnsData = this.sheetResponce.column_data;
+        if(this.sheetResponce.columns_data){
+          this.draggedColumnsData = this.sheetResponce.columns_data;
         }
         else{
           this.draggedColumns.forEach((res:any) => {
@@ -4833,7 +4877,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions3?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions3?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions3?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions3?.chart?.background;
+        this.backgroundColor = this.chartOptions3?.chart?.background;
         this.color = this.chartOptions3?.colors;
         console.log(this.chartOptions3.xaxis.convertedCatToNumeric);
         console.log(this.chartOptions3);
@@ -4883,7 +4927,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
         };
         this.legendSwitch = this.chartOptions4.legend?.show;
-        this.apexbBgColor = this.chartOptions4?.chart?.background;
+        this.backgroundColor = this.chartOptions4?.chart?.background;
         this.dataLabels = this.chartOptions4?.dataLabels?.enabled;
         this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
         // this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
@@ -4947,7 +4991,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.xGridSwitch = this.chartOptions?.grid?.xaxis?.lines?.show;
           this.yGridSwitch = this.chartOptions?.grid?.yaxis?.lines?.show;
           this.GridColor = this.chartOptions?.grid?.borderColor;
-          this.apexbBgColor = this.chartOptions?.chart?.background;
+          this.backgroundColor = this.chartOptions?.chart?.background;
           this.color = this.chartOptions?.colors;
         } else {
           this.eLineChartOptions = this.sheetResponce.savedChartOptions;
@@ -4991,7 +5035,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.xGridSwitch = this.chartOptions1?.grid?.xaxis?.lines?.show;
           this.yGridSwitch = this.chartOptions1?.grid?.yaxis?.lines?.show;
           this.GridColor = this.chartOptions1?.grid?.borderColor;
-          this.apexbBgColor = this.chartOptions1?.chart?.background;
+          this.backgroundColor = this.chartOptions1?.chart?.background;
           this.color = this.chartOptions1?.colors;
         } else {
           this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
@@ -5033,7 +5077,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions2?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions2?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions2?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions2?.chart?.background;
+        this.backgroundColor = this.chartOptions2?.chart?.background;
         } else {
           this.eSideBySideBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5074,7 +5118,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions6?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions6?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions6?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions6?.chart?.background;
+        this.backgroundColor = this.chartOptions6?.chart?.background;
         } else {
           this.eStackedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5117,7 +5161,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.xGridSwitch = this.chartOptions5?.grid?.xaxis?.lines?.show;
           this.yGridSwitch = this.chartOptions5?.grid?.yaxis?.lines?.show;
           this.GridColor = this.chartOptions5?.grid?.borderColor;
-          this.apexbBgColor = this.chartOptions5?.chart?.background;
+          this.backgroundColor = this.chartOptions5?.chart?.background;
           this.barColor = this.chartOptions5?.series[0]?.color;
           this.lineColor = this.chartOptions5?.series[1]?.color;
         } else {
@@ -5188,7 +5232,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions7?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions7?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions7?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions7?.chart?.background;
+        this.backgroundColor = this.chartOptions7?.chart?.background;
         } else {
           this.ehorizontalStackedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5229,7 +5273,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions8?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions8?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions8?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions8?.chart?.background;
+        this.backgroundColor = this.chartOptions8?.chart?.background;
         } else {
           this.eGroupedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5270,7 +5314,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions9?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions9?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions9?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions9?.chart?.background;
+        this.backgroundColor = this.chartOptions9?.chart?.background;
         } else {
           this.eMultiLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -7503,6 +7547,24 @@ renameColumns(){
     else if(this.barLine){
       this.barLineChart();
     }
+    else if(this.sidebyside){
+      this.sidebysideBar();
+    }
+    else if(this.stocked){
+      this.stockedBar();
+    }
+    else if(this.horizentalStocked){
+      this.horizentalStockedBar();
+    }
+    else if(this.grouped){
+      this.hGrouped();
+    }
+    else if(this.multiLine){
+      this.multiLineChart();
+    }
+    else if(this.heatMap){
+      this.heatMapChart();
+    }
   }
   formattedData : any[] = [];
   formatNumber(value: number): string {
@@ -8464,14 +8526,14 @@ fetchChartData(chartData: any){
           this.color2 = '#ffffff'; 
         }
         this.GridColor = '#0f0f0f';
-        this.apexbBgColor = '#ffffff';
+        this.backgroundColor = '#ffffff';
         if(this.kpi){
           this.kpiColor = '#0f0f0f';
         }
         this.marksColor2(this.color);
         this.funnelColorChange(this.color);
         this.gridLineColor(this.GridColor);
-        this.apexbBackgroundColor(this.apexbBgColor);
+        this.apexbBackgroundColor(this.backgroundColor);
       }
 
       sheetNotSaveAlert(): Promise<boolean> {
@@ -8532,4 +8594,17 @@ fetchChartData(chartData: any){
       this.selectedChartPlugin = localStorage.getItem('chartType')+'';
       this.changeChartPlugin();
     }
+
+    backgroundColorSwitch : boolean = false;
+    chartColorSwitch : boolean = false;
+    barColorSwitch : boolean = false;
+    lineColorSwitch : boolean = false;
+    gridLineColorSwitch : boolean = false;
+    xLabelColorSwitch : boolean = false;
+    xGridLineColorSwitch : boolean = false;
+    yLabelColorSwitch : boolean = false;
+    yGridLineColorSwitch : boolean = false;
+    bandingColorSwitch : boolean = false;
+    kpiColorSwitch : boolean = false;
+    funnelColorSwitch : boolean = false;
 }

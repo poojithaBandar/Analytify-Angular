@@ -1518,7 +1518,7 @@
                                                               <ng-template>
                                                                 <div >
                                                                   <div class="sub-menu-item  p-2" >
-                                                                    <div class="row">
+                                                                    <!-- <div class="row">
                                                                         <label class="col-md-4 form-label px-1 fs-14">Font</label>
                                                                         <div class="col-md-8">
                                                                             <div class="form-group mb-1">
@@ -1530,7 +1530,164 @@
                                                                                 </select>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> -->
+                                                                          <div class="row">
+                                                                            <div class="" >
+                                                                                <div class="font-color-card">
+                                                                                    <p class="mb-0">Fonts</p>
+                                                                                    <div class="dropup" ngbDropdown>
+                                                                                        <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                        <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                            <div class="dropup" ngbDropdown >
+                                                                                                <div class="form-group mb-0 p-1">
+                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontFamily" (change)="changeAlignment()">
+                                                                                                        <option value="'Arial', sans-serif">Arial</option>
+                                                                                                        <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                        <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                        <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                        <option value="'Georgia', serif">Georgia</option>
+                                                                                                        <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                                        <option value="Algerian">Algerian</option>
+                                                                                                        <option value="Arial">Arial</option>
+                                                                                                        <option value="Bahnschrift">Bahnschrift</option>
+                                                                                                        <option value="sans-serif">Sans Serif</option>
+                                                                                                        <option value="Calibri">Calibri</option>
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                                <div class="bold-italic p-1">
+                                                                                                    <div class="row">
+                                                                                                        <div class="form-group mb-0 d-flex">
+                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize" (change)="changeAlignment()">
+                                                                                                                <option value="10">10px</option>
+                                                                                                                <option value="11">11px</option>
+                                                                                                                <option value="12">12px</option>
+                                                                                                                <option value="13">13px</option>
+                                                                                                                <option value="14">14px</option>
+                                                                                                                <option value="15">15px</option>
+                                                                                                                <option value="16">16px</option>
+                                                                                                                <option value="17">17px</option>
+                                                                                                                <option value="18">18px</option>
+                                                                                                                <option value="19">19px</option>
+                                                                                                                <option value="20">20px</option>
+                                                                                                             </select>
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;changeAlignment()">
+                                                                                                                <p>B</p>
+                                                                                                            </div>
+                                                                                                            <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
+                                                                                                                <p>I</p>
+                                                                                                            </div>
+                                                                                                            <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('U')">
+                                                                                                                <p>U</p>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                       
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="color-shade-card p-1" *ngIf="false">
+                                                                                                    <div class="row px-4">
+                                                                                                        <div class="color-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-white" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-orange" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-DarkKhaki" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-ForestGreen" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-CadetBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-SteelBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-SlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    </div>
+                                                                                                    <div class="row px-4">
+                                                                                                        <div class="color-light-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Gainsboro" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-orange-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-DarkKhaki-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-ForestGreen-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-CadetBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-SteelBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-SlateGray-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    </div>
+                                                                                                    <div class="row px-4">
+                                                                                                        <div class="color-DimGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Gainsboro-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-orange-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-DarkKhaki-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-ForestGreen-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-CadetBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-SteelBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-SlateGray-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    </div>
+                                                                                                    <div class="row px-4 mt-2">
+                                                                                                        <div class="color-DimGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Gainsboro-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Orchid" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-PaleVioletRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-IndianRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-SaddleBrown" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-DimGray-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-PaleTurquoise" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    </div>
+                                                                                                    <div class="row px-4">
+                                                                                                        <div class="color-Silver" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Gainsboro-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Plum" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-LightPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-LightCoral" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Peru" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-LightSlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-HotPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    </div>
+                                                                                                    <div class="row px-4">
+                                                                                                        <div class="color-Silver-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Gainsboro-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Plum-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-LightPink-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-LightCoral-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-Peru-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-LightSlateGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                        <div class="color-yellow" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                              
+                                                                                            </div>
+                                                                                            <li *ngIf="false"> <p class="more-color-text">More colors...</p></li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                            </div>
+                                                                          </div>
+                                                                          <span ngbTooltip=""></span>
+                                                                        </div>
+                                                                        <div class="sub-menu-item mb-0">
+                                                                            <div class="row">
+                                                                              <div class="">
+                                                                                  <div class="font-color-card">
+                                                                                      <p class="mb-0">Alignments</p>
+                                                                                      <div class="dropup" ngbDropdown>
+                                                                                          <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                          <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                              <div class="dropup" ngbDropdown >
+                                                                                                  <div class=" p-1">
+                                                                                                          <div class="form-group mb-0 text-center" (click)="labelAlignment = 'center';changeAlignment()">
+                                                                                                            <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                                          </div>
+                                                                                                          <div class="form-group mb-0 alignment-sides">
+                                                                                                             <div class="align-left" (click)="labelAlignment = 'left';changeAlignment()">
+                                                                                                                <i class="fa fa-align-left"></i>
+                                                                                                            </div>
+                                                                                                            <div  class="align-center" (click)="labelAlignment = 'center';changeAlignment()">
+                                                                                                                <i class="fa fa-align-center"></i>
+                                                                                                            </div>
+                                                                                                            <div class="align-right" (click)="labelAlignment = 'right';changeAlignment()">
+                                                                                                                <i class="fa fa-align-right"></i>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>                                                                                    
+                                                                                              </div>
+                                                                                          </ul>
+                                                                                      </div>
+                                                                              </div>
+                                                                            </div>
+                                                                          </div>
+                                                                        </div>
                                                                     <div *ngIf="!isApexCharts" class="row">
                                                                         <label class="col-md-4 form-label px-1 fs-14">Font-Size</label>
                                                                         <div class="col-md-8">
@@ -1585,7 +1742,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="row">
+                                                                    <!-- <div class="row">
                                                                         <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                         <div class="col-md-8">
                                                                             <div class="form-group mb-1">
@@ -1596,7 +1753,7 @@
                                                                                 </select>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> -->
                                                                     <span ngbTooltip=""></span>
                                                                   </div>
                                                                 </div>
@@ -1637,7 +1794,7 @@
                                                                         <div class="row">
                                                                             
                                                                         </div>
-                                                                      <div class="row">
+                                                                      <!-- <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Font</label>
                                                                           <div class="col-md-8">
                                                                               <div class="form-group mb-1">
@@ -1649,7 +1806,164 @@
                                                                                   </select>
                                                                               </div>
                                                                           </div>
+                                                                      </div> -->
+                                                                      <div class="row">
+                                                                        <div class="" >
+                                                                            <div class="font-color-card">
+                                                                                <p class="mb-0">Fonts</p>
+                                                                                <div class="dropup" ngbDropdown>
+                                                                                    <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                        <div class="dropup" ngbDropdown >
+                                                                                            <div class="form-group mb-0 p-1">
+                                                                                                <select class="form-select form-select select2 fs-14" [(ngModel)]="yLabelFontFamily" (change)="changeAlignment()">
+                                                                                                    <option value="'Arial', sans-serif">Arial</option>
+                                                                                                    <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                    <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                    <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                    <option value="'Georgia', serif">Georgia</option>
+                                                                                                    <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                                    <option value="Algerian">Algerian</option>
+                                                                                                    <option value="Arial">Arial</option>
+                                                                                                    <option value="Bahnschrift">Bahnschrift</option>
+                                                                                                    <option value="sans-serif">Sans Serif</option>
+                                                                                                    <option value="Calibri">Calibri</option>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="bold-italic p-1">
+                                                                                                <div class="row">
+                                                                                                    <div class="form-group mb-0 d-flex">
+                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize" (change)="changeAlignment()">
+                                                                                                            <option value="10">10px</option>
+                                                                                                            <option value="11">11px</option>
+                                                                                                            <option value="12">12px</option>
+                                                                                                            <option value="13">13px</option>
+                                                                                                            <option value="14">14px</option>
+                                                                                                            <option value="15">15px</option>
+                                                                                                            <option value="16">16px</option>
+                                                                                                            <option value="17">17px</option>
+                                                                                                            <option value="18">18px</option>
+                                                                                                            <option value="19">19px</option>
+                                                                                                            <option value="20">20px</option>
+                                                                                                         </select>
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;changeAlignment()">
+                                                                                                            <p>B</p>
+                                                                                                        </div>
+                                                                                                        <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
+                                                                                                            <p>I</p>
+                                                                                                        </div>
+                                                                                                        <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('U')">
+                                                                                                            <p>U</p>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                   
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="color-shade-card p-1" *ngIf="false">
+                                                                                                <div class="row px-4">
+                                                                                                    <div class="color-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-white" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-orange" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-DarkKhaki" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-ForestGreen" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-CadetBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-SteelBlue" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-SlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                </div>
+                                                                                                <div class="row px-4">
+                                                                                                    <div class="color-light-black" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Gainsboro" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-orange-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-DarkKhaki-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-ForestGreen-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-CadetBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-SteelBlue-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-SlateGray-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                </div>
+                                                                                                <div class="row px-4">
+                                                                                                    <div class="color-DimGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Gainsboro-light" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-orange-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-DarkKhaki-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-ForestGreen-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-CadetBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-SteelBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-SlateGray-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                </div>
+                                                                                                <div class="row px-4 mt-2">
+                                                                                                    <div class="color-DimGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Gainsboro-light-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Orchid" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-PaleVioletRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-IndianRed" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-SaddleBrown" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-DimGray-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-PaleTurquoise" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                </div>
+                                                                                                <div class="row px-4">
+                                                                                                    <div class="color-Silver" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Gainsboro-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Plum" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-LightPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-LightCoral" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Peru" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-LightSlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-HotPink" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                </div>
+                                                                                                <div class="row px-4">
+                                                                                                    <div class="color-Silver-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Gainsboro-3" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Plum-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-LightPink-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-LightCoral-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-Peru-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-LightSlateGray-2" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                    <div class="color-yellow" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                          
+                                                                                        </div>
+                                                                                        <li *ngIf="false"> <p class="more-color-text">More colors...</p></li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                        </div>
                                                                       </div>
+                                                                      <span ngbTooltip=""></span>
+                                                                    </div>
+                                                                    <div class="sub-menu-item mb-0">
+                                                                        <div class="row">
+                                                                          <div class="">
+                                                                              <div class="font-color-card">
+                                                                                  <p class="mb-0">Alignments</p>
+                                                                                  <div class="dropup" ngbDropdown>
+                                                                                      <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                      <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                          <div class="dropup" ngbDropdown >
+                                                                                                <div class=" p-1 mt-2 mb-2">
+                                                                                                    <div class="form-group mb-0 text-center" (click)="labelAlignment = 'center';changeAlignment()">
+                                                                                                      <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                                    </div>
+                                                                                                    <div class="form-group mb-0 alignment-sides">
+                                                                                                       <div class="justify-bottom" (click)="ylabelAlignment = 'bottom';changeAlignment()">
+                                                                                                          <i class="fa fa-align-justify"></i>
+                                                                                                      </div>
+                                                                                                      <div  class="justify-middle" (click)="ylabelAlignment = 'center';changeAlignment()">
+                                                                                                          <i class="fa fa-align-justify"></i>
+                                                                                                      </div>
+                                                                                                      <div class="justify-top" (click)="ylabelAlignment = 'top';changeAlignment()">
+                                                                                                          <i class="fa fa-align-justify"></i>
+                                                                                                      </div>
+                                                                                                  </div>
+                                                                                              </div>                                                                                  
+                                                                                          </div>
+                                                                                      </ul>
+                                                                                  </div>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>
                                                                       @if(kpi){
                                                                         <div class="row">
                                                                           <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
@@ -1674,7 +1988,7 @@
                                                                           <input type="text" id="suffix" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
                                </div>
                                                                       }
-                                                                      <div class="row">
+                                                                      <!-- <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                           <div class="col-md-8">
                                                                               <div class="form-group mb-1">
@@ -1685,8 +1999,8 @@
                                                                                   </select>
                                                                               </div>
                                                                           </div>
-                                                                      </div>
-                                                                      @if(!kpi){
+                                                                      </div> -->
+                                                                      <!-- @if(!kpi){
                                                                       <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
                                                                           <div class="col-md-8">
@@ -1724,7 +2038,7 @@
                                                                                 <button class="btn btn-primary" (click)="updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}}); numberPopupTrigger()">Update</button>
                                                                             </div>
                                                                           </div>
-                                                                      }
+                                                                      } -->
                                                                       <span ngbTooltip=""></span>
                                                                     </div>
                                                                   </div>
@@ -1884,7 +2198,7 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="false" >
+                                                              <div class="sub-menu-item  p-2 mb-0">
                                                                 <div class="row">
                                                                   <div class="">
                                                                       <div class="font-color-card">
@@ -1893,39 +2207,38 @@
                                                                               <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                   <div class="dropup" ngbDropdown >
-                                                                                   
-                                                                                      <div class=" p-1">
-                                                                                              <div class="form-group mb-0 text-center">
-                                                                                                <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
-                                                                                              </div>
-                                                                                              <div class="form-group mb-0 alignment-sides">
-                                                                                                 <div class="align-left">
-                                                                                                    <i class="fa fa-align-left"></i>
-                                                                                                </div>
-                                                                                                <div  class="align-center">
-                                                                                                    <i class="fa fa-align-center"></i>
-                                                                                                </div>
-                                                                                                <div class="align-right">
-                                                                                                    <i class="fa fa-align-right"></i>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>   
-                                                                                        <div class=" p-1 mt-2 mb-2">
-                                                                                            <div class="form-group mb-0 text-center">
-                                                                                              <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
-                                                                                            </div>
-                                                                                            <div class="form-group mb-0 alignment-sides">
-                                                                                               <div class="justify-bottom">
-                                                                                                  <i class="fa fa-align-justify"></i>
-                                                                                              </div>
-                                                                                              <div  class="justify-middle">
-                                                                                                  <i class="fa fa-align-justify"></i>
-                                                                                              </div>
-                                                                                              <div class="justify-top">
-                                                                                                  <i class="fa fa-align-justify"></i>
-                                                                                              </div>
+                                                                                    <div class=" p-1" *ngIf="horizentalStocked || grouped">
+                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelAlignment = 'right';changeAlignment()">
+                                                                                          <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                        </div>
+                                                                                        <div class="form-group mb-0 alignment-sides">
+                                                                                           <div class="align-left" (click)="dataLabelAlignment = 'left';changeAlignment()">
+                                                                                              <i class="fa fa-align-left"></i>
                                                                                           </div>
-                                                                                      </div>                                                                                  
+                                                                                          <div  class="align-center" (click)="dataLabelAlignment = 'center';changeAlignment()">
+                                                                                              <i class="fa fa-align-center"></i>
+                                                                                          </div>
+                                                                                          <div class="align-right" (click)="dataLabelAlignment = 'right';changeAlignment()">
+                                                                                              <i class="fa fa-align-right"></i>
+                                                                                          </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class=" p-1 mt-2 mb-2" *ngIf="!(horizentalStocked || grouped)">
+                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelAlignment = 'top';changeAlignment()">
+                                                                                            <button class="btn btn-blue-light Automatic-btn">Automatic</button>
+                                                                                        </div>
+                                                                                        <div class="form-group mb-0 alignment-sides">
+                                                                                            <div class="justify-bottom" (click)="dataLabelAlignment = 'bottom';changeAlignment()">
+                                                                                                <i class="fa fa-align-justify"></i>
+                                                                                            </div>
+                                                                                            <div class="justify-middle" (click)="dataLabelAlignment = 'center';changeAlignment()">
+                                                                                                <i class="fa fa-align-justify"></i>
+                                                                                            </div>
+                                                                                            <div class="justify-top" (click)="dataLabelAlignment = 'top';changeAlignment()">
+                                                                                                <i class="fa fa-align-justify"></i>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
                                                                                   </div>
                                                                               </ul>
                                                                           </div>
@@ -1942,6 +2255,45 @@
                                                                     <option value="bottom">BOTTOM</option>
                                                                 </select>
                                                               </div>
+                                                              @if(!kpi){
+                                                                <div class="row">
+                                                                    <label class="col-md-4 form-label fs-14">Numbers</label>
+                                                                    <div class="col-md-8">
+                                                                        <div class="form-group mb-1">
+                                                                          <select class="form-select form-select select2 fs-14" (change)="numberPopupTrigger()">
+                                                                              <option value="1">123.456</option>
+                                                                              <option value="2">Number(custom)</option>
+                                                                          </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                              }
+                                                                @if(numberPopup){
+                                                                  <div class="number-formatting number-popup popup-content">
+                                                                      <label for="decimal-places">Decimal places:</label>
+                                                                      <input type="number" id="decimal-places" [(ngModel)]="decimalPlaces" min="0">
+                                                                      
+                                                                      <label for="display-units">Display Units:</label>
+                                                                      <select id="display-units" [(ngModel)]="displayUnits">
+                                                                        <option value="none">None</option>
+                                                                        <option value="K">Thousands (K)</option>
+                                                                        <option value="M">Millions (M)</option>
+                                                                        <option value="B">Billions (B)</option>
+                                                                        <option value="G">Billions (G)</option>
+                                                                      </select>
+                                                                      
+                                                                      <label for="prefix">Prefix:</label>
+                                                                      <input type="text" id="prefix" [(ngModel)]="prefix">
+                                                                      
+                                                                      <label for="suffix">Suffix:</label>
+                                                                      <input type="text" id="suffix" [(ngModel)]="suffix">
+                                                                      
+                                                                      <div class="buttons">
+                                                                          <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
+                                                                          <button class="btn btn-primary" (click)="updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}}); numberPopupTrigger()">Update</button>
+                                                                      </div>
+                                                                    </div>
+                                                                }
                                                             </ng-template>
                                                           </div>
                                                         </div>
@@ -1958,11 +2310,11 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                    <!-- <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Banding color </p>
                                                         </div>
-                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="color1"
@@ -1973,7 +2325,7 @@
                                                         [(ngModel)]="color2"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>
+                                                    </div> -->
                                                     <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                         <div  style="font-size: 15px;">
                                                             <label>Page Length</label>
@@ -1998,7 +2350,7 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && !calendar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <!-- <div *ngIf="!isApexCharts && !calendar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >background Color </p>
                                                         </div>
@@ -2007,8 +2359,8 @@
                                                         [(ngModel)]="backgroundColor"  (change)="marksColor($event,6)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>  
-                                                    <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div>   -->
+                                                    <!-- <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-label Color </p>
                                                         </div>
@@ -2017,8 +2369,8 @@
                                                         [(ngModel)]="xLabelColor"  (change)="marksColor($event,5)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>  
-                                                    <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div> -->
+                                                    <!-- <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >X-Grid Line Color </p>
                                                         </div>
@@ -2027,8 +2379,8 @@
                                                         [(ngModel)]="xGridColor"  (change)="marksColor($event,1)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div> -->
+                                                    <!-- <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-label Color </p>
                                                         </div>
@@ -2037,8 +2389,8 @@
                                                         [(ngModel)]="yLabelColor"  (change)="marksColor($event,2)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div> -->
+                                                    <!-- <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Y-Grid Line Color </p>
                                                         </div>
@@ -2047,7 +2399,7 @@
                                                         [(ngModel)]="yGridColor"  (change)="marksColor($event,3)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>
+                                                    </div> -->
                                                     <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
@@ -2159,6 +2511,232 @@
                                                           </div>
                                                         </div>
                                                     </div>
+
+                                                    <div *ngIf="!( guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                          <button
+                                                            ngbAccordionButton
+                                                            class="accordion-button p-3 fw-500 border"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse"
+                                                            >
+                                                            Color Palettes
+                                                          </button>
+                                                          
+                                                        </h6>
+                                                        <div
+                                                          ngbAccordionCollapse
+                                                          id="collapse"
+                                                          class="accordion-collapse collapse" 
+                                                          aria-labelledby="heading"
+                                                          data-bs-parent="#accordionExample"
+                                                           >
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <ng-template>
+                                                                <div *ngIf="!((table && chartId) || kpi || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p>Background</p>
+                                                                    </div>
+                                                                    <div *ngIf="backgroundColorSwitch" class="toggle toggle-sm on mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!backgroundColorSwitch" class="toggle toggle-sm off mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="backgroundColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="backgroundColor"  (change)="marksColor($event,6)"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p>Chart</p>
+                                                                    </div>
+                                                                    <div *ngIf="chartColorSwitch" class="toggle toggle-sm on mb-0" (click)="chartColorSwitch = !chartColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!chartColorSwitch" class="toggle toggle-sm off mb-0" (click)="chartColorSwitch = !chartColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="chartColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="color" 
+                                                                    (ngModelChange)="marksColor2($event)"
+                                                                    [format]="'hex'"></ngx-colors>
+                                                                </div>
+
+                                                                <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >bar</p>
+                                                                    </div>
+                                                                    <div *ngIf="barColorSwitch" class="toggle toggle-sm on mb-0" (click)="barColorSwitch = !barColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!barColorSwitch" class="toggle toggle-sm off mb-0" (click)="barColorSwitch = !barColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="barColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="barColor" 
+                                                                    (ngModelChange)="marksColor2($event)" 
+                                                                    [format]="'hex'">
+                                                                    </ngx-colors>
+                                                                </div>
+                                                                <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >line</p>
+                                                                    </div>
+                                                                    <div *ngIf="lineColorSwitch" class="toggle toggle-sm on mb-0" (click)="lineColorSwitch = !lineColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!lineColorSwitch" class="toggle toggle-sm off mb-0" (click)="lineColorSwitch = !lineColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="lineColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="lineColor" 
+                                                                    (ngModelChange)="marksColor2($event)" 
+                                                                    [format]="'hex'">
+                                                                    </ngx-colors>
+                                                                </div>
+                                                                <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Grid Line</p>
+                                                                    </div>
+                                                                    <div *ngIf="gridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="gridLineColorSwitch = !gridLineColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!gridLineColorSwitch" class="toggle toggle-sm off mb-0" (click)="gridLineColorSwitch = !gridLineColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="gridLineColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="GridColor"  (change)="gridLineColor($event)"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+
+                                                                <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >X-label Color </p>
+                                                                    </div>
+                                                                    <div *ngIf="xLabelColorSwitch" class="toggle toggle-sm on mb-0" (click)="xLabelColorSwitch = !xLabelColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!xLabelColorSwitch" class="toggle toggle-sm off mb-0" (click)="xLabelColorSwitch = !xLabelColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="xLabelColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="xLabelColor"  (change)="marksColor($event,5)"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>  
+                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >X-Grid Line Color </p>
+                                                                    </div>
+                                                                    <div *ngIf="xGridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="xGridLineColorSwitch = !xGridLineColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!xGridLineColorSwitch" class="toggle toggle-sm off mb-0" (click)="xGridLineColorSwitch = !xGridLineColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="xGridLineColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="xGridColor"  (change)="marksColor($event,1)"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+                                                                <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Y-label Color </p>
+                                                                    </div>
+                                                                    <div *ngIf="yLabelColorSwitch" class="toggle toggle-sm on mb-0" (click)="yLabelColorSwitch = !yLabelColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!yLabelColorSwitch" class="toggle toggle-sm off mb-0" (click)="yLabelColorSwitch = !yLabelColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="yLabelColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="yLabelColor"  (change)="marksColor($event,2)"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+                                                                <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Y-Grid Line Color </p>
+                                                                    </div>
+                                                                    <div *ngIf="yGridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="yGridLineColorSwitch = !yGridLineColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!yGridLineColorSwitch" class="toggle toggle-sm off mb-0" (click)="yGridLineColorSwitch = !yGridLineColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="yGridLineColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="yGridColor"  (change)="marksColor($event,3)"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+                                                                <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Banding color </p>
+                                                                    </div>
+                                                                    <div *ngIf="bandingColorSwitch" class="toggle toggle-sm on mb-0" (click)="bandingColorSwitch = !bandingColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!bandingColorSwitch" class="toggle toggle-sm off mb-0" (click)="bandingColorSwitch = !bandingColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="bandingColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="color1"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                     <ngx-colors *ngIf="bandingColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="color2"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+                                                                <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label for="color">Color</label>
+                                                                    <div *ngIf="kpiColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiColorSwitch = !kpiColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!kpiColorSwitch" class="toggle toggle-sm off mb-0" (click)="kpiColorSwitch = !kpiColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="kpiColorSwitch"
+                                                                    ngx-colors-trigger 
+                                                                    [(ngModel)]="kpiColor"
+                                                                    [format] = "'hex'"
+                                                                     ></ngx-colors>
+                                                                </div>
+                                                                <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label>color</label>
+                                                                    <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!funnelColorSwitch" class="toggle toggle-sm off mb-0" (click)="funnelColorSwitch = !funnelColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="funnelColor" ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
+                                                                    </ngx-colors>
+                                                                </div>
+     
+                                                            </ng-template>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+
                                                     <div *ngIf="((pie && chartId) || donut)">
                                                         <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                             <div class=""> 
@@ -2221,77 +2799,77 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <!-- <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Grid Line Color </p>
                                                         </div>
-                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="GridColor"  (change)="gridLineColor($event)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="isApexCharts  && !((table && chartId) || kpi || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div> -->
+                                                    <!-- <div *ngIf="isApexCharts  && !((table && chartId) || kpi || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Background Color </p>
                                                         </div>
-                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="apexbBgColor"  (change)="apexbBackgroundColor($event)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>
+                                                    </div> -->
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="font-size" step="1" >Font Size</label>
                                                         <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;">
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
-                                                    <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <!-- <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="color">Color:</label>
-                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="kpiColor"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div> -->
+                                                    <!-- <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Chart Color </p>
                                                         </div>
-                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="color" 
                                                         (ngModelChange)="marksColor2($event)"
                                                         [format]="'hex'"></ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div> -->
+                                                    <!-- <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >bar color </p>
                                                         </div>
-                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="barColor" 
                                                         (ngModelChange)="marksColor2($event)" 
                                                         [format]="'hex'">
                                                         </ngx-colors>
-                                                    </div>
-                                                    <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    </div> -->
+                                                    <!-- <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >line color </p>
                                                         </div>
-                                                        <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
                                                         [(ngModel)]="lineColor" 
                                                         (ngModelChange)="marksColor2($event)" 
                                                         [format]="'hex'">
                                                         </ngx-colors>
-                                                    </div>
+                                                    </div> -->
                                                     <div *ngIf="funnel">
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <label for="sorting">Sort by:</label>
@@ -2339,12 +2917,12 @@
                                                                 <option value="bottom">Left</option>
                                                             </select>
                                                         </div>
-                                                        <div style="display: flex;justify-content: space-between;" *ngIf="!isDistributed">
+                                                        <!-- <div style="display: flex;justify-content: space-between;" *ngIf="!isDistributed">
                                                             <label>color</label>
-                                                            <input class="resetColorButton" type="button" value="reset" (click)="resetColor()">
+                                                            <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
                                                             <ngx-colors [(ngModel)]="funnelColor" ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
                                                             </ngx-colors>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                     <div *ngIf="((area && chartId) || (pie && chartId) || donut || bar || line)  && draggedColumns && draggedColumns.length == 1 && draggedColumns[0]['data_type']== 'date'" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
