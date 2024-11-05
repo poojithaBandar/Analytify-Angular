@@ -11,11 +11,11 @@
                     <h6 class="mb-0 border-bottom">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
-                <p class=" mb-0" [ngbTooltip]="hostName && hostName.length > 15 ? hostName : null">{{ hostName ? (hostName.length > 15 ? (hostName | slice: 0: 15) + '...' : hostName) : ''}}</p>
+                <p class=" mb-0" [ngbTooltip]="hostName?.length > 15 ? hostName : null">{{hostName?.length > 15 ? (hostName| slice:0:15)+'...':hostName}}</p>
             </div>
             <div class="mb-0 p-4 br-0 border-bottom">
                 <h6 class="mb-0">Database</h6>
-                <p class="mb-0" [ngbTooltip]="databaseName && databaseName.length > 15 ? databaseName : null">{{databaseName ? (databaseName.length > 15 ? (databaseName| slice:0:15)+'...':databaseName): ''}}</p>
+                <p class="mb-0" [ngbTooltip]="databaseName?.length > 15 ? databaseName : null">{{databaseName?.length > 15 ? (databaseName| slice:0:15)+'...':databaseName}}</p>
             </div>
             <!-- <div class="card mb-0 br-0">
             </div> -->
@@ -126,39 +126,162 @@
                                 <div class="card-body overflow-scroll ">
                                     @if(relationOfTables.length){
                                     <ul class="tags">
-                                        @for(relation of displayJoiningCndnsList;track relation;let i = $index){
+                                        @for(relation of tableJoiningList;track relation;let i = $index){
                                         <!-- <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
-                                            <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
-                                                <i class="fa fa-circle" style="opacity: 0.5; margin-left: -10px;"></i></span>
-                                                {{relation}}
-                                            <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
-                                        </li> -->
-                                        <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
-                                            <span *ngIf="relation.type === 'full Outer'" ngbTooltip="Full Outer Join"
-                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/full-outer.png"
-                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
-                                            </span>
-                                            <span *ngIf="relation.type === 'Right'" ngbTooltip="Right Join"
-                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/right-join.png"
-                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
-                                            </span>
-                                            <span *ngIf="relation.type === 'Left'" ngbTooltip="Left Join"
-                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/left-join.png"
-                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
-                                            </span>
-                                            <span *ngIf="relation.type === 'inner'" ngbTooltip="Inner Join"
-                                                class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                <img src="./assets/images/charts/inner-join.png"
-                                                    class="rounded-2 mrk-t  chart-icon active" style="padding: 3px;">
-                                            </span>
-                                            <span style="margin-top: 4px;">{{relation.condition}}</span>
-                                            <a class="tag-addon rounded-pill bg-white-transparent"
-                                                data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)"
-                                                aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a>
-                                        </li>
+                                                                                <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
+                                                                                    <i class="fa fa-circle" style="opacity: 0.5; margin-left: -10px;"></i></span>
+                                                                                    {{relation}}
+                                                                                <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
+                                                                            </li> -->
+                                        <div class="dropdown" ngbDropdown  autoClose="outside">
+                                            <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
+                                                <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'full Outer'"
+                                                    ngbTooltip="Full Outer Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                    <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active"
+                                                        style="padding: 3px;">
+                                                </span>
+                                                <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'Right'"
+                                                    ngbTooltip="Right Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                    <img src="./assets/images/charts/right-join.png" class="rounded-2 mrk-t  chart-icon active"
+                                                        style="padding: 3px;">
+                                                </span>
+                                                <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'Left'"
+                                                    ngbTooltip="Left Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                    <img src="./assets/images/charts/left-join.png" class="rounded-2 mrk-t  chart-icon active"
+                                                        style="padding: 3px;">
+                                                </span>
+                                                <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'inner'"
+                                                    ngbTooltip="Inner Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
+                                                    <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active"
+                                                        style="padding: 3px;">
+                                                </span>
+                                                <span style="margin-top: 4px;">{{relation.table1}} : {{relation.table2}}</span>
+                                                                                    <!-- <a class="tag-addon rounded-pill bg-white-transparent"
+                                                                                        data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)"
+                                                                                        aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a> -->
+                                            </li>
+                                            <div class="dropdown-menu size-dropdown Semantic-layer-card" ngbDropdownMenu autoClose="outside">
+                                                <h6 class="mb-0 p-1">Join</h6>
+                                                <div class="row px-3">
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'inner';joinTypes[i] = 'inner';$event.stopPropagation();" [ngClass]="relation.join == 'inner' ? 'btn-blue-light':''" style="cursor: pointer;">
+                                                        <img src="./assets/images/charts/inner-join.png" style="padding: 3px;">
+                                                        <p class="Semantic-text mb-0">Inner</p>
+                                                    </div>
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'Left';joinTypes[i] = 'Left';$event.stopPropagation();" [ngClass]="relation.join == 'Left' ? 'btn-blue-light':''" style="cursor: pointer;" >
+                                                        <img src="./assets/images/charts/left-join.png" style="padding: 3px;">
+                                                        <p class="Semantic-text mb-0">Left</p>
+                                                    </div>
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'Right';joinTypes[i] = 'Right';$event.stopPropagation();" [ngClass]="relation.join == 'Right' ? 'btn-blue-light':''" style="cursor: pointer;">
+                                                        <img src="./assets/images/charts/right-join.png" style="padding: 3px;">
+                                                        <p class="Semantic-text mb-0">Right</p>
+                                                    </div>
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'full Outer';joinTypes[i] = 'full Outer';$event.stopPropagation();" [ngClass]="relation.join == 'full Outer' ? 'btn-blue-light':''" style="cursor: pointer;">
+                                                        <img src="./assets/images/charts/full-outer.png" style="padding: 3px;">
+                                                        <p class="Semantic-text mb-0">Full Outer</p>
+                                                    </div>
+                                                </div>
+                                               
+                                                    <div class="row px-3">
+                                                        <div class="col border Semantic-bg p-1">
+                                                            <p class="Semantic-header">Data Source</p>
+                                                        </div>
+                                                        <div class="col border Semantic-bg p-1">
+                                                            <p class="Semantic-header"></p>
+                                                        </div>
+                                                        <div class="col border Semantic-bg p-1">
+                                                            <p class="Semantic-header">{{relation.table2}}</p>
+                                                        </div>
+                                                        <div class="col border Semantic-bg p-1">
+                                                            <p class="Semantic-header"></p>
+                                                        </div>
+                                                    </div>
+                                                   
+                                                    @for(condition of relation?.conditions;track condition;let conditionIndex = $index ){
+                                                        <div class="row px-3">
+                                                        <div class="col border p-1 text-center">
+                                                            <div ngbDropdown class="btn-group dropdown">
+                                                                <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
+                                                                    aria-expanded="false" class="dropdown-toggle btn btn-primary-light"> {{(condition.firstcolumn ?
+                                                                    condition.firstcolumn:'Select Column') | slice:0:13}}</button>
+                                                                <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
+                                                                    <li>
+                                                                        <input class="form-control" type="text" [(ngModel)]="searchTermT1" (input)="filterColumnsT1()"
+                                                                            placeholder="Search columns..." />
+                                                                    </li>
+                                                                    @for(table of filteredTablesT1;track table;let nestedIndex = $index){
+                                                                    @if(nestedIndex <= i ){ <li class="dropdown-plus-title">
+                                                                        {{ table.schema }}.{{ table.alias }}
+                                                                        </li>
+                                                                        @for(column of table.columns;track column){
+                                                                        <li>
+                                                                            <a ngbDropdownItem class="dropdown-item"
+                                                                                (click)="condition.firstcolumn = column.column;condition.table1= table.alias;">{{
+                                                                                column.column }}</a>
+                                                                        </li>
+                                                                        }
+                                                                        }
+                                                                        }
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col border p-1 text-center">
+                                                            <div ngbDropdown class="btn-group dropdown">
+                                                                <button type="button" ngbDropdownToggle data-bs-toggle="dropdown" aria-expanded="false"
+                                                                    class="dropdown-toggle btn btn-primary-light">{{ condition.operator ?
+                                                                    condition.operator : 'Operator' }}</button>
+                                                                <ul ngbDropdownMenu class="dropdown-menu" style="background-color: #ffffff;">
+                                                                    <li><a class="dropdown-item" (click)="condition.operator = '='" ngbDropdownItem>=</a></li>
+                                                                    <li><a class="dropdown-item" (click)="condition.operator = '>'" ngbDropdownItem>></a></li>
+                                                                    <li><a class="dropdown-item" (click)="condition.operator = '<'" ngbDropdownItem>'<'</a>
+                                                                    </li>
+                                                                    <li><a class="dropdown-item" (click)="condition.operator = '>='" ngbDropdownItem>>=</a></li>
+                                                                    <li><a class="dropdown-item" (click)="condition.operator = '<='" ngbDropdownItem>
+                                                                            <=</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col border p-1 text-center">
+                                                            <div ngbDropdown class="btn-group dropdown">
+                                                                <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
+                                                                    aria-expanded="false" [disabled]="!condition.firstcolumn" class="dropdown-toggle btn btn-primary-light">{{
+                                                                    (condition.secondcolumn ?
+                                                                    condition.secondcolumn : 'Select Column') | slice:0:13 }}
+                                                                </button>
+                                                                <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
+                                                                    <li>
+                                                                        <input class="form-control" type="text" [(ngModel)]="relation.searchTermT2"
+                                                                            (input)="filterColumnsT2(relation)" placeholder="Search columns..." />
+                                                                    </li>
+                                                                    @for(table of relation.table2Data;track table){
+                                                                    <li class="dropdown-plus-title">
+                                                                        {{ table.schema }}.{{ table.alias }}
+                                                                    </li>
+                                                                    @for(column of table.columns;track column){
+                                                                    <li><a class="dropdown-item" ngbDropdownItem
+                                                                            (click)="condition.secondcolumn= column.column;condition.table2 = table.alias;">{{
+                                                                            column.column }}</a></li>
+                                                                    }
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col border p-1 text-center">
+                                                            <a aria-label="anchor" (click)="deleteJoiningRelation(conditionIndex,relation)"
+                                                                class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                                                <i class="ri-delete-bin-7-line" ngbTooltip="Delete Condition"></i>
+                                                            </a>
+                                                        </div>
+                                                          </div>                                   
+                                                    }
+                                                <!-- </div> -->
+                                                    <div class="mt-1 d-flex gap-2">
+                                                        <button class="btn btn-primary mt-0" (click)="addNewCondition(relation);">Add new join... </button>
+                                                        <button class="btn btn-primary mt-0" (click)="customTableJoin();">JOIN </button>
+                                                    </div>
+                                                <!-- </div> -->
+                                            </div>
+                                        </div>
                                         }
                                     </ul>
                                     }
@@ -278,7 +401,7 @@
                                                     </button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         <li>
-                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT2" (input)="filterColumnsT2()" placeholder="Search columns..." />
+                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT2" (input)="filterColumnsT2(filteredTablesT2)" placeholder="Search columns..." />
                                                         </li>
                                                         @for(table of filteredTablesT2;track table){
                                                         <li class="dropdown-plus-title">
