@@ -43,7 +43,7 @@ export class ConfigureComponent {
                 this.router.navigateByUrl(previousUrl);
                 localStorage.removeItem('previousUrl'); // Clear the stored URL
               } else {
-                this.router.navigate(['/default-route']); // Redirect to a default route if no previous URL
+                this.router.navigate(['insights/home']); // Redirect to a default route if no previous URL
               }
             });
           }

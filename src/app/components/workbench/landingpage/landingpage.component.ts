@@ -52,6 +52,8 @@ host:any;
 publishedDashboard = false;
 testVariableToChange! : string ;
 @ViewChild('propertiesModal') propertiesModal : any;
+@ViewChild('sampleDashboardPropertiesModal') sampleDashboardPropertiesModal : any;
+
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService){
   localStorage.setItem('QuerySetId', '0');
@@ -416,30 +418,67 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.router.navigate(['/insights/saved-queries']) 
 
   }
-  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
-    // const encodedServerId = btoa(dbId.toString());
-    // const encodedQuerySetId = btoa(qrySetId.toString());
-
-    // this.router.navigate(['insights/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
-    this.loaderService.show();
+  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any,isCustomSql:boolean,dsQrySetId:any){
+    if(isCustomSql){ 
     if(fileId === null){
-      const encodedServerId = btoa(dbId.toString());
+    const encodedServerId = btoa(dbId.toString());
+    const encodedQuerySetId = btoa(qrySetId.toString());
+
+    this.router.navigate(['insights/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
+    }
+    if(dbId === null){
+      const encodedFileId = btoa(fileId.toString());
       const encodedQuerySetId = btoa(qrySetId.toString());
   
-      this.router.navigate(['insights/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
-      }
-      if(dbId === null){
-        const encodedFileId = btoa(fileId.toString());
-        const encodedQuerySetId = btoa(qrySetId.toString());
-    
-        this.router.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
-      }
+      this.router.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+    }
+
   }
+  else{
+    const encodeddbId = btoa(dbId?.toString());
+    const encodedqurysetId = btoa(qrySetId.toString());
+    const encodedFileId = btoa(fileId?.toString());
+    // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
+
+    const idToPass = fileId ? encodedFileId : encodeddbId;
+    const fromSource = fileId ? 'fileId' : 'dbId';
+
+    const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
+  ? btoa('null') 
+  : btoa(dsQrySetId.toString()); 
+   this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+  }
+  }
+  // gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
+  //   // const encodedServerId = btoa(dbId.toString());
+  //   // const encodedQuerySetId = btoa(qrySetId.toString());
+
+  //   // this.router.navigate(['insights/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+  //   this.loaderService.show();
+  //   if(fileId === null){
+  //     const encodedServerId = btoa(dbId.toString());
+  //     const encodedQuerySetId = btoa(qrySetId.toString());
+  
+  //     this.router.navigate(['insights/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
+  //     }
+  //     if(dbId === null){
+  //       const encodedFileId = btoa(fileId.toString());
+  //       const encodedQuerySetId = btoa(qrySetId.toString());
+    
+  //       this.router.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+  //     }
+  // }
   loadNewDashboard(){
     this.loaderService.show();
     this.router.navigate(['/insights/sheetsdashboard'])
     }
-
+  viewSampleDashbaordPropertiesTab(name: any, dashboardId: any) {
+    this.modalService.open(this.sampleDashboardPropertiesModal);
+    this.dashboardPropertyTitle = name;
+    this.dashboardPropertyId = dashboardId;
+    this.dashboardId = dashboardId;
+    this.publishedDashboard = false;
+  }
   viewPropertiesTab(name :any,dashboardId:any){
   this.modalService.open(this.propertiesModal);
   this.getRoleDetailsDshboard();

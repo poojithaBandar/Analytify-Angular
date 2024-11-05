@@ -8,7 +8,7 @@ import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { PasswordValidators } from '../../../shared/password-validator';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -36,7 +36,8 @@ export class UsersDashboardComponent {
   userId:any;
   @ViewChild('Adduser') Adduser : any;
 
-  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,private router:Router,private toasterservice:ToastrService){
+  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,
+    private route:ActivatedRoute,private router:Router,private toasterservice:ToastrService){
     this.addUserForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.maxLength(64)]],
       firstname:['', Validators.required],
@@ -62,14 +63,16 @@ export class UsersDashboardComponent {
         ])]],
       conformpassword: ['', Validators.required],
     })
-    if(this.router.url.includes('/workbenchdashboard/user-add')){
+    if(this.router.url.includes('/insights/users/add-user')){
       this.addUserDiv();
     }
-    if(this.router.url.includes('/workbenchdashboard/roles-list/dashboard')){
-      this.addUserDivForm= false;
+    if(this.router.url.includes('/insights/users/edit-user/')){
+      if (route.snapshot.params['id'] ) {
+        const userId = +atob(route.snapshot.params['id']);
+       this.getUserIdDetails(userId);
     }
   }
-
+    }
   ngOnInit(){
     this.getUserList()
   }
@@ -245,7 +248,7 @@ toggleClass1 = "off-line";
     return selectedRoles;
   }
   gotoAddRole(){
-    this.router.navigate(['/insights/dashboard/role-add'])
+    this.router.navigate(['/insights/roles/add-role'])
   }
 getAddedRolesList(){
   this.workbechService.getAddedRolesList().subscribe({
@@ -265,7 +268,13 @@ getAddedRolesList(){
     }
   }) 
 }
-
+addUserRoute(){
+  this.router.navigate(['/insights/users/add-user'])
+  
+}
+viewUsers(){
+  this.router.navigate(['/insights/users/users-list'])
+}
 addUser(){
   if (!this.addUserForm.value.is_active) {
     Swal.fire({
@@ -361,7 +370,10 @@ deleteUser(id:any){
       )
     }})
 }
-
+editUserRoute(id:any){
+  const userId = btoa(id.toString());
+  this.router.navigate(['/insights/users/edit-user/'+userId])
+}
 
 getUserIdDetails(id:any){
   this.userId = id;

@@ -20,7 +20,7 @@
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="userName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2" (click)="searchUserList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary" (click)="addUserDiv()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add User</button>
+            <button type="button" class="btn btn-primary" (click)="addUserRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> Add User</button>
           </div>
         </div>
     </div>
@@ -72,7 +72,7 @@
                             <td>
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
-                                  [previledgeId]="61" [isBtn]="false" [toolTip]="'Edit'" (btnClickEvent)="getUserIdDetails(users.user_id);"
+                                  [previledgeId]="61" [isBtn]="false" [toolTip]="'Edit'" (btnClickEvent)="editUserRoute(users.user_id);"
                                   [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
                                   [previledgeId]="63" [isBtn]="false" [toolTip]="' Delete'" (btnClickEvent)="deleteUser(users.user_id)"
@@ -99,7 +99,7 @@
                         <div class="ms-2 mt-sm-0 mt-2 d-flex">
                           <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                             <h6 class="mb-1">
-                                <a ngbTooltip="{{users.username}}" (click)="getUserIdDetails(users.user_id)" class="float-start" style="line-height: 1;"> {{users.username | slice:0:15}}</a>
+                                <a ngbTooltip="{{users.username}}" (click)="editUserRoute(users.user_id)" class="float-start" style="line-height: 1;"> {{users.username | slice:0:15}}</a>
                             </h6>
                             
                         </div>
@@ -114,7 +114,7 @@
                         <div class="dropdown-menu" ngbDropdownMenu>
                           <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="61" [isBtn]="false"
                           [buttonName]="' Edit'" [tabIndex]="0"
-                          (btnClickEvent)="getUserIdDetails(users.user_id)"
+                          (btnClickEvent)="editUserRoute(users.user_id)"
                           [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                       <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="63" [isBtn]="false"
                           [buttonName]="' Delete'" [tabIndex]="0"
@@ -183,7 +183,7 @@
             <div class="modal-header justify-conent-between">
               <h1 *ngIf="!userEditHidePassword" class="modal-title fs-5 d-flex justify-conent-between" id="inputModalLabel">Add User</h1>
               <h1 *ngIf="userEditHidePassword" class="modal-title fs-5 d-flex justify-conent-between" id="inputModalLabel">Edit User</h1>        
-              <button  type="button" class="btn btn-primary" (click)="addUserDivForm = false" style="border-radius: 4px 4px 4px 4px;"> View Users</button>    
+              <button  type="button" class="btn btn-primary" (click)="viewUsers()" style="border-radius: 4px 4px 4px 4px;"> View Users</button>    
             </div>
             
             <div class="modal-body p-0">

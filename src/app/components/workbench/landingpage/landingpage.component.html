@@ -508,7 +508,7 @@
                                 <div class="card-body p-2 d-flex align-items-center justify-content-between">
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1"
-                                            (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)"
+                                            (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
                                             ngbTooltip="{{savedQuery.queryset_name}}" style="cursor: pointer;color: #05aff8;">
                                             {{savedQuery.queryset_name | slice:0:20}}</h5>
                                         <p class="card-text fs-11 fw-300 ">Modified on {{savedQuery.modified}} </p>
@@ -521,8 +521,8 @@
                                             </a>
                                             <div class="dropdown-menu" ngbDropdownMenu>
                                                 <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="54"
-                                                    [isBtn]="false" [buttonName]="' View Query'"
-                                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)"
+                                                    [isBtn]="false" [buttonName]="' Edit'"
+                                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
                                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
                                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
                                                     [previledgeId]="53" [isBtn]="false" [buttonName]="' Delete'"
@@ -538,7 +538,7 @@
                                 <div class="card-body p-2 d-flex align-items-center justify-content-between">
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1"
-                                            (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)"
+                                            (click)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
                                             ngbTooltip="{{savedQuery.queryset_name}}" style="cursor: pointer;color: #05aff8;">
                                             {{savedQuery.queryset_name | slice:0:20}}</h5>
                                         <p class="card-text fs-11 fw-300 ">Modified on {{savedQuery.modified}} </p>
@@ -551,8 +551,8 @@
                                             </a>
                                             <div class="dropdown-menu" ngbDropdownMenu>
                                                 <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="54"
-                                                    [isBtn]="false" [buttonName]="' View Query'"
-                                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id)"
+                                                    [isBtn]="false" [buttonName]="' Edit'"
+                                                    (btnClickEvent)="gotoSavedQuery(savedQuery.server_id,savedQuery.queryset_id,savedQuery.file_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
                                                     [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
                                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
                                                     [previledgeId]="53" [isBtn]="false" [buttonName]="' Delete'"
@@ -593,26 +593,42 @@
                         <div class=" ">
                             <div class=" p-2 d-flex align-items-center justify-content-between">
                                 <div class="dashboard-card-title">
-                                    <p class="card-text  ">Sample dashboard </p>
-                                    <p class="card-text  ">Explore what InsightApps can do </p>
+                                    <p class="card-text">Sample dashboard </p>
+                                    <p class="card-text">Explore what InsightApps can do </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <ng-container *ngFor="let dashboardList of demoDashboardList;let i = index">
-                        <div (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
+                        <div 
                             class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
-                            <div class=" p-2 ">
+                            <div class=" card img-shadow mb-0 ">
                                 <div class="card overflow-hidden img-shadow mb-0 " style="cursor: pointer;">
-                                    <img src="{{dashboardList.dashboard_image}}" alt="img" class="card-img-top">
+                                    <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" src="{{dashboardList.dashboard_image}}" alt="img" class="card-img-top">
                                 </div>
-                                <div class="card-body p-2">
-                                    <h6 class="card-title text-center">{{dashboardList.dashboard_name}}</h6>
+                                <div class="card-body p-2 d-flex justify-content-between">
+                                    <h5 class="card-title mb-0" style="cursor: pointer; color: #05aff8;">{{dashboardList.dashboard_name}}</h5>
+                                    <div class="dashboard-option">
+                                        <div class="d-flex justify-content-end p-1" ngbDropdown>
+                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"  ngbDropdownToggle
+                                            aria-haspopup="true" aria-expanded="false" class="">
+                                                <i class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                            </a>
+                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                                <app-insights-button [classesList]="'dropdown-item'" [previledgeId]="36"
+                                                    [isBtn]="false" [buttonName]="' View Dashboard'"
+                                                    (btnClickEvent)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
+                                                    [faIconList]="'fe fe-upload'" [isIcon]="true"></app-insights-button>
+                                                <a class="dropdown-item" tabindex="0"
+                                                    (click)="viewSampleDashbaordPropertiesTab(dashboardList.dashboard_name,dashboardList.dashboard_id)">
+                                                    <i class="fa fa-sliders me-2 d-inline-flex"></i> Properties</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </ng-container>
-            
                 </div>
             </div>
         </div>
@@ -632,39 +648,55 @@
                                 @for(database of connectionList;track database){
                                 <tr>
                                     <td>
-                                        <a  class="card-title" style="color: #05aff8;" (click)="getTablesFromConnectedDb(database.database_id,database.file_id)" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
-                                       </td>
-                                       <td *ngIf="database.server_type === 'POSTGRESQL'">
-                                        <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}} 
+                                        <a class="card-title" style="color: #05aff8;"
+                                            (click)="getTablesFromConnectedDb(database.database_id,database.file_id)"
+                                            ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
+                                    </td>
+                                    <td *ngIf="database.server_type === 'POSTGRESQL'">
+                                        <img alt="product" src="./assets/images/icons/postSQL-icon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <td *ngIf="database.server_type === 'ORACLE'">
-                                      <img alt="product" src="./assets/images/icons/oracle-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}} 
-                                  </td>
-                                  <td *ngIf="database.server_type === 'MYSQL'">
-                                    <img alt="product" src="./assets/images/icons/MySql-icon1.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
-                                </td>
-                                <td *ngIf="database.server_type === 'MONGODB'">
-                                    <img alt="product" src="./assets/images/icons/mongodb-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
-                                </td>
-                                <td *ngIf="database.server_type === 'MICROSOFTSQLSERVER'">
-                                    <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
-                                </td>
-                                <td *ngIf="database.server_type === 'SQLITE'">
-                                    <img alt="product" src="./assets/images/icons/sqlite-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
-                                </td>
-                                <td *ngIf="database.server_type === 'SNOWFLAKE'">
-                                    <img alt="product" src="./assets/images/icons/snowflake-icon.png" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
-                                </td>
-                                <td *ngIf="database.server_type === 'EXCEL'">
-                                    <img alt="product" src="./assets/images/icons/csv-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
-                                </td>
-                                <td *ngIf="database.server_type === 'CSV'">
-                                    <img alt="product" src="./assets/images/icons/excel-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
-                                </td>
-
+                                        <img alt="product" src="./assets/images/icons/oracle-icon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'MYSQL'">
+                                        <img alt="product" src="./assets/images/icons/MySql-icon1.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'MONGODB'">
+                                        <img alt="product" src="./assets/images/icons/mongodb-icon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'MICROSOFTSQLSERVER'">
+                                        <img alt="product" src="./assets/images/icons/microsoft-sql-server-icon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'SQLITE'">
+                                        <img alt="product" src="./assets/images/icons/sqlite-icon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'SNOWFLAKE'">
+                                        <img alt="product" src="./assets/images/icons/snowflake-icon.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'EXCEL'">
+                                        <img alt="product" src="./assets/images/icons/csv-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type |
+                                        lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'CSV'">
+                                        <img alt="product" src="./assets/images/icons/excel-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type
+                                        | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'QUICKBOOKS'">
+                                        <img alt="product" src="./assets/images/icons/salesforce-icon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'SALESFORCE'">
+                                        <img alt="product" src="./assets/images/icons/quickbooks-icon.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
                                     <!-- <td>{{database.server_type}}</td> -->
-                                    
-                                   
                                 </tr>
                             }
                             </tbody>
@@ -730,6 +762,44 @@
       <div class="modal-footer">
         <button type="button" *ngIf="!createUrl" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
         <button type="button" *ngIf="createUrl" (click)="publishDashboard()" class="btn ripple btn-primary">Publish</button>
+
+        <button
+          type="button"
+          class="btn ripple btn-secondary"
+          (click)="modal.close('Save click')"
+        >
+          Close
+        </button>
+      </div>
+</ng-template>
+
+<ng-template #sampleDashboardPropertiesModal let-modal>
+    <div class="modal-header">
+        <h6 class="modal-title">Dashboard properties</h6>
+        <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+        </button>
+      </div>
+    
+      <div class="modal-body" style="overflow: scroll;">
+          <div class="">
+              <label for="input-label" class="form-label">Title</label>
+              <p class="fw-semibold mb-2 mt-3 border p-1">{{dashboardPropertyTitle}}</p>
+
+          </div>
+       <div *ngIf="publishedDashboard" class="">
+            
+        <p class="fw-semibold mb-2 mt-3">Url</p>
+        <button class="btn text-left" style="border: 1px solid #edebeb;width: 100%;">{{publicUrl}}
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  x="0px" y="0px" viewBox="0 0 488.3 488.3" width="16px" height="16px" xml:space="preserve" (click)="copyUrl()">
+            <g>
+              <path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/>
+              <path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/>
+            </g>
+          </svg></button>
+   </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="sharePublish('public');publishDashboard()" class="btn ripple btn-primary">Publish Dashboard</button>
 
         <button
           type="button"

@@ -723,7 +723,7 @@ export class SheetsdashboardComponent {
           }
           let chartId : number = sheet['chartId'];
           const numberFormat = sheet?.numberFormat;
-          if(![10,24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
+          if(![10,24,26,27].includes(chartId) && !sheet['isEChart'] && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
             if([2,3].includes(chartId)){
               if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
                 sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
@@ -758,6 +758,13 @@ export class SheetsdashboardComponent {
               sheet.chartOptions.dataLabels.formatter = (val: number) => {
                 return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
               };
+            }
+          }
+          if(chartId == 11){
+            sheet.echartOptions.tooltip.formatter =  function (params: any) {
+              const date = params.data[0];
+              const value = params.data[1];
+              return `Date: ${date}<br/>Value: ${value}`;
             }
           }
         })
@@ -1126,6 +1133,26 @@ selected_sheet_ids :this.sheetIdsDataSet,
           }
           delete item1['originalData'];
         }
+        if(item1.chartId == '27' && item1['originalData']){//funnel
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
+        if(item1.chartId == '26' && item1['originalData']){//heatmap
+        if(item1.isEChart){
+          item1.echartOptions = item1['originalData'].chartOptions;
+        } else {
+          item1.chartOptions = item1['originalData'].chartOptions;
+        }
+        delete item1['originalData'];
+      }
+        if(item1.chartId == '11' && item1['originalData']){//calendar
+          if(item1.isEChart){
+            item1.echartOptions = item1['originalData'].chartOptions;
+          }
+          delete item1['originalData'];
+        }
     });
    return  dashboardData;
   }
@@ -1437,6 +1464,10 @@ selected_sheet_ids :this.sheetIdsDataSet,
       let savedOptions = sheet.sheet_data.savedChartOptions;
       return savedOptions;
     }
+    if(sheet.chart_id === 11){
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return savedOptions;
+    }
   }
 
   getChartData(results: any, chartType: string): any[] | undefined{
@@ -1621,7 +1652,7 @@ allowDrop(ev : any): void {
       }
       let chartId: number = sheet['chartId'];
       const numberFormat = sheet?.numberFormat;
-      if (![10, 24].includes(chartId) && (numberFormat.decimalPlaces || numberFormat.displayUnits || numberFormat.prefix || numberFormat.suffix)) {
+      if (![10, 24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)) {
         if([2,3].includes(chartId)){
           if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
             sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
@@ -1656,6 +1687,13 @@ allowDrop(ev : any): void {
           sheet.chartOptions.dataLabels.formatter = (val: number) => {
             return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
           };
+        }
+      }
+      if(chartId == 11){
+        sheet.echartOptions.tooltip.formatter =  function (params: any) {
+          const date = params.data[0];
+          const value = params.data[1];
+          return `Date: ${date}<br/>Value: ${value}`;
         }
       }
     });
@@ -2366,7 +2404,7 @@ getColumnsForFilter(){
 getColumnsForFilterEdit(selectedqryId:any,dashboardId:any){
 this.dashboardId= dashboardId,
 this.selectedQuerySetId = selectedqryId
- //this.getColumnsForFilter();
+ this.getColumnsForFilter();
 this.loadSelectedForEditing()
 
 }
@@ -2805,7 +2843,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       item1.chartOptions.series = this.filteredRowData;
       }
     }
-      if(item.chart_id == '25'){//KPI
+      if(item.chart_id == '25' || item.chartId == '25'){//KPI
         if(!item1.originalData ){
           item1['originalData'] = _.cloneDeep(item1['kpiData']);
         }
@@ -3146,8 +3184,29 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     item1.echartOptions = {
       ...item1.echartOptions,
     };
+  }
 
       if(item.chart_id == '27'){//funnel
+        if(item1.isEChart){
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+            const combinedArray: any[] = [];
+            this.filteredColumnData.forEach((item: any) => {
+              this.filteredRowData.forEach((categoryObj: any) => {
+                item.values.forEach((value: any, index: number) => {
+                  combinedArray.push({
+                    name: value,
+                    value: categoryObj.data[index]
+                  });
+                });
+              });
+            });
+            item1.echartOptions.series[0].data = combinedArray;
+            item1.echartOptions = {
+              ...item1.echartOptions,
+            };
+        } else {
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(!item1.originalData){
@@ -3156,14 +3215,97 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
       }
+      }
       if(item.chart_id == '26'){//heatmap
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData){
+        if(item1.isEChart){
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          item1.echartOptions.xAxis.data = _.cloneDeep(categories);
+            const heatmapData: any[][] = [];
+            this.filteredRowData.forEach((row: { data: (null | undefined)[]; }, rowIndex: any) => {
+                row.data.forEach((value: null | undefined, colIndex: any) => { // Assuming each row has a `data` array
+                    if (value !== null && value !== undefined) { // Ensure value is valid
+                        heatmapData.push([colIndex, rowIndex, value]); // [xIndex, yIndex, value]
+                    }
+                });
+            });          
+          item1.echartOptions.series.data = heatmapData;
+          item1.echartOptions = {
+            ...item1.echartOptions,     
+          };
+         }
+        else{ if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
         item1.chartOptions.series = this.filteredRowData;
+      }
+    }
+      if(item.chart_id == '11'){//calendar
+        if(item1.isEChart){
+          if(!item1.originalData){
+            item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+          }
+          let calendarData : any[]= [];
+          let years: Set<any> = new Set();
+          console.log(this.filteredColumnData);
+          console.log(this.filteredRowData);
+          this.filteredColumnData.forEach((data: any) => {
+            data?.values.forEach((column:any, index: any)=>{
+              let arr = [new Date(column).toISOString().split('T')[0], this.filteredRowData[0]?.data[index]];
+              calendarData.push(arr);
+
+              const year = new Date(column).getFullYear();
+              years.add(year);
+            })
+        });
+        let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+        let series = yearArray.map((year: any) => {
+          const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
+          return {
+              type: 'heatmap',
+              coordinateSystem: 'calendar',
+              calendarIndex: yearArray.indexOf(year),
+              data: yearData
+          };
+        });
+
+        const calendarHeight = 100;  // Adjust height for better visibility
+        const yearGap = 20;  // Reduced gap between years
+        const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+    
+        // Create multiple calendar instances, one for each year
+        let calendars = yearArray.map((year: any, idx: any) => ({
+            top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+            range: year.toString(),
+            cellSize: ['auto', 10],
+            splitLine: {
+                show: true,
+                lineStyle: {
+                    color: '#000',
+                    width: 1
+                }
+            },
+            yearLabel: {
+                margin: 20
+            }
+        }));
+
+        const minValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
+        const maxValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
+        console.log(minValue +' '+maxValue);
+
+          item1.echartOptions.series = series;
+          item1.echartOptions.calendar = calendars;
+          item1.echartOptions.visualMap.min = minValue;
+          item1.echartOptions.visualMap.max = maxValue;
+          item1.echartOptions = { ...item1.echartOptions };
+          console.log(calendarData);
+          console.log(item1.echartOptions);
+        }
       }
 
           // this.initializeChart(item1);
@@ -3172,7 +3314,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       console.log('filtered dashboard-data',item1)
     }
-}})
+})
 }
 
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {

@@ -68,7 +68,7 @@
                 <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521">
               </div>
               <div class="mb-2">
-                <label class="col-form-label">Service Name:</label>
+                <label class="col-form-label">Service Name1:</label>
                 <input type="text" class="form-control" [(ngModel)]="OracleServiceName" [ngModelOptions]="{standalone: true}" placeholder="orcl">
               </div>
               <div class="mb-2">
@@ -155,35 +155,35 @@
           <div class="modal-body">
             <form>
               <div class="mb-2">
-                <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
+                <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
+                <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
               </div>
               <div class="mb-2">
-                <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
+                <label [ngClass]="{'error-label': portError}" for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
+                <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432" (input)="portConditionError()">
               </div>
               <div class="mb-2">
-                <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL">
+                <label [ngClass]="{'error-label': databaseError}" class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
+                <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL" (input)="databaseConditionError()">
               </div>
               <div class="mb-2">
-                <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                <label [ngClass]="{'error-label': userNameError}" class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
+                <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
               </div>
               <div class="mb-2">
-                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
+                <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
+                <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps"  (input)="displayNameConditionError()">
               </div>
               <div class="mb-2">
-                <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
+                <label (input)="passwordConditionError()" class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
+                <input (input)="passwordConditionError()" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                 <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()">Update</button>
+            <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
           </div>
         </div>
       </div>
@@ -271,6 +271,12 @@
                       <td *ngIf="database.server_type === 'CSV'">
                         <img alt="product" src="./assets/images/icons/csv-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'QUICKBOOKS'">
+                        <img alt="product" src="./assets/images/icons/quickbooks-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'SALESFORCE'">
+                        <img alt="product" src="./assets/images/icons/salesforce-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
 
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
@@ -322,6 +328,10 @@
                                       <img src="./assets/images/icons/excel-icon.jpg" alt="" class="rounded-circle"></span>
                                       <span *ngIf="database.server_type === 'CSV'" class="avatar avatar rounded-circle">
                                         <img src="./assets/images/icons/csv-icon.jpg" alt="" class="rounded-circle"></span>
+                                        <span *ngIf="database.server_type === 'SALESFORCE'" class="avatar avatar rounded-circle">
+                                          <img src="./assets/images/icons/salesforce-icon.jpg" alt="" class="rounded-circle"></span>
+                                          <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
+                                            <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
@@ -423,7 +433,7 @@
                   <div class="card-body">
                       <form>
                               <div class="form-group">
-                                  <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">Server {{postGreServerName}}<span class="text-danger ms-1" >*</span></label>
+                                  <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">Server<span class="text-danger ms-1" >*</span></label>
                                   <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
                               </div>
                               <div class="form-group">
@@ -449,7 +459,7 @@
                           </div>
                           <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="errorCheck()">Connect</button>
+                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">Connect</button>
                           </div>
                       </form>
                   </div>
@@ -485,7 +495,6 @@
          </div>
       </div>
   </div>
-  
     }
     @if(openMySqlForm){
       <div class="main-container container-fluid" style="padding-left: 15px; padding-right: 15px;" >
@@ -524,7 +533,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="errorCheck()">Connect</button>
+                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
                             </div>
                         </form>
                     </div>
@@ -592,7 +601,7 @@
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="errorCheck()">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">Connect</button>
                               </div>
                           </form>
                       </div>
@@ -666,7 +675,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="errorCheck()">Connect</button>
+                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
                                 </div>
                             </form>
                         </div>
@@ -691,7 +700,7 @@
                       </ul>
                       <ul class="mt-2">
                         <li><span class="mb-0"><strong>Server:</strong> Place your host url or host name </span> </li>
-                        <li><span class="mb-0"><strong>port:</strong> Example port number for Oracle is 1433 </span> </li>
+                        <li><span class="mb-0"><strong>port:</strong> Example port number for SQL server is 1433 </span> </li>
                         <li><span class="mb-0"><strong>Database:</strong> Please give your database name in this field</span> </li>
                         <li><span class="mb-0"><strong>Username:</strong> Enter your username in this field</span> </li>
                         <li><span class="mb-0"><strong>Password:</strong> Please give your password in this field</span> </li>
@@ -740,7 +749,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="errorCheck()">Connect</button>
+                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">Connect</button>
                                   </div>
                               </form>
                           </div>
@@ -766,7 +775,7 @@
                         </ul>
                         <ul class="mt-2">
                           <li><span class="mb-0"><strong>Server:</strong> Place your host url or host name </span> </li>
-                          <li><span class="mb-0"><strong>port:</strong> Example port number for Oracle is 1433 </span> </li>
+                          <li><span class="mb-0"><strong>port:</strong> Example port number for Snow Flake is 1433 </span> </li>
                           <li><span class="mb-0"><strong>Database:</strong> Please give your database name in this field</span> </li>
                           <li><span class="mb-0"><strong>Username:</strong> Enter your username in this field</span> </li>
                           <li><span class="mb-0"><strong>Password:</strong> Please give your password in this field</span> </li>
@@ -1004,14 +1013,14 @@
 
     @if(viewNewDbs){
       <div class="main-container container-fluid">
-        <div class="row" class="card" style="padding: 15px;">
+        <div class="row" style="padding: 15px;">
         <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
-            <div class="card-header" >
+            <div class="card-header mb-3" style="border: none !important;">
                 <h4 class="card-title">Connect to Database</h4>
                 <div>
                     <div class="input-group" style="position: absolute;top: 0;right: 215px;width: 30%!important;">
                         <input type="text" class="form-control border-end-0" placeholder="Search Database Server" aria-describedby="button-addon2">
-                        <button class="btn border" type="button" id="button-addon2"><i class="bi bi-search text-muted"></i></button>
+                        <button class="btn btn-primary" type="button" id="button-addon2"><i class="bi bi-search"></i></button>
                         
                     </div>
                     <app-insights-button [buttonName]="' View Connected Database'" [classesList]="'btn btn-primary'" [isIcon]="true"
@@ -1021,10 +1030,10 @@
                 </div>
             </div>
             
-              <div class="row">
+              <div class="row ">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
-                  <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;">Relational Database</h6>
-                  <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
+                  <div class="card card-body border Connect-Database-card" >
+                    <h6 style="display: flex;margin-bottom: 17px;">Relational Database</h6>
                       <div class="image-card-container">
                           <!-- <div class="database-logo">
                             <div class="imgcard op-4 p-4">
@@ -1110,8 +1119,8 @@
                   </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
-                  <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Big Data Platform</h6>
-                  <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
+                  <div class="card card-body border Connect-Database-card">
+                    <h6 style="display: flex;margin-bottom: 17px;" >Big Data Platform</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
                         <div class="imgcard op-4 p-4">
@@ -1143,10 +1152,10 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row ">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
-                  <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >No Sql Database</h6>
-                  <div class="card-body" style="border-block-end: 1px solid rgb(237 235 235);">
+                  <div class="card card-body border Connect-Database-card" >
+                    <h6 style="display: flex;margin-bottom: 17px;" >No Sql Database</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
                         <div class="imgcard op-4 p-4">
@@ -1178,8 +1187,8 @@
                   </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
-                  <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Multi dimensional  Database</h6>
-                  <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
+                  <div class="card card-body border Connect-Database-card">
+                    <h6 style="display: flex;margin-bottom: 17px;" >Multi dimensional  Database</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
                         <div class="imgcard op-4 p-4">
@@ -1203,10 +1212,10 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row ">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
-                  <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >File Source</h6>
-                  <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
+                  <div class="card card-body border Connect-Database-card">
+                    <h6 style="display: flex;margin-bottom: 17px;" >File Source</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
                         <div class="imgcard p-4" (click)="triggerFileUpload('csv')">
@@ -1237,8 +1246,8 @@
                   </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
-                  <h6 style="display: flex;justify-content: center;margin-block-start: 1.5rem;" >Integrations</h6>
-                  <div class="card-body" style="border-block-end:1px solid rgb(237 235 235);">
+                  <div class="card card-body border Connect-Database-card">
+                    <h6 style="display: flex;margin-bottom: 17px;" >Integrations</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
                         <div class="imgcard p-4" (click)="connectQuickBooks()">

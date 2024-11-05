@@ -26,11 +26,10 @@ export class HeaderComponent implements OnInit {
   collapse: any;
   viewRoles = false;
   viewUsers = false;
-  @Input() isPublicUrl!: true; 
+  @Input() isPublicUrl!:boolean; 
   constructor(public navServices: NavService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private authService:AuthService,private router:Router,
     private elementRef: ElementRef,public renderer:Renderer2,private viewTemplateService:ViewTemplateDrivenService,private sharedService: SharedService) {
-      this.viewRoles=this.viewTemplateService.ViewRoles();
-      this.viewUsers=this.viewTemplateService.viewUsers();
+
 
   }  SwicherOpen(){
     document.querySelector('.offcanvas-end')?.classList.add('show')
@@ -209,11 +208,16 @@ export class HeaderComponent implements OnInit {
   public text!: string;
   public SearchResultEmpty:boolean = false;
   ngOnInit() {
+    if(!this.isPublicUrl){
+      this.viewRoles=this.viewTemplateService.ViewRoles();
+      this.viewUsers=this.viewTemplateService.viewUsers();
+      const currentUser = localStorage.getItem( 'username' );
+      this.userName = JSON.parse( currentUser! )['userName'];
+      }
     this.navServices.items.subscribe((menuItems) => {
       this.items = menuItems;
     });
-    const currentUser = localStorage.getItem( 'username' );
-    this.userName = JSON.parse( currentUser! )['userName'];
+
     // let html = this.elementRef.nativeElement.ownerDocument.documentElement;
     // html.setAttribute('data-toggled', 'icon-overlay-close');
   }
@@ -231,7 +235,7 @@ export class HeaderComponent implements OnInit {
     });
   }
   routehelpGuide(){
-    this.router.navigate(['/insights/home/help-guide']);
+    this.router.navigate(['/insights/help-guide']);
   }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];
@@ -318,10 +322,10 @@ export class HeaderComponent implements OnInit {
   }
 
   routeToUserDashboard(){
-    this.router.navigate(['/insights/list-users/dashboard'])
+    this.router.navigate(['/insights/users/users-list'])
   }
   routeToRolesDashboard(){
-    this.router.navigate(['/insights/roles-list/dashboard'])
+    this.router.navigate(['/insights/roles/roles-list'])
   }
 
   routeToConfigurePage() {

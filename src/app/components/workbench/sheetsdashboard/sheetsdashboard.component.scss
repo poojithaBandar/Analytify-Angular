@@ -358,6 +358,11 @@ a.dashboard-tab-padding.nav-link {
 .header-visibile{
   margin-top: 65px;
 }
+p {
+  margin-bottom: 0px !important;
+}
+
+
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
 .dashboard-title-card{

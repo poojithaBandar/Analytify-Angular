@@ -56,7 +56,7 @@
                                             <div *ngFor="let submenu of menu.tables"
                                                 class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
                                                 <i class="fa fa-table" style="padding-right:10px;"></i>
-                                                <span [ngbTooltip]="submenu.table.length > 15 ? submenu.table : null">{{submenu.table.length > 15 ? (submenu.table| slice:0:15)+'...':submenu.table}}</span>
+                                                <span [ngbTooltip]="submenu.table.length > 15 ? submenu.table : null">{{submenu.table ? (submenu.table.length > 15 ? (submenu.table| slice:0:15)+'...':submenu.table) : ''}}</span>
                                             </div>
                                         </div>
                                     </ng-template>
@@ -79,7 +79,7 @@
                         <div class="right">
                             @if(draggedtables.length){
                             <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
-                                (click)="openSuperScaled(applyFiltersModal);getFilteredList()"
+                                (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromTableJoinig')"
                                 class="modal-effect btn btn-primary m-1">
                                 <i class="fa fa-filter"></i> Apply Filters
                             </a>
@@ -520,7 +520,7 @@
                                             <app-insights-button [buttonName]="' Go to sheet '"
                                                 [classesList]="'btn btn-primary ms-2'" [previledgeId]="17"
                                                 [isBtn]="true" [gotoSheetButton]="gotoSheetButtonDisable"
-                                                (btnClickEvent)="goToSheet()" [isIcon]="false"></app-insights-button>
+                                                (btnClickEvent)="goToSheet('fromtablejoining')" [isIcon]="false"></app-insights-button>
                                             }
                                         </div>
                                     </div>
@@ -635,7 +635,7 @@
                             <a *ngIf="!fromSavedQuery" class="btn btn-blue-light m-1"
                                 (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
                             <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
-                                (click)="openSuperScaled(applyFiltersModal);getFilteredList()"
+                                (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromcustomsql')"
                                 class="modal-effect btn btn-primary m-1">
                                 <i class="fa fa-filter"></i> Apply Filters
                             </a>
@@ -676,7 +676,7 @@
                                 <a (click)="executeQuery()"><i
                                         class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
                                 <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'"
-                                    [previledgeId]="17" [isBtn]="true" (btnClickEvent)="goToSheet()"
+                                    [previledgeId]="17" [isBtn]="true" (btnClickEvent)="goToSheet('fromcustomsql')"
                                     [isIcon]="false"></app-insights-button>
                                 }
                             </div>

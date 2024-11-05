@@ -596,13 +596,12 @@ export class WorkbenchComponent implements OnInit{
       // quickbooks Connection
       connectQuickBooks(){
         Swal.fire({
-          title: 'Are you sure?',
-          text: 'This will redirect to QuickBooks SignIn page',
-          icon: 'warning',
+          title: 'This will redirect to QuickBooks SignIn page',
+          // text: 'This will redirect to QuickBooks SignIn page',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, Connect it!'
+          confirmButtonText: 'Ok'
         }).then((result)=>{
           if(result.isConfirmed){
             this.workbechService.connectQuickBooks()
@@ -612,6 +611,7 @@ export class WorkbenchComponent implements OnInit{
                   console.log(data);
                   // this.routeUrl = data.redirection_url
                   this.document.location.href = data.redirection_url;
+                  this.loaderService.show();
                 },
                 error: (error) => {
                   console.log(error);
@@ -622,13 +622,13 @@ export class WorkbenchComponent implements OnInit{
       }
       connectSalesforce(){
         Swal.fire({
-        title: 'Are you sure?',
-        text: 'This will redirect to Salesforce SignIn page',
-        icon: 'warning',
+        title: 'This will redirect to Salesforce SignIn page',
+        // text: 'This will redirect to Salesforce SignIn page',
+        // icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Connect it!'
+        confirmButtonText: 'Ok'
       }).then((result)=>{
         if(result.isConfirmed){
           this.workbechService.connectSalesforce()
@@ -790,6 +790,7 @@ export class WorkbenchComponent implements OnInit{
     if(this.viewDatasourceList){
    this.getDbConnectionList();
     }
+    this.errorCheck();
   }
 
   pageChangegetconnectionList(page:any){
@@ -875,12 +876,14 @@ export class WorkbenchComponent implements OnInit{
   displayNameError:boolean = false;
   passwordError:boolean = false;
   pathError:boolean = false;
+  disableConnectBtn = true;
   serverConditionError(){
     if(this.postGreServerName){
       this.serverError = false;
     }else{
       this.serverError = true;
     }
+    this.errorCheck();
   }
   portConditionError(){
     if(this.postGrePortName){
@@ -889,6 +892,7 @@ export class WorkbenchComponent implements OnInit{
       this.portError = true;
     }
     this.serverConditionError();
+    this.errorCheck();
   }
   databaseConditionError(){
     if(this.postGreDatabaseName){
@@ -897,6 +901,7 @@ export class WorkbenchComponent implements OnInit{
       this.databaseError = true;
     }
     this.portConditionError();
+    this.errorCheck();
   }
   userNameConditionError(){
     if(this.postGreUserName){
@@ -905,6 +910,7 @@ export class WorkbenchComponent implements OnInit{
       this.userNameError = true;
     }
     this.databaseConditionError();
+    this.errorCheck();
   }
   displayNameConditionError(){
     if(this.displayName){
@@ -917,6 +923,7 @@ export class WorkbenchComponent implements OnInit{
     } else{
       this.userNameConditionError();
     }
+    this.errorCheck();
   }
   passwordConditionError(){
     if(this.PostGrePassword){
@@ -925,6 +932,7 @@ export class WorkbenchComponent implements OnInit{
       this.passwordError = true;
     }
     this.displayNameConditionError();
+    this.errorCheck();
   }
   pathConditionError(){
     if(this.fileData){
@@ -935,9 +943,11 @@ export class WorkbenchComponent implements OnInit{
   }
   errorCheck(){
     if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
-      return true;
+      this.disableConnectBtn = true;
+    } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
+      this.disableConnectBtn = true;
     } else{
-      return false;
+      this.disableConnectBtn = false;
     }
   }
 }

@@ -178,20 +178,25 @@ getTokenQuickbook(data:any){
   this.accessToken = JSON.parse( currentUser! )['Token'];
   return this.http.post<any>(`${environment.apiUrl}/quickbooks_token/`+this.accessToken,data); 
 }
+getTokensalesforce(data:any){
+  const currentUser = localStorage.getItem( 'currentUser' );
+  this.accessToken = JSON.parse( currentUser! )['Token'];
+  return this.http.post<any>(`${environment.apiUrl}/callback/`+this.accessToken,data); 
+}
 resendOtpApi(obj:any){
   return this.http.post<any>(`${environment.apiUrl}/resendotp/`,obj); 
 }
 logOut(){
-localStorage.removeItem('username');
-       localStorage.removeItem('currentUser');
-      //  this.currentUserSubject.next(this.currentUserValue);
-       localStorage.clear();
-       //this.userSubject.next(null);
-       window.location.reload();
-
-       this.router.navigate(['/authentication/signin']) 
-      //  .then(() => {
-      //  }); 
-       return of({ success: false });
-}
+  localStorage.removeItem('username');
+         localStorage.removeItem('currentUser');
+        //  this.currentUserSubject.next(this.currentUserValue);
+         localStorage.clear();
+         //this.userSubject.next(null);
+         window.location.reload();
+  
+         this.router.navigate(['/authentication/signin']) 
+        //  .then(() => {
+        //  }); 
+         return of({ success: false });
+  }
 }

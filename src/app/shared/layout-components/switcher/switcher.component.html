@@ -37,6 +37,27 @@
                             </div>
                         </div>
                         <div class="">
+                            <p class="switcher-style-head">Chart:</p>
+                            <div class="row switcher-style gx-0">
+                                <div class="col-4">
+                                    <div class="form-check switch-select">
+                                        <label class="form-check-label" for="switcher-apex">
+                                            Apex
+                                        </label>
+                                        <input class="form-check-input" type="radio" name="chart-type" id="switcher-apex" [value]="'apex'" [checked]="chartType === 'apex'" (click)="changeChartType($event)">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-check switch-select">
+                                        <label class="form-check-label" for="switcher-echart">
+                                            Echart
+                                        </label>
+                                        <input class="form-check-input" type="radio" name="chart-type" id="switcher-echart" [value]="'echart'" [checked]="chartType === 'echart'" (click)="changeChartType($event)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
                             <p class="switcher-style-head">Directions:</p>
                             <div class="row switcher-style gx-0">
                                 <div class="col-4">

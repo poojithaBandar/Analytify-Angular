@@ -43,6 +43,14 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
+//salesforce
+{
+  path: 'database-connection/tables/salesforce/:id',
+  canActivate:[authGuard],
+  canDeactivate: [canDeactivateGuard],
+  loadComponent: () =>
+    import('./database/database.component').then((m)=> m.DatabaseComponent)
+},
 {
   path: 'database-connection/files/tables/:id',
   canActivate:[authGuard],
@@ -180,25 +188,31 @@ export const admin: Routes = [
     import('./saved-queries/saved-queries.component').then((m)=>m.SavedQueriesComponent)
 },
 {
-  path: 'list-users/dashboard',
+  path: 'users/users-list',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
 },
 {
-  path: 'dashboard/user-add',
+  path: 'users/add-user',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
 },
 {
-  path: 'roles-list/dashboard',
+  path: 'users/edit-user/:id',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
+},
+{
+  path: 'roles/roles-list',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
 },
 {
-  path: 'dashboard/role-add',
+  path: 'roles/add-role',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./roles-dashboard/roles-dashboard.component').then((m)=> m.RolesDashboardComponent)
@@ -222,12 +236,12 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
-{
-  path: 'home/help-guide',
-  canActivate:[authGuard],
-  loadComponent: () =>
-    import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent),
-},
+// {
+//   path: 'home/help-guide',
+//   canActivate:[authGuard],
+//   loadComponent: () =>
+//     import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent),
+// },
 
 
 
@@ -239,6 +253,7 @@ export const admin: Routes = [
 },
 {
   path: 'configure-page/configure',
+  canActivate:[authGuard],
   loadComponent: () =>
     import('./configure/configure.component').then((m) => m.ConfigureComponent),
 },

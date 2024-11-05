@@ -47,7 +47,7 @@
                             <th>Title</th>
                             <!-- <th>Created On</th> -->
                             <th>Last Modified</th>
-                            <th>DataBase Name</th>
+                            <th>Database Name</th>
                             <th>Queryset Name</th>
                             <th>Actions</th>
                         </tr>
@@ -95,7 +95,7 @@
                             </td>
                             <td>{{sheets.Modified}}</td>
                             <td [ngbTooltip]="sheets.database_name.length > 15 ? sheets.database_name : null" [container]="'body'">  {{ sheets.database_name.length > 15 ? (sheets.database_name | slice: 0: 15) + '...' : sheets.database_name }}</td>
-                            <td [ngbTooltip]="sheets.queryset_name.length > 15 ? sheets.queryset_name : null" [container]="'body'">{{ sheets.queryset_name.length > 15 ? (sheets.queryset_name | slice: 0: 15) + '...' : sheets.queryset_name }}</td>
+                            <td [ngbTooltip]="sheets.queryset_name?.length > 15 ? sheets.queryset_name : null" [container]="'body'">{{ sheets.queryset_name?.length > 15 ? (sheets.queryset_name | slice: 0: 15) + '...' : sheets.queryset_name }}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
@@ -269,7 +269,7 @@
                       </div>
                       <div class="row">
                         <div class="col-md-6">
-                            <span class="fw-semibold fs-14">DataBase Name: </span>
+                            <span class="fw-semibold fs-14">Database Name: </span>
                         </div>
                         <div class="col-md-6">
                             <span class="fs-14" [ngbTooltip]="sheets.database_name.length > 13 ? sheets.database_name : null">  {{ sheets.database_name.length > 13 ? (sheets.database_name | slice: 0: 13) + '...' : sheets.database_name }}</span>
@@ -280,7 +280,7 @@
                           <span class="fw-semibold fs-14">Queryset Name: </span>
                       </div>
                       <div class="col-md-6">
-                          <span class="fs-14" [ngbTooltip]="sheets.queryset_name.length > 13 ? sheets.queryset_name : null" >{{sheets.queryset_name.length > 13 ? (sheets.queryset_name | slice: 0: 13)+ '...' : sheets.queryset_name}}</span>
+                        <span class="fs-14" [ngbTooltip]="sheets.queryset_name?.length > 13 ? sheets.queryset_name : null" >{{sheets.queryset_name?.length > 13 ? (sheets.queryset_name | slice: 0: 13)+ '...' : sheets.queryset_name}}</span>
                       </div>
                   </div>
                     
