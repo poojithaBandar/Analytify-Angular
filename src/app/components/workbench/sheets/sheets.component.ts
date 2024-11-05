@@ -3169,7 +3169,7 @@ bar["stack"]="Total";
         this.dualAxisRowData = [];
         this.radarRowData = [];
         let draggedColumnsObj;
-        if (this.dateDrillDownSwitch) {
+        if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
           draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
           draggedColumnsObj[0][2] = 'year'
         } else {
