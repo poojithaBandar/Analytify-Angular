@@ -26,7 +26,7 @@ import Swal from 'sweetalert2';
 import { NgxColorsModule } from 'ngx-colors';
 import { CommonModule } from '@angular/common';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading } from 'ckeditor5';
+import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Font, Alignment, FontFamily, Underline, Subscript, Superscript, RemoveFormat, SelectAll, Heading, FontSize } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 import * as echarts from 'echarts';
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
@@ -41,8 +41,11 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { LoaderService } from '../../../shared/services/loader.service';
 import { HttpClient } from '@angular/common/http';
 import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatTooltipModule
+import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
+declare type VerticalAlign = 'top' | 'center' | 'bottom';
+declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
 interface TableRow {
   [key: string]: any;
 }
@@ -104,8 +107,11 @@ export class SheetsComponent {
   isEChatrts : boolean = false;
   isZoom : boolean = false;
   xLabelFontSize : number = 12;
+  yLabelFontSize : number = 12;
   xLabelFontFamily : string = 'sans-serif';
+  yLabelFontFamily : string = 'sans-serif';
   xlabelFontWeight : number = 400;
+  ylabelFontWeight : number = 400;
   xLabelColor : string = '#00a5a2';
   xGridColor : string = '#00a5a2';
   yLabelColor : string = '#00a5a2';
@@ -201,7 +207,7 @@ export class SheetsComponent {
   dashboardId : any;
   selectedDashboardId : any = 0;
   GridColor : any = '#089ffc';
-  apexbBgColor : any = '#fcfcfc';
+  // apexbBgColor : any = '#fcfcfc';
   dateValue : any = "-Select-";
   Editor = ClassicEditor;
   editor : boolean = false;
@@ -243,6 +249,8 @@ export class SheetsComponent {
   radar: boolean = false;
   radarRowData: any = [];
   labelAlignment : HorizontalAlign = 'left';
+  ylabelAlignment : VerticalAlign = 'center';
+  dataLabelAlignment : MixedAlign = 'top';
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
@@ -522,7 +530,7 @@ if(this.fromFileId){
             },
             type: 'bar',
             height: 320,
-            background: this.apexbBgColor, 
+            background: this.backgroundColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -561,7 +569,7 @@ if(this.fromFileId){
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 12,
-            },
+                },
             },
             axisBorder: {
               show: false,
@@ -621,7 +629,7 @@ if(this.fromFileId){
             bar: {
               dataLabels: {
                 hideOverflowingLabels:false,
-                position: 'top',
+                position: this.dataLabelAlignment,
               },
             },
           },
@@ -778,7 +786,7 @@ if(this.fromFileId){
           chart: {
             height: 300,
             type: 'pie',
-            background: this.apexbBgColor,
+            background: this.backgroundColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -896,7 +904,7 @@ if(this.fromFileId){
             },
             height: 350,
             type: 'line',
-            background: this.apexbBgColor,
+            background: this.backgroundColor,
             reponsive: true,
             zoom: {
               enabled: true
@@ -985,9 +993,9 @@ if(this.fromFileId){
                 this.yLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  cssClass: 'apexcharts-yaxis-label',
+                  fontSize: '12px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 12,
                 },
                 formatter: this.formatNumber.bind(this)
               }
@@ -1122,7 +1130,7 @@ if(this.fromFileId){
               },
               type: "area",
               height: 350,
-              background: this.apexbBgColor,
+              background: this.backgroundColor,
               zoom: {
                 enabled: true,
               },
@@ -1184,9 +1192,9 @@ if(this.fromFileId){
                 show: this.xLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  cssClass: "apexcharts-xaxis-label",
+                  fontSize: '12px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 12,
                 },
               },
               tickPlacement: 'on'
@@ -1196,14 +1204,15 @@ if(this.fromFileId){
                 show: this.yLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  cssClass: "apexcharts-xaxis-label",
+                  fontSize: '12px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 12,
                 },
                 formatter: this.formatNumber.bind(this)
               },
             },
           };
+          console.log(this.chartOptions1);
       } else {
         this.eAreaChartOptions = {
           backgroundColor: this.backgroundColor,
@@ -1334,6 +1343,7 @@ if(this.fromFileId){
             },
             type: 'bar',
             height: 320,
+            background: this.backgroundColor
           },
           plotOptions: {
             bar: {
@@ -1366,9 +1376,9 @@ if(this.fromFileId){
               hideOverlappingLabels: false,
               style: {
                 colors: this.color,
-                fontSize: "11px",
-                fontWeight: 600,
-                cssClass: "apexcharts-xaxis-label",
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12,
               },
             },
           },
@@ -1380,9 +1390,9 @@ if(this.fromFileId){
               show: this.yLabelSwitch,
               style: {
                 colors: this.color,
-                fontSize: "11px",
-                fontWeight: 600,
-                cssClass: "apexcharts-xaxis-label",
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 12,
               },
               formatter: this.formatNumber.bind(this)
             },
@@ -1529,6 +1539,7 @@ bar["type"]="bar";
           chart: {
             type: "bar",
             height: 350,
+            background: this.backgroundColor,
             stacked: true,
             toolbar: {
               show: true
@@ -1568,7 +1579,7 @@ bar["type"]="bar";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
             },
           },
@@ -1580,7 +1591,7 @@ bar["type"]="bar";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
               formatter: this.formatNumber.bind(this)
             }
@@ -1756,7 +1767,8 @@ bar["stack"]="total";
                 autoSelected: 'zoom' 
               },
               height: 350,
-              type: "line"
+              type: "line",
+              background: this.backgroundColor
             },
             grid: {
               show: true,
@@ -1804,7 +1816,7 @@ bar["stack"]="total";
                   colors: [],
                   fontSize: '12px',
                   fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12
+                  fontWeight: 12,
                 },
               }
             },
@@ -1825,7 +1837,7 @@ bar["stack"]="total";
                     colors: [],
                     fontSize: '12px',
                     fontFamily: 'Helvetica, Arial, sans-serif',
-                    fontWeight: 12
+                    fontWeight: 12,
                   },
                   formatter: this.formatNumber.bind(this)
                 }
@@ -1847,7 +1859,7 @@ bar["stack"]="total";
                     colors: [],
                     fontSize: '12px',
                     fontFamily: 'Helvetica, Arial, sans-serif',
-                    fontWeight: 12
+                    fontWeight: 12,
                   },
                   formatter: this.formatNumber.bind(this)
                 }
@@ -2017,6 +2029,7 @@ bar["stack"]="total";
           chart: {
             type: "bar",
             height: 350,
+            background: this.backgroundColor,
             stacked: true,
             toolbar: {
               show: true
@@ -2054,7 +2067,7 @@ bar["stack"]="total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
               formatter: this.formatNumber.bind(this)
             }
@@ -2067,7 +2080,7 @@ bar["stack"]="total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
             }
           },
@@ -2196,7 +2209,8 @@ bar["stack"]="total";
           series: this.dualAxisRowData,
           chart: {
             type: "bar",
-            height: 430
+            height: 430,
+            background: this.backgroundColor,
           },
           plotOptions: {
             bar: {
@@ -2228,7 +2242,7 @@ bar["stack"]="total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
               formatter: this.formatNumber.bind(this)
             },
@@ -2241,7 +2255,7 @@ bar["stack"]="total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
             },
           },
@@ -2383,7 +2397,8 @@ bar["stack"]="total";
               autoSelected: 'zoom' 
             },
             height: 350,
-            type: "line"
+            type: "line",
+            background: this.backgroundColor,
           },
           dataLabels: {
             enabled: true,
@@ -2431,7 +2446,7 @@ bar["stack"]="total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
             },
           },
@@ -2443,7 +2458,7 @@ bar["stack"]="total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
               formatter: this.formatNumber.bind(this)
             },
@@ -2567,6 +2582,7 @@ bar["stack"]="Total";
           series: this.chartsRowData,
           chart: {
             type: "donut",
+            background: this.backgroundColor,
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 if (self.drillDownIndex < self.draggedDrillDownColumns.length - 1) {
@@ -2678,6 +2694,7 @@ bar["stack"]="Total";
           chart: {
             height: 350,
             type: 'heatmap',
+            background: this.backgroundColor,
           },
           plotOptions: {
             heatmap: {
@@ -2704,8 +2721,8 @@ bar["stack"]="Total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
-              },
+                fontWeight: 12,
+                },
             }
           },
           yaxis: {
@@ -2719,7 +2736,7 @@ bar["stack"]="Total";
                 colors: [],
                 fontSize: '12px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12
+                fontWeight: 12,
               },
             }
           },
@@ -2860,7 +2877,8 @@ bar["stack"]="Total";
         series: this.dualAxisRowData,
         chart: {
           type: "bar",
-          height: 350
+          height: 350,
+          background: this.backgroundColor,
         },
         plotOptions: {
           bar: {
@@ -3131,7 +3149,7 @@ bar["stack"]="Total";
         this.dualAxisRowData = [];
         this.radarRowData = [];
         let draggedColumnsObj;
-        if (this.dateDrillDownSwitch) {
+        if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
           draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
           draggedColumnsObj[0][2] = 'year'
         } else {
@@ -3302,6 +3320,7 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map = false;
               this.sidebysideBar();
+              this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
             }
             if(this.table){
               this.tableDisplayPagination();
@@ -3627,21 +3646,23 @@ bar["stack"]="Total";
         }
       }
       this.draggedColumns.splice(event.currentIndex, 0, element);
+      event.currentIndex = this.draggedColumns.indexOf(element);
+      console.log('New element index:', event.currentIndex);
       const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
       //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-      this.draggedColumnsData.push([element.column, element.data_type, "", ""]);
-      this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
-        const indexA = columnIndexMap.get(a[0]) ?? -1;
-        const indexB = columnIndexMap.get(b[0]) ?? -1;
-        return indexA - indexB;
-      });
-      this.draggedColumns.forEach((column: any, index: number) => {
-        if (column.column === element.column) {
-          if (event.currentIndex !== index) {
-            event.currentIndex = index;
-          }
-        }
-      });
+      this.draggedColumnsData.splice(event.currentIndex, 0, [element.column, element.data_type, "", ""]);
+      // this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
+      //   const indexA = columnIndexMap.get(a[0]) ?? -1;
+      //   const indexB = columnIndexMap.get(b[0]) ?? -1;
+      //   return indexA - indexB;
+      // });
+      // this.draggedColumns.forEach((column: any, index: number) => {
+      //   if (column.column === element.column) {
+      //     if (event.currentIndex !== index) {
+      //       event.currentIndex = index;
+      //     }
+      //   }
+      // });
       console.log(this.draggedColumnsData);
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
@@ -3669,21 +3690,22 @@ bar["stack"]="Total";
       }
     }
     this.draggedRows.splice(event.currentIndex, 0, element);
+    event.currentIndex = this.draggedRows.indexOf(element);
     const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
     //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-    this.draggedRowsData.push([element.column, element.data_type, "", ""]);
-    this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
-      const indexA = rowIndexMap.get(a[0]) ?? -1;
-      const indexB = rowIndexMap.get(b[0]) ?? -1;
-      return indexA - indexB;
-    });
-    this.draggedRows.forEach((row: any, index: number) => {
-      if (row.column === element.column) {
-        if (event.currentIndex !== index) {
-          event.currentIndex = index;
-        }
-      }
-    });
+    this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+    // this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
+    //   const indexA = rowIndexMap.get(a[0]) ?? -1;
+    //   const indexB = rowIndexMap.get(b[0]) ?? -1;
+    //   return indexA - indexB;
+    // });
+    // this.draggedRows.forEach((row: any, index: number) => {
+    //   if (row.column === element.column) {
+    //     if (event.currentIndex !== index) {
+    //       event.currentIndex = index;
+    //     }
+    //   }
+    // });
     console.log(this.draggedRowsData);
     if (this.integerList.includes(element.data_type)) {
       this.rowMeasuresCount(element, event.currentIndex, 'sum');
@@ -3743,35 +3765,37 @@ bar["stack"]="Total";
     console.log(this.draggedColumnsData);
     console.log(index);
     // this.draggedColumns.splice(index, 1);
-    (this.draggedColumnsData as any[]).forEach((data,index1)=>{
-      if(this.dateList.includes(data[1])){
-        if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
-          && this.draggedColumns[index].type === data[2]){
-            this.draggedColumnsData.splice(index, 1);
-        }
-      }
-      else{
-        (data as any[]).forEach((aa)=>{ 
-          if(column === aa){
-            console.log(aa);
-            this.draggedColumnsData.splice(index1, 1);
-          }
-        } );
-      }
-    });
+    // (this.draggedColumnsData as any[]).forEach((data,index1)=>{
+    //   if(this.dateList.includes(data[1])){
+    //     if(this.draggedColumns[index].column === data[0] && this.draggedColumns[index].data_type === data[1] 
+    //       && this.draggedColumns[index].type === data[2]){
+    //         this.draggedColumnsData.splice(index, 1);
+    //     }
+    //   }
+    //   else{
+    //     (data as any[]).forEach((aa)=>{ 
+    //       if(column === aa){
+    //         console.log(aa);
+    //         this.draggedColumnsData.splice(index1, 1);
+    //       }
+    //     } );
+    //   }
+    // });
     this.draggedColumns.splice(index, 1);   
+    this.draggedColumnsData.splice(index, 1);
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
     this.draggedRows.splice(index, 1);
-    (this.draggedRowsData as any[]).forEach((data,index)=>{
-     (data as any[]).forEach((aa)=>{ 
-       if(column === aa){
-         console.log(aa);
-         this.draggedRowsData.splice(index, 1);
-       }
-     } );
-   });   
+    this.draggedRowsData.splice(index, 1);
+  //   (this.draggedRowsData as any[]).forEach((data,index)=>{
+  //    (data as any[]).forEach((aa)=>{ 
+  //      if(column === aa){
+  //        console.log(aa);
+  //        this.draggedRowsData.splice(index, 1);
+  //      }
+  //    } );
+  //  });   
    this.dataExtraction();
   }
   rightArrow(){
@@ -4108,7 +4132,7 @@ bar["stack"]="Total";
       this.kpiFontSize = '3';
       this.kpiColor = '#000000';
       this.GridColor = '#089ffc';
-      this.apexbBgColor = '#fcfcfc';
+      this.backgroundColor = '#fcfcfc';
       this.color = '#00a5a2';
       this.bandingSwitch = false;
       this.xLabelSwitch = true;
@@ -4672,8 +4696,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
         // this.displayUnits = 'none';
         
-        if(this.sheetResponce.column_data){
-          this.draggedColumnsData = this.sheetResponce.column_data;
+        if(this.sheetResponce.columns_data){
+          this.draggedColumnsData = this.sheetResponce.columns_data;
         }
         else{
           this.draggedColumns.forEach((res:any) => {
@@ -4833,8 +4857,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions3?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions3?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions3?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions3?.chart?.background;
+        this.backgroundColor = this.chartOptions3?.chart?.background;
         this.color = this.chartOptions3?.colors;
+        this.xLabelFontSize = this.chartOptions3?.xaxis?.labels?.style?.fontSize;
+        this.xLabelFontFamily = this.chartOptions3?.xaxis?.labels?.style?.fontFamily;
+        this.xlabelFontWeight = this.chartOptions3?.xaxis?.labels?.style?.fontWeight;
+        this.yLabelFontSize = this.chartOptions3?.yaxis?.labels?.style?.fontSize;
+        this.yLabelFontFamily = this.chartOptions3?.yaxis?.labels?.style?.fontFamily;
+        this.ylabelFontWeight = this.chartOptions3?.yaxis?.labels?.style?.fontWeight;
         console.log(this.chartOptions3.xaxis.convertedCatToNumeric);
         console.log(this.chartOptions3);
        } else {
@@ -4883,7 +4913,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
         };
         this.legendSwitch = this.chartOptions4.legend?.show;
-        this.apexbBgColor = this.chartOptions4?.chart?.background;
+        this.backgroundColor = this.chartOptions4?.chart?.background;
         this.dataLabels = this.chartOptions4?.dataLabels?.enabled;
         this.changeLegendsAllignment(this.sheetResponce.savedChartOptions.legend.position);
         // this.dataLabels = this.sheetResponce.savedChartOptions.dataLabels.enabled;
@@ -4947,8 +4977,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.xGridSwitch = this.chartOptions?.grid?.xaxis?.lines?.show;
           this.yGridSwitch = this.chartOptions?.grid?.yaxis?.lines?.show;
           this.GridColor = this.chartOptions?.grid?.borderColor;
-          this.apexbBgColor = this.chartOptions?.chart?.background;
+          this.backgroundColor = this.chartOptions?.chart?.background;
           this.color = this.chartOptions?.colors;
+          this.xLabelFontSize = this.chartOptions?.xaxis?.labels?.style?.fontSize;
+          this.xLabelFontFamily = this.chartOptions?.xaxis?.labels?.style?.fontFamily;
+          this.xlabelFontWeight = this.chartOptions?.xaxis?.labels?.style?.fontWeight;
+          this.yLabelFontSize = this.chartOptions?.yaxis?.labels?.style?.fontSize;
+          this.yLabelFontFamily = this.chartOptions?.yaxis?.labels?.style?.fontFamily;
+          this.ylabelFontWeight = this.chartOptions?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -4991,8 +5027,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.xGridSwitch = this.chartOptions1?.grid?.xaxis?.lines?.show;
           this.yGridSwitch = this.chartOptions1?.grid?.yaxis?.lines?.show;
           this.GridColor = this.chartOptions1?.grid?.borderColor;
-          this.apexbBgColor = this.chartOptions1?.chart?.background;
+          this.backgroundColor = this.chartOptions1?.chart?.background;
           this.color = this.chartOptions1?.colors;
+          this.xLabelFontSize = this.chartOptions1?.xaxis?.labels?.style?.fontSize;
+          this.xLabelFontFamily = this.chartOptions1?.xaxis?.labels?.style?.fontFamily;
+          this.xlabelFontWeight = this.chartOptions1?.xaxis?.labels?.style?.fontWeight;
+          this.yLabelFontSize = this.chartOptions1?.yaxis?.labels?.style?.fontSize;
+          this.yLabelFontFamily = this.chartOptions1?.yaxis?.labels?.style?.fontFamily;
+          this.ylabelFontWeight = this.chartOptions1?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5033,7 +5075,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions2?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions2?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions2?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions2?.chart?.background;
+        this.backgroundColor = this.chartOptions2?.chart?.background;
+        this.xLabelFontSize = this.chartOptions2?.xaxis?.labels?.style?.fontSize;
+        this.xLabelFontFamily = this.chartOptions2?.xaxis?.labels?.style?.fontFamily;
+        this.xlabelFontWeight = this.chartOptions2?.xaxis?.labels?.style?.fontWeight;
+        this.yLabelFontSize = this.chartOptions2?.yaxis?.labels?.style?.fontSize;
+        this.yLabelFontFamily = this.chartOptions2?.yaxis?.labels?.style?.fontFamily;
+        this.ylabelFontWeight = this.chartOptions2?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eSideBySideBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5074,7 +5122,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions6?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions6?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions6?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions6?.chart?.background;
+        this.backgroundColor = this.chartOptions6?.chart?.background;
+        this.xLabelFontSize = this.chartOptions6?.xaxis?.labels?.style?.fontSize;
+        this.xLabelFontFamily = this.chartOptions6?.xaxis?.labels?.style?.fontFamily;
+        this.xlabelFontWeight = this.chartOptions6?.xaxis?.labels?.style?.fontWeight;
+        this.yLabelFontSize = this.chartOptions6?.yaxis?.labels?.style?.fontSize;
+        this.yLabelFontFamily = this.chartOptions6?.yaxis?.labels?.style?.fontFamily;
+        this.ylabelFontWeight = this.chartOptions6?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eStackedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5117,9 +5171,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.xGridSwitch = this.chartOptions5?.grid?.xaxis?.lines?.show;
           this.yGridSwitch = this.chartOptions5?.grid?.yaxis?.lines?.show;
           this.GridColor = this.chartOptions5?.grid?.borderColor;
-          this.apexbBgColor = this.chartOptions5?.chart?.background;
+          this.backgroundColor = this.chartOptions5?.chart?.background;
           this.barColor = this.chartOptions5?.series[0]?.color;
           this.lineColor = this.chartOptions5?.series[1]?.color;
+          this.xLabelFontSize = this.chartOptions5?.xaxis?.labels?.style?.fontSize;
+          this.xLabelFontFamily = this.chartOptions5?.xaxis?.labels?.style?.fontFamily;
+          this.xlabelFontWeight = this.chartOptions5?.xaxis?.labels?.style?.fontWeight;
+          this.yLabelFontSize = this.chartOptions5?.yaxis?.labels?.style?.fontSize;
+          this.yLabelFontFamily = this.chartOptions5?.yaxis?.labels?.style?.fontFamily;
+          this.ylabelFontWeight = this.chartOptions5?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eBarLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5188,7 +5248,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions7?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions7?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions7?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions7?.chart?.background;
+        this.backgroundColor = this.chartOptions7?.chart?.background;
+        this.xLabelFontSize = this.chartOptions7?.xaxis?.labels?.style?.fontSize;
+        this.xLabelFontFamily = this.chartOptions7?.xaxis?.labels?.style?.fontFamily;
+        this.xlabelFontWeight = this.chartOptions7?.xaxis?.labels?.style?.fontWeight;
+        this.yLabelFontSize = this.chartOptions7?.yaxis?.labels?.style?.fontSize;
+        this.yLabelFontFamily = this.chartOptions7?.yaxis?.labels?.style?.fontFamily;
+        this.ylabelFontWeight = this.chartOptions7?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.ehorizontalStackedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5229,7 +5295,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions8?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions8?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions8?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions8?.chart?.background;
+        this.backgroundColor = this.chartOptions8?.chart?.background;
+        this.xLabelFontSize = this.chartOptions8?.xaxis?.labels?.style?.fontSize;
+        this.xLabelFontFamily = this.chartOptions8?.xaxis?.labels?.style?.fontFamily;
+        this.xlabelFontWeight = this.chartOptions8?.xaxis?.labels?.style?.fontWeight;
+        this.yLabelFontSize = this.chartOptions8?.yaxis?.labels?.style?.fontSize;
+        this.yLabelFontFamily = this.chartOptions8?.yaxis?.labels?.style?.fontFamily;
+        this.ylabelFontWeight = this.chartOptions8?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eGroupedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5270,7 +5342,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.xGridSwitch = this.chartOptions9?.grid?.xaxis?.lines?.show;
         this.yGridSwitch = this.chartOptions9?.grid?.yaxis?.lines?.show;
         this.GridColor = this.chartOptions9?.grid?.borderColor;
-        this.apexbBgColor = this.chartOptions9?.chart?.background;
+        this.backgroundColor = this.chartOptions9?.chart?.background;
         } else {
           this.eMultiLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5358,6 +5430,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 26){
         if(this.isApexCharts){
           this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
+          this.xLabelFontSize = this.heatMapChartOptions?.xaxis?.labels?.style?.fontSize;
+          this.xLabelFontFamily = this.heatMapChartOptions?.xaxis?.labels?.style?.fontFamily;
+          this.xlabelFontWeight = this.heatMapChartOptions?.xaxis?.labels?.style?.fontWeight;
+          this.yLabelFontSize = this.heatMapChartOptions?.yaxis?.labels?.style?.fontSize;
+          this.yLabelFontFamily = this.heatMapChartOptions?.yaxis?.labels?.style?.fontFamily;
+          this.ylabelFontWeight = this.heatMapChartOptions?.yaxis?.labels?.style?.fontWeight;
           if(this.heatMapChartOptions?.dataLabels){
             this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
           }
@@ -5915,805 +5993,10 @@ renameColumns(){
     const doc = parser.parseFromString(this.sheetTagName, 'text/html');
     this.sheetTitle = doc.body.textContent+'';
   }
-  fontChange(event : any, section : any){
-    let object:any;
-    if (section === 'dimension') {
-      if (event.target.value === 'arial') {
-        object = {xaxis: {labels: {style: {fontFamily: 'Arial, sans-serif',fontWeight: 'bold',fontSize: '12px',}}, categories: this.chartsColumnData}}
-        if (this.barchart) {
-          this.chartOptions3.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions3.xaxis.labels.style.fontSize = '12px';
-        }
-        else if (this.areachart) {
-          this.chartOptions1.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions1.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.linechart){
-          this.chartOptions.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.sidebysideChart){
-          this.chartOptions2.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions2.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.stockedChart){
-          this.chartOptions6.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions6.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.barlineChart){
-          this.chartOptions5.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions5.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.horizontolstockedChart){
-          this.chartOptions7.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions7.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.groupedChart){
-          this.chartOptions8.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions8.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.multilineChart){
-          this.chartOptions9.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions9.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.heatMap){
-          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Arial, sans-serif';
-          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.heatMapChartOptions.xaxis.labels.style.fontSize = '12px';
-        }
-      }
-      if (event.target.value === 'calibri') {
-        object = {xaxis: {labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}, categories: this.chartsColumnData}}
-        if (this.barchart) {
-          this.chartOptions3.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions3.xaxis.labels.style.fontSize = '14px';
-        }
-        else if (this.areachart) {
-          this.chartOptions1.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions1.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.linechart){
-          this.chartOptions.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.sidebysideChart){
-          this.chartOptions2.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions2.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.stockedChart){
-          this.chartOptions6.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions6.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.barlineChart){
-          this.chartOptions5.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions5.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.horizontolstockedChart){
-          this.chartOptions7.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions7.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.groupedChart){
-          this.chartOptions8.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions8.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.multilineChart){
-          this.chartOptions9.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions9.xaxis.labels.style.fontSize = '14px';
-        }
-        else if(this.heatMap){
-          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.heatMapChartOptions.xaxis.labels.style.fontSize = '14px';
-        }
-      }
-      if (event.target.value === 'times') {
-        object = {xaxis: {labels: {style: {fontFamily: 'Times New Roman, serif',fontWeight: 'bold',fontSize: '16px',}}, categories: this.chartsColumnData}}
-        if (this.barchart) {
-          this.chartOptions3.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions3.xaxis.labels.style.fontSize = '16px';
-        }
-        else if (this.areachart) {
-          this.chartOptions1.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions1.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.linechart){
-          this.chartOptions.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.sidebysideChart){
-          this.chartOptions2.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions2.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.stockedChart){
-          this.chartOptions6.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions6.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.barlineChart){
-          this.chartOptions5.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions5.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.horizontolstockedChart){
-          this.chartOptions7.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions7.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.groupedChart){
-          this.chartOptions8.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions8.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.multilineChart){
-          this.chartOptions9.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions9.xaxis.labels.style.fontSize = '16px';
-        }
-        else if(this.heatMap){
-          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Times New Roman, serif';
-          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.heatMapChartOptions.xaxis.labels.style.fontSize = '16px';
-        }
-      }
-      if (event.target.value === 'verdana') {
-        object = {xaxis: {labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}, categories: this.chartsColumnData}}
-        if (this.barchart) {
-          this.chartOptions3.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions3.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions3.xaxis.labels.style.fontSize = '12px';
-        }
-        else if (this.areachart) {
-          this.chartOptions1.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions1.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions1.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.linechart){
-          this.chartOptions.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.sidebysideChart){
-          this.chartOptions2.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions2.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions2.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.stockedChart){
-          this.chartOptions6.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions6.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions6.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.barlineChart){
-          this.chartOptions5.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions5.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions5.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.horizontolstockedChart){
-          this.chartOptions7.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions7.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions7.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.groupedChart){
-          this.chartOptions8.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions8.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions8.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.multilineChart){
-          this.chartOptions9.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.chartOptions9.xaxis.labels.style.fontWeight = 'bold';
-          this.chartOptions9.xaxis.labels.style.fontSize = '12px';
-        }
-        else if(this.heatMap){
-          this.heatMapChartOptions.xaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-          this.heatMapChartOptions.xaxis.labels.style.fontWeight = 'bold';
-          this.heatMapChartOptions.xaxis.labels.style.fontSize = '12px';
-        }
-      }
-    }
-    else{
-      if(event.target.value === 'arial'){
-        object = {yaxis: [{labels: {style: {fontFamily: 'Arial, sans-serif',fontWeight: 'bold',fontSize: '12px',}}}]};
-        if (this.barchart) {
-          if(this.chartOptions3.yaxis.length >0){
-            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions3.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions3.yaxis.labels.style.fontSize = '12px';
-          }
-          
-        }
-        else if (this.areachart){
-          if(this.chartOptions1.yaxis.length >0){
-            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions1.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions1.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.linechart){
-          if(this.chartOptions.yaxis.length >0){
-            (this.chartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.sidebysideChart){
-          if(this.chartOptions2.yaxis.length >0){
-            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions2.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions2.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.stockedChart){
-          if(this.chartOptions6.yaxis.length >0){
-            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions6.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions6.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.barlineChart){
-          if(this.chartOptions5.yaxis.length >0){
-            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions5.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions5.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.horizontolstockedChart){
-          if(this.chartOptions7.yaxis.length >0){
-            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions7.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions7.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.groupedChart){
-          if(this.chartOptions8.yaxis.length >0){
-            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions8.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions8.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.multilineChart){
-          if(this.chartOptions9.yaxis.length >0){
-            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions9.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions9.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.heatMap){
-          if(this.heatMapChartOptions.yaxis.length >0){
-            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Arial, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Arial, sans-serif';
-            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.heatMapChartOptions.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-      }
-      if(event.target.value === 'calibri'){
-        object = {yaxis: [{labels: {style: {fontFamily: 'Calibri, sans-serif',fontWeight: 'bold',fontSize: '14px',}}}]};
-        if(this.barchart){
-          if(this.chartOptions3.yaxis.length >0){
-            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions3.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions3.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.areachart){
-          if(this.chartOptions1.yaxis.length >0){
-            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions1.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions1.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.linechart){
-          if(this.chartOptions.yaxis.length >0){
-            (this.chartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.sidebysideChart){
-          if(this.chartOptions2.yaxis.length >0){
-            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions2.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions2.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.stockedChart){
-          if(this.chartOptions6.yaxis.length >0){
-            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions6.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions6.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.barlineChart){
-          if(this.chartOptions5.yaxis.length >0){
-            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions5.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions5.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.horizontolstockedChart){
-          if(this.chartOptions7.yaxis.length >0){
-            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions7.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions7.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.groupedChart){
-          if(this.chartOptions8.yaxis.length >0){
-            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions8.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions8.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.multilineChart){
-          if(this.chartOptions9.yaxis.length >0){
-            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.chartOptions9.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions9.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-        else if(this.heatMap){
-          if(this.heatMapChartOptions.yaxis.length >0){
-            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Calibri, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '14px';
-            })
-          }
-          else{
-            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Calibri, sans-serif';
-            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.heatMapChartOptions.yaxis.labels.style.fontSize = '14px';
-          }
-        }
-      }
-      if(event.target.value === 'times'){
-        object = {yaxis: [{labels: {style: {fontFamily: 'Times New Roman, serif',fontWeight: 'bold',fontSize: '16px',}}}]};
-        if(this.barchart){
-          if(this.chartOptions3.yaxis.length >0){
-            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions3.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions3.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.areachart){
-          if(this.chartOptions1.yaxis.length >0){
-            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions1.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions1.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.linechart){
-          if(this.chartOptions.yaxis.length >0){
-            (this.chartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.sidebysideChart){
-          if(this.chartOptions2.yaxis.length >0){
-            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions2.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions2.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.stockedChart){
-          if(this.chartOptions6.yaxis.length >0){
-            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions6.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions6.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.barlineChart){
-          if(this.chartOptions5.yaxis.length >0){
-            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions5.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions5.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.horizontolstockedChart){
-          if(this.chartOptions7.yaxis.length >0){
-            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions7.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions7.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.groupedChart){
-          if(this.chartOptions8.yaxis.length >0){
-            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions8.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions8.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.multilineChart){
-          if(this.chartOptions9.yaxis.length >0){
-            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.chartOptions9.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions9.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-        else if(this.heatMap){
-          if(this.heatMapChartOptions.yaxis.length >0){
-            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Times New Roman, serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '16px';
-            })
-          }
-          else{
-            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Times New Roman, serif';
-            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.heatMapChartOptions.yaxis.labels.style.fontSize = '16px';
-          }
-        }
-      }
-      if(event.target.value === 'verdana'){
-        object = {yaxis: [{labels: {style: {fontFamily: 'Verdana, sans-serif',fontWeight: 'bold',fontSize: '12px',}}}]};
-        if(this.barchart){
-          if(this.chartOptions3.yaxis.length >0){
-            (this.chartOptions3.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions3.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions3.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions3.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.areachart){
-          if(this.chartOptions1.yaxis.length >0){
-            (this.chartOptions1.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions1.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions1.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions1.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.linechart){
-          if(this.chartOptions.yaxis.length >0){
-            (this.chartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.sidebysideChart){
-          if(this.chartOptions2.yaxis.length >0){
-            (this.chartOptions2.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions2.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions2.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions2.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.stockedChart){
-          if(this.chartOptions6.yaxis.length >0){
-            (this.chartOptions6.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions6.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions6.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions6.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.barlineChart){
-          if(this.chartOptions5.yaxis.length >0){
-            (this.chartOptions5.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions5.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions5.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions5.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.horizontolstockedChart){
-          if(this.chartOptions7.yaxis.length >0){
-            (this.chartOptions7.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions7.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions7.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions7.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.groupedChart){
-          if(this.chartOptions8.yaxis.length >0){
-            (this.chartOptions8.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions8.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions8.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions8.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.multilineChart){
-          if(this.chartOptions9.yaxis.length >0){
-            (this.chartOptions9.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.chartOptions9.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.chartOptions9.yaxis.labels.style.fontWeight = 'bold';
-            this.chartOptions9.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-        else if(this.heatMap){
-          if(this.heatMapChartOptions.yaxis.length >0){
-            (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
-              data.labels.style.fontFamily = 'Verdana, sans-serif';
-              data.labels.style.fontWeight = 'bold';
-              data.labels.style.fontSize = '12px';
-            })
-          }
-          else{
-            this.heatMapChartOptions.yaxis.labels.style.fontFamily = 'Verdana, sans-serif';
-            this.heatMapChartOptions.yaxis.labels.style.fontWeight = 'bold';
-            this.heatMapChartOptions.yaxis.labels.style.fontSize = '12px';
-          }
-        }
-      }
-    }
-    
-    console.log(this.chartOptions3);
-    this.updateChart(object);
-  }
   allignmentChange(event: any, section: any) {
-    let object : any;
+    let object : any = {};
     if (section === 'dimension') {
-      if (event.target.value === 'center') {
+      if (event === 'center') {
         object = {xaxis: {labels : {offsetX : 0}, categories: this.chartsColumnData}};
         if(this.barchart){
           this.chartOptions3.xaxis.labels.offsetX = 0;
@@ -6747,7 +6030,7 @@ renameColumns(){
         }
 
       }
-      if (event.target.value === 'left') {
+      if (event === 'left') {
         object = {xaxis: {labels : {offsetX : -10}, categories: this.chartsColumnData}};
         if(this.barchart){
           this.chartOptions3.xaxis.labels.offsetX = -10;
@@ -6780,7 +6063,7 @@ renameColumns(){
           this.heatMapChartOptions.xaxis.labels.offsetX = -10;
         }
       }
-      if (event.target.value === 'right') {
+      if (event === 'right') {
         object = {xaxis: {labels : {offsetX : 10}, categories: this.chartsColumnData}};
         if(this.barchart){
           this.chartOptions3.xaxis.labels.offsetX = 10;
@@ -6815,8 +6098,8 @@ renameColumns(){
       }
     }
     else {
-      if (event.target.value === 'center') {
-        object = {yaxis: {labels : {offsetY : 0}}};
+      if (event === 'center') {
+        object = {yaxis: {labels : {offsetY : 0, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -6918,8 +6201,8 @@ renameColumns(){
           }
         }
       }
-      if (event.target.value === 'up') {
-        object = {yaxis: {labels : {offsetY : -10}}};
+      if (event === 'top') {
+        object = {yaxis: {labels : {offsetY : -10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -7021,8 +6304,8 @@ renameColumns(){
           }
         }
       }
-      if (event.target.value === 'down') {
-        object = {yaxis: {labels : {offsetY : 10}}};
+      if (event === 'bottom') {
+        object = {yaxis: {labels : {offsetY : 10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -7502,6 +6785,24 @@ renameColumns(){
     }
     else if(this.barLine){
       this.barLineChart();
+    }
+    else if(this.sidebyside){
+      this.sidebysideBar();
+    }
+    else if(this.stocked){
+      this.stockedBar();
+    }
+    else if(this.horizentalStocked){
+      this.horizentalStockedBar();
+    }
+    else if(this.grouped){
+      this.hGrouped();
+    }
+    else if(this.multiLine){
+      this.multiLineChart();
+    }
+    else if(this.heatMap){
+      this.heatMapChart();
     }
   }
   formattedData : any[] = [];
@@ -8207,48 +7508,48 @@ fetchChartData(chartData: any){
         let object = {};
         if(this.bar){
           this.chartOptions3.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions3;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          //  object = this.chartOptions3;
         }
         else if(this.area){
           this.chartOptions1.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions1;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions1;
         }
         else if(this.line){
           this.chartOptions.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions;
         }
         else if(this.sidebyside){
           this.chartOptions2.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions2;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions2;
         }
         else if(this.stocked){
           this.chartOptions6.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions6;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions6;
         }
         else if(this.barLine){
           this.chartOptions5.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions5;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
           this.chartOptions7.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions7;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions7;
         }
         else if(this.grouped){
           this.chartOptions8.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions8;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions8;
         }
         else if(this.multiLine){
           this.chartOptions9.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.chartOptions9;
+          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = this.chartOptions9;
         }
         this.updateChart(object);
       }
@@ -8258,48 +7559,48 @@ fetchChartData(chartData: any){
         let object = {};
         if(this.bar){
           this.chartOptions3.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions3;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions3;
         }
         else if(this.area){
           this.chartOptions1.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions1;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions1;
         }
         else if(this.line){
           this.chartOptions.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions;
         }
         else if(this.sidebyside){
           this.chartOptions2.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions2;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions2;
         }
         else if(this.stocked){
           this.chartOptions6.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions6;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions6;
         }
         else if(this.barLine){
           this.chartOptions5.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions5;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
           this.chartOptions7.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions7;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions7;
         }
         else if(this.grouped){
           this.chartOptions8.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions8;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions8;
         }
         else if(this.multiLine){
           this.chartOptions9.dataLabels.style.fontSize = font;
-          object = { datalabels: { style: { fontSize: font } } };
-          object = this.chartOptions9;
+          object = { dataLabels: { style: { fontSize: font } } };
+          // object = this.chartOptions9;
         }
         this.updateChart(object);
       }
@@ -8312,51 +7613,51 @@ fetchChartData(chartData: any){
         let object;
         if(fontStyle === 'B'){
           this.isBold = !this.isBold;
-          font = 'bold'
+          font = this.isBold ? 700 : 400;
           if(this.bar){
             this.chartOptions3.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions3;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions3;
           }
           else if(this.area){
             this.chartOptions1.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions1;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions1;
           }
           else if(this.line){
             this.chartOptions.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions;
           }
           else if(this.sidebyside){
             this.chartOptions2.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions2;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions2;
           }
           else if(this.stocked){
             this.chartOptions6.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions6;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions6;
           }
           else if(this.barLine){
             this.chartOptions5.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions5;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions5;
           }
           else if(this.horizentalStocked){
             this.chartOptions7.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions7;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions7;
           }
           else if(this.grouped){
             this.chartOptions8.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions8;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions8;
           }
           else if(this.multiLine){
             this.chartOptions9.dataLabels.style.fontWeight = font;
-            object = { datalabels: { style: { fontWeight: font } } };
-            object = this.chartOptions9;
+            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = this.chartOptions9;
           }
           this.updateChart(object);
         }
@@ -8378,56 +7679,55 @@ fetchChartData(chartData: any){
         let object;
         if(this.bar){
           this.chartOptions3.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions3;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions3;
         }
         else if(this.area){
           this.chartOptions1.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions1;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions1;
         }
         else if(this.line){
           this.chartOptions.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions;
         }
         else if(this.sidebyside){
           this.chartOptions2.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions2;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions2;
         }
         else if(this.stocked){
           this.chartOptions6.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions6;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions6;
         }
         else if(this.barLine){
           this.chartOptions5.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions5;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
           this.chartOptions7.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions7;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions7;
         }
         else if(this.grouped){
           this.chartOptions8.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions8;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions8;
         }
         else if(this.multiLine){
           this.chartOptions9.dataLabels.style.colors = [color];
-          object = { datalabels: { style: { colors : [color] } } };
-          object = this.chartOptions9;
+          object = { dataLabels: { style: { colors : [color] } } };
+          // object = this.chartOptions9;
         }
         element.style.border = `1px solid black`;
         this.selectedElement = element;
         this.updateChart(object);
       }
 
-      dataLabelsFontPosition(event:any){
-        let position = event.target.value;
+      dataLabelsFontPosition(position:any){
         let object: any;
         if(this.bar){
           object = { plotOptions: { bar: { dataLabels: { position: position } } } };
@@ -8464,14 +7764,14 @@ fetchChartData(chartData: any){
           this.color2 = '#ffffff'; 
         }
         this.GridColor = '#0f0f0f';
-        this.apexbBgColor = '#ffffff';
+        this.backgroundColor = '#ffffff';
         if(this.kpi){
           this.kpiColor = '#0f0f0f';
         }
         this.marksColor2(this.color);
         this.funnelColorChange(this.color);
         this.gridLineColor(this.GridColor);
-        this.apexbBackgroundColor(this.apexbBgColor);
+        this.apexbBackgroundColor(this.backgroundColor);
       }
 
       sheetNotSaveAlert(): Promise<boolean> {
@@ -8531,5 +7831,433 @@ fetchChartData(chartData: any){
     setChartType(){
       this.selectedChartPlugin = localStorage.getItem('chartType')+'';
       this.changeChartPlugin();
+    }
+
+    backgroundColorSwitch : boolean = false;
+    chartColorSwitch : boolean = false;
+    barColorSwitch : boolean = false;
+    lineColorSwitch : boolean = false;
+    gridLineColorSwitch : boolean = false;
+    xLabelColorSwitch : boolean = false;
+    xGridLineColorSwitch : boolean = false;
+    yLabelColorSwitch : boolean = false;
+    yGridLineColorSwitch : boolean = false;
+    bandingColorSwitch : boolean = false;
+    kpiColorSwitch : boolean = false;
+    funnelColorSwitch : boolean = false;
+
+    dimensionsFontFamilyChange(){
+      let  object = {xaxis: {labels: {style: {fontFamily: this.xLabelFontFamily}}, categories: this.chartsColumnData}};
+      if(this.bar){
+        this.chartOptions3.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if (this.areachart) {
+        this.chartOptions1.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.linechart){
+        this.chartOptions.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      else if(this.heatMap){
+        this.heatMapChartOptions.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+      }
+      this.updateChart(object);
+    }
+    dimensionsFontSizeChange(){
+      let  object = {xaxis: {labels: {style: {fontSize: this.xLabelFontSize}}, categories: this.chartsColumnData}};
+      if(this.bar){
+        this.chartOptions3.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if (this.areachart) {
+        this.chartOptions1.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.linechart){
+        this.chartOptions.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      else if(this.heatMap){
+        this.heatMapChartOptions.xaxis.labels.style.fontSize = this.xLabelFontSize;
+      }
+      this.updateChart(object);
+    }
+    dimensionsFontWeightChange(){
+      let  object = {xaxis: {labels: {style: {fontWeight: this.xlabelFontWeight}}, categories: this.chartsColumnData}};
+      if(this.bar){
+        this.chartOptions3.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if (this.areachart) {
+        this.chartOptions1.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.linechart){
+        this.chartOptions.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.sidebysideChart){
+        this.chartOptions2.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.stockedChart){
+        this.chartOptions6.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.barlineChart){
+        this.chartOptions5.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.horizontolstockedChart){
+        this.chartOptions7.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.groupedChart){
+        this.chartOptions8.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.multilineChart){
+        this.chartOptions9.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      else if(this.heatMap){
+        this.heatMapChartOptions.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+      }
+      this.updateChart(object);
+    }
+    measuresFontFamilyChange(){
+      let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
+      if (this.bar) {
+        if (this.chartOptions3.yaxis.length > 0) {
+          (this.chartOptions3.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions3.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if (this.areachart) {
+        if (this.chartOptions1.yaxis.length > 0) {
+          (this.chartOptions1.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions1.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.linechart){
+        if (this.chartOptions.yaxis.length > 0) {
+          (this.chartOptions.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.sidebysideChart){
+        if (this.chartOptions2.yaxis.length > 0) {
+          (this.chartOptions2.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions2.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.stockedChart){
+        if (this.chartOptions6.yaxis.length > 0) {
+          (this.chartOptions6.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions6.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.barlineChart){
+        if (this.chartOptions5.yaxis.length > 0) {
+          (this.chartOptions5.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions5.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.horizontolstockedChart){
+        if (this.chartOptions7.yaxis.length > 0) {
+          (this.chartOptions7.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions7.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.groupedChart){
+        if (this.chartOptions8.yaxis.length > 0) {
+          (this.chartOptions8.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions8.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.multilineChart){
+        if (this.chartOptions9.yaxis.length > 0) {
+          (this.chartOptions9.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions9.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      else if(this.heatMap){
+        if (this.heatMapChartOptions.yaxis.length > 0) {
+          (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.heatMapChartOptions.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
+        }
+      }
+      this.updateChart(object);
+    }
+    measuresFontSizeChange(){
+      let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
+      if (this.bar) {
+        if (this.chartOptions3.yaxis.length > 0) {
+          (this.chartOptions3.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions3.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if (this.areachart) {
+        if (this.chartOptions1.yaxis.length > 0) {
+          (this.chartOptions1.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions1.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.linechart){
+        if (this.chartOptions.yaxis.length > 0) {
+          (this.chartOptions.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontFamily = this.yLabelFontFamily;
+          })
+        }
+        else {
+          this.chartOptions.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.sidebysideChart){
+        if (this.chartOptions2.yaxis.length > 0) {
+          (this.chartOptions2.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions2.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.stockedChart){
+        if (this.chartOptions6.yaxis.length > 0) {
+          (this.chartOptions6.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions6.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.barlineChart){
+        if (this.chartOptions5.yaxis.length > 0) {
+          (this.chartOptions5.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions5.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.horizontolstockedChart){
+        if (this.chartOptions7.yaxis.length > 0) {
+          (this.chartOptions7.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions7.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.groupedChart){
+        if (this.chartOptions8.yaxis.length > 0) {
+          (this.chartOptions8.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions8.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.multilineChart){
+        if (this.chartOptions9.yaxis.length > 0) {
+          (this.chartOptions9.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.chartOptions9.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      else if(this.heatMap){
+        if (this.heatMapChartOptions.yaxis.length > 0) {
+          (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontSize = this.yLabelFontSize;
+          })
+        }
+        else {
+          this.heatMapChartOptions.yaxis.labels.style.fontSize = this.yLabelFontSize;
+        }
+      }
+      this.updateChart(object);
+    }
+    measuresFontWeightChange(){
+      let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
+      if (this.bar) {
+        if (this.chartOptions3.yaxis.length > 0) {
+          (this.chartOptions3.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions3.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if (this.areachart) {
+        if (this.chartOptions1.yaxis.length > 0) {
+          (this.chartOptions1.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions1.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.linechart){
+        if (this.chartOptions.yaxis.length > 0) {
+          (this.chartOptions.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.sidebysideChart){
+        if (this.chartOptions2.yaxis.length > 0) {
+          (this.chartOptions2.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions2.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.stockedChart){
+        if (this.chartOptions6.yaxis.length > 0) {
+          (this.chartOptions6.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions6.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.barlineChart){
+        if (this.chartOptions5.yaxis.length > 0) {
+          (this.chartOptions5.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions5.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.horizontolstockedChart){
+        if (this.chartOptions7.yaxis.length > 0) {
+          (this.chartOptions7.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions7.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.groupedChart){
+        if (this.chartOptions8.yaxis.length > 0) {
+          (this.chartOptions8.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions8.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.multilineChart){
+        if (this.chartOptions9.yaxis.length > 0) {
+          (this.chartOptions9.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.chartOptions9.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      else if(this.heatMap){
+        if (this.heatMapChartOptions.yaxis.length > 0) {
+          (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
+            data.labels.style.fontWeight = this.ylabelFontWeight;
+          })
+        }
+        else {
+          this.heatMapChartOptions.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
+        }
+      }
+      this.updateChart(object);
     }
 }

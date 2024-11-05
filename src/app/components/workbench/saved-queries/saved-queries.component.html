@@ -7,7 +7,7 @@
         <div class="connect-txt">
           <h4 class="card-title mt-2">Saved Queries</h4>
         </div>
-        <div *ngIf="savedQueryList.length > 0" class="new-data-btn d-flex text-align-center">
+        <div class="new-data-btn d-flex text-align-center">
           <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
           <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
 
@@ -20,7 +20,7 @@
         </div>
     </div>
     <div *ngIf="viewSavedQueries && savedQueryList.length === 0">
-     <p> No Saved Queries!</p>
+     <p> No Saved Queries Found!</p>
     </div>
     <div *ngIf="!viewSavedQueries">
       You don't have permission to view!
