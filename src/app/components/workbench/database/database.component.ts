@@ -656,7 +656,7 @@ joiningTablesWithoutQuerySetId(){
     delete obj.database_id
     obj.file_id = this.fileId
   }
-  this.workbechService.joiningTables(obj)
+  this.workbechService.joiningTablesTest(obj)
   .subscribe(
     {
       next:(data:any) =>{
@@ -698,7 +698,7 @@ joiningTables(){
     delete obj.database_id;
     obj.file_id=this.fileId
   }
-  this.workbechService.joiningTables(obj)
+  this.workbechService.joiningTablesTest(obj)
   .subscribe(
     {
       next:(data:any) =>{
@@ -763,38 +763,12 @@ joiningTables(){
 
 buildCustomJoin(){
   this.tableJoiningList =[];
-  let joiningConditions = [[{
-    table1 : 'user',
-    firstcolumn : 'user_id',
-    operator : '=',
-    secondcolumn : 'role_id',
-    table2 : 'user_guide',
-  },{
-    table1 : 'user',
-    firstcolumn : 'user_id123',
-    operator : '=',
-    secondcolumn : 'role_id123',
-    table2 : 'user_guide',
-  }],[{
-    table1 : 'user',
-  firstcolumn : 'id',
-  operator : '>',
-  secondcolumn : 'user_id',
-  table2 : 'user_profile',
-},
-{
-  table1 : 'user_guide',
-  firstcolumn : 'id456',
-  operator : '>',
-  secondcolumn : 'user_id456',
-  table2 : 'user_profile',
-}]]
   this.joinTypes.forEach((element : any,index : number) => {
     let remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias == this.draggedtables[index + 1].table);
     let object = {
        join : element,
-       table1 : this.draggedtables[index].table,
-       table2 : this.draggedtables[index + 1].table,
+       table1 : this.relationOfTables[index][0].table1,
+       table2 : this.relationOfTables[index][0].table2,
        conditions : this.relationOfTables[index],
        table2Data : remainingTables,
        originalData : remainingTables,
@@ -820,7 +794,7 @@ joiningTablesFromDelete(){
     delete obj.database_id;
     obj.file_id=this.fileId
   }
-  this.workbechService.joiningTables(obj)
+  this.workbechService.joiningTablesTest(obj)
   .subscribe(
     {
       next:(data:any) =>{
@@ -898,7 +872,7 @@ customTableJoin(){
    delete obj.database_id;
    obj.file_id = this.fileId
   }
-  this.workbechService.joiningTables(obj)
+  this.workbechService.joiningTablesTest(obj)
   .subscribe(
     {
       next:(data:any) =>{
@@ -1034,47 +1008,12 @@ if(obj.row_limit === null || obj.row_limit === undefined){
     }
     })
 }
-deleteJoiningRelation(index:number){
-
-  const deleteCondtin = this.displayJoiningCndnsList[index].condition
-  console.log(deleteCondtin)
-  this.relationOfTables = this.relationOfTables.map((subArray: any[]) =>
-    subArray.filter(item => item !== deleteCondtin)
-  ).filter((subArray: string | any[]) => subArray.length > 0);
-  console.log('deletedcondfromrelatiion',this.relationOfTables)
-
-  if (index > -1 && index < this.displayJoiningCndnsList.length) {
-    this.displayJoiningCndnsList.splice(index, 1);
-    //this.relationOfTables.splice(index,1);
-  }
-  this.deleteRelation(deleteCondtin)
-  
-  // console.log('removedjoining',this.displayJoiningCndnsList)
+deleteJoiningRelation(conditionIndex:number,list : any){
+  list.conditions.splice(conditionIndex, 1);
+  this.relationOfTables[conditionIndex] = list.conditions;
+  this.joiningTables();
 }
-deleteRelation(deleteCondtin:any){
-  const obj ={
-    conditions_list:this.relationOfTables,
-    delete_condition :deleteCondtin[0],
-    
-  }
-  this.workbechService.deleteRelation(obj).subscribe(
-    {
-      next:(data:any) =>{
-        console.log(data)
-       this.relationOfTables= data.data.conditions_list;
-       this.joiningTables();
-      },
-      error:(error:any)=>{
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-    }
-    })
-}
+
 openSuperScaled(modal: any) {
   this.modalService.open(modal, {
     centered: true,
