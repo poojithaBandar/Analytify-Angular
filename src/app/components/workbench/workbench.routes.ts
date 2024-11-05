@@ -200,6 +200,12 @@ export const admin: Routes = [
     import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
 },
 {
+  path: 'users/edit-user/:id',
+  canActivate:[authGuard],
+  loadComponent: () =>
+    import('./users-dashboard/users-dashboard.component').then((m)=> m.UsersDashboardComponent)
+},
+{
   path: 'roles/roles-list',
   canActivate:[authGuard],
   loadComponent: () =>

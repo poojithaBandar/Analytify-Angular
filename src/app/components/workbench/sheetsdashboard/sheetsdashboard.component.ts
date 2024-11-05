@@ -2404,7 +2404,7 @@ getColumnsForFilter(){
 getColumnsForFilterEdit(selectedqryId:any,dashboardId:any){
 this.dashboardId= dashboardId,
 this.selectedQuerySetId = selectedqryId
- //this.getColumnsForFilter();
+ this.getColumnsForFilter();
 this.loadSelectedForEditing()
 
 }

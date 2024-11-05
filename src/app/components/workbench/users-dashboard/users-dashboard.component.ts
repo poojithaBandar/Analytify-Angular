@@ -8,7 +8,7 @@ import { WorkbenchService } from '../workbench.service';
 import Swal from 'sweetalert2';
 import { PasswordValidators } from '../../../shared/password-validator';
 import { InsightsButtonComponent } from '../insights-button/insights-button.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -36,7 +36,8 @@ export class UsersDashboardComponent {
   userId:any;
   @ViewChild('Adduser') Adduser : any;
 
-  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,private router:Router,private toasterservice:ToastrService){
+  constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private formBuilder:FormBuilder,
+    private route:ActivatedRoute,private router:Router,private toasterservice:ToastrService){
     this.addUserForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.maxLength(64)]],
       firstname:['', Validators.required],
@@ -65,11 +66,13 @@ export class UsersDashboardComponent {
     if(this.router.url.includes('/insights/users/add-user')){
       this.addUserDiv();
     }
-    if(this.router.url.includes('/workbenchdashboard/users/add-user')){
-      this.addUserDivForm= false;
+    if(this.router.url.includes('/insights/users/edit-user/')){
+      if (route.snapshot.params['id'] ) {
+        const userId = +atob(route.snapshot.params['id']);
+       this.getUserIdDetails(userId);
     }
   }
-
+    }
   ngOnInit(){
     this.getUserList()
   }
@@ -367,7 +370,10 @@ deleteUser(id:any){
       )
     }})
 }
-
+editUserRoute(id:any){
+  const userId = btoa(id.toString());
+  this.router.navigate(['/insights/users/edit-user/'+userId])
+}
 
 getUserIdDetails(id:any){
   this.userId = id;

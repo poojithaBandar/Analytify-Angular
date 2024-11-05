@@ -606,8 +606,8 @@
                                 <div class="card overflow-hidden img-shadow mb-0 " style="cursor: pointer;">
                                     <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" src="{{dashboardList.dashboard_image}}" alt="img" class="card-img-top">
                                 </div>
-                                <div class="card-body p-2 d-flex">
-                                    <p class="mb-0">{{dashboardList.dashboard_name}}</p>
+                                <div class="card-body p-2 d-flex justify-content-between">
+                                    <h5 class="card-title mb-0" style="cursor: pointer; color: #05aff8;">{{dashboardList.dashboard_name}}</h5>
                                     <div class="dashboard-option">
                                         <div class="d-flex justify-content-end p-1" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"  ngbDropdownToggle
