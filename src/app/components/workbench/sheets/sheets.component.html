@@ -1540,7 +1540,7 @@
                                                                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                             <div class="dropup" ngbDropdown >
                                                                                                 <div class="form-group mb-0 p-1">
-                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontFamily" (change)="changeAlignment()">
+                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontFamily" (change)="dimensionsFontFamilyChange()">
                                                                                                         <option value="'Arial', sans-serif">Arial</option>
                                                                                                         <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                         <option value="'Verdana', sans-serif">Verdana</option>
@@ -1550,7 +1550,6 @@
                                                                                                         <option value="'Merriweather', serif">Merriweather</option>
                                                                                                         <option value="'Roboto', sans-serif">Roboto</option>
                                                                                                         <option value="Algerian">Algerian</option>
-                                                                                                        <option value="Arial">Arial</option>
                                                                                                         <option value="Bahnschrift">Bahnschrift</option>
                                                                                                         <option value="sans-serif">Sans Serif</option>
                                                                                                         <option value="Calibri">Calibri</option>
@@ -1559,7 +1558,7 @@
                                                                                                 <div class="bold-italic p-1">
                                                                                                     <div class="row">
                                                                                                         <div class="form-group mb-0 d-flex">
-                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize" (change)="changeAlignment()">
+                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize" (change)="dimensionsFontSizeChange()">
                                                                                                                 <option value="10">10px</option>
                                                                                                                 <option value="11">11px</option>
                                                                                                                 <option value="12">12px</option>
@@ -1572,7 +1571,7 @@
                                                                                                                 <option value="19">19px</option>
                                                                                                                 <option value="20">20px</option>
                                                                                                              </select>
-                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;changeAlignment()">
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;dimensionsFontWeightChange()">
                                                                                                                 <p>B</p>
                                                                                                             </div>
                                                                                                             <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
@@ -1666,17 +1665,17 @@
                                                                                           <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                               <div class="dropup" ngbDropdown >
                                                                                                   <div class=" p-1">
-                                                                                                          <div class="form-group mb-0 text-center" (click)="labelAlignment = 'center';changeAlignment()">
+                                                                                                          <div class="form-group mb-0 text-center" (click)="allignmentChange('center','dimension')">
                                                                                                             <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                           </div>
                                                                                                           <div class="form-group mb-0 alignment-sides">
-                                                                                                             <div class="align-left" (click)="labelAlignment = 'left';changeAlignment()">
+                                                                                                             <div class="align-left" (click)="allignmentChange('left','dimension')">
                                                                                                                 <i class="fa fa-align-left"></i>
                                                                                                             </div>
-                                                                                                            <div  class="align-center" (click)="labelAlignment = 'center';changeAlignment()">
+                                                                                                            <div  class="align-center" (click)="allignmentChange('center','dimension')">
                                                                                                                 <i class="fa fa-align-center"></i>
                                                                                                             </div>
-                                                                                                            <div class="align-right" (click)="labelAlignment = 'right';changeAlignment()">
+                                                                                                            <div class="align-right" (click)="allignmentChange('right','dimension')">
                                                                                                                 <i class="fa fa-align-right"></i>
                                                                                                             </div>
                                                                                                         </div>
@@ -1816,7 +1815,7 @@
                                                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                         <div class="dropup" ngbDropdown >
                                                                                             <div class="form-group mb-0 p-1">
-                                                                                                <select class="form-select form-select select2 fs-14" [(ngModel)]="yLabelFontFamily" (change)="changeAlignment()">
+                                                                                                <select class="form-select form-select select2 fs-14" [(ngModel)]="yLabelFontFamily" (change)="measuresFontFamilyChange()">
                                                                                                     <option value="'Arial', sans-serif">Arial</option>
                                                                                                     <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                     <option value="'Verdana', sans-serif">Verdana</option>
@@ -1826,7 +1825,6 @@
                                                                                                     <option value="'Merriweather', serif">Merriweather</option>
                                                                                                     <option value="'Roboto', sans-serif">Roboto</option>
                                                                                                     <option value="Algerian">Algerian</option>
-                                                                                                    <option value="Arial">Arial</option>
                                                                                                     <option value="Bahnschrift">Bahnschrift</option>
                                                                                                     <option value="sans-serif">Sans Serif</option>
                                                                                                     <option value="Calibri">Calibri</option>
@@ -1835,7 +1833,7 @@
                                                                                             <div class="bold-italic p-1">
                                                                                                 <div class="row">
                                                                                                     <div class="form-group mb-0 d-flex">
-                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize" (change)="changeAlignment()">
+                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize" (change)="measuresFontSizeChange()">
                                                                                                             <option value="10">10px</option>
                                                                                                             <option value="11">11px</option>
                                                                                                             <option value="12">12px</option>
@@ -1848,7 +1846,7 @@
                                                                                                             <option value="19">19px</option>
                                                                                                             <option value="20">20px</option>
                                                                                                          </select>
-                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;changeAlignment()">
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;measuresFontWeightChange()">
                                                                                                             <p>B</p>
                                                                                                         </div>
                                                                                                         <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
@@ -1942,17 +1940,17 @@
                                                                                       <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                           <div class="dropup" ngbDropdown >
                                                                                                 <div class=" p-1 mt-2 mb-2">
-                                                                                                    <div class="form-group mb-0 text-center" (click)="labelAlignment = 'center';changeAlignment()">
+                                                                                                    <div class="form-group mb-0 text-center" (click)="allignmentChange('center','measure')">
                                                                                                       <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                     </div>
                                                                                                     <div class="form-group mb-0 alignment-sides">
-                                                                                                       <div class="justify-bottom" (click)="ylabelAlignment = 'bottom';changeAlignment()">
+                                                                                                       <div class="justify-bottom" (click)="allignmentChange('bottom','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
-                                                                                                      <div  class="justify-middle" (click)="ylabelAlignment = 'center';changeAlignment()">
+                                                                                                      <div  class="justify-middle" (click)="allignmentChange('center','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
-                                                                                                      <div class="justify-top" (click)="ylabelAlignment = 'top';changeAlignment()">
+                                                                                                      <div class="justify-top" (click)="allignmentChange('top','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
                                                                                                   </div>
@@ -2208,33 +2206,33 @@
                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                   <div class="dropup" ngbDropdown >
                                                                                     <div class=" p-1" *ngIf="horizentalStocked || grouped">
-                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelAlignment = 'right';changeAlignment()">
+                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelsFontPosition('top')">
                                                                                           <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                         </div>
                                                                                         <div class="form-group mb-0 alignment-sides">
-                                                                                           <div class="align-left" (click)="dataLabelAlignment = 'left';changeAlignment()">
+                                                                                           <div class="align-left" (click)="dataLabelsFontPosition('bottom')">
                                                                                               <i class="fa fa-align-left"></i>
                                                                                           </div>
-                                                                                          <div  class="align-center" (click)="dataLabelAlignment = 'center';changeAlignment()">
+                                                                                          <div  class="align-center" (click)="dataLabelsFontPosition('center')">
                                                                                               <i class="fa fa-align-center"></i>
                                                                                           </div>
-                                                                                          <div class="align-right" (click)="dataLabelAlignment = 'right';changeAlignment()">
+                                                                                          <div class="align-right" (click)="dataLabelsFontPosition('top')">
                                                                                               <i class="fa fa-align-right"></i>
                                                                                           </div>
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class=" p-1 mt-2 mb-2" *ngIf="!(horizentalStocked || grouped)">
-                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelAlignment = 'top';changeAlignment()">
+                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelsFontPosition('top')">
                                                                                             <button class="btn btn-blue-light Automatic-btn">Automatic</button>
                                                                                         </div>
                                                                                         <div class="form-group mb-0 alignment-sides">
-                                                                                            <div class="justify-bottom" (click)="dataLabelAlignment = 'bottom';changeAlignment()">
+                                                                                            <div class="justify-bottom" (click)="dataLabelsFontPosition('bottom')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
-                                                                                            <div class="justify-middle" (click)="dataLabelAlignment = 'center';changeAlignment()">
+                                                                                            <div class="justify-middle" (click)=" dataLabelsFontPosition('center')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
-                                                                                            <div class="justify-top" (click)="dataLabelAlignment = 'top';changeAlignment()">
+                                                                                            <div class="justify-top" (click)="dataLabelsFontPosition('top')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
                                                                                         </div>
@@ -2246,7 +2244,7 @@
                                                                 </div>
                                                               </div>
                                                             </div>
-                                                              <div class="p-2" style="display: flex;justify-content: space-between;" *ngIf="bar || sidebyside || stocked || horizentalStocked || grouped">
+                                                              <!-- <div class="p-2" style="display: flex;justify-content: space-between;" *ngIf="bar || sidebyside || stocked || horizentalStocked || grouped">
                                                                 <label>Position</label>
                                                                 <select class="form-select form-select select2 fs-14" (change)="dataLabelsFontPosition($event)" style="width: 40%; height: 30px;">
                                                                     <option value="0" selected disabled>select</option>
@@ -2254,7 +2252,7 @@
                                                                     <option value="center">CENTER</option>
                                                                     <option value="bottom">BOTTOM</option>
                                                                 </select>
-                                                              </div>
+                                                              </div> -->
                                                               @if(!kpi){
                                                                 <div class="row">
                                                                     <label class="col-md-4 form-label fs-14">Numbers</label>
