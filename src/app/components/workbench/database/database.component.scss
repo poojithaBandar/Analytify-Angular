@@ -173,7 +173,7 @@ background-color: aliceblue;
 
 .sub-menu {
   margin-top: 5px;
-  padding-left: 10px;
+  // padding-left: 10px;
 }
 
 .sub-menu-item {
@@ -249,7 +249,7 @@ button.TextTransform {
   justify-content: flex-start;
 }
 .databse-T-H{
-  height: 250px;
+  height: 268px;
 }
 .ds-th {
   height: 540px;
@@ -340,4 +340,7 @@ outline: none;
 }
 .tag-addon{
   min-width: 2rem !important;
+}
+.text-truncate{
+  max-width: 80px;
 }

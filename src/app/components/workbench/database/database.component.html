@@ -5,7 +5,7 @@
     @if(tableJoiningUI){
         <div class="main-container container-fluid">
     <div class="row">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card left-sidebar border">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card mb-0 left-sidebar border">
             <div class="p-4 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0 border-bottom">Connections</h6>
@@ -19,7 +19,7 @@
             </div>
             <!-- <div class="card mb-0 br-0">
             </div> -->
-            <div class="mb-0 br-0 pt-2" style="height: 581px">
+            <div class="mb-0 br-0 pt-2" style="height: 550px">
                 <div class="mb-0 p-1 border-bottom-0">
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"
@@ -44,7 +44,7 @@
                             </h6>
                             <div ngbAccordionCollapse id="collapse{{i}}" class="accordion-collapse collapse"
                                 [class.show]="i === 0" aria-labelledby="heading" data-bs-parent="#accordionExample">
-                                <div class="accordion-body p-2 overflow-scroll database-dropdown" ngbAccordionBody
+                                <div class="accordion-body p-1 overflow-scroll database-dropdown" ngbAccordionBody
                                     style="    height: auto;max-height: 350px;">
                                     <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
@@ -137,22 +137,22 @@
                                             <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
                                                 <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'full Outer'"
                                                     ngbTooltip="Full Outer Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                    <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active"
+                                                    <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active ms-2"
                                                         style="padding: 3px;">
                                                 </span>
                                                 <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'Right'"
                                                     ngbTooltip="Right Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                    <img src="./assets/images/charts/right-join.png" class="rounded-2 mrk-t  chart-icon active"
+                                                    <img src="./assets/images/charts/right-join.png" class="rounded-2 mrk-t  chart-icon active ms-2"
                                                         style="padding: 3px;">
                                                 </span>
                                                 <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'Left'"
                                                     ngbTooltip="Left Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                    <img src="./assets/images/charts/left-join.png" class="rounded-2 mrk-t  chart-icon active"
+                                                    <img src="./assets/images/charts/left-join.png" class="rounded-2 mrk-t  chart-icon active ms-2"
                                                         style="padding: 3px;">
                                                 </span>
                                                 <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'inner'"
                                                     ngbTooltip="Inner Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
-                                                    <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active"
+                                                    <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active ms-2"
                                                         style="padding: 3px;">
                                                 </span>
                                                 <span style="margin-top: 4px;">{{relation.table1}} : {{relation.table2}}</span>
@@ -163,36 +163,36 @@
                                             <div class="dropdown-menu size-dropdown Semantic-layer-card" ngbDropdownMenu autoClose="outside">
                                                 <h6 class="mb-0 p-1">Join</h6>
                                                 <div class="row px-3">
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'inner';joinTypes[i] = 'inner';$event.stopPropagation();" [ngClass]="relation.join == 'inner' ? 'btn-blue-light':''" style="cursor: pointer;">
-                                                        <img src="./assets/images/charts/inner-join.png" style="padding: 3px;">
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'inner';joinTypes[i] = 'inner';$event.stopPropagation();" [ngClass]="relation.join == 'inner' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
+                                                        <img src="./assets/images/charts/inner-join.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Inner</p>
                                                     </div>
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'Left';joinTypes[i] = 'Left';$event.stopPropagation();" [ngClass]="relation.join == 'Left' ? 'btn-blue-light':''" style="cursor: pointer;" >
-                                                        <img src="./assets/images/charts/left-join.png" style="padding: 3px;">
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'Left';joinTypes[i] = 'Left';$event.stopPropagation();" [ngClass]="relation.join == 'Left' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;" >
+                                                        <img src="./assets/images/charts/left-join.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Left</p>
                                                     </div>
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'Right';joinTypes[i] = 'Right';$event.stopPropagation();" [ngClass]="relation.join == 'Right' ? 'btn-blue-light':''" style="cursor: pointer;">
-                                                        <img src="./assets/images/charts/right-join.png" style="padding: 3px;">
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'Right';joinTypes[i] = 'Right';$event.stopPropagation();" [ngClass]="relation.join == 'Right' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
+                                                        <img src="./assets/images/charts/right-join.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Right</p>
                                                     </div>
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'full Outer';joinTypes[i] = 'full Outer';$event.stopPropagation();" [ngClass]="relation.join == 'full Outer' ? 'btn-blue-light':''" style="cursor: pointer;">
-                                                        <img src="./assets/images/charts/full-outer.png" style="padding: 3px;">
+                                                    <div class="col-3 border px-2" (click)="relation.join = 'full Outer';joinTypes[i] = 'full Outer';$event.stopPropagation();" [ngClass]="relation.join == 'full Outer' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
+                                                        <img src="./assets/images/charts/full-outer.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Full Outer</p>
                                                     </div>
                                                 </div>
                                                
                                                     <div class="row px-3">
                                                         <div class="col border Semantic-bg p-1">
-                                                            <p class="Semantic-header">Data Source</p>
+                                                            <p class="Semantic-header mb-0 text-truncate">Data Source</p>
                                                         </div>
                                                         <div class="col border Semantic-bg p-1">
-                                                            <p class="Semantic-header"></p>
+                                                            <p class="Semantic-header mb-0 text-truncate"></p>
                                                         </div>
                                                         <div class="col border Semantic-bg p-1">
-                                                            <p class="Semantic-header">{{relation.table2}}</p>
+                                                            <p class="Semantic-header mb-0 text-truncate">{{relation.table2}}</p>
                                                         </div>
                                                         <div class="col border Semantic-bg p-1">
-                                                            <p class="Semantic-header"></p>
+                                                            <p class="Semantic-header mb-0 text-truncate"></p>
                                                         </div>
                                                     </div>
                                                    
@@ -297,7 +297,7 @@
                                 class="table-joining-card p-0 col-xxl-6 col-xl-6 col-lg-6 col-md-6">
 
                                 <div class="">
-                                    <div class="card br-0 joining-T-H br-0">
+                                    <div class="card mb-0 br-0 joining-T-H br-0">
                                         <div class="card-header d-flex align-items-center justify-content-between"
                                             style="padding: 21px;">
                                             <h6 class="m-0">Table Custom Join</h6>
@@ -485,7 +485,7 @@
                             </div>
                             <div class="p-0"
                                 [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
-                                <div class="card br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''"
+                                <div class="card mb-0 br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''"
                                     [class.expanded]="!isOpen">
                                     <div class="card-header d-flex align-items-center"
                                         style="display: flex; justify-content: space-between;">
