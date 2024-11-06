@@ -3670,6 +3670,8 @@ bar["stack"]="Total";
       //   }
       // });
       console.log(this.draggedColumnsData);
+      this.draggedDrillDownColumns = [];
+
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
@@ -3787,6 +3789,9 @@ bar["stack"]="Total";
     //     } );
     //   }
     // });
+    if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
+      this.draggedDrillDownColumns = [];
+    }
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
    this.dataExtraction();
@@ -3856,7 +3861,7 @@ bar["stack"]="Total";
     this.map = map;
     this.calendar = calendar;
     // this.dataExtraction();
-    if(!this.bar|| !this.pie || !this.donut){
+    if(!(this.bar|| this.pie || this.donut)){
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
       this.drillDownIndex = 0;
@@ -4423,7 +4428,7 @@ sheetSave(){
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
-  if (this.dateDrillDownSwitch) {
+  if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
     draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
     draggedColumnsObj[0][2] = 'year'
   } else {
