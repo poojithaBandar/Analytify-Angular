@@ -738,7 +738,7 @@
                         <option value="echart">EChart</option>
                     </select>
                 </div>
-                @if(pie || bar || line || donut || area){
+                @if((pie || bar || donut) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 p-1">
                                         <button class="btn btn-primary " (click)="goDrillDownBack()" style="padding: 4px;">
                                             <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
