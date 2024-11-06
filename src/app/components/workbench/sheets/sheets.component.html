@@ -1230,8 +1230,8 @@
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 mt-3 p-1">
                 <div class="card panel panel-primary">
                     <div class="tab-menu-heading tab-menu-heading-boxed">
-                        <div class="tabs-menu-boxed">
-                            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" >
+                        <div class="tabs-menu1">
+                            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" style="justify-content: space-between;">
 
                                 <li [ngbNavItem]="1">
                                     <a ngbNavLink class="p-2">Data</a>
@@ -1389,7 +1389,7 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,28)"><img src="./assets/images/charts/guage-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
                                                         </div>
                                                         <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !dateList.includes(draggedColumnsData[0]?.[1]) && (draggedRows.length !== 1 || draggedColumns !== 1)}">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Calendar Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,11)"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar}"></a>
+                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Calendar Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,11)"><img src="./assets/images/charts/calendar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
@@ -1574,10 +1574,10 @@
                                                                                                              <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;dimensionsFontWeightChange()">
                                                                                                                 <p>B</p>
                                                                                                             </div>
-                                                                                                            <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
+                                                                                                            <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
                                                                                                                 <p>I</p>
                                                                                                             </div>
-                                                                                                            <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('U')">
+                                                                                                            <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
                                                                                                                 <p>U</p>
                                                                                                             </div>
                                                                                                         </div>
@@ -1669,13 +1669,13 @@
                                                                                                             <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                           </div>
                                                                                                           <div class="form-group mb-0 alignment-sides">
-                                                                                                             <div class="align-left" (click)="allignmentChange('left','dimension')">
+                                                                                                             <div class="align-left" [ngStyle]="{'background-color': dimensionAlignment == 'left' ? '#00a5a2': '#fafcfc'}" (click)="allignmentChange('left','dimension')">
                                                                                                                 <i class="fa fa-align-left"></i>
                                                                                                             </div>
-                                                                                                            <div  class="align-center" (click)="allignmentChange('center','dimension')">
+                                                                                                            <div  class="align-center" [ngStyle]="{'background-color': dimensionAlignment == 'center' ? '#00a5a2': '#fafcfc'}" (click)="allignmentChange('center','dimension')">
                                                                                                                 <i class="fa fa-align-center"></i>
                                                                                                             </div>
-                                                                                                            <div class="align-right" (click)="allignmentChange('right','dimension')">
+                                                                                                            <div class="align-right" [ngStyle]="{'background-color': dimensionAlignment == 'right' ? '#00a5a2': '#fafcfc'}" (click)="allignmentChange('right','dimension')">
                                                                                                                 <i class="fa fa-align-right"></i>
                                                                                                             </div>
                                                                                                         </div>
@@ -1849,10 +1849,10 @@
                                                                                                          <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;measuresFontWeightChange()">
                                                                                                             <p>B</p>
                                                                                                         </div>
-                                                                                                        <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
+                                                                                                        <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
                                                                                                             <p>I</p>
                                                                                                         </div>
-                                                                                                        <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('U')">
+                                                                                                        <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
                                                                                                             <p>U</p>
                                                                                                         </div>
                                                                                                     </div>
@@ -1944,13 +1944,13 @@
                                                                                                       <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                     </div>
                                                                                                     <div class="form-group mb-0 alignment-sides">
-                                                                                                       <div class="justify-bottom" (click)="allignmentChange('bottom','measure')">
+                                                                                                       <div class="justify-bottom" [ngStyle]="{'background-color': measureAlignment == 'bottom' ? '#00a5a2': '#fafcfc'}" (click)="allignmentChange('bottom','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
-                                                                                                      <div  class="justify-middle" (click)="allignmentChange('center','measure')">
+                                                                                                      <div  class="justify-middle" [ngStyle]="{'background-color': measureAlignment == 'center' ? '#00a5a2': '#fafcfc'}" (click)="allignmentChange('center','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
-                                                                                                      <div class="justify-top" (click)="allignmentChange('top','measure')">
+                                                                                                      <div class="justify-top" [ngStyle]="{'background-color': measureAlignment == 'top' ? '#00a5a2': '#fafcfc'}" (click)="allignmentChange('top','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
                                                                                                   </div>
@@ -2045,11 +2045,11 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
-                                                            class="accordion-button p-3 fw-500"
+                                                            class="accordion-button p-3 fw-500 border "
                                                             type="button"
                                                             data-bs-toggle="collapse"
                                                             data-bs-target="#collapse"
@@ -2082,7 +2082,7 @@
                                                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                     <div class="dropup" ngbDropdown >
                                                                                         <div class="form-group mb-0 p-1">
-                                                                                            <select class="form-select form-select select2 fs-14" (change)="dataLabelsFontFamily($event)">
+                                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="dataLabelsFontFamily" (change)="setDataLabelsFontFamily($event)">
                                                                                                 <option value="0" selected disabled>family</option>
                                                                                                 <option value="'Arial', sans-serif">Arial</option>
                                                                                                 <option value="'Helvetica', sans-serif">Helvetica</option>
@@ -2092,12 +2092,16 @@
                                                                                                 <option value="'Georgia', serif">Georgia</option>
                                                                                                 <option value="'Merriweather', serif">Merriweather</option>
                                                                                                 <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                                <option value="Algerian">Algerian</option>
+                                                                                                <option value="Bahnschrift">Bahnschrift</option>
+                                                                                                <option value="sans-serif">Sans Serif</option>
+                                                                                                <option value="Calibri">Calibri</option>
                                                                                             </select>
                                                                                         </div>
                                                                                         <div class="bold-italic p-1">
                                                                                             <div class="row">
                                                                                                 <div class="form-group mb-0 d-flex">
-                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" (change)="dataLabelsFontSize($event)">
+                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="dataLabelsFontSize" (change)="setDataLabelsFontSize($event)">
                                                                                                         <option value="0" selected disabled>size</option>
                                                                                                         <option value="10px">10px</option>
                                                                                                         <option value="11px">11px</option>
@@ -2111,13 +2115,13 @@
                                                                                                         <option value="19px">19px</option>
                                                                                                         <option value="20px">20px</option>
                                                                                                      </select>
-                                                                                                     <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('B')">
+                                                                                                     <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('B')">
                                                                                                         <p>B</p>
                                                                                                     </div>
-                                                                                                    <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('I')">
+                                                                                                    <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
                                                                                                         <p>I</p>
                                                                                                     </div>
-                                                                                                    <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="dataLabelsFontStyle('U')">
+                                                                                                    <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
                                                                                                         <p>U</p>
                                                                                                     </div>
                                                                                                 </div>
@@ -2196,7 +2200,7 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0">
+                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!heatMap">
                                                                 <div class="row">
                                                                   <div class="">
                                                                       <div class="font-color-card">
@@ -2205,34 +2209,34 @@
                                                                               <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                               <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                   <div class="dropup" ngbDropdown >
-                                                                                    <div class=" p-1" *ngIf="horizentalStocked || grouped">
-                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelsFontPosition('top')">
+                                                                                    <div class=" p-1" *ngIf="horizentalStocked || grouped || funnel">
+                                                                                        <div class="form-group mb-0 text-center" (click)="setDataLabelsFontPosition('top')">
                                                                                           <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                         </div>
                                                                                         <div class="form-group mb-0 alignment-sides">
-                                                                                           <div class="align-left" (click)="dataLabelsFontPosition('bottom')">
+                                                                                           <div class="align-left" [ngStyle]="{'background-color': dataLabelsFontPosition == 'bottom' ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontPosition('bottom')">
                                                                                               <i class="fa fa-align-left"></i>
                                                                                           </div>
-                                                                                          <div  class="align-center" (click)="dataLabelsFontPosition('center')">
+                                                                                          <div  class="align-center" [ngStyle]="{'background-color': dataLabelsFontPosition == 'center' ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontPosition('center')">
                                                                                               <i class="fa fa-align-center"></i>
                                                                                           </div>
-                                                                                          <div class="align-right" (click)="dataLabelsFontPosition('top')">
+                                                                                          <div class="align-right" [ngStyle]="{'background-color': dataLabelsFontPosition == 'top' ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontPosition('top')">
                                                                                               <i class="fa fa-align-right"></i>
                                                                                           </div>
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div class=" p-1 mt-2 mb-2" *ngIf="!(horizentalStocked || grouped)">
-                                                                                        <div class="form-group mb-0 text-center" (click)="dataLabelsFontPosition('top')">
+                                                                                    <div class=" p-1 mt-2 mb-2" *ngIf="!(horizentalStocked || grouped || funnel)">
+                                                                                        <div class="form-group mb-0 text-center" (click)="setDataLabelsFontPosition('top')">
                                                                                             <button class="btn btn-blue-light Automatic-btn">Automatic</button>
                                                                                         </div>
                                                                                         <div class="form-group mb-0 alignment-sides">
-                                                                                            <div class="justify-bottom" (click)="dataLabelsFontPosition('bottom')">
+                                                                                            <div class="justify-bottom" [ngStyle]="{'background-color': dataLabelsFontPosition == 'bottom' ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontPosition('bottom')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
-                                                                                            <div class="justify-middle" (click)=" dataLabelsFontPosition('center')">
+                                                                                            <div class="justify-middle" [ngStyle]="{'background-color': dataLabelsFontPosition == 'center' ? '#00a5a2': '#fafcfc'}" (click)=" setDataLabelsFontPosition('center')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
-                                                                                            <div class="justify-top" (click)="dataLabelsFontPosition('top')">
+                                                                                            <div class="justify-top" [ngStyle]="{'background-color': dataLabelsFontPosition == 'top' ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontPosition('top')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
                                                                                         </div>
@@ -2254,16 +2258,24 @@
                                                                 </select>
                                                               </div> -->
                                                               @if(!kpi){
-                                                                <div class="row">
-                                                                    <label class="col-md-4 form-label fs-14">Numbers</label>
-                                                                    <div class="col-md-8">
+                                                                <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                                    <label>Numbers</label>
+                                                                    <div class="btn-group my-2" ngbDropdown>
+                                                                        <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                            123.456 &nbsp;<i class="fa fa-chevron-down"></i>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" ngbDropdownMenu>
+                                                                            <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="numberPopupTrigger()">Number(custom)</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <!-- <div class="col-md-8">
                                                                         <div class="form-group mb-1">
-                                                                          <select class="form-select form-select select2 fs-14" (change)="numberPopupTrigger()">
-                                                                              <option value="1">123.456</option>
+                                                                          <select class="form-select form-select select2 fs-14" (onChange)="numberPopupTrigger()">
+                                                                              <option selected disabled value="1">123.456</option>
                                                                               <option value="2">Number(custom)</option>
                                                                           </select>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> -->
                                                                 </div>
                                                               }
                                                                 @if(numberPopup){
@@ -2538,7 +2550,7 @@
                                                                     <div class=""> 
                                                                         <p>Background</p>
                                                                     </div>
-                                                                    <div *ngIf="backgroundColorSwitch" class="toggle toggle-sm on mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch; resetColor()">
+                                                                    <div *ngIf="backgroundColorSwitch" class="toggle toggle-sm on mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch; resetBackgroundColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!backgroundColorSwitch" class="toggle toggle-sm off mb-0" (click)="backgroundColorSwitch = !backgroundColorSwitch;">
@@ -2546,7 +2558,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="backgroundColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="backgroundColor"  (change)="marksColor($event,6)"
+                                                                    [(ngModel)]="backgroundColor"  (ngModelChange)="setBackgroundColor(backgroundColor)"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -2555,7 +2567,7 @@
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
-                                                                    <div *ngIf="chartColorSwitch" class="toggle toggle-sm on mb-0" (click)="chartColorSwitch = !chartColorSwitch; resetColor()">
+                                                                    <div *ngIf="chartColorSwitch" class="toggle toggle-sm on mb-0" (click)="chartColorSwitch = !chartColorSwitch; resetChartColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!chartColorSwitch" class="toggle toggle-sm off mb-0" (click)="chartColorSwitch = !chartColorSwitch;">
@@ -2572,7 +2584,7 @@
                                                                     <div class=""> 
                                                                         <p >bar</p>
                                                                     </div>
-                                                                    <div *ngIf="barColorSwitch" class="toggle toggle-sm on mb-0" (click)="barColorSwitch = !barColorSwitch; resetColor()">
+                                                                    <div *ngIf="barColorSwitch" class="toggle toggle-sm on mb-0" (click)="barColorSwitch = !barColorSwitch; resetChartColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!barColorSwitch" class="toggle toggle-sm off mb-0" (click)="barColorSwitch = !barColorSwitch;">
@@ -2589,7 +2601,7 @@
                                                                     <div class=""> 
                                                                         <p >line</p>
                                                                     </div>
-                                                                    <div *ngIf="lineColorSwitch" class="toggle toggle-sm on mb-0" (click)="lineColorSwitch = !lineColorSwitch; resetColor()">
+                                                                    <div *ngIf="lineColorSwitch" class="toggle toggle-sm on mb-0" (click)="lineColorSwitch = !lineColorSwitch; resetChartColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!lineColorSwitch" class="toggle toggle-sm off mb-0" (click)="lineColorSwitch = !lineColorSwitch;">
@@ -2606,7 +2618,7 @@
                                                                     <div class=""> 
                                                                         <p >Grid Line</p>
                                                                     </div>
-                                                                    <div *ngIf="gridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="gridLineColorSwitch = !gridLineColorSwitch; resetColor()">
+                                                                    <div *ngIf="gridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="gridLineColorSwitch = !gridLineColorSwitch; resetGridColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!gridLineColorSwitch" class="toggle toggle-sm off mb-0" (click)="gridLineColorSwitch = !gridLineColorSwitch;">
@@ -2614,12 +2626,12 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="gridLineColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="GridColor"  (change)="gridLineColor($event)"
+                                                                    [(ngModel)]="GridColor"  (ngModelChange)="gridLineColor($event)"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >X-label Color </p>
                                                                     </div>
@@ -2631,11 +2643,11 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="xLabelColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="xLabelColor"  (change)="marksColor($event,5)"
+                                                                    [(ngModel)]="xLabelColor"  (ngModelChange)="marksColor($event,5)"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>  
-                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >X-Grid Line Color </p>
                                                                     </div>
@@ -2647,11 +2659,11 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="xGridLineColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="xGridColor"  (change)="marksColor($event,1)"
+                                                                    [(ngModel)]="xGridColor"  (ngModelChange)="marksColor($event,1)"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Y-label Color </p>
                                                                     </div>
@@ -2663,11 +2675,11 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="yLabelColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="yLabelColor"  (change)="marksColor($event,2)"
+                                                                    [(ngModel)]="yLabelColor"  (ngModelChange)="marksColor($event,2)"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Y-Grid Line Color </p>
                                                                     </div>
@@ -2679,7 +2691,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="yGridLineColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="yGridColor"  (change)="marksColor($event,3)"
+                                                                    [(ngModel)]="yGridColor"  (ngModelChange)="marksColor($event,3)"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -2687,7 +2699,7 @@
                                                                     <div class=""> 
                                                                         <p >Banding color </p>
                                                                     </div>
-                                                                    <div *ngIf="bandingColorSwitch" class="toggle toggle-sm on mb-0" (click)="bandingColorSwitch = !bandingColorSwitch; resetColor()">
+                                                                    <div *ngIf="bandingColorSwitch" class="toggle toggle-sm on mb-0" (click)="bandingColorSwitch = !bandingColorSwitch; resetBandingColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!bandingColorSwitch" class="toggle toggle-sm off mb-0" (click)="bandingColorSwitch = !bandingColorSwitch;">
@@ -2706,7 +2718,7 @@
                                                                 </div>
                                                                 <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <label for="color">Color</label>
-                                                                    <div *ngIf="kpiColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiColorSwitch = !kpiColorSwitch; resetColor()">
+                                                                    <div *ngIf="kpiColorSwitch" class="toggle toggle-sm on mb-0" (click)="kpiColorSwitch = !kpiColorSwitch; resetKpiColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!kpiColorSwitch" class="toggle toggle-sm off mb-0" (click)="kpiColorSwitch = !kpiColorSwitch;">
@@ -2720,13 +2732,13 @@
                                                                 </div>
                                                                 <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <label>color</label>
-                                                                    <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetColor()">
+                                                                    <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetChartColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!funnelColorSwitch" class="toggle toggle-sm off mb-0" (click)="funnelColorSwitch = !funnelColorSwitch;">
                                                                         <span></span>
                                                                     </div>
-                                                                    <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="funnelColor" ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
+                                                                    <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'" (ngModelChange)="marksColor2($event)">
                                                                     </ngx-colors>
                                                                 </div>
      
@@ -2879,14 +2891,14 @@
                                                         </div>
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <label>Distribution</label>
-                                                            <div *ngIf="isDistributed" style="margin-left: 100px;" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
+                                                            <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
                                                                 <span></span>
                                                             </div>
-                                                            <div *ngIf="!isDistributed" style="margin-left: 100px;" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('distributed')">
+                                                            <div *ngIf="!isDistributed" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('distributed')">
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div style="display: flex;justify-content: space-between;">
+                                                        <!-- <div style="display: flex;justify-content: space-between;">
                                                             <label>Font</label>
                                                             <select [(ngModel)]="funnelDLFontFamily" style="width: 30%;" (change)="funnelFontChange($event,'family')">
                                                                 <option value="0" selected disabled>family</option>
@@ -2914,7 +2926,7 @@
                                                                 <option value="center">center</option>
                                                                 <option value="bottom">Left</option>
                                                             </select>
-                                                        </div>
+                                                        </div> -->
                                                         <!-- <div style="display: flex;justify-content: space-between;" *ngIf="!isDistributed">
                                                             <label>color</label>
                                                             <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
