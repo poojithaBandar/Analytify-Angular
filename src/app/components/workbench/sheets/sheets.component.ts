@@ -752,28 +752,33 @@ if(this.fromFileId){
       case 'left': return {
         show: this.legendSwitch,
         orient: 'vertical',
+        type: 'scroll',
         top : 'center',
         left: 'left'
       };
       case 'right': return {
         show: this.legendSwitch,
         orient: 'vertical',
+        type: 'scroll',
         top : 'center',
         right: 'right'
       };
       case 'top': return {
         show: this.legendSwitch,
         orient: 'horizontal',
+        type: 'scroll',
         top: 'top'
       };
       case 'bottom': return {
         show: this.legendSwitch,
         orient: 'horizontal',
+        type: 'scroll',
         bottom: 'bottom'
       };
       default: return {
         show: this.legendSwitch,
         orient: 'horizontal',
+        type: 'scroll',
         bottom: 'bottom'
       };
     }
@@ -2666,8 +2671,9 @@ bar["stack"]="Total";
             series: [
               {
                 type: 'pie',
-                radius: [this.donutSize+'%' , '100%'],
+                radius: [this.donutSize+'%' , '70%'],
                 data: combinedArray,
+                avoidLabelOverlap: true,
                 emphasis: {
                   itemStyle: {
                     shadowBlur: 10,
