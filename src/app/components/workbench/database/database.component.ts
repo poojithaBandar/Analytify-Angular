@@ -893,6 +893,7 @@ customTableJoin(){
         else{
           this.getJoiningTableData();
         }
+        this.buildCustomJoin();
         // this.getJoiningTableData();
         this.clearJoinCondns();
       },
