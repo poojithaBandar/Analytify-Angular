@@ -1924,7 +1924,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       if(result.isConfirmed){
         this.dashboardNew.splice(this.dashboardNew.findIndex((sheet:any) => item.sheetId == sheet.sheetId), 1);
        this.removeItem(event, item, false);
-       this.sheetIdsDataSet.splice(this.sheetIdsDataSet.findIndex((sheet:any) => item.sheetId == sheet.sheetId), 1);
+       this.sheetIdsDataSet.splice(this.sheetIdsDataSet.findIndex((sheet:any) => item.sheetId == sheet), 1);
        this.unSelectSheetsFromSheetsPanel(item);
       }})
   }
