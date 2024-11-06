@@ -354,6 +354,8 @@
                                             class="avatar-radius">
                                         <img *ngIf="sheetlist.chart_id === 29" src="./assets/images/charts/world-map.png" alt=""
                                             class="avatar-radius">
+                                        <img *ngIf="sheetlist.chart_id === 11" src="./assets/images/charts/calendar-chart.png" alt=""
+                                            class="avatar-radius">
                                     </span>
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1" ngbTooltip="{{sheetlist.sheet_name}}"
@@ -434,6 +436,8 @@
                                         <img *ngIf="sheetlist.chart_id === 28" src="./assets/images/charts/guage-icon.png" alt=""
                                             class="avatar-radius">
                                         <img *ngIf="sheetlist.chart_id === 29" src="./assets/images/charts/world-map.png" alt=""
+                                            class="avatar-radius">
+                                        <img *ngIf="sheetlist.chart_id === 11" src="./assets/images/charts/calendar-chart.png" alt=""
                                             class="avatar-radius">
                                     </span>
                                     <div class="dashboard-card-title">
@@ -641,8 +645,8 @@
                         <span class="add-txt text-info me-2" (click)="goToConnections()">View All <i class="fa fa-angle-double-right"> </i></span>
                     </a>
                 </div>
-                <div class="card-body mb-0 p-0 ">
-                    <div class="table-responsive" style="height: 290px; overflow: hidden;">
+                <div class="card-body mb-0 p-0 " style="padding-right: 10px !important;">
+                    <div class="table-responsive" style="height: 523px; overflow: hidden;">
                         <table class="table border text-nowrap text-md-nowrap mb-0">
                             <tbody>
                                 @for(database of connectionList;track database){
