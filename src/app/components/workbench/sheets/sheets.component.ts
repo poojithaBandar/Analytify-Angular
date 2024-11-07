@@ -5997,20 +5997,22 @@ viewDashboard(){
 }
 
 marksColor2(color:any){
-  if(this.isEChatrts){
-    this.color = color;
-    this.reAssignChartData();
-  }
 console.log(this.dualAxisRowData);
 console.log(color)
 let object : any;
-if(this.barchart){
+if(this.bar){
+  if(this,this.isApexCharts){
   this.chartOptions3.colors = color;
   object = {colors: [color]};
+  }else{
+  this.eBarChartOptions.color = color
+ }
 }
-else if(this.areachart){
+else if(this.area){
+  if(this.isApexCharts){
   this.chartOptions1.colors = color;
   object = {colors: [color]};
+  }
 }
 else if(this.linechart){
   this.chartOptions.colors = color;
@@ -6050,7 +6052,11 @@ else if(this.funnel){
   object = {series: this.dualAxisRowData}
   object = object.series[0].color = color;
 }
+if(this.isApexCharts){
 this.updateChart(object);
+}else{
+  this.updateEchartOptions();
+}
 }
 // scolor : any;
 // barColors(color:any, index: any){
@@ -6693,6 +6699,26 @@ renameColumns(){
     if (this.donut) {
       echarts.init(chartElement).setOption(this.eDonutChartOptions);
       console.log('sidebyside optionsafterupdate', this.eDonutChartOptions)
+    }
+    if (this.grouped) {
+      echarts.init(chartElement).setOption(this.eGroupedBarChartOptions);
+      console.log('sidebyside optionsafterupdate', this.eGroupedBarChartOptions)
+    }
+    if (this.multiLine) {
+      echarts.init(chartElement).setOption(this.eMultiLineChartOptions);
+      console.log('sidebyside optionsafterupdate', this.eMultiLineChartOptions)
+    }
+    if (this.barLine) {
+      echarts.init(chartElement).setOption(this.eBarLineChartOptions);
+      console.log('sidebyside optionsafterupdate', this.eBarLineChartOptions)
+    }
+    if (this.horizentalStocked) {
+      echarts.init(chartElement).setOption(this.ehorizontalStackedBarChartOptions);
+      console.log('sidebyside optionsafterupdate', this.ehorizontalStackedBarChartOptions)
+    }
+    if (this.funnel) {
+      echarts.init(chartElement).setOption(this.eFunnelChartOptions);
+      console.log('sidebyside optionsafterupdate', this.eFunnelChartOptions)
     }
   }
   toggleSwitch(type : string) {
@@ -7629,48 +7655,104 @@ fetchChartData(chartData: any){
   }
   setBackgroundColor(color: any){
     let object:any;
-    if(color){
-      object = {chart: {background: color}};
-      if(this.barchart){
-        this.chartOptions3.chart.background = color;
+    if (color) {
+      object = { chart: { background: color } };
+      if (this.bar) {
+        if (this.isApexCharts) {
+          this.chartOptions3.chart.background = color;
+        } else {
+          this.eBarChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.areachart){
-        this.chartOptions1.chart.background = color;
+      else if (this.area) {
+        if (this.isApexCharts) {
+          this.chartOptions1.chart.background = color;
+        } else {
+          this.eAreaChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.linechart){
-        this.chartOptions.chart.background = color;
+      else if (this.line) {
+        if (this.isApexCharts) {
+          this.chartOptions.chart.background = color;
+        } else {
+          this.eLineChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.sidebysideChart){
-        this.chartOptions2.chart.background = color;
+      else if (this.sidebyside) {
+        if (this.isApexCharts) {
+          this.chartOptions2.chart.background = color;
+        } else {
+          this.eSideBySideBarChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.stockedChart){
-        this.chartOptions6.chart.background = color;
+      else if (this.stocked) {
+        if (this.isApexCharts) {
+          this.chartOptions6.chart.background = color;
+        } else {
+          this.eStackedBarChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.barlineChart){
-        this.chartOptions5.chart.background = color;
+      else if (this.barLine) {
+        if (this.isApexCharts) {
+          this.chartOptions5.chart.background = color;
+        } else {
+          this.eBarLineChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.horizontolstockedChart){
-        this.chartOptions7.chart.background = color;
+      else if (this.horizentalStocked) {
+        if (this.isApexCharts) {
+          this.chartOptions7.chart.background = color;
+        } else {
+          this.ehorizontalStackedBarChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.groupedChart){
-        this.chartOptions8.chart.background = color;
+      else if (this.grouped) {
+        if (this.isApexCharts) {
+          this.chartOptions8.chart.background = color;
+        } else {
+          this.eGroupedBarChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.multilineChart){
-        this.chartOptions9.chart.background = color;
+      else if (this.multiLine) {
+        if (this.isApexCharts) {
+          this.chartOptions9.chart.background = color;
+        } else {
+          this.eMultiLineChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.piechart){
-        this.chartOptions4.chart.background = color;
+      else if (this.pie) {
+        if (this.isApexCharts) {
+          this.chartOptions4.chart.background = color;
+        } else {
+          this.ePieChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.donutchart){
-        this.chartOptions10.chart.background = color;
+      else if (this.donut) {
+        if (this.isApexCharts) {
+          this.chartOptions10.chart.background = color;
+        } else {
+          this.eDonutChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.heatMap){
-        this.heatMapChartOptions.chart.background = color;
+      else if (this.heatMap) {
+        if (this.isApexCharts) {
+          this.heatMapChartOptions.chart.background = color;
+        } else {
+          this.eHeatMapChartOptions.backgroundColor = color;
+        }
       }
-      else if(this.funnel){
-        this.funnelChartOptions.chart.background = color;
+      else if (this.funnel) {
+        if (this.isApexCharts) {
+          this.funnelChartOptions.chart.background = color;
+        } else {
+          this.eFunnelChartOptions.backgroundColor = color;
+        }
       }
-      this.updateChart(object);
+      if (this.isApexCharts) {
+        this.updateChart(object);
+      } else {
+        this.updateEchartOptions();
+      }
     }
   }
   openDateFormatModal(modal: any){
