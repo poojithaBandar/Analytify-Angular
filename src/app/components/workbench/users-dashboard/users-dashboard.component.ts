@@ -201,7 +201,7 @@ toggleClass1 = "off-line";
       }
   }
   closeAddUserForm(){
-    this.addUserDivForm = false;
+    this.router.navigate(['/insights/users/users-list'])
   }
 
   setRoles() {
@@ -443,7 +443,7 @@ editUserApiCall(){
       console.log(data);
       this.addUserDivForm = false;
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.getUserList();
+      this.router.navigate(['/insights/users/users-list'])    
      },
     error:(error)=>{
       console.log(error);
