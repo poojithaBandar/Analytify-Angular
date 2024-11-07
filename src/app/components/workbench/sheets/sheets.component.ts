@@ -6006,6 +6006,7 @@ if(this.bar){
   object = {colors: [color]};
   }else{
   this.eBarChartOptions.color = color
+  
  }
 }
 else if(this.area){
