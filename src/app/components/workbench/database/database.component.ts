@@ -674,6 +674,7 @@ joiningTablesWithoutQuerySetId(){
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
         this.getJoiningTableData();
+        this.buildCustomJoin();
       },
       error:(error:any)=>{
       console.log(error);
@@ -714,13 +715,13 @@ joiningTables(){
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
         console.log('relation',this.relationOfTables);
-        this.buildCustomJoin();
         if(!(this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined)){
           this.getDsQuerysetId()
         }
         else{
           this.getJoiningTableData();
         }
+        this.buildCustomJoin();
         // this.getJoiningTableData();
         this.gotoSheetButtonDisable = false;
       },
@@ -821,6 +822,7 @@ joiningTablesFromDelete(){
         else{
           this.getJoiningTableData();
         }
+        this.buildCustomJoin();
       },
       error:(error:any)=>{
       console.log(error);
@@ -1017,7 +1019,7 @@ if(obj.row_limit === null || obj.row_limit === undefined){
 deleteJoiningRelation(conditionIndex:number,list : any,index: number){
   list.conditions.splice(conditionIndex, 1);
   this.relationOfTables[index] = list.conditions;
-  this.joiningTables();
+  // this.joiningTables();
 }
 
 openSuperScaled(modal: any) {
@@ -1465,6 +1467,10 @@ getfilteredCustomSqlData(){
       database_id:this.databaseId,
       query_id:this.custumQuerySetid,
       datasource_queryset_id:this.datasourceQuerysetId
+    }as any;
+    if(this.fromFileId){
+      delete obj.database_id;
+      obj.file_id=this.fileId
     }
     this.workbechService.getTableJoiningData(obj).subscribe(
       {

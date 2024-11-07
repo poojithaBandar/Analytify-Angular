@@ -1010,10 +1010,10 @@
             } @else {
             @if(bar && chartId){         
             <div class="card-body">
-                <div id="bar-chart">
-                    <div id="echartsBar" echarts [options]="eBarChartOptions" class="echart-charts"></div>
+                <div >
+                    <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
                 </div>
-            </div>
+            </div>          
             }
             @if(funnel && chartId){         
                 <div class="card-body">
@@ -1584,68 +1584,15 @@
                                                                                                        
                                                                                                     </div>
                                                                                                 </div>
-                                                                                                <div class="color-shade-card p-1" *ngIf="false">
-                                                                                                    <div class="row px-4">
-                                                                                                        <div class="color-black" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-white" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-orange" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-DarkKhaki" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-ForestGreen" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-CadetBlue" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-SteelBlue" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-SlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                                <div class="color-shade-card p-1" *ngIf="isEChatrts">
+                                                                                                    <div *ngFor="let row of colorPalette" class="row px-4">
+                                                                                                      <div
+                                                                                                        *ngFor="let colorClass of row"
+                                                                                                        [class]="colorClass"
+                                                                                                        (click)="dimensionsColorChange($event)">
+                                                                                                      </div>
                                                                                                     </div>
-                                                                                                    <div class="row px-4">
-                                                                                                        <div class="color-light-black" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Gainsboro" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-orange-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-DarkKhaki-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-ForestGreen-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-CadetBlue-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-SteelBlue-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-SlateGray-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    </div>
-                                                                                                    <div class="row px-4">
-                                                                                                        <div class="color-DimGray" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Gainsboro-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-orange-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-DarkKhaki-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-ForestGreen-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-CadetBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-SteelBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-SlateGray-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    </div>
-                                                                                                    <div class="row px-4 mt-2">
-                                                                                                        <div class="color-DimGray-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Gainsboro-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Orchid" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-PaleVioletRed" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-IndianRed" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-SaddleBrown" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-DimGray-3" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-PaleTurquoise" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    </div>
-                                                                                                    <div class="row px-4">
-                                                                                                        <div class="color-Silver" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Gainsboro-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Plum" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-LightPink" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-LightCoral" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Peru" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-LightSlateGray" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-HotPink" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    </div>
-                                                                                                    <div class="row px-4">
-                                                                                                        <div class="color-Silver-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Gainsboro-3" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Plum-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-LightPink-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-LightCoral-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-Peru-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-LightSlateGray-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                        <div class="color-yellow" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    </div>
-                                                                                                </div>
+                                                                                                  </div>
                                                                                               
                                                                                             </div>
                                                                                             <li *ngIf="false"> <p class="more-color-text">More colors...</p></li>
@@ -1687,7 +1634,7 @@
                                                                             </div>
                                                                           </div>
                                                                         </div>
-                                                                    <div *ngIf="!isApexCharts" class="row">
+                                                                    <!-- <div *ngIf="!isApexCharts" class="row">
                                                                         <label class="col-md-4 form-label px-1 fs-14">Font-Size</label>
                                                                         <div class="col-md-8">
                                                                             <div class="form-group mb-1">
@@ -1740,7 +1687,7 @@
                                                                                 </select>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> -->
                                                                     <!-- <div class="row">
                                                                         <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                         <div class="col-md-8">
@@ -1859,69 +1806,16 @@
                                                                                                    
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div class="color-shade-card p-1" *ngIf="false">
-                                                                                                <div class="row px-4">
-                                                                                                    <div class="color-black" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-white" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-orange" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-DarkKhaki" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-ForestGreen" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-CadetBlue" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-SteelBlue" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-SlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            <div class="color-shade-card p-1" *ngIf="isEChatrts">
+                                                                                                <div *ngFor="let row of colorPalette" class="row px-4">
+                                                                                                  <div
+                                                                                                    *ngFor="let colorClass of row"
+                                                                                                    [class]="colorClass"
+                                                                                                    (click)="measuresColorChange($event)">
+                                                                                                  </div>
                                                                                                 </div>
-                                                                                                <div class="row px-4">
-                                                                                                    <div class="color-light-black" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Gainsboro" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-orange-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-DarkKhaki-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-ForestGreen-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-CadetBlue-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-SteelBlue-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-SlateGray-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                </div>
-                                                                                                <div class="row px-4">
-                                                                                                    <div class="color-DimGray" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Gainsboro-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-orange-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-DarkKhaki-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-ForestGreen-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-CadetBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-SteelBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-SlateGray-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                </div>
-                                                                                                <div class="row px-4 mt-2">
-                                                                                                    <div class="color-DimGray-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Gainsboro-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Orchid" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-PaleVioletRed" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-IndianRed" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-SaddleBrown" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-DimGray-3" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-PaleTurquoise" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                </div>
-                                                                                                <div class="row px-4">
-                                                                                                    <div class="color-Silver" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Gainsboro-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Plum" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-LightPink" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-LightCoral" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Peru" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-LightSlateGray" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-HotPink" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                </div>
-                                                                                                <div class="row px-4">
-                                                                                                    <div class="color-Silver-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Gainsboro-3" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Plum-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-LightPink-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-LightCoral-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-Peru-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-LightSlateGray-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                    <div class="color-yellow" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                          
+                                                                                              </div>
+
                                                                                         </div>
                                                                                         <li *ngIf="false"> <p class="more-color-text">More colors...</p></li>
                                                                                     </ul>
@@ -2129,67 +2023,15 @@
                                                                                             </div>
                                                                                         </div>
                                                                                         <div class="color-shade-card p-1">
-                                                                                            <div class="row px-4">
-                                                                                                <div class="color-black" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-white" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-orange" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-DarkKhaki" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-ForestGreen" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-CadetBlue" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-SteelBlue" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-SlateGray" (click)="dataLabelsFontColor($event)"></div>
+                                                                                            <div *ngFor="let row of colorPalette" class="row px-4">
+                                                                                              <div
+                                                                                                *ngFor="let colorClass of row"
+                                                                                                [class]="colorClass"
+                                                                                                (click)="dataLabelsFontColor($event)">
+                                                                                              </div>
                                                                                             </div>
-                                                                                            <div class="row px-4">
-                                                                                                <div class="color-light-black" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Gainsboro" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-orange-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-DarkKhaki-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-ForestGreen-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-CadetBlue-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-SteelBlue-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-SlateGray-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                            </div>
-                                                                                            <div class="row px-4">
-                                                                                                <div class="color-DimGray" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Gainsboro-light" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-orange-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-DarkKhaki-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-ForestGreen-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-CadetBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-SteelBlue-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-SlateGray-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                            </div>
-                                                                                            <div class="row px-4 mt-2">
-                                                                                                <div class="color-DimGray-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Gainsboro-light-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Orchid" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-PaleVioletRed" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-IndianRed" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-SaddleBrown" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-DimGray-3" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-PaleTurquoise" (click)="dataLabelsFontColor($event)"></div>
-                                                                                            </div>
-                                                                                            <div class="row px-4">
-                                                                                                <div class="color-Silver" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Gainsboro-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Plum" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-LightPink" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-LightCoral" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Peru" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-LightSlateGray" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-HotPink" (click)="dataLabelsFontColor($event)"></div>
-                                                                                            </div>
-                                                                                            <div class="row px-4">
-                                                                                                <div class="color-Silver-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Gainsboro-3" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Plum-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-LightPink-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-LightCoral-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-Peru-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-LightSlateGray-2" (click)="dataLabelsFontColor($event)"></div>
-                                                                                                <div class="color-yellow" (click)="dataLabelsFontColor($event)"></div>
-                                                                                            </div>
-                                                                                        </div>
+                                                                                          </div>
+
                                                                                       
                                                                                     </div>
                                                                                     <li> <p class="more-color-text">More colors...</p></li>
@@ -2349,7 +2191,7 @@
                                                             </select>
                                                          </div>
                                                     </div>
-                                                    <div *ngIf="!isApexCharts && !(pie || donut || funnel || calendar)" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
+                                                    <div *ngIf="!isApexCharts && !(pie || donut || funnel || calendar || radar)" class="d-flex align-items-center justify-content-between  mb-1 flex-wrap gap-2 p-3">
                                                         <div class=""> 
                                                             <p >Zoom </p>
                                                         </div>
@@ -2366,7 +2208,7 @@
                                                         </div>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
-                                                        [(ngModel)]="backgroundColor"  (change)="marksColor($event,6)"
+                                                        [(ngModel)]="backgroundColor"  (ngModelChange)="marksColor($event,6)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div>   -->
@@ -2376,7 +2218,7 @@
                                                         </div>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
-                                                        [(ngModel)]="xLabelColor"  (change)="marksColor($event,5)"
+                                                        [(ngModel)]="xLabelColor"  (ngModelChange)="marksColor($event,5)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div> -->
@@ -2386,7 +2228,7 @@
                                                         </div>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
-                                                        [(ngModel)]="xGridColor"  (change)="marksColor($event,1)"
+                                                        [(ngModel)]="xGridColor"  (ngModelChange)="marksColor($event,1)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div> -->
@@ -2396,7 +2238,7 @@
                                                         </div>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
-                                                        [(ngModel)]="yLabelColor"  (change)="marksColor($event,2)"
+                                                        [(ngModel)]="yLabelColor"  (ngModelChange)="marksColor($event,2)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div> -->
@@ -2406,7 +2248,7 @@
                                                         </div>
                                                         <ngx-colors 
                                                         ngx-colors-trigger 
-                                                        [(ngModel)]="yGridColor"  (change)="marksColor($event,3)"
+                                                        [(ngModel)]="yGridColor"  (ngModelChange)="marksColor($event,3)"
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div> -->
@@ -2663,7 +2505,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <!-- <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Y-label Color </p>
                                                                     </div>
@@ -2678,7 +2520,7 @@
                                                                     [(ngModel)]="yLabelColor"  (ngModelChange)="marksColor($event,2)"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
-                                                                </div>
+                                                                </div> -->
                                                                 <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Y-Grid Line Color </p>
