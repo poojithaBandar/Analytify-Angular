@@ -1019,7 +1019,7 @@ if(obj.row_limit === null || obj.row_limit === undefined){
 deleteJoiningRelation(conditionIndex:number,list : any,index: number){
   list.conditions.splice(conditionIndex, 1);
   this.relationOfTables[index] = list.conditions;
-  this.joiningTables();
+  // this.joiningTables();
 }
 
 openSuperScaled(modal: any) {

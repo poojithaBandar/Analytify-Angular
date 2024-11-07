@@ -160,22 +160,22 @@
                                                                                         data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)"
                                                                                         aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a> -->
                                             </li>
-                                            <div class="dropdown-menu size-dropdown Semantic-layer-card" ngbDropdownMenu autoClose="outside">
+                                            <div class="dropdown-menu size-dropdown Semantic-layer-card" ngbDropdownMenu autoClose="outside" >
                                                 <h6 class="mb-0 p-1">Join</h6>
                                                 <div class="row px-3">
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'inner';joinTypes[i] = 'inner';$event.stopPropagation();" [ngClass]="relation.join == 'inner' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
+                                                    <div class="col-3 border px-2" (click)="joinTypes[i] = 'inner';" [ngClass]="joinTypes[i] == 'inner' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
                                                         <img src="./assets/images/charts/inner-join.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Inner</p>
                                                     </div>
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'Left';joinTypes[i] = 'Left';$event.stopPropagation();" [ngClass]="relation.join == 'Left' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;" >
+                                                    <div class="col-3 border px-2" (click)="joinTypes[i] = 'Left';" [ngClass]="joinTypes[i] == 'Left' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;" >
                                                         <img src="./assets/images/charts/left-join.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Left</p>
                                                     </div>
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'Right';joinTypes[i] = 'Right';$event.stopPropagation();" [ngClass]="relation.join == 'Right' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
+                                                    <div class="col-3 border px-2" (click)="joinTypes[i] = 'Right';" [ngClass]="joinTypes[i] == 'Right' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
                                                         <img src="./assets/images/charts/right-join.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Right</p>
                                                     </div>
-                                                    <div class="col-3 border px-2" (click)="relation.join = 'full Outer';joinTypes[i] = 'full Outer';$event.stopPropagation();" [ngClass]="relation.join == 'full Outer' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
+                                                    <div class="col-3 border px-2" (click)="joinTypes[i] = 'full Outer';" [ngClass]="joinTypes[i] == 'full Outer' ? 'btn-blue-light':''" style="cursor: pointer; text-align: center;">
                                                         <img src="./assets/images/charts/full-outer.png" class="w-7" style="padding: 3px;">
                                                         <p class="Semantic-text mb-0">Full Outer</p>
                                                     </div>
@@ -266,12 +266,14 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
+                                                        @if(relation?.conditions?.length > 1){
                                                         <div class="col border p-1 text-center">
                                                             <a aria-label="anchor" (click)="deleteJoiningRelation(conditionIndex,relation, i)"
                                                                 class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                                                 <i class="ri-delete-bin-7-line" ngbTooltip="Delete Condition"></i>
                                                             </a>
                                                         </div>
+                                                    }
                                                           </div>                                   
                                                     }
                                                 <!-- </div> -->
