@@ -1465,6 +1465,10 @@ getfilteredCustomSqlData(){
       database_id:this.databaseId,
       query_id:this.custumQuerySetid,
       datasource_queryset_id:this.datasourceQuerysetId
+    }as any;
+    if(this.fromFileId){
+      delete obj.database_id;
+      obj.file_id=this.fileId
     }
     this.workbechService.getTableJoiningData(obj).subscribe(
       {
