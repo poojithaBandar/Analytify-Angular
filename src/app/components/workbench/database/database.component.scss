@@ -6,6 +6,25 @@
     display: inline-block;
     vertical-align: top;
   }
+
+  .Semantic-text{
+    margin-bottom: 0px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .Semantic-layer-card {
+    width: 390px; 
+  }
+  ul.dropdown-menu.show {
+    min-width: -webkit-fill-available;
+  }
+  .Semantic-header {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .Semantic-bg {
+    background-color: #e5f6f6;
+  }
   
   .example-list {
     width: 623px;
@@ -154,7 +173,7 @@ background-color: aliceblue;
 
 .sub-menu {
   margin-top: 5px;
-  padding-left: 10px;
+  // padding-left: 10px;
 }
 
 .sub-menu-item {
@@ -230,7 +249,7 @@ button.TextTransform {
   justify-content: flex-start;
 }
 .databse-T-H{
-  height: 250px;
+  height: 268px;
 }
 .ds-th {
   height: 540px;
@@ -321,4 +340,7 @@ outline: none;
 }
 .tag-addon{
   min-width: 2rem !important;
+}
+.text-truncate{
+  max-width: 80px;
 }

@@ -285,6 +285,44 @@ export class SheetsComponent {
   guageNumber:any;
   eFunnelChartOptions: any;
   valueToDivide:any;
+
+  barColor : any = '#4382f7';
+  lineColor : any = '#38ff98';
+  dataLabels:boolean = true;
+  label : boolean = true;
+  isDistributed : boolean = false;
+  kpiFontSize: string = '3';
+  kpiColor: string = '#000000';
+
+  titleShow : boolean = true;
+  legendsAllignment : any = 'bottom'
+  donutSize:any = 50;
+  color1:any;
+  color2:any;
+
+  isBold:boolean = false;
+  isItalic:boolean = false;
+  isUnderline:boolean = false;
+
+  backgroundColorSwitch : boolean = false;
+  chartColorSwitch : boolean = false;
+  barColorSwitch : boolean = false;
+  lineColorSwitch : boolean = false;
+  gridLineColorSwitch : boolean = false;
+  xLabelColorSwitch : boolean = false;
+  xGridLineColorSwitch : boolean = false;
+  yLabelColorSwitch : boolean = false;
+  yGridLineColorSwitch : boolean = false;
+  bandingColorSwitch : boolean = false;
+  kpiColorSwitch : boolean = false;
+  funnelColorSwitch : boolean = false;
+
+  dataLabelsFontFamily : string = 'sans-serif';
+  dataLabelsFontSize : any = '12px';
+  dataLabelsFontPosition : any = 'top';
+  measureAlignment : any = 'center';
+  dimensionAlignment : any = 'center';
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/insights/sheets/dbId')){
@@ -752,28 +790,33 @@ if(this.fromFileId){
       case 'left': return {
         show: this.legendSwitch,
         orient: 'vertical',
+        type: 'scroll',
         top : 'center',
         left: 'left'
       };
       case 'right': return {
         show: this.legendSwitch,
         orient: 'vertical',
+        type: 'scroll',
         top : 'center',
         right: 'right'
       };
       case 'top': return {
         show: this.legendSwitch,
         orient: 'horizontal',
+        type: 'scroll',
         top: 'top'
       };
       case 'bottom': return {
         show: this.legendSwitch,
         orient: 'horizontal',
+        type: 'scroll',
         bottom: 'bottom'
       };
       default: return {
         show: this.legendSwitch,
         orient: 'horizontal',
+        type: 'scroll',
         bottom: 'bottom'
       };
     }
@@ -807,11 +850,11 @@ if(this.fromFileId){
           colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
           labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
           legend: {
-            show: this.legendSwitch,
-            position: this.legendsAllignment
+            show: true,
+            position: 'bottom'
           },
           dataLabels: {
-            enabled: this.dataLabels,
+            enabled: true,
             dropShadow: {
               enabled: false
             }
@@ -2613,7 +2656,7 @@ bar["stack"]="Total";
             }
           ],
           legend: {
-            show: this.legendSwitch,
+            show: true,
           },
           dataLabels: {
             enabled: this.dataLabels,
@@ -2622,7 +2665,7 @@ bar["stack"]="Total";
             pie: {
               donut: {
                 labels: {
-                  show: this.label,
+                  show: true,
                   name: {
                     show: true
                   },
@@ -2666,8 +2709,9 @@ bar["stack"]="Total";
             series: [
               {
                 type: 'pie',
-                radius: [this.donutSize+'%' , '100%'],
+                radius: [this.donutSize+'%' , '70%'],
                 data: combinedArray,
+                avoidLabelOverlap: true,
                 emphasis: {
                   itemStyle: {
                     shadowBlur: 10,
@@ -2710,6 +2754,12 @@ bar["stack"]="Total";
           },
           dataLabels: {
             enabled: true,
+            style: {
+              colors: [],
+              fontSize: '12px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 12,
+            },
             formatter: this.formatNumber.bind(this)
           },
           xaxis: {
@@ -3664,6 +3714,8 @@ bar["stack"]="Total";
       //   }
       // });
       console.log(this.draggedColumnsData);
+      this.draggedDrillDownColumns = [];
+
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
@@ -3781,6 +3833,9 @@ bar["stack"]="Total";
     //     } );
     //   }
     // });
+    if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
+      this.draggedDrillDownColumns = [];
+    }
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
    this.dataExtraction();
@@ -3850,7 +3905,7 @@ bar["stack"]="Total";
     this.map = map;
     this.calendar = calendar;
     // this.dataExtraction();
-    if(!this.bar|| !this.pie || !this.donut){
+    if(!(this.bar|| this.pie || this.donut)){
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
       this.drillDownIndex = 0;
@@ -3903,6 +3958,7 @@ bar["stack"]="Total";
        this.setChartType();
     }
     this.kpi=false;
+    this.resetCustomizations();
   }
   sheetNameChange(name:any,event:any){
     console.log(this.SheetIndex)
@@ -4412,12 +4468,55 @@ sheetSave(){
     xlabelFontWeight : this.xlabelFontWeight,
     labelAlignment : this.labelAlignment,
     backgroundColor : this.backgroundColor,
-    color : this.color
+    color : this.color,
+    ylabelFontWeight : this.ylabelFontWeight,
+    isBold : this.isBold,
+    yLabelFontFamily : this.yLabelFontFamily,
+    yLabelFontSize : this.yLabelFontSize,
+    bandingSwitch : this.bandingSwitch,
+    backgroundColorSwitch : this.backgroundColorSwitch,
+    chartColorSwitch : this.chartColorSwitch,
+    barColorSwitch : this.barColorSwitch,
+    lineColorSwitch : this.lineColorSwitch,
+    gridLineColorSwitch : this.gridLineColorSwitch,
+    xLabelColorSwitch : this.xLabelColorSwitch,
+    xGridLineColorSwitch : this.xGridLineColorSwitch,
+    yLabelColorSwitch : this.yLabelColorSwitch,
+    yGridLineColorSwitch : this.yGridLineColorSwitch,
+    bandingColorSwitch : this.bandingColorSwitch,
+    kpiColorSwitch : this.kpiColorSwitch,
+    funnelColorSwitch : this.funnelColorSwitch,
+    color1 : this.color1,
+    color2 : this.color2,
+    kpiColor : this.kpiColor,
+    funnelColor : this.funnelColor,
+    barColor : this.barColor,
+    lineColor : this.lineColor,
+    GridColor : this.GridColor,
+    legendSwitch : this.legendSwitch,
+    dataLabels : this.dataLabels,
+    label : this.label,
+    donutSize : this.donutSize,
+    isDistributed : this.isDistributed,
+    kpiFontSize : this.kpiFontSize,
+    minValueGuage : this.minValueGuage,
+    maxValueGuage : this.maxValueGuage,
+    donutDecimalPlaces : this.donutDecimalPlaces,
+    decimalPlaces : this.decimalPlaces,
+    legendsAllignment : this.legendsAllignment,
+    displayUnits : this.displayUnits,
+    suffix : this.suffix,
+    prefix : this.prefix,
+    dataLabelsFontFamily : this.dataLabelsFontFamily,
+    dataLabelsFontSize: this.dataLabelsFontSize,
+    dataLabelsFontPosition: this.dataLabelsFontPosition,
+    measureAlignment: this.measureAlignment,
+    dimensionAlignment: this.dimensionAlignment,
 
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
-  if (this.dateDrillDownSwitch) {
+  if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
     draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
     draggedColumnsObj[0][2] = 'year'
   } else {
@@ -4852,19 +4951,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             }
           }
         };
-        this.xLabelSwitch = this.chartOptions3?.xaxis?.labels?.show;
-        this.yLabelSwitch = this.chartOptions3?.yaxis?.labels?.show;
-        this.xGridSwitch = this.chartOptions3?.grid?.xaxis?.lines?.show;
-        this.yGridSwitch = this.chartOptions3?.grid?.yaxis?.lines?.show;
-        this.GridColor = this.chartOptions3?.grid?.borderColor;
-        this.backgroundColor = this.chartOptions3?.chart?.background;
-        this.color = this.chartOptions3?.colors;
-        this.xLabelFontSize = this.chartOptions3?.xaxis?.labels?.style?.fontSize;
-        this.xLabelFontFamily = this.chartOptions3?.xaxis?.labels?.style?.fontFamily;
-        this.xlabelFontWeight = this.chartOptions3?.xaxis?.labels?.style?.fontWeight;
-        this.yLabelFontSize = this.chartOptions3?.yaxis?.labels?.style?.fontSize;
-        this.yLabelFontFamily = this.chartOptions3?.yaxis?.labels?.style?.fontFamily;
-        this.ylabelFontWeight = this.chartOptions3?.yaxis?.labels?.style?.fontWeight;
+        // this.xLabelSwitch = this.chartOptions3?.xaxis?.labels?.show;
+        // this.yLabelSwitch = this.chartOptions3?.yaxis?.labels?.show;
+        // this.xGridSwitch = this.chartOptions3?.grid?.xaxis?.lines?.show;
+        // this.yGridSwitch = this.chartOptions3?.grid?.yaxis?.lines?.show;
+        // this.GridColor = this.chartOptions3?.grid?.borderColor;
+        // this.backgroundColor = this.chartOptions3?.chart?.background;
+        // this.color = this.chartOptions3?.colors;
+        // this.xLabelFontSize = this.chartOptions3?.xaxis?.labels?.style?.fontSize;
+        // this.xLabelFontFamily = this.chartOptions3?.xaxis?.labels?.style?.fontFamily;
+        // this.xlabelFontWeight = this.chartOptions3?.xaxis?.labels?.style?.fontWeight;
+        // this.yLabelFontSize = this.chartOptions3?.yaxis?.labels?.style?.fontSize;
+        // this.yLabelFontFamily = this.chartOptions3?.yaxis?.labels?.style?.fontFamily;
+        // this.ylabelFontWeight = this.chartOptions3?.yaxis?.labels?.style?.fontWeight;
         console.log(this.chartOptions3.xaxis.convertedCatToNumeric);
         console.log(this.chartOptions3);
        } else {
@@ -4972,19 +5071,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
               }
             }
           }
-          this.xLabelSwitch = this.chartOptions?.xaxis?.labels?.show;
-          this.yLabelSwitch = this.chartOptions?.yaxis?.labels?.show;
-          this.xGridSwitch = this.chartOptions?.grid?.xaxis?.lines?.show;
-          this.yGridSwitch = this.chartOptions?.grid?.yaxis?.lines?.show;
-          this.GridColor = this.chartOptions?.grid?.borderColor;
-          this.backgroundColor = this.chartOptions?.chart?.background;
-          this.color = this.chartOptions?.colors;
-          this.xLabelFontSize = this.chartOptions?.xaxis?.labels?.style?.fontSize;
-          this.xLabelFontFamily = this.chartOptions?.xaxis?.labels?.style?.fontFamily;
-          this.xlabelFontWeight = this.chartOptions?.xaxis?.labels?.style?.fontWeight;
-          this.yLabelFontSize = this.chartOptions?.yaxis?.labels?.style?.fontSize;
-          this.yLabelFontFamily = this.chartOptions?.yaxis?.labels?.style?.fontFamily;
-          this.ylabelFontWeight = this.chartOptions?.yaxis?.labels?.style?.fontWeight;
+          // this.xLabelSwitch = this.chartOptions?.xaxis?.labels?.show;
+          // this.yLabelSwitch = this.chartOptions?.yaxis?.labels?.show;
+          // this.xGridSwitch = this.chartOptions?.grid?.xaxis?.lines?.show;
+          // this.yGridSwitch = this.chartOptions?.grid?.yaxis?.lines?.show;
+          // this.GridColor = this.chartOptions?.grid?.borderColor;
+          // this.backgroundColor = this.chartOptions?.chart?.background;
+          // this.color = this.chartOptions?.colors;
+          // this.xLabelFontSize = this.chartOptions?.xaxis?.labels?.style?.fontSize;
+          // this.xLabelFontFamily = this.chartOptions?.xaxis?.labels?.style?.fontFamily;
+          // this.xlabelFontWeight = this.chartOptions?.xaxis?.labels?.style?.fontWeight;
+          // this.yLabelFontSize = this.chartOptions?.yaxis?.labels?.style?.fontSize;
+          // this.yLabelFontFamily = this.chartOptions?.yaxis?.labels?.style?.fontFamily;
+          // this.ylabelFontWeight = this.chartOptions?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5022,19 +5121,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           if(this.chartOptions1.yaxis.labels){
             this.chartOptions1.yaxis.labels.formatter = this.formatNumber.bind(this);
           }
-          this.xLabelSwitch = this.chartOptions1?.xaxis?.labels?.show;
-          this.yLabelSwitch = this.chartOptions1?.yaxis?.labels?.show;
-          this.xGridSwitch = this.chartOptions1?.grid?.xaxis?.lines?.show;
-          this.yGridSwitch = this.chartOptions1?.grid?.yaxis?.lines?.show;
-          this.GridColor = this.chartOptions1?.grid?.borderColor;
-          this.backgroundColor = this.chartOptions1?.chart?.background;
-          this.color = this.chartOptions1?.colors;
-          this.xLabelFontSize = this.chartOptions1?.xaxis?.labels?.style?.fontSize;
-          this.xLabelFontFamily = this.chartOptions1?.xaxis?.labels?.style?.fontFamily;
-          this.xlabelFontWeight = this.chartOptions1?.xaxis?.labels?.style?.fontWeight;
-          this.yLabelFontSize = this.chartOptions1?.yaxis?.labels?.style?.fontSize;
-          this.yLabelFontFamily = this.chartOptions1?.yaxis?.labels?.style?.fontFamily;
-          this.ylabelFontWeight = this.chartOptions1?.yaxis?.labels?.style?.fontWeight;
+          // this.xLabelSwitch = this.chartOptions1?.xaxis?.labels?.show;
+          // this.yLabelSwitch = this.chartOptions1?.yaxis?.labels?.show;
+          // this.xGridSwitch = this.chartOptions1?.grid?.xaxis?.lines?.show;
+          // this.yGridSwitch = this.chartOptions1?.grid?.yaxis?.lines?.show;
+          // this.GridColor = this.chartOptions1?.grid?.borderColor;
+          // this.backgroundColor = this.chartOptions1?.chart?.background;
+          // this.color = this.chartOptions1?.colors;
+          // this.xLabelFontSize = this.chartOptions1?.xaxis?.labels?.style?.fontSize;
+          // this.xLabelFontFamily = this.chartOptions1?.xaxis?.labels?.style?.fontFamily;
+          // this.xlabelFontWeight = this.chartOptions1?.xaxis?.labels?.style?.fontWeight;
+          // this.yLabelFontSize = this.chartOptions1?.yaxis?.labels?.style?.fontSize;
+          // this.yLabelFontFamily = this.chartOptions1?.yaxis?.labels?.style?.fontFamily;
+          // this.ylabelFontWeight = this.chartOptions1?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eAreaChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5070,18 +5169,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.chartOptions2.yaxis.labels){
           this.chartOptions2.yaxis.labels.formatter = this.formatNumber.bind(this);
         }
-        this.xLabelSwitch = this.chartOptions2?.xaxis?.labels?.show;
-        this.yLabelSwitch = this.chartOptions2?.yaxis?.labels?.show;
-        this.xGridSwitch = this.chartOptions2?.grid?.xaxis?.lines?.show;
-        this.yGridSwitch = this.chartOptions2?.grid?.yaxis?.lines?.show;
-        this.GridColor = this.chartOptions2?.grid?.borderColor;
-        this.backgroundColor = this.chartOptions2?.chart?.background;
-        this.xLabelFontSize = this.chartOptions2?.xaxis?.labels?.style?.fontSize;
-        this.xLabelFontFamily = this.chartOptions2?.xaxis?.labels?.style?.fontFamily;
-        this.xlabelFontWeight = this.chartOptions2?.xaxis?.labels?.style?.fontWeight;
-        this.yLabelFontSize = this.chartOptions2?.yaxis?.labels?.style?.fontSize;
-        this.yLabelFontFamily = this.chartOptions2?.yaxis?.labels?.style?.fontFamily;
-        this.ylabelFontWeight = this.chartOptions2?.yaxis?.labels?.style?.fontWeight;
+        // this.xLabelSwitch = this.chartOptions2?.xaxis?.labels?.show;
+        // this.yLabelSwitch = this.chartOptions2?.yaxis?.labels?.show;
+        // this.xGridSwitch = this.chartOptions2?.grid?.xaxis?.lines?.show;
+        // this.yGridSwitch = this.chartOptions2?.grid?.yaxis?.lines?.show;
+        // this.GridColor = this.chartOptions2?.grid?.borderColor;
+        // this.backgroundColor = this.chartOptions2?.chart?.background;
+        // this.xLabelFontSize = this.chartOptions2?.xaxis?.labels?.style?.fontSize;
+        // this.xLabelFontFamily = this.chartOptions2?.xaxis?.labels?.style?.fontFamily;
+        // this.xlabelFontWeight = this.chartOptions2?.xaxis?.labels?.style?.fontWeight;
+        // this.yLabelFontSize = this.chartOptions2?.yaxis?.labels?.style?.fontSize;
+        // this.yLabelFontFamily = this.chartOptions2?.yaxis?.labels?.style?.fontFamily;
+        // this.ylabelFontWeight = this.chartOptions2?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eSideBySideBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5117,18 +5216,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.chartOptions6.yaxis.labels){
           this.chartOptions6.yaxis.labels.formatter = this.formatNumber.bind(this);
         }
-        this.xLabelSwitch = this.chartOptions6?.xaxis?.labels?.show;
-        this.yLabelSwitch = this.chartOptions6?.yaxis?.labels?.show;
-        this.xGridSwitch = this.chartOptions6?.grid?.xaxis?.lines?.show;
-        this.yGridSwitch = this.chartOptions6?.grid?.yaxis?.lines?.show;
-        this.GridColor = this.chartOptions6?.grid?.borderColor;
-        this.backgroundColor = this.chartOptions6?.chart?.background;
-        this.xLabelFontSize = this.chartOptions6?.xaxis?.labels?.style?.fontSize;
-        this.xLabelFontFamily = this.chartOptions6?.xaxis?.labels?.style?.fontFamily;
-        this.xlabelFontWeight = this.chartOptions6?.xaxis?.labels?.style?.fontWeight;
-        this.yLabelFontSize = this.chartOptions6?.yaxis?.labels?.style?.fontSize;
-        this.yLabelFontFamily = this.chartOptions6?.yaxis?.labels?.style?.fontFamily;
-        this.ylabelFontWeight = this.chartOptions6?.yaxis?.labels?.style?.fontWeight;
+        // this.xLabelSwitch = this.chartOptions6?.xaxis?.labels?.show;
+        // this.yLabelSwitch = this.chartOptions6?.yaxis?.labels?.show;
+        // this.xGridSwitch = this.chartOptions6?.grid?.xaxis?.lines?.show;
+        // this.yGridSwitch = this.chartOptions6?.grid?.yaxis?.lines?.show;
+        // this.GridColor = this.chartOptions6?.grid?.borderColor;
+        // this.backgroundColor = this.chartOptions6?.chart?.background;
+        // this.xLabelFontSize = this.chartOptions6?.xaxis?.labels?.style?.fontSize;
+        // this.xLabelFontFamily = this.chartOptions6?.xaxis?.labels?.style?.fontFamily;
+        // this.xlabelFontWeight = this.chartOptions6?.xaxis?.labels?.style?.fontWeight;
+        // this.yLabelFontSize = this.chartOptions6?.yaxis?.labels?.style?.fontSize;
+        // this.yLabelFontFamily = this.chartOptions6?.yaxis?.labels?.style?.fontFamily;
+        // this.ylabelFontWeight = this.chartOptions6?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eStackedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5166,20 +5265,20 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.chartOptions5.yaxis[0].labels.formatter = this.formatNumber.bind(this);
             this.chartOptions5.yaxis[1].labels.formatter = this.formatNumber.bind(this);
           }
-          this.xLabelSwitch = this.chartOptions5?.xaxis?.labels?.show;
-          this.yLabelSwitch = this.chartOptions5?.yaxis?.labels?.show;
-          this.xGridSwitch = this.chartOptions5?.grid?.xaxis?.lines?.show;
-          this.yGridSwitch = this.chartOptions5?.grid?.yaxis?.lines?.show;
-          this.GridColor = this.chartOptions5?.grid?.borderColor;
-          this.backgroundColor = this.chartOptions5?.chart?.background;
-          this.barColor = this.chartOptions5?.series[0]?.color;
-          this.lineColor = this.chartOptions5?.series[1]?.color;
-          this.xLabelFontSize = this.chartOptions5?.xaxis?.labels?.style?.fontSize;
-          this.xLabelFontFamily = this.chartOptions5?.xaxis?.labels?.style?.fontFamily;
-          this.xlabelFontWeight = this.chartOptions5?.xaxis?.labels?.style?.fontWeight;
-          this.yLabelFontSize = this.chartOptions5?.yaxis?.labels?.style?.fontSize;
-          this.yLabelFontFamily = this.chartOptions5?.yaxis?.labels?.style?.fontFamily;
-          this.ylabelFontWeight = this.chartOptions5?.yaxis?.labels?.style?.fontWeight;
+          // this.xLabelSwitch = this.chartOptions5?.xaxis?.labels?.show;
+          // this.yLabelSwitch = this.chartOptions5?.yaxis?.labels?.show;
+          // this.xGridSwitch = this.chartOptions5?.grid?.xaxis?.lines?.show;
+          // this.yGridSwitch = this.chartOptions5?.grid?.yaxis?.lines?.show;
+          // this.GridColor = this.chartOptions5?.grid?.borderColor;
+          // this.backgroundColor = this.chartOptions5?.chart?.background;
+          // this.barColor = this.chartOptions5?.series[0]?.color;
+          // this.lineColor = this.chartOptions5?.series[1]?.color;
+          // this.xLabelFontSize = this.chartOptions5?.xaxis?.labels?.style?.fontSize;
+          // this.xLabelFontFamily = this.chartOptions5?.xaxis?.labels?.style?.fontFamily;
+          // this.xlabelFontWeight = this.chartOptions5?.xaxis?.labels?.style?.fontWeight;
+          // this.yLabelFontSize = this.chartOptions5?.yaxis?.labels?.style?.fontSize;
+          // this.yLabelFontFamily = this.chartOptions5?.yaxis?.labels?.style?.fontFamily;
+          // this.ylabelFontWeight = this.chartOptions5?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eBarLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5243,18 +5342,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.chartOptions7.xaxis.labels){
           this.chartOptions7.xaxis.labels.formatter = this.formatNumber.bind(this);
         }
-        this.xLabelSwitch = this.chartOptions7?.xaxis?.labels?.show;
-        this.yLabelSwitch = this.chartOptions7?.yaxis?.labels?.show;
-        this.xGridSwitch = this.chartOptions7?.grid?.xaxis?.lines?.show;
-        this.yGridSwitch = this.chartOptions7?.grid?.yaxis?.lines?.show;
-        this.GridColor = this.chartOptions7?.grid?.borderColor;
-        this.backgroundColor = this.chartOptions7?.chart?.background;
-        this.xLabelFontSize = this.chartOptions7?.xaxis?.labels?.style?.fontSize;
-        this.xLabelFontFamily = this.chartOptions7?.xaxis?.labels?.style?.fontFamily;
-        this.xlabelFontWeight = this.chartOptions7?.xaxis?.labels?.style?.fontWeight;
-        this.yLabelFontSize = this.chartOptions7?.yaxis?.labels?.style?.fontSize;
-        this.yLabelFontFamily = this.chartOptions7?.yaxis?.labels?.style?.fontFamily;
-        this.ylabelFontWeight = this.chartOptions7?.yaxis?.labels?.style?.fontWeight;
+        // this.xLabelSwitch = this.chartOptions7?.xaxis?.labels?.show;
+        // this.yLabelSwitch = this.chartOptions7?.yaxis?.labels?.show;
+        // this.xGridSwitch = this.chartOptions7?.grid?.xaxis?.lines?.show;
+        // this.yGridSwitch = this.chartOptions7?.grid?.yaxis?.lines?.show;
+        // this.GridColor = this.chartOptions7?.grid?.borderColor;
+        // this.backgroundColor = this.chartOptions7?.chart?.background;
+        // this.xLabelFontSize = this.chartOptions7?.xaxis?.labels?.style?.fontSize;
+        // this.xLabelFontFamily = this.chartOptions7?.xaxis?.labels?.style?.fontFamily;
+        // this.xlabelFontWeight = this.chartOptions7?.xaxis?.labels?.style?.fontWeight;
+        // this.yLabelFontSize = this.chartOptions7?.yaxis?.labels?.style?.fontSize;
+        // this.yLabelFontFamily = this.chartOptions7?.yaxis?.labels?.style?.fontFamily;
+        // this.ylabelFontWeight = this.chartOptions7?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.ehorizontalStackedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5290,18 +5389,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.chartOptions8.xaxis.labels){
           this.chartOptions8.xaxis.labels.formatter = this.formatNumber.bind(this);
         }
-        this.xLabelSwitch = this.chartOptions8?.xaxis?.labels?.show;
-        this.yLabelSwitch = this.chartOptions8?.yaxis?.labels?.show;
-        this.xGridSwitch = this.chartOptions8?.grid?.xaxis?.lines?.show;
-        this.yGridSwitch = this.chartOptions8?.grid?.yaxis?.lines?.show;
-        this.GridColor = this.chartOptions8?.grid?.borderColor;
-        this.backgroundColor = this.chartOptions8?.chart?.background;
-        this.xLabelFontSize = this.chartOptions8?.xaxis?.labels?.style?.fontSize;
-        this.xLabelFontFamily = this.chartOptions8?.xaxis?.labels?.style?.fontFamily;
-        this.xlabelFontWeight = this.chartOptions8?.xaxis?.labels?.style?.fontWeight;
-        this.yLabelFontSize = this.chartOptions8?.yaxis?.labels?.style?.fontSize;
-        this.yLabelFontFamily = this.chartOptions8?.yaxis?.labels?.style?.fontFamily;
-        this.ylabelFontWeight = this.chartOptions8?.yaxis?.labels?.style?.fontWeight;
+        // this.xLabelSwitch = this.chartOptions8?.xaxis?.labels?.show;
+        // this.yLabelSwitch = this.chartOptions8?.yaxis?.labels?.show;
+        // this.xGridSwitch = this.chartOptions8?.grid?.xaxis?.lines?.show;
+        // this.yGridSwitch = this.chartOptions8?.grid?.yaxis?.lines?.show;
+        // this.GridColor = this.chartOptions8?.grid?.borderColor;
+        // this.backgroundColor = this.chartOptions8?.chart?.background;
+        // this.xLabelFontSize = this.chartOptions8?.xaxis?.labels?.style?.fontSize;
+        // this.xLabelFontFamily = this.chartOptions8?.xaxis?.labels?.style?.fontFamily;
+        // this.xlabelFontWeight = this.chartOptions8?.xaxis?.labels?.style?.fontWeight;
+        // this.yLabelFontSize = this.chartOptions8?.yaxis?.labels?.style?.fontSize;
+        // this.yLabelFontFamily = this.chartOptions8?.yaxis?.labels?.style?.fontFamily;
+        // this.ylabelFontWeight = this.chartOptions8?.yaxis?.labels?.style?.fontWeight;
         } else {
           this.eGroupedBarChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5337,12 +5436,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.chartOptions9.yaxis.labels){
           this.chartOptions9.yaxis.labels.formatter = this.formatNumber.bind(this);
         }
-        this.xLabelSwitch = this.chartOptions9?.xaxis?.labels?.show;
-        this.yLabelSwitch = this.chartOptions9?.yaxis?.labels?.show;
-        this.xGridSwitch = this.chartOptions9?.grid?.xaxis?.lines?.show;
-        this.yGridSwitch = this.chartOptions9?.grid?.yaxis?.lines?.show;
-        this.GridColor = this.chartOptions9?.grid?.borderColor;
-        this.backgroundColor = this.chartOptions9?.chart?.background;
+        // this.xLabelSwitch = this.chartOptions9?.xaxis?.labels?.show;
+        // this.yLabelSwitch = this.chartOptions9?.yaxis?.labels?.show;
+        // this.xGridSwitch = this.chartOptions9?.grid?.xaxis?.lines?.show;
+        // this.yGridSwitch = this.chartOptions9?.grid?.yaxis?.lines?.show;
+        // this.GridColor = this.chartOptions9?.grid?.borderColor;
+        // this.backgroundColor = this.chartOptions9?.chart?.background;
         } else {
           this.eMultiLineChartOptions = this.sheetResponce.savedChartOptions;
         }
@@ -5430,12 +5529,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 26){
         if(this.isApexCharts){
           this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
-          this.xLabelFontSize = this.heatMapChartOptions?.xaxis?.labels?.style?.fontSize;
-          this.xLabelFontFamily = this.heatMapChartOptions?.xaxis?.labels?.style?.fontFamily;
-          this.xlabelFontWeight = this.heatMapChartOptions?.xaxis?.labels?.style?.fontWeight;
-          this.yLabelFontSize = this.heatMapChartOptions?.yaxis?.labels?.style?.fontSize;
-          this.yLabelFontFamily = this.heatMapChartOptions?.yaxis?.labels?.style?.fontFamily;
-          this.ylabelFontWeight = this.heatMapChartOptions?.yaxis?.labels?.style?.fontWeight;
+          // this.xLabelFontSize = this.heatMapChartOptions?.xaxis?.labels?.style?.fontSize;
+          // this.xLabelFontFamily = this.heatMapChartOptions?.xaxis?.labels?.style?.fontFamily;
+          // this.xlabelFontWeight = this.heatMapChartOptions?.xaxis?.labels?.style?.fontWeight;
+          // this.yLabelFontSize = this.heatMapChartOptions?.yaxis?.labels?.style?.fontSize;
+          // this.yLabelFontFamily = this.heatMapChartOptions?.yaxis?.labels?.style?.fontFamily;
+          // this.ylabelFontWeight = this.heatMapChartOptions?.yaxis?.labels?.style?.fontWeight;
           if(this.heatMapChartOptions?.dataLabels){
             this.heatMapChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
           }
@@ -5475,7 +5574,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.funnelDLAllign = this.funnelChartOptions?.plotOptions?.bar?.dataLabels?.position;
         this.funnelDLFontFamily = this.funnelChartOptions?.dataLabels?.style?.fontFamily;
         this.funnelDLFontSize = this.funnelChartOptions?.dataLabels?.style?.fontSize;
-        this.funnelColor = this.funnelChartOptions?.series[0]?.color;
+        // this.funnelColor = this.funnelChartOptions?.series[0]?.color;
       }
         this.bar = false;
         this.table = false;
@@ -5848,8 +5947,7 @@ viewDashboard(){
   }
 
 }
-barColor : any = '#4382f7';
-lineColor : any = '#38ff98';
+
 marksColor2(color:any){
   if(this.isEChatrts){
     this.color = color;
@@ -5896,6 +5994,13 @@ else if(this.groupedChart){
 else if(this.multilineChart){
   this.chartOptions9.colors = color;
   object = {colors: [color]};
+}
+else if(this.funnel){
+  // this.funnelChartOptions.colors = color;
+  // object = {colors: [color]};
+  this.funnelChartOptions.series[0].color = color;
+  object = {series: this.dualAxisRowData}
+  object = object.series[0].color = color;
 }
 this.updateChart(object);
 }
@@ -5996,6 +6101,7 @@ renameColumns(){
   allignmentChange(event: any, section: any) {
     let object : any = {};
     if (section === 'dimension') {
+      this.dimensionAlignment = event;
       if (event === 'center') {
         object = {xaxis: {labels : {offsetX : 0}, categories: this.chartsColumnData}};
         if(this.barchart){
@@ -6098,6 +6204,7 @@ renameColumns(){
       }
     }
     else {
+      this.measureAlignment = event;
       if (event === 'center') {
         object = {yaxis: {labels : {offsetY : 0, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.barchart){
@@ -6468,6 +6575,7 @@ renameColumns(){
     }
     else if(this.funnel){
       this.funnelCharts.updateOptions(object);
+      console.log(this.funnelChartOptions);
       console.log(this.funnelCharts);
     }
     else if(this.guage){
@@ -6476,12 +6584,11 @@ renameColumns(){
     }
     else if(this.heatMap){
       this.heatmapcharts.updateOptions(object);
+      console.log(this.heatMapChartOptions);
       console.log(this.heatmapcharts);
     }
   }
-  dataLabels:boolean = true;
-  label : boolean = true;
-  isDistributed : boolean = false;
+
   toggleSwitch(type : string) {
     let object:any;
     if(type === 'banding'){
@@ -6544,7 +6651,7 @@ renameColumns(){
     else if(type === 'ylabel'){
       this.yLabelSwitch = !this.yLabelSwitch;
       if(this.isApexCharts){
-      object = { yaxis: {labels: {show: this.yLabelSwitch}}};
+      object = { yaxis: {labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
       if(this.barchart){
         if(this.chartOptions3.yaxis.length >0){
           (this.chartOptions3.yaxis as any[]).forEach((data)=>{
@@ -6928,7 +7035,8 @@ fetchChartData(chartData: any){
           this.sheetfilter_querysets_id = null;
           
           console.log("This is ShaetData",chartData)
-          this.sheetTitle = chartData.chart_title
+          this.sheetTitle = chartData.chart_title;
+          this.sheetTagName = chartData.chart_title;
           if (chartData.chart_type.toLowerCase().includes("bar")){
             this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type.toLowerCase().includes("pie")){
@@ -7006,21 +7114,123 @@ fetchChartData(chartData: any){
   }
 
   setCustomizeOptions(data: any) {
-    this.isZoom = data.isZoom;
-    this.xGridColor = data.xGridColor;
-    this.xGridSwitch = data.xGridSwitch;
-    this.xLabelSwitch = data.xLabelSwitch;
-    this.xLabelColor = data.xLabelColor;
-    this.yLabelSwitch = data.yLabelSwitch;
-    this.yGridColor = data.yGridColor;
-    this.yGridSwitch = data.yGridSwitch;
-    this.yLabelColor = data.yLabelColor;
-    this.xLabelFontFamily = data.xLabelFontFamily;
-    this.xLabelFontSize = data.xLabelFontSize;
-    this.xlabelFontWeight = data.xlabelFontWeight;
-    this.labelAlignment = data.labelAlignment;
-    this.backgroundColor = data.backgroundColor;
-    this.color = data.color;
+    this.isZoom = data.isZoom || true;
+    this.xGridColor = data.xGridColor || '#00a5a2';
+    this.xGridSwitch = data.xGridSwitch || false;
+    this.xLabelSwitch = data.xLabelSwitch || true;
+    this.xLabelColor = data.xLabelColor || '#00a5a2';
+    this.yLabelSwitch = data.yLabelSwitch || true;
+    this.yGridColor = data.yGridColor || '#00a5a2';
+    this.yGridSwitch = data.yGridSwitch || false;
+    this.yLabelColor = data.yLabelColor || '#00a5a2';
+    this.xLabelFontFamily = data.xLabelFontFamily || 'sans-serif';
+    this.xLabelFontSize = data.xLabelFontSize || 12;
+    this.xlabelFontWeight = data.xlabelFontWeight || 400;
+    this.labelAlignment = data.labelAlignment || 'left';
+    this.backgroundColor = data.backgroundColor || '#fff';
+    this.color = data.color || '#00a5a2';
+    this.ylabelFontWeight = data.ylabelFontWeight || 400;
+    this.isBold = data.isBold || false;
+    this.yLabelFontFamily = data.yLabelFontFamily || 'sans-serif';
+    this.yLabelFontSize = data.yLabelFontSize || 12;
+    this.bandingSwitch = data.bandingSwitch || false;
+    this.backgroundColorSwitch = data.backgroundColorSwitch || false;
+    this.chartColorSwitch = data.chartColorSwitch || false;
+    this.barColorSwitch = data.barColorSwitch || false;
+    this.lineColorSwitch = data.lineColorSwitch || false;
+    this.gridLineColorSwitch = data.gridLineColorSwitch || false;
+    this.xLabelColorSwitch = data.xLabelColorSwitch || false;
+    this.xGridLineColorSwitch = data.xGridLineColorSwitch || false;
+    this.yLabelColorSwitch = data.yLabelColorSwitch || false;
+    this.yGridLineColorSwitch = data.yGridLineColorSwitch || false;
+    this.bandingColorSwitch = data.bandingColorSwitch || false;
+    this.kpiColorSwitch = data.kpiColorSwitch || false;
+    this.funnelColorSwitch = data.funnelColorSwitch || false;
+    this.color1 = data.color1 || undefined;
+    this.color2 = data.color2 || undefined;
+    this.kpiColor = data.kpiColor || '#000000';
+    this.barColor = data.barColor || '#4382f7';
+    this.lineColor = data.lineColor || '#38ff98';
+    this.GridColor = data.GridColor || '#089ffc';
+    this.legendSwitch = data.legendSwitch || true;
+    this.dataLabels = data.dataLabels || true;
+    this.label = data.label || true;
+    this.donutSize = data.donutSize || 50;
+    this.isDistributed = data.isDistributed || false;
+    this.kpiFontSize = data.kpiFontSize || 3;
+    this.minValueGuage = data.minValueGuage || 0;
+    this.maxValueGuage = data.maxValueGuage || 100;
+    this.donutDecimalPlaces = data.donutDecimalPlaces || 0;
+    this.decimalPlaces = data.decimalPlaces || 0;
+    this.legendsAllignment = data.legendsAllignment || 'bottom';
+    this.displayUnits = data.displayUnits || 'none';
+    this.suffix = data.suffix || '';
+    this.prefix = data.prefix || '';
+    this.dataLabelsFontFamily = data.dataLabelsFontFamily || 'sans-serif';
+    this.dataLabelsFontSize = data.dataLabelsFontSize || '12px';
+    this.dataLabelsFontPosition = data.dataLabelsFontPosition || 'top';
+    this.measureAlignment = data.measureAlignment || 'center';
+    this.dimensionAlignment = data.dimensionAlignment || 'center';
+  }
+
+  resetCustomizations(){
+    this.isZoom = false;
+    this.xGridColor = '#00a5a2';
+    this.xGridSwitch = false;
+    this.xLabelSwitch = true;
+    this.xLabelColor = '#00a5a2';
+    this.yLabelSwitch = true;
+    this.yGridColor = '#00a5a2';
+    this.yGridSwitch = false;
+    this.yLabelColor = '#00a5a2';
+    this.xLabelFontFamily = 'sans-serif';
+    this.xLabelFontSize = 12;
+    this.xlabelFontWeight = 400;
+    this.labelAlignment = 'left';
+    this.backgroundColor = '#fff';
+    this.color = '#00a5a2';
+    this.ylabelFontWeight = 400;
+    this.isBold = false;
+    this.yLabelFontFamily = 'sans-serif';
+    this.yLabelFontSize = 12;
+    this.bandingSwitch = false;
+    this.backgroundColorSwitch = false;
+    this.chartColorSwitch = false;
+    this.barColorSwitch = false;
+    this.lineColorSwitch = false;
+    this.gridLineColorSwitch = false;
+    this.xLabelColorSwitch = false;
+    this.xGridLineColorSwitch = false;
+    this.yLabelColorSwitch = false;
+    this.yGridLineColorSwitch = false;
+    this.bandingColorSwitch = false;
+    this.kpiColorSwitch = false;
+    this.funnelColorSwitch = false;
+    this.color1 = undefined;
+    this.color2 = undefined;
+    this.kpiColor = '#000000';
+    this.barColor = '#4382f7';
+    this.lineColor = '#38ff98';
+    this.GridColor = '#089ffc';
+    this.legendSwitch = true;
+    this.dataLabels = true;
+    this.label = true;
+    this.donutSize = 50;
+    this.isDistributed = false;
+    this.kpiFontSize = '3';
+    this.minValueGuage = 0;
+    this.maxValueGuage = 100;
+    this.donutDecimalPlaces = 0;
+    this.decimalPlaces = 0;
+    this.legendsAllignment = 'bottom';
+    this.displayUnits = 'none';
+    this.suffix = '';
+    this.prefix = '';
+    this.dataLabelsFontFamily = 'sans-serif';
+    this.dataLabelsFontSize = '12px';
+    this.dataLabelsFontPosition = 'top';
+    this.measureAlignment = 'center';
+    this.dimensionAlignment = 'center';
   }
 
   sendPrompt() {
@@ -7179,7 +7389,7 @@ fetchChartData(chartData: any){
       this.updateChart(object);
     }
   }
-  apexbBackgroundColor(color: any){
+  setBackgroundColor(color: any){
     let object:any;
     if(color){
       object = {chart: {background: color}};
@@ -7258,9 +7468,6 @@ fetchChartData(chartData: any){
     }
     this.dataExtraction();
   }
-  
-  kpiFontSize: string = '3';
-  kpiColor: string = '#000000';
 
   sliderOptions = {
     floor: 1,
@@ -7323,8 +7530,7 @@ fetchChartData(chartData: any){
               this.callDrillDown();
             }         
           }
-  titleShow : boolean = true;
-  legendsAllignment : any = 'bottom'
+  
   changeLegendsAllignment(allignment:any){
     this.legendsAllignment = allignment;
     if(this.isEChatrts){
@@ -7342,7 +7548,7 @@ fetchChartData(chartData: any){
       this.updateChart(object);
     }
   }
-  donutSize:any = 50;
+
   changeSize(){
     if(this.isEChatrts){
       this.donutChart();
@@ -7352,8 +7558,6 @@ fetchChartData(chartData: any){
     this.updateChart(object);
     }
   }
-  color1:any;
-  color2:any;
 
   setOriginalData(){
         if(this.bar){//bar
@@ -7503,161 +7707,177 @@ fetchChartData(chartData: any){
         this.donutchart.updateOptions(this.chartOptions10);
       }
 
-      dataLabelsFontFamily(event:any){
+      setDataLabelsFontFamily(event:any){
         let font = event.target.value;
-        let object = {};
+        let object = { dataLabels: { style: { fontFamily: font } } };
         if(this.bar){
           this.chartOptions3.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           //  object = this.chartOptions3;
         }
         else if(this.area){
           this.chartOptions1.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions1;
         }
         else if(this.line){
           this.chartOptions.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions;
         }
         else if(this.sidebyside){
           this.chartOptions2.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions2;
         }
         else if(this.stocked){
           this.chartOptions6.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions6;
         }
         else if(this.barLine){
           this.chartOptions5.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
           this.chartOptions7.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions7;
         }
         else if(this.grouped){
           this.chartOptions8.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions8;
         }
         else if(this.multiLine){
           this.chartOptions9.dataLabels.style.fontFamily = font;
-          object = { dataLabels: { style: { fontFamily: font } } };
+          // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions9;
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.dataLabels.style.fontFamily = font;
+        }
+        else if(this.funnel){
+          this.funnelChartOptions.dataLabels.style.fontFamily = font;
         }
         this.updateChart(object);
       }
 
-      dataLabelsFontSize(event:any){
+      setDataLabelsFontSize(event:any){
         let font = event.target.value;
-        let object = {};
+        let object = { dataLabels: { style: { fontSize: font } } };
         if(this.bar){
           this.chartOptions3.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions3;
         }
         else if(this.area){
           this.chartOptions1.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions1;
         }
         else if(this.line){
           this.chartOptions.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions;
         }
         else if(this.sidebyside){
           this.chartOptions2.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions2;
         }
         else if(this.stocked){
           this.chartOptions6.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions6;
         }
         else if(this.barLine){
           this.chartOptions5.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
           this.chartOptions7.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions7;
         }
         else if(this.grouped){
           this.chartOptions8.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions8;
         }
         else if(this.multiLine){
           this.chartOptions9.dataLabels.style.fontSize = font;
-          object = { dataLabels: { style: { fontSize: font } } };
+          // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions9;
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.dataLabels.style.fontSize = font;
+        }
+        else if(this.funnel){
+          this.funnelChartOptions.dataLabels.style.fontSize = font;
         }
         this.updateChart(object);
       }
-      isBold:boolean = false;
-      isItalic:boolean = false;
-      isUnderline:boolean = false;
 
-      dataLabelsFontStyle(fontStyle:any){
+      setDataLabelsFontStyle(fontStyle:any){
         let font;
         let object;
         if(fontStyle === 'B'){
           this.isBold = !this.isBold;
           font = this.isBold ? 700 : 400;
+          object = { dataLabels: { style: { fontWeight: font } } };
           if(this.bar){
             this.chartOptions3.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions3;
           }
           else if(this.area){
             this.chartOptions1.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions1;
           }
           else if(this.line){
             this.chartOptions.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions;
           }
           else if(this.sidebyside){
             this.chartOptions2.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions2;
           }
           else if(this.stocked){
             this.chartOptions6.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions6;
           }
           else if(this.barLine){
             this.chartOptions5.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions5;
           }
           else if(this.horizentalStocked){
             this.chartOptions7.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions7;
           }
           else if(this.grouped){
             this.chartOptions8.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions8;
           }
           else if(this.multiLine){
             this.chartOptions9.dataLabels.style.fontWeight = font;
-            object = { dataLabels: { style: { fontWeight: font } } };
+            // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions9;
+          }
+          else if(this.heatMap){
+            this.heatMapChartOptions.dataLabels.style.fontWeight = font;
+          }
+          else if(this.funnel){
+            this.funnelChartOptions.dataLabels.style.fontWeight = font;
           }
           this.updateChart(object);
         }
@@ -7676,102 +7896,136 @@ fetchChartData(chartData: any){
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
         const color = window.getComputedStyle(element).backgroundColor;
-        let object;
+        let object = { dataLabels: { style: { colors : [color] } } };
         if(this.bar){
           this.chartOptions3.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions3;
         }
         else if(this.area){
           this.chartOptions1.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions1;
         }
         else if(this.line){
           this.chartOptions.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions;
         }
         else if(this.sidebyside){
           this.chartOptions2.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions2;
         }
         else if(this.stocked){
           this.chartOptions6.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions6;
         }
         else if(this.barLine){
           this.chartOptions5.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
           this.chartOptions7.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions7;
         }
         else if(this.grouped){
           this.chartOptions8.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions8;
         }
         else if(this.multiLine){
           this.chartOptions9.dataLabels.style.colors = [color];
-          object = { dataLabels: { style: { colors : [color] } } };
+          // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions9;
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.dataLabels.style.colors = [color];
+        }
+        else if(this.funnel){
+          this.funnelChartOptions.dataLabels.style.colors = [color];
         }
         element.style.border = `1px solid black`;
         this.selectedElement = element;
         this.updateChart(object);
       }
 
-      dataLabelsFontPosition(position:any){
-        let object: any;
+      setDataLabelsFontPosition(position:any){
+        this.dataLabelsFontPosition = position;
+        let object = { plotOptions: { bar: { dataLabels: { position: position } } } };
         if(this.bar){
-          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
           this.chartOptions3.plotOptions.bar.dataLabels.position = position;
         }
         else if(this.sidebyside){
-          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
           this.chartOptions2.plotOptions.bar.dataLabels.position = position;
         }
         else if(this.stocked){
-          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
           this.chartOptions6.plotOptions.bar.dataLabels.position = position;
         }
         else if(this.barLine){
-          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
           this.chartOptions5.plotOptions.bar.dataLabels.position = position;
         }
         else if(this.horizentalStocked){
-          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
           this.chartOptions7.plotOptions.bar.dataLabels.position = position;
         }
         else if(this.grouped){
-          object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
           this.chartOptions8.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.heatMap){
+          this.heatMapChartOptions.plotOptions.bar.dataLabels.position = position;
+        }
+        else if(this.funnel){
+          this.funnelChartOptions.plotOptions.bar.dataLabels.position = position;
         }
         this.updateChart(object);
       }
-      resetColor(){
+      resetChartColor(){
         this.color = '#00A5A2';
         this.barColor = '#4382F7';
         this.lineColor = '#38FF98';
-        if(this.table){
-          this.color1 = '#d4d3d2';
-          this.color2 = '#ffffff'; 
-        }
-        this.GridColor = '#0f0f0f';
-        this.backgroundColor = '#ffffff';
-        if(this.kpi){
-          this.kpiColor = '#0f0f0f';
-        }
         this.marksColor2(this.color);
-        this.funnelColorChange(this.color);
+      }
+      resetBandingColor(){
+        this.color1 = '#d4d3d2';
+        this.color2 = '#ffffff'; 
+      }
+      resetGridColor(){
+        this.GridColor = '#0f0f0f';
         this.gridLineColor(this.GridColor);
-        this.apexbBackgroundColor(this.backgroundColor);
+      }
+      resetBackgroundColor(){
+        this.backgroundColor = '#ffffff';
+        this.setBackgroundColor(this.backgroundColor);
+      }
+      resetKpiColor(){
+        this.kpiColor = '#0f0f0f';
+      }
+      resetColor(){
+        // this.color = '#00A5A2';
+        // this.barColor = '#4382F7';
+        // this.lineColor = '#38FF98';
+        // if(this.table){
+        //   this.color1 = '#d4d3d2';
+        //   this.color2 = '#ffffff'; 
+        // }
+        // this.GridColor = '#0f0f0f';
+        // this.backgroundColor = '#ffffff';
+        // if(this.kpi){
+        //   this.kpiColor = '#0f0f0f';
+        // }
+        // this.marksColor2(this.color);
+        // this.funnelColorChange(this.color);
+        // this.gridLineColor(this.GridColor);
+        // this.setBackgroundColor(this.backgroundColor);
       }
 
       sheetNotSaveAlert(): Promise<boolean> {
@@ -7832,19 +8086,6 @@ fetchChartData(chartData: any){
       this.selectedChartPlugin = localStorage.getItem('chartType')+'';
       this.changeChartPlugin();
     }
-
-    backgroundColorSwitch : boolean = false;
-    chartColorSwitch : boolean = false;
-    barColorSwitch : boolean = false;
-    lineColorSwitch : boolean = false;
-    gridLineColorSwitch : boolean = false;
-    xLabelColorSwitch : boolean = false;
-    xGridLineColorSwitch : boolean = false;
-    yLabelColorSwitch : boolean = false;
-    yGridLineColorSwitch : boolean = false;
-    bandingColorSwitch : boolean = false;
-    kpiColorSwitch : boolean = false;
-    funnelColorSwitch : boolean = false;
 
     dimensionsFontFamilyChange(){
       let  object = {xaxis: {labels: {style: {fontFamily: this.xLabelFontFamily}}, categories: this.chartsColumnData}};
@@ -7949,7 +8190,7 @@ fetchChartData(chartData: any){
       this.updateChart(object);
     }
     measuresFontFamilyChange(){
-      let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
+      let object = { yaxis: [{show: this.yLabelSwitch, labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
       if (this.bar) {
         if (this.chartOptions3.yaxis.length > 0) {
           (this.chartOptions3.yaxis as any[]).forEach((data) => {
