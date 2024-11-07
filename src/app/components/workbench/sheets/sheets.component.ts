@@ -1335,7 +1335,6 @@ if(this.fromFileId){
               fontFamily: this.xLabelFontFamily,
               fontSize: this.xLabelFontSize,
               fontWeight: this.xlabelFontWeight,
-
             },
             splitLine: {
               lineStyle: {
@@ -6006,6 +6005,7 @@ if(this.bar){
   object = {colors: [color]};
   }else{
   this.eBarChartOptions.color = color
+
  }
 }
 else if(this.area){
