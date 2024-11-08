@@ -779,7 +779,9 @@ if(this.fromFileId){
             itemStyle: {
               borderRadius: 5
             },
-            label: { show: true },
+            label: { show: true,
+              position: 'center',
+             },
             type: 'bar',
             barWidth: '80%',
             data: this.chartsRowData
@@ -3958,6 +3960,7 @@ bar["stack"]="Total";
       this.drillDownIndex = 0;
       this.dateDrillDownSwitch = false;
     }
+    this.resetCustomizations();
     this.chartsOptionsSet(); 
   }
   // enableDisableCharts(){
@@ -9186,5 +9189,64 @@ fetchChartData(chartData: any){
           this.eStackedBarChartOptions.yAxis.axisLabel.color = color;
         }
         this.updateEchartOptions();
+    }
+
+    // updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}})
+    updateNumberFormat(){
+      let object;
+      if(this.isApexCharts){
+        if(this.heatMap){
+          object = {dataLabels:{formatter: this.formatNumber.bind(this)}};
+        }
+        else{
+          object = { yaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
+        }
+        this.updateChart(object);
+      }
+      else if(this.isEChatrts){
+        if(this.bar){
+          this.eBarChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.line){
+          this.eLineChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.area){
+          this.eAreaChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eAreaChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.pie){
+          this.ePieChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+          this.ePieChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.donut){
+          this.eDonutChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eDonutChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.sidebyside){
+          this.eSideBySideBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eSideBySideBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.stocked){
+          this.eStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eStackedBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.barLine){
+          this.eBarLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eBarLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.horizentalStocked){
+          this.ehorizontalStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.grouped){
+          this.eGroupedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eGroupedBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.multiLine){
+          this.eMultiLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eMultiLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.radar){
+          this.eRadarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eRadarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        } else if(this.heatMap){
+          this.eHeatMapChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+        } else if(this.funnel){
+          this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+        }
+        this.updateEchartOptions();
+      }
     }
 }
