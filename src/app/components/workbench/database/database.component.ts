@@ -792,7 +792,7 @@ joiningTablesFromDelete(){
     query_set_id:this.qurtySetId,
     database_id:this.databaseId,
     joining_tables: schemaTablePairs,
-    join_type:[],
+    join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array:this.draggedtables
   }as any;
