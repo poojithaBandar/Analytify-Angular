@@ -3406,10 +3406,20 @@ bar["stack"]="Total";
                 else if (this.sidebysideChart) {
                   this.chartOptions2.series = this.dualAxisRowData;
                   this.chartOptions2.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.sidebysideChart.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.sidebysideChart.updateOptions(object);
+                  console.log(this.sidebysideChart);
                 }
                 else if (this.stockedChart) {
                   this.chartOptions6.series = this.dualAxisRowData;
                   this.chartOptions6.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.stockedChart.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.stockedChart.updateOptions(object);
+                  console.log(this.stockedChart);
                 }
                 else if (this.barlineChart) {
                   // this.chartOptions5.series[0] = {name: this.dualAxisRowData[0]?.name,type: "column",data: this.dualAxisRowData[0]?.data};
@@ -3418,30 +3428,60 @@ bar["stack"]="Total";
                   this.chartOptions5.series[1].data = this.dualAxisRowData[1].data;
                   this.chartOptions5.labels = categories;
                   this.chartOptions5.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.barlineChart.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.barlineChart.updateOptions(object);
+                  console.log(this.barlineChart);
                 }
                 else if (this.horizontolstockedChart) {
                   this.chartOptions7.series = this.dualAxisRowData;
                   this.chartOptions7.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.horizontolstockedChart.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.horizontolstockedChart.updateOptions(object);
+                  console.log(this.horizontolstockedChart);
                 }
                 else if (this.groupedChart) {
                   this.chartOptions8.series = this.dualAxisRowData;
                   this.chartOptions8.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.groupedChart.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.groupedChart.updateOptions(object);
+                  console.log(this.groupedChart);
                 }
                 else if (this.multilineChart) {
                   this.chartOptions9.series = this.dualAxisRowData;
                   this.chartOptions9.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.multilineChart.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.multilineChart.updateOptions(object);
+                  console.log(this.multilineChart);
                 }
                 else if (this.donutchart) {
                   this.chartOptions10.series = this.chartsRowData;
                   this.chartOptions10.labels = this.chartsColumnData;
                 }
                 else if (this.heatMap) {
-                  this.chartOptions9.series = this.dualAxisRowData;
-                  this.chartOptions9.xaxis.categories = categories;
+                  this.heatMapChartOptions.series = this.dualAxisRowData;
+                  this.heatMapChartOptions.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.heatmapcharts.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.heatmapcharts.updateOptions(object);
+                  console.log(this.heatmapcharts);
                 }
                 else if (this.funnel) {
                   this.funnelChartOptions.series = this.dualAxisRowData;
                   this.funnelChartOptions.xaxis.categories = categories;
+                  object = [{data : this.dualAxisRowData}];
+                  this.funnelCharts.updateSeries(object);
+                  object = {xaxis: {categories : categories}};
+                  this.funnelCharts.updateOptions(object);
+                  console.log(this.funnelCharts);
                 } else if(this.map){
                   this.mapChart();
                 }
@@ -5777,6 +5817,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.map = false;
           this.calendar = true;
        }
+       this.updateNumberFormat();
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
       },
       error: (error) => {
@@ -8101,10 +8142,6 @@ fetchChartData(chartData: any){
           this.funnelCharts.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
         } 
         else if (this.bar) {
-          const numbers = this.chartOptions3.series[0].data;
-          const labels = this.chartOptions3.xaxis.categories;
-          const sortedData = this.sort(event, numbers, labels);
-          console.log(numbers);
           if(this.isEChatrts){
             // this.eBarchart.setOption({
             //   xAxis: {
@@ -8116,8 +8153,17 @@ fetchChartData(chartData: any){
             //     },
             //   ],
             // });
-            this.eBarChartOptions.series[0].data = numbers;
+            const numbers = this.eBarChartOptions.series[0].data;
+            const labels = this.eBarChartOptions.xAxis.data;
+            const sortedData = this.sort(event, numbers, labels);
+            this.eBarChartOptions.series[0].data = sortedData.sortedNumbers;
+            this.eBarChartOptions.xAxis.data = sortedData.sortedLabels;
+            this.updateEchartOptions();
           } else {
+            const numbers = this.chartOptions3.series[0].data;
+            const labels = this.chartOptions3.xaxis.categories;
+            const sortedData = this.sort(event, numbers, labels);
+            console.log(numbers);
             this.chartOptions3.series[0].data = sortedData.sortedNumbers;
             this.chartOptions3.xaxis.categories = sortedData.sortedLabels;
             this.barchart.updateSeries([{ data: sortedData.sortedNumbers }]);
@@ -9644,31 +9690,58 @@ fetchChartData(chartData: any){
           this.eDonutChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
           this.eDonutChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.sidebyside){
-          this.eSideBySideBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eSideBySideBarChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value);
+          })
+          // this.eSideBySideBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           this.eSideBySideBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.stocked){
-          this.eStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eStackedBarChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value);
+          })
+          // this.eStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           this.eStackedBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.barLine){
-          this.eBarLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eBarLineChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value);
+          })
+          // this.eBarLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           this.eBarLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.horizentalStocked){
-          this.ehorizontalStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+          this.ehorizontalStackedBarChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value);
+          })
+          // this.ehorizontalStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.grouped){
-          this.eGroupedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eGroupedBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+          this.eGroupedBarChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value);
+          })
+          // this.eGroupedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eGroupedBarChartOptions.xAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.multiLine){
-          this.eMultiLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          this.eMultiLineChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value);
+          })
+          // this.eMultiLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           this.eMultiLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.radar){
-          this.eRadarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eRadarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+          // this.eRadarChartOptions.series.forEach((data : any)=>{
+          //   data.label.formatter = (params:any) => this.formatNumber(params.value);
+          // })
+          // this.eRadarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          // this.eRadarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.heatMap){
-          this.eHeatMapChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          // this.eHeatMapChartOptions.series.forEach((data : any)=>{
+          //   data.label.formatter = (params:any) => this.formatNumber(params.value);
+          // })
+          // this.eHeatMapChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
         } else if(this.funnel){
-          this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+          this.eFunnelChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value);
+          })
+          // this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+          // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         }
         this.updateEchartOptions();
       }
