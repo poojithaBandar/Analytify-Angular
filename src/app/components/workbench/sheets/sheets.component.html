@@ -1150,49 +1150,58 @@
          }
          </mat-tab-group>
          
-                          <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12 " style=" display: contents;">
-                             <!--  <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-right">
-                                    <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
+                        <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12 " style=" display: contents;">
+                            <!--  <li role="presentation" class="nav-item">
+                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-right">
+                                                            <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
+                                                        </button>
+                                                    </li>
+                                                    <li role="presentation" class="nav-item">
+                                                       <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-left">
+                                                            <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right"></i>
+                                                        </button>
+                                                    </li>
+                                                    <li role="presentation" class="nav-item">
+                                                        <button type="button " ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-23" aria-disabled="false" aria-controls="ngb-nav-23-panel" class="nav-link BtnNewStyle active"> Sheet 1</button>
+                                                    </li>
+                                                    <li role="presentation" class="nav-item">
+                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 2</button>
+                                                    </li>
+                                                    <li role="presentation" class="nav-item">
+                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 3</button>
+                                                    </li>
+                                                    <li role="presentation" class="nav-item">
+                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 4</button>
+                                                    </li>
+                                                    <li role="presentation" class="nav-item">
+                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 5</button>
+                                                    </li>
+                                                    <li role="presentation" class="nav-item">
+                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 6</button>
+                                                    </li>-->
+                            <div>
+                                <li role="presentation" class="nav-item">
+                                    <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
+                                        role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
+                                        class="nav-link BtnNewStyle" (click)="addSheet(false)" style="padding: 14px;">
+                                        <i class="fa fa-plus-square-o"></i>
+                                    </button>
+                                </li>
+                            </div>
+                            <li role="presentation" class="nav-item">
+                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle"
+                                    (click)="removeTab()" style="padding: 14px;">
+                                    <i class="fe fe-trash"></i>
                                 </button>
                             </li>
-                            <li role="presentation" class="nav-item">
-                               <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-left">
-                                    <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right"></i>
+                            <!-- <li role="presentation" class="nav-item">
+                                <button type="button" ngbnavlink="" ngbtooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle"
+                                    (click)="sheetDuplicate()" style="padding: 14px;">
+                                    <i class="fe fe-trash"></i>
                                 </button>
-                            </li>
-                            <li role="presentation" class="nav-item">
-                                <button type="button " ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-23" aria-disabled="false" aria-controls="ngb-nav-23-panel" class="nav-link BtnNewStyle active"> Sheet 1</button>
-                            </li>
-                            <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 2</button>
-                            </li>
-                            <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 3</button>
-                            </li>
-                            <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 4</button>
-                            </li>
-                            <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 5</button>
-                            </li>
-                            <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 6</button>
-                            </li>-->
-                            <div >
-                            <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
-                                  tabindex="-1" class="nav-link BtnNewStyle" (click)="addSheet()" style="padding: 14px;">
-                                    <i class="fa fa-plus-square-o"></i>
-                                </button>
-                            </li>
-                        </div>
-                            <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" 
-                                  tabindex="-1" class="nav-link BtnNewStyle" (click)="removeTab()" style="padding: 14px;">
-                                    <i class="fe fe-trash" ></i>
-                                </button>
-                            </li>
+                            </li> -->
                         </ul>
                         <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
                             <ng-template #content let-modal>
@@ -1367,25 +1376,25 @@
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
                                                         <div class="card-title fs-12" style="text-align: center;">Single Axis</div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)} ">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)} ">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Area" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17)"><img src="./assets/images/charts/area-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': area}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Line" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13)"><img src="./assets/images/charts/Line-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': line}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Pie" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24)"><img src="./assets/images/charts/pie-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': pie}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || ( draggedRows.length<1 || draggedColumns.length<1)}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Donut" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10)"><img src="./assets/images/charts/doughnut-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon " [ngClass]="{'active': donut}"></a>
                                                         </div>
-                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0}">
+                                                        <div class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows.length>1 || draggedColumns.length>1) || draggedRows.length<1 || draggedColumns.length>0}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Kpi" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,25)"><img src="./assets/images/charts/kpi-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': kpi}"></a>
                                                         </div>
-                                                        <div *ngIf="isApexCharts" class="col-3 px-2 mt-2" [ngClass]="{'disabled':  draggedRows.length>1 || draggedRows.length<1 || draggedColumns.length>0 || guagechartRowData > 1 }">
+                                                        <div *ngIf="isApexCharts" class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows.length>1 || draggedColumns.length>1) || draggedRows.length<1 || draggedColumns.length>0 || guagechartRowData > 1 }">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,28)"><img src="./assets/images/charts/guage-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
                                                         </div>
                                                         <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !dateList.includes(draggedColumnsData[0]?.[1]) && (draggedRows.length !== 1 || draggedColumns !== 1)}">
@@ -1489,7 +1498,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton
@@ -1708,7 +1717,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -2252,7 +2261,7 @@
                                                         [format] = "'hex'"
                                                          ></ngx-colors>
                                                     </div> -->
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2308,7 +2317,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2364,7 +2373,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!(guage || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && !bandingSwitch) || guage || calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2405,7 +2414,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -2422,7 +2431,7 @@
                                                                     [format]="'hex'"></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="barLine" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >bar</p>
                                                                     </div>
@@ -2439,7 +2448,7 @@
                                                                     [format]="'hex'">
                                                                     </ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="barLine" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >line</p>
                                                                     </div>
@@ -2473,7 +2482,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <!-- <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >X-label Color </p>
                                                                     </div>
@@ -2490,6 +2499,8 @@
                                                                      ></ngx-colors>
                                                                 </div>  
                                                                 <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                </div>   -->
+                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >X-Grid Line Color </p>
                                                                     </div>

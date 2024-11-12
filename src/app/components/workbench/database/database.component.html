@@ -100,7 +100,7 @@
                             <div class="card card-body databse-T-H mb-0 br-0 p-0">
                                 <div class="card-body example-list-drop  mb-0" cdkDropList
                                     #destinationList="cdkDropList" [cdkDropListData]="draggedtables"
-                                    (cdkDropListDropped)="drop($event)">
+                                    (cdkDropListDropped)="tableCustomJoinError ? '' : drop($event)">
                                     @for(item of draggedtables;track $index){
                                     <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias |
                                         slice:0:16}}({{item.schema | slice:0:12}})
@@ -215,7 +215,7 @@
                                                                         @for(column of table.columns;track column){
                                                                         <li>
                                                                             <a ngbDropdownItem class="dropdown-item"
-                                                                                (click)="condition.firstcolumn = column.column;condition.table1= table.alias;">{{
+                                                                                (click)="condition.firstcolumn = column.column;condition.table1= table.alias;relation.table1 = table.alias">{{
                                                                                 column.column }}</a>
                                                                         </li>
                                                                         }
