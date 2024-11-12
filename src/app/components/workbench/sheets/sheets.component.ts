@@ -1571,7 +1571,7 @@ bar["type"]="bar";
               fontFamily: 'Helvetica, Arial, sans-serif' // Use custom font family if needed
           }
       })),
-        
+        color:this.color
 
       };
     }
@@ -1775,8 +1775,18 @@ bar["stack"]="total";
             show: this.yGridSwitch
           }
         },
-        series: yaxisOptions,
-        
+        series: yaxisOptions.map((series:any) => ({
+          ...series,
+          label: {
+              show:true, // Enable data labels
+              position:'inside', // Position of the labels (e.g., 'top', 'inside', etc.)
+              formatter:'{c}', // Customize the label format (e.g., '{c}' for value)
+              color:'#000', // Customize label color (default black)
+              fontSize:12, // Customize label font size
+              fontWeight:'bold', // Customize label font weight
+              fontFamily:'Helvetica, Arial, sans-serif' // Use custom font family if needed
+          }
+      })),        
 
       };
     }
@@ -1977,17 +1987,46 @@ bar["stack"]="total";
               data: categories,
               axisPointer: {
                 type: 'shadow'
-              }
+              },
+              axisLabel: {
+                color: '#333', // Customize label color
+                fontSize: 12, // Customize font size
+                fontFamily: 'Arial, sans-serif', // Customize font family
+                fontWeight: 'bold', // Customize font weight
+                formatter(value:any) {
+                    return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
+                }
+            }
             }
           ],
           yAxis: [
             {
               type: 'value',
-              name: 'Bar'
+              name: 'Bar',
+              axisLabel: {
+                color: '#333', // Customize label color
+                fontSize: 12, // Customize font size
+                position: 'right',
+                fontFamily: 'Arial, sans-serif', // Customize font family
+                fontWeight: 'bold', // Customize font weight
+                formatter(value:any) {
+                    return value; // Customize label format (e.g., add units)
+                }
+            }
             },
             {
               type: 'value',
-              name: 'Line'
+              name: 'Line',
+              axisLabel: {
+                color: '#333', // Customize label color
+                fontSize: 12, // Customize font size
+                position: 'left',
+                fontFamily: 'Arial, sans-serif', // Customize font family
+                fontWeight: 'bold', // Customize font weight
+                formatter(value:any) {
+                    return value ; // Customize label format (e.g., add units)
+                }
+            }
             }
           ],
           // yAxis: {
@@ -2026,7 +2065,13 @@ bar["stack"]="total";
               //     return value + ' ml';
               //   }
               // },
-              data: this.dualAxisRowData[0]?.data
+              data: this.dualAxisRowData[0]?.data,
+              itemStyle:{
+                color:this.barColor // Default bar color
+            },
+              label:{
+                show:true,
+              }
             },
 
             {
@@ -2040,9 +2085,12 @@ bar["stack"]="total";
               //   }
               // },
               lineStyle: {
-                color: "red"
+                color: this.lineColor
               },
-              data: this.dualAxisRowData[1]?.data
+              data: this.dualAxisRowData[1]?.data,
+              label:{
+                show:true,
+              }
             }
           ]
         };
@@ -2259,7 +2307,18 @@ bar["stack"]="total";
             show: this.yGridSwitch
           }
         },
-        series: yaxisOptions,
+        series:yaxisOptions.map((series:any) => ({
+          ...series,
+          label:{
+              show:true, // Enable data labels
+              position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+              formatter:'{c}', // Display the value of the bar
+              color:'#000', // Default label color (can be updated)
+              fontSize:this.xLabelFontSize, // Default label font size
+              fontWeight:'bold', // Default label font weight
+              fontFamily:this.xLabelFontFamily // Default label font family
+          }
+      })),
         
 
       };
@@ -2417,8 +2476,18 @@ bar["stack"]="total";
               show: this.yGridSwitch
             }
           },
-          series: yaxisOptions,
-          
+          series:yaxisOptions.map((series:any) => ({
+            ...series,
+            label:{
+                show:true, // Enable data labels
+                position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+                formatter:'{c}', // Display the value of the bar
+                color:'#000', // Default label color (can be updated)
+                fontSize:this.xLabelFontSize, // Default label font size
+                fontWeight:'bold', // Default label font weight
+                fontFamily:this.xLabelFontFamily // Default label font family
+            }
+        })),
   
         };
       }
@@ -2633,7 +2702,18 @@ bar["stack"]="Total";
             show: this.yGridSwitch
           }
         },
-        series: yaxisOptions,
+        series:yaxisOptions.map((series:any) => ({
+          ...series,
+          label:{
+              show:true, // Enable data labels
+              position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+              formatter:'{c}', // Display the value of the bar
+              color:'#000', // Default label color (can be updated)
+              fontSize:this.xLabelFontSize, // Default label font size
+              fontWeight:'bold', // Default label font weight
+              fontFamily:this.xLabelFontFamily // Default label font family
+          }
+      })),
         
 
       };
@@ -2851,10 +2931,10 @@ bar["stack"]="Total";
                   interval: 0,
                   rotate: 45,
                   textStyle: {
-                      color: '#333',
-                      fontSize: 12,
-                      fontFamily: 'Helvetica, Arial, sans-serif',
-                      fontWeight: 'normal'
+                      color: this.xLabelColor,
+                      fontSize: this.xLabelFontSize,
+                      fontFamily: this.xLabelFontFamily,
+                      fontWeight: this.xlabelFontWeight,
                   }
               }
           },
@@ -2864,10 +2944,10 @@ bar["stack"]="Total";
               axisLabel: {
                   show: this.yLabelSwitch,
                   textStyle: {
-                      color:'#333',
-                      fontSize : 12,
-                      fontFamily : 'Helvetica, Arial, sans-serif',
-                      fontWeight : 'normal'
+                      color:this.yLabelColor,
+                      fontSize : this.yLabelFontSize,
+                      fontFamily : this.yLabelFontFamily,
+                      fontWeight : this.ylabelFontWeight
                   }
               }
           },
@@ -6015,45 +6095,77 @@ else if(this.area){
   if(this.isApexCharts){
   this.chartOptions1.colors = color;
   object = {colors: [color]};
+  }else{
+    this.eAreaChartOptions.color = color
   }
 }
-else if(this.linechart){
+else if(this.line){
   this.chartOptions.colors = color;
   object = {colors: [color]};
 }
-else if(this.sidebysideChart){
+else if(this.sidebyside){
   if(this.dualAxisRowData){
   }
+  if(this.isApexCharts){
   this.chartOptions2.colors = color;
   object = {colors: [color]};
+  }else{
+  this.eSideBySideBarChartOptions.color = color
+  }
 }
-else if(this.stockedChart){
+else if(this.stocked){
+  if(this.isApexCharts){
   this.chartOptions6.colors = color;
   object = {colors: [color]};
+  }else{
+    this.eStackedBarChartOptions.color = color
+  }
 }
-else if(this.barlineChart){
+else if(this.barLine){
+  if(this.isApexCharts){
   this.chartOptions5.series[0].color = this.barColor;
   this.chartOptions5.series[1].color = this.lineColor;
   object = {colors: [this.barColor, this.lineColor]};
+  }else{
+    this.eBarLineChartOptions.series[0].itemStyle.color = this.barColor;
+    this.eBarLineChartOptions.series[1].itemStyle.color = this.lineColor;
+
+  }
 }
-else if(this.horizontolstockedChart){
+else if(this.horizentalStocked){
+  if(this.isApexCharts){
   this.chartOptions7.colors = color;
   object = {colors: [color]};
+  }else{
+    this.ehorizontalStackedBarChartOptions.color = color
+  }
 }
-else if(this.groupedChart){
+else if(this.grouped){
+  if(this.isApexCharts){
   this.chartOptions8.colors = color;
   object = {colors: [color]};
+  }else{
+    this.eGroupedBarChartOptions.color = color
+  }
 }
 else if(this.multilineChart){
+  if(this.isApexCharts){
   this.chartOptions9.colors = color;
   object = {colors: [color]};
+  }else{
+    this.eMultiLineChartOptions.color = color;
+  }
 }
 else if(this.funnel){
   // this.funnelChartOptions.colors = color;
   // object = {colors: [color]};
+  if(this.isApexCharts){
   this.funnelChartOptions.series[0].color = color;
   object = {series: this.dualAxisRowData}
   object = object.series[0].color = color;
+  }else{
+    this.eFunnelChartOptions.color = color;
+  }
 }
 if(this.isApexCharts){
 this.updateChart(object);
@@ -6681,47 +6793,47 @@ renameColumns(){
     }
     if (this.sidebyside) {
       echarts.init(chartElement).setOption(this.eSideBySideBarChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eSideBySideBarChartOptions)
+      console.log('eSideBySideBarChartOptions afterupdate', this.eSideBySideBarChartOptions)
     }
     if (this.stocked) {
       echarts.init(chartElement).setOption(this.eStackedBarChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eStackedBarChartOptions)
+      console.log('eStackedBarChartOptions afterupdate', this.eStackedBarChartOptions)
     }
     if (this.radar) {
       echarts.init(chartElement).setOption(this.eRadarChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eRadarChartOptions)
+      console.log('eRadarChartOptions optionsafterupdate', this.eRadarChartOptions)
     }
     if (this.heatMap) {
       echarts.init(chartElement).setOption(this.eHeatMapChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eHeatMapChartOptions)
+      console.log('eHeatMapChartOptions optionsafterupdate', this.eHeatMapChartOptions)
     }
     if (this.pie) {
       echarts.init(chartElement).setOption(this.ePieChartOptions);
-      console.log('sidebyside optionsafterupdate', this.ePieChartOptions)
+      console.log('ePieChartOptions optionsafterupdate', this.ePieChartOptions)
     }
     if (this.donut) {
       echarts.init(chartElement).setOption(this.eDonutChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eDonutChartOptions)
+      console.log('eDonutChartOptions optionsafterupdate', this.eDonutChartOptions)
     }
     if (this.grouped) {
       echarts.init(chartElement).setOption(this.eGroupedBarChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eGroupedBarChartOptions)
+      console.log('eGroupedBarChartOptions optionsafterupdate', this.eGroupedBarChartOptions)
     }
     if (this.multiLine) {
       echarts.init(chartElement).setOption(this.eMultiLineChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eMultiLineChartOptions)
+      console.log('eMultiLineChartOptions optionsafterupdate', this.eMultiLineChartOptions)
     }
     if (this.barLine) {
       echarts.init(chartElement).setOption(this.eBarLineChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eBarLineChartOptions)
+      console.log('eBarLineChartOptions optionsafterupdate', this.eBarLineChartOptions)
     }
     if (this.horizentalStocked) {
       echarts.init(chartElement).setOption(this.ehorizontalStackedBarChartOptions);
-      console.log('sidebyside optionsafterupdate', this.ehorizontalStackedBarChartOptions)
+      console.log('ehorizontalStackedBarChartOptions optionsafterupdate', this.ehorizontalStackedBarChartOptions)
     }
     if (this.funnel) {
       echarts.init(chartElement).setOption(this.eFunnelChartOptions);
-      console.log('sidebyside optionsafterupdate', this.eFunnelChartOptions)
+      console.log('eFunnelChartOptions optionsafterupdate', this.eFunnelChartOptions)
     }
   }
   toggleSwitch(type : string) {
@@ -7144,7 +7256,15 @@ renameColumns(){
         show: false
       }];
     }
-    
+    if(this.barLine){
+      this.eBarLineChartOptions.dataZoom = this.isZoom ? [{
+        type: 'slider',
+        show: true
+      }] : [{
+        type: 'slider',
+        show: false
+      }];
+    }
     this.updateEchartOptions()
   }
 
@@ -8120,8 +8240,10 @@ fetchChartData(chartData: any){
           // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions2;
           }else{
-            this.eSideBySideBarChartOptions.series[0].label.fontFamily = font;
-          }
+            this.eSideBySideBarChartOptions.series.forEach((series:any) => {
+              series.label.fontFamily = font; // Set new font family
+          });          
+        }
         }
         else if(this.stocked){
           if(this.isApexCharts){
@@ -8129,31 +8251,61 @@ fetchChartData(chartData: any){
           // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions6;
           }else{
-            this.eStackedBarChartOptions.series[0].label.fontFamily = font;
+            this.eStackedBarChartOptions.series.forEach((series:any) => {
+              series.label.fontFamily = font; // Set new font family
+          });    
           }
         }
         else if(this.barLine){
+          if(this.isApexCharts){
           this.chartOptions5.dataLabels.style.fontFamily = font;
+          }else{
+            this.eBarLineChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
+              series.label.fontFamily = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
+          if(this.isApexCharts){
           this.chartOptions7.dataLabels.style.fontFamily = font;
+          }else{
+            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
+              series.label.fontFamily = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions7;
         }
         else if(this.grouped){
+          if(this.isApexCharts){
           this.chartOptions8.dataLabels.style.fontFamily = font;
+          }else{
+            this.eGroupedBarChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
+              series.label.fontFamily = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions8;
         }
         else if(this.multiLine){
+          if(this.isApexCharts){
           this.chartOptions9.dataLabels.style.fontFamily = font;
+          }else{
+            this.eMultiLineChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
+              series.label.fontFamily = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontFamily: font } } };
           // object = this.chartOptions9;
         }
         else if(this.heatMap){
+          if(this.isApexCharts){
           this.heatMapChartOptions.dataLabels.style.fontFamily = font;
+          }else{
+            this.eHeatMapChartOptions.series[0].label.fontFamily = font;
+          }
         }
         else if(this.funnel){
           this.funnelChartOptions.dataLabels.style.fontFamily = font;
@@ -8197,7 +8349,9 @@ fetchChartData(chartData: any){
           // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions2;
           }else{
-            this.eSideBySideBarChartOptions.series[0].label.fontSize = font;
+            this.eSideBySideBarChartOptions.series.forEach((series:any) => {
+              series.label.fontSize = font; // Set new font family
+          });    
           }
         }
         else if(this.stocked){
@@ -8206,31 +8360,60 @@ fetchChartData(chartData: any){
           // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions6;
           }else{
-            this.eStackedBarChartOptions.series[0].label.fontSize = font;
-          }
+            this.eStackedBarChartOptions.series.forEach((series:any) => {
+              series.label.fontSize = font; // Set new font family
+          });           }
         }
         else if(this.barLine){
+          if(this.isApexCharts){
           this.chartOptions5.dataLabels.style.fontSize = font;
+          }else{
+            this.eBarLineChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
+              series.label.fontSize = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
+          if(this.isApexCharts){
           this.chartOptions7.dataLabels.style.fontSize = font;
+          }else{
+            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
+              series.label.fontSize = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions7;
         }
         else if(this.grouped){
+          if(this.isApexCharts){
           this.chartOptions8.dataLabels.style.fontSize = font;
+          }else{
+            this.eGroupedBarChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
+              series.label.fontSize = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions8;
         }
         else if(this.multiLine){
+          if(this.isApexCharts){
           this.chartOptions9.dataLabels.style.fontSize = font;
+          }else{
+            this.eMultiLineChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
+              series.label.fontSize = font; 
+          });
+          }
           // object = { dataLabels: { style: { fontSize: font } } };
           // object = this.chartOptions9;
         }
         else if(this.heatMap){
+          if(this.isApexCharts){
           this.heatMapChartOptions.dataLabels.style.fontSize = font;
+          }else{
+            this.eHeatMapChartOptions.series[0].label.fontSize = font;
+          }
         }
         else if(this.funnel){
           this.funnelChartOptions.dataLabels.style.fontSize = font;
@@ -8243,7 +8426,7 @@ fetchChartData(chartData: any){
       }
 
       setDataLabelsFontStyle(fontStyle:any){
-        let font;
+        let font: number;
         let object;
         if(fontStyle === 'B'){
           this.isBold = !this.isBold;
@@ -8281,7 +8464,9 @@ fetchChartData(chartData: any){
             // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions2;
             }else{
-              this.eSideBySideBarChartOptions.series[0].label.fontWeight = font;
+              this.eSideBySideBarChartOptions.series.forEach((series:any) => {
+                series.label.fontWeight = font; // Set new font family
+            });    
             }
           }
           else if(this.stocked){
@@ -8290,31 +8475,60 @@ fetchChartData(chartData: any){
             // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions6;
             }else{
-              this.eStackedBarChartOptions.series[0].label.fontWeight = font;
-            }
+              this.eStackedBarChartOptions.series.forEach((series:any) => {
+                series.label.fontWeight = font; // Set new font family
+            });             }
           }
           else if(this.barLine){
+            if(this.isApexCharts){
             this.chartOptions5.dataLabels.style.fontWeight = font;
+            }else{
+              this.eBarLineChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
+                series.label.fontWeight = font; 
+            });
+            }
             // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions5;
           }
           else if(this.horizentalStocked){
+            if(this.isApexCharts){
             this.chartOptions7.dataLabels.style.fontWeight = font;
+            }else{
+              this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
+                series.label.fontWeight = font; 
+            });
+            }
             // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions7;
           }
           else if(this.grouped){
+            if(this.isApexCharts){
             this.chartOptions8.dataLabels.style.fontWeight = font;
+            }else{
+              this.eGroupedBarChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
+                series.label.fontWeight = font; 
+            });
+            }
             // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions8;
           }
           else if(this.multiLine){
+            if(this.isApexCharts){
             this.chartOptions9.dataLabels.style.fontWeight = font;
+            }else{
+              this.eMultiLineChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
+                series.label.fontWeight = font; 
+            });
+            }
             // object = { dataLabels: { style: { fontWeight: font } } };
             // object = this.chartOptions9;
           }
           else if(this.heatMap){
+            if(this.isApexCharts){
             this.heatMapChartOptions.dataLabels.style.fontWeight = font;
+            }else{
+              this.eHeatMapChartOptions.series[0].label.fontWeight = font;
+            }
           }
           else if(this.funnel){
             this.funnelChartOptions.dataLabels.style.fontWeight = font;
@@ -8375,7 +8589,9 @@ fetchChartData(chartData: any){
           // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions2;
           }else{
-            this.eSideBySideBarChartOptions.series[0].label.color = color;
+            this.eSideBySideBarChartOptions.series.forEach((series:any) => {
+              series.label.color = color; // Set new font family
+          }); 
           }
         }
         else if(this.stocked){
@@ -8384,31 +8600,61 @@ fetchChartData(chartData: any){
           // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions6;
           }else{
-            this.eStackedBarChartOptions.series[0].label.color = color;
+            this.eStackedBarChartOptions.series.forEach((series:any) => {
+              series.label.color = color; // Set new font family
+          }); 
           }
         }
         else if(this.barLine){
+          if(this.isApexCharts){
           this.chartOptions5.dataLabels.style.colors = [color];
+          }else{
+            this.eBarLineChartOptions.series.forEach((series: { label: { color: any; }; }) => {
+              series.label.color = color; 
+          });
+          }
           // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions5;
         }
         else if(this.horizentalStocked){
+          if(this.isApexCharts){
           this.chartOptions7.dataLabels.style.colors = [color];
+          }else{
+            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { color: any; }; }) => {
+              series.label.color = color; 
+          });
+          }
           // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions7;
         }
         else if(this.grouped){
+          if(this.isApexCharts){
           this.chartOptions8.dataLabels.style.colors = [color];
+          }else{
+            this.eGroupedBarChartOptions.series.forEach((series: { label: { color: any; }; }) => {
+              series.label.color = color; 
+          });
+          }
           // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions8;
         }
         else if(this.multiLine){
+          if(this.isApexCharts){
           this.chartOptions9.dataLabels.style.colors = [color];
+          }else{
+            this.eMultiLineChartOptions.series.forEach((series: { label: { color: any; }; }) => {
+              series.label.color = color; 
+          });
+          }
           // object = { dataLabels: { style: { colors : [color] } } };
           // object = this.chartOptions9;
         }
         else if(this.heatMap){
+          if(this.isApexCharts){
           this.heatMapChartOptions.dataLabels.style.colors = [color];
+          }else{
+            this.eHeatMapChartOptions.series[0].label.color = color;
+          }
         }
         else if(this.funnel){
           this.funnelChartOptions.dataLabels.style.colors = [color];
@@ -8443,30 +8689,55 @@ fetchChartData(chartData: any){
           if(this.isApexCharts){
           this.chartOptions2.plotOptions.bar.dataLabels.position = position;
           }else{
-            this.eSideBySideBarChartOptions.series[0].label.position = position;
-          }
+          this.eSideBySideBarChartOptions.series.forEach((series:any) => {
+            series.label.position = position; // Set new font family
+        });   
+        } 
         }
         else if(this.stocked){
           if(this.isApexCharts){
           this.chartOptions6.plotOptions.bar.dataLabels.position = position;
           }else{
-            this.eStackedBarChartOptions.series[0].label.position = position;
+            this.eStackedBarChartOptions.series.forEach((series:any) => {
+              series.label.position = position; // Set new font family
+          }); 
           }
         }
         else if(this.barLine){
-          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          if(this.isApexCharts){
           this.chartOptions5.plotOptions.bar.dataLabels.position = position;
+          }else{
+            this.eBarLineChartOptions.series.forEach((series: { label: { position: any; }; }) => {
+              series.label.position = position; 
+          });
+          }
         }
         else if(this.horizentalStocked){
           // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          if(this.isApexCharts){
           this.chartOptions7.plotOptions.bar.dataLabels.position = position;
+          }else{
+            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { position: any; }; }) => {
+              series.label.position = position; 
+          });
+          }
         }
         else if(this.grouped){
           // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
+          if(this.isApexCharts){
           this.chartOptions8.plotOptions.bar.dataLabels.position = position;
+          }else{
+            this.eGroupedBarChartOptions.series.forEach((series: { label: { position: any; }; }) => {
+              series.label.position = position; 
+          });
+          }
         }
         else if(this.heatMap){
+          if(this.isApexCharts){
           this.heatMapChartOptions.plotOptions.bar.dataLabels.position = position;
+          }else{
+            this.eHeatMapChartOptions.series[0].label.position = position;
+          }
         }
         else if(this.funnel){
           this.funnelChartOptions.plotOptions.bar.dataLabels.position = position;
@@ -8613,24 +8884,40 @@ fetchChartData(chartData: any){
           this.eStackedBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily; 
         }
       }
-      else if(this.barlineChart){
+      else if(this.barLine){
         if(this.isApexCharts){
         this.chartOptions5.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
         }else{
-          this.eBarLineChartOptions.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+          this.eBarLineChartOptions.xAxis[0].axisLabel.fontFamily = this.xLabelFontFamily;
         }
       }
-      else if(this.horizontolstockedChart){
+      else if(this.horizentalStocked){
+        if(this.isApexCharts){
         this.chartOptions7.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+        }else{
+          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
+        }
       }
-      else if(this.groupedChart){
+      else if(this.grouped){
+        if(this.isApexCharts){
         this.chartOptions8.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+        }else{
+          this.eGroupedBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
+        }
       }
-      else if(this.multilineChart){
+      else if(this.multiLine){
+        if(this.isApexCharts){
         this.chartOptions9.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+        }else{
+          this.eMultiLineChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
+        }
       }
       else if(this.heatMap){
+        if(this.isApexCharts){
         this.heatMapChartOptions.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
+        }else{
+          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.fontFamily = this.xLabelFontFamily;
+        }
       }
       if(this.isApexCharts){
       this.updateChart(object);
@@ -8675,20 +8962,40 @@ fetchChartData(chartData: any){
         this.eStackedBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;  
         }
       }
-      else if(this.barlineChart){
+      else if(this.barLine){
+        if(this.isApexCharts){
         this.chartOptions5.xaxis.labels.style.fontSize = this.xLabelFontSize;
+        }else{
+          this.eBarLineChartOptions.xAxis[0].axisLabel.fontSize = this.xLabelFontSize;
+        }
       }
-      else if(this.horizontolstockedChart){
+      else if(this.horizentalStocked){
+        if(this.isApexCharts){
         this.chartOptions7.xaxis.labels.style.fontSize = this.xLabelFontSize;
+        }else{
+          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
+        }
       }
-      else if(this.groupedChart){
+      else if(this.grouped){
+        if(this.isApexCharts){
         this.chartOptions8.xaxis.labels.style.fontSize = this.xLabelFontSize;
+        }else{
+          this.eGroupedBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
+        }
       }
-      else if(this.multilineChart){
+      else if(this.multiLine){
+        if(this.isApexCharts){
         this.chartOptions9.xaxis.labels.style.fontSize = this.xLabelFontSize;
+        }else{
+          this.eMultiLineChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize
+        }
       }
       else if(this.heatMap){
+        if(this.isApexCharts){
         this.heatMapChartOptions.xaxis.labels.style.fontSize = this.xLabelFontSize;
+        }else{
+          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.fontSize = this.xLabelFontSize
+        }
       }
       if(this.isApexCharts){
       this.updateChart(object);
@@ -8733,20 +9040,40 @@ fetchChartData(chartData: any){
           this.eStackedBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
         }
       }
-      else if(this.barlineChart){
+      else if(this.barLine){
+        if(this.isApexCharts){
         this.chartOptions5.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+        }else{
+          this.eBarLineChartOptions.xAxis[0].axisLabel.fontWeight = this.xlabelFontWeight;
+        }
       }
-      else if(this.horizontolstockedChart){
+      else if(this.horizentalStocked){
+        if(this.isApexCharts){
         this.chartOptions7.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+        }else{
+          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
+        }
       }
-      else if(this.groupedChart){
+      else if(this.grouped){
+        if(this.isApexCharts){
         this.chartOptions8.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+        }else{
+          this.eGroupedBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight
+        }
       }
-      else if(this.multilineChart){
+      else if(this.multiLine){
+        if(this.isApexCharts){
         this.chartOptions9.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+        }else{
+          this.eMultiLineChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight
+        }
       }
       else if(this.heatMap){
+        if(this.isApexCharts){
         this.heatMapChartOptions.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
+        }else{
+          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.fontWeight = this.xlabelFontWeight
+        }
       }
       if(this.isApexCharts){
       this.updateChart(object);
@@ -8776,6 +9103,21 @@ fetchChartData(chartData: any){
         }
         if(this.stocked){
           this.eStackedBarChartOptions.xAxis.axisLabel.color = color;
+        }
+        if(this.barLine){
+          this.eBarLineChartOptions.xAxis[0].axisLabel.color = color;
+        }
+        if(this.horizentalStocked){
+          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.color = color;
+        }
+        if(this.grouped){
+          this.eGroupedBarChartOptions.xAxis.axisLabel.color = color;
+        }
+        if(this.multiLine){
+          this.eMultiLineChartOptions.xAxis.axisLabel.color = color;
+        }
+        if(this.heatMap){
+          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.color = color;
         }
         this.updateEchartOptions();
     }
@@ -8851,7 +9193,8 @@ fetchChartData(chartData: any){
         this.eStackedBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
       }
       }
-      else if(this.barlineChart){
+      else if(this.barLine){
+        if(this.isApexCharts){
         if (this.chartOptions5.yaxis.length > 0) {
           (this.chartOptions5.yaxis as any[]).forEach((data) => {
             data.labels.style.fontFamily = this.yLabelFontFamily;
@@ -8860,8 +9203,14 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions5.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
         }
+      }else{
+        this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { fontFamily: string; }; }) => {
+          axis.axisLabel.fontFamily = this.yLabelFontFamily; // Update Y-axis label size
+        });
       }
-      else if(this.horizontolstockedChart){
+      }
+      else if(this.horizentalStocked){
+        if(this.isApexCharts){
         if (this.chartOptions7.yaxis.length > 0) {
           (this.chartOptions7.yaxis as any[]).forEach((data) => {
             data.labels.style.fontFamily = this.yLabelFontFamily;
@@ -8870,8 +9219,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions7.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
         }
+      }else{
+        this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
       }
-      else if(this.groupedChart){
+      }
+      else if(this.grouped){
+        if(this.isApexCharts){
         if (this.chartOptions8.yaxis.length > 0) {
           (this.chartOptions8.yaxis as any[]).forEach((data) => {
             data.labels.style.fontFamily = this.yLabelFontFamily;
@@ -8880,8 +9233,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions8.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
         }
+      }else{
+        this.eGroupedBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
       }
-      else if(this.multilineChart){
+      }
+      else if(this.multiLine){
+        if(this.isApexCharts){
         if (this.chartOptions9.yaxis.length > 0) {
           (this.chartOptions9.yaxis as any[]).forEach((data) => {
             data.labels.style.fontFamily = this.yLabelFontFamily;
@@ -8890,8 +9247,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions9.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
         }
+      }else{
+        this.eMultiLineChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
+      }
       }
       else if(this.heatMap){
+        if(this.isApexCharts){
         if (this.heatMapChartOptions.yaxis.length > 0) {
           (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
             data.labels.style.fontFamily = this.yLabelFontFamily;
@@ -8900,6 +9261,9 @@ fetchChartData(chartData: any){
         else {
           this.heatMapChartOptions.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
         }
+      }else{
+        this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.fontFamily = this.yLabelFontFamily;
+      }
       }
       if(this.isApexCharts){
       this.updateChart(object);
@@ -8981,7 +9345,8 @@ fetchChartData(chartData: any){
         this.eStackedBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
       }
       }
-      else if(this.barlineChart){
+      else if(this.barLine){
+        if(this.isApexCharts){
         if (this.chartOptions5.yaxis.length > 0) {
           (this.chartOptions5.yaxis as any[]).forEach((data) => {
             data.labels.style.fontSize = this.yLabelFontSize;
@@ -8990,8 +9355,14 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions5.yaxis.labels.style.fontSize = this.yLabelFontSize;
         }
+      }else{
+         this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { fontSize: number; }; }) => {
+          axis.axisLabel.fontSize = this.yLabelFontSize; // Update Y-axis label size
+        });
+        }
       }
-      else if(this.horizontolstockedChart){
+      else if(this.horizentalStocked){
+        if(this.isApexCharts){
         if (this.chartOptions7.yaxis.length > 0) {
           (this.chartOptions7.yaxis as any[]).forEach((data) => {
             data.labels.style.fontSize = this.yLabelFontSize;
@@ -9000,8 +9371,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions7.yaxis.labels.style.fontSize = this.yLabelFontSize;
         }
+      }else{
+        this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
       }
-      else if(this.groupedChart){
+      }
+      else if(this.grouped){
+        if(this.isApexCharts){
         if (this.chartOptions8.yaxis.length > 0) {
           (this.chartOptions8.yaxis as any[]).forEach((data) => {
             data.labels.style.fontSize = this.yLabelFontSize;
@@ -9010,8 +9385,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions8.yaxis.labels.style.fontSize = this.yLabelFontSize;
         }
+      }else{
+        this.eGroupedBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
       }
-      else if(this.multilineChart){
+      }
+      else if(this.multiLine){
+        if(this.isApexCharts){
         if (this.chartOptions9.yaxis.length > 0) {
           (this.chartOptions9.yaxis as any[]).forEach((data) => {
             data.labels.style.fontSize = this.yLabelFontSize;
@@ -9020,8 +9399,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions9.yaxis.labels.style.fontSize = this.yLabelFontSize;
         }
+      }else{
+        this.eMultiLineChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
+      }
       }
       else if(this.heatMap){
+        if(this.isApexCharts){
         if (this.heatMapChartOptions.yaxis.length > 0) {
           (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
             data.labels.style.fontSize = this.yLabelFontSize;
@@ -9030,6 +9413,9 @@ fetchChartData(chartData: any){
         else {
           this.heatMapChartOptions.yaxis.labels.style.fontSize = this.yLabelFontSize;
         }
+      }else{
+        this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.fontSize = this.yLabelFontSize;
+      }
       }
       if(this.isApexCharts){
       this.updateChart(object);
@@ -9109,7 +9495,8 @@ fetchChartData(chartData: any){
         this.eStackedBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
       }
       }
-      else if(this.barlineChart){
+      else if(this.barLine){
+        if(this.isApexCharts){
         if (this.chartOptions5.yaxis.length > 0) {
           (this.chartOptions5.yaxis as any[]).forEach((data) => {
             data.labels.style.fontWeight = this.ylabelFontWeight;
@@ -9118,8 +9505,13 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions5.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
         }
+      }else{
+        this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { fontWeight: number; }; }) => {
+          axis.axisLabel.fontWeight = this.ylabelFontWeight; // Update Y-axis label size
+        });      }
       }
-      else if(this.horizontolstockedChart){
+      else if(this.horizentalStocked){
+        if(this.isApexCharts){
         if (this.chartOptions7.yaxis.length > 0) {
           (this.chartOptions7.yaxis as any[]).forEach((data) => {
             data.labels.style.fontWeight = this.ylabelFontWeight;
@@ -9128,8 +9520,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions7.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
         }
+      }else{
+        this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
+      }
       }
       else if(this.groupedChart){
+        if(this.isApexCharts){
         if (this.chartOptions8.yaxis.length > 0) {
           (this.chartOptions8.yaxis as any[]).forEach((data) => {
             data.labels.style.fontWeight = this.ylabelFontWeight;
@@ -9138,8 +9534,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions8.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
         }
+      }else{
+        this.eGroupedBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
       }
-      else if(this.multilineChart){
+      }
+      else if(this.multiLine){
+        if(this.isApexCharts){
         if (this.chartOptions9.yaxis.length > 0) {
           (this.chartOptions9.yaxis as any[]).forEach((data) => {
             data.labels.style.fontWeight = this.ylabelFontWeight;
@@ -9148,8 +9548,12 @@ fetchChartData(chartData: any){
         else {
           this.chartOptions9.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
         }
+      }else{
+        this.eMultiLineChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
+      }
       }
       else if(this.heatMap){
+        if(this.isApexCharts){
         if (this.heatMapChartOptions.yaxis.length > 0) {
           (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
             data.labels.style.fontWeight = this.ylabelFontWeight;
@@ -9158,6 +9562,9 @@ fetchChartData(chartData: any){
         else {
           this.heatMapChartOptions.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
         }
+      }else{
+        this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.fontWeight = this.ylabelFontWeight;
+      }
       }
       if(this.isApexCharts){
       this.updateChart(object);
@@ -9187,6 +9594,23 @@ fetchChartData(chartData: any){
         }
         if(this.stocked){
           this.eStackedBarChartOptions.yAxis.axisLabel.color = color;
+        }
+        if(this.barLine){
+          this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { color: any; }; }) => {
+            axis.axisLabel.color = color; // Update Y-axis label size
+          });
+        }
+        if(this.horizentalStocked){
+          this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.color = color;
+        }
+        if(this.multiLine){
+          this.eMultiLineChartOptions.yAxis.axisLabel.color = color;
+        }
+        if(this.grouped){
+          this.eGroupedBarChartOptions.yAxis.axisLabel.color = color;
+        }
+        if(this.heatMap){
+          this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.color = color;
         }
         this.updateEchartOptions();
     }
