@@ -466,7 +466,7 @@ if(this.fromFileId){
         else {
           this.SheetSavePlusEnabled.splice(0, 1);
           this.sheetNumber = 1;
-          this.addSheet();
+          this.addSheet(false);
         }
       },
       error: (error) => {
@@ -3397,7 +3397,7 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if((this.draggedColumns.length > 0 && this.draggedRows.length > 1 && (this.pie || this.bar || this.area || this.line || this.donut))) {
+            } else if((this.draggedColumns.length > 1 && this.draggedRows.length > 0 && (this.pie || this.bar || this.area || this.line || this.donut))) {
               this.table = false;
               this.bar = false;
               this.area = false;
@@ -3983,7 +3983,7 @@ bar["stack"]="Total";
   // }
   tabs : any [] = [];
   selected = new FormControl(0);
-  addSheet() {
+  addSheet(isDuplicate : boolean) {
     this.retriveDataSheet_id = '';
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
@@ -3999,7 +3999,9 @@ bar["stack"]="Total";
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
-      this.getChartData();
+      if(!isDuplicate){
+        this.getChartData();
+      }
       this.sheetNumber = this.tabs.length+1;
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
@@ -4010,6 +4012,12 @@ bar["stack"]="Total";
     this.kpi=false;
     this.resetCustomizations();
   }
+
+  sheetDuplicate(){
+    this.addSheet(true);
+    this.dataExtraction();
+  }
+
   sheetNameChange(name:any,event:any){
     console.log(this.SheetIndex)
     // if (event.keyCode === 13) {

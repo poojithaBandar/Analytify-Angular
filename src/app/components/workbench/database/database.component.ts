@@ -53,6 +53,7 @@ export class DatabaseComponent {
   tableName:any;
   tableJoiningList : any[] = [];
   joiningConditions : any[] = [];
+  tableCustomJoinError : boolean = false;
   selectedClmnT1:any;
   selectedClmnT2:any;
   getSelectedT1:any;
@@ -675,9 +676,11 @@ joiningTablesWithoutQuerySetId(){
         console.log('relation',this.relationOfTables);
         this.getJoiningTableData();
         this.buildCustomJoin();
+        this.tableCustomJoinError = false;
       },
       error:(error:any)=>{
       console.log(error);
+      this.tableCustomJoinError = true;
       Swal.fire({
         icon: 'error',
         title: 'oops!',
@@ -692,6 +695,7 @@ joiningTables(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
    console.log(schemaTablePairs)
    this.relationOfTables.push([])
+   this.relationOfTables = this.relationOfTables.slice(0,this.joinTypes.length + 1);
   const obj ={
     query_set_id:this.qurtySetId,
     database_id:this.databaseId,
@@ -724,9 +728,16 @@ joiningTables(){
         this.buildCustomJoin();
         // this.getJoiningTableData();
         this.gotoSheetButtonDisable = false;
+        this.tableCustomJoinError = false;
       },
       error:(error:any)=>{
       console.log(error);
+      this.tableCustomJoinError = true;
+      if(error.error?.joining_condition && error.error?.joining_condition.length) {
+        this.joinTypes.push("inner");
+        this.relationOfTables[this.relationOfTables.length - 1] = [{}];
+        this.buildCustomJoin();
+      }
       Swal.fire({
         icon: 'error',
         title: 'oops!',
@@ -823,9 +834,11 @@ joiningTablesFromDelete(){
           this.getJoiningTableData();
         }
         this.buildCustomJoin();
+        this.tableCustomJoinError = false;
       },
       error:(error:any)=>{
       console.log(error);
+      this.tableCustomJoinError = true;
       Swal.fire({
         icon: 'error',
         title: 'oops!',
@@ -898,16 +911,18 @@ customTableJoin(){
         this.buildCustomJoin();
         // this.getJoiningTableData();
         this.clearJoinCondns();
+        this.tableCustomJoinError = false;
       },
       error:(error:any)=>{
       console.log(error);
+      this.tableCustomJoinError = true;
       Swal.fire({
         icon: 'error',
         title: 'oops!',
         text: error.error.message,
         width: '400px',
       })
-      this.relationOfTables.pop();
+      // this.relationOfTables.pop();
     }
     })
   // }
