@@ -1227,7 +1227,7 @@
                                     <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click')">
                                         Cancel
                                     </button>
-                                    <button type="button" class="btn ripple btn-primary" (click)="moveToDashboard(); modal.close('Save click')">Ok</button>
+                                    <button type="button" class="btn ripple btn-primary" [disabled]="!selectedDashboardId" (click)="moveToDashboard(); modal.close('Save click')">Ok</button>
                                 </div>
                             </ng-template>
                         </div>
@@ -2733,7 +2733,7 @@
                                                         [format]="'hex'">
                                                         </ngx-colors>
                                                     </div> -->
-                                                    <div *ngIf="funnel">
+                                                    <div *ngIf="funnel && isApexCharts">
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <label for="sorting">Sort by:</label>
                                                             <select id="sorting" (change)="sortSeries($event)">
