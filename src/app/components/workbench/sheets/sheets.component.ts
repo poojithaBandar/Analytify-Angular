@@ -4042,11 +4042,16 @@ bar["stack"]="Total";
     }
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
+    this.dateDrillDownSwitch = false;
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
     this.draggedRows.splice(index, 1);
     this.draggedRowsData.splice(index, 1);
+    if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
+      this.draggedDrillDownColumns = [];
+    }
+    this.dateDrillDownSwitch = false;
   //   (this.draggedRowsData as any[]).forEach((data,index)=>{
   //    (data as any[]).forEach((aa)=>{ 
   //      if(column === aa){
