@@ -106,7 +106,7 @@
                                         slice:0:16}}({{item.schema | slice:0:12}})
                                         <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
-                                        <a aria-label="anchor" (click)="onDeleteItem($index)"
+                                        <a aria-label="anchor" (click)="onDeleteItem($index,item.alias)"
                                             class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                             <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                                         </a>

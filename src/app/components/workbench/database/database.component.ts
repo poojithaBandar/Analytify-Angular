@@ -22,6 +22,7 @@ import { tickStep } from 'd3';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LoaderService } from '../../../shared/services/loader.service';
+import _ from 'lodash';
 
 
 @Component({
@@ -511,21 +512,34 @@ getTablerowclms(table:any,schema:any){
 //   })
 // }
 
-onDeleteItem(index: number) {
+onDeleteItem(index: number, tableName : string) {
+  if(index <= 0){
+    this.relationOfTables =[];
+    this.joinTypes = [];
+    this.draggedtables = [];
+    this.saveQueryName =  '';
+    this.gotoSheetButtonDisable = true;
+  } else {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
-   console.log(this.draggedtables);
-  //  const schema = this.draggedtables[index].schema
-  //  const tablename = this.draggedtables[index].table
-  //  const tablealias = this.draggedtables[index].alias
-
-
-  //  if(this.draggedtables.length !== 0){
-    const deleteIndex = index - 1
-    this.relationOfTables.splice(deleteIndex,1)
-   this.joiningTablesFromDelete();
    this.isOpen = false;
-  //  }
+   this.deleteJoiningCondition(tableName)
   this.filterColumnsT1();
+  }
+  this.joiningTablesFromDelete();
+}
+
+deleteJoiningCondition(tableName: string): void {
+ let data = _.cloneDeep(this.relationOfTables);
+  for (let i = 0; i < this.relationOfTables.length; i++) {
+    const conditionGroup = data[i];
+    const conditionIndex = conditionGroup.findIndex((condition: any) => 
+      condition.table1.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '') || condition.table2.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '')
+    );
+    if (conditionIndex !== -1) {
+      conditionGroup.splice(conditionIndex, 1);
+    }
+  }
+  this.relationOfTables = data;
 }
 buildCustomRelation(){
   const parts = this.selectedClmnT1.split('(');
