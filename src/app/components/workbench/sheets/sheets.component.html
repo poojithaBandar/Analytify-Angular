@@ -1717,7 +1717,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -1865,7 +1865,7 @@
                                                                         </div>
                                                                       </div>
                                                                     </div>
-                                                                      @if(kpi){
+                                                                      <!-- @if(kpi){
                                                                         <div class="row">
                                                                           <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
                                                                           <input type="number" id="decimal-places" [(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
@@ -1888,7 +1888,7 @@
                                                                           <label for="suffix">Suffix:</label>
                                                                           <input type="text" id="suffix" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
                                </div>
-                                                                      }
+                                                                      } -->
                                                                       <!-- <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                           <div class="col-md-8">
@@ -1948,7 +1948,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || guage || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || guage || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1975,7 +1975,7 @@
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="sub-menu-item  p-2 mb-0" >
+                                                                <div class="sub-menu-item  p-2 mb-0" *ngIf="!kpi">
                                                                   <div class="row">
                                                                     <div class="" >
                                                                         <div class="font-color-card">
@@ -2051,7 +2051,7 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(heatMap || line || area || multiLine || barLine)">
+                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(heatMap || line || area || multiLine || barLine || kpi)">
                                                                 <div class="row">
                                                                   <div class="">
                                                                       <div class="font-color-card">
@@ -2108,6 +2108,30 @@
                                                                     <option value="bottom">BOTTOM</option>
                                                                 </select>
                                                               </div> -->
+                                                              @if(kpi){
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
+                                                                  <input type="number" class="form-control fs-14" id="decimal-places" style="width: auto;"[(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
+                                                                  </div>
+                                                                  <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="display-units">Display Units:</label>
+                                                                  <select id="display-units" class="form-select select2 fs-14" style="width: auto;" [(ngModel)]="KPIDisplayUnits" (change)="formatKPINumber()">
+                                                                    <option value="none">None</option>
+                                                                    <option value="K">Thousands (K)</option>
+                                                                    <option value="M">Millions (M)</option>
+                                                                    <option value="B">Billions (B)</option>
+                                                                    <option value="G">Billions (G)</option>
+                                                                  </select>
+                                                                  </div>
+                                                                  <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="prefix">Prefix:</label>
+                                                                  <input type="text" class="form-control fs-14" id="prefix" style="width: auto;" [(ngModel)]="KPIPrefix" (input)="formatKPINumber()">
+                                                                  </div>
+                                                                  <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="suffix">Suffix:</label>
+                                                                  <input type="text" class="form-control fs-14" id="suffix" style="width: auto;" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
+                                                                </div>
+                                                              }
                                                               @if(!kpi){
                                                                 <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                                     <label>Numbers</label>
@@ -2373,7 +2397,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && !bandingSwitch) || guage || calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((kpi || guage) && draggedRows.length === 1) || !((table && !bandingSwitch) || guage || calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2847,10 +2871,10 @@
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
-                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="customMinMaxGuage()" />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="minValueGuage" id="minValue" (change)="customMinMaxGuage()" />
                                                           
                                                             <label for="maxValue">Enter Maximum Value:</label>
-                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
                                                         </div>
                                                     </div>
                                                     <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
