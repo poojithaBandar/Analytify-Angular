@@ -1183,7 +1183,7 @@
                                 <li role="presentation" class="nav-item">
                                     <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
-                                        class="nav-link BtnNewStyle" (click)="addSheet(false)" style="padding: 14px;">
+                                        class="nav-link BtnNewStyle" (click)="addSheet()" style="padding: 14px;">
                                         <i class="fa fa-plus-square-o"></i>
                                     </button>
                                 </li>
@@ -1195,13 +1195,13 @@
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
-                            <!-- <li role="presentation" class="nav-item">
+                            <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" ngbtooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle"
                                     (click)="sheetDuplicate()" style="padding: 14px;">
-                                    <i class="fe fe-trash"></i>
+                                    <i class="fa fa-copy"></i>
                                 </button>
-                            </li> -->
+                            </li>
                         </ul>
                         <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
                             <ng-template #content let-modal>

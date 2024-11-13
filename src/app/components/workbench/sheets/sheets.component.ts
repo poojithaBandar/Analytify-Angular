@@ -466,7 +466,7 @@ if(this.fromFileId){
         else {
           this.SheetSavePlusEnabled.splice(0, 1);
           this.sheetNumber = 1;
-          this.addSheet(false);
+          this.addSheet();
         }
       },
       error: (error) => {
@@ -4130,7 +4130,7 @@ bar["stack"]="Total";
   // }
   tabs : any [] = [];
   selected = new FormControl(0);
-  addSheet(isDuplicate : boolean) {
+  addSheet() {
     this.retriveDataSheet_id = '';
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
@@ -4146,9 +4146,7 @@ bar["stack"]="Total";
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
-      if(!isDuplicate){
-        this.getChartData();
-      }
+      this.getChartData();
       this.sheetNumber = this.tabs.length+1;
        this.tabs.push('Sheet ' +this.sheetNumber);
        this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
@@ -4161,8 +4159,13 @@ bar["stack"]="Total";
   }
 
   sheetDuplicate(){
-    this.addSheet(true);
-    this.dataExtraction();
+    this.sheetNumber = this.tabs.length+1;
+    this.tabs.push('Sheet ' +this.sheetNumber);
+    this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+    this.selectedTabIndex = this.tabs.length - 1;
+    this.sheetTagName = 'Sheet ' +this.sheetNumber;
+    // this.setChartType();
+    this.sheetRetrive(true);
   }
 
   sheetNameChange(name:any,event:any){
@@ -4263,7 +4266,7 @@ bar["stack"]="Total";
     this.getChartData();
     if(selectedSheetId){
       this.retriveDataSheet_id = selectedSheetId;
-      this.sheetRetrive();
+      this.sheetRetrive(false);
     }
 
     // const obj = {
@@ -4925,7 +4928,7 @@ if(this.retriveDataSheet_id){
 
   }
 sheetTagTitle : any;
-sheetRetrive(){
+sheetRetrive(isDuplicate : boolean){
   this.getChartData();
   console.log(this.tabs);
   const obj={
@@ -4938,11 +4941,20 @@ if(this.fromFileId){
 }
 
 this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
-          console.log(responce);
-        this.retriveDataSheet_id = responce.sheet_id;
+        if(isDuplicate){
+          this.retriveDataSheet_id = '';
+        } else {
+          this.retriveDataSheet_id = responce.sheet_id;
+          this.sheetName = responce.sheet_name;
+          this.sheetTitle = responce.sheet_name;
+          if(!responce.sheet_tag_name){
+            this.sheetTagName = responce.sheet_name;
+          }
+          else{
+            this.sheetTagName = responce.sheet_tag_name;
+          }
+        }
         this.chartId = responce.chart_id;
-        this.sheetName = responce.sheet_name;
-        this.sheetTitle = responce.sheet_name;
         this.sheetCustomQuery = responce.custom_query;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
@@ -4985,17 +4997,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         } else {
           this.isApexCharts = true;
           this.selectedChartPlugin = 'apex';
-        }
-        if(!responce.sheet_tag_name){
-          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          // inputElement.innerHTML = responce.sheet_name;
-          this.sheetTagName = responce.sheet_name;
-        }
-        else{
-          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          // inputElement.innerHTML = responce.sheet_tag_name;
-          // inputElement.style.paddingTop = '1.5%';
-          this.sheetTagName = responce.sheet_tag_name;
         }
         this.sheetTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.sheetTagName);
         // this.displayUnits = 'none';
@@ -7512,7 +7513,7 @@ fetchChartData(chartData: any){
     }
     if(this.retriveDataSheet_id){
       if((this.sheetResponce.isEChart && this.isEChatrts) || (this.sheetResponce.isApexChart && this.isApexCharts)){
-        this.sheetRetrive();
+        this.sheetRetrive(false);
       } else {
         this.reAssignChartData();
         this.resetCustomizations();
