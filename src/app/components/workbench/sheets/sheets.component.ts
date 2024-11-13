@@ -43,6 +43,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatTooltipModule
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
+import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -891,6 +892,7 @@ if(this.fromFileId){
         legend: {
           orient: 'vertical',
           left: 'left',
+          type:'scroll',
           show: this.legendSwitch 
           },
               label: {
@@ -1979,7 +1981,7 @@ bar["stack"]="total";
             }
           },
           legend: {
-
+            show:true
           },
           xAxis: [
             {
@@ -1989,9 +1991,9 @@ bar["stack"]="total";
                 type: 'shadow'
               },
               axisLabel: {
-                color: '#333', // Customize label color
-                fontSize: 12, // Customize font size
-                fontFamily: 'Arial, sans-serif', // Customize font family
+                color: this.xLabelColor, // Customize label color
+                fontSize: this.xLabelFontSize, // Customize font size
+                fontFamily: this.xLabelFontFamily, // Customize font family
                 fontWeight: 'bold', // Customize font weight
                 formatter(value:any) {
                     return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
@@ -2038,7 +2040,13 @@ bar["stack"]="total";
                 formatter(value:any) {
                     return value ; // Customize label format (e.g., add units)
                 }
-            }
+            },
+            splitLine: {
+              lineStyle: {
+                  color: this.yGridColor || '#cccccc' // Default x-axis grid line color
+              },
+              show: this.yGridSwitch // Toggle visibility based on user input
+          }
             }
           ],
           // yAxis: {
@@ -2832,6 +2840,7 @@ bar["stack"]="Total";
             legend: {
               orient: 'vertical',
               left: 'left',
+              type:'scroll',
               show: this.legendSwitch // Control legend visibility
           },            
           // label: {
@@ -3066,6 +3075,8 @@ bar["stack"]="Total";
             data: combinedArray,
             label: {
               show: true,
+              fontFamily:this.dataLabelsFontFamily,
+              fontSize:this.dataLabelsFontSize,
               formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
             },
           },
@@ -3109,13 +3120,6 @@ bar["stack"]="Total";
         legend: {
           show: false
         },
-        dataZoom: [
-          {
-            show: this.isZoom,
-            type: 'slider'
-          },
-
-        ],
       };
     }
   }
@@ -3164,10 +3168,13 @@ bar["stack"]="Total";
           chart: {
             height: 350,
             type: 'radialBar',
+            background: this.backgroundColor,
             toolbar: {
               show: true
             },
           },
+          colors: [this.color],
+
           plotOptions: {
             radialBar: {
               startAngle: -120,
@@ -3188,7 +3195,8 @@ bar["stack"]="Total";
                 value: {
                   formatter: (val:any) => `${val.toFixed(2)}%`, // Displaying percentage
                   color: '#333',
-                  fontSize: '36px',
+                  fontSize: this.dataLabelsFontSize,
+                  fontFamily:this.dataLabelsFontFamily,
                   show: true,
                 },
               },
@@ -3451,8 +3459,8 @@ bar["stack"]="Total";
                 else if (this.barlineChart) {
                   // this.chartOptions5.series[0] = {name: this.dualAxisRowData[0]?.name,type: "column",data: this.dualAxisRowData[0]?.data};
                   // this.chartOptions5.series[1] = {name: this.dualAxisRowData[1]?.name,type: "line",data: this.dualAxisRowData[1]?.data};
-                  this.chartOptions5.series[0].data = this.dualAxisRowData[0].data;
-                  this.chartOptions5.series[1].data = this.dualAxisRowData[1].data;
+                  this.chartOptions5.series[0].data = this.dualAxisRowData[0]?.data;
+                  this.chartOptions5.series[1].data = this.dualAxisRowData[1]?.data;
                   this.chartOptions5.labels = categories;
                   this.chartOptions5.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
@@ -4381,6 +4389,7 @@ bar["stack"]="Total";
       this.heatMap = false;
       this.funnel = false;
       this.calendar = false;
+      this.guage = false;
       this.banding = false;
       this.barOptions = undefined;
       this.lineOptions = undefined;
@@ -6046,8 +6055,12 @@ else if(this.area){
   }
 }
 else if(this.line){
+  if(this.isApexCharts){
   this.chartOptions.colors = color;
   object = {colors: [color]};
+  }else{
+    this.eLineChartOptions.color = color
+  }
 }
 else if(this.sidebyside){
   if(this.dualAxisRowData){
@@ -6112,6 +6125,10 @@ else if(this.funnel){
   }else{
     this.eFunnelChartOptions.color = color;
   }
+}
+else if(this.guage){
+  this.guageChartOptions.colors = color;
+  object = {colors: [color]};
 }
 else if(this.radar){
   this.eRadarChartOptions.color = color;
@@ -6844,7 +6861,7 @@ renameColumns(){
         this.chartOptions5.xaxis.labels.show = this.xLabelSwitch;
         this.chartOptions5.xaxis.categories = categories;
         }
-        this.eBarLineChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
+        this.eBarLineChartOptions.xAxis[0].axisLabel.show = this.xLabelSwitch;
       }
       else if(this.horizentalStocked){
         if(this.isApexCharts){
@@ -6964,7 +6981,7 @@ renameColumns(){
           this.chartOptions5.yaxis.labels.show = this.yLabelSwitch;
         }
       }else{
-        this.eBarLineChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
+        this.eBarLineChartOptions.yAxis[1].axisLabel.show = this.yLabelSwitch;
       }
       }
       else if(this.horizentalStocked){
@@ -6981,7 +6998,7 @@ renameColumns(){
         this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
       }
       }
-      else if(this.groupedChart){
+      else if(this.grouped){
         if(this.isApexCharts){
         if(this.chartOptions8.yaxis.length >0){
           (this.chartOptions8.yaxis as any[]).forEach((data)=>{
@@ -7080,7 +7097,7 @@ renameColumns(){
         if(this.isApexCharts){
         this.chartOptions8.grid.xaxis.lines.show = this.xGridSwitch;
         }else{
-          this.eGroupedBarChartOptions.xAxis[0].splitLine.show = this.xGridSwitch;
+          this.eGroupedBarChartOptions.xAxis.splitLine.show = this.xGridSwitch;
         }
       }
       else if(this.multiLine){
@@ -7141,6 +7158,8 @@ renameColumns(){
         this.chartOptions5.grid.yaxis.lines.show = this.yGridSwitch;
         }else{
           this.eBarLineChartOptions.yAxis[0].splitLine.show = this.yGridSwitch;
+          this.eBarLineChartOptions.yAxis[1].splitLine.show = this.yGridSwitch;
+
         }
       }
       else if(this.horizentalStocked){
@@ -7226,8 +7245,12 @@ renameColumns(){
     }
     else if(type === 'distributed'){
       this.isDistributed = !this.isDistributed;
+      if(this.isApexCharts){
       object = {plotOptions: {bar: {distributed: this.isDistributed}}};
       this.funnelChartOptions.plotOptions.bar.distributed = this.isDistributed;
+      }else{
+      // this.eFunnelChartOptions.series[0].label
+      }
     }
     if(this.isApexCharts){
     this.updateChart(object);
@@ -7621,6 +7644,8 @@ fetchChartData(chartData: any){
       } 
       else if(this.barLine){
           this.eBarLineChartOptions.yAxis[0].splitLine.lineStyle.color = this.yGridColor;
+          this.eBarLineChartOptions.yAxis[1].splitLine.lineStyle.color = this.yGridColor;
+
       }
       else if(this.horizentalStocked){
         this.ehorizontalStackedBarChartOptions.yAxis.splitLine.lineStyle.color = this.yGridColor;
@@ -8010,6 +8035,10 @@ fetchChartData(chartData: any){
       else if(this.radar){
         this.eRadarChartOptions.backgroundColor = color;
       }
+      else if(this.guage){
+        this.guageChartOptions.chart.background = color;
+
+      }
       if (this.isApexCharts) {
         this.updateChart(object);
       } else {
@@ -8359,6 +8388,7 @@ fetchChartData(chartData: any){
       setDataLabelsFontFamily(event:any){
         let font = event.target.value;
         let object = { dataLabels: { style: { fontFamily: font } } };
+        let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { fontFamily: font } }} }};
         if(this.bar){
           if(this.isApexCharts){
           this.chartOptions3.dataLabels.style.fontFamily = font;
@@ -8459,7 +8489,11 @@ fetchChartData(chartData: any){
           }
         }
         else if(this.funnel){
+          if(this.isApexCharts){
           this.funnelChartOptions.dataLabels.style.fontFamily = font;
+          }else{
+          this.eFunnelChartOptions.series[0].label.fontFamily = font  
+          }
         }
         else if(this.radar){
           this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { fontFamily: any; }; }) => {
@@ -8468,8 +8502,15 @@ fetchChartData(chartData: any){
             }
         });
         }
+        else if(this.guage){
+          this.guageChartOptions.plotOptions.radialBar.dataLabels.value.fontFamily = font;
+        }
         if(this.isApexCharts){
-        this.updateChart(object);
+          if(this.guage){
+            this.updateChart(guageObject);
+          }else{
+            this.updateChart(object);
+          }
         }else{
           this.updateEchartOptions();
         }
@@ -8478,6 +8519,8 @@ fetchChartData(chartData: any){
       setDataLabelsFontSize(event:any){
         let font = event.target.value;
         let object = { dataLabels: { style: { fontSize: font } } };
+        let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { fontSize: font } }} }};
+
         if(this.bar){
           if(this.isApexCharts){
           this.chartOptions3.dataLabels.style.fontSize = font;
@@ -8574,7 +8617,11 @@ fetchChartData(chartData: any){
           }
         }
         else if(this.funnel){
+          if(this.isApexCharts){
           this.funnelChartOptions.dataLabels.style.fontSize = font;
+          }else{
+            this.eFunnelChartOptions.series[0].label.fontSize = font  
+          }
         }
         if(this.radar){
           this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { fontSize: any; }; }) => {
@@ -8583,8 +8630,15 @@ fetchChartData(chartData: any){
             }
         });
         }
+        if(this.guage){
+          this.guageChartOptions.plotOptions.radialBar.dataLabels.value.fontSize = font;
+        }
         if(this.isApexCharts){
+          if(this.guage){
+            this.updateChart(guageObject)
+          }else{
         this.updateChart(object);
+          }
         }else{
           this.updateEchartOptions();
         }
@@ -8597,6 +8651,8 @@ fetchChartData(chartData: any){
           this.isBold = !this.isBold;
           font = this.isBold ? 700 : 400;
           object = { dataLabels: { style: { fontWeight: font } } };
+          let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { fontWeight: font } }} }};
+
           if(this.bar){
             if(this.isApexCharts){
             this.chartOptions3.dataLabels.style.fontWeight = font;
@@ -8696,7 +8752,11 @@ fetchChartData(chartData: any){
             }
           }
           else if(this.funnel){
+            if(this.isApexCharts){
             this.funnelChartOptions.dataLabels.style.fontWeight = font;
+            }else{
+              this.eFunnelChartOptions.series[0].label.fontWeight = font  
+            }
           }
           else if(this.radar){
             this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { fontWeight: number; }; }) => {
@@ -8705,8 +8765,15 @@ fetchChartData(chartData: any){
               }
           });
           }
+          else if(this.guage){
+            this.guageChartOptions.plotOptions.radialBar.dataLabels.value.fontWeight = font;
+          }
           if(this.isApexCharts){
-          this.updateChart(object);
+            if(this.guage){
+          this.updateChart(guageObject);
+            }else{
+              this.updateChart(object)
+            }
           }else{
             this.updateEchartOptions();
           }
@@ -8728,6 +8795,8 @@ fetchChartData(chartData: any){
         this.selectedElement.style.border = '2px solid #00a5a2';
         const color = window.getComputedStyle(element).backgroundColor;
         let object = { dataLabels: { style: { colors : [color] } } };
+        let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { colors: color } }} }};
+
         if(this.bar){
           if(this.isApexCharts){
           this.chartOptions3.dataLabels.style.colors = [color];
@@ -8829,16 +8898,27 @@ fetchChartData(chartData: any){
           }
         }
         else if(this.funnel){
+          if(this.isApexCharts){
           this.funnelChartOptions.dataLabels.style.colors = [color];
+          }else{
+            this.eFunnelChartOptions.series[0].label.color = color;  
+          }
         }
         else if(this.radar){
           this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { color: string; }; }) => {
             dataItem.label.color = color;
         });        }
+        if(this.guage){
+          this.guageChartOptions.plotOptions.radialBar.dataLabels.value.colors = color.toString();
+        }
         element.style.border = `1px solid black`;
         this.selectedElement = element;
         if(this.isApexCharts){
+          if(this.guage){
+            this.updateChart(guageObject)
+          }else{
         this.updateChart(object);
+          }
         }else{
           this.updateEchartOptions();
         }
@@ -8945,25 +9025,14 @@ fetchChartData(chartData: any){
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
       }
-      resetColor(){
-        // this.color = '#00A5A2';
-        // this.barColor = '#4382F7';
-        // this.lineColor = '#38FF98';
-        // if(this.table){
-        //   this.color1 = '#d4d3d2';
-        //   this.color2 = '#ffffff'; 
-        // }
-        // this.GridColor = '#0f0f0f';
-        // this.backgroundColor = '#ffffff';
-        // if(this.kpi){
-        //   this.kpiColor = '#0f0f0f';
-        // }
-        // this.marksColor2(this.color);
-        // this.funnelColorChange(this.color);
-        // this.gridLineColor(this.GridColor);
-        // this.setBackgroundColor(this.backgroundColor);
+      resetEchartXGridColor(){
+        this.xGridColor = '#0f0f0f';
+        this.marksColor(this.xGridColor,1)
       }
-
+      resetEchartYGridColor(){
+        this.yGridColor = '#0f0f0f';
+        this.marksColor(this.yGridColor,3)
+      }
       sheetNotSaveAlert(): Promise<boolean> {
         // if (this.goToSheetButtonClicked) {
         //   // If the "Go to Sheet" button is clicked, skip the alert

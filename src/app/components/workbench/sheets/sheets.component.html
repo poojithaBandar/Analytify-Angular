@@ -1243,7 +1243,7 @@
                             <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" style="justify-content: space-between;">
 
                                 <li [ngbNavItem]="1">
-                                    <a ngbNavLink class="p-2">Data</a>
+                                    <a ngbNavLink class="p-1">Data</a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane active" id="activetabs">
                                             <div class="border  mb-1 filter-card-height" >
@@ -1494,7 +1494,7 @@
                                     </ng-template>
                                 </li>
                                 <li [ngbNavItem]="2">
-                                     <a ngbNavLink class="p-2">Customize</a>
+                                     <a ngbNavLink class="p-1">Customize</a>
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
@@ -1611,7 +1611,7 @@
                                                                           </div>
                                                                           <span ngbTooltip=""></span>
                                                                         </div>
-                                                                        <div class="sub-menu-item mb-0">
+                                                                        <div *ngIf="isApexCharts" class="sub-menu-item mb-0">
                                                                             <div class="row">
                                                                               <div class="">
                                                                                   <div class="font-color-card">
@@ -1717,7 +1717,7 @@
                                                           </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || funnel || kpi || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                             <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                               <button
                                                                 ngbAccordionButton
@@ -1833,7 +1833,7 @@
                                                                       </div>
                                                                       <span ngbTooltip=""></span>
                                                                     </div>
-                                                                    <div class="sub-menu-item mb-0">
+                                                                    <div *ngIf="isApexCharts" class="sub-menu-item mb-0">
                                                                         <div class="row">
                                                                           <div class="">
                                                                               <div class="font-color-card">
@@ -1865,7 +1865,7 @@
                                                                         </div>
                                                                       </div>
                                                                     </div>
-                                                                      @if(kpi){
+                                                                      <!-- @if(kpi){
                                                                         <div class="row">
                                                                           <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
                                                                           <input type="number" id="decimal-places" [(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
@@ -1888,7 +1888,7 @@
                                                                           <label for="suffix">Suffix:</label>
                                                                           <input type="text" id="suffix" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
                                </div>
-                                                                      }
+                                                                      } -->
                                                                       <!-- <div class="row">
                                                                           <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
                                                                           <div class="col-md-8">
@@ -1948,7 +1948,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || guage || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -1975,7 +1975,7 @@
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="sub-menu-item  p-2 mb-0" >
+                                                                <div class="sub-menu-item  p-2 mb-0" *ngIf="!kpi">
                                                                   <div class="row">
                                                                     <div class="" >
                                                                         <div class="font-color-card">
@@ -2051,7 +2051,7 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(heatMap || line || area || multiLine || barLine)">
+                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(heatMap || line || area || multiLine || barLine || kpi || guage)">
                                                                 <div class="row">
                                                                   <div class="">
                                                                       <div class="font-color-card">
@@ -2108,8 +2108,31 @@
                                                                     <option value="bottom">BOTTOM</option>
                                                                 </select>
                                                               </div> -->
-                                                              @if(!kpi){
-                                                                <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
+                                                              @if(kpi){
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
+                                                                  <input type="number" class="form-control fs-14" id="decimal-places" style="width: auto;"[(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
+                                                                  </div>
+                                                                  <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="display-units">Display Units:</label>
+                                                                  <select id="display-units" class="form-select select2 fs-14" style="width: auto;" [(ngModel)]="KPIDisplayUnits" (change)="formatKPINumber()">
+                                                                    <option value="none">None</option>
+                                                                    <option value="K">Thousands (K)</option>
+                                                                    <option value="M">Millions (M)</option>
+                                                                    <option value="B">Billions (B)</option>
+                                                                    <option value="G">Billions (G)</option>
+                                                                  </select>
+                                                                  </div>
+                                                                  <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="prefix">Prefix:</label>
+                                                                  <input type="text" class="form-control fs-14" id="prefix" style="width: auto;" [(ngModel)]="KPIPrefix" (input)="formatKPINumber()">
+                                                                  </div>
+                                                                  <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                  <label for="suffix">Suffix:</label>
+                                                                  <input type="text" class="form-control fs-14" id="suffix" style="width: auto;" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
+                                                                </div>
+                                                              }
+                                                                <div *ngIf="!(kpi || guage)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                                     <label>Numbers</label>
                                                                     <div class="btn-group my-2" ngbDropdown>
                                                                         <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -2128,7 +2151,7 @@
                                                                         </div>
                                                                     </div> -->
                                                                 </div>
-                                                              }
+                                                              
                                                                 @if(numberPopup){
                                                                   <div class="number-formatting number-popup popup-content">
                                                                       <label for="decimal-places">Decimal places:</label>
@@ -2373,7 +2396,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && !bandingSwitch) || guage || calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((kpi || guage) && draggedRows.length === 1) || !((table && !bandingSwitch) || guage || calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2397,7 +2420,7 @@
                                                            >
                                                           <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
                                                             <ng-template>
-                                                                <div *ngIf="!((table && chartId) || kpi || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!((table && chartId) || kpi || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p>Background</p>
                                                                     </div>
@@ -2414,7 +2437,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -2504,7 +2527,7 @@
                                                                     <div class=""> 
                                                                         <p >X-Grid Line Color </p>
                                                                     </div>
-                                                                    <div *ngIf="xGridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="xGridLineColorSwitch = !xGridLineColorSwitch; resetColor()">
+                                                                    <div *ngIf="xGridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="xGridLineColorSwitch = !xGridLineColorSwitch; resetEchartXGridColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!xGridLineColorSwitch" class="toggle toggle-sm off mb-0" (click)="xGridLineColorSwitch = !xGridLineColorSwitch;">
@@ -2536,7 +2559,7 @@
                                                                     <div class=""> 
                                                                         <p >Y-Grid Line Color </p>
                                                                     </div>
-                                                                    <div *ngIf="yGridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="yGridLineColorSwitch = !yGridLineColorSwitch; resetColor()">
+                                                                    <div *ngIf="yGridLineColorSwitch" class="toggle toggle-sm on mb-0" (click)="yGridLineColorSwitch = !yGridLineColorSwitch; resetEchartYGridColor()">
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!yGridLineColorSwitch" class="toggle toggle-sm off mb-0" (click)="yGridLineColorSwitch = !yGridLineColorSwitch;">
@@ -2733,7 +2756,7 @@
                                                         [format]="'hex'">
                                                         </ngx-colors>
                                                     </div> -->
-                                                    <div *ngIf="funnel && isApexCharts">
+                                                    <div *ngIf="funnel">
                                                         <div style="display: flex; justify-content: space-between;">
                                                             <label for="sorting">Sort by:</label>
                                                             <select id="sorting" (change)="sortSeries($event)">
@@ -2742,7 +2765,7 @@
                                                                 <option value="descending">Descending</option>
                                                             </select>
                                                         </div>
-                                                        <div style="display: flex; justify-content: space-between;">
+                                                        <div *ngIf="isApexCharts" style="display: flex; justify-content: space-between;">
                                                             <label>Distribution</label>
                                                             <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
                                                                 <span></span>
@@ -2847,10 +2870,10 @@
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
-                                                            <input type="number" [(ngModel)]="minValueGuage" id="minValue" (change)="customMinMaxGuage()" />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="minValueGuage" id="minValue" (change)="customMinMaxGuage()" />
                                                           
                                                             <label for="maxValue">Enter Maximum Value:</label>
-                                                            <input type="number" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
                                                         </div>
                                                     </div>
                                                     <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
@@ -2867,7 +2890,7 @@
                                 </li>
 
                                 <li [ngbNavItem]="3">
-                                    <a ngbNavLink class="p-2" (click)="getChartSuggestions()">
+                                    <a ngbNavLink class="p-1" (click)="getChartSuggestions()">
                                         <button class="copilot-button">
                                             <img src="./assets/images/copilot.gif" alt="Copilot" class="copilot-icon" />
                                         </button>
