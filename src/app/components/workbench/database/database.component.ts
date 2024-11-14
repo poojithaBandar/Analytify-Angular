@@ -513,18 +513,18 @@ getTablerowclms(table:any,schema:any){
 // }
 
 onDeleteItem(index: number, tableName : string) {
-  if(index <= 0){
-    this.relationOfTables =[];
-    this.joinTypes = [];
-    this.draggedtables = [];
-    this.saveQueryName =  '';
-    this.gotoSheetButtonDisable = true;
-  } else {
+  // if(index <= 0){
+  //   this.relationOfTables =[];
+  //   this.joinTypes = [];
+  //   this.draggedtables = [];
+  //   this.saveQueryName =  '';
+  //   this.gotoSheetButtonDisable = true;
+  // } else {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
    this.isOpen = false;
    this.deleteJoiningCondition(tableName)
   this.filterColumnsT1();
-  }
+  // }
   this.joiningTablesFromDelete();
 }
 
@@ -537,6 +537,9 @@ deleteJoiningCondition(tableName: string): void {
     );
     if (conditionIndex !== -1) {
       conditionGroup.splice(conditionIndex, 1);
+    }
+    if(conditionGroup && conditionGroup.length <= 0){
+      this.joinTypes.splice(i,1);
     }
   }
   this.relationOfTables = data;

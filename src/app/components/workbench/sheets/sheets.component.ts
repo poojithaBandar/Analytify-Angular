@@ -4252,6 +4252,7 @@ bar["stack"]="Total";
   }
   onChange(event:MatTabChangeEvent){
     console.log('tabs',event);
+    this.selectedTabIndex =  event.index;
     const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
     const selectedSheetId = selectedTab.id; // Access the sheet_id
   
