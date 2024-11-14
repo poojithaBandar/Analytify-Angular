@@ -143,6 +143,7 @@ export class DatabaseComponent {
   filteredTablesT1: any[] = [];
   filteredTablesT2: any[] = [];
   filterParamPass:any;
+  itemCounters: any={};
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/insights/database-connection/tables/')){
@@ -465,10 +466,13 @@ pushToDraggedTables(newTable:any): void {
   const baseTableName = newTable.table
   const occurrences = existingTableNames.filter((name: string) => name.startsWith(baseTableName)).length;
   let tableName = newTable.table;
-  let suffix = occurrences;
+  if (!this.itemCounters[tableName]) {
+    this.itemCounters[tableName] = 0;
+  }
+
+  let suffix = ++this.itemCounters[tableName];
     while (existingTableNames.includes(tableName)) {
-      tableName = `${newTable.table}_${suffix}`;
-      suffix++;
+      tableName = `${newTable.table}_${suffix - 1}`;
     }
     newTable['alias']=tableName;
     this.draggedtables.push(newTable);
