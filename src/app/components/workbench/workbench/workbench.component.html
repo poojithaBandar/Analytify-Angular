@@ -209,7 +209,7 @@
             <button class="btn btn-primary border me-2" type="button" (click)="searchDbConnectionList()" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
             
             <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
-            (btnClickEvent)="databaseconnectionsList=false;viewNewDbs=true;"></app-insights-button>
+            (btnClickEvent)="routeNewDatabase()"></app-insights-button>
             <!-- <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Database</button> -->
           </div>
         </div>
@@ -1025,7 +1025,7 @@
                     </div>
                     <app-insights-button [buttonName]="' View Connected Database'" [classesList]="'btn btn-primary'" [isIcon]="true"
                       [previledgeId]="4" [faIconList]="'fa fa-eye'" [isBtn]="true" style="position: absolute;top: 0;right: 0;"
-                      (btnClickEvent)="viewNewDbs=false;databaseconnectionsList=true;"></app-insights-button>
+                      (btnClickEvent)="routeViewDatabase()"></app-insights-button>
 
                 </div>
             </div>
