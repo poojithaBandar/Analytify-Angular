@@ -3530,7 +3530,10 @@ bar["stack"]="Total";
               }
             }
            
-            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1))) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2)) {
+              if(!this.table){
+                this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
+              }
               this.table = true;
               this.bar = false;
               this.area = false;
@@ -5739,7 +5742,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
         setTimeout(()=>{
           this.updateNumberFormat();
-        }, 3000);
+        }, 1000);
       },
       error: (error) => {
         console.log(error);
@@ -8273,14 +8276,35 @@ fetchChartData(chartData: any){
       
       sortSeries(event: any) {
         if (this.funnel) {
-          const numbers = this.funnelChartOptions.series[0].data;
-          const labels = this.funnelChartOptions.xaxis.categories;
-          const sortedData = this.sort(event, numbers, labels);
+          if(this.isEChatrts){
+            let numbers : any[] = [];
+            let labels: any[] = [];
+            this.eFunnelChartOptions.series[0].data.forEach((data:any)=>{
+              numbers.push(data.value);
+              labels.push(data.name);
+            })
+            // const labels = this.eFunnelChartOptions.series[0].data.name;
+            const sortedData = this.sort(event, numbers, labels);
+            const funnelData : any[] = [];
+            console.log(sortedData);
+            sortedData.sortedLabels.forEach((name: any, index: number) => {
+              funnelData.push({
+                name: name,
+                value: sortedData.sortedNumbers[index]
+              });
+            });
+            this.eFunnelChartOptions.series[0].data = funnelData;
+            this.updateEchartOptions();
+          } else{
+            const numbers = this.funnelChartOptions.series[0].data;
+            const labels = this.funnelChartOptions.xaxis.categories;
+            const sortedData = this.sort(event, numbers, labels);
 
-          this.funnelChartOptions.series[0].data = sortedData.sortedNumbers;
-          this.funnelChartOptions.xaxis.categories = sortedData.sortedLabels;
-          this.funnelCharts.updateSeries([{ data: sortedData.sortedNumbers }]);
-          this.funnelCharts.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
+            this.funnelChartOptions.series[0].data = sortedData.sortedNumbers;
+            this.funnelChartOptions.xaxis.categories = sortedData.sortedLabels;
+            this.funnelCharts.updateSeries([{ data: sortedData.sortedNumbers }]);
+            this.funnelCharts.updateOptions({ xaxis: { categories: sortedData.sortedLabels } });
+          }
         } 
         else if (this.bar) {
           if(this.isEChatrts){
@@ -9874,6 +9898,9 @@ fetchChartData(chartData: any){
         if(this.heatMap){
           object = {dataLabels:{formatter: this.formatNumber.bind(this)}};
         }
+        else if(this.horizentalStocked || this.grouped){
+          object = { xaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
+        }
         else{
           object = { yaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
         }
@@ -9933,15 +9960,17 @@ fetchChartData(chartData: any){
           // this.eMultiLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           this.eMultiLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.radar){
-          // this.eRadarChartOptions.series.forEach((data : any)=>{
-          //   data.label.formatter = (params:any) => this.formatNumber(params.value);
-          // })
+          this.eRadarChartOptions.series.forEach((data : any)=>{
+            data.data.forEach((measure:any)=>{
+              measure.label.formatter = (params:any) => this.formatNumber(params.value);
+            })
+          })
           // this.eRadarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           // this.eRadarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         } else if(this.heatMap){
-          // this.eHeatMapChartOptions.series.forEach((data : any)=>{
-          //   data.label.formatter = (params:any) => this.formatNumber(params.value);
-          // })
+          this.eHeatMapChartOptions.series.forEach((data : any)=>{
+            data.label.formatter = (params:any) => this.formatNumber(params.value[2]);
+          })
           // this.eHeatMapChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
         } else if(this.funnel){
           this.eFunnelChartOptions.series.forEach((data : any)=>{

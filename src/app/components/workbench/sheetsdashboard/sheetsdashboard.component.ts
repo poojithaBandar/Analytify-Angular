@@ -1223,7 +1223,14 @@ selected_sheet_ids :this.sheetIdsDataSet,
        ... this.getTableData(sheet.sheet_data)
 
       }
-       : undefined
+       : undefined,
+       numberFormat: {
+        donutDecimalPlaces:this.donutDecimalPlaces,
+        decimalPlaces:sheet?.sheet_data?.numberFormat?.decimalPlaces,
+        displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
+        prefix:sheet?.sheet_data?.numberFormat?.prefix,
+        suffix:sheet?.sheet_data?.numberFormat?.suffix
+      }
     }));
     this.sheetIdsDataSet = this.dashboardNew.map(item => item['sheetId']);
     console.log('dashboardNew',this.dashboardNew)
@@ -1282,7 +1289,14 @@ selected_sheet_ids :this.sheetIdsDataSet,
        ... this.getTableData(sheet.sheet_data)
 
       }
-       : undefined
+       : undefined,
+       numberFormat: {
+        donutDecimalPlaces:this.donutDecimalPlaces,
+        decimalPlaces:sheet?.sheet_data?.numberFormat?.decimalPlaces,
+        displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
+        prefix:sheet?.sheet_data?.numberFormat?.prefix,
+        suffix:sheet?.sheet_data?.numberFormat?.suffix
+      }
     }));
       if (this.dashboardView) {
         this.getSavedDashboardData();
@@ -2759,6 +2773,9 @@ getFilteredData(){
 }
 }
 clearAllFilters(): void {
+  this.DahboardListFilters.forEach((values:any) => {
+    values.searchText =''
+  });
   if (this.DahboardListFilters && Array.isArray(this.DahboardListFilters)) {
       this.DahboardListFilters.forEach(filterList => {
         filterList.isExclude = false;
@@ -3694,7 +3711,14 @@ kpiData?: KpiData;
          ... this.getTableData(sheet.sheet_data)
   
         }
-         : undefined
+         : undefined,
+         numberFormat: {
+          donutDecimalPlaces:this.donutDecimalPlaces,
+          decimalPlaces:sheet?.sheet_data?.numberFormat?.decimalPlaces,
+          displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
+          prefix:sheet?.sheet_data?.numberFormat?.prefix,
+          suffix:sheet?.sheet_data?.numberFormat?.suffix
+        }
       }));
       this.setSelectedSheetData();
       this.removeUnSelectedSheetsFromCanvas();

@@ -1060,7 +1060,7 @@
                             </div>
                           </div> -->
                           <div class="database-logo">
-                            <div class="imgcard p-4 "  (click)="openMySql()">
+                            <div class="imgcard p-4 "  (click)="openMySql(); errorCheck()">
                                 <img src="./assets/images/Db_server_images/Relational Database/mysql.png" alt="Image" class="card-img"/>                   
                               </div>
                               <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -1068,7 +1068,7 @@
                             </div>
                           </div>
                           <div class="database-logo">
-                            <div class="imgcard p-4" (click)="openOracle()">
+                            <div class="imgcard p-4" (click)="openOracle(); errorCheck()">
                                 <img src="./assets/images/Db_server_images/Relational Database/Oracle_logo.png"  alt="Image" class="card-img"/>
                             </div>
                             <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -1076,7 +1076,7 @@
                             </div>
                           </div>
                           <div class="database-logo">
-                            <div class="imgcard p-4" (click)="openPostgreSql()">
+                            <div class="imgcard p-4" (click)="openPostgreSql(); errorCheck()">
                                 <img src="./assets/images/Db_server_images/Relational Database/postgresql.png" alt="Image" class="card-img"/>
                             </div>
                             <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -1084,7 +1084,7 @@
                           </div>
                           </div>
                           <div class="database-logo">
-                            <div class="imgcard p-4" (click)="openMicrosoftSqlServer()">
+                            <div class="imgcard p-4" (click)="openMicrosoftSqlServer(); errorCheck()">
                                 <img src="./assets/images/Db_server_images/Relational Database/sql server.png" alt="Image" class="card-img"/>
                             </div>
                             <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -1092,7 +1092,7 @@
                             </div>
                           </div>
                           <div class="database-logo">
-                            <div class="imgcard p-4" (click)="openSnowflakeServer()">
+                            <div class="imgcard p-4" (click)="openSnowflakeServer(); errorCheck()">
                                 <img src="./assets/images/Db_server_images/Relational Database/snowflake-icon.png" alt="Image" class="card-img"/>
                             </div>
                             <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
@@ -1167,7 +1167,7 @@
                       </div>
                       <div class="database-logo">
                     
-                        <div class="imgcard p-4" (click)="opensqlLite()">
+                        <div class="imgcard p-4" (click)="opensqlLite(); pathConditionError(); displayNameConditionError()">
                           <img src="./assets/images/Db_server_images/No Sql Database/sqlite.png" alt="Image" class="card-img" />
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
