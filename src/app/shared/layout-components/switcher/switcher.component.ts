@@ -334,7 +334,7 @@ export class SwitcherComponent {
     localStorage.setItem('insightapps-image', type);
   }
   reset() {
-    localStorage.clear();
+    // localStorage.clear();
     const html: any = this.elementRef.nativeElement.ownerDocument.documentElement;
     const body: any = document.querySelector('body');
     html.style = '';

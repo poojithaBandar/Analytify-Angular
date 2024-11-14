@@ -577,7 +577,7 @@ clrQuery(){
   this.cutmquryTable=[];
   this.custmQryTime='';
   this.custmQryRows='';
-  this.gotoSheetButtonDisable = true;
+  // this.gotoSheetButtonDisable = true;
 }
 executeQuery(){
   const obj ={
