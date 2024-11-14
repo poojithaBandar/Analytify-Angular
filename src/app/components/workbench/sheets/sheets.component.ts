@@ -467,7 +467,7 @@ if(this.fromFileId){
         else {
           this.SheetSavePlusEnabled.splice(0, 1);
           this.sheetNumber = 1;
-          this.addSheet();
+          this.addSheet(false);
         }
       },
       error: (error) => {
@@ -4143,7 +4143,8 @@ bar["stack"]="Total";
   // }
   tabs : any [] = [];
   selected = new FormControl(0);
-  addSheet() {
+  addSheet(isDuplicate : boolean) {
+    this.active = 1;
     this.retriveDataSheet_id = '';
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
