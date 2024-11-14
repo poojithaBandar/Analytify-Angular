@@ -22,6 +22,7 @@ import { tickStep } from 'd3';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LoaderService } from '../../../shared/services/loader.service';
+import _ from 'lodash';
 
 
 @Component({
@@ -142,6 +143,7 @@ export class DatabaseComponent {
   filteredTablesT1: any[] = [];
   filteredTablesT2: any[] = [];
   filterParamPass:any;
+  itemCounters: any={};
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/insights/database-connection/tables/')){
@@ -464,10 +466,13 @@ pushToDraggedTables(newTable:any): void {
   const baseTableName = newTable.table
   const occurrences = existingTableNames.filter((name: string) => name.startsWith(baseTableName)).length;
   let tableName = newTable.table;
-  let suffix = occurrences;
+  if (!this.itemCounters[tableName]) {
+    this.itemCounters[tableName] = 0;
+  }
+
+  let suffix = ++this.itemCounters[tableName];
     while (existingTableNames.includes(tableName)) {
-      tableName = `${newTable.table}_${suffix}`;
-      suffix++;
+      tableName = `${newTable.table}_${suffix - 1}`;
     }
     newTable['alias']=tableName;
     this.draggedtables.push(newTable);
@@ -511,21 +516,37 @@ getTablerowclms(table:any,schema:any){
 //   })
 // }
 
-onDeleteItem(index: number) {
+onDeleteItem(index: number, tableName : string) {
+  // if(index <= 0){
+  //   this.relationOfTables =[];
+  //   this.joinTypes = [];
+  //   this.draggedtables = [];
+  //   this.saveQueryName =  '';
+  //   this.gotoSheetButtonDisable = true;
+  // } else {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
-   console.log(this.draggedtables);
-  //  const schema = this.draggedtables[index].schema
-  //  const tablename = this.draggedtables[index].table
-  //  const tablealias = this.draggedtables[index].alias
-
-
-  //  if(this.draggedtables.length !== 0){
-    const deleteIndex = index - 1
-    this.relationOfTables.splice(deleteIndex,1)
-   this.joiningTablesFromDelete();
    this.isOpen = false;
-  //  }
+   this.deleteJoiningCondition(tableName)
   this.filterColumnsT1();
+  // }
+  this.joiningTablesFromDelete();
+}
+
+deleteJoiningCondition(tableName: string): void {
+ let data = _.cloneDeep(this.relationOfTables);
+  for (let i = 0; i < this.relationOfTables.length; i++) {
+    const conditionGroup = data[i];
+    const conditionIndex = conditionGroup.findIndex((condition: any) => 
+      condition.table1.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '') || condition.table2.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '')
+    );
+    if (conditionIndex !== -1) {
+      conditionGroup.splice(conditionIndex, 1);
+    }
+    if(conditionGroup && conditionGroup.length <= 0){
+      this.joinTypes.splice(i,1);
+    }
+  }
+  this.relationOfTables = data;
 }
 buildCustomRelation(){
   const parts = this.selectedClmnT1.split('(');
@@ -556,7 +577,7 @@ clrQuery(){
   this.cutmquryTable=[];
   this.custmQryTime='';
   this.custmQryRows='';
-  this.gotoSheetButtonDisable = true;
+  // this.gotoSheetButtonDisable = true;
 }
 executeQuery(){
   const obj ={

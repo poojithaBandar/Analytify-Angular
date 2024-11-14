@@ -81,13 +81,22 @@ export class WorkbenchComponent implements OnInit{
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('insights/datasources/view-connections')){
-      this.databaseconnectionsList= true;   
+      this.databaseconnectionsList= true;  
+       this.viewNewDbs= false;
     } 
     if(currentUrl.includes('insights/datasources/new-connections')){
       this.viewNewDbs = true;
+      this.databaseconnectionsList = false;
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
+  routeNewDatabase(){
+    this.router.navigate(['insights/datasources/new-connections'])
+  }
+  routeViewDatabase(){
+    this.router.navigate(['insights/datasources/view-connections'])
+  }
+
     postGreServerName = '';
     postGrePortName = '';
     postGreDatabaseName = '';
@@ -867,6 +876,7 @@ export class WorkbenchComponent implements OnInit{
   this.PostGrePassword = '';
   this.OracleServiceName = '';
   this.displayName ='';
+  this.fileData = '';
   }
 
   serverError:boolean = false;
@@ -935,7 +945,7 @@ export class WorkbenchComponent implements OnInit{
     this.errorCheck();
   }
   pathConditionError(){
-    if(this.fileData){
+    if(this.path){
       this.pathError = false;
     } else{
       this.pathError = true;

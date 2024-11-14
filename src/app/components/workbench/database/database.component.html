@@ -5,22 +5,22 @@
     @if(tableJoiningUI){
         <div class="main-container container-fluid">
     <div class="row">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card mb-0 left-sidebar border">
-            <div class="p-4 br-0 mb-0  border-bottom d-block">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card mb-3 left-sidebar border">
+            <div class="p-2 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0 border-bottom">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" [ngbTooltip]="hostName?.length > 15 ? hostName : null">{{hostName?.length > 15 ? (hostName| slice:0:15)+'...':hostName}}</p>
             </div>
-            <div class="mb-0 p-4 br-0 border-bottom">
+            <div class="mb-0 p-2 br-0 border-bottom">
                 <h6 class="mb-0">Database</h6>
                 <p class="mb-0" [ngbTooltip]="databaseName?.length > 15 ? databaseName : null">{{databaseName?.length > 15 ? (databaseName| slice:0:15)+'...':databaseName}}</p>
             </div>
             <!-- <div class="card mb-0 br-0">
             </div> -->
-            <div class="mb-0 br-0 pt-2" style="height: 550px">
-                <div class="mb-0 p-1 border-bottom-0">
+            <div class="mb-0 br-0 pt-0" style="height: 550px; overflow: scroll;">
+                <div class="mb-0 p-0 me-2 py-1 border-bottom-0">
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"
                             [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                <div class="card-body p-1" style="overflow: scroll;">
+                <div class="card-body p-0" style="overflow: scroll;">
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
                         <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
                             class="accordion-item">
@@ -71,7 +71,7 @@
         <div class="col-xl-10 col-md-12 p-1">
             <div class=" p-0 ">
                 <div class="col-xl-12 col-md-12 p-0">
-                    <div class="card mb-0 p-4 br-0" style="display: flex;flex-direction: row;">
+                    <div class="card mb-0 p-4 br-0" style="display: flex;flex-direction: row; border-radius: 10px 10px 0px 0px !important;">
                         <div class="flex-grow-1 ">
                             <input type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title"
                                 aria-label="Sheet" class="form-control">
@@ -80,11 +80,11 @@
                             @if(draggedtables.length){
                             <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
                                 (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromTableJoinig')"
-                                class="modal-effect btn btn-primary m-1">
+                                class="modal-effect btn btn-primary ms-1">
                                 <i class="fa fa-filter"></i> Apply Filters
                             </a>
                             }
-                            <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light m-1'"
+                            <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light ms-1'"
                                 [previledgeId]="54" [isBtn]="true" (btnClickEvent)="customSql=true;tableJoiningUI=false"
                                 [isIcon]="false"></app-insights-button>
                             <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72"
@@ -106,7 +106,7 @@
                                         slice:0:16}}({{item.schema | slice:0:12}})
                                         <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
-                                        <a aria-label="anchor" (click)="onDeleteItem($index)"
+                                        <a aria-label="anchor" (click)="onDeleteItem($index,item.alias)"
                                             class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                             <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                                         </a>
@@ -299,7 +299,7 @@
                                 class="table-joining-card p-0 col-xxl-6 col-xl-6 col-lg-6 col-md-6">
 
                                 <div class="">
-                                    <div class="card mb-0 br-0 joining-T-H br-0">
+                                    <div class="card mb-0 br-0 joining-T-H br-0" style="border-radius: 0px 0px 10px 10px !important;">
                                         <div class="card-header d-flex align-items-center justify-content-between"
                                             style="padding: 21px;">
                                             <h6 class="m-0">Table Custom Join</h6>
@@ -487,7 +487,7 @@
                             </div>
                             <div class="p-0"
                                 [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
-                                <div class="card mb-0 br-0 joining-T-H" [ngClass]="isOpen ? 'right-card':''"
+                                <div class="card mb-0 br-0 joining-T-H" style="border-radius: 0px 0px 10px 10px !important;" [ngClass]="isOpen ? 'right-card':''"
                                     [class.expanded]="!isOpen">
                                     <div class="card-header d-flex align-items-center"
                                         style="display: flex; justify-content: space-between;">
@@ -580,14 +580,14 @@
     @if(customSql){
     <div class="row main-container">
         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-            <div class="card  p-4 mb-0 br-0 border-bottom d-block">
+            <div class="card  p-2 mb-0 br-0 border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
             </div>
-            <div class="card mb-0 p-4 br-0 border-bottom">
+            <div class="card mb-0 p-2 br-0 border-bottom">
                 <h6 class="mb-0">Database</h6>
                 <p class="mb-0">{{databaseName}}</p>
             </div>

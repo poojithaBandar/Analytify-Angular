@@ -34,6 +34,11 @@ a {
 .img-cursor{
     cursor: pointer;
 }
+.table-responsive{
+    height: 523px;
+    overflow: hidden;
+}
+
      // for Mobile Resolution //
      @media only screen and ( max-width : 578px ) {
         .h1, h1{
@@ -82,6 +87,10 @@ a {
         .quick-start-txt {
             font-size: 13px;
         }
+        .table-responsive {
+            height: 510px;
+            overflow: hidden;
+        }
     }
 
       // for 100% Resolution //
@@ -120,6 +129,10 @@ a {
         }
         .input-group-text{
             padding: 0.275rem 0.75rem;
+        }
+        .table-responsive{
+            height: 493px;
+            overflow: hidden;
         }
   }
 
