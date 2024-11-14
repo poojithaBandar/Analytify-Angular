@@ -4961,6 +4961,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.retriveDataSheet_id = responce.sheet_id;
           this.sheetName = responce.sheet_name;
           this.sheetTitle = responce.sheet_name;
+          this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id || responce.sheet_filter_quereyset_ids;
           if(!responce.sheet_tag_name){
             this.sheetTagName = responce.sheet_name;
           }
@@ -4982,7 +4983,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.createdBy = responce.created_by;
         this.color1 = responce.sheet_data?.results?.color1;
         this.color2 = responce.sheet_data?.results?.color2;
-        this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id || responce.sheet_filter_quereyset_ids;
         this.tablePaginationCustomQuery = responce.custom_query;
         this.donutDecimalPlaces = this.sheetResponce.results.decimalplaces;
         if(this.sheetResponce?.numberFormat?.decimalPlaces){ 
