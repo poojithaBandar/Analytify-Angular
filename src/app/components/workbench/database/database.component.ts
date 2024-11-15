@@ -472,7 +472,7 @@ pushToDraggedTables(newTable:any): void {
 
   let suffix = ++this.itemCounters[tableName];
     while (existingTableNames.includes(tableName)) {
-      tableName = `${newTable.table}_${suffix - 1}`;
+      tableName = `${newTable.table}_${suffix}`;
     }
     newTable['alias']=tableName;
     this.draggedtables.push(newTable);
@@ -663,7 +663,7 @@ updateRemainingTables(item:any) {
 }
 filterColumnsT2(relation: any) {
   // If search term is empty, return all tables excluding the selected one
-  if (this.searchTermT2.trim() === '') {
+  if (relation.searchTermT2.trim() === '') {
     relation.table2Data = relation.originalData;
     return;
   }
@@ -671,7 +671,7 @@ filterColumnsT2(relation: any) {
   // Filter logic
   relation.table2Data = relation.originalData.map((table: { columns: any[]; alias: any; }) => {
     const filteredColumns = table.columns.filter(column =>
-      column.column.toLowerCase().includes(this.searchTermT2.toLowerCase())
+      column.column.toLowerCase().includes(relation.searchTermT2.toLowerCase())
     );
 
     return filteredColumns.length > 0 && table.alias !== this.selectedClmnT1 ? { 
