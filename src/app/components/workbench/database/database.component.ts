@@ -536,9 +536,22 @@ deleteJoiningCondition(tableName: string): void {
  let data = _.cloneDeep(this.relationOfTables);
   for (let i = 0; i < this.relationOfTables.length; i++) {
     const conditionGroup = data[i];
-    const conditionIndex = conditionGroup.findIndex((condition: any) => 
-      condition.table1.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '') || condition.table2.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '')
+    let conditionIndex;
+    let isArrayOfEmptyObjects = true;
+
+for (const obj of conditionGroup) {
+  if (!obj || Object.keys(obj).length > 0) {
+    isArrayOfEmptyObjects = false;
+    break;
+  }
+}
+    if(!isArrayOfEmptyObjects){
+      conditionIndex = conditionGroup.findIndex((condition: any) => 
+        condition?.table1.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '') || condition?.table2.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '')
     );
+  } else {
+    conditionIndex = 0;
+  }
     if (conditionIndex !== -1) {
       conditionGroup.splice(conditionIndex, 1);
     }
@@ -802,8 +815,10 @@ joiningTables(){
 buildCustomJoin(){
   this.tableJoiningList =[];
   this.joinTypes.forEach((element : any,index : number) => {
+    let object;
     let remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias == this.draggedtables[index + 1].table);
-    let object = {
+    if(this.relationOfTables[index] && this.relationOfTables[index].length){
+    object = {
        join : element,
        table1 : this.relationOfTables[index][0].table1,
        table2 : this.relationOfTables[index][0].table2,
@@ -812,6 +827,9 @@ buildCustomJoin(){
        originalData : remainingTables,
        searchTermT2 : ''
     }
+  } else {
+    object = { join : element,conditions: this.relationOfTables};
+  }
     this.tableJoiningList.push(object);
   });
 
@@ -820,6 +838,7 @@ buildCustomJoin(){
 joiningTablesFromDelete(){
   const schemaTablePairs = this.draggedtables.map((item: { schema: any; table: any; alias:any }) => [item.schema, item.table, item.alias]);
    console.log(schemaTablePairs)
+   this.relationOfTables = this.relationOfTables.slice(0,this.joinTypes.length);
   const obj ={
     query_set_id:this.qurtySetId,
     database_id:this.databaseId,
@@ -860,6 +879,11 @@ joiningTablesFromDelete(){
       error:(error:any)=>{
       console.log(error);
       this.tableCustomJoinError = true;
+      if(error.error?.joining_condition && error.error?.joining_condition.length) {
+        // this.joinTypes.push("inner");
+        this.relationOfTables[this.relationOfTables.length - 1] = [{}];
+        this.buildCustomJoin();
+      }
       Swal.fire({
         icon: 'error',
         title: 'oops!',
