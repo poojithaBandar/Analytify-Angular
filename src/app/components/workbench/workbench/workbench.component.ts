@@ -876,6 +876,7 @@ export class WorkbenchComponent implements OnInit{
   this.PostGrePassword = '';
   this.OracleServiceName = '';
   this.displayName ='';
+  this.fileData = '';
   }
 
   serverError:boolean = false;
@@ -944,7 +945,7 @@ export class WorkbenchComponent implements OnInit{
     this.errorCheck();
   }
   pathConditionError(){
-    if(this.fileData){
+    if(this.path){
       this.pathError = false;
     } else{
       this.pathError = true;

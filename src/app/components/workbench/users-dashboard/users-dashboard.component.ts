@@ -63,15 +63,18 @@ export class UsersDashboardComponent {
         ])]],
       conformpassword: ['', Validators.required],
     })
-    if(this.router.url.includes('/insights/users/add-user')){
+    if (this.router.url.includes('/insights/users/add-user')) {
       this.addUserDiv();
     }
-    if(this.router.url.includes('/insights/users/edit-user/')){
-      if (route.snapshot.params['id'] ) {
+    if (this.router.url.includes('/insights/users/edit-user/')) {
+      if (route.snapshot.params['id']) {
         const userId = +atob(route.snapshot.params['id']);
-       this.getUserIdDetails(userId);
+        this.getUserIdDetails(userId);
+      }
     }
-  }
+    if (this.router.url.includes('/insights/users/users-list')) {
+      this.getUserList();
+    }
     }
   ngOnInit(){
     this.getUserList()
@@ -295,9 +298,8 @@ addUser(){
           this.workbechService.addUserwithRoles(userData  ).subscribe({
           next:(data)=>{
             console.log(data);
-            this.addUserDivForm = false;
             this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-            this.getUserList();
+            this.viewUsers();
            },
           error:(error)=>{
             console.log(error);
@@ -320,9 +322,10 @@ addUser(){
       this.workbechService.addUserwithRoles(userData  ).subscribe({
       next:(data)=>{
         console.log(data);
-        this.addUserDivForm = false;
+        // this.addUserDivForm = false;
         this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-        this.getUserList();
+        // this.getUserList();
+        this.viewUsers();
        },
       error:(error)=>{
         console.log(error);
