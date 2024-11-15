@@ -5805,7 +5805,9 @@ if(this.fromFileId){
 }
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
-        this.filterData = responce.col_data;
+        const convertedArray = responce.col_data.map((item: any) => ({ label: item, selected: false }));
+        this.filterData = convertedArray;
+
         if(this.dateList.includes(responce.dtype)){
           this.floor = new Date(this.filterData[0]).getTime();
           this.ceil = new Date(this.filterData[this.filterData.length - 1]).getTime();
@@ -5836,10 +5838,12 @@ if(this.fromFileId){
   )
   }
   toggleEditAllRows(event:any){
-    this.isAllSelected = !this.isAllSelected;
-    this.filterData.forEach((element:any) => element['selected'] = this.isAllSelected);
+    // this.isAllSelected = !this.isAllSelected;
+    this.filterDataArray = [];
+    this.filterData.forEach((element: any) => { element['selected'] = this.isAllSelected; if(this.isAllSelected){this.filterDataArray.push(element.label)} });
     console.log(this.filterData)
   }
+
   filterDataArray = [] as any;
   filterCheck(event:any,data:any){
     if(event.target.checked){
@@ -5945,6 +5949,7 @@ if(this.fromFileId){
           this.dataExtraction();
           this.filterDataArray = [];
           this.filterDateRange = [];
+          this.isAllSelected = false;
         },
         error: (error) => {
           console.log(error);
