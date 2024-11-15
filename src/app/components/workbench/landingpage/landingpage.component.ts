@@ -411,7 +411,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
 
   }
   viewAllDashboards(){
-    this.router.navigate(['/insights/dashboarda']) 
+    this.router.navigate(['/insights/dashboards']) 
 
   }
   viewAllSavedQueries(){

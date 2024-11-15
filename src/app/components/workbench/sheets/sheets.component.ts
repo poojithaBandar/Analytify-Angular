@@ -3104,7 +3104,12 @@ bar["stack"]="Total";
         },
         dataLabels: {
           enabled: true,
-          formatter: this.formatNumber.bind(this),
+          formatter: (val: any, opts: any) => {
+            const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
+            const formattedValue = this.formatNumber(val);
+            return `${category}: ${formattedValue}`;
+        },
+          // formatter: this.formatNumber.bind(this),
           dropShadow: {
             enabled: true,
           },
@@ -4948,6 +4953,7 @@ if(this.retriveDataSheet_id){
 
   }
 sheetTagTitle : any;
+sheetChartId : any;
 sheetRetrive(isDuplicate : boolean){
   this.getChartData();
   console.log(this.tabs);
@@ -4976,6 +4982,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
         }
         this.chartId = responce.chart_id;
+        this.sheetChartId = responce.chart_id;
         this.sheetCustomQuery = responce.custom_query;
         this.sheetResponce = responce.sheet_data;
         this.draggedColumns=this.sheetResponce.columns;
@@ -5661,7 +5668,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
          } else {
         this.funnelChartOptions = this.sheetResponce.savedChartOptions;
         if(this.funnelChartOptions?.dataLabels){
-          this.funnelChartOptions.dataLabels.formatter = this.formatNumber.bind(this);
+          this.funnelChartOptions.dataLabels.formatter = (val: any, opts: any) => {
+            const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
+            const formattedValue = this.formatNumber(val);
+            return `${category}: ${formattedValue}`;
+        }
         }
         this.isDistributed = this.funnelChartOptions?.plotOptions?.bar?.distributed;
         this.funnelDLAllign = this.funnelChartOptions?.plotOptions?.bar?.dataLabels?.position;
@@ -6372,7 +6383,7 @@ renameColumns(){
     else {
       this.measureAlignment = event;
       if (event === 'center') {
-        object = {yaxis: {labels : {offsetY : 0, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
+        object = {yaxis: {labels : {offsetY : 0, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -6434,6 +6445,7 @@ renameColumns(){
           }
         }
         else if(this.horizontolstockedChart){
+          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
           if (this.chartOptions7.yaxis.length > 0) {
             (this.chartOptions7.yaxis as any[]).forEach((data) => {
               data.labels.offsetY = 0;
@@ -6444,6 +6456,7 @@ renameColumns(){
           }
         }
         else if(this.groupedChart){
+          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
           if (this.chartOptions8.yaxis.length > 0) {
             (this.chartOptions8.yaxis as any[]).forEach((data) => {
               data.labels.offsetY = 0;
@@ -6475,7 +6488,7 @@ renameColumns(){
         }
       }
       if (event === 'top') {
-        object = {yaxis: {labels : {offsetY : -10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
+        object = {yaxis: {labels : {offsetY : -10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -6537,6 +6550,7 @@ renameColumns(){
           }
         }
         else if(this.horizontolstockedChart){
+          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
           if (this.chartOptions7.yaxis.length > 0) {
             (this.chartOptions7.yaxis as any[]).forEach((data) => {
               data.labels.offsetY = -10;
@@ -6547,6 +6561,7 @@ renameColumns(){
           }
         }
         else if(this.groupedChart){
+          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
           if (this.chartOptions8.yaxis.length > 0) {
             (this.chartOptions8.yaxis as any[]).forEach((data) => {
               data.labels.offsetY = -10;
@@ -6578,7 +6593,7 @@ renameColumns(){
         }
       }
       if (event === 'bottom') {
-        object = {yaxis: {labels : {offsetY : 10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
+        object = {yaxis: {labels : {offsetY : 10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
         if(this.barchart){
           if (this.chartOptions3.yaxis.length > 0) {
             (this.chartOptions3.yaxis as any[]).forEach((data) => {
@@ -6640,6 +6655,7 @@ renameColumns(){
           }
         }
         else if(this.horizontolstockedChart){
+          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
           if (this.chartOptions7.yaxis.length > 0) {
             (this.chartOptions7.yaxis as any[]).forEach((data) => {
               data.labels.offsetY = 10;
@@ -6650,6 +6666,7 @@ renameColumns(){
           }
         }
         else if(this.groupedChart){
+          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
           if (this.chartOptions8.yaxis.length > 0) {
             (this.chartOptions8.yaxis as any[]).forEach((data) => {
               data.labels.offsetY = 10;
@@ -6915,7 +6932,8 @@ renameColumns(){
     }
     else if(type === 'ylabel'){
       this.yLabelSwitch = !this.yLabelSwitch;
-      object = { yaxis: {labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
+      // object = { yaxis: {labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
+      object = {yaxis: {labels : {show: this.yLabelSwitch, offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
       if(this.bar){
         if(this.isApexCharts){
         if(this.chartOptions3.yaxis.length >0){
@@ -7001,6 +7019,7 @@ renameColumns(){
       }
       }
       else if(this.horizentalStocked){
+        object = {yaxis: {labels : {show: this.yLabelSwitch, offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if(this.chartOptions7.yaxis.length >0){
           (this.chartOptions7.yaxis as any[]).forEach((data)=>{
@@ -7015,6 +7034,7 @@ renameColumns(){
       }
       }
       else if(this.grouped){
+        object = {yaxis: {labels : {show: this.yLabelSwitch, offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if(this.chartOptions8.yaxis.length >0){
           (this.chartOptions8.yaxis as any[]).forEach((data)=>{
@@ -7551,7 +7571,7 @@ fetchChartData(chartData: any){
       this.isEChatrts = true;
     }
     if(this.retriveDataSheet_id){
-      if((this.sheetResponce.isEChart && this.isEChatrts) || (this.sheetResponce.isApexChart && this.isApexCharts)){
+      if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
         this.sheetRetrive(false);
       } else {
         this.reAssignChartData();
@@ -9404,7 +9424,9 @@ fetchChartData(chartData: any){
         this.updateEchartOptions();
     }
     measuresFontFamilyChange(){
-      let object = { yaxis: [{show: this.yLabelSwitch, labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
+      // let object = { yaxis: [{show: this.yLabelSwitch, labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)} }] };
+      let object;
+      object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
       if (this.bar) {
         if(this.isApexCharts){
         if (this.chartOptions3.yaxis.length > 0) {
@@ -9492,6 +9514,7 @@ fetchChartData(chartData: any){
       }
       }
       else if(this.horizentalStocked){
+        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if (this.chartOptions7.yaxis.length > 0) {
           (this.chartOptions7.yaxis as any[]).forEach((data) => {
@@ -9506,6 +9529,7 @@ fetchChartData(chartData: any){
       }
       }
       else if(this.grouped){
+        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if (this.chartOptions8.yaxis.length > 0) {
           (this.chartOptions8.yaxis as any[]).forEach((data) => {
@@ -9554,7 +9578,9 @@ fetchChartData(chartData: any){
       }
     }
     measuresFontSizeChange(){
-      let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
+      // let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)} }] };
+      let object;
+      object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
       if (this.bar) {
         if(this.isApexCharts){
         if (this.chartOptions3.yaxis.length > 0) {
@@ -9644,6 +9670,7 @@ fetchChartData(chartData: any){
         }
       }
       else if(this.horizentalStocked){
+        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if (this.chartOptions7.yaxis.length > 0) {
           (this.chartOptions7.yaxis as any[]).forEach((data) => {
@@ -9658,6 +9685,7 @@ fetchChartData(chartData: any){
       }
       }
       else if(this.grouped){
+        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if (this.chartOptions8.yaxis.length > 0) {
           (this.chartOptions8.yaxis as any[]).forEach((data) => {
@@ -9706,7 +9734,9 @@ fetchChartData(chartData: any){
       }
     }
     measuresFontWeightChange(){
-      let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight } } }] };
+      // let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)} }] };
+      let object;
+      object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
       if (this.bar) {
         if(this.isApexCharts){
         if (this.chartOptions3.yaxis.length > 0) {
@@ -9793,6 +9823,7 @@ fetchChartData(chartData: any){
         });      }
       }
       else if(this.horizentalStocked){
+        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if (this.chartOptions7.yaxis.length > 0) {
           (this.chartOptions7.yaxis as any[]).forEach((data) => {
@@ -9807,6 +9838,7 @@ fetchChartData(chartData: any){
       }
       }
       else if(this.groupedChart){
+        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
         if(this.isApexCharts){
         if (this.chartOptions8.yaxis.length > 0) {
           (this.chartOptions8.yaxis as any[]).forEach((data) => {
@@ -9904,11 +9936,19 @@ fetchChartData(chartData: any){
         if(this.heatMap){
           object = {dataLabels:{formatter: this.formatNumber.bind(this)}};
         }
+        else if(this.funnel){
+          object = {dataLabels:{formatter: (val: any, opts: any) => {
+            const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
+            const formattedValue = this.formatNumber(val);
+            return `${category}: ${formattedValue}`;
+        }}};
+        }
         else if(this.horizentalStocked || this.grouped){
           object = { xaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
         }
         else{
-          object = { yaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
+          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
+          // object = { yaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
         }
         this.updateChart(object);
       }
@@ -9980,7 +10020,10 @@ fetchChartData(chartData: any){
           // this.eHeatMapChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
         } else if(this.funnel){
           this.eFunnelChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value);
+            data.label.formatter = (params:any) => {
+              const formattedValue = this.formatNumber(params.value);
+              return `${params.name}: ${formattedValue}`;
+          };
           })
           // this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);

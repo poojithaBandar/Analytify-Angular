@@ -223,7 +223,7 @@
 
         <div *ngIf="viewDatasourceList" class="card-body card-p">
           @if(!gridView){
-            <div class="table-responsive" style="height: 26rem;">
+            <div class="table-responsive border" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
                     <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
                         <tr>
@@ -399,7 +399,7 @@
             </div>
           }
           <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
-          <div  style="float: right;font-size: 15px; margin-top: -41px;">
+          <div  style="float: right;font-size: 15px; margin-top: -30px;">
             <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getDbConnectionList()" class="form-control cursor">
                   <option  value="10"> 10</option>
                   <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
