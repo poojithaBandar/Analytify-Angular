@@ -44,6 +44,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatT
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
+import { lastValueFrom } from 'rxjs';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -436,7 +437,7 @@ export class SheetsComponent {
     this.setChartType();
     // this.sheetRetrive();
   }
- async getSheetNames(){
+ async getSheetNames():Promise<void>{
   //this.tabs = [];
   const obj={
     "server_id":this.databaseId,
@@ -446,36 +447,36 @@ if(this.fromFileId){
   delete obj.server_id;
   obj.file_id=this.fileId;
 }
-  this.workbechService.getSheetNames(obj).subscribe({next: (responce:any) => {
-        console.log(responce);
-        if(responce.data.length>0){
-          this.sheetList = responce.data;
-          this.sheetNumber = this.sheetList.length+1;
-          (responce.data as any[]).forEach((sheet,index)=>{
-            this.tabs.push(sheet);
-            if(sheet.id === this.retriveDataSheet_id){
-              this.selectedTabIndex = index;
-            }
-          });
-          console.log(this.tabs);
-          
-        // this.sheetTitle = this.tabs[0];
-        this.SheetSavePlusEnabled.splice(0, 1);
-        console.log(this.SheetSavePlusEnabled)
-          // this.sheetRetrive();
-        }
-        else {
-          this.SheetSavePlusEnabled.splice(0, 1);
-          this.sheetNumber = 1;
-          this.addSheet(false);
-        }
-      },
-      error: (error) => {
-        console.log(error);
+try {
+  const response: any = await lastValueFrom(this.workbechService.getSheetNames(obj));
+  console.log(response);
+
+  if (response.data.length > 0) {
+    this.sheetList = response.data;
+    this.sheetNumber = this.sheetList.length + 1;
+    response.data.forEach((sheet: any, index: number) => {
+      this.tabs.push(sheet);
+      if (sheet.id === this.retriveDataSheet_id) {
+        this.selectedTabIndex = index;
       }
-    }
-  )
- }
+    });
+    console.log(this.tabs);
+
+    this.SheetSavePlusEnabled.splice(0, 1);
+    console.log(this.SheetSavePlusEnabled);
+  } else {
+    this.SheetSavePlusEnabled.splice(0, 1);
+    this.sheetNumber = 1;
+    this.addSheet(false);
+  }
+} catch (error) {
+  console.error('Error fetching sheet names:', error);
+  throw error;
+}
+}
+
+    
+
   goToDataSource(){
 
     if(this.isCustomSql){

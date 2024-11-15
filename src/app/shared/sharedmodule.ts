@@ -26,7 +26,6 @@ import { TestPipe } from '../test.pipe';
   declarations: [
     SidebarComponent,
     // ContentLayoutComponent,
-    TestPipe,
     HeaderComponent,
     SwitcherComponent,
     PageHeaderComponent,
@@ -45,6 +44,7 @@ import { TestPipe } from '../test.pipe';
   imports: [
     CommonModule,
     RouterModule,
+    TestPipe,
     SimplebarAngularModule,
     NgbModule,
   ColorPickerModule,
