@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -77,7 +77,7 @@ export class WorkbenchComponent implements OnInit{
   fileData:any;
   viewDatasourceList = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
-    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService){ 
+    private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('insights/datasources/view-connections')){
@@ -557,6 +557,7 @@ export class WorkbenchComponent implements OnInit{
           },
           complete: () => {
             fileInput.value = '';
+            this.cd.detectChanges();
           }
         }
       )
@@ -598,6 +599,7 @@ export class WorkbenchComponent implements OnInit{
             },
             complete: () => {
               fileInput.value = '';
+              this.cd.detectChanges();
             }
           }
         )

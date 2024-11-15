@@ -723,43 +723,45 @@ export class SheetsdashboardComponent {
           }
           let chartId : number = sheet['chartId'];
           const numberFormat = sheet?.numberFormat;
-          if(![10,24,26,27].includes(chartId) && !sheet['isEChart'] && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
-            if([2,3].includes(chartId)){
-              if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
-                sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
-                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                };
-                sheet.chartOptions.dataLabels.formatter = (val: number) => {
-                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                };
-              }
-            }
-            else{
-              if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
-                sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
-                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                };
-                sheet.chartOptions.dataLabels.formatter = (val: number) => {
-                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                };
-              }
-              else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
-                sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
-                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                };
-                sheet.chartOptions.dataLabels.formatter = (val: number) => {
-                  return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                };
-              }
-            }
-          }
-          if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
-            if (sheet.chartOptions?.dataLabels) {
-              sheet.chartOptions.dataLabels.formatter = (val: number) => {
-                return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-              };
-            }
-          }
+          const isEcharts = sheet?.isEChart;
+          this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
+          // if(![10,24,26,27].includes(chartId) && !sheet['isEChart'] && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
+          //   if([2,3].includes(chartId)){
+          //     if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
+          //       sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          //       };
+          //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          //       };
+          //     }
+          //   }
+          //   else{
+          //     if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
+          //       sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          //       };
+          //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          //       };
+          //     }
+          //     else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
+          //       sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
+          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          //       };
+          //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          //       };
+          //     }
+          //   }
+          // }
+          // if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
+          //   if (sheet.chartOptions?.dataLabels) {
+          //     sheet.chartOptions.dataLabels.formatter = (val: number) => {
+          //       return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+          //     };
+          //   }
+          // }
           if(chartId == 11){
             sheet.echartOptions.tooltip.formatter =  function (params: any) {
               const date = params.data[0];
@@ -1666,43 +1668,45 @@ allowDrop(ev : any): void {
       }
       let chartId: number = sheet['chartId'];
       const numberFormat = sheet?.numberFormat;
-      if (![10, 24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)) {
-        if([2,3].includes(chartId)){
-          if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
-            sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };            
-            sheet.chartOptions.dataLabels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };
-          }
-        }
-        else{
-          if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
-            sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };
-            sheet.chartOptions.dataLabels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };
-          }
-          else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
-            sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };
-            sheet.chartOptions.dataLabels.formatter = (val: number) => {
-              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-            };
-          }
-        }
-      }
-      if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
-        if (sheet.chartOptions?.dataLabels) {
-          sheet.chartOptions.dataLabels.formatter = (val: number) => {
-            return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          };
-        }
-      }
+      const isEcharts = sheet?.isEChart;
+      this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
+      // if (![10, 24].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)) {
+      //   if([2,3].includes(chartId)){
+      //     if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
+      //       sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+      //       };            
+      //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+      //       };
+      //     }
+      //   }
+      //   else{
+      //     if (sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels) {
+      //       sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+      //       };
+      //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+      //       };
+      //     }
+      //     else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
+      //       sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
+      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+      //       };
+      //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
+      //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+      //       };
+      //     }
+      //   }
+      // }
+      // if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
+      //   if (sheet.chartOptions?.dataLabels) {
+      //     sheet.chartOptions.dataLabels.formatter = (val: number) => {
+      //       return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+      //     };
+      //   }
+      // }
       if(chartId == 11){
         sheet.echartOptions.tooltip.formatter =  function (params: any) {
           const date = params.data[0];
@@ -2246,7 +2250,7 @@ sidebySideBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boole
     yaxis.forEach((bar: any) => {
       bar["type"] = "bar";
     });
-    savedOptions.series = yaxis;
+    savedOptions.series.data = yaxis.data;
     savedOptions.xAxis.categories = xaxis;
     return savedOptions;
   } else {
@@ -2272,7 +2276,7 @@ stockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean)
       bar["type"] = "bar";
       bar["stack"]="total";
     });
-    savedOptions.series = yaxis;
+    savedOptions.series.data = yaxis.data;
     savedOptions.xAxis.data = xaxis;
     return savedOptions;
   } else {
@@ -2304,7 +2308,7 @@ hStockedBarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean
       bar["type"] = "bar";
       bar["stack"]="total";
     });
-    savedOptions.series = yaxis;
+    savedOptions.series.data = yaxis.data;
     savedOptions.yAxis.data = xaxis;
     return savedOptions;
   } else {
@@ -2319,7 +2323,7 @@ hGroupedChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
     yaxis.forEach((bar: any) => {
       bar["type"] = "bar";
     });
-    savedOptions.series = yaxis;
+    savedOptions.series.data = yaxis.data;
     savedOptions.yAxis.data = xaxis;
     return savedOptions;
   } else {
@@ -4268,6 +4272,115 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       let index = this.excludeFilterIdArray.indexOf(filterData.dashboard_filter_id);
       if (index > -1) {
         this.excludeFilterIdArray.splice(index, 1);
+      }
+    }
+  }
+
+  updateNumberFormat(sheet : any, numberFormat : any, chartId : any, isEcharts : any){
+    if(numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix){
+      if(isEcharts){
+        if([2,3].includes(chartId)){
+          if (sheet.echartOptions?.xAxis?.axisLabel) {
+            sheet.echartOptions.xAxis.axisLabel.formatter = (val: any) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+          if(sheet.echartOptions?.series){
+            sheet.echartOptions.series.forEach((data:any)=>{
+              // data.data.forEach((measure:any)=>{
+              //   measure.label.formatter = (val: any) => {
+              //     return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              //   };
+              // })
+              data.label.formatter = (val: any) => {
+                return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              };
+            })
+          }
+        } else if([26].includes(chartId)){
+          if(sheet.echartOptions?.series){
+            sheet.echartOptions.series.forEach((data:any)=>{
+              data.label.formatter = (val: any) => {
+                return this.formatNumber(val.value[2], numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              };
+            })
+          }
+        } else if([27].includes(chartId)){
+          if(sheet.echartOptions?.series){
+            sheet.echartOptions.series.forEach((data:any)=>{
+              data.label.formatter = (val: any) => {
+                const formattedValue = this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                return `${val.name}: ${formattedValue}`;
+              };
+            })
+          }
+        } else if([12].includes(chartId)){
+          if(sheet.echartOptions?.series){
+            sheet.echartOptions.series.forEach((data : any)=>{
+              data.data.forEach((measure:any)=>{
+                measure.label.formatter = (val: any) => {
+                  return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              })
+            })
+          }
+        } else if(![1, 25, 10, 24, 28, 11, 29].includes(chartId)){
+          if (sheet.echartOptions?.yAxis?.axisLabel) {
+            sheet.echartOptions.yAxis.axisLabel.formatter = (val: any) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+          if(sheet.echartOptions?.series){
+            sheet.echartOptions.series.forEach((data:any)=>{
+              data.label.formatter = (val: any) => {
+                return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              };
+            })
+          }
+        }
+      } else {
+        if([2,3].includes(chartId)){
+          if (sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };            
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+        } else if([26].includes(chartId)){
+          if (sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+        } else if([27].includes(chartId)){
+          if (sheet.chartOptions?.dataLabels) {
+            sheet.chartOptions.dataLabels.formatter = (val: any, opts: any) => {
+              const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
+              const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              return `${category}: ${formattedValue}`;
+            }
+          }
+        } else if(![1, 25, 10, 24, 28].includes(chartId)){
+          if (sheet.chartOptions?.yaxis?.labels) {
+            sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+          else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.yaxis?.length >= 0){
+            sheet.chartOptions.yaxis.forEach((data:any)=>{
+              data.labels.formatter = (val: number) => {
+                return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              };
+            });
+          }
+          if(sheet.chartOptions?.dataLabels){
+            sheet.chartOptions.dataLabels.formatter = (val: number) => {
+              return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+            };
+          }
+        }
       }
     }
   }

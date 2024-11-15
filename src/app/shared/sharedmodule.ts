@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterComponent } from './layout-components/footer/footer.component';
 import { TabToTopComponent } from './layout-components/tab-to-top/tab-to-top.component';
 import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboard/sheetsdashboard.component';
+import { TestPipe } from '../test.pipe';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboar
   imports: [
     CommonModule,
     RouterModule,
+    TestPipe,
     SimplebarAngularModule,
     NgbModule,
   ColorPickerModule,
@@ -55,6 +57,7 @@ import { SheetsdashboardComponent } from '../components/workbench/sheetsdashboar
   exports: [
     // ContentLayoutComponent,
     // LandingpageLayoutComponent,
+    TestPipe,
     SidebarComponent,
     HeaderComponent,
     TabToTopComponent,
