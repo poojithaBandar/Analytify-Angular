@@ -55393,6 +55393,10 @@ input[type=range]::-webkit-slider-runnable-track {
     color: #fefefe;
     cursor: default;
   }
+  .ngx-pagination{
+    margin-bottom:0px !important;
+    padding-top: 15px;
+  }
   .table thead th{
     color: #fff;
     font-size: 16px;
