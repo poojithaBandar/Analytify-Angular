@@ -632,7 +632,7 @@
 
                                             </a>
                                         </div> -->
-                                        <ng-template #aggregateUserModal let-modal>
+                                        <!-- <ng-template #aggregateUserModal let-modal>
                                             <div class="modal-header">
                                                 <h6 class="modal-title">Aggregated measures</h6>
                                                 <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -665,7 +665,7 @@
                                                     Close
                                                 </button>
                                             </div>
-                                        </ng-template>
+                                        </ng-template> -->
                                         <!-- <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="openSuperScaledModal(aggregateModal)"></i> -->
                                        <!--  <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="toggleDropdown()"></i>
                                         <select  class="form-control" [(ngModel)]="measureValue" [class.show]="isDropdownVisible" (change)="rowMeasuresCount(rows,index,measureValue)">
@@ -2192,7 +2192,7 @@
                                                                       
                                                                       <div class="buttons">
                                                                           <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                          <button class="btn btn-primary" (click)="updateNumberFormat(); numberPopupTrigger()">Update</button>
+                                                                          <button class="btn btn-primary" (click)="updateNumberFormat('notfromsheetRetrirve'); numberPopupTrigger()">Update</button>
                                                                       </div>
                                                                     </div>
                                                                 }
