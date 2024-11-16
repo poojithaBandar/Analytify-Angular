@@ -708,7 +708,7 @@
                             
                         </div>
                     </div>
-                    <div  [ngStyle]="{'display': ((bar || pie || donut) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center">
+                    <div  [ngStyle]="{'display': ((bar || pie || donut || map) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
                                                        <label for="inputName" class="form-control mb-0">Hierarchy</label>
@@ -750,7 +750,7 @@
                         <option value="echart">EChart</option>
                     </select>
                 </div>
-                @if((pie || bar || donut) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
+                @if((pie || bar || donut || map) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 p-1">
                                         <button class="btn btn-primary " (click)="goDrillDownBack()" style="padding: 4px;">
                                             <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
@@ -1023,7 +1023,7 @@
             @if(bar && chartId){         
             <div class="card-body">
                 <div >
-                    <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
+                    <div echarts [options]="eBarChartOptions" (chartClick)="onBarChartClick($event)" class="echart-charts"></div>
                 </div>
             </div>          
             }
@@ -1116,7 +1116,7 @@
                     <div class="card-body">
                         <div id="map-chart">
                             <!-- <app-map-echart  [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart> -->
-                            <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
+                            <div id="echartsBar" echarts [options]="eMapChartOptions" (chartClick)="onMapChartClick($event)"  class="echart-charts"></div>  
                         </div>
                     </div>
                     }

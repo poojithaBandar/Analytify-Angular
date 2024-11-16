@@ -258,6 +258,7 @@ export class SheetsComponent {
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
   drillDownIndex : number = 0;
+  isMapChart : boolean = false;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
   drillDownLevel : any[] = [];
@@ -536,7 +537,8 @@ try {
           series: [
             {
               name: "",
-              data: this.chartsRowData 
+              data: this.chartsRowData ,
+              universalTransition: true,
             }
           ],
           annotations: {
@@ -4122,8 +4124,9 @@ bar["stack"]="Total";
     this.guage = guage;
     this.map = map;
     this.calendar = calendar;
+    this.isMapChart = this.map;
     // this.dataExtraction();
-    if(!(this.bar|| this.pie || this.donut)){
+    if(!(this.bar|| this.pie || this.donut || this.map)){
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
       this.drillDownIndex = 0;
@@ -4500,25 +4503,29 @@ sheetSave(){
    bandColor1 = this.color1;
    bandColor2 = this.color2;
   }
-  if(this.bar && this.chartId == 6){
+  if(this.bar && this.chartId == 6 && !this.isMapChart){
     console.log(this.chartOptions3);
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData;
-    if (this.originalData) {
-      this.saveBar = this.originalData.data;
-      this.barXaxis = this.originalData.categories;
-      this.chartOptions3.xaxis.categories = this.originalData.categories;
-      this.chartOptions3.series[0].data = this.originalData.data;
-      tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
-      tablePreviewRow[0].result_data = this.originalData.data;
-      tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
-      tablePreviewCol[0].result_data = this.originalData.categories;
-      delete this.originalData;
-    }
     if(this.isApexCharts) {
+      if (this.originalData) {
+        this.saveBar = this.originalData.data;
+        this.barXaxis = this.originalData.categories;
+        this.chartOptions3.xaxis.categories = this.originalData.categories;
+        this.chartOptions3.series[0].data = this.originalData.data;
+        tablePreviewRow = _.cloneDeep(this.tablePreviewRow);
+        tablePreviewRow[0].result_data = this.originalData.data;
+        tablePreviewCol = _.cloneDeep(this.tablePreviewColumn);
+        tablePreviewCol[0].result_data = this.originalData.categories;
+        delete this.originalData;
+      }
       savedChartOptions = this.chartOptions3;
       this.barOptions = this.chartOptions3;
     } else {
+      if (this.originalData) {
+      this.eBarChartOptions.series[0].data = this.originalData.data;
+      this.eBarChartOptions.xAxis.data =  this.originalData.categories;
+      }
       savedChartOptions = this.eBarChartOptions;
     }
   }
@@ -4680,8 +4687,24 @@ sheetSave(){
     // savedChartOptions['min1'] = this.minValue
 
   }
-  if(this.map && this.chartId == 29){
+  if((this.map  && this.chartId == 29) || this.isMapChart){
+    if (this.originalData) {
+      let result:any[] = [];
+      this.originalData.categories[0].values.forEach((country: string, index: number) => {
+        const countryData: any = { name: country , value : this.chartsRowData[index]};
+            this.originalData.data.forEach((measure:any) => {
+          const measureName = measure.name;
+          const measureValue = measure.data[index];;
+          countryData[measureName] = measureValue;
+        });
+    
+        result.push(countryData);
+      });
+      this.eMapChartOptions.series[0].data = result;
+      }
     savedChartOptions = this.eMapChartOptions;
+    this.map = true;
+    this.chartId = 29;
   }
   if(this.calendar && this.chartId == 11){
     savedChartOptions = this.eCalendarChartOptions;
@@ -4981,6 +5004,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.sheetTagName = responce.sheet_tag_name;
           }
         }
+        this.isMapChart = false;
         this.chartId = responce.chart_id;
         this.sheetChartId = responce.chart_id;
         this.sheetCustomQuery = responce.custom_query;
@@ -5153,6 +5177,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.funnel = false;
           this.guage = false;
           this.map = true;
+          this.isMapChart = true;
           this.calendar = false;
         }
        if(responce.chart_id == 6){
@@ -8175,6 +8200,11 @@ fetchChartData(chartData: any){
               this.drillDownIndex--;
               this.drillDownObject.pop();
               this.callDrillDown();
+              if(this.drillDownIndex == 0 && this.isMapChart){
+                this.map = true;
+                this.bar = false;
+                this.chartId = 29;
+              }
             }         
           }
   
@@ -8282,6 +8312,11 @@ fetchChartData(chartData: any){
         else if(this.donut){//pie
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+          }
+        }
+        else if(this.map){//pie
+          if(!this.originalData){
+            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData };
           }
         }
       }
@@ -9927,6 +9962,46 @@ fetchChartData(chartData: any){
           this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.color = color;
         }
         this.updateEchartOptions();
+    }
+
+    onBarChartClick($event : any){
+      console.log(event);
+      if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
+        // const selectedXValue = this.chartsColumnData[config.dataPointIndex];
+        console.log('X-axis value:', $event.name);
+        let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
+        this.drillDownIndex++;
+        let obj = { [nestedKey]:  $event.name };
+        this.drillDownObject.push(obj);
+        this.setOriginalData();
+        this.dataExtraction();
+      }
+    }
+
+    async onMapChartClick(event: any) {
+      const regionName = event.name;
+      if (regionName === 'United States') {
+        const geoJson = await lastValueFrom(
+          this.http.get<any>(`assets/maps/USA.json`)
+        );
+        echarts.registerMap(regionName, geoJson);
+      } else {
+       
+      }
+      this.setOriginalData();
+                if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
+                  console.log('X-axis value:', regionName);
+                  let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
+                  this.drillDownIndex++;
+                  let obj = { [nestedKey]: regionName };
+                  this.drillDownObject.push(obj);
+                  this.map = false;
+                  if(this.drillDownIndex > 0){
+                    this.bar = true;
+                    this.chartId = 6;
+                  }
+                  this.dataExtraction();
+                }
     }
 
     // updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}})
