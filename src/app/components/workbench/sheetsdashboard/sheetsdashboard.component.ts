@@ -176,6 +176,7 @@ export class SheetsdashboardComponent {
   tableTotalItems:any;
   tableSearch:any;
   isDraggingDisabled = false;
+  isSampleDashboard: boolean = false;;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -660,6 +661,7 @@ export class SheetsdashboardComponent {
       next:(data)=>{
         console.log('savedDashboard',data);
         this.dashboardName=data.dashboard_name;
+        this.isSampleDashboard = data.is_sample;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
         this.gridType = data.grid_type;

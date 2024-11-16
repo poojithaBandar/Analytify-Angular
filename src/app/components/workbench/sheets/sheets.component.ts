@@ -4153,7 +4153,9 @@ bar["stack"]="Total";
   tabs : any [] = [];
   selected = new FormControl(0);
   addSheet(isDuplicate : boolean) {
-    this.active = 1;
+    if (this.active !== 3){
+      this.active = 1;
+    }
     this.retriveDataSheet_id = '';
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
