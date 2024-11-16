@@ -155,15 +155,17 @@
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                                                 <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                             </div>
-                                                            @for(data of filterData;track data){
+                                                            <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                            <!-- @for(data of filterData;track data){ -->
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                 <div class="form-check">
                                                                     <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input"
-                                                                        (click)="filterCheck($event,data)">
-                                                                    <label for="defaultCheck1" class="form-check-label"> {{data}} </label>
+                                                                        (click)="filterCheck($event,data.label)">
+                                                                    <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
                                                                 </div>
-                                                                }
+                                                                <!-- } -->
                                                             }
+                                                        </div>
                                                         </div>
                                                     </ng-template>
                                                 </li>

@@ -2844,10 +2844,10 @@ bar["stack"]="Total";
               type:'scroll',
               show: this.legendSwitch // Control legend visibility
           },            
-          // label: {
-          //     show : this.dataLabels,
-          //     formatter: '{b}: {d}%',
-          //   },
+          label: {
+              show : this.dataLabels,
+              formatter: '{b}: {d}%',
+            },
             series: [
               {
                 type: 'pie',
@@ -5821,8 +5821,8 @@ if(this.fromFileId){
         this.filterData = convertedArray;
 
         if(this.dateList.includes(responce.dtype)){
-          this.floor = new Date(this.filterData[0]).getTime();
-          this.ceil = new Date(this.filterData[this.filterData.length - 1]).getTime();
+          this.floor = new Date(this.filterData[0].label).getTime();
+          this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
           this.minValue = this.floor;
           this.maxValue = this.ceil;
           this.options = {
@@ -8194,17 +8194,21 @@ fetchChartData(chartData: any){
             case 'top':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.ePieChartOptions.legend.top = 'top';
+                this.ePieChartOptions.legend.orient = 'horizontal';
                 break;
             case 'bottom':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.ePieChartOptions.legend.bottom = 'bottom';
+                this.ePieChartOptions.legend.orient = 'horizontal';
                 break;
             case 'left':
                 this.ePieChartOptions.legend.left = 'left';
+                this.ePieChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             case 'right':
                 this.ePieChartOptions.legend.right = 'right';
+                this.ePieChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             default:
@@ -8225,17 +8229,21 @@ fetchChartData(chartData: any){
             case 'top':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.eDonutChartOptions.legend.top = 'top';
+                this.eDonutChartOptions.legend.orient = 'horizontal';
                 break;
             case 'bottom':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.eDonutChartOptions.legend.bottom = 'bottom';
+                this.eDonutChartOptions.legend.orient = 'horizontal';
                 break;
             case 'left':
                 this.eDonutChartOptions.legend.left = 'left';
+                this.eDonutChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             case 'right':
                 this.eDonutChartOptions.legend.right = 'right';
+                this.eDonutChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             default:
