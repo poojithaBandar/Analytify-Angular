@@ -2277,7 +2277,7 @@ eRadarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
       let radarArray = categories.map((value: any, index: number) => ({
         name: categories[index]
       }));
-  savedOptions.series.data = yaxis;
+  savedOptions.series.data = yaxis.data;
     savedOptions.radar.indicator = radarArray;
     return savedOptions;
 }
@@ -2871,7 +2871,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
-      item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+      item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData;
       }
     }
@@ -2908,7 +2908,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
-        item1.chartOptions.labels = this.filteredColumnData[0].values;
+        item1.chartOptions.labels = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
     }
@@ -2937,7 +2937,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
-        item1.chartOptions.labels = this.filteredColumnData[0].values;
+        item1.chartOptions.labels = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
     }

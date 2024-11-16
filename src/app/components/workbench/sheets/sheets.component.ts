@@ -3410,19 +3410,19 @@ bar["stack"]="Total";
                 let object : any;
                 if (this.barchart) {
                   this.chartOptions3.series[0].data = this.chartsRowData;
-                  this.chartOptions3.xaxis.categories = this.chartsColumnData;
+                  this.chartOptions3.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                   this.chartOptions3.xaxis.convertedCatToNumeric = true;
                   // console.log(this.chartOptions3.xaxis.categories);
                   // console.log(this.chartOptions3);
                   object = [{data : this.chartsRowData}];
                   this.barchart.updateSeries(object);
-                  object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
+                  object = {xaxis: {categories : this.chartsColumnData.map((category : any)  => category === null ? 'null' : category), convertedCatToNumeric : true}};
                   this.barchart.updateOptions(object);
                   console.log(this.barchart);
                 }
                 else if (this.piechart) {
                   this.chartOptions4.series = this.chartsRowData;
-                  this.chartOptions4.labels = this.chartsColumnData;
+                  this.chartOptions4.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                 }
                 else if (this.linechart) {
                   this.chartOptions.series[0].data = this.chartsRowData;
@@ -3504,7 +3504,7 @@ bar["stack"]="Total";
                 }
                 else if (this.donutchart) {
                   this.chartOptions10.series = this.chartsRowData;
-                  this.chartOptions10.labels = this.chartsColumnData;
+                  this.chartOptions10.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                 }
                 else if (this.heatMap) {
                   this.heatMapChartOptions.series = this.dualAxisRowData;
@@ -4505,7 +4505,7 @@ sheetSave(){
   if(this.bar && this.chartId == 6){
     console.log(this.chartOptions3);
     this.saveBar = this.chartsRowData;
-    this.barXaxis = this.chartsColumnData;
+    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
       this.saveBar = this.originalData.data;
       this.barXaxis = this.originalData.categories;
@@ -4526,7 +4526,7 @@ sheetSave(){
   }
   if(this.pie && this.chartId == 24){
     this.savePie = this.chartsRowData;
-    this.pieXaxis = this.chartsColumnData;
+    this.pieXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if(this.isApexCharts) {
       savedChartOptions = _.cloneDeep(this.chartOptions4);
       this.pieOptions = this.chartOptions4;
@@ -4633,7 +4633,7 @@ sheetSave(){
   if(this.donut && this.chartId == 10){
     
     this.donutYaxis = this.chartsRowData;
-    this.donutXaxis = this.chartsColumnData;
+    this.donutXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     
     if (this.originalData) {
       this.donutYaxis = this.originalData.data;
