@@ -330,6 +330,10 @@ export class SheetsdashboardComponent {
     }
   }
   ngOnInit() {  
+    let displayGrid = DisplayGrid.Always;
+    if(this.isPublicUrl){
+      displayGrid = DisplayGrid.None;
+    }
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
@@ -342,6 +346,7 @@ export class SheetsdashboardComponent {
         // this.dashboardId = 145
         this.getSavedDashboardDataPublic();
         this.getDashboardFilterredListPublic();
+        displayGrid = DisplayGrid.None;
       }
         // if(this.sheetsNewDashboard){
         //   this.sheetsDataWithQuerysetId();
@@ -358,7 +363,7 @@ export class SheetsdashboardComponent {
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactLeftAndUp,
-      displayGrid: DisplayGrid.Always,
+      displayGrid: displayGrid,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
@@ -406,12 +411,16 @@ export class SheetsdashboardComponent {
 
   }
   changeGridType(gridType : string){
+    let displayGrid = DisplayGrid.Always;
+    if(this.isPublicUrl){
+      displayGrid = DisplayGrid.None;
+    }
   if(gridType.toLocaleLowerCase() == 'fixed'){
     this.gridType = 'fixed';
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactUpAndLeft,
-      displayGrid: DisplayGrid.Always,
+      displayGrid: displayGrid,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
@@ -448,7 +457,7 @@ export class SheetsdashboardComponent {
     this.options = {
       gridType: GridType.Fixed,
       compactType: CompactType.CompactUpAndLeft,
-      displayGrid: DisplayGrid.Always,
+      displayGrid: displayGrid,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
