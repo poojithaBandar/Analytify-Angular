@@ -2844,10 +2844,10 @@ bar["stack"]="Total";
               type:'scroll',
               show: this.legendSwitch // Control legend visibility
           },            
-          // label: {
-          //     show : this.dataLabels,
-          //     formatter: '{b}: {d}%',
-          //   },
+          label: {
+              show : this.dataLabels,
+              formatter: '{b}: {d}%',
+            },
             series: [
               {
                 type: 'pie',
@@ -3410,19 +3410,19 @@ bar["stack"]="Total";
                 let object : any;
                 if (this.barchart) {
                   this.chartOptions3.series[0].data = this.chartsRowData;
-                  this.chartOptions3.xaxis.categories = this.chartsColumnData;
+                  this.chartOptions3.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                   this.chartOptions3.xaxis.convertedCatToNumeric = true;
                   // console.log(this.chartOptions3.xaxis.categories);
                   // console.log(this.chartOptions3);
                   object = [{data : this.chartsRowData}];
                   this.barchart.updateSeries(object);
-                  object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
+                  object = {xaxis: {categories : this.chartsColumnData.map((category : any)  => category === null ? 'null' : category), convertedCatToNumeric : true}};
                   this.barchart.updateOptions(object);
                   console.log(this.barchart);
                 }
                 else if (this.piechart) {
                   this.chartOptions4.series = this.chartsRowData;
-                  this.chartOptions4.labels = this.chartsColumnData;
+                  this.chartOptions4.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                 }
                 else if (this.linechart) {
                   this.chartOptions.series[0].data = this.chartsRowData;
@@ -3504,7 +3504,7 @@ bar["stack"]="Total";
                 }
                 else if (this.donutchart) {
                   this.chartOptions10.series = this.chartsRowData;
-                  this.chartOptions10.labels = this.chartsColumnData;
+                  this.chartOptions10.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                 }
                 else if (this.heatMap) {
                   this.heatMapChartOptions.series = this.dualAxisRowData;
@@ -4153,7 +4153,9 @@ bar["stack"]="Total";
   tabs : any [] = [];
   selected = new FormControl(0);
   addSheet(isDuplicate : boolean) {
-    this.active = 1;
+    if (this.active !== 3){
+      this.active = 1;
+    }
     this.retriveDataSheet_id = '';
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
@@ -4503,7 +4505,7 @@ sheetSave(){
   if(this.bar && this.chartId == 6){
     console.log(this.chartOptions3);
     this.saveBar = this.chartsRowData;
-    this.barXaxis = this.chartsColumnData;
+    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
       this.saveBar = this.originalData.data;
       this.barXaxis = this.originalData.categories;
@@ -4524,7 +4526,7 @@ sheetSave(){
   }
   if(this.pie && this.chartId == 24){
     this.savePie = this.chartsRowData;
-    this.pieXaxis = this.chartsColumnData;
+    this.pieXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if(this.isApexCharts) {
       savedChartOptions = _.cloneDeep(this.chartOptions4);
       this.pieOptions = this.chartOptions4;
@@ -4631,7 +4633,7 @@ sheetSave(){
   if(this.donut && this.chartId == 10){
     
     this.donutYaxis = this.chartsRowData;
-    this.donutXaxis = this.chartsColumnData;
+    this.donutXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     
     if (this.originalData) {
       this.donutYaxis = this.originalData.data;
@@ -5821,8 +5823,8 @@ if(this.fromFileId){
         this.filterData = convertedArray;
 
         if(this.dateList.includes(responce.dtype)){
-          this.floor = new Date(this.filterData[0]).getTime();
-          this.ceil = new Date(this.filterData[this.filterData.length - 1]).getTime();
+          this.floor = new Date(this.filterData[0].label).getTime();
+          this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
           this.minValue = this.floor;
           this.maxValue = this.ceil;
           this.options = {
@@ -8194,17 +8196,21 @@ fetchChartData(chartData: any){
             case 'top':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.ePieChartOptions.legend.top = 'top';
+                this.ePieChartOptions.legend.orient = 'horizontal';
                 break;
             case 'bottom':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.ePieChartOptions.legend.bottom = 'bottom';
+                this.ePieChartOptions.legend.orient = 'horizontal';
                 break;
             case 'left':
                 this.ePieChartOptions.legend.left = 'left';
+                this.ePieChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             case 'right':
                 this.ePieChartOptions.legend.right = 'right';
+                this.ePieChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             default:
@@ -8225,17 +8231,21 @@ fetchChartData(chartData: any){
             case 'top':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.eDonutChartOptions.legend.top = 'top';
+                this.eDonutChartOptions.legend.orient = 'horizontal';
                 break;
             case 'bottom':
                 // this.ePieChartOptions.legend.left = 'center';
                 this.eDonutChartOptions.legend.bottom = 'bottom';
+                this.eDonutChartOptions.legend.orient = 'horizontal';
                 break;
             case 'left':
                 this.eDonutChartOptions.legend.left = 'left';
+                this.eDonutChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             case 'right':
                 this.eDonutChartOptions.legend.right = 'right';
+                this.eDonutChartOptions.legend.orient = 'vertical';
                 // this.ePieChartOptions.legend.top = 'center';
                 break;
             default:

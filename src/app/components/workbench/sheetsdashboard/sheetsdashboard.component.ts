@@ -176,6 +176,7 @@ export class SheetsdashboardComponent {
   tableTotalItems:any;
   tableSearch:any;
   isDraggingDisabled = false;
+  isSampleDashboard: boolean = false;;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -330,6 +331,10 @@ export class SheetsdashboardComponent {
     }
   }
   ngOnInit() {  
+    let displayGrid = DisplayGrid.Always;
+    if(this.isPublicUrl){
+      displayGrid = DisplayGrid.None;
+    }
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson); 
       this.loaderService.hide(); 
@@ -342,6 +347,7 @@ export class SheetsdashboardComponent {
         // this.dashboardId = 145
         this.getSavedDashboardDataPublic();
         this.getDashboardFilterredListPublic();
+        displayGrid = DisplayGrid.None;
       }
         // if(this.sheetsNewDashboard){
         //   this.sheetsDataWithQuerysetId();
@@ -358,7 +364,7 @@ export class SheetsdashboardComponent {
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactLeftAndUp,
-      displayGrid: DisplayGrid.Always,
+      displayGrid: displayGrid,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
@@ -406,12 +412,16 @@ export class SheetsdashboardComponent {
 
   }
   changeGridType(gridType : string){
+    let displayGrid = DisplayGrid.Always;
+    if(this.isPublicUrl){
+      displayGrid = DisplayGrid.None;
+    }
   if(gridType.toLocaleLowerCase() == 'fixed'){
     this.gridType = 'fixed';
     this.options = {
       gridType: GridType.Fit,
       compactType: CompactType.CompactUpAndLeft,
-      displayGrid: DisplayGrid.Always,
+      displayGrid: displayGrid,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
@@ -448,7 +458,7 @@ export class SheetsdashboardComponent {
     this.options = {
       gridType: GridType.Fixed,
       compactType: CompactType.CompactUpAndLeft,
-      displayGrid: DisplayGrid.Always,
+      displayGrid: displayGrid,
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
@@ -651,6 +661,7 @@ export class SheetsdashboardComponent {
       next:(data)=>{
         console.log('savedDashboard',data);
         this.dashboardName=data.dashboard_name;
+        this.isSampleDashboard = data.is_sample;
         this.heightGrid = data.height;
         this.widthGrid = data.width;
         this.gridType = data.grid_type;
@@ -2266,7 +2277,7 @@ eRadarChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
       let radarArray = categories.map((value: any, index: number) => ({
         name: categories[index]
       }));
-  savedOptions.series.data = yaxis;
+  savedOptions.series.data = yaxis.data;
     savedOptions.radar.indicator = radarArray;
     return savedOptions;
 }
@@ -2860,7 +2871,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
-      item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+      item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData;
       }
     }
@@ -2897,7 +2908,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
-        item1.chartOptions.labels = this.filteredColumnData[0].values;
+        item1.chartOptions.labels = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
     }
@@ -2926,7 +2937,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
-        item1.chartOptions.labels = this.filteredColumnData[0].values;
+        item1.chartOptions.labels = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData[0].data;
       }
     }
@@ -2996,7 +3007,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           if(!item1.originalData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
-        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
       }
@@ -3020,7 +3031,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           if(!item1.originalData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
-        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
       }
@@ -3044,7 +3055,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           if(!item1.originalData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
-        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
       }
@@ -3065,7 +3076,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           if(!item1.originalData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
-        item1.chartOptions.label = this.filteredColumnData[0].values;
+        item1.chartOptions.label = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
       }
@@ -3088,7 +3099,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           if(!item1.originalData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
-        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
       }
@@ -3233,7 +3244,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
-        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
       }
@@ -3261,7 +3272,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         else{ if(!item1.originalData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
-        item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+        item1.chartOptions.xaxis.categories = categories;
         item1.chartOptions.series = this.filteredRowData;
       }
     }
