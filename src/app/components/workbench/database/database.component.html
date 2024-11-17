@@ -102,8 +102,7 @@
                                     #destinationList="cdkDropList" [cdkDropListData]="draggedtables"
                                     (cdkDropListDropped)="tableCustomJoinError ? '' : drop($event)">
                                     @for(item of draggedtables;track $index){
-                                    <div class="example-box p-2 border border-dark-subtle" cdkDrag>{{item.alias |
-                                        slice:0:16}}({{item.schema | slice:0:12}})
+                                        <div class="example-box p-2 border border-dark-subtle" style="cursor: auto;">{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
                                         <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
                                         <a aria-label="anchor" (click)="onDeleteItem($index,item.alias)"
