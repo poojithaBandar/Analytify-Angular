@@ -323,6 +323,7 @@ export class SheetsComponent {
   dataLabelsFontFamily : string = 'sans-serif';
   dataLabelsFontSize : any = '12px';
   dataLabelsFontPosition : any = 'top';
+  dataLabelsColor : string = '#00a5a2';
   measureAlignment : any = 'center';
   dimensionAlignment : any = 'center';
   colorPalette = COLOR_PALETTE;
@@ -572,7 +573,7 @@ try {
             },
             type: 'bar',
             height: 320,
-            background: this.backgroundColor,
+            background: [this.backgroundColor],
             events: {
               dataPointSelection: function (event: any, chartContext: any, config: any) {
                 const selectedXValue = self.chartsColumnData[config.dataPointIndex];
@@ -608,9 +609,9 @@ try {
               hideOverlappingLabels: false,
               style: {
                 colors: this.color,
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
                 },
             },
             axisBorder: {
@@ -640,9 +641,9 @@ try {
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
               formatter: this.formatNumber.bind(this)
             },
@@ -680,8 +681,10 @@ try {
             formatter: this.formatNumber.bind(this),
             offsetY: -20,
             style: {
-              fontSize: '12px',
-              colors: [this.color],
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400,
+              colors: [this.dataLabelsColor],
             },
           },
           // fill: {
@@ -859,11 +862,11 @@ try {
           colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
           labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
           legend: {
-            show: true,
-            position: 'bottom'
+            show: this.legendSwitch,
+            position: this.legendsAllignment
           },
           dataLabels: {
-            enabled: true,
+            enabled: this.dataLabels,
             dropShadow: {
               enabled: false
             }
@@ -990,8 +993,10 @@ try {
               formatter: this.formatNumber.bind(this),
               offsetY: -20,
               style: {
-                fontSize: '12px',
-                colors: [this.color],
+                fontSize: this.dataLabelsFontSize,
+                fontFamily: this.dataLabelsFontFamily,
+                fontWeight: this.isBold ? 700 : 400,
+                colors: [this.dataLabelsColor],
               },
               background: {
                 enabled: false,
@@ -1038,9 +1043,9 @@ try {
                 trim: true,
                 style: {
                   colors: this.color,
-                  fontSize: '12px',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12,
+                  fontSize: this.xLabelFontSize,
+                  fontFamily: this.xLabelFontFamily,
+                  fontWeight: this.xlabelFontWeight,
                 },
               }
             },
@@ -1050,9 +1055,9 @@ try {
                 this.yLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: '12px',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12,
+                  fontSize: this.yLabelFontSize,
+                  fontFamily: this.yLabelFontFamily,
+                  fontWeight: this.ylabelFontWeight,
                 },
                 formatter: this.formatNumber.bind(this)
               }
@@ -1198,8 +1203,10 @@ try {
               formatter: this.formatNumber.bind(this),
               offsetY: -20,
               style: {
-                fontSize: '12px',
-                colors: [this.color],
+                fontSize: this.dataLabelsFontSize,
+                fontFamily: this.dataLabelsFontFamily,
+                fontWeight: this.isBold ? 700 : 400,
+                colors: [this.dataLabelsColor],
               },
               background: {
                 enabled: false,
@@ -1218,7 +1225,7 @@ try {
               },
             },
             grid: {
-              borderColor: "rgba(119, 119, 142, 0.05)",
+              borderColor: this.GridColor,
               show: true,
               xaxis: {
                 lines: {
@@ -1250,9 +1257,9 @@ try {
                 show: this.xLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: '12px',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12,
+                  fontSize: this.xLabelFontSize,
+                  fontFamily: this.xLabelFontFamily,
+                  fontWeight: this.xlabelFontWeight,
                 },
               },
               tickPlacement: 'on'
@@ -1262,9 +1269,9 @@ try {
                 show: this.yLabelSwitch,
                 style: {
                   colors: this.color,
-                  fontSize: '12px',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12,
+                  fontSize: this.yLabelFontSize,
+                  fontFamily: this.yLabelFontFamily,
+                  fontWeight: this.ylabelFontWeight,
                 },
                 formatter: this.formatNumber.bind(this)
               },
@@ -1408,7 +1415,7 @@ try {
               horizontal: false,
               columnWidth: '55%',
               dataLabels: {
-                position: 'top',
+                position: this.dataLabelsFontPosition,
               }
             },
           },
@@ -1417,8 +1424,10 @@ try {
             formatter: this.formatNumber.bind(this),
             offsetY: -20,
             style: {
-              fontSize: '12px',
-              colors: [this.color],
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400,
+              colors: [this.dataLabelsColor],
             },
           },
           stroke: {
@@ -1434,9 +1443,9 @@ try {
               hideOverlappingLabels: false,
               style: {
                 colors: this.color,
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
             },
           },
@@ -1448,9 +1457,9 @@ try {
               show: this.yLabelSwitch,
               style: {
                 colors: this.color,
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
               formatter: this.formatNumber.bind(this)
             },
@@ -1566,12 +1575,12 @@ bar["type"]="bar";
           ...series,
           label: {
               show: true, // Enable data labels
-              position: 'top', // Position of the labels (e.g., 'top', 'inside', etc.)
+              position: this.dataLabelsFontPosition, // Position of the labels (e.g., 'top', 'inside', etc.)
               formatter: '{c}', // Customize the label format (e.g., '{c}' for value)
-              color: '#000', // Customize label color
-              fontSize: 12, // Customize label font size
-              fontWeight: 'bold', // Customize label font weight
-              fontFamily: 'Helvetica, Arial, sans-serif' // Use custom font family if needed
+              color: this.dataLabelsColor, // Customize label color
+              fontSize: this.dataLabelsFontSize, // Customize label font size
+              fontWeight: this.isBold ? 700 : 400, // Customize label font weight
+              fontFamily: this.dataLabelsFontFamily // Use custom font family if needed
           }
       })),
         color:this.color
@@ -1635,7 +1644,7 @@ bar["type"]="bar";
             bar: {
               horizontal: false,
               dataLabels: {
-                position: 'top',
+                position: this.dataLabelsFontPosition,
               }
             }
           },
@@ -1647,9 +1656,9 @@ bar["type"]="bar";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
             },
           },
@@ -1659,9 +1668,9 @@ bar["type"]="bar";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
               formatter: this.formatNumber.bind(this)
             }
@@ -1691,8 +1700,10 @@ bar["type"]="bar";
             formatter: this.formatNumber.bind(this),
             offsetY: -20,
             style: {
-              fontSize: '12px',
-              colors: [this.color],
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400,
+              colors: [this.dataLabelsColor],
             },
           }
         };
@@ -1784,10 +1795,10 @@ bar["stack"]="total";
               show:true, // Enable data labels
               position:'inside', // Position of the labels (e.g., 'top', 'inside', etc.)
               formatter:'{c}', // Customize the label format (e.g., '{c}' for value)
-              color:'#000', // Customize label color (default black)
-              fontSize:12, // Customize label font size
-              fontWeight:'bold', // Customize label font weight
-              fontFamily:'Helvetica, Arial, sans-serif' // Use custom font family if needed
+              color:this.dataLabelsColor, // Customize label color (default black)
+              fontSize:this.dataLabelsFontSize, // Customize label font size
+              fontWeight:this.isBold ? 700:400, // Customize label font weight
+              fontFamily:this.dataLabelsFontFamily // Use custom font family if needed
           }
       })),        
 
@@ -1880,8 +1891,10 @@ bar["stack"]="total";
               formatter: this.formatNumber.bind(this),
               offsetY: -20,
               style: {
-                fontSize: '12px',
-                // colors: [this.color],
+                fontSize: this.dataLabelsFontSize,
+                fontFamily: this.dataLabelsFontFamily,
+                fontWeight: this.isBold ? 700 : 400,
+                colors: [this.dataLabelsColor],
               },
               background: {
                 enabled: false,
@@ -1895,9 +1908,9 @@ bar["stack"]="total";
                 show: this.xLabelSwitch,
                 style: {
                   colors: [],
-                  fontSize: '12px',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 12,
+                  fontSize: this.xLabelFontSize,
+                  fontFamily: this.xLabelFontFamily,
+                  fontWeight: this.xlabelFontWeight,
                 },
               }
             },
@@ -1916,9 +1929,9 @@ bar["stack"]="total";
                   show: this.yLabelSwitch,
                   style: {
                     colors: [],
-                    fontSize: '12px',
-                    fontFamily: 'Helvetica, Arial, sans-serif',
-                    fontWeight: 12,
+                    fontSize: this.yLabelFontSize,
+                    fontFamily: this.yLabelFontFamily,
+                    fontWeight: this.ylabelFontWeight,
                   },
                   formatter: this.formatNumber.bind(this)
                 }
@@ -1938,9 +1951,9 @@ bar["stack"]="total";
                   show: this.yLabelSwitch,
                   style: {
                     colors: [],
-                    fontSize: '12px',
-                    fontFamily: 'Helvetica, Arial, sans-serif',
-                    fontWeight: 12,
+                    fontSize: this.yLabelFontSize,
+                    fontFamily: this.yLabelFontFamily,
+                    fontWeight: this.ylabelFontWeight,
                   },
                   formatter: this.formatNumber.bind(this)
                 }
@@ -1949,7 +1962,7 @@ bar["stack"]="total";
             plotOptions: {
               bar: {
                 dataLabels: {
-                  position: 'top',
+                  position: this.dataLabelsFontPosition,
                 }
               }
             }
@@ -1995,7 +2008,7 @@ bar["stack"]="total";
                 color: this.xLabelColor, // Customize label color
                 fontSize: this.xLabelFontSize, // Customize font size
                 fontFamily: this.xLabelFontFamily, // Customize font family
-                fontWeight: 'bold', // Customize font weight
+                fontWeight: this.xlabelFontWeight, // Customize font weight
                 formatter(value:any) {
                     return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
                 }
@@ -2013,11 +2026,11 @@ bar["stack"]="total";
               type: 'value',
               name: 'Bar',
               axisLabel: {
-                color: '#333', // Customize label color
-                fontSize: 12, // Customize font size
+                color: this.yLabelColor, // Customize label color
+                fontSize: this.yLabelFontSize, // Customize font size
                 position: 'right',
-                fontFamily: 'Arial, sans-serif', // Customize font family
-                fontWeight: 'bold', // Customize font weight
+                fontFamily: this.yLabelFontFamily, // Customize font family
+                fontWeight: this.ylabelFontWeight, // Customize font weight
                 formatter(value:any) {
                     return value; // Customize label format (e.g., add units)
                 }
@@ -2033,11 +2046,11 @@ bar["stack"]="total";
               type: 'value',
               name: 'Line',
               axisLabel: {
-                color: '#333', // Customize label color
-                fontSize: 12, // Customize font size
+                color: this.yLabelColor, // Customize label color
+                fontSize: this.yLabelFontSize, // Customize font size
                 position: 'left',
-                fontFamily: 'Arial, sans-serif', // Customize font family
-                fontWeight: 'bold', // Customize font weight
+                fontFamily: this.yLabelFontFamily, // Customize font family
+                fontWeight: this.ylabelFontWeight, // Customize font weight
                 formatter(value:any) {
                     return value ; // Customize label format (e.g., add units)
                 }
@@ -2213,9 +2226,9 @@ bar["stack"]="total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
               formatter: this.formatNumber.bind(this)
             }
@@ -2226,9 +2239,9 @@ bar["stack"]="total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
             }
           },
@@ -2257,8 +2270,10 @@ bar["stack"]="total";
             formatter: this.formatNumber.bind(this),
             offsetY: -20,
             style: {
-              fontSize: '12px',
-              colors: [this.color],
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400,
+              colors: [this.dataLabelsColor],
             },
           }
         };
@@ -2347,12 +2362,12 @@ bar["stack"]="total";
           ...series,
           label:{
               show:true, // Enable data labels
-              position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+              position:this.dataLabelsFontPosition, // Position of the labels (e.g., 'top', 'inside', etc.)
               formatter:'{c}', // Display the value of the bar
-              color:'#000', // Default label color (can be updated)
-              fontSize:this.xLabelFontSize, // Default label font size
-              fontWeight:'bold', // Default label font weight
-              fontFamily:this.xLabelFontFamily // Default label font family
+              color:this.dataLabelsColor, // Default label color (can be updated)
+              fontSize:this.dataLabelsFontSize, // Default label font size
+              fontWeight:this.isBold? 700:400, // Default label font weight
+              fontFamily:this.dataLabelsFontFamily // Default label font family
           }
       })),
         
@@ -2384,8 +2399,10 @@ bar["stack"]="total";
             formatter: this.formatNumber.bind(this),
             offsetY: -6,
             style: {
-              fontSize: '12px',
-              colors: [this.color],
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400,
+              colors: [this.dataLabelsColor],
             },
           },
           stroke: {
@@ -2399,9 +2416,9 @@ bar["stack"]="total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
               formatter: this.formatNumber.bind(this)
             },
@@ -2412,9 +2429,9 @@ bar["stack"]="total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
             },
           },
@@ -2516,12 +2533,12 @@ bar["stack"]="total";
             ...series,
             label:{
                 show:true, // Enable data labels
-                position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+                position:this.dataLabelsFontPosition, // Position of the labels (e.g., 'top', 'inside', etc.)
                 formatter:'{c}', // Display the value of the bar
-                color:'#000', // Default label color (can be updated)
-                fontSize:this.xLabelFontSize, // Default label font size
-                fontWeight:'bold', // Default label font weight
-                fontFamily:this.xLabelFontFamily // Default label font family
+                color:this.dataLabelsColor, // Default label color (can be updated)
+                fontSize:this.dataLabelsFontSize, // Default label font size
+                fontWeight:this.isBold? 700:400, // Default label font weight
+                fontFamily:this.dataLabelsFontFamily // Default label font family
             }
         })),
   
@@ -2574,8 +2591,10 @@ bar["stack"]="total";
             formatter: this.formatNumber.bind(this),
             offsetY: -20,
             style: {
-              fontSize: '12px',
-              // colors: [this.color],
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400,
+              colors: [this.dataLabelsColor],
             },
             background: {
               enabled: false,
@@ -2613,9 +2632,9 @@ bar["stack"]="total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
               },
             },
           },
@@ -2625,9 +2644,9 @@ bar["stack"]="total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
               formatter: this.formatNumber.bind(this)
             },
@@ -2742,12 +2761,12 @@ bar["stack"]="Total";
           ...series,
           label:{
               show:true, // Enable data labels
-              position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
+              position:this.dataLabelsFontPosition, // Position of the labels (e.g., 'top', 'inside', etc.)
               formatter:'{c}', // Display the value of the bar
-              color:'#000', // Default label color (can be updated)
-              fontSize:this.xLabelFontSize, // Default label font size
-              fontWeight:'bold', // Default label font weight
-              fontFamily:this.xLabelFontFamily // Default label font family
+              color:this.dataLabelsColor, // Default label color (can be updated)
+              fontSize:this.dataLabelsFontSize, // Default label font size
+              fontWeight:this.isBold?700:400, // Default label font weight
+              fontFamily:this.dataLabelsFontFamily // Default label font family
           }
       })),
         
@@ -2786,14 +2805,15 @@ bar["stack"]="Total";
                 chart: {
                   width: 100
                 },
-                legend: {
-                  position: "bottom"
-                }
+                // legend: {
+                //   position: this.legendsAllignment
+                // }
               }
             }
           ],
           legend: {
-            show: true,
+            show: this.legendSwitch,
+            position: this.legendsAllignment
           },
           dataLabels: {
             enabled: this.dataLabels,
@@ -2813,8 +2833,8 @@ bar["stack"]="Total";
                     }
                   },
                   total: {
-                    show: true,
-                    showAlways: true,
+                    show: this.label,
+                    showAlways: this.label,
                     formatter: (w:any) => {
                       return w.globals.seriesTotals.reduce((a:any, b:any) => {
                         return +a + b
@@ -2826,7 +2846,7 @@ bar["stack"]="Total";
             }
           },
         };
-        this.changeLegendsAllignment('bottom');
+        // this.changeLegendsAllignment('bottom');
       } else {
           let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
             value: value,
@@ -2897,10 +2917,10 @@ bar["stack"]="Total";
           dataLabels: {
             enabled: true,
             style: {
-              colors: [],
-              fontSize: '12px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 12,
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400,
+              colors: [this.dataLabelsColor],
             },
             formatter: this.formatNumber.bind(this)
           },
@@ -2911,9 +2931,9 @@ bar["stack"]="Total";
               show: this.xLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.xLabelFontSize,
+                fontFamily: this.xLabelFontFamily,
+                fontWeight: this.xlabelFontWeight,
                 },
             }
           },
@@ -2926,9 +2946,9 @@ bar["stack"]="Total";
               show: this.yLabelSwitch,
               style: {
                 colors: [],
-                fontSize: '12px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 12,
+                fontSize: this.yLabelFontSize,
+                fontFamily: this.yLabelFontFamily,
+                fontWeight: this.ylabelFontWeight,
               },
             }
           },
@@ -3005,8 +3025,12 @@ bar["stack"]="Total";
             type : 'heatmap',
             data : this.prepareHeatmapData(this.dualAxisRowData), // Prepare your data accordingly
             label : {
-                show : true,
-                formatter : (params: { value: number[]; }) => this.formatNumber(params.value[2]) // Assuming value[2] holds the number to format
+              show: true,
+              formatter: (params: { value: number[]; }) => this.formatNumber(params.value[2]), // Assuming value[2] holds the number to format
+              color: this.dataLabelsColor, // Default label color (can be updated)
+              fontSize: this.dataLabelsFontSize, // Default label font size
+              fontWeight: this.isBold ? 700 : 400, // Default label font weight
+              fontFamily: this.dataLabelsFontFamily // Default label font family
             },
             emphasis : {
                 itemStyle : {
@@ -3078,6 +3102,8 @@ bar["stack"]="Total";
               show: true,
               fontFamily:this.dataLabelsFontFamily,
               fontSize:this.dataLabelsFontSize,
+              fontWeight: this.isBold ? 700 : 400,
+              color: this.dataLabelsColor, 
               formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
             },
           },
@@ -3098,7 +3124,7 @@ bar["stack"]="Total";
             barHeight: "80%",
             isFunnel: true,
             dataLabels: {
-              position: "center",
+              position: this.dataLabelsFontPosition,
             }
           }
         },
@@ -3114,8 +3140,10 @@ bar["stack"]="Total";
             enabled: true,
           },
           style: {
-            fontSize: "8px",
-            fontFamily: "Helvetica, Arial, sans-serif",
+            fontSize: this.dataLabelsFontSize,
+            fontFamily: this.dataLabelsFontFamily,
+            fontWeight: this.isBold ? 700 : 400,
+            colors: [this.dataLabelsColor],
           },
         },
         title: {
@@ -3126,6 +3154,7 @@ bar["stack"]="Total";
         legend: {
           show: false
         },
+        colors: [this.color]
       };
     }
   }
@@ -4747,6 +4776,7 @@ sheetSave(){
     dataLabelsFontPosition: this.dataLabelsFontPosition,
     measureAlignment: this.measureAlignment,
     dimensionAlignment: this.dimensionAlignment,
+    dataLabelsColor : this.dataLabelsColor,
 
   }
   // this.sheetTagName = this.sheetTitle;
@@ -7572,17 +7602,18 @@ fetchChartData(chartData: any){
       this.isApexCharts = false;
       this.isEChatrts = true;
     }
-    if(this.retriveDataSheet_id){
-      if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
-        this.sheetRetrive(false);
-      } else {
-        this.reAssignChartData();
-        this.resetCustomizations();
-      }
-    } else{
-      this.reAssignChartData();
-      this.resetCustomizations();
-    }
+    // if(this.retriveDataSheet_id){
+    //   if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
+    //     this.sheetRetrive(false);
+    //   } else {
+    //     this.resetCustomizations();
+    //     this.reAssignChartData();
+    //   }
+    // } else{
+    //   this.resetCustomizations();
+    //   this.reAssignChartData();
+    // }
+    this.reAssignChartData();
   }
   reAssignChartData() {
     if (this.bar) {
@@ -7758,6 +7789,7 @@ fetchChartData(chartData: any){
     this.dataLabelsFontPosition = data.dataLabelsFontPosition || 'top';
     this.measureAlignment = data.measureAlignment || 'center';
     this.dimensionAlignment = data.dimensionAlignment || 'center';
+    this.dataLabelsColor = data.dataLabelsColor || '#00a5a2';
   }
 
   resetCustomizations(){
@@ -7817,6 +7849,7 @@ fetchChartData(chartData: any){
     this.dataLabelsFontPosition = 'top';
     this.measureAlignment = 'center';
     this.dimensionAlignment = 'center';
+    this.dataLabelsColor = '#00a5a2';
   }
 
   sendPrompt() {
@@ -8861,6 +8894,7 @@ fetchChartData(chartData: any){
         this.selectedElement = event.target as HTMLElement;
         this.selectedElement.style.border = '2px solid #00a5a2';
         const color = window.getComputedStyle(element).backgroundColor;
+        this.dataLabelsColor = color;
         let object = { dataLabels: { style: { colors : [color] } } };
         let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { colors: color } }} }};
 
