@@ -176,6 +176,9 @@ export class WorkbenchComponent implements OnInit{
           "database": this.postGreDatabaseName,
           "display_name":this.displayName,
           database_id:this.databaseId
+      }as any
+      if(this.databaseType === 'oracle'){
+        delete obj.database
       }
         this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
               console.log(responce);
