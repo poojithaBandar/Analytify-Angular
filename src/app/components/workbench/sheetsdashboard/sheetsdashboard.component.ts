@@ -4298,40 +4298,43 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           }
           if(sheet.echartOptions?.series){
             sheet.echartOptions.series.forEach((data:any)=>{
-              // data.data.forEach((measure:any)=>{
-              //   measure.label.formatter = (val: any) => {
-              //     return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-              //   };
-              // })
-              data.label.formatter = (val: any) => {
-                return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-              };
+              if( data?.label){
+                data.label.formatter = (val: any) => {
+                  return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
             })
           }
         } else if([26].includes(chartId)){
           if(sheet.echartOptions?.series){
             sheet.echartOptions.series.forEach((data:any)=>{
-              data.label.formatter = (val: any) => {
-                return this.formatNumber(val.value[2], numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-              };
+              if( data?.label){
+                data.label.formatter = (val: any) => {
+                  return this.formatNumber(val.value[2], numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
             })
           }
         } else if([27].includes(chartId)){
           if(sheet.echartOptions?.series){
             sheet.echartOptions.series.forEach((data:any)=>{
-              data.label.formatter = (val: any) => {
-                const formattedValue = this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                return `${val.name}: ${formattedValue}`;
-              };
+              if( data?.label){
+                data.label.formatter = (val: any) => {
+                  const formattedValue = this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                  return `${val.name}: ${formattedValue}`;
+                };
+              }
             })
           }
         } else if([12].includes(chartId)){
           if(sheet.echartOptions?.series){
             sheet.echartOptions.series.forEach((data : any)=>{
               data.data.forEach((measure:any)=>{
-                measure.label.formatter = (val: any) => {
-                  return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-                };
+                if( measure?.label){
+                  measure.label.formatter = (val: any) => {
+                    return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                  };
+                }
               })
             })
           }
@@ -4343,9 +4346,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           }
           if(sheet.echartOptions?.series){
             sheet.echartOptions.series.forEach((data:any)=>{
-              data.label.formatter = (val: any) => {
-                return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-              };
+              if( data?.label){
+                data.label.formatter = (val: any) => {
+                  return this.formatNumber(val.value, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+                };
+              }
             })
           }
         }
