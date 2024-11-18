@@ -3066,7 +3066,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           if(!item1.originalData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
-          item1.echartOptions.xAxis.data = categories;
+          item1.echartOptions.xAxis[0].data = categories;
         item1.echartOptions.series[0].data = this.filteredRowData[0].data;
         item1.echartOptions.series[1].data = this.filteredRowData[1].data;
         item1.echartOptions = {
