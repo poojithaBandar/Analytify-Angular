@@ -526,6 +526,13 @@ onDeleteItem(index: number, tableName : string) {
   // } else {
    this.draggedtables.splice(index, 1); // Remove the item from the droppedItems array
    this.isOpen = false;
+   if(index > 0){
+    this.relationOfTables.splice(index-1, 1);
+    this.joinTypes.splice(index-1, 1);
+  } else if(index == 0){
+    this.relationOfTables.splice(index, 1);
+    this.joinTypes.splice(index, 1);
+  }
    this.deleteJoiningCondition(tableName)
   this.filterColumnsT1();
   // }
@@ -533,34 +540,34 @@ onDeleteItem(index: number, tableName : string) {
 }
 
 deleteJoiningCondition(tableName: string): void {
- let data = _.cloneDeep(this.relationOfTables);
-  for (let i = 0; i < this.relationOfTables.length; i++) {
-    const conditionGroup = data[i];
-    let conditionIndex;
-    let isArrayOfEmptyObjects = true;
-
-for (const obj of conditionGroup) {
-  if (!obj || Object.keys(obj).length > 0) {
-    isArrayOfEmptyObjects = false;
-    break;
-  }
-}
-    if(!isArrayOfEmptyObjects){
-      conditionIndex = conditionGroup.findIndex((condition: any) => 
-        condition?.table1.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '') || condition?.table2.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '')
-    );
-  } else {
-    conditionIndex = 0;
-  }
-    if (conditionIndex !== -1) {
-      conditionGroup.splice(conditionIndex, 1);
-    }
-    if(conditionGroup && conditionGroup.length <= 0){
-      this.joinTypes.splice(i,1);
-    }
-  }
-  this.relationOfTables = data;
-}
+  let data = _.cloneDeep(this.relationOfTables);
+   for (let i = 0; i < this.relationOfTables.length; i++) {
+     const conditionGroup = data[i];
+     let conditionIndex;
+     let isArrayOfEmptyObjects = true;
+ 
+ for (const obj of conditionGroup) {
+   if (!obj || Object.keys(obj).length > 0) {
+     isArrayOfEmptyObjects = false;
+     break;
+   }
+ }
+     if(!isArrayOfEmptyObjects){
+       conditionIndex = conditionGroup.findIndex((condition: any) => 
+         condition?.table1.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '') || condition?.table2.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '')
+     );
+   } else {
+     conditionIndex = 0;
+   }
+     if (conditionIndex !== -1) {
+       conditionGroup.splice(conditionIndex, 1);
+     }
+     // if(conditionGroup && conditionGroup.length <= 0){
+     //   this.joinTypes.splice(i,1);
+     // }
+   }
+   this.relationOfTables = data;
+ }
 buildCustomRelation(){
   const parts = this.selectedClmnT1.split('(');
   this.selectedClmnT1 = parts[0].trim()
@@ -828,7 +835,9 @@ buildCustomJoin(){
        searchTermT2 : ''
     }
   } else {
-    object = { join : element,conditions: this.relationOfTables};
+    object = { join : element,conditions: [{}], table2Data : remainingTables,
+      originalData : remainingTables,
+      searchTermT2 : ''};
   }
     this.tableJoiningList.push(object);
   });
@@ -881,7 +890,7 @@ joiningTablesFromDelete(){
       this.tableCustomJoinError = true;
       if(error.error?.joining_condition && error.error?.joining_condition.length) {
         // this.joinTypes.push("inner");
-        this.relationOfTables[this.relationOfTables.length - 1] = [{}];
+        // this.relationOfTables[this.relationOfTables.length - 1] = [{}];
         this.buildCustomJoin();
       }
       Swal.fire({
