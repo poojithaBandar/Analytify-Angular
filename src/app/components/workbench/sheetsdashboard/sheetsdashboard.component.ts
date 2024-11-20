@@ -4016,6 +4016,25 @@ kpiData?: KpiData;
           }
           }
           console.log('After sanitization:', sheet.data.sheetTagName);
+          this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
+          if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
+            sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
+              return w.globals.seriesTotals.reduce((a:any, b:any) => {
+                return +a + b
+              }, 0).toFixed(this.donutDecimalPlaces);
+            };
+          }
+          let chartId : number = sheet['chartId'];
+          const numberFormat = sheet?.numberFormat;
+          const isEcharts = sheet?.isEChart;
+          this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
+          if(chartId == 11){
+            sheet.echartOptions.tooltip.formatter =  function (params: any) {
+              const date = params.data[0];
+              const value = params.data[1];
+              return `Date: ${date}<br/>Value: ${value}`;
+            }
+          }
         })
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){

@@ -34,7 +34,7 @@
         </div>
     </div>
     
-    @if(!isModules && !isSearch){
+    @if(!isModules && !isSearch && !isQuestionary){
         <div *ngFor="let data of userGuideData" class="col-sm-12 col-lg-12 col-xl-12 card" style="padding: 0px;" >
             <div class="card-body">
                 <div class="subCardBg" style="margin-bottom:15px;">
@@ -55,7 +55,7 @@
            
         </div>
     }
-    @if(isSearch){
+    @if(isSearch && !isQuestionary && !isModules){
         <div class="main-container container-fluid mt-5">
               <div class="col-sm-12 col-lg-12 col-xl-12 card" style="padding: 0px;">
                   <div class="card-body">
@@ -108,7 +108,7 @@
                                 </div>
                           </div>
                           <div class="col-lg-9 col-md-9 col-sm-12" style="border-left: 1px solid #ebebeb;">
-                            @if(searchData.length > 0){
+                            @if(searchData.length > 0 && !searchErrorMessage){
                                 <div *ngFor="let data of searchData" class="col-sm-12 col-lg-12 col-xl-12 card" style="padding: 0px;" >
                                     <div class="card-body">
                                         <div class="subCardBg" style="margin-bottom:15px;">
@@ -127,7 +127,11 @@
                                         </div>
                                     </div>
                             </div>
-                            } @else {
+                            } @else if(searchErrorMessage) {
+                                <div class="card-body" class="alert alert-info">
+                                    <strong> {{searchErrorMessage}}</strong>
+                                 </div>
+                            }@else {
                                 <div class="card-body" class="alert alert-info">
                                    <strong> No results found</strong>
                                 </div>
@@ -139,3 +143,6 @@
           </div>
     }
 </div>
+@if(isQuestionary && !isModules && !isSearch){
+    <app-help-guide-questionaries [slug]="slug"></app-help-guide-questionaries>
+}

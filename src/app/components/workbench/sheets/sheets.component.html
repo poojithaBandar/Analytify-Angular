@@ -430,25 +430,25 @@
                                                 <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Date</li>
                                                 <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'month')">Month (January)</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'day')">Day (1-31)</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekdays')">Week Day (1-7)</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'week numbers')">Week Number (0-52)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'year' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
+                                                    <li><a [ngClass]="columns.type === 'month' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'month')">Month (January)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'day' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'day')">Day (1-31)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'weekdays' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekdays')">Week Day (1-7)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'week numbers' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'week numbers')">Week Number (0-52)</a></li>
                                                     <!-- <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekname')">Week Name (Mon-Sun)</a></li> -->
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
+                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
                                             <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
                                                 <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Measure</li>
                                                 <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count')">Count</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count_distinct')">Count (Distinct)</a></li>
-                                                    <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'')">None</a></li>  
+                                                    <li><a [ngClass]="columns.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
+                                                    <li><a [ngClass]="columns.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
+                                                    <li><a [ngClass]="columns.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count')">Count</a></li>
+                                                    <li><a [ngClass]="columns.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count_distinct')">Count (Distinct)</a></li>
+                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
                                             <li><a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedColumn(index,columns.column)"> Remove</a>  </li>
@@ -562,13 +562,13 @@
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'avg' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
+                                                        <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
                                                     </ul>
                                                 </div>
                                                 <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
