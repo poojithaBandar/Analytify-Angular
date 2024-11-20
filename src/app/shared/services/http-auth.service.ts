@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 export class HttpAuthService {
 
   constructor(private authService:AuthService) { }
+  private isLoggingOut = false; // Flag to prevent multiple logouts
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // const token: any = localStorage.getItem('currentUser');
@@ -29,7 +30,8 @@ export class HttpAuthService {
                  status: error.status
              };
              if (error.error.message === 'Invalid Access Token' || error.error.message === 'Session Expired, Please login again') {
-                 
+                if (!this.isLoggingOut) { // Check if already logging out
+                    this.isLoggingOut = true; 
                      Swal.fire({
                          icon: 'error',
                          title: 'Oops...',
@@ -37,8 +39,11 @@ export class HttpAuthService {
                          
                      })
 
-             this.authService.logOut();
+             this.authService.logOut().subscribe(() => {
+                this.isLoggingOut = false; // Reset flag after logout
+              });;
              }
+            }
              return throwError(error);
          }));
  }

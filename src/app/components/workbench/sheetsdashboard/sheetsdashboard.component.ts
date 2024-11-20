@@ -22,7 +22,7 @@ import * as _ from 'lodash';
 // import { chartOptions } from '../../../shared/data/dashboard';
 import { ChartsStoreComponent } from '../charts-store/charts-store.component';
 import { v4 as uuidv4 } from 'uuid';
-import { debounceTime, fromEvent, map } from 'rxjs';
+import { debounceTime, fromEvent, map, Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -47,6 +47,7 @@ import * as echarts from 'echarts';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
+import { tap } from 'rxjs/operators'; 
 
 interface TableRow {
   [key: string]: any;
@@ -816,102 +817,197 @@ export class SheetsdashboardComponent {
     });
   }
 
-  saveDashboard(){
-    // localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
+  // saveDashboard(){
+  //   // localStorage.setItem('dashboardItems', JSON.stringify(this.dashboard));
+  //   this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+  //   if(this.dashboardName===''){
+  //     this.toasterService.info('Please add dashboard Title.','info',{ positionClass: 'toast-top-center'})
+  //   }else{
+  //     this.takeScreenshot();
+  //     this.assignOriginalDataToDashboard();
+  //     this.setQuerySetIds()
+  //   let obj ={
+  //     grid : this.gridType,
+  //     height: this.heightGrid,
+  //     width: this.widthGrid,
+  //     queryset_id:this.qrySetId,
+  //     server_id:this.databaseId,
+  //     sheet_ids:this.sheetsIdArray,
+  //     selected_sheet_ids :this.sheetIdsDataSet,
+  //     dashboard_name:this.dashboardName,
+  //     dashboard_tag_name:this.dashboardTagName,
+  //     data:this.dashboard,
+  //     file_id : this.fileId,
+  //     donutDecimalPlaces : this.donutDecimalPlaces
+  //   }as any;
+  //   if(this.fromFileId){
+  //     delete obj.server_id;
+  //     obj.file_id = this.fileId
+  //   }
+  //   this.workbechService.saveDashboard(obj).subscribe({
+  //     next:(data)=>{
+  //       console.log(data);
+  //       this.dashboardId=data.dashboard_id;         
+  //       this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
+  //       this.updateDashbpardBoolen = true;
+  //       // Swal.fire({
+  //       //   icon: 'success',
+  //       //   title: 'Congartualtions!',
+  //       //   text: 'Dashboard Saved Successfully',
+  //       //   width: '400px',
+  //       // })
+  //       this.toasterService.success('Dashboard Saved Successfully','success',{ positionClass: 'toast-top-right'});
+  //       const encodedDashboardId = btoa(this.dashboardId.toString());
+  //       this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
+  
+  //     },
+  //     error:(error)=>{
+  //       console.log(error)
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'oops!',
+  //         text: error.error.message,
+  //         width: '400px',
+  //       })
+  //     }
+  //   })
+  // }
+  // }
+  async saveDashboard() {
     this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
-    if(this.dashboardName===''){
-      this.toasterService.info('Please add dashboard Title.','info',{ positionClass: 'toast-top-center'})
-    }else{
-      this.takeScreenshot();
-      this.assignOriginalDataToDashboard();
-      this.setQuerySetIds()
-    let obj ={
-      grid : this.gridType,
-      height: this.heightGrid,
-      width: this.widthGrid,
-      queryset_id:this.qrySetId,
-      server_id:this.databaseId,
-       sheet_ids:this.sheetsIdArray,
-selected_sheet_ids :this.sheetIdsDataSet,
-      dashboard_name:this.dashboardName,
-      dashboard_tag_name:this.dashboardTagName,
-      data:this.dashboard,
-      file_id : this.fileId,
-      donutDecimalPlaces : this.donutDecimalPlaces
-    }as any;
-    if(this.fromFileId){
-      delete obj.server_id;
-      obj.file_id = this.fileId
-    }
-    this.workbechService.saveDashboard(obj).subscribe({
-      next:(data)=>{
+  
+    if (this.dashboardName === '') {
+      this.toasterService.info('Please add dashboard Title.', 'info', { positionClass: 'toast-top-center' });
+    } else {
+      try {
+        // Wait for the screenshot to be taken
+        await this.takeScreenshot();
+  
+        // Assign other data after screenshot
+        this.assignOriginalDataToDashboard();
+        this.setQuerySetIds();
+  
+        let obj = {
+          grid: this.gridType,
+          height: this.heightGrid,
+          width: this.widthGrid,
+          queryset_id: this.qrySetId,
+          server_id: this.databaseId,
+          sheet_ids: this.sheetsIdArray,
+          selected_sheet_ids: this.sheetIdsDataSet,
+          dashboard_name: this.dashboardName,
+          dashboard_tag_name: this.dashboardTagName,
+          data: this.dashboard,
+          file_id: this.fileId,
+          donutDecimalPlaces: this.donutDecimalPlaces
+        } as any;
+  
+        if (this.fromFileId) {
+          delete obj.server_id;
+          obj.file_id = this.fileId;
+        }
+  
+        // Save the dashboard data
+        const data = await this.workbechService.saveDashboard(obj).toPromise();
         console.log(data);
-        this.dashboardId=data.dashboard_id;
+        this.dashboardId = data.dashboard_id;
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.updateDashbpardBoolen = true;
-        // Swal.fire({
-        //   icon: 'success',
-        //   title: 'Congartualtions!',
-        //   text: 'Dashboard Saved Successfully',
-        //   width: '400px',
-        // })
-        this.toasterService.success('Dashboard Saved Successfully','success',{ positionClass: 'toast-top-right'});
-        const encodedDashboardId = btoa(this.dashboardId.toString());
-        this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
   
-      },
-      error:(error)=>{
-        console.log(error)
+        // Call saveDashboardimage after the dashboard is saved
+        await this.saveDashboardimage().toPromise(); // Wait for image saving to complete
+  
+        // After saving image, navigate
+        const encodedDashboardId = btoa(this.dashboardId.toString());
+        this.router.navigate(['/insights/home/sheetsdashboard/' + encodedDashboardId]);
+  
+        // Show success message after navigation
+        this.toasterService.success('Dashboard Saved Successfully', 'success', { positionClass: 'toast-top-right' });
+  
+      } catch (error) {
+        console.error(error);
         Swal.fire({
           icon: 'error',
           title: 'oops!',
-          text: error.error.message,
+          text: 'An error occurred while saving the dashboard.',
           width: '400px',
-        })
+        });
       }
-    })
+    }
   }
-  }
+  
   setQuerySetIds() {
     this.qrySetId = [];
     this.dashboard.forEach((sheet: any) =>{
       this.qrySetId.push(sheet.qrySetId);
     })
   }
-  takeScreenshot() {
-   this.startMethod();
-   this.loaderService.show();
-   setTimeout(() => {
-  const element = document.getElementById('capture-element');
-  if (element) {
-    // Select all gridster-items
-    // Hide scrollbars
-    htmlToImage.toPng(element)
-      .then((dataUrl) => {
-        this.screenshotSrc = dataUrl;
-        console.log('scrnsht',this.screenshotSrc);
-        // Convert base64 to Blob
-        const imageBlob = this.workbechService.base64ToBlob(dataUrl);
-        const imageBlob1 = this.workbechService.blobToFile(imageBlob)
-        // let fileObj:any;
-        // fileObj = this.workbechService.convertBase64ToFileObject(this.screenshotSrc);
-        // fileObj = this.workbechService.blobToFile(fileObj);
+  // takeScreenshot() {
+  //  this.startMethod();
+  //  this.loaderService.show();
+  //  setTimeout(() => {
+  // const element = document.getElementById('capture-element');
+  // if (element) {
+  //   // Select all gridster-items
+  //   // Hide scrollbars
+  //   htmlToImage.toPng(element)
+  //     .then((dataUrl) => {
+  //       this.screenshotSrc = dataUrl;
+  //       console.log('scrnsht',this.screenshotSrc);
+  //       // Convert base64 to Blob
+  //       const imageBlob = this.workbechService.base64ToBlob(dataUrl);
+  //       const imageBlob1 = this.workbechService.blobToFile(imageBlob)
+  //       // let fileObj:any;
+  //       // fileObj = this.workbechService.convertBase64ToFileObject(this.screenshotSrc);
+  //       // fileObj = this.workbechService.blobToFile(fileObj);
 
-         this.imageFile = imageBlob
-         this.imagename = imageBlob1
-         console.log('fileblob',this.imageFile);
-         this.loaderService.hide();
-      })
-      .catch((error) => {
-        console.error('oops, something went wrong!', error);
-      })
-      .finally(() => {
-        this.saveDashboardimage();
-      });
-      //console.log('converted-image',this.screenshotSrc)
+  //        this.imageFile = imageBlob
+  //        this.imagename = imageBlob1
+  //        console.log('fileblob',this.imageFile);
+  //        this.loaderService.hide();
+  //     })
+  //     .catch((error) => {
+  //       console.error('oops, something went wrong!', error);
+  //     })
+  //     .finally(() => {
+  //       this.saveDashboardimage();
+  //     });
+  //     //console.log('converted-image',this.screenshotSrc)
      
-  }}, 1000);
+  // }}, 1000);
+  // }
+  takeScreenshot(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.startMethod();
+      this.loaderService.show();
+  
+      setTimeout(() => {
+        const element = document.getElementById('capture-element');
+        if (element) {
+          htmlToImage.toPng(element)
+            .then((dataUrl) => {
+              this.screenshotSrc = dataUrl;
+              console.log('scrnsht', this.screenshotSrc);
+              const imageBlob = this.workbechService.base64ToBlob(dataUrl);
+              const imageBlob1 = this.workbechService.blobToFile(imageBlob);
+  
+              this.imageFile = imageBlob;
+              this.imagename = imageBlob1;
+              console.log('fileblob', this.imageFile);
+              this.loaderService.hide();
+              resolve(); // Resolve once the screenshot is done
+            })
+            .catch((error) => {
+              console.error('oops, something went wrong!', error);
+              reject(error); // Reject in case of error
+            });
+        } else {
+          reject('No element found for screenshot');
+        }
+      }, 1000);
+    });
   }
+  
   downloadImageInPublic() {
     this.startMethod();
     this.loaderService.show();
@@ -943,27 +1039,41 @@ selected_sheet_ids :this.sheetIdsDataSet,
   endMethod() {
     this.isOverflowHidden = false;
   }
-  saveDashboardimage(){
-    var formData:any = new FormData();
-    formData.append("dashboard_id",this.dashboardId);
-    formData.append("imagepath",this.imageFile,this.imagename.name);
+  // saveDashboardimage(){
+  //   var formData:any = new FormData();
+  //   formData.append("dashboard_id",this.dashboardId);
+  //   formData.append("imagepath",this.imageFile,this.imagename.name);
 
-    this.workbechService.saveDAshboardimage(formData).subscribe({
-      next:(data)=>{
+  //   this.workbechService.saveDAshboardimage(formData).subscribe({
+  //     next:(data)=>{
+  //       console.log(data);
+  //       // Swal.fire({
+  //       //   icon: 'success',
+  //       //   title: 'Congartualtions!',
+  //       //   text: 'Dashboard Updated Successfully',
+  //       //   width: '400px',
+  //       // })
+  //       this.endMethod(); 
+  //     },
+  //     error:(error)=>{
+  //       console.log(error)
+  //     }
+  //   })
+  // }
+  saveDashboardimage(): Observable<any> {
+    var formData: any = new FormData();
+    formData.append("dashboard_id", this.dashboardId);
+    formData.append("imagepath", this.imageFile, this.imagename.name);
+  
+    return this.workbechService.saveDAshboardimage(formData).pipe(
+      tap((data: any) => {
         console.log(data);
-        // Swal.fire({
-        //   icon: 'success',
-        //   title: 'Congartualtions!',
-        //   text: 'Dashboard Updated Successfully',
-        //   width: '400px',
-        // })
-        this.endMethod(); 
-      },
-      error:(error)=>{
-        console.log(error)
-      }
-    })
+        // Call the endMethod after image is saved
+        this.endMethod();
+      })
+    );
   }
+  
   updateDashboard(){
     this.takeScreenshot();
       this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
@@ -2379,6 +2489,7 @@ this.dropdownOptions = [];
 this.querySetNames = [];
 this.selectedQuerySetId = 0;
 this.selectedOption = null;
+this.sheetsFilterNames =[];
 }
 
 getQuerySetForFilter(){
