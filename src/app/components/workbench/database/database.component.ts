@@ -430,7 +430,9 @@ return result;
 }
 drop(event: CdkDragDrop<string[]>) {
   if (event.previousContainer === event.container) {
-    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    console.log('Internal swap is restricted.');
+    return;
   } else {
     console.log('Transfering item to new container')
     let item: any = event.previousContainer.data[event.previousIndex];

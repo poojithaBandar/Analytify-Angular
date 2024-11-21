@@ -3640,6 +3640,9 @@ getColumnsFromEdit(qryId:any,dashboardIID:any){
     }
   })
 }
+isAnySheetSelected(){
+  return this.sheetsFilterNamesFromEdit.some((sheet: { selected: any; }) => sheet.selected);
+}
 updateSelectedRowsEdit(){
   this.selectedRowsEdit = this.sheetsFilterNamesFromEdit
   .filter((row: { selected: any; }) => row.selected)
