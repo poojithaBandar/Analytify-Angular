@@ -1771,6 +1771,7 @@ dataNotSaveAlert(): Promise<boolean> {
     // If the "Go to Sheet" button is clicked, skip the alert
     return Promise.resolve(true);
   }
+  this.loaderService.hide();
   return Swal.fire({
     position: "center",
     icon: "warning",
@@ -1782,6 +1783,7 @@ dataNotSaveAlert(): Promise<boolean> {
   }).then((result) => {
     if (result.isConfirmed) {
       // User clicked "Yes", allow navigation
+      this.loaderService.show();
       return true;
     } else {
       // User clicked "No", prevent navigation
