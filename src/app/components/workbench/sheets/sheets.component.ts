@@ -3815,8 +3815,8 @@ bar["stack"]="Total";
       }
 
       mapChart(){
-       let minData = 0;
-       const maxData = Math.max(...this.chartsRowData);
+       let minData : number = 0;
+       let maxData: number = Math.max(...this.chartsRowData);
        let result:any[] = [];
 
        // Loop through the countries (assuming both data sets align by index)
@@ -3834,9 +3834,12 @@ bar["stack"]="Total";
          result.push(countryData);
        });
     if(this.chartsColumnData && this.chartsColumnData.length > 1){
-    minData = Math.min(...this.chartsRowData);
+    minData= Math.min(...this.chartsRowData);
     }
-
+    if(Number.isNaN(minData) || Number.isNaN(maxData)){
+      minData = 0;
+      maxData = 1;
+    }
     
     this.eMapChartOptions = {
       tooltip: {
