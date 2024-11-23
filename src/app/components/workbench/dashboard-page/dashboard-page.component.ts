@@ -284,6 +284,7 @@ sharePublish(value:any){
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;
+    this.publishedDashboard = false;
   }
   }
 copyUrl(): void {

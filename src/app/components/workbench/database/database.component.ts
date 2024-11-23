@@ -430,7 +430,9 @@ return result;
 }
 drop(event: CdkDragDrop<string[]>) {
   if (event.previousContainer === event.container) {
-    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    console.log('Internal swap is restricted.');
+    return;
   } else {
     console.log('Transfering item to new container')
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -1771,6 +1773,7 @@ dataNotSaveAlert(): Promise<boolean> {
     // If the "Go to Sheet" button is clicked, skip the alert
     return Promise.resolve(true);
   }
+  this.loaderService.hide();
   return Swal.fire({
     position: "center",
     icon: "warning",
@@ -1782,6 +1785,7 @@ dataNotSaveAlert(): Promise<boolean> {
   }).then((result) => {
     if (result.isConfirmed) {
       // User clicked "Yes", allow navigation
+      this.loaderService.show();
       return true;
     } else {
       // User clicked "No", prevent navigation

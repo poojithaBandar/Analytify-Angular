@@ -420,7 +420,7 @@
                                           </div>
 
                                           <div class="py-2 mt-3">
-                                            <button type="button" (click)="updateFilters()" class="btn ripple btn-primary me-2">Update</button>
+                                            <button type="button" [disabled]="!isAnySheetSelected()" (click)="updateFilters()" class="btn ripple btn-primary me-2">Update</button>
                                             <button type="button" class="btn ripple btn-secondary " (click)="selectClmnEdit = '';filterName='';closeFilterModal();isAllSelected = false"> Cancel </button>
                                         </div>
                                         </ul>

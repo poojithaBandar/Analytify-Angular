@@ -3187,8 +3187,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           if(!item1.originalData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
-        item1.chartOptions.label = categories;
-        item1.chartOptions.series = this.filteredRowData;
+        item1.chartOptions.labels = categories;
+        item1.chartOptions.series[0].data = this.filteredRowData[0].data;
+        item1.chartOptions.series[1].data = this.filteredRowData[1].data;
+        // item1.chartOptions.series = this.filteredRowData;
       }
       }
       if(item.chart_id == '3'){//hgrouped
@@ -3637,6 +3639,9 @@ getColumnsFromEdit(qryId:any,dashboardIID:any){
       })
     }
   })
+}
+isAnySheetSelected(){
+  return this.sheetsFilterNamesFromEdit.some((sheet: { selected: any; }) => sheet.selected);
 }
 updateSelectedRowsEdit(){
   this.selectedRowsEdit = this.sheetsFilterNamesFromEdit
