@@ -818,10 +818,12 @@
                                 }
                                 @if(isApexCharts){
               @if(bar && chartId){
+
+                <app-insight-apex [isZoom]="isZoom" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-apex>
               <!--<h6>Bar Chart</h6>
               <figure id="bar"></figure>-->
 
-              <div class="card-body">
+              <!-- <div class="card-body">
                 <div id="bar-chart" class="chartfit">
                     <apx-chart #barChart 
                     [series]="chartOptions3.series"
@@ -836,7 +838,7 @@
                     [colors]="chartOptions3.colors">
                     </apx-chart>
                 </div>
-            </div>
+            </div> -->
               }
               @if(area && chartId){
                 <div class="card-body">
@@ -1024,9 +1026,10 @@
             } @else {
             @if(bar && chartId){         
             <div class="card-body">
-                <div >
+                <!-- <div >
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
             </div>          
             }
             @if(funnel && chartId){         

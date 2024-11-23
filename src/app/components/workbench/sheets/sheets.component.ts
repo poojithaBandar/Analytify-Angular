@@ -45,6 +45,8 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom } from 'rxjs';
+import { InsightApexComponent } from '../insight-apex/insight-apex.component';
+import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -72,7 +74,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -7415,7 +7417,7 @@ renameColumns(){
         show: false
       }];
     }
-    this.updateEchartOptions()
+    // this.updateEchartOptions()
   }
 
   changeAlignment(){
