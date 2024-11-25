@@ -77,7 +77,7 @@
                                 aria-label="Sheet" class="form-control">
                         </div>
                         <div class="right">
-                            @if(draggedtables.length){
+                            @if(draggedtables?.length){
                             <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
                                 (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromTableJoinig')"
                                 class="modal-effect btn btn-primary ms-1">
@@ -88,7 +88,7 @@
                                 [previledgeId]="54" [isBtn]="true" (btnClickEvent)="customSql=true;tableJoiningUI=false"
                                 [isIcon]="false"></app-insights-button>
                             <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72"
-                                [gotoSheetButton]="draggedtables.length === 0" [isBtn]="true" [isIcon]="false"
+                                [gotoSheetButton]="draggedtables?.length === 0" [isBtn]="true" [isIcon]="false"
                                 (btnClickEvent)="viewQuery(viewQueryModal)" [toolTip]="' View Query'"
                                 [imageUrl]="'./assets/images/icons/view-query.png'">
                             </app-insights-button>
@@ -114,7 +114,7 @@
                                 <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                         </a> -->
                                     }
-                                    @if(!draggedtables.length){
+                                    @if(!draggedtables?.length){
                                     <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
                                     }
                                 </div>
@@ -485,13 +485,13 @@
 
                             </div>
                             <div class="p-0"
-                                [ngClass]="draggedtables.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
+                                [ngClass]="draggedtables?.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
                                 <div class="card mb-0 br-0 joining-T-H" style="border-radius: 0px 0px 10px 10px !important;" [ngClass]="isOpen ? 'right-card':''"
                                     [class.expanded]="!isOpen">
                                     <div class="card-header d-flex align-items-center"
                                         style="display: flex; justify-content: space-between;">
                                         <div class="d-flex">
-                                            @if(draggedtables.length > 1){
+                                            @if(draggedtables?.length > 1){
                                             @if(!isOpen){
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()"
                                                 ngbtooltip="fa fa-chevron-left" style="border: none;"
@@ -530,8 +530,8 @@
                                         <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                         }@else{
                                         <div class="table-responsive" style="overflow-y: scroll;height: 233px;"
-                                            [class.table-left]="draggedtables.length > 1 && !isOpen"
-                                            [class.table-right]="draggedtables.length === 1 || (draggedtables.length > 1 && isOpen)">
+                                            [class.table-left]="draggedtables?.length > 1 && !isOpen"
+                                            [class.table-right]="draggedtables?.length === 1 || (draggedtables?.length > 1 && isOpen)">
                                             <table
                                                 class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
                                                 <thead style="position: sticky;top: -1px; background-color: #00a5a2;">
