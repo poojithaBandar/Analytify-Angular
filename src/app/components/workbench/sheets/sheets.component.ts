@@ -260,7 +260,6 @@ export class SheetsComponent {
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
-  drillDownLevel : any[] = [];
   drillDownObject: any[] = [];
   sheetCustomQuery: any;
   KPINumber: any;
@@ -8174,13 +8173,14 @@ fetchChartData(chartData: any){
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
-        (this.draggedDrillDownColumns as any[]).forEach((data,index)=>{
-          (data as any[]).forEach((aa)=>{ 
-           if(column === aa){
-              this.draggedDrillDownColumns.splice(index, 1);
-            }
-         } );
-        });   
+    if (index <= 0) {
+      this.drillDownIndex = 0;
+      this.draggedDrillDownColumns = [];
+      this.drillDownObject = [];
+    } else if (index <= this.drillDownIndex) {
+      this.drillDownObject = this.drillDownObject.slice(0, index - 1);
+      this.drillDownIndex = index - 1;
+    } 
        this.dataExtraction();
       }
 
