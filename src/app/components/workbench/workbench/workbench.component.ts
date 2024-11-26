@@ -76,7 +76,6 @@ export class WorkbenchComponent implements OnInit{
   totalItems:any;
   fileData:any;
   viewDatasourceList = false;
-  isEditOracle : boolean = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
@@ -180,6 +179,7 @@ export class WorkbenchComponent implements OnInit{
       }as any
       if(this.databaseType === 'oracle'){
         delete obj.database
+        obj.service_name=this.postGreDatabaseName;
       }
         this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
               console.log(responce);
@@ -249,11 +249,12 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              // Swal.fire({
+              //   icon: 'warning',
+              //   text: error.error.message,
+              //   width: '300px',
+              // })
             }
           }
         )
@@ -292,12 +293,13 @@ export class WorkbenchComponent implements OnInit{
               }
             },
             error: (error) => {
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              // Swal.fire({
+              //   icon: 'warning',
+              //   text: error.error.message,
+              //   width: '300px',
+              // })
             }
           }
         )
@@ -321,11 +323,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Connected',
-                  width: '400px',
-                })
+                // Swal.fire({
+                //   icon: 'success',
+                //   title: 'Connected',
+                //   width: '400px',
+                // })
+                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openMicrosoftSqlServerForm = false;
@@ -335,11 +338,12 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              // Swal.fire({
+              //   icon: 'warning',
+              //   text: error.error.message,
+              //   width: '300px',
+              // })
             }
           }
         )
@@ -378,11 +382,7 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
           }
         )
@@ -421,11 +421,7 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
           }
         )
@@ -464,11 +460,7 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
           }
         )
@@ -507,11 +499,7 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
           }
         )
@@ -553,11 +541,7 @@ export class WorkbenchComponent implements OnInit{
           },
           error: (error) => {
             console.log(error);
-            Swal.fire({
-              icon: 'warning',
-              text: error.error.message,
-              width: '300px',
-            })
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
           },
           complete: () => {
             fileInput.value = '';
@@ -595,11 +579,7 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
-              Swal.fire({
-                icon: 'warning',
-                text: error.error.message,
-                width: '300px',
-              })
+              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             },
             complete: () => {
               fileInput.value = '';
@@ -707,11 +687,7 @@ export class WorkbenchComponent implements OnInit{
                         this.getDbConnectionList();
                       },
                       error:(error:any)=>{
-                        Swal.fire({
-                          icon: 'warning',
-                          text: error.error.message,
-                          width: '300px',
-                        })
+                        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
                         console.log(error)
                       }
                     } 
@@ -773,7 +749,6 @@ export class WorkbenchComponent implements OnInit{
       const editData = editDataArray[0] 
     this.postGreServerName =editData.hostname;
     this.postGrePortName = editData.port;
-    this.postGreDatabaseName = editData.database;
     this.postGreUserName = editData.username;
     this.PostGrePassword = '';
     this.OracleServiceName = '';
@@ -781,9 +756,9 @@ export class WorkbenchComponent implements OnInit{
     this.databaseId=editData.database_id;
     this.databaseType = editData.database_type;
     if(this.databaseType === 'oracle'){
-      this.isEditOracle = true;
-    } else{
-      this.isEditOracle = false;
+      this.postGreDatabaseName = editData.service_name;
+    }else{
+      this.postGreDatabaseName = editData.database;
     }
     this.errorCheck();
     }
@@ -917,16 +892,11 @@ export class WorkbenchComponent implements OnInit{
     this.errorCheck();
   }
   databaseConditionError(){
-    if (!this.isEditOracle) {
       if (this.postGreDatabaseName) {
         this.databaseError = false;
       } else {
         this.databaseError = true;
       }
-    }
-    else {
-      this.databaseError = false;
-    }
     this.portConditionError();
     this.errorCheck();
   }
@@ -971,14 +941,8 @@ export class WorkbenchComponent implements OnInit{
   errorCheck(){
     if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
       this.disableConnectBtn = true;
-    } else if(!(this.postGreServerName && this.postGrePortName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
-      if(this.isEditOracle){
-        this.disableConnectBtn = true;
-      } else {
-        if(this.postGreDatabaseName){
-          this.disableConnectBtn = true;
-        }
-      }
+    } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
+      this.disableConnectBtn = true;
     } else{
       this.disableConnectBtn = false;
     }

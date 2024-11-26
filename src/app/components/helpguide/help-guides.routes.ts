@@ -11,11 +11,11 @@ const routes: Routes = [
       canActivate:[authGuard],
       loadComponent: () => import('./help-guide/help-guide.component').then((m) => m.HelpGuideComponent)
     },
-    { 
-      path: 'help-guide/:slug', 
-      canActivate:[authGuard],
-      loadComponent: () => import('./help-guide-questionaries/help-guide-questionaries.component').then((m) => m.HelpGuideQuestionariesComponent)
-    },
+    // { 
+    //   path: 'help-guide/:slug', 
+    //   canActivate:[authGuard],
+    //   loadComponent: () => import('./help-guide-questionaries/help-guide-questionaries.component').then((m) => m.HelpGuideQuestionariesComponent)
+    // },
     //   { path: 'search', component: GuideLeftMenuComponent},
     //   { path: 'search/:moduleName', component:GuideLeftMenuComponent},
     //   { path: 'help-guide/:moduleName', component: HelpGuideComponent },
