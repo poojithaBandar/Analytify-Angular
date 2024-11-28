@@ -10152,7 +10152,7 @@ fetchChartData(chartData: any){
           query_set_id: this.qrySetId,
           database_id : this.databaseId,
           field_name : this.calculatedFieldName,
-          field_logic : this.calculatedFieldLogic,
+          field_logic : this.originalCalculatedFieldLogic,
           actual_fields_logic : this.originalCalculatedFieldLogic,
           cal_field_id : this.calculatedFieldId
         }
@@ -10169,7 +10169,7 @@ fetchChartData(chartData: any){
         query_set_id: this.qrySetId,
         database_id : this.databaseId,
         field_name : this.calculatedFieldName,
-        field_logic : this.calculatedFieldLogic,
+        field_logic : this.originalCalculatedFieldLogic,
         actual_fields_logic : this.originalCalculatedFieldLogic,
       }
       this.workbechService.applyCalculatedFields(requestObj).subscribe({
