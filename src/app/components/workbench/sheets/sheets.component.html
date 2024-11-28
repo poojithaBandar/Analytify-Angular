@@ -1029,95 +1029,140 @@
                 <!-- <div >
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
+                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
+                [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
+                [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
+                [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [color]="color" [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"></app-insight-echart>
             </div>          
             }
-            @if(funnel && chartId){         
+            @else if(funnel && chartId){         
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <!-- <div id="bar-chart">
                         <div id="echartsBar" echarts [options]="eFunnelChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [color]="color" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily"></app-insight-echart>
                 </div>
                 }
-            @if(stocked && chartId){         
+            @else if(stocked && chartId){         
                 <div class="card-body">
-                    <div id="stockedbar-chart">
+                    <!-- <div id="stockedbar-chart">
                         <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                    [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                    [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"></app-insight-echart>
                 </div>
                 }
-                @if(sidebyside && chartId){         
+            @else if(sidebyside && chartId){         
                     <div class="card-body">
-                        <div id="sidebysidebar-chart">
+                        <!-- <div id="sidebysidebar-chart">
                             <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" 
+                        [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color"></app-insight-echart>
                     </div>
                     }
-            @if(grouped && chartId){         
+            @else if(grouped && chartId){         
                     <div class="card-body">
-                        <div id="groupedbar-chart">
+                        <!-- <div id="groupedbar-chart">
                             <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                        [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"></app-insight-echart>
                     </div>
             }
-            @if(horizentalStocked && chartId){         
+            @else if(horizentalStocked && chartId){         
                 <div class="card-body">
-                    <div id="bhstockedar-chart">
+                    <!-- <div id="bhstockedar-chart">
                         <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                    [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                    [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"></app-insight-echart>
                 </div>
         }
                 
-            @if(area && chartId){
+            @else if(area && chartId){
             <div class="card-body">
-                <div id="area-chart">
+                <!-- <div id="area-chart">
                     <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
+                [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
+                [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
+                [yGridSwitch]="yGridSwitch" [color]="color"></app-insight-echart>
             </div>
             }
-            @if(line && chartId){
+            @else if(line && chartId){
             <div class="card-body">
-                <div id="line-chart">
+                <!-- <div id="line-chart">
                     <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
+                [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
+                [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
+                [yGridSwitch]="yGridSwitch" [color]="color"></app-insight-echart>
             </div>
             }
-            @if(pie && chartId){
+            @else if(pie && chartId){
             <div class="card-body">
-                <div id="pie-chart">
+                <!-- <div id="pie-chart">
                     <div id="echartsBar" echarts [options]="ePieChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" ></app-insight-echart>
             </div>
             }
-            @if(donut && chartId){
+            @else if(donut && chartId){
                 <div class="card-body">
-                    <div id="donut-chart">
+                    <!-- <div id="donut-chart">
                         <div id="echartsBar" echarts [options]="eDonutChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" ></app-insight-echart>
                 </div>
                 }
-            @if(barLine && chartId){
+            @else if(barLine && chartId){
                 <div class="card-body">
-                    <div id="barline-chart">
+                    <!-- <div id="barline-chart">
                         <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" 
+                    [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"></app-insight-echart>
                 </div>
                 }
-                @if(multiLine && chartId){
+                @else if(multiLine && chartId){
                     <div class="card-body">
-                        <div id="multiline-chart">
+                        <!-- <div id="multiline-chart">
                             <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                        [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"></app-insight-echart>
                     </div>
                     }
-            @if(radar && chartId){
+            @else if(radar && chartId){
                 <div class="card-body">
-                    <div id="radar-chart">
+                    <!-- <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [radarRowData]="radarRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels"></app-insight-echart>
                 </div>
                 }
-                @if(map && chartId){
+                @else if(map && chartId){
                     <div class="card-body">
                         <div id="map-chart">
                             <!-- <app-map-echart  [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart> -->
@@ -1126,19 +1171,24 @@
                     </div>
                     }
                     
-                @if(calendar){
+                @else if(calendar){
                     <div class="card-body">
-                        <div id="calender-chart" style="height: 100vh; overflow-y: scroll;">
+                        <!-- <div id="calender-chart" style="height: 100vh; overflow-y: scroll;">
                             <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="chart-container"></div>  
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData"></app-insight-echart>
                     </div>
                 }
-                @if(heatMap){
+                @else if(heatMap){
                     <div class="card-body">
-                        <div id="heatmap-chart">
+                        <!-- <div id="heatmap-chart">
                             <div id="echartsBar" echarts [options]="eHeatMapChartOptions" class="echart-charts">
                             </div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [decimalPlaces]="decimalPlaces" [displayUnits]="displayUnits"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xLabelSwitch]="xLabelSwitch" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily"
+                        [xlabelFontWeight]="xlabelFontWeight" [yLabelSwitch]="yLabelSwitch" [yLabelColor]="yLabelColor" [yLabelFontSize]="[yLabelFontSize]" [yLabelFontFamily]="yLabelFontFamily" [ylabelFontWeight]="ylabelFontWeight"
+                        ></app-insight-echart>
                     </div>
                 }
             }

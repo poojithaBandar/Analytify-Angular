@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -66,6 +66,7 @@ interface RangeSliderModel {
 @Component({
   selector: 'app-sheets',
   standalone: true,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NGX_ECHARTS_CONFIG,
@@ -328,8 +329,10 @@ export class SheetsComponent {
   measureAlignment : any = 'center';
   dimensionAlignment : any = 'center';
   colorPalette = COLOR_PALETTE;
-
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
+  dimensionColor = '#00a5a2';
+  measureColor = '#00a5a2';
+  dataLabelsColor = '#00a5a2';
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/insights/sheets/dbId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
@@ -3711,6 +3714,7 @@ bar["stack"]="Total";
           });
           console.log('dualAxisColumnDatathis', this.dualAxisColumnData)
           console.log(this.dualAxisRowData);
+          this.cdr.detectChanges();
           let rowCount: any;
           if (this.tablePreviewColumn[0]?.result_data?.length) {
             rowCount = this.tablePreviewColumn[0]?.result_data?.length;
@@ -3770,40 +3774,58 @@ bar["stack"]="Total";
           //   this.chartsData.push(aa);
           // }
         }
+
       }
 
+
+      chartType : string ='';
       chartsOptionsSet(){
         if (this.bar) {
+          this.chartType = 'bar';
           this.barChart();
         } else if (this.area) {
+          this.chartType = 'area';
           this.areaChart();
         } else if (this.line) {
+          this.chartType = 'line';
           this.lineChart();
         } else if (this.pie) {
+          this.chartType = 'pie';
           this.pieChart();
         } else if (this.sidebyside) {
+          this.chartType = 'sidebyside';
           this.sidebysideBar();
         } else if (this.stocked) {
+          this.chartType = 'stocked';
           this.stockedBar();
         } else if (this.barLine) {
+          this.chartType = 'barline';
           this.barLineChart();
         } else if (this.horizentalStocked) {
+          this.chartType = 'hstocked';
           this.horizentalStockedBar();
         } else if (this.grouped) {
+          this.chartType = 'hgrouped';
           this.hGrouped();
         } else if (this.multiLine) {
+          this.chartType = 'multiline';
           this.multiLineChart();
         } else if (this.donut) {
+          this.chartType = 'donut';
           this.donutChart();
         } else if (this.radar) {
+          this.chartType = 'radar';
           this.radarChart();
         } else if (this.heatMap) {
+          this.chartType = 'heatmap';
           this.heatMapChart();
         } else if (this.kpi){
           this.KPIChart();
         } else if (this.funnel){
+          this.chartType = 'funnel';
           this.funnelChart();
         }else if(this.guage){
+          this.chartType = 'guage';
           this.guageChart();
         } else if(this.map){
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
@@ -3813,10 +3835,12 @@ bar["stack"]="Total";
             this.mapChart();
           });
         } else if(this.calendar){
+          this.chartType = 'calendar';
           this.calendarChart();
         }
-        
+
       }
+
 
       mapChart(){
        let minData = 0;
@@ -4751,7 +4775,9 @@ sheetSave(){
     dataLabelsFontPosition: this.dataLabelsFontPosition,
     measureAlignment: this.measureAlignment,
     dimensionAlignment: this.dimensionAlignment,
-
+    dimeansionColor:this.dimensionColor,
+    measureColor:this.measureColor,
+    dataLabelsColor:this.dataLabelsColor
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -6121,7 +6147,6 @@ else if(this.barLine){
   }else{
     this.eBarLineChartOptions.series[0].itemStyle.color = this.barColor;
     this.eBarLineChartOptions.series[1].lineStyle.color = this.lineColor;
-
   }
 }
 else if(this.horizentalStocked){
@@ -6169,7 +6194,7 @@ else if(this.radar){
 if(this.isApexCharts){
 this.updateChart(object);
 }else{
-  this.updateEchartOptions();
+  // this.updateEchartOptions();
 }
 }
 // scolor : any;
@@ -6725,7 +6750,7 @@ renameColumns(){
     if(this.isApexCharts){
     this.updateChart(object);
     }else{
-      this.updateEchartOptions();
+     // // this.updateEchartOptions();
     }
   }
   updateChart(object : any) {
@@ -6800,65 +6825,65 @@ renameColumns(){
     }
   }
 
-  updateEchartOptions(){
-    const chartElement = document.getElementsByClassName('echart-charts')[0] as HTMLElement;
-    if (this.bar) {
-      echarts.init(chartElement).setOption(this.eBarChartOptions);
-      console.log('barchartoptionsafterupdate', this.eBarChartOptions)
-    }
-    if (this.area) {
-      echarts.init(chartElement).setOption(this.eAreaChartOptions);
-      console.log('areachart optionsafterupdate', this.eAreaChartOptions)
-    }
-    if (this.line) {
-      echarts.init(chartElement).setOption(this.eLineChartOptions);
-      console.log('linechart optionsafterupdate', this.eLineChartOptions)
-    }
-    if (this.sidebyside) {
-      echarts.init(chartElement).setOption(this.eSideBySideBarChartOptions);
-      console.log('eSideBySideBarChartOptions afterupdate', this.eSideBySideBarChartOptions)
-    }
-    if (this.stocked) {
-      echarts.init(chartElement).setOption(this.eStackedBarChartOptions);
-      console.log('eStackedBarChartOptions afterupdate', this.eStackedBarChartOptions)
-    }
-    if (this.radar) {
-      echarts.init(chartElement).setOption(this.eRadarChartOptions);
-      console.log('eRadarChartOptions optionsafterupdate', this.eRadarChartOptions)
-    }
-    if (this.heatMap) {
-      echarts.init(chartElement).setOption(this.eHeatMapChartOptions);
-      console.log('eHeatMapChartOptions optionsafterupdate', this.eHeatMapChartOptions)
-    }
-    if (this.pie) {
-      echarts.init(chartElement).setOption(this.ePieChartOptions);
-      console.log('ePieChartOptions optionsafterupdate', this.ePieChartOptions)
-    }
-    if (this.donut) {
-      echarts.init(chartElement).setOption(this.eDonutChartOptions);
-      console.log('eDonutChartOptions optionsafterupdate', this.eDonutChartOptions)
-    }
-    if (this.grouped) {
-      echarts.init(chartElement).setOption(this.eGroupedBarChartOptions);
-      console.log('eGroupedBarChartOptions optionsafterupdate', this.eGroupedBarChartOptions)
-    }
-    if (this.multiLine) {
-      echarts.init(chartElement).setOption(this.eMultiLineChartOptions);
-      console.log('eMultiLineChartOptions optionsafterupdate', this.eMultiLineChartOptions)
-    }
-    if (this.barLine) {
-      echarts.init(chartElement).setOption(this.eBarLineChartOptions);
-      console.log('eBarLineChartOptions optionsafterupdate', this.eBarLineChartOptions)
-    }
-    if (this.horizentalStocked) {
-      echarts.init(chartElement).setOption(this.ehorizontalStackedBarChartOptions);
-      console.log('ehorizontalStackedBarChartOptions optionsafterupdate', this.ehorizontalStackedBarChartOptions)
-    }
-    if (this.funnel) {
-      echarts.init(chartElement).setOption(this.eFunnelChartOptions);
-      console.log('eFunnelChartOptions optionsafterupdate', this.eFunnelChartOptions)
-    }
-  }
+  // updateEchartOptions(){
+  //   const chartElement = document.getElementsByClassName('echart-charts')[0] as HTMLElement;
+  //   if (this.bar) {
+  //     echarts.init(chartElement).setOption(this.eBarChartOptions);
+  //     console.log('barchartoptionsafterupdate', this.eBarChartOptions)
+  //   }
+  //   if (this.area) {
+  //     echarts.init(chartElement).setOption(this.eAreaChartOptions);
+  //     console.log('areachart optionsafterupdate', this.eAreaChartOptions)
+  //   }
+  //   if (this.line) {
+  //     echarts.init(chartElement).setOption(this.eLineChartOptions);
+  //     console.log('linechart optionsafterupdate', this.eLineChartOptions)
+  //   }
+  //   if (this.sidebyside) {
+  //     echarts.init(chartElement).setOption(this.eSideBySideBarChartOptions);
+  //     console.log('eSideBySideBarChartOptions afterupdate', this.eSideBySideBarChartOptions)
+  //   }
+  //   if (this.stocked) {
+  //     echarts.init(chartElement).setOption(this.eStackedBarChartOptions);
+  //     console.log('eStackedBarChartOptions afterupdate', this.eStackedBarChartOptions)
+  //   }
+  //   if (this.radar) {
+  //     echarts.init(chartElement).setOption(this.eRadarChartOptions);
+  //     console.log('eRadarChartOptions optionsafterupdate', this.eRadarChartOptions)
+  //   }
+  //   if (this.heatMap) {
+  //     echarts.init(chartElement).setOption(this.eHeatMapChartOptions);
+  //     console.log('eHeatMapChartOptions optionsafterupdate', this.eHeatMapChartOptions)
+  //   }
+  //   if (this.pie) {
+  //     echarts.init(chartElement).setOption(this.ePieChartOptions);
+  //     console.log('ePieChartOptions optionsafterupdate', this.ePieChartOptions)
+  //   }
+  //   if (this.donut) {
+  //     echarts.init(chartElement).setOption(this.eDonutChartOptions);
+  //     console.log('eDonutChartOptions optionsafterupdate', this.eDonutChartOptions)
+  //   }
+  //   if (this.grouped) {
+  //     echarts.init(chartElement).setOption(this.eGroupedBarChartOptions);
+  //     console.log('eGroupedBarChartOptions optionsafterupdate', this.eGroupedBarChartOptions)
+  //   }
+  //   if (this.multiLine) {
+  //     echarts.init(chartElement).setOption(this.eMultiLineChartOptions);
+  //     console.log('eMultiLineChartOptions optionsafterupdate', this.eMultiLineChartOptions)
+  //   }
+  //   if (this.barLine) {
+  //     echarts.init(chartElement).setOption(this.eBarLineChartOptions);
+  //     console.log('eBarLineChartOptions optionsafterupdate', this.eBarLineChartOptions)
+  //   }
+  //   if (this.horizentalStocked) {
+  //     echarts.init(chartElement).setOption(this.ehorizontalStackedBarChartOptions);
+  //     console.log('ehorizontalStackedBarChartOptions optionsafterupdate', this.ehorizontalStackedBarChartOptions)
+  //   }
+  //   if (this.funnel) {
+  //     echarts.init(chartElement).setOption(this.eFunnelChartOptions);
+  //     console.log('eFunnelChartOptions optionsafterupdate', this.eFunnelChartOptions)
+  //   }
+  // }
   toggleSwitch(type : string) {
     let object:any;
     if(type === 'banding'){
@@ -7322,7 +7347,7 @@ renameColumns(){
     if(this.isApexCharts){
     this.updateChart(object);
     }else{
-      this.updateEchartOptions();
+      // this.updateEchartOptions();
     }
   }
   enableZoom(){
@@ -7727,7 +7752,7 @@ fetchChartData(chartData: any){
           this.eHeatMapChartOptions.yAxis.splitLine.lineStyle.color = this.yGridColor;
       }
     }
-     this.updateEchartOptions();
+     // this.updateEchartOptions();
   }
 
   setCustomizeOptions(data: any) {
@@ -7787,6 +7812,9 @@ fetchChartData(chartData: any){
     this.dataLabelsFontPosition = data.dataLabelsFontPosition || 'top';
     this.measureAlignment = data.measureAlignment || 'center';
     this.dimensionAlignment = data.dimensionAlignment || 'center';
+    this.dimensionColor = data.dimensionColor || '#00a5a2';
+    this.measureColor = data.measureColor || '#00a5a2';
+    this.dataLabelsColor = data.dataLabelsColor || '#0a5a2';
   }
 
   resetCustomizations(){
@@ -7846,6 +7874,9 @@ fetchChartData(chartData: any){
     this.dataLabelsFontPosition = 'top';
     this.measureAlignment = 'center';
     this.dimensionAlignment = 'center';
+    this.dimensionColor = '#00a5a2';
+    this.measureColor = '#00a5a2';
+    this.dataLabelsColor = '#00a5a2';
   }
 
   sendPrompt() {
@@ -8109,7 +8140,7 @@ fetchChartData(chartData: any){
       if (this.isApexCharts) {
         this.updateChart(object);
       } else {
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
   }
@@ -8292,7 +8323,7 @@ fetchChartData(chartData: any){
       if(this.isApexCharts){
       this.updateChart(object);
       }else{
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     
   }
@@ -8359,7 +8390,7 @@ fetchChartData(chartData: any){
               });
             });
             this.eFunnelChartOptions.series[0].data = funnelData;
-            this.updateEchartOptions();
+            // this.updateEchartOptions();
           } else{
             const numbers = this.funnelChartOptions.series[0].data;
             const labels = this.funnelChartOptions.xaxis.categories;
@@ -8388,7 +8419,7 @@ fetchChartData(chartData: any){
             const sortedData = this.sort(event, numbers, labels);
             this.eBarChartOptions.series[0].data = sortedData.sortedNumbers;
             this.eBarChartOptions.xAxis.data = sortedData.sortedLabels;
-            this.updateEchartOptions();
+            // this.updateEchartOptions();
           } else {
             const numbers = this.chartOptions3.series[0].data;
             const labels = this.chartOptions3.xaxis.categories;
@@ -8608,7 +8639,7 @@ fetchChartData(chartData: any){
             this.updateChart(object);
           }
         }else{
-          this.updateEchartOptions();
+          // this.updateEchartOptions();
         }
       }
 
@@ -8736,7 +8767,7 @@ fetchChartData(chartData: any){
         this.updateChart(object);
           }
         }else{
-          this.updateEchartOptions();
+          // this.updateEchartOptions();
         }
       }
 
@@ -8871,7 +8902,7 @@ fetchChartData(chartData: any){
               this.updateChart(object)
             }
           }else{
-            this.updateEchartOptions();
+            // this.updateEchartOptions();
           }
         }
         else if(fontStyle === 'I'){
@@ -8892,7 +8923,7 @@ fetchChartData(chartData: any){
         const color = window.getComputedStyle(element).backgroundColor;
         let object = { dataLabels: { style: { colors : [color] } } };
         let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { colors: color } }} }};
-
+        this.dataLabelsColor = color;
         if(this.bar){
           if(this.isApexCharts){
           this.chartOptions3.dataLabels.style.colors = [color];
@@ -9003,7 +9034,8 @@ fetchChartData(chartData: any){
         else if(this.radar){
           this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { color: string; }; }) => {
             dataItem.label.color = color;
-        });        }
+        });       
+       }
         if(this.guage){
           this.guageChartOptions.plotOptions.radialBar.dataLabels.value.colors = color.toString();
         }
@@ -9016,7 +9048,7 @@ fetchChartData(chartData: any){
         this.updateChart(object);
           }
         }else{
-          this.updateEchartOptions();
+          // this.updateEchartOptions();
         }
       }
 
@@ -9108,7 +9140,7 @@ fetchChartData(chartData: any){
         if(this.isApexCharts){
         this.updateChart(object);
         }else{
-          this.updateEchartOptions();
+          // this.updateEchartOptions();
         }
       }
       resetChartColor(){
@@ -9274,7 +9306,7 @@ fetchChartData(chartData: any){
       if(this.isApexCharts){
       this.updateChart(object);
       }else{
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
     dimensionsFontSizeChange(){
@@ -9352,7 +9384,7 @@ fetchChartData(chartData: any){
       if(this.isApexCharts){
       this.updateChart(object);
       }else{
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
     dimensionsFontWeightChange(){
@@ -9430,7 +9462,7 @@ fetchChartData(chartData: any){
       if(this.isApexCharts){
       this.updateChart(object);
       }else{
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
     dimensionsColorChange(event:any){
@@ -9441,6 +9473,7 @@ fetchChartData(chartData: any){
         this.selectedElement = event.target as HTMLElement;
         this.selectedElement.style.border = '2px solid #00a5a2';
         const color = window.getComputedStyle(element).backgroundColor;
+        this.dimensionColor = color;
         if(this.bar){
           this.eBarChartOptions.xAxis.axisLabel.color = color;
         }
@@ -9471,7 +9504,7 @@ fetchChartData(chartData: any){
         if(this.heatMap){
           this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.color = color;
         }
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
     }
     measuresFontFamilyChange(){
       // let object = { yaxis: [{show: this.yLabelSwitch, labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)} }] };
@@ -9630,7 +9663,7 @@ fetchChartData(chartData: any){
       if(this.isApexCharts){
       this.updateChart(object);
       }else{
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
     measuresFontSizeChange(){
@@ -9792,7 +9825,7 @@ fetchChartData(chartData: any){
       if(this.isApexCharts){
       this.updateChart(object);
       }else{
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
     measuresFontWeightChange(){
@@ -9951,7 +9984,7 @@ fetchChartData(chartData: any){
       if(this.isApexCharts){
       this.updateChart(object);
       }else{
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
     measuresColorChange(event:any){
@@ -9962,6 +9995,7 @@ fetchChartData(chartData: any){
         this.selectedElement = event.target as HTMLElement;
         this.selectedElement.style.border = '2px solid #00a5a2';
         const color = window.getComputedStyle(element).backgroundColor;
+        this.measureColor = color;
         if(this.bar){
           this.eBarChartOptions.yAxis.axisLabel.color = color;
         }
@@ -9994,7 +10028,7 @@ fetchChartData(chartData: any){
         if(this.heatMap){
           this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.color = color;
         }
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
     }
 
     // updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}})
@@ -10104,7 +10138,7 @@ fetchChartData(chartData: any){
           // this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
           // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         }
-        this.updateEchartOptions();
+        // this.updateEchartOptions();
       }
     }
 }
