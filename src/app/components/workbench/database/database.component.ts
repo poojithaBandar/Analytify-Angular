@@ -23,8 +23,10 @@ import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LoaderService } from '../../../shared/services/loader.service';
 import _ from 'lodash';
-
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+const EXCEL_TYPE =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 @Component({
   selector: 'app-database',
   standalone: true,
@@ -49,6 +51,7 @@ import _ from 'lodash';
     ])
   ]
 })
+
 export class DatabaseComponent {
   databaseName:any;
   tableName:any;
@@ -649,6 +652,53 @@ executeQuery(){
     }
     })
 }
+downloadExcelFromCustomSql() {
+  const obj ={
+    database_id: this.databaseId,
+    custom_query: this.sqlQuery,
+    row_limit:this.totalRowsCustomQuery,
+    queryset_id:this.custumQuerySetid,
+    query_name:this.saveQueryName,
+  }as any
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id = this.fileId
+  }
+  if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
+    delete obj.query_name
+  }
+  this.workbechService.executeQuery(obj)
+  .subscribe(
+    {
+      next:(data:any) =>{
+            //Convert JSON data to worksheet
+            // let cominedData =[data.column_data, data.row_data]
+            let combinedData: any[] = data.row_data.map((row: any) => {
+              let combined: { [key: string]: any } = {};
+              data.column_data.forEach((column: string | number, index: string | number) => {
+                combined[column] = row[index];
+              });
+              return combined;
+            });
+            // console.log(combinedData,'combined-data')
+          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
+
+          // Create a workbook and append the worksheet
+          const wb: XLSX.WorkBook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+          // Write the workbook and download it
+          const excelBuffer: any = XLSX.write(wb, {
+              bookType: 'xlsx',
+              type: 'array',
+          });
+           this.saveAsExcelFile(excelBuffer, 'ExportedData');
+      },
+      error:(error:any)=>{
+      console.error('Error fetching data for download:', error);
+    }
+    })
+}
 filterColumnsT1() {
   if (this.searchTermT1.trim() === '') {
     this.filteredTablesT1 = this.draggedtables;
@@ -799,30 +849,6 @@ joiningTables(){
       this.gotoSheetButtonDisable= true
     }
     })
-  
-  // else if(schemaTablePairs.length > 2){
-  //   const obj ={
-  //     query_set_id:this.qurtySetId,
-  //     database_id:this.databaseId,
-  //     joining_tables: schemaTablePairs,
-  //     join_type:[],
-  //     joining_conditions:[]
-  //   }
-  //   this.workbechService.joiningTables(obj)
-  //   .subscribe(
-  //     {
-  //       next:(data:any) =>{
-  //         console.log(data)
-  //         this.relationOfTables = data.table_columns_and_rows?.joining_condition;
-  //         this.displayJoiningCndnsList = data.table_columns_and_rows?.joining_condition_list;
-  //         console.log('relation',this.relationOfTables);
-  //         this.getJoiningTableData();
-  //       },
-  //       error:(error:any)=>{
-  //       console.log(error)
-  //     }
-  //     })
-  // }
 }
 
 buildCustomJoin(){
@@ -1092,6 +1118,59 @@ if(obj.row_limit === null || obj.row_limit === undefined){
     }
     })
 }
+
+downloadExcel() {
+  const obj ={
+    database_id:this.databaseId,
+    query_id:this.qurtySetId,
+    datasource_queryset_id:this.datasourceQuerysetId,
+    row_limit:this.totalRows
+  } as any
+if(obj.row_limit === null || obj.row_limit === undefined){
+ delete obj.row_limit;
+}
+  if(this.fromFileId){
+    delete obj.database_id
+    obj.file_id=this.fileId
+    
+  }  
+  this.workbechService.getTableJoiningData(obj).subscribe(
+    {
+      next:(data:any) =>{
+            //Convert JSON data to worksheet
+            // let cominedData =[data.column_data, data.row_data]
+            let combinedData: any[] = data.row_data.map((row: any) => {
+              let combined: { [key: string]: any } = {};
+              data.column_data.forEach((column: string | number, index: string | number) => {
+                combined[column] = row[index];
+              });
+              return combined;
+            });
+            // console.log(combinedData,'combined-data')
+          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(combinedData);
+
+          // Create a workbook and append the worksheet
+          const wb: XLSX.WorkBook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+          // Write the workbook and download it
+          const excelBuffer: any = XLSX.write(wb, {
+              bookType: 'xlsx',
+              type: 'array',
+          });
+           this.saveAsExcelFile(excelBuffer, 'ExportedData');
+      },
+      error:(error:any)=>{
+      console.error('Error fetching data for download:', error);
+    }
+    })
+}
+
+private saveAsExcelFile(buffer: any, fileName: string): void {
+  const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
+  saveAs(data, `${fileName}_${new Date().getTime()}.xlsx`);
+}
+
 deleteJoiningRelation(conditionIndex:number,list : any,index: number){
   list.conditions.splice(conditionIndex, 1);
   this.relationOfTables[index] = list.conditions;

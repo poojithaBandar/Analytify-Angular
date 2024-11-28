@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-page-header',
@@ -13,4 +14,13 @@ export class PageHeaderComponent {
   @Input() title2!:string;
   @Input() multiLevel = false;
   @Input() title2Route!:string;
+  @Input() moduleId:any;
+
+constructor(private route:Router){}
+
+helpRoute(){
+  console.log(this.moduleId)
+  this.route.navigate([`/insights/help-guide/${this.moduleId}`])
+}
+  
 }
