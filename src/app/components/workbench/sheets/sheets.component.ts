@@ -123,6 +123,10 @@ export class SheetsComponent {
   editFilterSearch! : string;
   tableSearch! : string;
   isMeasureEdit : boolean = false;
+  calculatedFieldName! : string
+  calculatedFieldLogic : string = '';
+  originalCalculatedFieldLogic : string = '';
+  isEditCalculatedField : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -257,6 +261,7 @@ export class SheetsComponent {
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
+  calculatedFieldsColumns = [] as any;
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
@@ -325,6 +330,9 @@ export class SheetsComponent {
   measureAlignment : any = 'center';
   dimensionAlignment : any = 'center';
   colorPalette = COLOR_PALETTE;
+  isValidCalculatedField! : boolean;
+  validationMessage: string = '';
+  calculatedFieldId: any;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
@@ -8170,6 +8178,21 @@ fetchChartData(chartData: any){
           this.draggedDrillDownColumns.push(item.column);
         }
   }
+  calculatedFieldsDrop(event: CdkDragDrop<string[]>){
+    console.log(event)
+    let item: any = event.previousContainer.data[event.previousIndex];
+    if(item && item.column) {
+      this.calculatedFieldsColumns.push(item.column);
+      if(this.calculatedFieldLogic?.length){
+        this.calculatedFieldLogic = this.calculatedFieldLogic + '[' + item.table_name + '.' + item.column + ']';
+        this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic + '"' + item.table_name + '"' + '.' + '"' + item.actual_column + '"';
+
+      } else {
+        this.calculatedFieldLogic = '[' + item.table_name + '.' + item.column + ']';
+        this.originalCalculatedFieldLogic = '"' + item.table_name + '"' + '.' + '"' + item.actual_column + '"';
+      }
+    }
+}
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
@@ -10106,6 +10129,166 @@ fetchChartData(chartData: any){
           // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         }
         this.updateEchartOptions();
+      }
+    }
+    fetchCalculatedFields(id : any){
+      this.workbechService.fetchCalculatedFields(id).subscribe({
+        next: (response: any) => {
+          this.calculatedFieldId = id;
+          this.isEditCalculatedField = true;
+          this.calculatedFieldLogic = response[0].cal_logic;
+          this.calculatedFieldName = response[0].field_name;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+    }
+    applyCalculatedFields(){
+      // this.validateExpression();
+      // if(this.isValidCalculatedField){
+      if(this.isEditCalculatedField){
+        let requestObj = {
+          query_set_id: this.qrySetId,
+          database_id : this.databaseId,
+          field_name : this.calculatedFieldName,
+          field_logic : this.calculatedFieldLogic,
+          actual_fields_logic : this.originalCalculatedFieldLogic,
+          cal_field_id : this.calculatedFieldId
+        }
+        this.workbechService.editCalculatedFields(requestObj).subscribe({
+          next: (responce: any) => {
+            this.columnsData();
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
+      } else {
+      let requestObj = {
+        query_set_id: this.qrySetId,
+        database_id : this.databaseId,
+        field_name : this.calculatedFieldName,
+        field_logic : this.calculatedFieldLogic
+      }
+      this.workbechService.applyCalculatedFields(requestObj).subscribe({
+        next: (responce: any) => {
+          this.columnsData();
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+    // }
+  }
+    }
+
+    private checkBalancedParentheses(expression: string): void {
+      const stack: string[] = [];
+      const chars = expression.split('');
+    
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+    
+        // Push opening parentheses onto the stack
+        if (char === '(') {
+          stack.push(char);
+    
+          // Check for empty parentheses ()
+          if (chars[i + 1] === ')') {
+            throw new Error('The expression contains empty parentheses.');
+          }
+        } else if (char === ')') {
+          // Check for unmatched closing parentheses
+          if (stack.length === 0) {
+            throw new Error('The expression contains unbalanced parentheses.');
+          }
+    
+          stack.pop();
+    
+          // Check for invalid placement like ")3"
+          if (i + 1 < chars.length && /[0-9a-zA-Z]/.test(chars[i + 1])) {
+            throw new Error('The expression contains invalid parentheses placement.');
+          }
+        }
+      }
+    
+      // Check for unmatched opening parentheses
+      if (stack.length > 0) {
+        throw new Error('The expression contains unbalanced parentheses.');
+      }
+    }
+
+    // Step 1: Check for valid characters
+    private checkValidCharacters(expression: string): void {
+      const validCharactersRegex = /^[\[\]().+\-*/\s]+|(\[[^[]+\.[^[]+\])/g;
+      if (!expression.match(validCharactersRegex)) {
+        throw new Error('The formula contains invalid characters.');
+      }
+    }
+
+  // Step 3: Check for operator syntax
+  private checkOperatorSyntax(expression: string): void {
+    const trimmedExpression = expression.trim();
+
+    // Ensure the expression doesn't start or end with an operator
+    if (/^[+\-*/]/.test(trimmedExpression) || /[+\-*/]$/.test(trimmedExpression)) {
+      throw new Error('The expression cannot start or end with an operator.');
+    }
+
+    // Ensure no consecutive operators
+    if (/[+\-*/]{2,}/.test(trimmedExpression)) {
+      throw new Error('The expression contains consecutive operators.');
+    }
+  }
+
+  private validateSyntax(expression: string): void {
+    // Check for consecutive operators
+    if (/[+\-*/]{2,}/.test(expression)) {
+      throw new Error('The formula contains consecutive operators.');
+    }
+  
+    // Ensure no operator at start or end
+    if (/^[+\-*/]/.test(expression.trim()) || /[+\-*/]$/.test(expression.trim())) {
+      throw new Error('The formula cannot start or end with an operator.');
+    }
+  
+    // Check for missing operator between terms
+    if (/\]\s+\[/.test(expression)) {
+      throw new Error('The formula contains adjacent parentheses without an operator.');
+    }
+  
+    // Validate table.column structure
+    const tableColumnRegex = /\[[^[]+\.[^[]+\]/g;
+    const matches = expression.match(tableColumnRegex);
+    if (matches) {
+      for (const match of matches) {
+        if (!/^\[[^[]+\.[^[]+\]$/.test(match)) {
+          throw new Error(`Invalid table.column format: ${match}`);
+        }
+      }
+    } else {
+      throw new Error('The formula must contain at least one [tablename.columnName].');
+    }
+  }
+
+    validateExpression(): void {
+      try {
+        // Step 1: Check for invalid characters
+        this.checkValidCharacters(this.calculatedFieldLogic);
+  
+        // Step 2: Check for balanced parentheses
+        this.checkBalancedParentheses(this.calculatedFieldLogic);
+  
+        // Step 3: Check for operator syntax
+        this.checkOperatorSyntax(this.calculatedFieldLogic);
+
+        this.validateSyntax(this.calculatedFieldLogic);
+        this.validationMessage = 'The expression is valid!';
+        this.isValidCalculatedField = true;
+      } catch (error) {
+        this.validationMessage = (error as Error).message;
+        this.isValidCalculatedField = false;
       }
     }
 }
