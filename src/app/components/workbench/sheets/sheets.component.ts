@@ -10169,7 +10169,8 @@ fetchChartData(chartData: any){
         query_set_id: this.qrySetId,
         database_id : this.databaseId,
         field_name : this.calculatedFieldName,
-        field_logic : this.calculatedFieldLogic
+        field_logic : this.calculatedFieldLogic,
+        actual_fields_logic : this.originalCalculatedFieldLogic,
       }
       this.workbechService.applyCalculatedFields(requestObj).subscribe({
         next: (responce: any) => {
