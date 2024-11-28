@@ -45,6 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom } from 'rxjs';
+// import { evaluate, parse } from 'mathjs';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -124,7 +125,6 @@ export class SheetsComponent {
   tableSearch! : string;
   isMeasureEdit : boolean = false;
   calculatedFieldName! : string
-  calculatedFieldLogic : string = '';
   originalCalculatedFieldLogic : string = '';
   isEditCalculatedField : boolean = false;
  /* private data = [
@@ -3970,7 +3970,11 @@ bar["stack"]="Total";
     event.currentIndex = this.draggedRows.indexOf(element);
     const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
     //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
+    if(element.data_type == 'calculated') {
+      this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+    } else {
     this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+    }
     // this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
     //   const indexA = rowIndexMap.get(a[0]) ?? -1;
     //   const indexB = rowIndexMap.get(b[0]) ?? -1;
@@ -8183,13 +8187,10 @@ fetchChartData(chartData: any){
     let item: any = event.previousContainer.data[event.previousIndex];
     if(item && item.column) {
       this.calculatedFieldsColumns.push(item.column);
-      if(this.calculatedFieldLogic?.length){
-        this.calculatedFieldLogic = this.calculatedFieldLogic + '[' + item.table_name + '.' + item.column + ']';
-        this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic + '"' + item.table_name + '"' + '.' + '"' + item.actual_column + '"';
-
+      if(this.originalCalculatedFieldLogic?.length){
+        this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic +'"' + item.column + '"';
       } else {
-        this.calculatedFieldLogic = '[' + item.table_name + '.' + item.column + ']';
-        this.originalCalculatedFieldLogic = '"' + item.table_name + '"' + '.' + '"' + item.actual_column + '"';
+        this.originalCalculatedFieldLogic = '"' + item.column + '"';
       }
     }
 }
@@ -10136,7 +10137,7 @@ fetchChartData(chartData: any){
         next: (response: any) => {
           this.calculatedFieldId = id;
           this.isEditCalculatedField = true;
-          this.calculatedFieldLogic = response[0].cal_logic;
+          this.originalCalculatedFieldLogic = response[0].cal_logic;
           this.calculatedFieldName = response[0].field_name;
         },
         error: (error) => {
@@ -10144,7 +10145,7 @@ fetchChartData(chartData: any){
         }
       })
     }
-    applyCalculatedFields(){
+    applyCalculatedFields(event:any){
       // this.validateExpression();
       // if(this.isValidCalculatedField){
       if(this.isEditCalculatedField){
@@ -10152,15 +10153,19 @@ fetchChartData(chartData: any){
           query_set_id: this.qrySetId,
           database_id : this.databaseId,
           field_name : this.calculatedFieldName,
-          field_logic : this.originalCalculatedFieldLogic,
           actual_fields_logic : this.originalCalculatedFieldLogic,
           cal_field_id : this.calculatedFieldId
         }
         this.workbechService.editCalculatedFields(requestObj).subscribe({
           next: (responce: any) => {
+            this.isEditCalculatedField = false;
+            event.close();
             this.columnsData();
+            this.validationMessage = '';
+
           },
           error: (error) => {
+            this.validationMessage = error?.error?.error;
             console.log(error);
           }
         })
@@ -10169,122 +10174,49 @@ fetchChartData(chartData: any){
         query_set_id: this.qrySetId,
         database_id : this.databaseId,
         field_name : this.calculatedFieldName,
-        field_logic : this.originalCalculatedFieldLogic,
         actual_fields_logic : this.originalCalculatedFieldLogic,
       }
       this.workbechService.applyCalculatedFields(requestObj).subscribe({
         next: (responce: any) => {
+          this.validationMessage = '';
+          this.isEditCalculatedField = false;
+          event.close();
           this.columnsData();
         },
         error: (error) => {
+          this.validationMessage = error?.error?.error;
           console.log(error);
         }
       })
-    // }
-  }
     }
-
-    private checkBalancedParentheses(expression: string): void {
-      const stack: string[] = [];
-      const chars = expression.split('');
-    
-      for (let i = 0; i < chars.length; i++) {
-        const char = chars[i];
-    
-        // Push opening parentheses onto the stack
-        if (char === '(') {
-          stack.push(char);
-    
-          // Check for empty parentheses ()
-          if (chars[i + 1] === ')') {
-            throw new Error('The expression contains empty parentheses.');
-          }
-        } else if (char === ')') {
-          // Check for unmatched closing parentheses
-          if (stack.length === 0) {
-            throw new Error('The expression contains unbalanced parentheses.');
-          }
-    
-          stack.pop();
-    
-          // Check for invalid placement like ")3"
-          if (i + 1 < chars.length && /[0-9a-zA-Z]/.test(chars[i + 1])) {
-            throw new Error('The expression contains invalid parentheses placement.');
-          }
-        }
-      }
-    
-      // Check for unmatched opening parentheses
-      if (stack.length > 0) {
-        throw new Error('The expression contains unbalanced parentheses.');
-      }
+  // }
     }
 
     // Step 1: Check for valid characters
-    private checkValidCharacters(expression: string): void {
-      const validCharactersRegex = /^[\[\]().+\-*/\s]+|(\[[^[]+\.[^[]+\])/g;
-      if (!expression.match(validCharactersRegex)) {
-        throw new Error('The formula contains invalid characters.');
-      }
-    }
-
-  // Step 3: Check for operator syntax
-  private checkOperatorSyntax(expression: string): void {
-    const trimmedExpression = expression.trim();
-
-    // Ensure the expression doesn't start or end with an operator
-    if (/^[+\-*/]/.test(trimmedExpression) || /[+\-*/]$/.test(trimmedExpression)) {
-      throw new Error('The expression cannot start or end with an operator.');
-    }
-
-    // Ensure no consecutive operators
-    if (/[+\-*/]{2,}/.test(trimmedExpression)) {
-      throw new Error('The expression contains consecutive operators.');
-    }
-  }
-
-  private validateSyntax(expression: string): void {
-    // Check for consecutive operators
-    if (/[+\-*/]{2,}/.test(expression)) {
-      throw new Error('The formula contains consecutive operators.');
-    }
+    // private preValidateExpression(expression: string): void {
+    //   // Check for adjacent parentheses without an operator
+    //   if (/\)\s*\(/.test(expression)) {
+    //     throw new Error('Invalid expression: Missing operator between parentheses.');
+    //   }
   
-    // Ensure no operator at start or end
-    if (/^[+\-*/]/.test(expression.trim()) || /[+\-*/]$/.test(expression.trim())) {
-      throw new Error('The formula cannot start or end with an operator.');
-    }
-  
-    // Check for missing operator between terms
-    if (/\]\s+\[/.test(expression)) {
-      throw new Error('The formula contains adjacent parentheses without an operator.');
-    }
-  
-    // Validate table.column structure
-    const tableColumnRegex = /\[[^[]+\.[^[]+\]/g;
-    const matches = expression.match(tableColumnRegex);
-    if (matches) {
-      for (const match of matches) {
-        if (!/^\[[^[]+\.[^[]+\]$/.test(match)) {
-          throw new Error(`Invalid table.column format: ${match}`);
-        }
-      }
-    } else {
-      throw new Error('The formula must contain at least one [tablename.columnName].');
-    }
-  }
+    //   // Check for balanced parentheses
+    //   const stack: string[] = [];
+    //   for (const char of expression) {
+    //     if (char === '(') stack.push(char);
+    //     else if (char === ')') {
+    //       if (!stack.length) throw new Error('Unbalanced parentheses in the expression.');
+    //       stack.pop();
+    //     }
+    //   }
+    //   if (stack.length > 0) {
+    //     throw new Error('Unbalanced parentheses in the expression.');
+    //   }
+    // }
 
     validateExpression(): void {
       try {
-        // Step 1: Check for invalid characters
-        this.checkValidCharacters(this.calculatedFieldLogic);
-  
-        // Step 2: Check for balanced parentheses
-        this.checkBalancedParentheses(this.calculatedFieldLogic);
-  
-        // Step 3: Check for operator syntax
-        this.checkOperatorSyntax(this.calculatedFieldLogic);
-
-        this.validateSyntax(this.calculatedFieldLogic);
+        // this.preValidateExpression(this.originalCalculatedFieldLogic);
+        // const parsedExpression = parse(this.originalCalculatedFieldLogic);
         this.validationMessage = 'The expression is valid!';
         this.isValidCalculatedField = true;
       } catch (error) {

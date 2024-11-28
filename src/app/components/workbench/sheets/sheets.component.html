@@ -47,7 +47,7 @@
                                               </div>
                                                  
                                             <div class="mt-2 d-flex gap-2">
-                                                <button class="btn btn-primary mt-0" (click)="applyCalculatedFields();isEditCalculatedField = false;myDropdown.close()">Apply </button>
+                                                <button class="btn btn-primary mt-0" (click)="applyCalculatedFields(myDropdown);">Apply </button>
                                                 <button class="btn btn-primary mt-0" (click)="isEditCalculatedField = false;myDropdown.close()">Close </button>
                                             </div>                                 
                                         </div>
@@ -152,10 +152,18 @@
                                         Calculated Fields </span>
     
                                   </div>
-                                  
-                                  @if(columns.expanded){                               
+                                  <div cdkDropList
+                                  #originList="cdkDropList"
+                                  [cdkDropListData]="columns.calculated_fields"
+                                  [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList]"
+                                  (cdkDropListDropped)="rowdrop($event)"
+                                  [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">  
+                                  @if(columns.expanded){    
+                                                            
                                 @for(measures of columns.calculated_fields; track measures){ 
-                                    <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.field_name}}" ># 
+                                    <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.field_name}}" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" ># 
+
+                                    <!-- <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.field_name}}" >#  -->
                                         {{ measures.field_name?.substr(0,18) }}{{ measures.field_name.length > 18 ? '...' : '' }}
                                         <div class="dashboard-option">
                                             <div class=" p-1" ngbDropdown>
@@ -170,9 +178,12 @@
                                                 </div>
                                             </div>
                                           </div>
+                                    <!-- </div> -->
                                     </div>
                                 }
+                                
                           }
+                        </div>
                                 </div>
                         }
                         }
@@ -615,6 +626,8 @@
                                     <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.alias){
                                             {{ rows.alias }}
+                                        } @else if(rows.field_name){
+                                            {{ rows.field_name }}
                                         }
                                         @else if(rows.type){
                                             {{ rows.type }} ({{rows.column}})
