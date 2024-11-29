@@ -35,7 +35,7 @@
                                             <label class="form-label mb-2">Calculated Field Name <span  class="text-red">*</span>
                                             </label>
                                             <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName" class="mb-2 form-control checkbox-color">
-                                            <textarea class="query-text mb-2" [(ngModel)]="originalCalculatedFieldLogic" placeholder="Drop Column or Enter Logic"
+                                            <textarea class="query-text mb-2"  [(ngModel)]="calculatedFieldLogic" placeholder="Drop Column or Enter Logic"
                                         ></textarea> 
                                         <div *ngIf="validationMessage" class="alert" [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
                                             {{ validationMessage }}
@@ -43,7 +43,7 @@
                                           </div>
                                              
                                         <div class="mt-2 d-flex gap-2">
-                                            <button class="btn btn-primary mt-0" (click)="applyCalculatedFields(myDropdown);">Apply </button>
+                                            <button [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))" class="btn btn-primary mt-0" (click)="applyCalculatedFields(myDropdown);">Apply </button>
                                             <button class="btn btn-primary mt-0" (click)="isEditCalculatedField = false;myDropdown.close()">Close </button>
                                         </div>                                 
                                     </div>
@@ -178,7 +178,7 @@
                                         <div class="dashboard-option">
                                             <div class=" p-1" ngbDropdown>
                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.column)"><i
+                                                aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.field_name)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
