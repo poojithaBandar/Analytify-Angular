@@ -94,7 +94,7 @@
                             <div  cdkDropList 
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.dimensions"
-                            [cdkDropListConnectedTo]="[columnList,rowList,drilldownList]"
+                            [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList]"
                             (cdkDropListDropped)="columndrop($event)"
                             [cdkDropListDisabled]="canDrop" [ngClass]="{'drag-disabled': canDrop}">
                             
