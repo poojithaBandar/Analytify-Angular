@@ -507,7 +507,9 @@
                                     <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
                                         @if(columns.type){
                                             {{ columns.type }} ({{columns.column}})
-                                        }@else{   
+                                        } @else if(columns.field_name) {
+                                            {{ columns.field_name }}
+                                        } @else {   
                                             {{ columns.column }}
                                             <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
                                         }

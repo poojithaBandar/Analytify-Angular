@@ -3925,7 +3925,11 @@ bar["stack"]="Total";
       console.log('New element index:', event.currentIndex);
       const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
       //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-      this.draggedColumnsData.splice(event.currentIndex, 0, [element.column, element.data_type, "", ""]);
+      if(element.data_type == 'calculated') {
+        this.draggedColumnsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+      } else {
+      this.draggedColumnsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+      }
       // this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
       //   const indexA = columnIndexMap.get(a[0]) ?? -1;
       //   const indexB = columnIndexMap.get(b[0]) ?? -1;
