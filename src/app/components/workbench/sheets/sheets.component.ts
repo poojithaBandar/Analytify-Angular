@@ -333,6 +333,8 @@ export class SheetsComponent {
   isValidCalculatedField! : boolean;
   validationMessage: string = '';
   calculatedFieldId: any;
+  calculatedFieldLogic : string = '';
+  columnMapping: { [key: string]: string } = {};
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
@@ -8186,18 +8188,7 @@ fetchChartData(chartData: any){
           this.draggedDrillDownColumns.push(item.column);
         }
   }
-  calculatedFieldsDrop(event: CdkDragDrop<string[]>){
-    console.log(event)
-    let item: any = event.previousContainer.data[event.previousIndex];
-    if(item && item.column) {
-      this.calculatedFieldsColumns.push(item.column);
-      if(this.originalCalculatedFieldLogic?.length){
-        this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic +'"' + item.column + '"';
-      } else {
-        this.originalCalculatedFieldLogic = '"' + item.column + '"';
-      }
-    }
-}
+
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
@@ -10141,7 +10132,7 @@ fetchChartData(chartData: any){
         next: (response: any) => {
           this.calculatedFieldId = id;
           this.isEditCalculatedField = true;
-          this.originalCalculatedFieldLogic = response[0].cal_logic;
+          this.calculatedFieldLogic = response[0].cal_logic;
           this.calculatedFieldName = response[0].field_name;
         },
         error: (error) => {
@@ -10149,7 +10140,40 @@ fetchChartData(chartData: any){
         }
       })
     }
+
+    calculatedFieldsDrop(event: CdkDragDrop<string[]>){
+      console.log(event)
+      let item: any = event.previousContainer.data[event.previousIndex];
+      if(item && item.column) {
+        this.calculatedFieldsColumns.push(item.column);
+        this.tableNamesList.push(item.table_name);
+        if(this.calculatedFieldLogic?.length){
+          this.calculatedFieldLogic = this.calculatedFieldLogic +'"' + item.column + '"';
+          // this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic +'"' + item.column + '"';
+        } else {
+          this.calculatedFieldLogic = '"' + item.column + '"';
+          // this.originalCalculatedFieldLogic = '"' + item.column + '"';
+        }
+        this.updateColumnMapping(item.column, item.table_name, item.actual_column);
+      }
+  }
+
+    buildCalculatedLogic(){
+      const regex =/([a-zA-Z_][a-zA-Z0-9_]*\([a-zA-Z0-9_]+\)|[a-zA-Z_][a-zA-Z0-9_]*)/g;
+      this.originalCalculatedFieldLogic = this.calculatedFieldLogic.replace(regex, (match) => {
+        return this.columnMapping[match] || match; // Keep only the column name
+      });
+
+    }
+
+    updateColumnMapping(columnName:string,tableName:string,actualColumnName : string): void {
+      if (columnName && tableName) {
+        this.columnMapping[columnName] =  tableName + '"' + '.' + '"' + actualColumnName  ;
+      }
+    }
+
     applyCalculatedFields(event:any){
+      this.buildCalculatedLogic();
       // this.validateExpression();
       // if(this.isValidCalculatedField){
       if(this.isEditCalculatedField){
@@ -10157,7 +10181,8 @@ fetchChartData(chartData: any){
           query_set_id: this.qrySetId,
           database_id : this.databaseId,
           field_name : this.calculatedFieldName,
-          actual_fields_logic : this.originalCalculatedFieldLogic,
+          actual_fields_logic : this.calculatedFieldLogic,
+          field_logic : this.originalCalculatedFieldLogic,
           cal_field_id : this.calculatedFieldId
         }
         this.workbechService.editCalculatedFields(requestObj).subscribe({
@@ -10166,6 +10191,7 @@ fetchChartData(chartData: any){
             event.close();
             this.columnsData();
             this.validationMessage = '';
+            this.toasterService.success('Updated Field Successfully','success',{ positionClass: 'toast-top-right'});
 
           },
           error: (error) => {
@@ -10178,7 +10204,8 @@ fetchChartData(chartData: any){
         query_set_id: this.qrySetId,
         database_id : this.databaseId,
         field_name : this.calculatedFieldName,
-        actual_fields_logic : this.originalCalculatedFieldLogic,
+        actual_fields_logic : this.calculatedFieldLogic,
+        field_logic : this.originalCalculatedFieldLogic,
       }
       this.workbechService.applyCalculatedFields(requestObj).subscribe({
         next: (responce: any) => {
@@ -10186,6 +10213,8 @@ fetchChartData(chartData: any){
           this.isEditCalculatedField = false;
           event.close();
           this.columnsData();
+          this.toasterService.success('Added Successfully','success',{ positionClass: 'toast-top-right'});
+
         },
         error: (error) => {
           this.validationMessage = error?.error?.error;
