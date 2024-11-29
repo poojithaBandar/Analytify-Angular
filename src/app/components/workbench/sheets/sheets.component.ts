@@ -10146,7 +10146,6 @@ fetchChartData(chartData: any){
       let item: any = event.previousContainer.data[event.previousIndex];
       if(item && item.column) {
         this.calculatedFieldsColumns.push(item.column);
-        this.tableNamesList.push(item.table_name);
         if(this.calculatedFieldLogic?.length){
           this.calculatedFieldLogic = this.calculatedFieldLogic +'"' + item.column + '"';
           // this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic +'"' + item.column + '"';
