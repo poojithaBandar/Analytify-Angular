@@ -58,7 +58,8 @@ export class InsightEchartComponent {
   @Input() lineColor:any;
   @Input() measureColor:any;
   @Input() dimensionColor:any;
-
+  @Input() legendsAllignment:any
+  
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
@@ -1623,6 +1624,16 @@ chartInitialize(){
         this.yGridColorSetOptions();
       }
     }
+    else if(changes['backgroundColor']){
+      if(this.chartInstance){
+        this.backgroundColorSetOptions();
+      }
+    }
+    else if(changes['legendsAllignment']){
+      if(this.chartInstance){
+        this.legendsAllignmentSetOptions()
+      }
+    }
   }
 
 
@@ -2297,4 +2308,84 @@ chartInitialize(){
       this.chartInstance.setOption(obj)
   }
   }
+  backgroundColorSetOptions(){
+      let obj ={
+        backgroundColor:this.backgroundColor
+      }
+      this.chartInstance.setOption(obj)
+  }
+  legendsAllignmentSetOptions(){
+    if(this.chartType === 'pie' || this.chartType === 'donut'){
+    if(this.legendsAllignment === 'top'){
+    let obj ={
+      legend :{
+          top : 'top',
+          orient:'horizantal'
+      },
+    }
+    this.chartInstance.setOption(obj)
+  }
+  else if(this.legendsAllignment === 'bottom'){
+    let obj ={
+      legend :{
+          bottom : 'bottom',
+          orient:'horizantal'
+      },
+    }
+    this.chartInstance.setOption(obj)
+  }
+  else if(this.legendsAllignment === 'left'){
+    let obj ={
+      legend :{
+          left : 'left',
+          orient:'vertical'
+      },
+    }
+    this.chartInstance.setOption(obj)
+  }
+  else if(this.legendsAllignment === 'right'){
+    let obj ={
+      legend :{
+          right : 'right',
+          orient:'vertical'
+      },
+    }
+    this.chartInstance.setOption(obj)
+  }
+  }
+  else if(this.chartType === 'radar'){
+    if(this.legendsAllignment === 'top'){
+      let obj ={
+        legend :{
+            top : 'top',
+        },
+      }
+      this.chartInstance.setOption(obj)
+    }
+    else if(this.legendsAllignment === 'bottom'){
+      let obj ={
+        legend :{
+            bottom : 'bottom',
+        },
+      }
+      this.chartInstance.setOption(obj)
+    }
+    else if(this.legendsAllignment === 'left'){
+      let obj ={
+        legend :{
+            left : 'left',
+        },
+      }
+      this.chartInstance.setOption(obj)
+    }
+    else if(this.legendsAllignment === 'right'){
+      let obj ={
+        legend :{
+            right : 'right',
+        },
+      }
+      this.chartInstance.setOption(obj)
+    }
+  }
+}
 }
