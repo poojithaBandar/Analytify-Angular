@@ -45,6 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom } from 'rxjs';
+// import { evaluate, parse } from 'mathjs';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -123,6 +124,9 @@ export class SheetsComponent {
   editFilterSearch! : string;
   tableSearch! : string;
   isMeasureEdit : boolean = false;
+  calculatedFieldName! : string
+  originalCalculatedFieldLogic : string = '';
+  isEditCalculatedField : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -257,6 +261,7 @@ export class SheetsComponent {
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
+  calculatedFieldsColumns = [] as any;
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
@@ -325,6 +330,9 @@ export class SheetsComponent {
   measureAlignment : any = 'center';
   dimensionAlignment : any = 'center';
   colorPalette = COLOR_PALETTE;
+  isValidCalculatedField! : boolean;
+  validationMessage: string = '';
+  calculatedFieldId: any;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
@@ -3917,7 +3925,11 @@ bar["stack"]="Total";
       console.log('New element index:', event.currentIndex);
       const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
       //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-      this.draggedColumnsData.splice(event.currentIndex, 0, [element.column, element.data_type, "", ""]);
+      if(element.data_type == 'calculated') {
+        this.draggedColumnsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+      } else {
+      this.draggedColumnsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+      }
       // this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
       //   const indexA = columnIndexMap.get(a[0]) ?? -1;
       //   const indexB = columnIndexMap.get(b[0]) ?? -1;
@@ -3962,7 +3974,11 @@ bar["stack"]="Total";
     event.currentIndex = this.draggedRows.indexOf(element);
     const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
     //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
+    if(element.data_type == 'calculated') {
+      this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+    } else {
     this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+    }
     // this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
     //   const indexA = rowIndexMap.get(a[0]) ?? -1;
     //   const indexB = rowIndexMap.get(b[0]) ?? -1;
@@ -8170,6 +8186,18 @@ fetchChartData(chartData: any){
           this.draggedDrillDownColumns.push(item.column);
         }
   }
+  calculatedFieldsDrop(event: CdkDragDrop<string[]>){
+    console.log(event)
+    let item: any = event.previousContainer.data[event.previousIndex];
+    if(item && item.column) {
+      this.calculatedFieldsColumns.push(item.column);
+      if(this.originalCalculatedFieldLogic?.length){
+        this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic +'"' + item.column + '"';
+      } else {
+        this.originalCalculatedFieldLogic = '"' + item.column + '"';
+      }
+    }
+}
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
@@ -10106,6 +10134,98 @@ fetchChartData(chartData: any){
           // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         }
         this.updateEchartOptions();
+      }
+    }
+    fetchCalculatedFields(id : any){
+      this.workbechService.fetchCalculatedFields(id).subscribe({
+        next: (response: any) => {
+          this.calculatedFieldId = id;
+          this.isEditCalculatedField = true;
+          this.originalCalculatedFieldLogic = response[0].cal_logic;
+          this.calculatedFieldName = response[0].field_name;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+    }
+    applyCalculatedFields(event:any){
+      // this.validateExpression();
+      // if(this.isValidCalculatedField){
+      if(this.isEditCalculatedField){
+        let requestObj = {
+          query_set_id: this.qrySetId,
+          database_id : this.databaseId,
+          field_name : this.calculatedFieldName,
+          actual_fields_logic : this.originalCalculatedFieldLogic,
+          cal_field_id : this.calculatedFieldId
+        }
+        this.workbechService.editCalculatedFields(requestObj).subscribe({
+          next: (responce: any) => {
+            this.isEditCalculatedField = false;
+            event.close();
+            this.columnsData();
+            this.validationMessage = '';
+
+          },
+          error: (error) => {
+            this.validationMessage = error?.error?.error;
+            console.log(error);
+          }
+        })
+      } else {
+      let requestObj = {
+        query_set_id: this.qrySetId,
+        database_id : this.databaseId,
+        field_name : this.calculatedFieldName,
+        actual_fields_logic : this.originalCalculatedFieldLogic,
+      }
+      this.workbechService.applyCalculatedFields(requestObj).subscribe({
+        next: (responce: any) => {
+          this.validationMessage = '';
+          this.isEditCalculatedField = false;
+          event.close();
+          this.columnsData();
+        },
+        error: (error) => {
+          this.validationMessage = error?.error?.error;
+          console.log(error);
+        }
+      })
+    }
+  // }
+    }
+
+    // Step 1: Check for valid characters
+    // private preValidateExpression(expression: string): void {
+    //   // Check for adjacent parentheses without an operator
+    //   if (/\)\s*\(/.test(expression)) {
+    //     throw new Error('Invalid expression: Missing operator between parentheses.');
+    //   }
+  
+    //   // Check for balanced parentheses
+    //   const stack: string[] = [];
+    //   for (const char of expression) {
+    //     if (char === '(') stack.push(char);
+    //     else if (char === ')') {
+    //       if (!stack.length) throw new Error('Unbalanced parentheses in the expression.');
+    //       stack.pop();
+    //     }
+    //   }
+    //   if (stack.length > 0) {
+    //     throw new Error('Unbalanced parentheses in the expression.');
+    //   }
+    // }
+
+    validateExpression(): void {
+      try {
+        // this.preValidateExpression(this.originalCalculatedFieldLogic);
+        // const parsedExpression = parse(this.originalCalculatedFieldLogic);
+        this.validationMessage = 'The expression is valid!';
+        this.isValidCalculatedField = true;
+      } catch (error) {
+        this.validationMessage = (error as Error).message;
+        this.isValidCalculatedField = false;
       }
     }
 }
