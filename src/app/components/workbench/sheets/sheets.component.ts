@@ -5984,7 +5984,9 @@ if(this.fromFileId){
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
       "data_type":this.filterType,
-      "is_exclude":this.isExclude
+      "is_exclude":this.isExclude,
+      "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+      "is_calculated": this.filterType == 'calculated' ? true : false
 
   }as any;
   if(this.fromFileId){
