@@ -178,10 +178,12 @@
                                         <div class="dashboard-option">
                                             <div class=" p-1" ngbDropdown>
                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                    aria-haspopup="true" aria-expanded="false" class="" ><i
-                                                        class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                                </a>
+                                                aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.column)"><i
+                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                            </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="myDropdown.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);"> Edit Calculated Field </a>
                                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
