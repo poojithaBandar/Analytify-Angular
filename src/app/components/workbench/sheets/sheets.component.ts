@@ -335,6 +335,7 @@ export class SheetsComponent {
   calculatedFieldId: any;
   calculatedFieldLogic : string = '';
   columnMapping: { [key: string]: string } = {};
+  filterCalculatedFieldLogic: any = '';
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
@@ -5797,7 +5798,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
     });
+    if(data.data_type == 'calculated'){
+      this.filterName = data.field_name;
+      this.filterCalculatedFieldLogic = data.column;
+    } else {
     this.filterName = data.column;
+    }
     this.filterType = data.data_type;
     this.filterDataGet();
   }
@@ -5832,7 +5838,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "col_name":this.filterName,
        "data_type":this.filterType,
        "search":this.filterSearch,
-       "parent_user":this.createdBy
+       "parent_user":this.createdBy,
+       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+       "is_calculated": this.filterType == 'calculated' ? true : false
       // "format_date":""
 }as any;
 if(this.fromFileId){
@@ -5903,7 +5911,9 @@ if(this.fromFileId){
     "col_name":this.filterName,
        "data_type":this.filterType,
        "parent_user":this.createdBy,
-       "is_exclude":this.isExclude
+       "is_exclude":this.isExclude,
+       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+       "is_calculated": this.filterType == 'calculated' ? true : false
 }as any;
 if(this.fromFileId){
   delete obj.database_id;
@@ -5941,6 +5951,7 @@ if(this.fromFileId){
         this.filter_id = responce.filter_id;
         this.filterName=responce.column_name;
         this.filterType=responce.data_type;
+        this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
