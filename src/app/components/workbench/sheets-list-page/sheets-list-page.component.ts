@@ -77,7 +77,7 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
     if(this.selectedSheetList > 0){
     const Obj ={
       search:this.sheetName,
-      page_no:this.pageNo,
+      page_no:1,
       page_count:this.itemsPerPage,
       queryset_id:this.selectedSheetList
     }
