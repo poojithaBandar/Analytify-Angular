@@ -3776,8 +3776,6 @@ bar["stack"]="Total";
         }
 
       }
-
-
       chartType : string ='';
       chartsOptionsSet(){
         if (this.bar) {
@@ -5190,6 +5188,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
         // this.chartsColumnData = this.sheetResponce.results.barXaxis;
+        this.chartType = 'bar';
        if(this.isApexCharts){
         const self = this;
         this.chartOptions3 = this.sheetResponce.savedChartOptions;
@@ -5243,6 +5242,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 24){
+        this.chartType = 'pie';
         if(this.isApexCharts){
           const self = this;
           this.chartOptions4 = this.sheetResponce.savedChartOptions;
@@ -5293,6 +5293,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 13){
+        this.chartType = 'line';
         if(this.isApexCharts){
           const self = this;
           this.chartOptions = this.sheetResponce.savedChartOptions;
@@ -5343,6 +5344,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 17){
+        this.chartType = 'area';
         if(this.isApexCharts){
           this.chartOptions1 = this.sheetResponce.savedChartOptions;
           this.chartOptions1.xaxis.convertedCatToNumeric = true;
@@ -5378,6 +5380,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 7){
+        this.chartType = 'sidebyside';
         if(this.isApexCharts){
         this.chartOptions2 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions2?.dataLabels){
@@ -5411,6 +5414,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 5){
+        this.chartType = 'stocked';
         if(this.isApexCharts){
         this.chartOptions6 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions6?.dataLabels){
@@ -5444,6 +5448,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 4){
+        this.chartType = 'barline';
         if(this.isApexCharts){
           this.chartOptions5 = this.sheetResponce.savedChartOptions;
           this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
@@ -5480,6 +5485,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 12){
+        this.chartType = 'radar';
         this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.radarChart();
         this.bar = false;
@@ -5508,6 +5514,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
        }
        if(responce.chart_id == 2){
+        this.chartType = 'hstocked';
         if(this.isApexCharts){
         this.chartOptions7 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions7?.dataLabels){
@@ -5541,6 +5548,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 3){
+        this.chartType = 'hgrouped';
         if(this.isApexCharts){
         this.chartOptions8 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions8?.dataLabels){
@@ -5574,6 +5582,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 8){
+        this.chartType = 'multiline';
         if(this.isApexCharts){
         this.chartOptions9 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions9?.dataLabels){
@@ -5607,6 +5616,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 10){
+        this.chartType = 'donut';
         if(this.isApexCharts){
         this.chartOptions10 = this.sheetResponce.savedChartOptions;
         this.legendSwitch = this.chartOptions10?.legend?.show;
@@ -5665,6 +5675,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 26){
+        this.chartType = 'heatmap';
         if(this.isApexCharts){
           this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
           if(this.heatMapChartOptions?.dataLabels){
@@ -5695,6 +5706,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 27){
+        this.chartType = 'funnel';
          if(this.isEChatrts){
           this.eFunnelChartOptions = this.sheetResponce.savedChartOptions;
          } else {
@@ -5733,6 +5745,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 28){
+        this.chartType = 'guage';
         this.guageChartOptions = this.sheetResponce.savedChartOptions;
         this.maxValueGuage = this.guageChartOptions.plotOptions.radialBar.max;
         this.minValueGuage =  this.guageChartOptions.plotOptions.radialBar.min;
@@ -6810,16 +6823,16 @@ renameColumns(){
       console.log(this.donutchart);
     }
     else if(this.funnel){
-      this.funnelCharts.updateOptions(object);
+      // this.funnelCharts.updateOptions(object);
       console.log(this.funnelChartOptions);
       console.log(this.funnelCharts);
     }
     else if(this.guage){
-      this.guageCharts.updateOptions(object);
+      // this.guageCharts.updateOptions(object);
       console.log(this.guageCharts);
     }
     else if(this.heatMap){
-      this.heatmapcharts.updateOptions(object);
+      // this.heatmapcharts.updateOptions(object);
       console.log(this.heatMapChartOptions);
       console.log(this.heatmapcharts);
     }
@@ -7626,17 +7639,18 @@ fetchChartData(chartData: any){
       this.isApexCharts = false;
       this.isEChatrts = true;
     }
-    if(this.retriveDataSheet_id){
-      if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
-        this.sheetRetrive(false);
-      } else {
-        this.reAssignChartData();
-        this.resetCustomizations();
-      }
-    } else{
-      this.reAssignChartData();
-      this.resetCustomizations();
-    }
+    // if(this.retriveDataSheet_id){
+    //   if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
+    //     this.sheetRetrive(false);
+    //   } else {
+    //     this.reAssignChartData();
+    //     this.resetCustomizations();
+    //   }
+    // } else{
+    //   this.reAssignChartData();
+    //   this.resetCustomizations();
+    // }
+    this.reAssignChartData();
   }
   reAssignChartData() {
     if (this.bar) {
@@ -8921,6 +8935,7 @@ fetchChartData(chartData: any){
         this.selectedElement = event.target as HTMLElement;
         this.selectedElement.style.border = '2px solid #00a5a2';
         const color = window.getComputedStyle(element).backgroundColor;
+        this.dataLabelsColor = color;
         let object = { dataLabels: { style: { colors : [color] } } };
         let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { colors: color } }} }};
         this.dataLabelsColor = color;
@@ -10140,5 +10155,12 @@ fetchChartData(chartData: any){
         }
         // this.updateEchartOptions();
       }
+    }
+    setDrilldowns(event : any){
+      this.drillDownIndex = event.drillDownIndex;
+      this.draggedDrillDownColumns = event.draggedDrillDownColumns;
+      this.drillDownObject = event.drillDownObject;
+      this.setOriginalData();
+      this.dataExtraction();
     }
 }

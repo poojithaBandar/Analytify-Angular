@@ -816,10 +816,22 @@
                                         <!-- } -->
                                     </div>
                                 }
-                                @if(isApexCharts){
-              @if(bar && chartId){
+                                @if(isApexCharts && !table){
+              <!-- @if(bar && chartId){ -->
 
-                <app-insight-apex [isZoom]="isZoom" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-apex>
+                <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData" 
+                [dualAxisRowData]="dualAxisRowData" [tablePreviewRow]="tablePreviewRow" [chartType]="chartType" [xGridSwitch]="xGridSwitch"
+                [xLabelSwitch]="xLabelSwitch" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [xLabelFontFamily]="xLabelFontFamily"
+                [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [backgroundColor]="backgroundColor" [color]="color"
+                [ylabelFontWeight]="ylabelFontWeight" [isBold]="isBold" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
+                [barColor]="barColor" [lineColor]="lineColor" [gridColor]="GridColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"
+                [label]="label" [donutSize]="donutSize" [isDistributed]="isDistributed" [minValueGuage]="minValueGuage" [maxValueGuage]="maxValueGuage"
+                [legendsAllignment]="legendsAllignment" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
+                [dataLabelsFontPosition]="dataLabelsFontPosition" [dataLabelsColor]="dataLabelsColor" [measureAlignment]="measureAlignment" 
+                [dimensionAlignment]="dimensionAlignment" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                [donutDecimalPlaces]="donutDecimalPlaces" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"
+                [drillDownObject]="drillDownObject" (setDrilldowns)="setDrilldowns($event)">
+                </app-insight-apex>
               <!--<h6>Bar Chart</h6>
               <figure id="bar"></figure>-->
 
@@ -839,8 +851,8 @@
                     </apx-chart>
                 </div>
             </div> -->
-              }
-              @if(area && chartId){
+              <!-- } -->
+              <!-- @if(area && chartId){
                 <div class="card-body">
                     <div id="area-chart">
                         <apx-chart #areaChart
@@ -851,8 +863,8 @@
                         [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
                     </div>
                 </div>
-              }
-              @if(line && chartId){
+              } -->
+              <!-- @if(line && chartId){
                 <div class="card-body">
                     <div id="line-chart">
                         <apx-chart #lineChart
@@ -862,21 +874,21 @@
                         [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
                     </div>
                 </div>
-              }
-              @if(pie && chartId){
+              } -->
+              <!-- @if(pie && chartId){ -->
              <!-- <h6>Pie Chart</h6>
              <figure id="pie"></figure>-->
-             <div class="card-body">
+             <!-- <div class="card-body">
                 <div id="pie-basic">
                     <apx-chart #piechart
                     [series]="chartOptions4.series" [chart]="chartOptions4.chart" [legend]="chartOptions4.legend"
                     [labels]="chartOptions4.labels" [responsive]="chartOptions4.responsive" [colors]="chartOptions4.colors" [dataLabels]="chartOptions4.dataLabels"></apx-chart>
                 </div>
-            </div>
-              }
+            </div> -->
+              <!-- } -->
               
              
-              @if(sidebyside && chartId){
+              <!-- @if(sidebyside && chartId){
                 <div class="card-body">
                     <div id="column-chart">
                         <apx-chart #sidebyside
@@ -887,8 +899,8 @@
                         [xaxis]="chartOptions2.xaxis"></apx-chart>
                     </div>
                 </div>
-              }
-              @if(stocked){
+              } -->
+              <!-- @if(stocked){
                 <div id="chart">
                     <apx-chart #stocked
                       [series]="chartOptions6.series"
@@ -903,8 +915,8 @@
                       [grid]="chartOptions6.grid"
                     ></apx-chart>
                   </div>
-              }
-             @if(barLine){
+              } -->
+             <!-- @if(barLine){
                 <div class="card-body">
                     <div id="mixed-linecolumn">
                         <apx-chart #barline
@@ -915,8 +927,8 @@
                         [tooltip]="chartOptions5.tooltip"[colors]="chartOptions5.colors"></apx-chart>
                     </div>
                 </div>
-             }
-             @if(horizentalStocked){
+             } -->
+             <!-- @if(horizentalStocked){
                 <div id="chart">
                     <apx-chart #horizentalstocked
                       [series]="chartOptions7.series"
@@ -931,8 +943,8 @@
                       [fill]="chartOptions7.fill"
                     ></apx-chart>
                   </div>
-              }
-              @if(grouped){
+              } -->
+              <!-- @if(grouped){
                 <div id="chart">
                     <apx-chart #grouped
                       [series]="chartOptions8.series"
@@ -947,8 +959,8 @@
                       [fill]="chartOptions8.fill"
                     ></apx-chart>
                   </div>
-              }
-              @if(multiLine){
+              } -->
+              <!-- @if(multiLine){
                 <div id="chart">
                     <apx-chart #multiline
                     [series]="chartOptions9.series"
@@ -964,8 +976,8 @@
                     [title]="chartOptions9.title"
                   ></apx-chart>
                   </div>
-              }
-              @if(donut){
+              } -->
+              <!-- @if(donut){
                 <div id="donutchart">
                 <apx-chart #donutchart
                     [series]="chartOptions10.series"
@@ -977,8 +989,8 @@
                     [legend]="chartOptions10.legend" >
                 </apx-chart>
                   </div>
-              }
-              @if(heatMap){
+              } -->
+              <!-- @if(heatMap){
                 <div id="chart">
                     <apx-chart #heatmapchart
                       [series]="heatMapChartOptions.series"
@@ -991,8 +1003,8 @@
                       [grid]="heatMapChartOptions.grid"
                     ></apx-chart>
                   </div>
-              }
-              @if(funnel){
+              } -->
+              <!-- @if(funnel){
                 <div id="chart">
                     <apx-chart #funnelChart
                       [series]="funnelChartOptions.series"
@@ -1004,8 +1016,8 @@
                       [title]="funnelChartOptions.title"
                       [legend]="funnelChartOptions.legend"></apx-chart>
                       </div>
-                    }
-              @if(guage){
+                    } -->
+              <!-- @if(guage){
                 <div id="chart">
                     <apx-chart #guageChart
                       [series]="guageChartOptions.series"
@@ -1022,7 +1034,7 @@
                         [stroke]="guageChartOptions.stroke"
                     ></apx-chart>
                   </div>
-              }
+              } -->
             } @else {
             @if(bar && chartId){         
             <div class="card-body">
