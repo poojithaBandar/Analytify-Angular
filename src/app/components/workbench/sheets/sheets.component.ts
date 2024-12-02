@@ -10184,7 +10184,7 @@ fetchChartData(chartData: any){
       }
     }
 
-    applyCalculatedFields(event:any){
+    applyCalculatedFields(event:any,ngbdropdownevent:any){
       this.buildCalculatedLogic();
       // this.validateExpression();
       // if(this.isValidCalculatedField){
@@ -10201,6 +10201,7 @@ fetchChartData(chartData: any){
           next: (responce: any) => {
             this.isEditCalculatedField = false;
             event.close();
+            ngbdropdownevent.close();
             this.columnsData();
             this.validationMessage = '';
             this.toasterService.success('Updated Field Successfully','success',{ positionClass: 'toast-top-right'});

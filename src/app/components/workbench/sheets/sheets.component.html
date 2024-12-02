@@ -20,50 +20,50 @@
                 <div class="card-body p-1">
                     <div class="input-group justify-content-between">
                     <h6 class="fw-600  mb-0 p-2">Tables</h6>
-                    <div class=" p-1" #myDropdown="ngbDropdown" ngbDropdown [autoClose]="false">
 
-                        <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
-                            <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="form-control" 
-                                style="position: relative;min-height: 100px; padding: 2px;" 
-                            #calculatedfields="cdkDropList" 
-                                [cdkDropListData]="calculatedFieldsColumns" 
-                                (cdkDropListDropped)="calculatedFieldsDrop($event)">
-                                    
-                                    <div style="height: 282px; overflow: scroll; padding: 15px;">
-                                        <div class="form-group p-0 mb-2">
-                                            <label class="form-label mb-2">Calculated Field Name <span  class="text-red">*</span>
-                                            </label>
-                                            <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName" class="mb-2 form-control checkbox-color">
-                                            <textarea class="query-text mb-2"  [(ngModel)]="calculatedFieldLogic" placeholder="Drop Column or Enter Logic"
-                                        ></textarea> 
-                                        <div *ngIf="validationMessage" class="alert" [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
-                                            {{ validationMessage }}
-                                          </div>
-                                          </div>
-                                             
-                                        <div class="mt-2 d-flex gap-2">
-                                            <button [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))" class="btn btn-primary mt-0" (click)="applyCalculatedFields(myDropdown);">Apply </button>
-                                            <button class="btn btn-primary mt-0" (click)="isEditCalculatedField = false;myDropdown.close()">Close </button>
-                                        </div>                                 
-                                    </div>
-                                 
-                                </div>             
-                                
-                            <!-- </div> -->
-                            <!-- <button class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="test(calculatedfield)"> Create Calculated Field </button> -->
-                           <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
-                            <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
-                        </div>
-                    </div>
                     <div class="dashboard-option">
-                        <div class=" p-1" ngbDropdown>
+                        <div class=" p-1" ngbDropdown [autoClose]="false" #level1="ngbDropdown">
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                 aria-haspopup="true" aria-expanded="false" class="" ><i
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="myDropdown.open();"> Add Calculated Field </a>
+                                <div class=" p-1" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
+                                <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
+                                <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
+                                    <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
+                                        <div cdkDropList cdkDropListOrientation="horizontal" class="form-control" 
+                                        style="position: relative;min-height: 100px; padding: 2px;" 
+                                    #calculatedfields="cdkDropList" 
+                                        [cdkDropListData]="calculatedFieldsColumns" 
+                                        (cdkDropListDropped)="calculatedFieldsDrop($event)">
+                                            
+                                            <div style="height: 282px; overflow: scroll; padding: 15px;">
+                                                <div class="form-group p-0 mb-2">
+                                                    <label class="form-label mb-2">Calculated Field Name <span  class="text-red">*</span>
+                                                    </label>
+                                                    <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName" class="mb-2 form-control checkbox-color">
+                                                    <textarea class="query-text mb-2"  [(ngModel)]="calculatedFieldLogic" placeholder="Drop Column or Enter Logic"
+                                                ></textarea> 
+                                                <div *ngIf="validationMessage" class="alert" [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
+                                                    {{ validationMessage }}
+                                                  </div>
+                                                  </div>
+                                                     
+                                                <div class="mt-2 d-flex gap-2">
+                                                    <button [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))" class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
+                                                    <button class="btn btn-primary mt-0" (click)="isEditCalculatedField = false;level1.close();level2.close()">Close </button>
+                                                </div>                                 
+                                            </div>
+                                         
+                                        </div>             
+                                        
+                                    <!-- </div> -->
+                                    <!-- <button class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="test(calculatedfield)"> Create Calculated Field </button> -->
+                                   <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
+                                </div>
+                                </div>
                                <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                 <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
                             </div>
@@ -184,7 +184,7 @@
                                                 <div class="dropdown-menu" ngbDropdownMenu>
                                                     <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
-                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="myDropdown.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);"> Edit Calculated Field </a>
+                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
                                                 </div>
