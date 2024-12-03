@@ -35,27 +35,100 @@
                                         <div cdkDropList cdkDropListOrientation="horizontal" class="form-control" 
                                         style="position: relative;min-height: 100px; padding: 2px;" 
                                     #calculatedfields="cdkDropList" 
-                                        [cdkDropListData]="calculatedFieldsColumns" 
+                                      
                                         (cdkDropListDropped)="calculatedFieldsDrop($event)">
                                             
-                                            <div style="height: 282px; overflow: scroll; padding: 15px;">
-                                                <div class="form-group p-0 mb-2">
-                                                    <label class="form-label mb-2">Calculated Field Name <span  class="text-red">*</span>
-                                                    </label>
-                                                    <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName" class="mb-2 form-control checkbox-color">
-                                                    <textarea class="query-text mb-2"  [(ngModel)]="calculatedFieldLogic" placeholder="Drop Column or Enter Logic"
-                                                ></textarea> 
-                                                <div *ngIf="validationMessage" class="alert" [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
-                                                    {{ validationMessage }}
-                                                  </div>
-                                                  </div>
-                                                     
-                                                <div class="mt-2 d-flex gap-2">
-                                                    <button [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))" class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
-                                                    <button class="btn btn-primary mt-0" (click)="isEditCalculatedField = false;level1.close();level2.close()">Close </button>
-                                                </div>                                 
+                                            <div style="max-height: 382px; overflow: scroll; padding: 10px;">
+                                                <div class="col-lg-12 col-md-12 p-0 m-0">
+                                                        <div class="form-group p-0 mb-0">
+                                                            <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label>
+                                                            <div class="d-flex">
+                                                                <div class="col-6 p-0">
+                                                                    <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName"
+                                                                    class="mb-2 form-control checkbox-color">
+                                                                    <div class="input-group mb-2">
+                                                                        <div class="col-lg-6 col-md-6 p-0">
+                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
+                                                                                (change)="calculatedFieldData()">
+                                                                                <option value="number">Number</option>
+                                                                                <option value="string">String</option>
+                                                                                <option value="arithematic">Arithmetic operation</option>
+                                                                                <option value="date">Date</option>
+                                                                                <option value="logical">Logical</option>
+                                                                                <option value="aggregation">Aggregate</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div *ngIf="calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
+                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
+                                                                                (change)="nestedCalculatedFieldFunction()">
+                                                                                <option [disabled]="true" value="">select function</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="contains">CONTAINS</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="startwith">STARTS WITH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="endwidth">ENDS WITH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="split">SLPIT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datename">DATENAME</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="year">YEAR</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="month">MONTH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="day">DAY</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <textarea
+                                                                        *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'logical'"
+                                                                        class="query-text mb-2 px-3" [(ngModel)]="calculatedFieldLogic"
+                                                                        placeholder="Drop Column or Enter Logic"></textarea>
+                                                                    <div *ngIf="validationMessage" class="alert"
+                                                                        [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
+                                                                        {{ validationMessage }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6 p-0" style="margin-left: 8px;">
+                                                                    <div class=" p-0  ">
+                                                                        <p class="mb-0  p-2 bg-light mb-3 border rounded-2 description-text" >
+                                                                            2. COUNT(expression): Counts rows or non-null values.
+                                                                            Insightapps_cal_field : COUN</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                            
+                                                        <div class="mt-0 d-flex gap-2">
+                                                            <button
+                                                                [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
+                                                                class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
+                                                            <button class="btn btn-primary mt-0"
+                                                                (click)="isEditCalculatedField = false;level1.close();level2.close()">Close </button>
+                                                        </div>
+                                                </div>
                                             </div>
-                                         
                                         </div>             
                                         
                                     <!-- </div> -->
@@ -896,20 +969,35 @@
                                 @if(table && chartId){
                                 <table>
                                     <thead>
-                                      <tr>
+                                      <tr [ngStyle]="{ 'font-family': headerFontFamily, 'font-size': headerFontSize, 
+                                      'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 'color': headerFontColor }">
                                         @for(column of tableColumnsDisplay;track column){
-                                        <th>{{ column }}</th>
+                                        <th [ngStyle]="{ 'text-align': headerFontAlignment, 'font-weight': headerFontWeight }">{{ column }}
+                                            <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
+                                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                  aria-haspopup="true" aria-expanded="false" class=""><i
+                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                                </a>
+                                                <div class="dropdown-menu" ngbDropdownMenu>
+                                                  <button class="dropdown-item" (click)="tableColumnSort('default', column)">Default</button>
+                                                  <button class="dropdown-item" (click)="tableColumnSort('ascending', column)">Ascending</button>
+                                                  <button class="dropdown-item" (click)="tableColumnSort('descending', column)">Descending</button>
+                                                </div>
+                                            </span> -->
+                                        </th>
                                         }
                                       </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let row of (tableDataDisplay | paginate: { itemsPerPage: itemsPerPage,
+                                    <tr *ngFor="let row of (tableDataDisplay| paginate: { itemsPerPage: itemsPerPage,
                                                                 currentPage: page,
                                                                 totalItems: totalItems }) ; let i = index"
                                         [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}">
+                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}"
+                                        [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
+                                        'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 'color': tableDataFontColor }">
                                         @for(column of tableColumnsDisplay;track column){
-                                        <td>{{ row[column] }}</td>
+                                        <td [ngStyle]="{ 'text-align': tableDataFontAlignment }">{{ row[column] }}</td>
                                         }
                                     </tr>
                                     
@@ -1626,6 +1714,272 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
+                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
+                                                                data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
+                                                                Header
+                                                            </button>
+                                                    
+                                                        </h6>
+                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse" aria-labelledby="heading"
+                                                            data-bs-parent="#accordionExample">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="sub-menu-item  p-2">
+                                                                            <div class="row">
+                                                                                <div class="">
+                                                                                    <div class="font-color-card">
+                                                                                        <p class="mb-0">Fonts</p>
+                                                                                        <div class="dropup" ngbDropdown>
+                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle"
+                                                                                                ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                <div class="dropup" ngbDropdown>
+                                                                                                    <div class="form-group mb-0 p-1">
+                                                                                                        <select class="form-select form-select select2 fs-14"
+                                                                                                            [(ngModel)]="headerFontFamily">
+                                                                                                            <option value="'Arial', sans-serif">Arial</option>
+                                                                                                            <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                            <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                            <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                            <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                            <option value="'Georgia', serif">Georgia</option>
+                                                                                                            <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                            <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                                            <option value="Algerian">Algerian</option>
+                                                                                                            <option value="Bahnschrift">Bahnschrift</option>
+                                                                                                            <option value="sans-serif">Sans Serif</option>
+                                                                                                            <option value="Calibri">Calibri</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="bold-italic p-1">
+                                                                                                        <div class="row">
+                                                                                                            <div class="form-group mb-0 d-flex">
+                                                                                                                <select class="form-select form-select select2 fs-14"
+                                                                                                                    style="width: 100px;" [(ngModel)]="headerFontSize">
+                                                                                                                    <option value="10px">10px</option>
+                                                                                                                    <option value="11px">11px</option>
+                                                                                                                    <option value="12px">12px</option>
+                                                                                                                    <option value="13px">13px</option>
+                                                                                                                    <option value="14px">14px</option>
+                                                                                                                    <option value="15px">15px</option>
+                                                                                                                    <option value="16px">16px</option>
+                                                                                                                    <option value="17px">17px</option>
+                                                                                                                    <option value="18px">18px</option>
+                                                                                                                    <option value="19px">19px</option>
+                                                                                                                    <option value="20px">20px</option>
+                                                                                                                </select>
+                                                                                                                <div class="bold-text"
+                                                                                                                    [ngStyle]="{'background-color': headerFontWeight === 700 ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isBold = !isBold;headerFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    <p>B</p>
+                                                                                                                </div>
+                                                                                                                <div class="italic-text"
+                                                                                                                    [ngStyle]="{'background-color': headerFontStyle === 'italic' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    <p>I</p>
+                                                                                                                </div>
+                                                                                                                <div class="underline-text"
+                                                                                                                    [ngStyle]="{'background-color': headerFontDecoration === 'underline' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    <p>U</p>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                        
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="color-shade-card p-1">
+                                                                                                        <div *ngFor="let row of colorPalette" class="row px-4">
+                                                                                                            <div *ngFor="let colorClass of row" [class]="colorClass"
+                                                                                                                (click)="headerColorChange($event)">
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                        
+                                                                                                </div>
+                                                                                                <li *ngIf="false">
+                                                                                                    <p class="more-color-text">More colors...</p>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <span ngbTooltip=""></span>
+                                                                            </div>
+                                                                            <div class="sub-menu-item mb-0">
+                                                                                <div class="row">
+                                                                                  <div class="">
+                                                                                      <div class="font-color-card">
+                                                                                          <p class="mb-0">Alignments</p>
+                                                                                          <div class="dropup" ngbDropdown>
+                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                              <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                  <div class="dropup" ngbDropdown >
+                                                                                                      <div class=" p-1">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left'">
+                                                                                                                <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                                              </div>
+                                                                                                              <div class="form-group mb-0 alignment-sides">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? '#00a5a2': '#fafcfc'}" (click)="headerFontAlignment = 'left'">
+                                                                                                                    <i class="fa fa-align-left"></i>
+                                                                                                                </div>
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? '#00a5a2': '#fafcfc'}" (click)="headerFontAlignment = 'center'">
+                                                                                                                    <i class="fa fa-align-center"></i>
+                                                                                                                </div>
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? '#00a5a2': '#fafcfc'}" (click)="headerFontAlignment = 'right'">
+                                                                                                                    <i class="fa fa-align-right"></i>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>                                                                                    
+                                                                                                  </div>
+                                                                                              </ul>
+                                                                                          </div>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>
+                                                                            <span ngbTooltip=""></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
+                                                                data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
+                                                                Table Data
+                                                            </button>
+                                                    
+                                                        </h6>
+                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse" aria-labelledby="heading"
+                                                            data-bs-parent="#accordionExample">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="sub-menu-item  p-2">
+                                                                            <div class="row">
+                                                                                <div class="">
+                                                                                    <div class="font-color-card">
+                                                                                        <p class="mb-0">Fonts</p>
+                                                                                        <div class="dropup" ngbDropdown>
+                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle"
+                                                                                                ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                <div class="dropup" ngbDropdown>
+                                                                                                    <div class="form-group mb-0 p-1">
+                                                                                                        <select class="form-select form-select select2 fs-14"
+                                                                                                            [(ngModel)]="tableDataFontFamily">
+                                                                                                            <option value="'Arial', sans-serif">Arial</option>
+                                                                                                            <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                            <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                            <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                            <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                            <option value="'Georgia', serif">Georgia</option>
+                                                                                                            <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                            <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                                            <option value="Algerian">Algerian</option>
+                                                                                                            <option value="Bahnschrift">Bahnschrift</option>
+                                                                                                            <option value="sans-serif">Sans Serif</option>
+                                                                                                            <option value="Calibri">Calibri</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="bold-italic p-1">
+                                                                                                        <div class="row">
+                                                                                                            <div class="form-group mb-0 d-flex">
+                                                                                                                <select class="form-select form-select select2 fs-14"
+                                                                                                                    style="width: 100px;" [(ngModel)]="tableDataFontSize">
+                                                                                                                    <option value="10px">10px</option>
+                                                                                                                    <option value="11px">11px</option>
+                                                                                                                    <option value="12px">12px</option>
+                                                                                                                    <option value="13px">13px</option>
+                                                                                                                    <option value="14px">14px</option>
+                                                                                                                    <option value="15px">15px</option>
+                                                                                                                    <option value="16px">16px</option>
+                                                                                                                    <option value="17px">17px</option>
+                                                                                                                    <option value="18px">18px</option>
+                                                                                                                    <option value="19px">19px</option>
+                                                                                                                    <option value="20px">20px</option>
+                                                                                                                </select>
+                                                                                                                <div class="bold-text"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontWeight === 700 ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isBold = !isBold;tableDataFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    <p>B</p>
+                                                                                                                </div>
+                                                                                                                <div class="italic-text"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontStyle === 'italic' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    <p>I</p>
+                                                                                                                </div>
+                                                                                                                <div class="underline-text"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontDecoration === 'underline' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    <p>U</p>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                        
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="color-shade-card p-1">
+                                                                                                        <div *ngFor="let row of colorPalette" class="row px-4">
+                                                                                                            <div *ngFor="let colorClass of row" [class]="colorClass"
+                                                                                                                (click)="tableDataColorChange($event)">
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                        
+                                                                                                </div>
+                                                                                                <li *ngIf="false">
+                                                                                                    <p class="more-color-text">More colors...</p>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <span ngbTooltip=""></span>
+                                                                            </div>
+                                                                            <div class="sub-menu-item mb-0">
+                                                                                <div class="row">
+                                                                                  <div class="">
+                                                                                      <div class="font-color-card">
+                                                                                          <p class="mb-0">Alignments</p>
+                                                                                          <div class="dropup" ngbDropdown>
+                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                              <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                  <div class="dropup" ngbDropdown >
+                                                                                                      <div class=" p-1">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                                              </div>
+                                                                                                              <div class="form-group mb-0 alignment-sides">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? '#00a5a2': '#fafcfc'}" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                    <i class="fa fa-align-left"></i>
+                                                                                                                </div>
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? '#00a5a2': '#fafcfc'}" (click)="tableDataFontAlignment = 'center'">
+                                                                                                                    <i class="fa fa-align-center"></i>
+                                                                                                                </div>
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? '#00a5a2': '#fafcfc'}" (click)="tableDataFontAlignment = 'right'">
+                                                                                                                    <i class="fa fa-align-right"></i>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>                                                                                    
+                                                                                                  </div>
+                                                                                              </ul>
+                                                                                          </div>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>
+                                                                            <span ngbTooltip=""></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button

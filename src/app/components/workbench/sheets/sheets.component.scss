@@ -946,16 +946,23 @@ th, td {
 }
   
 .Semantic-layer-card {
-  width: 390px; 
+  min-width: 600px; 
+  max-width: 1000px;
 }
 
 .query-text {
   width: 100%;
-  height: 122px;
-  min-height: 122px;
-  max-height: 122px;
+  height: 110px;
+  min-height: 110px;
+  max-height: 110px;
   overflow-y: scroll;
   outline: none;
   border: 1px solid #edebeb;
   border-radius: 5px;
+}
+.description-text{
+  overflow-y: scroll; 
+  height: 195px; 
+  min-height: 195px;  
+  max-height: 95px;
 }

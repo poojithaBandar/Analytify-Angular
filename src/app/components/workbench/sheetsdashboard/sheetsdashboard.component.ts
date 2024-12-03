@@ -640,7 +640,8 @@ export class SheetsdashboardComponent {
           displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
-        }
+        },
+        customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
        this.isSheetsView = false;
@@ -1353,7 +1354,8 @@ export class SheetsdashboardComponent {
         displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
         prefix:sheet?.sheet_data?.numberFormat?.prefix,
         suffix:sheet?.sheet_data?.numberFormat?.suffix
-      }
+      },
+      customizeOptions: sheet?.sheet_data?.customizeOptions
     }));
     this.sheetIdsDataSet = this.dashboardNew.map(item => item['sheetId']);
     console.log('dashboardNew',this.dashboardNew)
@@ -1419,7 +1421,8 @@ export class SheetsdashboardComponent {
         displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
         prefix:sheet?.sheet_data?.numberFormat?.prefix,
         suffix:sheet?.sheet_data?.numberFormat?.suffix
-      }
+      },
+      customizeOptions: sheet?.sheet_data?.customizeOptions
     }));
       if (this.dashboardView) {
         this.getSavedDashboardData();
@@ -1695,7 +1698,8 @@ allowDrop(ev : any): void {
       drillDownObject : [],
       drillDownIndex : 0,
       isDrillDownData : copy.isDrillDownData,
-      numberFormat : copy.numberFormat
+      numberFormat : copy.numberFormat,
+      customizeOptions: copy.customizeOptions
       };
       // this.qrySetId.push(copy.qrySetId);
       if(copy.fileId){
@@ -3860,7 +3864,8 @@ kpiData?: KpiData;
           displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
-        }
+        },
+        customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
       this.removeUnSelectedSheetsFromCanvas();
