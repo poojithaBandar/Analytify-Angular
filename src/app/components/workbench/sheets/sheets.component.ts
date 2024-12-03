@@ -45,7 +45,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { lastValueFrom } from 'rxjs';
-// import { evaluate, parse } from 'mathjs';
+import { evaluate, parse } from 'mathjs';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -125,7 +125,6 @@ export class SheetsComponent {
   tableSearch! : string;
   isMeasureEdit : boolean = false;
   calculatedFieldName! : string
-  originalCalculatedFieldLogic : string = '';
   isEditCalculatedField : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
@@ -237,6 +236,8 @@ export class SheetsComponent {
   isCustomSql = false;
   canDrop = true;
   createdBy : any;
+  calculatedFieldFunction : string = '';
+  nestedCalculatedFieldData : string = '';
   @ViewChild('barChart') barchart!: ChartComponent;
   @ViewChild(' bar-chart') eBarchart!: any;
   @ViewChild('areaChart') areachart!: ChartComponent;
@@ -261,7 +262,6 @@ export class SheetsComponent {
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
-  calculatedFieldsColumns = [] as any;
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
@@ -10138,7 +10138,7 @@ fetchChartData(chartData: any){
           // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
         }
         this.updateEchartOptions();
-      }
+      }3
     }
     fetchCalculatedFields(id : any){
       this.workbechService.fetchCalculatedFields(id).subscribe({
@@ -10147,6 +10147,8 @@ fetchChartData(chartData: any){
           this.isEditCalculatedField = true;
           this.calculatedFieldLogic = response[0].cal_logic;
           this.calculatedFieldName = response[0].field_name;
+          this.calculatedFieldFunction = response[0].functionName;
+          this.nestedCalculatedFieldData = response[0].nestedFunctionName;
         },
         error: (error) => {
           console.log(error);
@@ -10154,48 +10156,142 @@ fetchChartData(chartData: any){
       })
     }
 
-    calculatedFieldsDrop(event: CdkDragDrop<string[]>){
-      console.log(event)
-      let item: any = event.previousContainer.data[event.previousIndex];
-      if(item && item.column) {
-        this.calculatedFieldsColumns.push(item.column);
-        if(this.calculatedFieldLogic?.length){
-          this.calculatedFieldLogic = this.calculatedFieldLogic +'"' + item.column + '"';
-          // this.originalCalculatedFieldLogic = this.originalCalculatedFieldLogic +'"' + item.column + '"';
-        } else {
-          this.calculatedFieldLogic = '"' + item.column + '"';
-          // this.originalCalculatedFieldLogic = '"' + item.column + '"';
+    dropCalculatedField(tableName: string , columnName : string){
+      let regex;
+      switch(this.nestedCalculatedFieldData) {
+        case 'abs': 
+          this.calculatedFieldLogic = 'ABS("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'ceiling':
+          this.calculatedFieldLogic = 'CEILING("' + tableName + '"."' + columnName + '")';
+          break; 
+        case 'floor': 
+        this.calculatedFieldLogic = 'FLOOR("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'round':
+        this.calculatedFieldLogic = 'ROUND("' + tableName + '"."' + columnName + '")';
+           break; 
+        case 'left': 
+        regex = /^LEFT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
+        this.calculatedFieldLogic.trim();
+        if (!this.calculatedFieldLogic.startsWith('LEFT(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        const params = this.calculatedFieldLogic.slice(5, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2] = params.split(',');
+        if (param2 === undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
         }
-        this.updateColumnMapping(item.column, item.table_name, item.actual_column);
+        this.calculatedFieldLogic = "LEFT("+'"'+tableName+'"."'+columnName+'",'+param2+")";    
       }
+        break; 
+        case 'right': 
+        this.calculatedFieldLogic.trim();
+        regex = /^RIGHT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('RIGHT(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        const params = this.calculatedFieldLogic.slice(6, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2] = params.split(',');
+        if (param2 === undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
+        }
+        this.calculatedFieldLogic = "RIGHT("+'"'+tableName+'"."'+columnName+'",'+param2+")";   
+      }
+        break;
+        case 'mid': 
+        this.calculatedFieldLogic.trim();
+        regex = /^MID\(\s*([^,]*)\s*,\s*([^,]*)\s*,\s*([^,]*)\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('MID(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        const params = this.calculatedFieldLogic.slice(4, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2, param3] = params.split(',');
+        if (param2 === undefined || param3 == undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
+        }
+        this.calculatedFieldLogic = "MID("+'"'+tableName+'"."'+columnName+'",'+param2+ ',' + param3 + ")";   
+      }
+        break; 
+        case 'length':
+          this.calculatedFieldLogic = 'LENGTH("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'trim':
+          this.calculatedFieldLogic = 'TRIM("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'upper': 
+        this.calculatedFieldLogic = 'UPPER("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'lower': 
+        this.calculatedFieldLogic = 'LOWER("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'contains': break;
+        case 'startwith': break; 
+        case 'replace': break; 
+        case 'endwidth': break; 
+        case 'split': break; 
+        case 'find': break; 
+        case 'dateadd': break;
+        case 'datediff': break; 
+        case 'datepart': break; 
+        case 'datename': break; 
+        case 'now': break; 
+        case 'today': break; 
+        case 'year': break; 
+        case 'month': break; 
+        case 'day': break; 
+        case 'parse': break; 
+        case 'average': break; 
+        case 'count': break; 
+        case 'countd': break;
+        case 'max': break; 
+        case 'min': break; 
+        case 'sum': break; 
+        
+      }
+    }
+
+  calculatedFieldsDrop(event: CdkDragDrop<string[]>) {
+    console.log(event)
+    let item: any = event.previousContainer.data[event.previousIndex];
+    if (item && item.column && item.table_name) {
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+        this.dropCalculatedField(item.table_name, item.column); 
+      } else {
+        if (this.calculatedFieldLogic?.length) {
+          this.calculatedFieldLogic = this.calculatedFieldLogic + '"' + item.table_name + '"."' + item.column + '"';
+        } else {
+          this.calculatedFieldLogic = '"' + item.table_name + '"."' + item.column + '"';
+        }
+      }
+    }
   }
 
-    buildCalculatedLogic(){
-      const regex =/([a-zA-Z_][a-zA-Z0-9_]*\([a-zA-Z0-9_]+\)|[a-zA-Z_][a-zA-Z0-9_]*)/g;
-      this.originalCalculatedFieldLogic = this.calculatedFieldLogic.replace(regex, (match) => {
-        return this.columnMapping[match] || match; // Keep only the column name
-      });
-
+  applyCalculatedFields(event: any, ngbdropdownevent: any) {
+    if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+      this.validateCalculatedField();
+    } else {
+      this.validateExpression();
     }
-
-    updateColumnMapping(columnName:string,tableName:string,actualColumnName : string): void {
-      if (columnName && tableName) {
-        this.columnMapping[columnName] =  tableName + '"' + '.' + '"' + actualColumnName  ;
-      }
-    }
-
-    applyCalculatedFields(event:any,ngbdropdownevent:any){
-      this.buildCalculatedLogic();
-      // this.validateExpression();
-      // if(this.isValidCalculatedField){
-      if(this.isEditCalculatedField){
+    if (this.isValidCalculatedField) {
+      if (this.isEditCalculatedField) {
         let requestObj = {
           query_set_id: this.qrySetId,
-          database_id : this.databaseId,
-          field_name : this.calculatedFieldName,
-          actual_fields_logic : this.calculatedFieldLogic,
-          field_logic : this.originalCalculatedFieldLogic,
-          cal_field_id : this.calculatedFieldId
+          database_id: this.databaseId,
+          field_name: this.calculatedFieldName,
+          actual_fields_logic: this.calculatedFieldLogic,
+          cal_field_id: this.calculatedFieldId,
+          functionName: this.calculatedFieldFunction,
+          nestedFunctionName: "this.nestedCalculatedFieldData"
         }
         this.workbechService.editCalculatedFields(requestObj).subscribe({
           next: (responce: any) => {
@@ -10204,7 +10300,7 @@ fetchChartData(chartData: any){
             ngbdropdownevent.close();
             this.columnsData();
             this.validationMessage = '';
-            this.toasterService.success('Updated Field Successfully','success',{ positionClass: 'toast-top-right'});
+            this.toasterService.success('Updated Field Successfully', 'success', { positionClass: 'toast-top-right' });
 
           },
           error: (error) => {
@@ -10213,61 +10309,314 @@ fetchChartData(chartData: any){
           }
         })
       } else {
-      let requestObj = {
-        query_set_id: this.qrySetId,
-        database_id : this.databaseId,
-        field_name : this.calculatedFieldName,
-        actual_fields_logic : this.calculatedFieldLogic,
-        field_logic : this.originalCalculatedFieldLogic,
-      }
-      this.workbechService.applyCalculatedFields(requestObj).subscribe({
-        next: (responce: any) => {
-          this.validationMessage = '';
-          this.isEditCalculatedField = false;
-          event.close();
-          this.columnsData();
-          this.toasterService.success('Added Successfully','success',{ positionClass: 'toast-top-right'});
-
-        },
-        error: (error) => {
-          this.validationMessage = error?.error?.error;
-          console.log(error);
+        let requestObj = {
+          query_set_id: this.qrySetId,
+          database_id: this.databaseId,
+          field_name: this.calculatedFieldName,
+          actual_fields_logic: this.calculatedFieldLogic,
+          functionName: this.calculatedFieldFunction,
+          nestedFunctionName: "this.nestedCalculatedFieldData"
         }
-      })
+        this.workbechService.applyCalculatedFields(requestObj).subscribe({
+          next: (responce: any) => {
+            this.validationMessage = '';
+            this.isEditCalculatedField = false;
+            event.close();
+            this.columnsData();
+            this.toasterService.success('Added Successfully', 'success', { positionClass: 'toast-top-right' });
+
+          },
+          error: (error) => {
+            this.validationMessage = error?.error?.error;
+            console.log(error);
+          }
+        })
+      }
     }
-  // }
-    }
+  }
 
     // Step 1: Check for valid characters
-    // private preValidateExpression(expression: string): void {
-    //   // Check for adjacent parentheses without an operator
-    //   if (/\)\s*\(/.test(expression)) {
-    //     throw new Error('Invalid expression: Missing operator between parentheses.');
-    //   }
-  
-    //   // Check for balanced parentheses
-    //   const stack: string[] = [];
-    //   for (const char of expression) {
-    //     if (char === '(') stack.push(char);
-    //     else if (char === ')') {
-    //       if (!stack.length) throw new Error('Unbalanced parentheses in the expression.');
-    //       stack.pop();
-    //     }
-    //   }
-    //   if (stack.length > 0) {
-    //     throw new Error('Unbalanced parentheses in the expression.');
-    //   }
-    // }
+    private preValidateExpression(expression: string): void {
+      // Check for adjacent parentheses without an operator
+      if (/\)\s*\(/.test(expression)) {
+        throw new Error('Invalid expression: Missing operator between parentheses.');
+      }
+    }
 
     validateExpression(): void {
       try {
-        // this.preValidateExpression(this.originalCalculatedFieldLogic);
-        // const parsedExpression = parse(this.originalCalculatedFieldLogic);
-        this.validationMessage = 'The expression is valid!';
+        this.preValidateExpression(this.calculatedFieldLogic);
+        const regex = /"([a-zA-Z0-9_]+)"\.\"([a-zA-Z0-9_]+)\"/g;
+        let validateFieldData = _.cloneDeep(this.calculatedFieldLogic);
+        validateFieldData = validateFieldData.replace(regex, (_, tableName, columnName) => {
+          return `${tableName}_${columnName}`;
+        });
+        parse(validateFieldData);
         this.isValidCalculatedField = true;
       } catch (error) {
         this.validationMessage = (error as Error).message;
         this.isValidCalculatedField = false;
+      }
+    }
+
+    validateFormula(regex: RegExp){
+      return regex.test(this.calculatedFieldLogic);
+    }
+
+    validateCalculatedField(){
+      switch(this.nestedCalculatedFieldData) {
+        case 'abs':
+          if(!this.validateFormula(/^ABS\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+
+        break; 
+        case 'ceiling':
+          if(!this.validateFormula(/^CEILING\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+        case 'floor': 
+        if(!this.validateFormula(/^FLOOR\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+        }
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'round':
+          if(!this.validateFormula(/^ROUND\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+           break; 
+        case 'left': 
+        if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'right': 
+        if(!this.validateFormula(/^RIGHT\(\s*("[a-zA-Z0-9_]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break;
+        case 'mid': 
+        if(!this.validateFormula(/^(MID)\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)\[\]]+)"\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'length':
+          if(!this.validateFormula(/^LENGTH\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'trim':
+          if(!this.validateFormula(/^TRIM\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'upper':
+          if(!this.validateFormula(/^UPPER\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'lower':
+          if(!this.validateFormula(/^LOWER\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'contains': break;
+        case 'startwith': break; 
+        case 'replace': break; 
+        case 'endwidth': break; 
+        case 'split': break; 
+        case 'find': break; 
+        case 'dateadd': break;
+        case 'datediff': break; 
+        case 'datepart': break; 
+        case 'datename': break; 
+        case 'now': break; 
+        case 'today': break; 
+        case 'year': break; 
+        case 'month': break; 
+        case 'day': break; 
+        case 'parse': break; 
+        case 'average': break; 
+        case 'count': break; 
+        case 'countd': break;
+        case 'max': break; 
+        case 'min': break; 
+        case 'sum': break; 
+        
+      }
+    }
+
+    calculatedFieldData(){
+      this.nestedCalculatedFieldData = '';
+    }
+
+    nestedCalculatedFieldFunction(){
+      switch(this.nestedCalculatedFieldData) {
+        case 'abs':
+          this.calculatedFieldLogic = 'ABS()';
+        break; 
+        case 'ceiling':
+          this.calculatedFieldLogic = 'CEILING()';
+          break; 
+        case 'floor': 
+        this.calculatedFieldLogic = 'FLOOR()';
+        break; 
+        case 'round':
+        this.calculatedFieldLogic = 'ROUND()';
+           break; 
+        case 'left': 
+        this.calculatedFieldLogic = 'LEFT( , )';
+        break; 
+        case 'right': 
+        this.calculatedFieldLogic = 'RIGHT( , )';
+        break;
+        case 'mid': 
+        this.calculatedFieldLogic = 'MID( , , )';
+        break; 
+        case 'length': 
+        this.calculatedFieldLogic = 'LENGTH()';
+        break; 
+        case 'trim':
+         this.calculatedFieldLogic = 'TRIM()';
+        break; 
+        case 'upper': 
+        this.calculatedFieldLogic = 'UPPER()';
+        break; 
+        case 'lower': 
+        this.calculatedFieldLogic = 'LOWER()';
+        break; 
+        case 'contains':
+          this.calculatedFieldLogic = 'CONTAINS()';
+        break;
+        case 'startwith': 
+        this.calculatedFieldLogic = 'STARTSWITH()';
+        break; 
+        case 'replace': 
+        this.calculatedFieldLogic = 'REPLACE()';
+        break; 
+        case 'endwidth':
+          this.calculatedFieldLogic = 'ENDSWITH()';
+        break; 
+        case 'split':
+          this.calculatedFieldLogic = 'SPLIT()';
+        break; 
+        case 'find':
+          this.calculatedFieldLogic = 'FIND()';
+        break; 
+        case 'dateadd': 
+        this.calculatedFieldLogic = 'DATEADD()';
+        break;
+        case 'datediff':
+          this.calculatedFieldLogic = 'DATEDIFF()';
+        break; 
+        case 'datepart': 
+        this.calculatedFieldLogic = 'DATEPART()';
+        break; 
+        case 'datename':
+          this.calculatedFieldLogic = 'DATENAME()';
+        break; 
+        case 'now': 
+        this.calculatedFieldLogic = 'NOW()';
+        break; 
+        case 'today': 
+        this.calculatedFieldLogic = 'TODAY()';
+        break; 
+        case 'year':
+          this.calculatedFieldLogic = 'YEAR()';
+        break; 
+        case 'month': 
+        this.calculatedFieldLogic = 'MONTH()';
+        break; 
+        case 'day':
+          this.calculatedFieldLogic = 'DAY()';
+        break; 
+        case 'parse':
+          this.calculatedFieldLogic = 'dateparse()';
+        break; 
+        case 'average':
+          this.calculatedFieldLogic = 'AVG()';
+        break; 
+        case 'count': 
+        this.calculatedFieldLogic = 'COUNT()';
+        break; 
+        case 'countd':
+          this.calculatedFieldLogic = 'COUNTD()';
+        break;
+        case 'max':
+          this.calculatedFieldLogic = 'MAX()';
+        break; 
+        case 'min':
+          this.calculatedFieldLogic = 'MIN()';
+        break; 
+        case 'sum': 
+        this.calculatedFieldLogic = 'SUM()';
+        break; 
+        
       }
     }
 }
