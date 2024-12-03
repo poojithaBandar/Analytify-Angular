@@ -38,79 +38,89 @@
                                       
                                         (cdkDropListDropped)="calculatedFieldsDrop($event)">
                                             
-                                            <div style="height: 382px; overflow: scroll; padding: 15px;">
+                                            <div style="max-height: 382px; overflow: scroll; padding: 10px;">
                                                 <div class="col-lg-12 col-md-12 p-0 m-0">
-                                                        <div class="form-group p-0 mb-2">
-                                                            <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span>
-                                                            </label>
-                                                            <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName"
-                                                                class="mb-2 form-control checkbox-color">
-                                                            <div class="input-group mb-2">
-                                                                <div class="col-lg-6 col-md-6 p-0">
-                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
-                                                                        (change)="calculatedFieldData()">
-                                                                        <option value="number">Number</option>
-                                                                        <option value="string">String</option>
-                                                                        <option value="arithematic">Arithmetic operation</option>
-                                                                        <option value="date">Date</option>
-                                                                        <option value="logical">Logical</option>
-                                                                        <option value="aggregation">Aggregate</option>
-                                                                    </select>
+                                                        <div class="form-group p-0 mb-0">
+                                                            <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label>
+                                                            <div class="d-flex">
+                                                                <div class="col-6 p-0">
+                                                                    <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName"
+                                                                    class="mb-2 form-control checkbox-color">
+                                                                    <div class="input-group mb-2">
+                                                                        <div class="col-lg-6 col-md-6 p-0">
+                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
+                                                                                (change)="calculatedFieldData()">
+                                                                                <option value="number">Number</option>
+                                                                                <option value="string">String</option>
+                                                                                <option value="arithematic">Arithmetic operation</option>
+                                                                                <option value="date">Date</option>
+                                                                                <option value="logical">Logical</option>
+                                                                                <option value="aggregation">Aggregate</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div *ngIf="calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
+                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
+                                                                                (change)="nestedCalculatedFieldFunction()">
+                                                                                <option [disabled]="true" value="">select function</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="contains">CONTAINS</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="startwith">STARTS WITH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="endwidth">ENDS WITH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="split">SLPIT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datename">DATENAME</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="year">YEAR</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="month">MONTH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="day">DAY</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <textarea
+                                                                        *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'logical'"
+                                                                        class="query-text mb-2 px-3" [(ngModel)]="calculatedFieldLogic"
+                                                                        placeholder="Drop Column or Enter Logic"></textarea>
+                                                                    <div *ngIf="validationMessage" class="alert"
+                                                                        [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
+                                                                        {{ validationMessage }}
+                                                                    </div>
                                                                 </div>
-                                                                <div *ngIf="calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
-                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
-                                                                        (change)="nestedCalculatedFieldFunction()">
-                                                                        <option [disabled]="true" value="">select function</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
-                                            
-                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
-                                            
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="contains">CONTAINS</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="startwith">STARTS WITH</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="endwidth">ENDS WITH</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="split">SLPIT</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
-                                            
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datename">DATENAME</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="year">YEAR</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="month">MONTH</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="day">DAY</option>
-                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
-                                                                    </select>
+                                                                <div class="col-6 p-0" style="margin-left: 8px;">
+                                                                    <div class=" p-0  ">
+                                                                        <p class="mb-0  p-2 bg-light mb-3 border rounded-2 description-text" >
+                                                                            2. COUNT(expression): Counts rows or non-null values.
+                                                                            Insightapps_cal_field : COUN</p>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <textarea
-                                                                *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'logical'"
-                                                                class="query-text mb-2" [(ngModel)]="calculatedFieldLogic"
-                                                                placeholder="Drop Column or Enter Logic"></textarea>
-                                                            <div *ngIf="validationMessage" class="alert"
-                                                                [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
-                                                                {{ validationMessage }}
                                                             </div>
                                                         </div>
                                             
-                                                        <div class="mt-2 d-flex gap-2">
+                                                        <div class="mt-0 d-flex gap-2">
                                                             <button
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
