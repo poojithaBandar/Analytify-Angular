@@ -10226,6 +10226,7 @@ fetchChartData(chartData: any){
 
     dropCalculatedField(tableName: string , columnName : string){
       let regex;
+      let hasContentInsideParentheses;
       switch(this.nestedCalculatedFieldData) {
         case 'abs': 
           this.calculatedFieldLogic = 'ABS("' + tableName + '"."' + columnName + '")';
@@ -10337,12 +10338,60 @@ fetchChartData(chartData: any){
         case 'parse': 
         this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
         break; 
-        case 'average': break; 
-        case 'count': break; 
-        case 'countd': break;
-        case 'max': break; 
-        case 'min': break; 
-        case 'sum': break; 
+        case 'average':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + ')';
+          }
+          break; 
+        case 'count':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
+        case 'countd':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + ')';
+          }
+        break;
+        case 'max':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
+        case 'min':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
+        case 'sum':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
         
       }
     }
