@@ -1193,9 +1193,22 @@
                 <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
                   <table class="table border text-nowrap text-md-nowrap mb-0">
                       <thead>
-                        <tr>
+                        <tr [ngStyle]="{ 'font-family': item['customizeOptions'].headerFontFamily, 'font-size': item['customizeOptions'].headerFontSize, 
+                        'font-style': item['customizeOptions'].headerFontStyle, 'text-decoration': item['customizeOptions'].headerFontDecoration }">
                           @for(column of item.tableData?.headers;track column){
-                          <th>{{ column }}</th>
+                          <th [ngStyle]="{ 'text-align': item['customizeOptions'].headerFontAlignment, 'font-weight': item['customizeOptions'].headerFontWeight, 'color': item['customizeOptions'].headerFontColor }">{{ column }}
+                            <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
+                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                aria-haspopup="true" aria-expanded="false" class=""><i
+                                  class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                              </a>
+                              <div class="dropdown-menu" ngbDropdownMenu>
+                                <button class="dropdown-item" (click)="tableColumnSort('default', column)">Default</button>
+                                <button class="dropdown-item" (click)="tableColumnSort('ascending', column)">Ascending</button>
+                                <button class="dropdown-item" (click)="tableColumnSort('descending', column)">Descending</button>
+                              </div>
+                            </span> -->
+                          </th>
                           }
                         </tr>
                       </thead>
@@ -1203,11 +1216,13 @@
                            <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
                     <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
                     [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                    [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}">
+                    [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}"
+                    [ngStyle]="{ 'font-family': item['customizeOptions'].tableDataFontFamily, 'font-size': item['customizeOptions'].tableDataFontSize,
+                    'font-style': item['customizeOptions'].tableDataFontStyle, 'text-decoration': item['customizeOptions'].tableDataFontDecoration }">
                       <!-- @for(column of item.tableData?.headers;track column){
                       <td>{{ row[column] }}</td>
                       } -->
-                      <td *ngFor="let column of item.tableData?.headers">
+                      <td *ngFor="let column of item.tableData?.headers" [ngStyle]="{ 'text-align': item['customizeOptions'].tableDataFontAlignment, 'color': item['customizeOptions'].tableDataFontColor, 'font-weight': item['customizeOptions'].tableDataFontWeight }">
                         {{ row[column] }}
                       </td>
                     </tr>

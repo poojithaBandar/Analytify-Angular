@@ -337,6 +337,22 @@ export class SheetsComponent {
   columnMapping: { [key: string]: string } = {};
   filterCalculatedFieldLogic: any = '';
 
+  tableDataFontFamily : string = 'sans-serif';
+  tableDataFontSize : any = '12px';
+  tableDataFontWeight : any = 400;
+  tableDataFontStyle : any = 'normal';
+  tableDataFontDecoration : any = 'none';
+  tableDataFontColor : any = '#000000';
+  tableDataFontAlignment : any = 'left';
+
+  headerFontFamily : any = "'Arial', sans-serif";
+  headerFontSize : any = '16px';
+  headerFontWeight : any = 700;
+  headerFontStyle : any = 'normal';
+  headerFontDecoration : any = 'none';
+  headerFontColor : any = '#000000'
+  headerFontAlignment : any = 'left';
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/insights/sheets/dbId')){
@@ -3380,6 +3396,7 @@ bar["stack"]="Total";
         this.chartsRowData = [];
         this.dualAxisRowData = [];
         this.radarRowData = [];
+        this.sortedData = [];
         let draggedColumnsObj;
         if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
           draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
@@ -3609,6 +3626,7 @@ bar["stack"]="Total";
       }
 
       pageChangeTableDisplay(page:any){
+        this.sortedData = [];
         this.pageNo=page;
         this.tableDisplayPagination();
       }
@@ -3909,6 +3927,7 @@ bar["stack"]="Total";
       storeColumnData = [] as any;
       storeRowData = [] as any;
       columndrop(event: CdkDragDrop<string[]>){
+        this.sortedData = [];
         console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
         this.storeColumnData.push(event.previousContainer.data);
@@ -3959,6 +3978,7 @@ bar["stack"]="Total";
     boolList = ['bool', 'boolean'];
     stringList = ['varchar','bp char','text','varchar2','NVchar2','char','Nchar','character varying','string'];
     rowdrop(event: CdkDragDrop<string[]>){
+      this.sortedData = [];
       console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
       // this.storeRowData.push(event.previousContainer.data); 
@@ -4049,6 +4069,7 @@ bar["stack"]="Total";
     }
   }
   dragStartedColumn(index:any,column:any){
+    this.sortedData = [];
     console.log(this.draggedColumns);
     console.log(this.draggedColumnsData);
     console.log(index);
@@ -4078,6 +4099,7 @@ bar["stack"]="Total";
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
+    this.sortedData = [];
     this.draggedRows.splice(index, 1);
     this.draggedRowsData.splice(index, 1);
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
@@ -4412,6 +4434,7 @@ bar["stack"]="Total";
       this.multiLineXaxis = [];
       this.donutYaxis = [];
       this.donutXaxis = [];
+      this.sortedData = [];
       this.table = true;
       this.bar = false;
       this.pie = false;
@@ -4770,6 +4793,20 @@ sheetSave(){
     dataLabelsFontPosition: this.dataLabelsFontPosition,
     measureAlignment: this.measureAlignment,
     dimensionAlignment: this.dimensionAlignment,
+    tableDataFontFamily: this.tableDataFontFamily,
+    tableDataFontSize: this.tableDataFontSize,
+    tableDataFontWeight: this.tableDataFontWeight,
+    tableDataFontStyle: this.tableDataFontStyle,
+    tableDataFontDecoration: this.tableDataFontDecoration,
+    tableDataFontColor: this.tableDataFontColor,
+    tableDataFontAlignment: this.tableDataFontAlignment,
+    headerFontFamily: this.headerFontFamily,
+    headerFontSize: this.headerFontSize,
+    headerFontWeight: this.headerFontWeight,
+    headerFontStyle: this.headerFontStyle,
+    headerFontDecoration: this.headerFontDecoration,
+    headerFontColor: this.headerFontColor,
+    headerFontAlignment: this.headerFontAlignment,
 
   }
   // this.sheetTagName = this.sheetTitle;
@@ -5900,6 +5937,7 @@ if(this.fromFileId){
   }
   filterDataPut(){
     // this.dimetionMeasure = [];
+    this.sortedData = [];
     const obj={
     //"filter_id": this.filter_id,
     "database_id": this.databaseId,
@@ -5974,6 +6012,7 @@ if(this.fromFileId){
   }
   filterDataEditArray = [] as any;
   filterDataEditPut(){
+    this.sortedData = [];
     const obj={
       "filter_id": this.filter_id,
       "database_id": this.databaseId,
@@ -6007,6 +6046,7 @@ if(this.fromFileId){
     )
   }
   filterDelete(index:any,filterId:any){
+  this.sortedData = [];
   this.workbechService.filterDelete(filterId).subscribe({next: (responce:any) => {
         this.dimetionMeasure.splice(index, 1);
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
@@ -7818,6 +7858,20 @@ fetchChartData(chartData: any){
     this.dataLabelsFontPosition = data.dataLabelsFontPosition || 'top';
     this.measureAlignment = data.measureAlignment || 'center';
     this.dimensionAlignment = data.dimensionAlignment || 'center';
+    this.tableDataFontFamily = data.tableDataFontFamily || 'sans-serif';
+    this.tableDataFontSize = data.tableDataFontSize || '12px';
+    this.tableDataFontWeight = data.tableDataFontWeight || 400;
+    this.tableDataFontStyle = data.tableDataFontStyle || 'normal';
+    this.tableDataFontDecoration = data.tableDataFontDecoration || 'none';
+    this.tableDataFontColor = data.tableDataFontColor || '#000000';
+    this.tableDataFontAlignment = data.tableDataFontAlignment || 'left';
+    this.headerFontFamily = data.headerFontFamily || "'Arial', sans-serif";
+    this.headerFontSize = data.headerFontSize || '16px';
+    this.headerFontWeight = data.headerFontWeight || 700;
+    this.headerFontStyle = data.headerFontStyle || 'normal';
+    this.headerFontDecoration = data.headerFontDecoration || 'none';
+    this.headerFontColor = data.headerFontColor || '#000000'
+    this.headerFontAlignment = data.headerFontAlignment || 'left';
   }
 
   resetCustomizations(){
@@ -7877,6 +7931,20 @@ fetchChartData(chartData: any){
     this.dataLabelsFontPosition = 'top';
     this.measureAlignment = 'center';
     this.dimensionAlignment = 'center';
+    this.tableDataFontFamily = 'sans-serif';
+    this.tableDataFontSize = '12px';
+    this.tableDataFontWeight = 400;
+    this.tableDataFontStyle = 'normal';
+    this.tableDataFontDecoration = 'none';
+    this.tableDataFontColor = '#000000';
+    this.tableDataFontAlignment = 'left';
+    this.headerFontFamily = "'Arial', sans-serif";
+    this.headerFontSize = '16px';
+    this.headerFontWeight = 700;
+    this.headerFontStyle = 'normal';
+    this.headerFontDecoration = 'none';
+    this.headerFontColor = '#000000'
+    this.headerFontAlignment = 'left';
   }
 
   sendPrompt() {
@@ -10617,6 +10685,53 @@ fetchChartData(chartData: any){
         this.calculatedFieldLogic = 'SUM()';
         break; 
         
+      }
+    }
+    tableDataColorChange(event:any){
+      if (this.selectedElement) {
+        this.selectedElement.style.border = 'none';
+      }
+      const element = event.target as HTMLElement;
+      this.selectedElement = event.target as HTMLElement;
+      this.selectedElement.style.border = '2px solid #00a5a2';
+      this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
+    }
+    headerColorChange(event:any){
+      if (this.selectedElement) {
+        this.selectedElement.style.border = 'none';
+      }
+      const element = event.target as HTMLElement;
+      this.selectedElement = event.target as HTMLElement;
+      this.selectedElement.style.border = '2px solid #00a5a2';
+      this.headerFontColor = window.getComputedStyle(element).backgroundColor;
+    }
+    sortedData : TableRow[] = [];
+    tableColumnSort(sortType:any, column : any){
+      this.sortedData = [...this.tableDataDisplay];
+      if(sortType === 'default'){
+        this.sortedData = [];
+      }
+      else if(sortType === 'ascending'){
+        this.sortedData.sort((a, b) => {
+          if (a[column] < b[column]) {
+            return -1;
+          }
+          if (a[column] > b[column]) {
+            return 1;
+          }
+          return 0;
+        });
+      }
+      else if(sortType === 'descending'){
+        this.sortedData.sort((a, b) => {
+          if (a[column] > b[column]) {
+            return -1;
+          }
+          if (a[column] < b[column]) {
+            return 1;
+          }
+          return 0;
+        });
       }
     }
 }
