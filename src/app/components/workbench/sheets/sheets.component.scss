@@ -946,7 +946,8 @@ th, td {
 }
   
 .Semantic-layer-card {
-  width: 390px; 
+  min-width: 490px; 
+  max-width: 1000px;
 }
 
 .query-text {
