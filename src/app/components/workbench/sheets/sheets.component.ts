@@ -10291,7 +10291,7 @@ fetchChartData(chartData: any){
           actual_fields_logic: this.calculatedFieldLogic,
           cal_field_id: this.calculatedFieldId,
           functionName: this.calculatedFieldFunction,
-          nestedFunctionName: "this.nestedCalculatedFieldData"
+          nestedFunctionName: this.nestedCalculatedFieldData
         }
         this.workbechService.editCalculatedFields(requestObj).subscribe({
           next: (responce: any) => {
@@ -10315,7 +10315,7 @@ fetchChartData(chartData: any){
           field_name: this.calculatedFieldName,
           actual_fields_logic: this.calculatedFieldLogic,
           functionName: this.calculatedFieldFunction,
-          nestedFunctionName: "this.nestedCalculatedFieldData"
+          nestedFunctionName: this.nestedCalculatedFieldData
         }
         this.workbechService.applyCalculatedFields(requestObj).subscribe({
           next: (responce: any) => {
