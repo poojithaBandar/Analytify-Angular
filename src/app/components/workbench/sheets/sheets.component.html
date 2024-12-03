@@ -657,7 +657,10 @@
                                                     }
                                                     @else if(rows.type){
                                                         {{ rows.type }} ({{rows.column}})
-                                                    }@else{   
+                                                    }@else if(rows.field_name){
+                                                        {{ rows.field_name }}
+                                                    }
+                                                    @else{   
                                                          {{ rows.column }}
                                                     } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1" style="float: right; padding-top: 5px;"></i> </li>
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
