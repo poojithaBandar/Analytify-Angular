@@ -97,8 +97,8 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                    <textarea [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
-                                                                        *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'logical'"
+                                                                    <textarea [readonly]="calculatedFieldFunction == 'logical' || nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
+                                                                        *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic'"
                                                                         class="query-text mb-2 px-3" [(ngModel)]="calculatedFieldLogic"
                                                                         placeholder="Drop Column or Enter Logic"></textarea>
                                                                     <div *ngIf="validationMessage" class="alert"
