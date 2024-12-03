@@ -333,7 +333,7 @@ export class SheetsComponent {
   isValidCalculatedField! : boolean;
   validationMessage: string = '';
   calculatedFieldId: any;
-  calculatedFieldLogic : string = '';
+  calculatedFieldLogic! : string ;
   columnMapping: { [key: string]: string } = {};
   filterCalculatedFieldLogic: any = '';
 
@@ -10206,21 +10206,7 @@ fetchChartData(chartData: any){
       }
         break;
         case 'mid': 
-        this.calculatedFieldLogic.trim();
-        regex = /^MID\(\s*([^,]*)\s*,\s*([^,]*)\s*,\s*([^,]*)\s*\)$/;
-        if (!this.calculatedFieldLogic.startsWith('MID(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
-          this.isValidCalculatedField = false;
-          this.validationMessage = "Invalid Syntax.";
-        } else{
-        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
-        const params = this.calculatedFieldLogic.slice(4, -1).trim(); // Removes 'LEFT(' and ')'
-        const [param1, param2, param3] = params.split(',');
-        if (param2 === undefined || param3 == undefined) {
-          this.isValidCalculatedField = false;
-          this.validationMessage = "Missing Parameters.";
-        }
-        this.calculatedFieldLogic = "MID("+'"'+tableName+'"."'+columnName+'",'+param2+ ',' + param3 + ")";   
-      }
+        this.calculatedFieldLogic = "SUBSTRING("+'"'+tableName+'"."'+columnName+'"'+ " FROM   FOR  " + ")";
         break; 
         case 'length':
           this.calculatedFieldLogic = 'LENGTH("' + tableName + '"."' + columnName + '")';
@@ -10234,22 +10220,55 @@ fetchChartData(chartData: any){
         case 'lower': 
         this.calculatedFieldLogic = 'LOWER("' + tableName + '"."' + columnName + '")';
         break; 
-        case 'contains': break;
-        case 'startwith': break; 
-        case 'replace': break; 
-        case 'endwidth': break; 
-        case 'split': break; 
-        case 'find': break; 
-        case 'dateadd': break;
-        case 'datediff': break; 
-        case 'datepart': break; 
-        case 'datename': break; 
+        case 'replace': 
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        regex = /^REPLACE\(\s*([^,]*)\s*,\s*([^,]*)\s*,\s*([^,]*)\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('REPLACE(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        const params = this.calculatedFieldLogic.slice(7, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2, param3] = params.split(',');
+        if (param2 === undefined || param3 == undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
+        }
+        this.calculatedFieldLogic = "REPLACE("+'"'+tableName+'"."'+columnName+'",'+param2+ ',' + param3 + ")";  
+      } 
+        break; 
+        case 'split': 
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        regex = /^split_part\(\s*([^,]*)\s*,\s*([^,]*)\s*,\s*([^,]*)\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('split_part(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        const params = this.calculatedFieldLogic.slice(10, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2, param3] = params.split(',');
+        if (param2 === undefined || param3 == undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
+        }
+        this.calculatedFieldLogic = "split_part("+'"'+tableName+'"."'+columnName+'",'+param2+ ',' + param3 + ")";  
+      }
+        break; 
+        case 'find': 
+        this.calculatedFieldLogic = "POSITION( '' IN "+'"'+tableName+'"."'+columnName + '"' +")";  
+        break; 
+        case 'dateadd':
+          this.calculatedFieldLogic = '"'+tableName+'"."'+columnName + '" ' +"+ INTERVAL ''";  
+        break;
+        case 'datediff':
+          this.calculatedFieldLogic = 'CURRENT_DATE - "'+tableName+'"."'+columnName + '"' ;
+        break; 
+        case 'datepart': 
+        this.calculatedFieldLogic = 'DATE_PART("year", ' + '"'+ tableName +'"."'+ columnName + '")';
+        break; 
         case 'now': break; 
         case 'today': break; 
-        case 'year': break; 
-        case 'month': break; 
-        case 'day': break; 
-        case 'parse': break; 
+        case 'parse': 
+        this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
+        break; 
         case 'average': break; 
         case 'count': break; 
         case 'countd': break;
@@ -10277,7 +10296,7 @@ fetchChartData(chartData: any){
   }
 
   applyCalculatedFields(event: any, ngbdropdownevent: any) {
-    if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+    if (!(this.calculatedFieldFunction == 'arithematic')) {
       this.validateCalculatedField();
     } else {
       this.validateExpression();
@@ -10346,7 +10365,7 @@ fetchChartData(chartData: any){
     validateExpression(): void {
       try {
         this.preValidateExpression(this.calculatedFieldLogic);
-        const regex = /"([a-zA-Z0-9_]+)"\.\"([a-zA-Z0-9_]+)\"/g;
+        const regex = /"([^"]+)"\.\"([^"]+)\"/g;
         let validateFieldData = _.cloneDeep(this.calculatedFieldLogic);
         validateFieldData = validateFieldData.replace(regex, (_, tableName, columnName) => {
           return `${tableName}_${columnName}`;
@@ -10431,7 +10450,7 @@ fetchChartData(chartData: any){
         }
         break;
         case 'mid': 
-        if(!this.validateFormula(/^(MID)\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)\[\]]+)"\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^SUBSTRING\(\s*"([^"]+)"\.\"([^"]+)\"\s+FROM\s+(\d+)\s+FOR\s+(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -10485,34 +10504,180 @@ fetchChartData(chartData: any){
             return true;
           }
         break; 
-        case 'contains': break;
-        case 'startwith': break; 
-        case 'replace': break; 
-        case 'endwidth': break; 
-        case 'split': break; 
-        case 'find': break; 
-        case 'dateadd': break;
-        case 'datediff': break; 
-        case 'datepart': break; 
-        case 'datename': break; 
-        case 'now': break; 
-        case 'today': break; 
-        case 'year': break; 
-        case 'month': break; 
-        case 'day': break; 
-        case 'parse': break; 
-        case 'average': break; 
-        case 'count': break; 
-        case 'countd': break;
-        case 'max': break; 
-        case 'min': break; 
-        case 'sum': break; 
+        case 'replace': 
+        if(!this.validateFormula(/^REPLACE\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*\"([^\"]*)\"\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'split': 
+        if(!this.validateFormula(/^split_part\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'find':
+          if(!this.validateFormula(/^POSITION\(\s*(['"])([^\1]+)\1\s+IN\s+"([^"]+)"\.\"([^"]+)\"\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+          case 'dateadd': 
+          if(!this.validateFormula(/\+\s*INTERVAL/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break;
+          case 'datediff':
+            this.isValidCalculatedField = true;
+              return true;
+          break; 
+          case 'datepart': 
+          if(!this.validateFormula(/^DATE_PART\(\s*(.+?)\s*,\s*(.+?)\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+          case 'now': 
+          this.isValidCalculatedField = true;
+            return true;
+          break; 
+          case 'today': 
+          this.isValidCalculatedField = true;
+            return true;
+          break; 
+          case 'parse':
+            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*'dd-mm-yyyy'\s*\)$/)){
+              this.isValidCalculatedField = false;
+              this.validationMessage = 'Invalid Syntax';
+              return false;
+            } 
+            else{
+              this.isValidCalculatedField = true;
+              return true;
+            }
+          break; 
+          case 'case': 
+          if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          } 
+          break; 
+        case 'ifnull': 
+        if(!this.validateFormula(/^COALESCE\(\s*([^,]+(?:\s*,\s*[^,]+)*)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'average': 
+        if(!this.validateFormula(/^AVERAGE\(\s*.+?\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'count':
+          if(!this.validateFormula(/^COUNT\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'countd':
+          if(!this.validateFormula(/^COUNT\(\s*DISTINCT\s+.+\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          
+        break;
+        case 'max':
+          if(!this.validateFormula(/^MAX\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+        case 'min':
+          if(!this.validateFormula(/^MIN\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'sum':
+          if(!this.validateFormula(/^SUM\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }  
+        break; 
         
       }
     }
 
     calculatedFieldData(){
       this.nestedCalculatedFieldData = '';
+      this.calculatedFieldLogic = '';
     }
 
     nestedCalculatedFieldFunction(){
@@ -10536,7 +10701,7 @@ fetchChartData(chartData: any){
         this.calculatedFieldLogic = 'RIGHT( , )';
         break;
         case 'mid': 
-        this.calculatedFieldLogic = 'MID( , , )';
+        this.calculatedFieldLogic = 'SUBSTRING( from  for )';
         break; 
         case 'length': 
         this.calculatedFieldLogic = 'LENGTH()';
@@ -10550,53 +10715,38 @@ fetchChartData(chartData: any){
         case 'lower': 
         this.calculatedFieldLogic = 'LOWER()';
         break; 
-        case 'contains':
-          this.calculatedFieldLogic = 'CONTAINS()';
-        break;
-        case 'startwith': 
-        this.calculatedFieldLogic = 'STARTSWITH()';
-        break; 
         case 'replace': 
-        this.calculatedFieldLogic = 'REPLACE()';
-        break; 
-        case 'endwidth':
-          this.calculatedFieldLogic = 'ENDSWITH()';
+        this.calculatedFieldLogic = 'REPLACE(, ,)';
         break; 
         case 'split':
-          this.calculatedFieldLogic = 'SPLIT()';
+          this.calculatedFieldLogic = 'split_part(, ,)';
         break; 
         case 'find':
-          this.calculatedFieldLogic = 'FIND()';
+          this.calculatedFieldLogic = "POSITION( '' IN )";
         break; 
         case 'dateadd': 
-        this.calculatedFieldLogic = 'DATEADD()';
+        this.calculatedFieldLogic = 'CURRENT_DATE + INTERVAL ';
         break;
         case 'datediff':
-          this.calculatedFieldLogic = 'DATEDIFF()';
+          this.calculatedFieldLogic = 'CURRENT_DATE - ';
         break; 
         case 'datepart': 
-        this.calculatedFieldLogic = 'DATEPART()';
-        break; 
-        case 'datename':
-          this.calculatedFieldLogic = 'DATENAME()';
+        this.calculatedFieldLogic = "DATE_PART('year', current_timestamp)";
         break; 
         case 'now': 
-        this.calculatedFieldLogic = 'NOW()';
+        this.calculatedFieldLogic = 'current_timestamp()';
         break; 
         case 'today': 
-        this.calculatedFieldLogic = 'TODAY()';
-        break; 
-        case 'year':
-          this.calculatedFieldLogic = 'YEAR()';
-        break; 
-        case 'month': 
-        this.calculatedFieldLogic = 'MONTH()';
-        break; 
-        case 'day':
-          this.calculatedFieldLogic = 'DAY()';
+        this.calculatedFieldLogic = 'CURRENT_DATE()';
         break; 
         case 'parse':
-          this.calculatedFieldLogic = 'dateparse()';
+          this.calculatedFieldLogic = "TO_CHAR(, 'dd-mm-yyyy')";
+        break; 
+        case 'case':
+          this.calculatedFieldLogic = 'CASE expression WHEN value THEN result ELSE default END';
+        break; 
+        case 'ifnull':
+          this.calculatedFieldLogic = 'COALESCE()';
         break; 
         case 'average':
           this.calculatedFieldLogic = 'AVG()';
