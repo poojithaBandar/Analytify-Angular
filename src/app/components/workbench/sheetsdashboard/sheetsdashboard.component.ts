@@ -131,7 +131,7 @@ export class SheetsdashboardComponent {
  columnFilterNames = [] as any;
  columnFilterNamesEdit = [] as any;
  querySetNames = [] as any;
- selectedQuerySetId! : number
+ selectedQuerySetId! : any
  selectClmn:any;
  selectClmnEdit:any;
  selectdColmnDtype:any;
@@ -2634,7 +2634,11 @@ toggleAllRows(event: Event) {
 isAnyRowSelected(): boolean {
   return this.sheetsFilterNames.some((row: { selected: any; }) => row.selected);
 }
-
+validateQuerySetSelection(){
+  if (this.selectedQuerySetId === 0) {
+    this.selectedQuerySetId = null; // Reset to null if no valid option is selected
+  }
+}
 closeColumnsDropdown(colName:any,colDatatype:any, dropdown: NgbDropdown) {
   dropdown.close();
   this.selectClmn=colName,
@@ -2688,6 +2692,7 @@ if(this.filterName === ''){
       this.isAllSelected = false;
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
+      this.selectedQuerySetId = 0;
     },
     error:(error)=>{
       console.log(error)
@@ -3578,7 +3583,8 @@ addfilterOnEdit(){
   this.querysetNameEdit = '';
   //new
   this.dropdownOptions = [];
-this.selectedQuerySetId = 0
+this.selectedQuerySetId = 0;
+this.selectedOption ='';
 }
 
 editFiltersData(id:any){
@@ -3662,6 +3668,10 @@ closeColumnsDropdownEdit(colName:any,colDatatype:any, dropdown: NgbDropdown) {
 
 }
 updateFilters(){
+  if(this.filterName === ''){
+    this.toasterService.error('Please Add Filter Name','error',{ positionClass: 'toast-center-center'})
+  
+  }else{
 const obj ={
   dashboard_filter_id:this.dashboardFilterIdEdit,
   dashboard_id:this.dashboardId,
@@ -3694,6 +3704,7 @@ const obj ={
       })
     }
   })
+}
 }
 ///
 dropTest2(event: any) {
