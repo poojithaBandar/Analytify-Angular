@@ -58,7 +58,7 @@
                                                                                 <option value="aggregation">Aggregate</option>
                                                                             </select>
                                                                         </div>
-                                                                        <div *ngIf="calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
+                                                                        <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
                                                                             <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
                                                                                 (change)="nestedCalculatedFieldFunction()">
                                                                                 <option [disabled]="true" value="">select function</option>
@@ -66,6 +66,9 @@
                                                                                 <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+
+                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
                                                     
                                                                                 <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
@@ -81,27 +84,20 @@
                                                                                 <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="contains">CONTAINS</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="startwith">STARTS WITH</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="endwidth">ENDS WITH</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="split">SLPIT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
                                                     
                                                                                 <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datename">DATENAME</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="year">YEAR</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="month">MONTH</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="day">DAY</option>
                                                                                 <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                    <textarea
+                                                                    <textarea [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
                                                                         *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic' || calculatedFieldFunction == 'logical'"
                                                                         class="query-text mb-2 px-3" [(ngModel)]="calculatedFieldLogic"
                                                                         placeholder="Drop Column or Enter Logic"></textarea>
@@ -111,11 +107,149 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-6 p-0" style="margin-left: 8px;">
-                                                                    <div class=" p-0  ">
                                                                         <p class="mb-0  p-2 bg-light mb-3 border rounded-2 description-text" >
-                                                                            2. COUNT(expression): Counts rows or non-null values.
-                                                                            Insightapps_cal_field : COUN</p>
-                                                                    </div>
+                                                                            @if(nestedCalculatedFieldData == 'abs'){
+                                                                                <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the absolute value.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ABS("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  ABS(-2) = 2 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'ceiling'){
+                                                                                <span > <p class="fw-600 mb-0">CEILING(number) :<br> </p> Rounds up to the nearest integer.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CEILING("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  CEILING(2.63) = 3 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'floor'){
+                                                                                <span > <p class="fw-600 mb-0">FLOOR(number) :<br> </p> Rounds down to the nearest integer.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> FLOOR("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  FLOOR(2.65) = 2 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'round'){
+                                                                                <span > <p class="fw-600 mb-0">ROUND(number, [decimals]) :<br> </p> Rounds to a specified number of decimals.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  ROUND(2.65,1) = 2.6 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'ifnull'){
+                                                                                <span > <p class="fw-600 mb-0">IFNULL(expression1, expression2) :<br> </p> Returns the first non-null expression.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> COALESCE("tablename"."column_name", 0)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  COALESCE("finance"."Amount", 0) </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'case'){
+                                                                                <span > <p class="fw-600 mb-0">CASE :<br> </p> executes conditional logical expression.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CASE expression WHEN value THEN result ELSE default END</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  case  when "finance"."Amount" > 0 then 1 else 0 end </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'average'){
+                                                                                <span > <p class="fw-600 mb-0">AVG(expression) :<br> </p> Returns the average.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> AVG("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  AVG("finance"."Amount") </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'countd'){
+                                                                                <span > <p class="fw-600 mb-0">COUNTD(string) :<br> </p> Counts distinct values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> COUNT( DISTINCT "tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  COUNT(DISTINCT "finance"."Name") </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'max'){
+                                                                                <span > <p class="fw-600 mb-0">MAX(expression) :<br> </p> Returns the maximum value.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> MAX("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  MAX("finance"."Amount")  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'min'){
+                                                                                <span > <p class="fw-600 mb-0">MIN(expression) :<br> </p> Returns the minimum value.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> MIN("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  MIN("finance"."Amount")  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'sum'){
+                                                                                <span > <p class="fw-600 mb-0">SUM(expression) :<br> </p> Returns the total sum.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> SUM("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  SUM("finance"."Amount")  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'left'){
+                                                                                <span > <p class="fw-600 mb-0">LEFT(string, number) :<br> </p> Returns the specified number of characters from left part of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=Ele </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'right'){
+                                                                                <span > <p class="fw-600 mb-0">RIGHT(string, number) :<br> </p> Returns the specified number of characters from right part of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=ics </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'mid'){
+                                                                                <span > <p class="fw-600 mb-0">substring(string, [from int], [for int]) :<br> </p> Extracts part of a string by giving starting position and the length of the string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> substring("Tablename"."column_name" from [int] for [int])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  substring('electronics' from 1 for 3)=ele </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'length'){
+                                                                                <span > <p class="fw-600 mb-0">LENGTH(string) :<br> </p> Returns the length of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LENGTH("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Length('electronics') = 12 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'trim'){
+                                                                                <span > <p class="fw-600 mb-0">TRIM(string) :<br> </p> Removes spaces at the beginning and end of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> TRIM("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  TRIM('   electronics   ') = 'electronics' </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'upper'){
+                                                                                <span > <p class="fw-600 mb-0">UPPER(number) :<br> </p>  Converts a string to uppercase.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> UPPER("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  UPPER('electronics') = ELECTRONICS </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'lower'){
+                                                                                <span > <p class="fw-600 mb-0">LOWER(number) :<br> </p>  Converts a string to lowercase.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LOWER("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  LOWER('ELECTRONICS') = electronics </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'replace'){
+                                                                                <span > <p class="fw-600 mb-0">REPLACE(string, substring, replacement) :<br> </p> Replaces occurrences of substring with replacement.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REPLACE("tablename"."column_name", substring, replacement)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  REPLACE('I will do it', 'will do', 'did') = I did it </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'split'){
+                                                                                <span > <p class="fw-600 mb-0">split_part(string text, delimiter text, field int) :<br> </p> Splits a given string at a specified character and returns the requested part.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> split_part("Tablename"."column_name", '$',[int])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  split_part('I will$do it', '$',2) = do it </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'find'){
+                                                                                <span > <p class="fw-600 mb-0">position(substring in string) :<br> </p> Returns the position of the first occurrence of substring.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> POSITION([string] in "tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> POSITION('ctr' IN 'electronics') = 4 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'dateadd'){
+                                                                                <span > <p class="fw-600 mb-0">DATEADD (date_field + interval date) :<br> </p> Adds a time interval to a date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."columnname" + INTERVAL '[int] days' (days/months/years) </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  current_date + INTERVAL '5 days'(days/months/years)  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datediff'){
+                                                                                <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the difference between two dates.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" - "tablename"."column_name"</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  CURRENT_DATE - '2024-10-03' </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datepart'){
+                                                                                <span > <p class="fw-600 mb-0">DATEPART(date_part, date) :<br> </p> Returns a part of the date (year, month, day, etc.).</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATE_PART('year', "tablename"."column_name")/DATE_PART('month', "tablename"."column_name")/DATE_PART('date', "tablename"."column_name")
+                                                                                    </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  DATE_PART('year', current_timestamp)/DATE_PART('month', current_timestamp)/DATE_PART('date', current_timestamp)
+                                                                                 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'now'){
+                                                                                <span > <p class="fw-600 mb-0">Current_timestamp :<br> </p> Returns the current date and time.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> current_timestamp()</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> current_timestamp() </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'today'){
+                                                                                <span > <p class="fw-600 mb-0">Current_date :<br> </p> Returns the current date without the time.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CURRENT_DATE </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> CURRENT_DATE </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'parse'){
+                                                                                <span > <p class="fw-600 mb-0">dateparse :<br> </p> converts string to date in specific format .</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> TO_CHAR(Tablename.column_name, 'dd-mm-yyyy') </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  TO_CHAR('2024-12-02', 'dd-mm-yyyy') </span>
+                                                                            }
+                                                                            @if(calculatedFieldFunction == 'arithematic'){
+                                                                                <span > <p class="fw-600 mb-0">expression :<br> </p> evaluate the basic mathematical calculations.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" + "tablename"."column_name"</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example : 2 + 2 = 4<br> </p>   </span>
+                                                                            }
                                                                 </div>
                                                             </div>
                                                         </div>
