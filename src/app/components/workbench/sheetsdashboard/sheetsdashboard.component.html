@@ -559,6 +559,185 @@
                                         </div>
                                     </ng-template>
                             </li>
+
+                            <ng-template #dashboardActions let-modal>
+                              <div class="modal-header">
+                                <h6 class="modal-title">Actions</h6>
+                                <button type="button"class="btn-close"aria-label="Close"(click)="clearActionForm();modal.dismiss('Cross click');editActions = false;">
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="text-wrap">
+                                  <div class="row">
+                                  <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 "style="border-right: 1px solid #f3f6f9;">
+                                    <button *ngIf="editActions" class="btn btn-primary dropdown-toggle mb-2" (click)="editActions = false;clearActionForm();" type="button"  aria-expanded="false" style="width: 100%;">
+                                      <i class="fa fa-plus"></i> Add Action
+                                    </button>
+                                    <button *ngFor="let action of drillThroughActionList" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" (click)="getEditActionPreview(action.drill_id)" class="btn text-left mb-2">{{action.action_name}}
+                                      <a (click)="deleteDashboardAction([action.drill_id]);$event.stopPropagation()" style="color: red;"><i style="float: right;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
+                                    </button>
+
+                                    </div>
+                                  <div class="col-xxl-7 col-xl-7 col-lg-7 col-md-6 " >
+                                    <div *ngIf="!editActions" class="card-content p-0">
+                                        <div class=" mt-2 mb-2">
+                                          <ul class="d filter-popover" aria-labelledby="applyfilters" >
+                                            <div class="setting-text border-bottom text-center">
+                                              <p>Add Actions</p>
+                                            </div>
+                                            <div class="form-group p-1 mb-0">
+                                              <label class="form-label">Action Name <span  class="text-red">*</span>
+                                              </label>
+                                              <input type="text" placeholder="Enter Action Name" [(ngModel)]="actionName" class="form-control checkbox-color">
+                                            </div>
+                                            <div class="form-group p-1 mb-0">
+                                              <label class="form-label">Query Set Name <span class="text-red">*</span>
+                                              </label>
+                                              <select [(ngModel)]="drillThroughQuerySetId" (change)="getSheetsForActions()"  class="form-select form-select select2 " >
+                                                <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
+                                                @for(querySet of querySetNames;track querySet.queryset_id){
+                                                  <option [ngbTooltip]="querySet.queryset_name"
+                                                  [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
+                                                }
+                                            </select>
+                                            </div>
+                                    
+                                            <div class="form-group p-1">
+                                              <label class="form-label">Source Sheet <span class="text-red">*</span>
+                                              </label>
+                                              <select [(ngModel)]="sourceSheetId" (change)="getTargetSheetsList()"  class="form-select form-select select2 " >
+                                                <option value="0" disabled selected style="color: #999999 !important;">Select Source Sheet</option>
+                                                @for(sheet of sourceSheetList;track sheet.id){
+                                                  <option [ngbTooltip]="sheet.name" value="{{sheet.id}}">{{sheet.name}}</option>
+                                                }
+                                            </select>
+                                            </div>
+                                              <label class="form-label">Target Sheets <span class="text-red">*</span></label>
+                                           
+                                            <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
+
+                                              <div *ngIf="(targetSheetList?.length ?? 0) > 0" class="form-check">
+                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllTargetSheetsSelected" (change)="toggleAllTargetSheets($event)"
+                                                  class="form-check-input">
+                                                <label for="selectAll" class="form-check-label">Select All</label>
+                                              </div>
+                                              @for(sheet of targetSheetList;track sheet;let i = $index){
+                                               
+
+                                              <div class="form-check">
+                                                <input type="checkbox" [id]="'defaultCheck' + i" [(ngModel)]="sheet.selected" (change)="updateSelectedSheets()" class="form-check-input"> 
+                                                <label [for]="'defaultCheck' + i" class="form-check-label "> <p>{{sheet?.name}}</p> </label>
+                                              </div>
+                                            }
+                                            </div>
+
+                                            <div class="py-2 mt-3">
+                                              <button type="button" [disabled]="disableActionSave()"  (click)="saveDrillThroughAction()" class="btn ripple btn-primary me-2">Save</button>
+                                              <button type="button" class="btn ripple btn-secondary " (click)="clearActionForm();modal.dismiss('Cross click');editActions = false;"> Cancel </button>
+                                          </div>
+                                          </ul>
+                                        </div>
+                                     
+                                    </div>
+                                    <!-- edit filter -->
+                                    <div *ngIf="editActions" class="card-content p-0">
+                                      <div class=" mt-2 mb-2">
+                                        <ul class="d filter-popover" aria-labelledby="applyActions" >
+                                          <div class="setting-text border-bottom text-center">
+                                            <h6>Edit Actions</h6>
+                                          </div>
+                                          <div class="form-group p-1 mb-0">
+                                            <label class="form-label">Action Name <span  class="text-red">*</span>
+                                            </label>
+                                            <input type="text" placeholder="" [(ngModel)]="actionName" class="form-control checkbox-color">
+                                          </div>
+                                          <div class="form-group p-1 mb-0">
+                                            <label class="form-label">Query Set Name <span class="text-red">*</span>
+                                            </label>
+                                            <select [(ngModel)]="drillThroughQuerySetId" class="form-select form-select select2 fs-14" >
+                                              @for(querySet of querySetNames;track querySet.queryset_id){
+                                                <option value="{{querySet.queryset_id}}" [ngbTooltip]="querySet.queryset_name" 
+                                                [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'">{{querySet.queryset_name}}</option>
+                                              }
+                                            </select>
+                                          <!-- <p>{{querysetNameEdit}}</p> -->
+                                          <!-- <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button> -->
+                                          </div>
+
+                                          <div class="form-group p-1">
+                                            <label class="form-label">Source Sheet <span class="text-red">*</span>
+                                            </label>
+                                            <select [(ngModel)]="sourceSheetId" (change)="getTargetSheetsList()"  class="form-select form-select select2 " >
+                                              <option value="0" disabled selected style="color: #999999 !important;">Select Source Sheet</option>
+                                              @for(sheet of sourceSheetList;track sheet.id){
+                                                <option [ngbTooltip]="sheet.name" [value]="sheet.id">{{sheet.name}}</option>
+                                              }
+                                          </select>
+                                          </div>
+                                            <label class="form-label">Target Sheets <span class="text-red">*</span></label>
+                                         
+                                          <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
+
+                                            <div *ngIf="(targetSheetList?.length ?? 0) > 0" class="form-check">
+                                              <input type="checkbox" id="selectAll" [(ngModel)]="isAllTargetSheetsSelected" (change)="toggleAllTargetSheets($event)"
+                                                class="form-check-input">
+                                              <label for="selectAll" class="form-check-label">Select All</label>
+                                            </div>
+                                            @for(sheet of targetSheetList;track sheet;let i = $index){
+                                            <div class="form-check">
+                                              <input type="checkbox" [id]="'defaultCheck' + i" [(ngModel)]="sheet.selected" (change)="updateSelectedSheets()" class="form-check-input">
+                                              <label [for]="'defaultCheck' + i" class="form-check-label ">
+                                                <p>{{sheet?.name}}</p>
+                                              </label>
+                                            </div>
+                                            }
+                                          </div>
+
+                                          <div class="py-2 mt-3">
+                                            <button type="button" [disabled]="disableActionSave()" (click)="updateDrillThroughAction()" class="btn ripple btn-primary me-2">Update</button>
+                                            <button type="button" class="btn ripple btn-secondary " (click)="clearActionForm();modal.dismiss('Cross click');editActions = false;"> Cancel </button>
+                                        </div>
+                                        </ul>
+                                      </div>
+                                   
+                                  </div>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                            </ng-template>
+                            <li *ngIf="!isPublicUrl" [ngbNavItem]="3" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
+                              <a ngbNavLink class="dashboard-tab-padding">Actions</a>
+                                 <ng-template ngbNavContent>
+                                     <div class="tab-pane" id="linktabs">
+                                         <div class="card-body p-0">
+                                           <div class="text-wrap">
+                                               <div class="card-content p-0">
+                                                   <div class=" mt-2 mb-2">
+                                                       <div class="">
+                                                        <button *ngIf="!isPublicUrl" class="btn btn-primary" (click)="getQuerySetForFilter();clearActionForm();openSuperScaled(dashboardActions);getDrillThroughActionList()" id="applyActions" type="button" aria-expanded="false" style="width: 100%;">
+                                                          <i class="fa fa-plus"></i> Add/Edit Actions
+                                                        </button>
+                                                        <div >
+                                                          <ng-container *ngIf="drillThroughActionList.length > 0; else noData">
+                                                            <div *ngFor="let action of drillThroughActionList" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2" (click)="actionId = action.drill_id;getActionData(action.drill_id);"
+                                                              [ngStyle]="{'background-color': actionId === action.drill_id ? '#00a5a2' : 'white','color': actionId === action.drill_id ? 'white' : 'black'}">
+                                                              <p class="p-1 mb-0 category-text">{{action.action_name}}</p>
+                                                            </div>
+                                                          </ng-container>
+                                                          <ng-template #noData>
+                                                            <p>No Actions Available</p>
+                                                          </ng-template>
+                                                         </div>
+                                                       </div>
+                                                   </div>
+                                                
+                                               </div>
+                                           </div>
+                                       </div>
+                                     </div>
+                                 </ng-template>
+                         </li>
                             <!-- <li [ngbNavItem]="3" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
                               <a ngbNavLink class="dashboard-tab-padding">
                                 <div class="mobile-nav-icon">
@@ -840,6 +1019,9 @@
                     <!-- <div class="col-lg-3 col-md-3"> -->
                       <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i class="fa fa-arrow-left "></i> </button>
                    <!-- </div> -->
+                  }
+                  @if(actionId && item['sheetId'] == sourceSheetId){
+                    <button class="btn btn-primary " style="margin-right: 10px;" (click)="setDrillThrough('',item)"><i class="fa fa-undo "></i> </button>
                   }
                   <div style="width: 100%;" [innerHtml]="sheetTagTitle[item.data?.title]?sheetTagTitle[item.data?.title]:item.data?.sheetTagName"></div>
                   <div *ngIf="item['chartType'] === 'Table'"  class="sheet-search">
