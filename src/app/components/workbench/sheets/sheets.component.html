@@ -3012,7 +3012,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((kpi || guage) && draggedRows.length === 1) || !((table && !bandingSwitch) || guage || calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((table && bandingSwitch) || (kpi || guage) && draggedRows.length === 1) || !(calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton

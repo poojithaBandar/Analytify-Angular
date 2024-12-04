@@ -720,7 +720,7 @@
                                                         </button>
                                                         <div >
                                                           <ng-container *ngIf="drillThroughActionList.length > 0; else noData">
-                                                            <div *ngFor="let action of drillThroughActionList" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2" (click)="actionId = action.drill_id;getActionData(action.drill_id);"
+                                                            <div *ngFor="let action of drillThroughActionList" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2" (click)="setDrillThrough('',[]);actionId = action.drill_id;getActionData(action.drill_id);"
                                                               [ngStyle]="{'background-color': actionId === action.drill_id ? '#00a5a2' : 'white','color': actionId === action.drill_id ? 'white' : 'black'}">
                                                               <p class="p-1 mb-0 category-text">{{action.action_name}}</p>
                                                             </div>

@@ -9246,6 +9246,7 @@ fetchChartData(chartData: any){
         //   // If the "Go to Sheet" button is clicked, skip the alert
         //   return Promise.resolve(true);
         // }
+        this.loaderService.hide();
         return Swal.fire({
           position: "center",
           icon: "warning",
@@ -9260,7 +9261,7 @@ fetchChartData(chartData: any){
             return true;
           } else {
             // User clicked "No", prevent navigation
-            this.loaderService.hide();
+            // this.loaderService.hide();
             return false;
           }
         });
