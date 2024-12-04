@@ -59,13 +59,16 @@ export class InsightEchartComponent {
   @Input() measureColor:any;
   @Input() dimensionColor:any;
   @Input() legendsAllignment:any
-  
+  @Input() prefix : any;
+  @Input() suffix : any;
+  @Input() donutDecimalPlaces :any;
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
   private chartInstance!: echarts.ECharts;
   // @ViewChild('NgxEchartsDirective', { static: true }) chartDirective!: NgxEchartsDirective; 
-   
+     formattedData : any[] = [];
+
   series: any[] = [];
   chartOptions: any = {};
   constructor(private cdr: ChangeDetectorRef){}
@@ -197,9 +200,10 @@ export class InsightEchartComponent {
           fontWeight: this.ylabelFontWeight,
           color:this.measureColor,
           rotate:0,
-          formatter: function(value:any) {
-            return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
-        }
+        //   formatter: function(value:any) {
+        //     return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
+        // }
+        formatter:(params:any) => this.formatNumber(params.value) 
         },
         splitLine: {
           lineStyle: {
@@ -216,7 +220,8 @@ export class InsightEchartComponent {
           },
           label: { show: true,
             position: 'center',
-            fontFamily:this.dataLabelsFontFamily
+            fontFamily:this.dataLabelsFontFamily,
+            formatter:(params:any) => this.formatNumber(params.value) 
            },
           type: 'bar',
           barWidth: '80%',
@@ -1402,31 +1407,31 @@ getMaxValue(rowData:any) {
   return max === Number.NEGATIVE_INFINITY ? 0 : max; // Return 0 if no valid values found
 }
 
-// formatNumber(value: number): string {
-//   let formattedNumber = value+'';
+formatNumber(value: number): string {
+  let formattedNumber = value+'';
 
-//   // if (this.displayUnits !== 'none') {
-//     switch (this.displayUnits) {
-//       case 'K':
-//         formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
-//         break;
-//       case 'M':
-//         formattedNumber = (value / 1_000_000).toFixed(this.decimalPlaces) + 'M';
-//         break;
-//       case 'B':
-//         formattedNumber = (value / 1_000_000_000).toFixed(this.decimalPlaces) + 'B';
-//         break;
-//       case 'G':
-//         formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
-//         break;
-//       case 'none':
-//         formattedNumber = (value/1).toFixed(this.decimalPlaces);
-//         break;
-//     }
-//   // }
-//   this.formattedData.push(this.prefix + formattedNumber + this.suffix);
-//   return this.prefix + formattedNumber + this.suffix;
-// }
+  // if (this.displayUnits !== 'none') {
+    switch (this.displayUnits) {
+      case 'K':
+        formattedNumber = (value / 1_000).toFixed(this.decimalPlaces) + 'K';
+        break;
+      case 'M':
+        formattedNumber = (value / 1_000_000).toFixed(this.decimalPlaces) + 'M';
+        break;
+      case 'B':
+        formattedNumber = (value / 1_000_000_000).toFixed(this.decimalPlaces) + 'B';
+        break;
+      case 'G':
+        formattedNumber = (value / 1_000_000_000_000).toFixed(this.decimalPlaces) + 'G';
+        break;
+      case 'none':
+        formattedNumber = (value/1).toFixed(this.decimalPlaces);
+        break;
+    }
+  // }
+  this.formattedData.push(this.prefix + formattedNumber + this.suffix);
+  return this.prefix + formattedNumber + this.suffix;
+}
 
 private updateChartOptions(): void {
   if (this.chartInstance) {
@@ -1495,11 +1500,21 @@ chartInitialize(){
     }
   }
   ngOnChanges(changes: SimpleChanges) {
-    if(changes[this.chartType]){
+    if(changes['chartType']){
       this.chartInitialize();
     }
-    if (changes['chartsRowData'] || changes['chartsColumnData'] || changes['dualAxisColumnData'] || changes['dualAxisRowData'] && this.chartInstance) {
-      if(changes['dualAxisRowData'] && changes['dualAxisRowData'].currentValue){
+    // if (changes['chartsRowData'] || changes['chartsColumnData'] || changes['dualAxisColumnData'] || changes['dualAxisRowData'] && this.chartInstance) {
+    //   if(changes['dualAxisRowData'] && changes['dualAxisRowData'].currentValue){
+    //     this.resetchartoptions();
+    //   }
+    // }
+    if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
+      if(changes['chartsColumnData']?.currentValue.length>0 || changes['dualAxisColumnData']?.currentValue.length>0){
+        this.resetchartoptions();
+      }
+    }
+    if(changes['chartsRowData'] || changes['dualAxisRowData'] ){
+      if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue.length>0){
         this.resetchartoptions();
       }
     }
@@ -1633,6 +1648,9 @@ chartInitialize(){
       if(this.chartInstance){
         this.legendsAllignmentSetOptions()
       }
+    }
+    if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
+      this.updateNumberFormat();
     }
   }
 
@@ -2387,5 +2405,92 @@ chartInitialize(){
       this.chartInstance.setOption(obj)
     }
   }
+}
+
+updateNumberFormat(){
+  if(this.chartType === 'bar'){
+    this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+    // let obj ={
+    //    series:[{
+    //     label:{
+    //       formatter:
+    //     }
+    //    }]
+    // }
+  } else if(this.chartType === 'line'){
+    this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'area'){
+    this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'pie'){
+    this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'donut'){
+    this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'sidebyside'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => this.formatNumber(params.value);
+    })
+    // this.eSideBySideBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'stocked'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => this.formatNumber(params.value);
+    })
+    // this.eStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'barline'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => this.formatNumber(params.value);
+    })
+    // this.eBarLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis[0].axisLabel.formatter = (value:any) => this.formatNumber(value);
+    this.chartOptions.yAxis[1].axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'hstocked'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => this.formatNumber(params.value);
+    })
+    // this.ehorizontalStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.xAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'hgrouped'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => this.formatNumber(params.value);
+    })
+    // this.eGroupedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.xAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'multiline'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => this.formatNumber(params.value);
+    })
+    // this.eMultiLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'radar'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.data.forEach((measure:any)=>{
+        measure.label.formatter = (params:any) => this.formatNumber(params.value);
+      })
+    })
+    // this.eRadarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    // this.eRadarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  } else if(this.chartType === 'heatmap'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => this.formatNumber(params.value[2]);
+    })
+    // this.eHeatMapChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+  } else if(this.chartType === 'funnel'){
+    this.chartOptions.series.forEach((data : any)=>{
+      data.label.formatter = (params:any) => {
+        const formattedValue = this.formatNumber(params.value);
+        return `${params.name}: ${formattedValue}`;
+    };
+    })
+    // this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
+    // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
+  }
+  this.chartInstance.setOption(this.chartOptions,true)
+
 }
 }
