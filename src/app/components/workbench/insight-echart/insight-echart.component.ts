@@ -200,10 +200,10 @@ export class InsightEchartComponent {
           fontWeight: this.ylabelFontWeight,
           color:this.measureColor,
           rotate:0,
-        //   formatter: function(value:any) {
-        //     return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
-        // }
-        formatter:(params:any) => this.formatNumber(params.value) 
+          formatter: function(value:any) {
+            return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
+        }
+        // formatter:(params:any) => this.formatNumber(params.value) 
         },
         splitLine: {
           lineStyle: {
@@ -281,8 +281,8 @@ stackedChart(){
   const categories = this.flattenDimensions(dimensions);
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
   yaxisOptions.forEach((bar : any)=>{
-bar["type"]="bar";
-bar["stack"]="total";
+  bar["type"]="bar";
+  bar["stack"]="total";
   });
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
@@ -1258,7 +1258,6 @@ heatMapChart(){
         }
     },
     visualMap: {
-        min : 0,
         max : this.getMaxValue(this.dualAxisRowData),
         calculable : true,
         orient : 'horizontal',
@@ -1503,19 +1502,14 @@ chartInitialize(){
     if(changes['chartType']){
       this.chartInitialize();
     }
-    // if (changes['chartsRowData'] || changes['chartsColumnData'] || changes['dualAxisColumnData'] || changes['dualAxisRowData'] && this.chartInstance) {
-    //   if(changes['dualAxisRowData'] && changes['dualAxisRowData'].currentValue){
-    //     this.resetchartoptions();
-    //   }
-    // }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       if(changes['chartsColumnData']?.currentValue.length>0 || changes['dualAxisColumnData']?.currentValue.length>0){
-        this.resetchartoptions();
+        this.updateCategories();
       }
     }
     if(changes['chartsRowData'] || changes['dualAxisRowData'] ){
       if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue.length>0){
-        this.resetchartoptions();
+        this.updateSeries();
       }
     }
     else if(changes['isZoom']){
@@ -2411,13 +2405,6 @@ updateNumberFormat(){
   if(this.chartType === 'bar'){
     this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
     this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-    // let obj ={
-    //    series:[{
-    //     label:{
-    //       formatter:
-    //     }
-    //    }]
-    // }
   } else if(this.chartType === 'line'){
     this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
     this.chartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
@@ -2491,6 +2478,187 @@ updateNumberFormat(){
     // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
   }
   this.chartInstance.setOption(this.chartOptions,true)
+
+}
+
+updateCategories(){
+  if(this.chartType === 'bar' || this.chartType === 'line' || this.chartType === 'area'){
+   let obj={
+    xAxis:{
+      data:this.chartsColumnData
+    }
+   }
+   this.chartInstance.setOption(obj)
+  } else if(this.chartType === 'pie'){
+    let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
+      value: value,
+      name: this.chartsColumnData[index]
+    }));
+    let obj ={
+      series :{
+        data:combinedArray
+      }
+    }
+    this.chartInstance.setOption(obj)
+  } else if(this.chartType === 'donut'){
+    let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
+      value: value,
+      name: this.chartsColumnData[index]
+    }));
+    let obj ={
+      series :[{
+        data:combinedArray
+      }]
+    }
+    this.chartInstance.setOption(obj)
+  } else if(this.chartType === 'sidebyside' || this.chartType === 'stocked' || this.chartType === 'multiline' || this.chartType === 'heatmap'){
+    const dimensions: Dimension[] = this.dualAxisColumnData;
+    const categories = this.flattenDimensions(dimensions);
+    let obj ={
+      xAxis:{
+        data:categories
+      }
+    }
+    this.chartInstance.setOption(obj)
+  }else if(this.chartType === 'barline'){
+  const dimensions: Dimension[] = this.dualAxisColumnData;
+  const categories = this.flattenDimensions(dimensions);
+  let obj ={
+    xAxis:[{
+      data:categories
+    }]
+  }
+  this.chartInstance.setOption(obj)
+  } else if(this.chartType === 'hstocked' || this.chartType === 'hgrouped'){
+    const dimensions: Dimension[] = this.dualAxisColumnData;
+    const categories = this.flattenDimensions(dimensions);
+    let obj ={
+      yAxis:{
+        data:categories
+      }
+    }
+    this.chartInstance.setOption(obj)
+  } else if(this.chartType === 'radar'){
+    const dimensions: Dimension[] = this.dualAxisColumnData;
+    const categories = this.flattenDimensions(dimensions);
+    let radarArray = categories.map((value: any, index: number) => ({
+      name: categories[index]
+    }));
+    let legendArray = this.radarRowData.map((data: any) => ({
+      name: data.name
+    }));
+    let obj ={
+      legend:{
+        data:legendArray
+      }
+    }
+    this.chartInstance.setOption(obj)
+  } else if(this.chartType === 'funnel'){
+    const combinedArray: any[] = [];
+    this.dualAxisColumnData.forEach((item: any) => {
+    this.dualAxisRowData.forEach((categoryObj: any) => {
+      item.values.forEach((value: any, index: number) => {
+        combinedArray.push({
+          name: value,
+          value: categoryObj.data[index]
+        });
+      });
+    });
+  });
+  let obj ={
+    series:[{
+      data:combinedArray
+    }]
+  }
+  this.chartInstance.setOption(obj)
+
+  }
+
+}
+updateSeries(){
+  if(this.chartType === 'bar' || this.chartType === 'line' || this.chartType === 'area'){
+    let obj={
+     series:[{
+       data:this.chartsRowData
+     }]
+    }
+    this.chartInstance.setOption(obj)
+}  else if(this.chartType === 'pie'){
+  let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
+    value: value,
+    name: this.chartsColumnData[index]
+  }));
+  let obj ={
+    series :{
+      data:combinedArray
+    }
+  }
+  this.chartInstance.setOption(obj)
+} else if(this.chartType === 'donut'){
+  let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
+    value: value,
+    name: this.chartsColumnData[index]
+  }));
+  let obj ={
+    series :[{
+      data:combinedArray
+    }]
+  }
+  this.chartInstance.setOption(obj)
+} else if(this.chartType === 'sidebyside' || this.chartType === 'stocked' || this.chartType === 'hstocked' || this.chartType === 'hgrouped' || this.chartType === 'multiline'){
+  let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
+  let obj ={
+    series:yaxisOptions
+  }
+  this.chartInstance.setOption(obj)
+} else if(this.chartType === 'barline'){
+  let obj ={
+    series:[
+      {
+      name:this.dualAxisRowData[0]?.name,
+      data:this.dualAxisRowData[0]?.data
+    },
+    {
+      name:this.dualAxisRowData[1]?.name,
+      data:this.dualAxisRowData[1]?.data
+    }
+  ]
+  }
+  this.chartInstance.setOption(obj)
+} else if(this.chartType === 'radar'){
+  let obj ={
+    series:[
+      {data:this.radarRowData}
+    ]
+  }
+  this.chartInstance.setOption(obj)
+} else if(this.chartType === 'heatmap'){
+  let obj ={
+    yAxis:{
+      data:this.dualAxisRowData
+    }
+  }
+  this.chartInstance.setOption(obj)
+} else if(this.chartType === 'funnel'){
+  const combinedArray: any[] = [];
+    this.dualAxisColumnData.forEach((item: any) => {
+    this.dualAxisRowData.forEach((categoryObj: any) => {
+      item.values.forEach((value: any, index: number) => {
+        combinedArray.push({
+          name: value,
+          value: categoryObj.data[index]
+        });
+      });
+    });
+  });
+  let obj ={
+    series:[{
+      data:combinedArray
+    }]
+  }
+  this.chartInstance.setOption(obj)
+
+}
 
 }
 }
