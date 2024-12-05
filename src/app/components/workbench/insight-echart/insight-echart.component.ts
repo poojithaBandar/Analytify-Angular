@@ -1405,7 +1405,74 @@ getMaxValue(rowData:any) {
   });
   return max === Number.NEGATIVE_INFINITY ? 0 : max; // Return 0 if no valid values found
 }
+mapChart(){
+  let minData : number = 0;
+  let maxData: number = Math.max(...this.chartsRowData);
+  let result:any[] = [];
 
+  // Loop through the countries (assuming both data sets align by index)
+  this.dualAxisColumnData[0].values.forEach((country: string, index: number) => {
+    // Create an object for each country
+    const countryData: any = { name: country , value : this.chartsRowData[index]};
+
+    // Add each measure to the country object
+    this.dualAxisRowData.forEach((measure:any) => {
+      const measureName = measure.name; // e.g., sum(Sales), sum(Quantity)
+      const measureValue = measure.data[index]; // Value for that measure
+      countryData[measureName] = measureValue;
+    });
+
+    result.push(countryData);
+  });
+if(this.chartsColumnData && this.chartsColumnData.length > 1){
+minData= Math.min(...this.chartsRowData);
+}
+if(Number.isNaN(minData) || Number.isNaN(maxData)){
+ minData = 0;
+ maxData = 1;
+}
+
+this.chartOptions = {
+ tooltip: {
+   formatter: (params: any) => {
+     const { name, data } = params;
+     if (data) {
+       const keys = Object.keys(data);
+ const values = Object.values(data);
+ let formattedString = '';
+ keys.forEach((key, index) => {
+   if(key)
+   formattedString += `${key}: ${values[index]}<br/>`;
+ });
+
+ return formattedString;
+      
+     } else {
+       return `${name}: No Data`;
+     }
+   },
+       trigger: 'item',
+       showDelay: 0,
+       transitionDuration: 0.2
+     },
+ visualMap: {
+   min: minData,
+   max: maxData,
+   text: ['High', 'Low'],
+   realtime: false,
+   calculable: true,
+   inRange: {
+    color: ['lightskyblue', 'yellow', 'orangered']
+   }
+ },
+ series: [{
+   type: 'map',
+   map: 'world',
+   roam: this.isZoom,  
+   data: result
+ }]
+};
+ }
 formatNumber(value: number): string {
   let formattedNumber = value+'';
 
@@ -1485,6 +1552,9 @@ chartInitialize(){
   }
   else if(this.chartType === 'calendar'){
     this.calendarChart();
+  }
+  else if(this.chartType === 'map'){
+    this.mapChart();
   }
 }
   // }
@@ -1647,6 +1717,9 @@ chartInitialize(){
     }
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
+    }
+    if(changes['donutSize']){
+      this.donutSizeChange();
     }
   }
   xLabelFontFamilySetOptions(){
@@ -2398,8 +2471,14 @@ chartInitialize(){
       this.chartInstance.setOption(obj)
     }
   }
-}
-
+  }
+  donutSizeChange(){
+    let obj ={
+      series:[{
+        radius: [this.donutSize+'%' , '70%']
+      }]
+    }
+  }
 updateNumberFormat(){
   if(this.chartType === 'bar'){
     this.chartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);

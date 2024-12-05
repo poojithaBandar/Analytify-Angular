@@ -70,8 +70,7 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
           this.datasourceQuerysetId = selectedObject.datasource_queryset_id;
           this.qrysetId = selectedObject.id
         }
-      }
-    
+      }    
   }
   loadSelectedSheetList(){
     if(this.selectedSheetList > 0){
@@ -93,7 +92,8 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
           this.savedSheetsList=data.sheets
           this.itemsPerPage = data.items_per_page;
           this.totalItems = data.total_items
-          console.log('sheetsList',data)
+          console.log('sheetsList',data);
+          this.page=this.pageNo
   
   
         },
@@ -149,7 +149,12 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
 
 pageChangegetUserSheetsList(page:any){
 this.pageNo=page;
+if(this.selectedSheetList !== 0)
+{
+  this.loadSelectedSheetList();
+}else{
 this.getUserSheetsList();
+}
 }
 searchUserList(){
   this.pageNo=1

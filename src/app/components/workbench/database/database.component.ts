@@ -297,7 +297,8 @@ export class DatabaseComponent {
           console.log(data);
           this.relationOfTables = data.dragged_data.relation_tables
           console.log('tablerelation', this.relationOfTables)
-          this.draggedtables = data.dragged_data.json_data
+          this.draggedtables = data.dragged_data.json_data.dragged_array;
+          this.itemCounters = data.dragged_data.json_data.dragged_array_indexing;
           this.joinTypes = data.dragged_data.join_type;
           this.saveQueryName= data.dragged_data.queryset_name;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
@@ -468,7 +469,7 @@ pushToDraggedTables(newTable:any): void {
   const baseTableName = newTable.table
   const occurrences = existingTableNames.filter((name: string) => name.startsWith(baseTableName)).length;
   let tableName = newTable.table;
-  if (!this.itemCounters[tableName]) {
+  if (!this.itemCounters[tableName] || !existingTableNames.includes(tableName)) {
     this.itemCounters[tableName] = 0;
   }
 
@@ -544,26 +545,28 @@ onDeleteItem(index: number, tableName : string) {
 deleteJoiningCondition(tableName: string): void {
   let data = _.cloneDeep(this.relationOfTables);
    for (let i = 0; i < this.relationOfTables.length; i++) {
-     const conditionGroup = data[i];
+     let conditionGroup = data[i];
      let conditionIndex;
      let isArrayOfEmptyObjects = true;
- 
+     let conditiondata = _.cloneDeep(conditionGroup);
  for (const obj of conditionGroup) {
    if (!obj || Object.keys(obj).length > 0) {
      isArrayOfEmptyObjects = false;
-     break;
+    //  break;
    }
- }
+ 
      if(!isArrayOfEmptyObjects){
-       conditionIndex = conditionGroup.findIndex((condition: any) => 
+       conditionIndex = conditiondata.findIndex((condition: any) => 
          condition?.table1.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '') || condition?.table2.replace(/^"+|"+$/g, '') == tableName.replace(/^"+|"+$/g, '')
      );
    } else {
      conditionIndex = 0;
    }
      if (conditionIndex !== -1) {
-       conditionGroup.splice(conditionIndex, 1);
+      conditiondata.splice(conditionIndex, 1);
      }
+    }
+    data[i] = conditiondata;
      // if(conditionGroup && conditionGroup.length <= 0){
      //   this.joinTypes.splice(i,1);
      // }
@@ -699,7 +702,7 @@ joiningTablesWithoutQuerySetId(){
     joining_tables: schemaTablePairs,
     join_type:[],
     joining_conditions:[],
-    dragged_array:this.draggedtables,
+    dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
   } as any
   if(this.fromFileId){
     delete obj.database_id
@@ -745,7 +748,7 @@ joiningTables(){
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
-    dragged_array:this.draggedtables
+    dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
   }as any;
   if(this.fromFileId){
     delete obj.database_id;
@@ -777,8 +780,9 @@ joiningTables(){
       console.log(error);
       this.tableCustomJoinError = true;
       if(error.error?.joining_condition && error.error?.joining_condition.length) {
-        this.joinTypes.push("inner");
-        this.relationOfTables[this.relationOfTables.length - 1] = [{}];
+        this.relationOfTables = error.error?.joining_condition;
+        // this.joinTypes.push("inner");
+        // this.relationOfTables[this.relationOfTables.length - 1] = [{}];
         this.buildCustomJoin();
       }
       Swal.fire({
@@ -856,7 +860,7 @@ joiningTablesFromDelete(){
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
-    dragged_array:this.draggedtables
+    dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
   }as any;
   if(this.fromFileId){
     delete obj.database_id;
@@ -893,6 +897,7 @@ joiningTablesFromDelete(){
       if(error.error?.joining_condition && error.error?.joining_condition.length) {
         // this.joinTypes.push("inner");
         // this.relationOfTables[this.relationOfTables.length - 1] = [{}];
+        this.relationOfTables = error.error?.joining_condition;
         this.buildCustomJoin();
       }
       Swal.fire({
@@ -941,7 +946,7 @@ customTableJoin(){
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:joiningConditions,
-    dragged_array:this.draggedtables
+    dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
 
   }as any;
   if(this.fromFileId){

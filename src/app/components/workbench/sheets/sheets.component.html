@@ -18,7 +18,267 @@
                         </div>
                 </div>
                 <div class="card-body p-1">
+                    <div class="input-group justify-content-between">
                     <h6 class="fw-600  mb-0 p-2">Tables</h6>
+
+                    <div class="dashboard-option">
+                        <div class=" p-1" ngbDropdown [autoClose]="false" #level1="ngbDropdown">
+                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                aria-haspopup="true" aria-expanded="false" class="" ><i
+                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                            </a>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                                <div class=" p-1" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
+                                <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
+                                <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
+                                    <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
+                                        <div cdkDropList cdkDropListOrientation="horizontal" class="form-control" 
+                                        style="position: relative;min-height: 100px; padding: 2px;" 
+                                    #calculatedfields="cdkDropList" 
+                                      
+                                        (cdkDropListDropped)="calculatedFieldsDrop($event)">
+                                            
+                                            <div style="max-height: 382px; overflow: scroll; padding: 10px;">
+                                                <div class="col-lg-12 col-md-12 p-0 m-0">
+                                                        <div class="form-group p-0 mb-0">
+                                                            <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label>
+                                                            <div class="d-flex">
+                                                                <div class="col-6 p-0">
+                                                                    <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName"
+                                                                    class="mb-2 form-control checkbox-color">
+                                                                    <div class="input-group mb-2">
+                                                                        <div class="col-lg-6 col-md-6 p-0">
+                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
+                                                                                (change)="calculatedFieldData()">
+                                                                                <option value="number">Number</option>
+                                                                                <option value="string">String</option>
+                                                                                <option value="arithematic">Arithmetic operation</option>
+                                                                                <option value="date">Date</option>
+                                                                                <option value="logical">Logical</option>
+                                                                                <option value="aggregation">Aggregate</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
+                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
+                                                                                (change)="nestedCalculatedFieldFunction()">
+                                                                                <option [disabled]="true" value="">select function</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+
+                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
+                                                    
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
+                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <textarea [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
+                                                                        *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic'"
+                                                                        class="query-text mb-2 px-3" [(ngModel)]="calculatedFieldLogic"
+                                                                        placeholder="Drop Column or Enter Logic"></textarea>
+                                                                    <div *ngIf="validationMessage" class="alert"
+                                                                        [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
+                                                                        {{ validationMessage }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6 p-0" style="margin-left: 8px;">
+                                                                        <p class="mb-0  p-2 bg-light mb-3 border rounded-2 description-text" >
+                                                                            @if(nestedCalculatedFieldData == 'abs'){
+                                                                                <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the absolute value.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ABS("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  ABS(-2) = 2 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'ceiling'){
+                                                                                <span > <p class="fw-600 mb-0">CEILING(number) :<br> </p> Rounds up to the nearest integer.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CEILING("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  CEILING(2.63) = 3 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'floor'){
+                                                                                <span > <p class="fw-600 mb-0">FLOOR(number) :<br> </p> Rounds down to the nearest integer.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> FLOOR("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  FLOOR(2.65) = 2 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'round'){
+                                                                                <span > <p class="fw-600 mb-0">ROUND(number, [decimals]) :<br> </p> Rounds to a specified number of decimals.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> ROUND("tablename"."column_name", [decimals])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  ROUND(2.65,1) = 2.6 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'ifnull'){
+                                                                                <span > <p class="fw-600 mb-0">IFNULL(expression1, expression2) :<br> </p> Returns the first non-null expression.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> COALESCE("tablename"."column_name", 0)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  COALESCE("finance"."Amount", 0) </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'case'){
+                                                                                <span > <p class="fw-600 mb-0">CASE :<br> </p> executes conditional logical expression.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CASE expression WHEN value THEN result ELSE default END</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  case  when "finance"."Amount" > 0 then 1 else 0 end </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'average'){
+                                                                                <span > <p class="fw-600 mb-0">AVG(expression) :<br> </p> Returns the average.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> AVG("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  AVG("finance"."Amount") </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'countd'){
+                                                                                <span > <p class="fw-600 mb-0">COUNTD(string) :<br> </p> Counts distinct values.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> COUNT( DISTINCT "tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  COUNT(DISTINCT "finance"."Name") </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'max'){
+                                                                                <span > <p class="fw-600 mb-0">MAX(expression) :<br> </p> Returns the maximum value.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> MAX("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  MAX("finance"."Amount")  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'min'){
+                                                                                <span > <p class="fw-600 mb-0">MIN(expression) :<br> </p> Returns the minimum value.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> MIN("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  MIN("finance"."Amount")  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'sum'){
+                                                                                <span > <p class="fw-600 mb-0">SUM(expression) :<br> </p> Returns the total sum.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> SUM("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  SUM("finance"."Amount")  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'left'){
+                                                                                <span > <p class="fw-600 mb-0">LEFT(string, number) :<br> </p> Returns the specified number of characters from left part of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=Ele </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'right'){
+                                                                                <span > <p class="fw-600 mb-0">RIGHT(string, number) :<br> </p> Returns the specified number of characters from right part of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LEFT("Tablename"."column_name", number)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Left('Electronics',3)=ics </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'mid'){
+                                                                                <span > <p class="fw-600 mb-0">substring(string, [from int], [for int]) :<br> </p> Extracts part of a string by giving starting position and the length of the string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> substring("Tablename"."column_name" from [int] for [int])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  substring('electronics' from 1 for 3)=ele </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'length'){
+                                                                                <span > <p class="fw-600 mb-0">LENGTH(string) :<br> </p> Returns the length of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LENGTH("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  Length('electronics') = 12 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'trim'){
+                                                                                <span > <p class="fw-600 mb-0">TRIM(string) :<br> </p> Removes spaces at the beginning and end of a string.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> TRIM("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  TRIM('   electronics   ') = 'electronics' </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'upper'){
+                                                                                <span > <p class="fw-600 mb-0">UPPER(number) :<br> </p>  Converts a string to uppercase.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> UPPER("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  UPPER('electronics') = ELECTRONICS </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'lower'){
+                                                                                <span > <p class="fw-600 mb-0">LOWER(number) :<br> </p>  Converts a string to lowercase.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> LOWER("tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  LOWER('ELECTRONICS') = electronics </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'replace'){
+                                                                                <span > <p class="fw-600 mb-0">REPLACE(string, substring, replacement) :<br> </p> Replaces occurrences of substring with replacement.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> REPLACE("tablename"."column_name", substring, replacement)</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  REPLACE('I will do it', 'will do', 'did') = I did it </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'split'){
+                                                                                <span > <p class="fw-600 mb-0">split_part(string text, delimiter text, field int) :<br> </p> Splits a given string at a specified character and returns the requested part.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> split_part("Tablename"."column_name", '$',[int])</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  split_part('I will$do it', '$',2) = do it </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'find'){
+                                                                                <span > <p class="fw-600 mb-0">position(substring in string) :<br> </p> Returns the position of the first occurrence of substring.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> POSITION([string] in "tablename"."column_name")</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> POSITION('ctr' IN 'electronics') = 4 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'dateadd'){
+                                                                                <span > <p class="fw-600 mb-0">DATEADD (date_field + interval date) :<br> </p> Adds a time interval to a date.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."columnname" + INTERVAL '[int] days' (days/months/years) </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  current_date + INTERVAL '5 days'(days/months/years)  </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datediff'){
+                                                                                <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the difference between two dates.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" - "tablename"."column_name"</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  CURRENT_DATE - '2024-10-03' </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'datepart'){
+                                                                                <span > <p class="fw-600 mb-0">DATEPART(date_part, date) :<br> </p> Returns a part of the date (year, month, day, etc.).</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATE_PART('year', "tablename"."column_name")/DATE_PART('month', "tablename"."column_name")/DATE_PART('date', "tablename"."column_name")
+                                                                                    </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  DATE_PART('year', current_timestamp)/DATE_PART('month', current_timestamp)/DATE_PART('date', current_timestamp)
+                                                                                 </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'now'){
+                                                                                <span > <p class="fw-600 mb-0">Current_timestamp :<br> </p> Returns the current date and time.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> current_timestamp()</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> current_timestamp() </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'today'){
+                                                                                <span > <p class="fw-600 mb-0">Current_date :<br> </p> Returns the current date without the time.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> CURRENT_DATE </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p> CURRENT_DATE </span>
+                                                                            }
+                                                                            @if(nestedCalculatedFieldData == 'parse'){
+                                                                                <span > <p class="fw-600 mb-0">dateparse :<br> </p> converts string to date in specific format .</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> TO_CHAR(Tablename.column_name, 'dd-mm-yyyy') </span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example :<br> </p>  TO_CHAR('2024-12-02', 'dd-mm-yyyy') </span>
+                                                                            }
+                                                                            @if(calculatedFieldFunction == 'arithematic'){
+                                                                                <span > <p class="fw-600 mb-0">expression :<br> </p> evaluate the basic mathematical calculations.</span> <br><br>
+                                                                                <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" + "tablename"."column_name"</span><br><br>
+                                                                                <span > <p class="fw-600 mb-0">Example : 2 + 2 = 4<br> </p>   </span>
+                                                                            }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                            
+                                                        <div class="mt-0 d-flex gap-2">
+                                                            <button
+                                                                [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
+                                                                class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
+                                                            <button class="btn btn-primary mt-0"
+                                                                (click)="isEditCalculatedField = false;level1.close();level2.close()">Close </button>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>             
+                                        
+                                    <!-- </div> -->
+                                    <!-- <button class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="test(calculatedfield)"> Create Calculated Field </button> -->
+                                   <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
+                                </div>
+                                </div>
+                               <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
+                            </div>
+                        </div>
+                      </div>
+                        
+                      
+                      </div>
                     <div class="input-group">
                         <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="tableSearch"
                             (keyup.enter)="columnsData()" aria-describedby="button-addon2">
@@ -27,6 +287,7 @@
                     </div>
                     <div class="sheet-table-h">
                         @for(columns of tableColumnsData; track columns){
+                            @if(!columns.calculated_fields){
                             <div  class="menu-item mb-1">
                                 
                             
@@ -40,7 +301,7 @@
                             <div  cdkDropList 
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.dimensions"
-                            [cdkDropListConnectedTo]="[columnList,rowList,drilldownList]"
+                            [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList]"
                             (cdkDropListDropped)="columndrop($event)"
                             [cdkDropListDisabled]="canDrop" [ngClass]="{'drag-disabled': canDrop}">
                             
@@ -73,7 +334,7 @@
                             <div cdkDropList
                             #originList="cdkDropList"
                             [cdkDropListData]="columns.measures"
-                            [cdkDropListConnectedTo]="[rowList,columnList,drilldownList]"
+                            [cdkDropListConnectedTo]="[calculatedfields,columnList,drilldownList]"
                             (cdkDropListDropped)="rowdrop($event)"
                             [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                             
@@ -99,6 +360,51 @@
                             </div>
                       }
                             </div>
+                        } @else if(columns.calculated_fields?.length){
+                            <div  class="menu-item mb-1">
+                                
+                            
+                                <div class="menu-title" class="example-box border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
+                                    <span class="arrow"> {{ columns.expanded ? '▲' : '▼' }}
+                                        Calculated Fields </span>
+    
+                                  </div>
+                                  <div cdkDropList
+                                  #originList="cdkDropList"
+                                  [cdkDropListData]="columns.calculated_fields"
+                                  [cdkDropListConnectedTo]="[calculatedfields,columnList,rowList,drilldownList]"
+                                  (cdkDropListDropped)="rowdrop($event)"
+                                  [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">  
+                                  @if(columns.expanded){    
+                                                            
+                                @for(measures of columns.calculated_fields; track measures){ 
+                                    <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.field_name}}" (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" ># 
+
+                                    <!-- <div class="example-box1 border m-0 ps-3 pe-0" ngbTooltip="{{measures.field_name}}" >#  -->
+                                        {{ measures.field_name?.substr(0,18) }}{{ measures.field_name.length > 18 ? '...' : '' }}
+                                        <div class="dashboard-option">
+                                            <div class=" p-1" ngbDropdown>
+                                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.field_name)"><i
+                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                            </a>
+                                                <div class="dropdown-menu" ngbDropdownMenu>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
+                                                   <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
+                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
+                                                </div>
+                                            </div>
+                                          </div>
+                                    <!-- </div> -->
+                                    </div>
+                                }
+                                
+                          }
+                        </div>
+                                </div>
+                        }
                         }
                       </div>
                       <ng-template #content let-modal>
@@ -345,6 +651,8 @@
                         </div>
                       </ng-template>
                      
+                     
+                     
                 </div>
                 
             </div>
@@ -415,15 +723,17 @@
                                 (cdkDropListDropped)="columndrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
+                                    <div class="example-box  example-box-bg" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
                                         @if(columns.type){
                                             {{ columns.type }} ({{columns.column}})
-                                        }@else{   
+                                        } @else if(columns.field_name) {
+                                            {{ columns.field_name }}
+                                        } @else {   
                                             {{ columns.column }}
                                             <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
                                         }
 
-                                     <div class="dropup" ngbDropdown>
+                                     <div class="dropup" ngbDropdown style="line-height: 0;">
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                             <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
@@ -534,16 +844,18 @@
                                 (cdkDropListDropped)="rowdrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
+                                    <div class="example-box1  example-box1-bg" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.alias){
                                             {{ rows.alias }}
+                                        } @else if(rows.field_name){
+                                            {{ rows.field_name }}
                                         }
                                         @else if(rows.type){
                                             {{ rows.type }} ({{rows.column}})
                                         }@else{   
                                              {{ rows.column }}
                                         }
-                                        <div class="dropup" ngbDropdown>
+                                        <div class="dropup" ngbDropdown style="line-height: 0;">
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown >
@@ -552,7 +864,10 @@
                                                     }
                                                     @else if(rows.type){
                                                         {{ rows.type }} ({{rows.column}})
-                                                    }@else{   
+                                                    }@else if(rows.field_name){
+                                                        {{ rows.field_name }}
+                                                    }
+                                                    @else{   
                                                          {{ rows.column }}
                                                     } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1" style="float: right; padding-top: 5px;"></i> </li>
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
@@ -788,20 +1103,35 @@
                                 @if(table && chartId){
                                 <table>
                                     <thead>
-                                      <tr>
+                                      <tr [ngStyle]="{ 'font-family': headerFontFamily, 'font-size': headerFontSize, 
+                                      'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 'color': headerFontColor }">
                                         @for(column of tableColumnsDisplay;track column){
-                                        <th>{{ column }}</th>
+                                        <th [ngStyle]="{ 'text-align': headerFontAlignment, 'font-weight': headerFontWeight }">{{ column }}
+                                            <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
+                                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                                  aria-haspopup="true" aria-expanded="false" class=""><i
+                                                    class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                                                </a>
+                                                <div class="dropdown-menu" ngbDropdownMenu>
+                                                  <button class="dropdown-item" (click)="tableColumnSort('default', column)">Default</button>
+                                                  <button class="dropdown-item" (click)="tableColumnSort('ascending', column)">Ascending</button>
+                                                  <button class="dropdown-item" (click)="tableColumnSort('descending', column)">Descending</button>
+                                                </div>
+                                            </span> -->
+                                        </th>
                                         }
                                       </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let row of (tableDataDisplay | paginate: { itemsPerPage: itemsPerPage,
+                                    <tr *ngFor="let row of (tableDataDisplay| paginate: { itemsPerPage: itemsPerPage,
                                                                 currentPage: page,
                                                                 totalItems: totalItems }) ; let i = index"
                                         [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}">
+                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}"
+                                        [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
+                                        'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 'color': tableDataFontColor }">
                                         @for(column of tableColumnsDisplay;track column){
-                                        <td>{{ row[column] }}</td>
+                                        <td [ngStyle]="{ 'text-align': tableDataFontAlignment }">{{ row[column] }}</td>
                                         }
                                     </tr>
                                     
@@ -1054,7 +1384,7 @@
                     <!-- <div id="bar-chart">
                         <div id="echartsBar" echarts [options]="eFunnelChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [color]="color" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
                 </div>
@@ -1069,7 +1399,8 @@
                     [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                     [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
-                    [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
+                    [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                 </div>
                 }
             @else if(sidebyside && chartId){         
@@ -1080,7 +1411,7 @@
                         <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" 
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
-                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                          [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
                     </div>
@@ -1095,7 +1426,8 @@
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
-                        [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
+                        [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                     </div>
             }
             @else if(horizentalStocked && chartId){         
@@ -1107,7 +1439,8 @@
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                     [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
-                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
+                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                 </div>
         }
                 
@@ -1170,7 +1503,8 @@
                     [backgroundColor]="backgroundColor" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" 
                     [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
-                    [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
+                    [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                 </div>
                 }
                 @else if(multiLine && chartId){
@@ -1183,7 +1517,8 @@
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
-                        [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
+                        [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                     </div>
                     }
             @else if(radar && chartId){
@@ -1191,18 +1526,18 @@
                     <!-- <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [radarRowData]="radarRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [radarRowData]="radarRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
-                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" 
+                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
                 </div>
                 }
                 @else if(map && chartId){
                     <div class="card-body">
-                        <div id="map-chart">
-                            <!-- <app-map-echart  [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart> -->
+                        <!-- <div id="map-chart">
                             <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
-                        </div>
+                        </div> -->
+                        <app-insight-echart  [isZoom]="isZoom" [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart>
                     </div>
                     }
                     
@@ -1224,7 +1559,7 @@
                         [backgroundColor]="backgroundColor" [xLabelSwitch]="xLabelSwitch" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily"
                         [xlabelFontWeight]="xlabelFontWeight" [yLabelSwitch]="yLabelSwitch" [yLabelColor]="yLabelColor" [yLabelFontSize]="[yLabelFontSize]" [yLabelFontFamily]="yLabelFontFamily" [ylabelFontWeight]="ylabelFontWeight"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
-                        [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
+                        [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                     </div>
                 }
             }
@@ -1607,6 +1942,272 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
+                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
+                                                                data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
+                                                                Header
+                                                            </button>
+                                                    
+                                                        </h6>
+                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse" aria-labelledby="heading"
+                                                            data-bs-parent="#accordionExample">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="sub-menu-item  p-2">
+                                                                            <div class="row">
+                                                                                <div class="">
+                                                                                    <div class="font-color-card">
+                                                                                        <p class="mb-0">Fonts</p>
+                                                                                        <div class="dropup" ngbDropdown>
+                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle"
+                                                                                                ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                <div class="dropup" ngbDropdown>
+                                                                                                    <div class="form-group mb-0 p-1">
+                                                                                                        <select class="form-select form-select select2 fs-14"
+                                                                                                            [(ngModel)]="headerFontFamily">
+                                                                                                            <option value="'Arial', sans-serif">Arial</option>
+                                                                                                            <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                            <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                            <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                            <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                            <option value="'Georgia', serif">Georgia</option>
+                                                                                                            <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                            <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                                            <option value="Algerian">Algerian</option>
+                                                                                                            <option value="Bahnschrift">Bahnschrift</option>
+                                                                                                            <option value="sans-serif">Sans Serif</option>
+                                                                                                            <option value="Calibri">Calibri</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="bold-italic p-1">
+                                                                                                        <div class="row">
+                                                                                                            <div class="form-group mb-0 d-flex">
+                                                                                                                <select class="form-select form-select select2 fs-14"
+                                                                                                                    style="width: 100px;" [(ngModel)]="headerFontSize">
+                                                                                                                    <option value="10px">10px</option>
+                                                                                                                    <option value="11px">11px</option>
+                                                                                                                    <option value="12px">12px</option>
+                                                                                                                    <option value="13px">13px</option>
+                                                                                                                    <option value="14px">14px</option>
+                                                                                                                    <option value="15px">15px</option>
+                                                                                                                    <option value="16px">16px</option>
+                                                                                                                    <option value="17px">17px</option>
+                                                                                                                    <option value="18px">18px</option>
+                                                                                                                    <option value="19px">19px</option>
+                                                                                                                    <option value="20px">20px</option>
+                                                                                                                </select>
+                                                                                                                <div class="bold-text"
+                                                                                                                    [ngStyle]="{'background-color': headerFontWeight === 700 ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isBold = !isBold;headerFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    <p>B</p>
+                                                                                                                </div>
+                                                                                                                <div class="italic-text"
+                                                                                                                    [ngStyle]="{'background-color': headerFontStyle === 'italic' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    <p>I</p>
+                                                                                                                </div>
+                                                                                                                <div class="underline-text"
+                                                                                                                    [ngStyle]="{'background-color': headerFontDecoration === 'underline' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    <p>U</p>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                        
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="color-shade-card p-1">
+                                                                                                        <div *ngFor="let row of colorPalette" class="row px-4">
+                                                                                                            <div *ngFor="let colorClass of row" [class]="colorClass"
+                                                                                                                (click)="headerColorChange($event)">
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                        
+                                                                                                </div>
+                                                                                                <li *ngIf="false">
+                                                                                                    <p class="more-color-text">More colors...</p>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <span ngbTooltip=""></span>
+                                                                            </div>
+                                                                            <div class="sub-menu-item mb-0">
+                                                                                <div class="row">
+                                                                                  <div class="">
+                                                                                      <div class="font-color-card">
+                                                                                          <p class="mb-0">Alignments</p>
+                                                                                          <div class="dropup" ngbDropdown>
+                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                              <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                  <div class="dropup" ngbDropdown >
+                                                                                                      <div class=" p-1">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="headerFontAlignment = 'left'">
+                                                                                                                <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                                              </div>
+                                                                                                              <div class="form-group mb-0 alignment-sides">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? '#00a5a2': '#fafcfc'}" (click)="headerFontAlignment = 'left'">
+                                                                                                                    <i class="fa fa-align-left"></i>
+                                                                                                                </div>
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? '#00a5a2': '#fafcfc'}" (click)="headerFontAlignment = 'center'">
+                                                                                                                    <i class="fa fa-align-center"></i>
+                                                                                                                </div>
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? '#00a5a2': '#fafcfc'}" (click)="headerFontAlignment = 'right'">
+                                                                                                                    <i class="fa fa-align-right"></i>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>                                                                                    
+                                                                                                  </div>
+                                                                                              </ul>
+                                                                                          </div>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>
+                                                                            <span ngbTooltip=""></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                            <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
+                                                                data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
+                                                                Table Data
+                                                            </button>
+                                                    
+                                                        </h6>
+                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse" aria-labelledby="heading"
+                                                            data-bs-parent="#accordionExample">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                                <ng-template>
+                                                                    <div>
+                                                                        <div class="sub-menu-item  p-2">
+                                                                            <div class="row">
+                                                                                <div class="">
+                                                                                    <div class="font-color-card">
+                                                                                        <p class="mb-0">Fonts</p>
+                                                                                        <div class="dropup" ngbDropdown>
+                                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle"
+                                                                                                ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                <div class="dropup" ngbDropdown>
+                                                                                                    <div class="form-group mb-0 p-1">
+                                                                                                        <select class="form-select form-select select2 fs-14"
+                                                                                                            [(ngModel)]="tableDataFontFamily">
+                                                                                                            <option value="'Arial', sans-serif">Arial</option>
+                                                                                                            <option value="'Helvetica', sans-serif">Helvetica</option>
+                                                                                                            <option value="'Verdana', sans-serif">Verdana</option>
+                                                                                                            <option value="'Open Sans', sans-serif">Open Sans</option>
+                                                                                                            <option value="'Times New Roman', serif">Times New Roman</option>
+                                                                                                            <option value="'Georgia', serif">Georgia</option>
+                                                                                                            <option value="'Merriweather', serif">Merriweather</option>
+                                                                                                            <option value="'Roboto', sans-serif">Roboto</option>
+                                                                                                            <option value="Algerian">Algerian</option>
+                                                                                                            <option value="Bahnschrift">Bahnschrift</option>
+                                                                                                            <option value="sans-serif">Sans Serif</option>
+                                                                                                            <option value="Calibri">Calibri</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="bold-italic p-1">
+                                                                                                        <div class="row">
+                                                                                                            <div class="form-group mb-0 d-flex">
+                                                                                                                <select class="form-select form-select select2 fs-14"
+                                                                                                                    style="width: 100px;" [(ngModel)]="tableDataFontSize">
+                                                                                                                    <option value="10px">10px</option>
+                                                                                                                    <option value="11px">11px</option>
+                                                                                                                    <option value="12px">12px</option>
+                                                                                                                    <option value="13px">13px</option>
+                                                                                                                    <option value="14px">14px</option>
+                                                                                                                    <option value="15px">15px</option>
+                                                                                                                    <option value="16px">16px</option>
+                                                                                                                    <option value="17px">17px</option>
+                                                                                                                    <option value="18px">18px</option>
+                                                                                                                    <option value="19px">19px</option>
+                                                                                                                    <option value="20px">20px</option>
+                                                                                                                </select>
+                                                                                                                <div class="bold-text"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontWeight === 700 ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isBold = !isBold;tableDataFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    <p>B</p>
+                                                                                                                </div>
+                                                                                                                <div class="italic-text"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontStyle === 'italic' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ">
+                                                                                                                    <p>I</p>
+                                                                                                                </div>
+                                                                                                                <div class="underline-text"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontDecoration === 'underline' ? '#00a5a2': '#fafcfc'}"
+                                                                                                                    (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ">
+                                                                                                                    <p>U</p>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                        
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="color-shade-card p-1">
+                                                                                                        <div *ngFor="let row of colorPalette" class="row px-4">
+                                                                                                            <div *ngFor="let colorClass of row" [class]="colorClass"
+                                                                                                                (click)="tableDataColorChange($event)">
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                        
+                                                                                                </div>
+                                                                                                <li *ngIf="false">
+                                                                                                    <p class="more-color-text">More colors...</p>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <span ngbTooltip=""></span>
+                                                                            </div>
+                                                                            <div class="sub-menu-item mb-0">
+                                                                                <div class="row">
+                                                                                  <div class="">
+                                                                                      <div class="font-color-card">
+                                                                                          <p class="mb-0">Alignments</p>
+                                                                                          <div class="dropup" ngbDropdown>
+                                                                                              <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                                              <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                                  <div class="dropup" ngbDropdown >
+                                                                                                      <div class=" p-1">
+                                                                                                              <div class="form-group mb-0 text-center" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
+                                                                                                              </div>
+                                                                                                              <div class="form-group mb-0 alignment-sides">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? '#00a5a2': '#fafcfc'}" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                    <i class="fa fa-align-left"></i>
+                                                                                                                </div>
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? '#00a5a2': '#fafcfc'}" (click)="tableDataFontAlignment = 'center'">
+                                                                                                                    <i class="fa fa-align-center"></i>
+                                                                                                                </div>
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? '#00a5a2': '#fafcfc'}" (click)="tableDataFontAlignment = 'right'">
+                                                                                                                    <i class="fa fa-align-right"></i>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>                                                                                    
+                                                                                                  </div>
+                                                                                              </ul>
+                                                                                          </div>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>
+                                                                            <span ngbTooltip=""></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
@@ -1658,7 +2259,7 @@
                                                                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                             <div class="dropup" ngbDropdown >
                                                                                                 <div class="form-group mb-0 p-1">
-                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontFamily" (change)="dimensionsFontFamilyChange()">
+                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontFamily">
                                                                                                         <option value="'Arial', sans-serif">Arial</option>
                                                                                                         <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                         <option value="'Verdana', sans-serif">Verdana</option>
@@ -1676,7 +2277,7 @@
                                                                                                 <div class="bold-italic p-1">
                                                                                                     <div class="row">
                                                                                                         <div class="form-group mb-0 d-flex">
-                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize" (change)="dimensionsFontSizeChange()">
+                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize">
                                                                                                                 <option value="10">10px</option>
                                                                                                                 <option value="11">11px</option>
                                                                                                                 <option value="12">12px</option>
@@ -1689,7 +2290,7 @@
                                                                                                                 <option value="19">19px</option>
                                                                                                                 <option value="20">20px</option>
                                                                                                              </select>
-                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;dimensionsFontWeightChange()">
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;">
                                                                                                                 <p>B</p>
                                                                                                             </div>
                                                                                                             <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -1880,7 +2481,7 @@
                                                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                         <div class="dropup" ngbDropdown >
                                                                                             <div class="form-group mb-0 p-1">
-                                                                                                <select class="form-select form-select select2 fs-14" [(ngModel)]="yLabelFontFamily" (change)="measuresFontFamilyChange()">
+                                                                                                <select class="form-select form-select select2 fs-14" [(ngModel)]="yLabelFontFamily">
                                                                                                     <option value="'Arial', sans-serif">Arial</option>
                                                                                                     <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                     <option value="'Verdana', sans-serif">Verdana</option>
@@ -1898,7 +2499,7 @@
                                                                                             <div class="bold-italic p-1">
                                                                                                 <div class="row">
                                                                                                     <div class="form-group mb-0 d-flex">
-                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize" (change)="measuresFontSizeChange()">
+                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize">
                                                                                                             <option value="10">10px</option>
                                                                                                             <option value="11">11px</option>
                                                                                                             <option value="12">12px</option>
@@ -1911,7 +2512,7 @@
                                                                                                             <option value="19">19px</option>
                                                                                                             <option value="20">20px</option>
                                                                                                          </select>
-                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;measuresFontWeightChange()">
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;">
                                                                                                             <p>B</p>
                                                                                                         </div>
                                                                                                         <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2094,7 +2695,7 @@
                                                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                     <div class="dropup" ngbDropdown >
                                                                                         <div class="form-group mb-0 p-1">
-                                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="dataLabelsFontFamily" (change)="setDataLabelsFontFamily($event)">
+                                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="dataLabelsFontFamily" >
                                                                                                 <option value="0" selected disabled>family</option>
                                                                                                 <option value="'Arial', sans-serif">Arial</option>
                                                                                                 <option value="'Helvetica', sans-serif">Helvetica</option>
@@ -2113,7 +2714,7 @@
                                                                                         <div class="bold-italic p-1">
                                                                                             <div class="row">
                                                                                                 <div class="form-group mb-0 d-flex">
-                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="dataLabelsFontSize" (change)="setDataLabelsFontSize($event)">
+                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="dataLabelsFontSize">
                                                                                                         <option value="0" selected disabled>size</option>
                                                                                                         <option value="10px">10px</option>
                                                                                                         <option value="11px">11px</option>
@@ -2283,7 +2884,7 @@
                                                                       
                                                                       <div class="buttons">
                                                                           <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                          <button class="btn btn-primary" (click)="updateNumberFormat(); numberPopupTrigger()">Update</button>
+                                                                          <!-- <button class="btn btn-primary" (click)="updateNumberFormat(); numberPopupTrigger()">Update</button> -->
                                                                       </div>
                                                                     </div>
                                                                 }
@@ -2505,7 +3106,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((kpi || guage) && draggedRows.length === 1) || !((table && !bandingSwitch) || guage || calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((table && bandingSwitch) || (kpi || guage) && draggedRows.length === 1) || !(calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2541,7 +3142,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="backgroundColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="backgroundColor"  (ngModelChange)="setBackgroundColor(backgroundColor)"
+                                                                    [(ngModel)]="backgroundColor"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -2609,7 +3210,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="gridLineColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="GridColor"  (ngModelChange)="gridLineColor($event)"
+                                                                    [(ngModel)]="GridColor" 
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -2783,7 +3384,7 @@
                                                         <div *ngIf="donut" sclass="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                             <div style="display: flex;justify-content: space-between;">
                                                                 <label>Donut Size</label>
-                                                                <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5" (ngModelChange)="changeSize()">
+                                                                <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5">
                                                             </div>
                                                         </div>
                                                         <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
