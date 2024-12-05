@@ -144,7 +144,7 @@
     <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
 <div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
-	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }">
+	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }" class="card p-0" >
         <!-- <div class="card mb-0"> -->
           <!-- <div class="card-body p-0"> -->
             <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
