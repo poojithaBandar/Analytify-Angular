@@ -1371,7 +1371,7 @@
                 <!-- <div >
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
                 [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
@@ -1384,7 +1384,7 @@
                     <!-- <div id="bar-chart">
                         <div id="echartsBar" echarts [options]="eFunnelChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [color]="color" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
                 </div>
@@ -1394,7 +1394,7 @@
                     <!-- <div id="stockedbar-chart">
                         <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                     [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
@@ -1408,7 +1408,7 @@
                         <!-- <div id="sidebysidebar-chart">
                             <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" 
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
@@ -1421,7 +1421,7 @@
                         <!-- <div id="groupedbar-chart">
                             <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
@@ -1435,7 +1435,7 @@
                     <!-- <div id="bhstockedar-chart">
                         <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                     [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
@@ -1449,7 +1449,7 @@
                 <!-- <div id="area-chart">
                     <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
@@ -1463,7 +1463,7 @@
                 <!-- <div id="line-chart">
                     <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
@@ -1477,7 +1477,7 @@
                 <!-- <div id="pie-chart">
                     <div id="echartsBar" echarts [options]="ePieChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"  [dataLabelsFontFamily]="dataLabelsFontFamily" 
                 [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
             </div>
@@ -1487,7 +1487,7 @@
                     <!-- <div id="donut-chart">
                         <div id="echartsBar" echarts [options]="eDonutChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"
                     [donutDecimalPlaces]="donutDecimalPlaces"
@@ -1499,7 +1499,7 @@
                     <!-- <div id="barline-chart">
                         <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" 
                     [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
@@ -1512,7 +1512,7 @@
                         <!-- <div id="multiline-chart">
                             <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
@@ -1526,7 +1526,7 @@
                     <!-- <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [radarRowData]="radarRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [radarRowData]="radarRowData" [isBold]="isBold"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
@@ -1537,7 +1537,7 @@
                         <!-- <div id="map-chart">
                             <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
                         </div> -->
-                        <app-insight-echart  [isZoom]="isZoom" [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart>
+                        <app-insight-echart  [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart>
                     </div>
                     }
                     
@@ -1546,7 +1546,7 @@
                         <!-- <div id="calender-chart" style="height: 100vh; overflow-y: scroll;">
                             <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="chart-container"></div>  
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData"></app-insight-echart>
+                        <app-insight-echart [isZoom]="isZoom"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData"></app-insight-echart>
                     </div>
                 }
                 @else if(heatMap){
@@ -1555,7 +1555,7 @@
                             <div id="echartsBar" echarts [options]="eHeatMapChartOptions" class="echart-charts">
                             </div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [chartType]="chartType" [decimalPlaces]="decimalPlaces" [displayUnits]="displayUnits"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [decimalPlaces]="decimalPlaces" [displayUnits]="displayUnits"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xLabelSwitch]="xLabelSwitch" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily"
                         [xlabelFontWeight]="xlabelFontWeight" [yLabelSwitch]="yLabelSwitch" [yLabelColor]="yLabelColor" [yLabelFontSize]="[yLabelFontSize]" [yLabelFontFamily]="yLabelFontFamily" [ylabelFontWeight]="ylabelFontWeight"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"

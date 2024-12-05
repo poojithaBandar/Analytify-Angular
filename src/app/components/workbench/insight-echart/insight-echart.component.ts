@@ -7,6 +7,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { SharedModule } from '../../../shared/sharedmodule';
 import _ from 'lodash';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
+import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 interface Dimension {
   name: string;
   values: string[];
@@ -62,6 +63,7 @@ export class InsightEchartComponent {
   @Input() prefix : any;
   @Input() suffix : any;
   @Input() donutDecimalPlaces :any;
+  @Input() isBold:any;
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
@@ -221,6 +223,9 @@ export class InsightEchartComponent {
           label: { show: true,
             position: 'center',
             fontFamily:this.dataLabelsFontFamily,
+            fontSize:this.dataLabelsFontSize,
+            fontWeight:this.isBold ? 700 : 400,
+            color:this.dataLabelsColor,
             formatter:(params:any) => this.formatNumber(params.value) 
            },
           type: 'bar',
@@ -270,6 +275,8 @@ funnelchart(){
           show: true,
           fontFamily:this.dataLabelsFontFamily,
           fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
           formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
         },
       },
@@ -366,10 +373,14 @@ stackedChart(){
           show:true, // Enable data labels
           position:'inside', // Position of the labels (e.g., 'top', 'inside', etc.)
           formatter:'{c}', // Customize the label format (e.g., '{c}' for value)
-          color:'#000', // Customize label color (default black)
-          fontSize:12, // Customize label font size
-          fontWeight:'bold', // Customize label font weight
-          fontFamily:'Helvetica, Arial, sans-serif' // Use custom font family if needed
+          //color:'#000', // Customize label color (default black)
+          // fontSize:12, // Customize label font size
+          // fontWeight:'bold', // Customize label font weight
+          // fontFamily:'Helvetica, Arial, sans-serif' // Use custom font family if needed
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
       }
   })),        
 
@@ -466,10 +477,14 @@ sidebySide(){
           show: true, // Enable data labels
           position: 'top', // Position of the labels (e.g., 'top', 'inside', etc.)
           formatter: '{c}', // Customize the label format (e.g., '{c}' for value)
-          color: '#000', // Customize label color
-          fontSize: 12, // Customize label font size
-          fontWeight: 'bold', // Customize label font weight
-          fontFamily: 'Helvetica, Arial, sans-serif' // Use custom font family if needed
+          // color: '#000', // Customize label color
+          // fontSize: 12, // Customize label font size
+          // fontWeight: 'bold', // Customize label font weight
+          // fontFamily: 'Helvetica, Arial, sans-serif' // Use custom font family if needed
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
       }
   })),
     color:this.color
@@ -564,10 +579,14 @@ hgroupedChart(){
           show:true, // Enable data labels
           position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
           formatter:'{c}', // Display the value of the bar
-          color:'#000', // Default label color (can be updated)
-          fontSize:this.xLabelFontSize, // Default label font size
-          fontWeight:'bold', // Default label font weight
-          fontFamily:this.xLabelFontFamily // Default label font family
+          // color:'#000', // Default label color (can be updated)
+          // fontSize:this.xLabelFontSize, // Default label font size
+          // fontWeight:'bold', // Default label font weight
+          // fontFamily:this.xLabelFontFamily // Default label font family
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
       }
   })),
 
@@ -662,10 +681,14 @@ hstackedChart(){
           show:true, // Enable data labels
           position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
           formatter:'{c}', // Display the value of the bar
-          color:'#000', // Default label color (can be updated)
-          fontSize:this.xLabelFontSize, // Default label font size
-          fontWeight:'bold', // Default label font weight
-          fontFamily:this.xLabelFontFamily // Default label font family
+          // color:'#000', // Default label color (can be updated)
+          // fontSize:this.xLabelFontSize, // Default label font size
+          // fontWeight:'bold', // Default label font weight
+          // fontFamily:this.xLabelFontFamily // Default label font family
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
       }
   })),
     
@@ -753,7 +776,12 @@ areaChart(){
     },
     series: [
       {
-        label: { show: true },
+        label: { show: true,
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
+        },
         type: 'line',
         data: this.chartsRowData,
         areaStyle: {}
@@ -843,9 +871,15 @@ lineChart(){
     },
     series: [
       {
-        label: { show: true },
+        label: { show: true,
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
+        },
         type: 'line',
-        data: this.chartsRowData
+        data: this.chartsRowData,
+      
       },
     ],
     color: this.color
@@ -1038,10 +1072,14 @@ barLineChart(){
         type: 'bar',
         data: this.dualAxisRowData[0]?.data,
         itemStyle:{
-          color:this.barColor // Default bar color
+          color:this.barColor, // Default bar color
+          
       },
         label:{
           show:true,
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
         }
       },
 
@@ -1056,11 +1094,17 @@ barLineChart(){
         //   }
         // },
         lineStyle: {
-          color: this.lineColor
+          color: this.lineColor,
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
         },
         data: this.dualAxisRowData[1]?.data,
         label:{
           show:true,
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
         }
       }
     ]
@@ -1155,10 +1199,14 @@ multiLineChart(){
           show:true, // Enable data labels
           position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
           formatter:'{c}', // Display the value of the bar
-          color:'#000', // Default label color (can be updated)
-          fontSize:this.xLabelFontSize, // Default label font size
-          fontWeight:'bold', // Default label font weight
-          fontFamily:this.xLabelFontFamily // Default label font family
+          // color:'#000', // Default label color (can be updated)
+          // fontSize:this.xLabelFontSize, // Default label font size
+          // fontWeight:'bold', // Default label font weight
+          // fontFamily:this.xLabelFontFamily // Default label font family
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
       }
   })),
   };
@@ -1204,11 +1252,11 @@ radarChart(){
             ...dataItem,
             label:{
                 show:this.dataLabels,
-                fontFamily:this.dataLabelsFontFamily,
                 formatter:'{c}',
-                color:'#000', // Default label color
-                fontSize:12, // Default label font size
-                // fontFamily:'Arial' // Default label font family
+                fontFamily:this.dataLabelsFontFamily,
+                fontSize:this.dataLabelsFontSize,
+                fontWeight:this.isBold ? 700 : 400,
+                color:this.dataLabelsColor,
             }
         }))
     }
@@ -1274,6 +1322,10 @@ heatMapChart(){
       data : this.prepareHeatmapData(this.dualAxisRowData), // Prepare your data accordingly
       label : {
           show : true,
+          fontFamily:this.dataLabelsFontFamily,
+          fontSize:this.dataLabelsFontSize,
+          fontWeight:this.isBold ? 700 : 400,
+          color:this.dataLabelsColor,
           // formatter : (params: { value: number[]; }) => this.formatNumber(params.value[2]) // Assuming value[2] holds the number to format
       },
       emphasis : {
