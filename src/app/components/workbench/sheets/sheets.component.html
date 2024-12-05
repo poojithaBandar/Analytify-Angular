@@ -292,7 +292,7 @@
                                 
                             
                             <div class="menu-title" class="example-box border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
-                                <span class="arrow"> {{ columns.expanded ? '▲' : '▼' }}
+                                <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                     {{columns.table_alias}} </span>
 
                               </div>
@@ -365,7 +365,7 @@
                                 
                             
                                 <div class="menu-title" class="example-box border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
-                                    <span class="arrow"> {{ columns.expanded ? '▲' : '▼' }}
+                                    <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                         Calculated Fields </span>
     
                                   </div>
