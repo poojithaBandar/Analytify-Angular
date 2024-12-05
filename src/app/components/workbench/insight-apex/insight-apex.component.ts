@@ -65,6 +65,7 @@ export class InsightApexComponent {
   @Input() drillDownIndex : any;
   @Input() draggedDrillDownColumns : any;
   @Input() drillDownObject : any;
+  @Input() sortType : any;
 
   @Output() setDrilldowns = new EventEmitter<object>();
   
@@ -89,61 +90,61 @@ export class InsightApexComponent {
   formattedData : any[] = [];
 
   ngOnInit(){
-    this.generateChart();
+    // this.generateChart();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes['chartType']){
+    // if(changes['chartType']){
       this.generateChart();
-    }
+    // }
     
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
-      if(changes['chartsColumnData'].currentValue.length>0 || changes['dualAxisColumnData'].currentValue.length>0){
+      // if(changes['chartsColumnData'].currentValue.length>0 || changes['dualAxisColumnData'].currentValue.length>0){
         this.updateCategories();
-      }
+      // }
     }
     if(changes['chartsRowData'] || changes['dualAxisRowData'] ){
-      if(changes['chartsRowData'].currentValue.length>0 || changes['dualAxisRowData'].currentValue.length>0){
+      // if(changes['chartsRowData'].currentValue.length>0 || changes['dualAxisRowData'].currentValue.length>0){
         this.updateSeries();
-      }
+      // }
     }
-    if(changes['xLabelFontFamily'] && changes['xLabelFontFamily'].currentValue){
+    if(changes['xLabelFontFamily']){
       this.dimensionsFontFamilyChange();
     }
-    if(changes['xLabelFontSize'] && changes['xLabelFontSize'].currentValue){
+    if(changes['xLabelFontSize']){
       this.dimensionsFontSizeChange();
     }
-    if(changes['xlabelFontWeight'] && changes['xlabelFontWeight'].currentValue){
+    if(changes['xlabelFontWeight']){
       this.dimensionsFontWeightChange();
     }
-    if(changes['dimensionAlignment'] && changes['dimensionAlignment'].currentValue){
+    if(changes['dimensionAlignment']){
       this.dimensionsAlignmentChange();
     }
-    if(changes['yLabelFontFamily'] && changes['yLabelFontFamily'].currentValue){
+    if(changes['yLabelFontFamily']){
       this.measuresFontFamilyChange();
     }
-    if(changes['yLabelFontSize'] && changes['yLabelFontSize'].currentValue){
+    if(changes['yLabelFontSize']){
       this.measuresFontSizeChange();
     }
-    if(changes['ylabelFontWeight'] && changes['ylabelFontWeight'].currentValue){
+    if(changes['ylabelFontWeight']){
       this.measuresFontWeightChange();
     }
-    if(changes['measureAlignment'] && changes['measureAlignment'].currentValue){
+    if(changes['measureAlignment']){
       this.measuresAlignmentChange();
     }
-    if(changes['dataLabelsFontFamily'] && changes['dataLabelsFontFamily'].currentValue){
+    if(changes['dataLabelsFontFamily']){
       this.setDataLabelsFontFamily();
     }
-    if(changes['dataLabelsFontSize'] && changes['dataLabelsFontSize'].currentValue){
+    if(changes['dataLabelsFontSize']){
       this.setDataLabelsFontSize();
     }
     if(changes['isBold']){
       this.setDataLabelsFontWeight();
     }
-    if(changes['dataLabelsColor'] && changes['dataLabelsColor'].currentValue){
+    if(changes['dataLabelsColor']){
       this.dataLabelsFontColor();
     }
-    if(changes['dataLabelsFontPosition'] && changes['dataLabelsFontPosition'].currentValue){
+    if(changes['dataLabelsFontPosition']){
       this.setDataLabelsFontPosition();
     }
     if(changes['xLabelSwitch']){
@@ -158,38 +159,41 @@ export class InsightApexComponent {
     if(changes['yGridSwitch']){
       this.yGridShowOrHide();
     }
-    if(changes['legendSwitch']){
+    if(['donut','pie'].includes(this.chartType) && changes['legendSwitch']){
       this.legendsShowOrHide();
     }
-    if(changes['dataLabels']){
+    if(['donut','pie'].includes(this.chartType) && changes['dataLabels']){
       this.dataLabelsShowOrHide();
     }
-    if(changes['label']){
+    if(this.chartType == 'donut' && changes['label']){
       this.labelsShowOrHide();
     }
-    if(changes['isDistributed']){
+    if(this.chartType == 'funnel' && changes['isDistributed']){
       this.colorDistribution();
     }
-    if(changes['legendsAllignment'] && changes['legendsAllignment'].currentValue){
+    if(['donut','pie'].includes(this.chartType) && changes['legendsAllignment']){
       this.legendPositionChange();
     }
-    if(changes['donutSize'] && changes['donutSize'].currentValue){
+    if(this.chartType == 'donut' && changes['donutSize']){
       this.donutSizeChange();
     }
-    if(changes['backgroundColor'] && changes['backgroundColor'].currentValue){
+    if(changes['backgroundColor']){
       this.setBackgroundColor();
     }
-    if((changes['barColor'] && changes['barColor'].currentValue) || (changes['lineColor'] && changes['lineColor'].currentValue) || (changes['color'] && changes['color'].currentValue)){
+    if(changes['barColor'] || changes['lineColor'] || changes['color']){
       this.setChartColor();
     }
-    if(changes['gridColor'] && changes['gridColor'].currentValue){
+    if(changes['gridColor']){
       this.gridLineColor();
     }
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
       this.updateNumberFormat();
     }
-    if(changes['minValueGuage'] || changes['maxValueGuage']){
+    if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
       this.customMinMaxGuage();
+    }
+    if(['funnel','bar'].includes(this.chartType) && changes['sortType'] && changes['sortType']?.currentValue !== 0){
+      this.sortSeries(this.sortType);
     }
     // if(changes['drillDownIndex']){
     //   this.updateDrilldowns();
@@ -200,112 +204,90 @@ export class InsightApexComponent {
   updateSeries() {
     if (this.barCharts) {
       this.chartOptions.series[0].data = this.chartsRowData;
-      this.barCharts.updateSeries(this.chartOptions.series);
+      this.barCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.areaCharts) {
       this.chartOptions.series[0].data = this.chartsRowData;
-      this.areaCharts.updateSeries(this.chartOptions.series);
+      this.areaCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.lineCharts) {
       this.chartOptions.series[0].data = this.chartsRowData;
-      this.lineCharts.updateSeries(this.chartOptions.series);
+      this.lineCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.pieCharts) {
       this.chartOptions.series = this.chartsRowData;
-      this.pieCharts.updateSeries(this.chartOptions.series);
+      this.pieCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.sideBySideCharts) {
       this.chartOptions.series = this.dualAxisRowData;
-      this.sideBySideCharts.updateSeries(this.chartOptions.series);
+      this.sideBySideCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.stockedCharts) {
       this.chartOptions.series = this.dualAxisRowData;
-      this.stockedCharts.updateSeries(this.chartOptions.series);
+      this.stockedCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.barLineCharts) {
       this.chartOptions.series[0].data = this.dualAxisRowData[0]?.data;
       this.chartOptions.series[1].data = this.dualAxisRowData[1]?.data;
-      this.barLineCharts.updateSeries(this.chartOptions.series);
+      this.barLineCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.horizontalStockedCharts) {
       this.chartOptions.series = this.dualAxisRowData;
-      this.horizontalStockedCharts.updateSeries(this.chartOptions.series);
+      this.horizontalStockedCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.groupedCharts) {
       this.chartOptions.series = this.dualAxisRowData;
-      this.groupedCharts.updateSeries(this.chartOptions.series);
+      this.groupedCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.multiLineCharts) {
       this.chartOptions.series = this.dualAxisRowData;
-      this.multiLineCharts.updateSeries(this.chartOptions.series);
+      this.multiLineCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.donutCharts) {
       this.chartOptions.series = this.chartsRowData;
-      this.donutCharts.updateSeries(this.chartOptions.series);
+      this.donutCharts.updateOptions({ series: this.chartOptions.series });
     } else if (this.funnelCharts) {
       this.chartOptions.series = this.dualAxisRowData;
-      this.funnelCharts.updateSeries(this.chartOptions.series);
+      this.funnelCharts.updateOptions({ series: this.chartOptions.series });
     } 
-    // else if (this.guageCharts) {
-    //   this.chartOptions.series = this.dualAxisRowData;
-    //   object = [{ data: this.dualAxisRowData }];
-    //   this.guageCharts.updateSeries(object);
-    // } 
     else if (this.heatmapCharts) {
       this.chartOptions.series = this.dualAxisRowData;
-      this.heatmapCharts.updateSeries(this.chartOptions.series);
+      this.heatmapCharts.updateOptions({ series: this.chartOptions.series });
     }
   }
   updateCategories(){
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
-    let object;
     if(this.barCharts){
       this.chartOptions.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
-      this.barCharts.updateOptions(this.chartOptions.xaxis);
+      this.barCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.areaCharts){
       this.chartOptions.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
-      this.areaCharts.updateOptions(this.chartOptions.xaxis);
+      this.areaCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.lineCharts){
       this.chartOptions.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
-      object = {xaxis: {categories : this.chartsColumnData.map((category : any)  => category === null ? 'null' : category)}};
-      this.lineCharts.updateOptions(this.chartOptions.xaxis);
+      this.lineCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.pieCharts){
       this.chartOptions.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
-      object = {labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category)};
-      this.pieCharts.updateOptions(this.chartOptions.labels);
+      this.pieCharts.updateOptions({ labels: this.chartOptions.labels });
     } else if(this.sideBySideCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.sideBySideCharts.updateOptions(this.chartOptions.xaxis);
+      this.sideBySideCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.stockedCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.stockedCharts.updateOptions(this.chartOptions.xaxis);
+      this.stockedCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.barLineCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.barLineCharts.updateOptions(this.chartOptions.xaxis);
+      this.barLineCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.horizontalStockedCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.horizontalStockedCharts.updateOptions(this.chartOptions.xaxis);
+      this.horizontalStockedCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.groupedCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.groupedCharts.updateOptions(this.chartOptions.xaxis);
+      this.groupedCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.multiLineCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.multiLineCharts.updateOptions(this.chartOptions.xaxis);
+      this.multiLineCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     } else if(this.donutCharts){
       this.chartOptions.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
-      object = {labels: this.chartsColumnData.map((category : any)  => category === null ? 'null' : category)};
-      this.donutCharts.updateOptions(this.chartOptions.labels);
+      this.donutCharts.updateOptions({ labels: this.chartOptions.labels });
     } else if(this.funnelCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.funnelCharts.updateOptions(this.chartOptions.xaxis);
+      this.funnelCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     }
-    //  else if(this.guageCharts){
-    //   this.chartOptions.series = this.dualAxisRowData;
-    //   object = [{data : this.dualAxisRowData}];
-    //   this.guageCharts.updateSeries(object);
-    // } 
     else if(this.heatmapCharts){
       this.chartOptions.xaxis.categories = categories;
-      object = {xaxis: {categories : categories}};
-      this.heatmapCharts.updateOptions(this.chartOptions.xaxis.categories);
+      this.heatmapCharts.updateOptions({ xaxis: this.chartOptions.xaxis });
     }
   }
 
@@ -763,7 +745,7 @@ export class InsightApexComponent {
           }
         }
       },
-      colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+      // colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
       legend: {
         show: this.legendSwitch,
@@ -1566,7 +1548,8 @@ export class InsightApexComponent {
                   }, 0).toFixed(this.donutDecimalPlaces);
                 }
               }
-            }
+            },
+            size: this.donutSize+'%'
           }
         }
       },
@@ -1681,9 +1664,6 @@ export class InsightApexComponent {
           const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
           const formattedValue = this.formatNumber(val);
           return `${category}: ${formattedValue}`;
-      },
-        dropShadow: {
-          enabled: true,
         },
         style: {
           fontSize: this.dataLabelsFontSize,
@@ -2891,6 +2871,40 @@ export class InsightApexComponent {
     }
     else if (this.donutCharts) {
       this.donutCharts.updateOptions(this.chartOptions.chart);
+    }
+  }
+  sort(sortType: any, numbers: any, labels: any) {
+    const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+  
+    if (sortType === 'ascending') {
+      pairedData.sort((a: any, b: any) => a[0] - b[0]);
+    } else if (sortType === 'descending') {
+      pairedData.sort((a: any, b: any) => b[0] - a[0]);
+    }
+
+    const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+    const sortedLabels = pairedData.map((pair: any) => pair[1]);
+  
+    return { sortedNumbers, sortedLabels };
+  }
+  sortSeries(sortType: any) {
+    if (this.chartType === 'funnel') {
+      const numbers = this.chartOptions.series[0].data;
+      const labels = this.chartOptions.xaxis.categories;
+      const sortedData = this.sort(sortType, numbers, labels);
+
+      this.chartOptions.series[0].data = sortedData.sortedNumbers;
+      this.chartOptions.xaxis.categories = sortedData.sortedLabels;
+      this.funnelCharts.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
+    } 
+    else if (this.chartType === 'bar') {
+      const numbers = this.chartOptions.series[0].data;
+      const labels = this.chartOptions.xaxis.categories;
+      const sortedData = this.sort(sortType, numbers, labels);
+
+      this.chartOptions.series[0].data = sortedData.sortedNumbers;
+      this.chartOptions.xaxis.categories = sortedData.sortedLabels;
+      this.barCharts.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
     }
   }
 }

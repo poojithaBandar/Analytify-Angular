@@ -358,6 +358,8 @@ export class SheetsComponent {
   headerFontColor : any = '#000000'
   headerFontAlignment : any = 'left';
 
+  sortType : any = 0;
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
     if(this.router.url.includes('/insights/sheets/dbId')){
@@ -3616,6 +3618,7 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map = false;
               this.sidebysideBar();
+              this.chartType = 'sidebyside';
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
               this.chartType = 'sidebyside'
             }
@@ -4831,7 +4834,8 @@ sheetSave(){
     headerFontAlignment: this.headerFontAlignment,
     dimeansionColor:this.dimensionColor,
     measureColor:this.measureColor,
-    dataLabelsColor:this.dataLabelsColor
+    dataLabelsColor:this.dataLabelsColor,
+    sortType : this.sortType
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -6752,6 +6756,7 @@ fetchChartData(chartData: any){
     this.headerFontDecoration = data.headerFontDecoration || 'none';
     this.headerFontColor = data.headerFontColor || '#000000'
     this.headerFontAlignment = data.headerFontAlignment || 'left';
+    this.sortType = data.sortType || 0;
   }
 
   resetCustomizations(){
@@ -6828,6 +6833,7 @@ fetchChartData(chartData: any){
     this.headerFontDecoration = 'none';
     this.headerFontColor = '#000000'
     this.headerFontAlignment = 'left';
+    this.sortType = 0;
   }
 
   sendPrompt() {
@@ -7070,84 +7076,7 @@ fetchChartData(chartData: any){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
           }
         }
-      }
-      sort(event: any, numbers: any, labels: any) {
-        const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
-      
-        if (event.target.value === 'ascending') {
-          pairedData.sort((a: any, b: any) => a[0] - b[0]);
-        } else if (event.target.value === 'descending') {
-          pairedData.sort((a: any, b: any) => b[0] - a[0]);
-        }
-
-        const sortedNumbers = pairedData.map((pair: any) => pair[0]);
-        const sortedLabels = pairedData.map((pair: any) => pair[1]);
-      
-        return { sortedNumbers, sortedLabels };
-      }
-      
-      sortSeries(event: any) {
-        if (this.funnel) {
-          if(this.isEChatrts){
-            let numbers : any[] = [];
-            let labels: any[] = [];
-            this.eFunnelChartOptions.series[0].data.forEach((data:any)=>{
-              numbers.push(data.value);
-              labels.push(data.name);
-            })
-            // const labels = this.eFunnelChartOptions.series[0].data.name;
-            const sortedData = this.sort(event, numbers, labels);
-            const funnelData : any[] = [];
-            console.log(sortedData);
-            sortedData.sortedLabels.forEach((name: any, index: number) => {
-              funnelData.push({
-                name: name,
-                value: sortedData.sortedNumbers[index]
-              });
-            });
-            this.eFunnelChartOptions.series[0].data = funnelData;
-            // this.updateEchartOptions();
-          } else{
-            const numbers = this.funnelChartOptions.series[0].data;
-            const labels = this.funnelChartOptions.xaxis.categories;
-            const sortedData = this.sort(event, numbers, labels);
-
-            this.funnelChartOptions.series[0].data = sortedData.sortedNumbers;
-            this.funnelChartOptions.xaxis.categories = sortedData.sortedLabels;
-            this.funnelCharts.updateSeries([{ data: sortedData.sortedNumbers }]);
-            this.funnelCharts.updateOptions({ xaxis: { categories: sortedData.sortedLabels } });
-          }
-        } 
-        else if (this.bar) {
-          if(this.isEChatrts){
-            // this.eBarchart.setOption({
-            //   xAxis: {
-            //     data: this.chartsColumnData.map(item => item.name),
-            //   },
-            //   series: [
-            //     {
-            //       data: thiss.barData.map(item => item.value),
-            //     },
-            //   ],
-            // });
-            const numbers = this.eBarChartOptions.series[0].data;
-            const labels = this.eBarChartOptions.xAxis.data;
-            const sortedData = this.sort(event, numbers, labels);
-            this.eBarChartOptions.series[0].data = sortedData.sortedNumbers;
-            this.eBarChartOptions.xAxis.data = sortedData.sortedLabels;
-            // this.updateEchartOptions();
-          } else {
-            const numbers = this.chartOptions3.series[0].data;
-            const labels = this.chartOptions3.xaxis.categories;
-            const sortedData = this.sort(event, numbers, labels);
-            console.log(numbers);
-            this.chartOptions3.series[0].data = sortedData.sortedNumbers;
-            this.chartOptions3.xaxis.categories = sortedData.sortedLabels;
-            this.barchart.updateSeries([{ data: sortedData.sortedNumbers }]);
-            this.barchart.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
-          }
-        }
-      }      
+      }     
       viewQuery(modal:any){
         this.modalService.open(modal, {
           centered: true,
@@ -7192,9 +7121,6 @@ fetchChartData(chartData: any){
       }
       donutDecimalPlaces: number = 0;
 
-      updateDonut(){
-        this.donutchart.updateOptions(this.chartOptions10);
-      }
       setDataLabelsFontStyle(fontStyle:any){
         if(fontStyle === 'B'){
           this.isBold = !this.isBold;

@@ -1160,7 +1160,7 @@
                 [dataLabelsFontPosition]="dataLabelsFontPosition" [dataLabelsColor]="dataLabelsColor" [measureAlignment]="measureAlignment" 
                 [dimensionAlignment]="dimensionAlignment" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                 [donutDecimalPlaces]="donutDecimalPlaces" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"
-                [drillDownObject]="drillDownObject" (setDrilldowns)="setDrilldowns($event)">
+                [drillDownObject]="drillDownObject" [sortType]="sortType" (setDrilldowns)="setDrilldowns($event)">
                 </app-insight-apex>
               <!--<h6>Bar Chart</h6>
               <figure id="bar"></figure>-->
@@ -1376,7 +1376,7 @@
                 [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                 [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [color]="color" [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontSize]="dataLabelsFontSize" 
-                [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
+                [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [sortType]="sortType"></app-insight-echart>
             </div>          
             }
             @else if(funnel && chartId){         
@@ -1526,7 +1526,7 @@
                     <!-- <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [radarRowData]="radarRowData" [isBold]="isBold"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart  [chartType]="chartType" [radarRowData]="radarRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
@@ -1942,7 +1942,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -2075,7 +2075,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -3106,7 +3106,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((table && bandingSwitch) || (kpi || guage) && draggedRows.length === 1) || !(calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns.length !== 0 || draggedRows.length !==0)) || (((kpi || guage) && draggedRows.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3390,7 +3390,7 @@
                                                         <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                             <div style="display: flex;justify-content: space-between;">
                                                                 <label for="decimalInput">Decimal Places: </label>
-                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" (input)="updateDonut()" min="0" />
+                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" min="0" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -3467,14 +3467,14 @@
                                                         </ngx-colors>
                                                     </div> -->
                                                     <div *ngIf="funnel && isApexCharts">
-                                                        <div style="display: flex; justify-content: space-between;">
+                                                        <!-- <div style="display: flex; justify-content: space-between;">
                                                             <label for="sorting">Sort by:</label>
                                                             <select id="sorting" (change)="sortSeries($event)">
                                                                 <option value="0" selected disabled>select</option>
                                                                 <option value="ascending">Ascending</option>
                                                                 <option value="descending">Descending</option>
                                                             </select>
-                                                        </div>
+                                                        </div> -->
                                                         <div *ngIf="isApexCharts" style="display: flex; justify-content: space-between;">
                                                             <label>Distribution</label>
                                                             <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
@@ -3586,9 +3586,9 @@
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <label for="sorting">Sort by:</label>
-                                                        <select id="sorting" (change)="sortSeries($event)">
+                                                    <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <label for="sorting">Sort by: </label>
+                                                        <select id="sorting" [(ngModel)]="sortType">
                                                             <option value="0" selected disabled>select</option>
                                                             <option value="ascending">Ascending</option>
                                                             <option value="descending">Descending</option>

@@ -64,6 +64,8 @@ export class InsightEchartComponent {
   @Input() suffix : any;
   @Input() donutDecimalPlaces :any;
   @Input() isBold:any;
+  @Input() sortType : any;
+
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
@@ -1773,6 +1775,10 @@ chartInitialize(){
     if(changes['donutSize']){
       this.donutSizeChange();
     }
+    if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
+      this.sortSeries(this.sortType);
+    }
+    console.log(this.sortType)
   }
   xLabelFontFamilySetOptions(){
     if(this.chartType !== 'heatmap'){
@@ -2530,6 +2536,7 @@ chartInitialize(){
         radius: [this.donutSize+'%' , '70%']
       }]
     }
+    this.chartInstance.setOption(obj);
   }
 updateNumberFormat(){
   if(this.chartType === 'bar'){
@@ -2790,5 +2797,35 @@ updateSeries(){
 
 }
 
+}
+sort(sortType: any, numbers: any, labels: any) {
+  const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+
+  if (sortType === 'ascending') {
+    pairedData.sort((a: any, b: any) => a[0] - b[0]);
+  } else if (sortType === 'descending') {
+    pairedData.sort((a: any, b: any) => b[0] - a[0]);
+  }
+
+  const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+  const sortedLabels = pairedData.map((pair: any) => pair[1]);
+
+  return { sortedNumbers, sortedLabels };
+}
+sortSeries(sortType: any) {
+ if (this.chartType === 'bar') {
+  const numbers = this.chartOptions.series[0].data;
+  const labels = this.chartOptions.xAxis.data;
+  const sortedData = this.sort(sortType, numbers, labels);
+  let obj={
+    series:[{
+      data:sortedData.sortedNumbers
+    }],
+    xAxis:{
+      data:sortedData.sortedLabels
+    }
+  }
+  this.chartInstance.setOption(obj)
+  }
 }
 }
