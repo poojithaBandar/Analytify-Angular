@@ -723,7 +723,7 @@
                                 (cdkDropListDropped)="columndrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(columns of draggedColumns;track columns;let index = $index){
-                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
+                                    <div class="example-box  example-box-bg" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
                                         @if(columns.type){
                                             {{ columns.type }} ({{columns.column}})
                                         } @else if(columns.field_name) {
@@ -733,7 +733,7 @@
                                             <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
                                         }
 
-                                     <div class="dropup" ngbDropdown>
+                                     <div class="dropup" ngbDropdown style="line-height: 0;">
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                             <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
@@ -844,7 +844,7 @@
                                 (cdkDropListDropped)="rowdrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1 border-end" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
+                                    <div class="example-box1  example-box1-bg" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.alias){
                                             {{ rows.alias }}
                                         } @else if(rows.field_name){
@@ -855,7 +855,7 @@
                                         }@else{   
                                              {{ rows.column }}
                                         }
-                                        <div class="dropup" ngbDropdown>
+                                        <div class="dropup" ngbDropdown style="line-height: 0;">
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown >
