@@ -1146,12 +1146,26 @@
                                         <!-- } -->
                                     </div>
                                 }
-                                @if(isApexCharts){
-              @if(bar && chartId){
+                                @if(isApexCharts && !table){
+              <!-- @if(bar && chartId){ -->
+
+                <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData" 
+                [dualAxisRowData]="dualAxisRowData" [tablePreviewRow]="tablePreviewRow" [chartType]="chartType" [xGridSwitch]="xGridSwitch"
+                [xLabelSwitch]="xLabelSwitch" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [xLabelFontFamily]="xLabelFontFamily"
+                [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [backgroundColor]="backgroundColor" [color]="color"
+                [ylabelFontWeight]="ylabelFontWeight" [isBold]="isBold" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
+                [barColor]="barColor" [lineColor]="lineColor" [gridColor]="GridColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"
+                [label]="label" [donutSize]="donutSize" [isDistributed]="isDistributed" [minValueGuage]="minValueGuage" [maxValueGuage]="maxValueGuage"
+                [legendsAllignment]="legendsAllignment" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
+                [dataLabelsFontPosition]="dataLabelsFontPosition" [dataLabelsColor]="dataLabelsColor" [measureAlignment]="measureAlignment" 
+                [dimensionAlignment]="dimensionAlignment" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                [donutDecimalPlaces]="donutDecimalPlaces" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"
+                [drillDownObject]="drillDownObject" [sortType]="sortType" (setDrilldowns)="setDrilldowns($event)">
+                </app-insight-apex>
               <!--<h6>Bar Chart</h6>
               <figure id="bar"></figure>-->
 
-              <div class="card-body">
+              <!-- <div class="card-body">
                 <div id="bar-chart" class="chartfit">
                     <apx-chart #barChart 
                     [series]="chartOptions3.series"
@@ -1166,9 +1180,9 @@
                     [colors]="chartOptions3.colors">
                     </apx-chart>
                 </div>
-            </div>
-              }
-              @if(area && chartId){
+            </div> -->
+              <!-- } -->
+              <!-- @if(area && chartId){
                 <div class="card-body">
                     <div id="area-chart">
                         <apx-chart #areaChart
@@ -1179,8 +1193,8 @@
                         [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
                     </div>
                 </div>
-              }
-              @if(line && chartId){
+              } -->
+              <!-- @if(line && chartId){
                 <div class="card-body">
                     <div id="line-chart">
                         <apx-chart #lineChart
@@ -1190,21 +1204,21 @@
                         [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
                     </div>
                 </div>
-              }
-              @if(pie && chartId){
+              } -->
+              <!-- @if(pie && chartId){ -->
              <!-- <h6>Pie Chart</h6>
              <figure id="pie"></figure>-->
-             <div class="card-body">
+             <!-- <div class="card-body">
                 <div id="pie-basic">
                     <apx-chart #piechart
                     [series]="chartOptions4.series" [chart]="chartOptions4.chart" [legend]="chartOptions4.legend"
                     [labels]="chartOptions4.labels" [responsive]="chartOptions4.responsive" [colors]="chartOptions4.colors" [dataLabels]="chartOptions4.dataLabels"></apx-chart>
                 </div>
-            </div>
-              }
+            </div> -->
+              <!-- } -->
               
              
-              @if(sidebyside && chartId){
+              <!-- @if(sidebyside && chartId){
                 <div class="card-body">
                     <div id="column-chart">
                         <apx-chart #sidebyside
@@ -1215,8 +1229,8 @@
                         [xaxis]="chartOptions2.xaxis"></apx-chart>
                     </div>
                 </div>
-              }
-              @if(stocked){
+              } -->
+              <!-- @if(stocked){
                 <div id="chart">
                     <apx-chart #stocked
                       [series]="chartOptions6.series"
@@ -1231,8 +1245,8 @@
                       [grid]="chartOptions6.grid"
                     ></apx-chart>
                   </div>
-              }
-             @if(barLine){
+              } -->
+             <!-- @if(barLine){
                 <div class="card-body">
                     <div id="mixed-linecolumn">
                         <apx-chart #barline
@@ -1243,8 +1257,8 @@
                         [tooltip]="chartOptions5.tooltip"[colors]="chartOptions5.colors"></apx-chart>
                     </div>
                 </div>
-             }
-             @if(horizentalStocked){
+             } -->
+             <!-- @if(horizentalStocked){
                 <div id="chart">
                     <apx-chart #horizentalstocked
                       [series]="chartOptions7.series"
@@ -1259,8 +1273,8 @@
                       [fill]="chartOptions7.fill"
                     ></apx-chart>
                   </div>
-              }
-              @if(grouped){
+              } -->
+              <!-- @if(grouped){
                 <div id="chart">
                     <apx-chart #grouped
                       [series]="chartOptions8.series"
@@ -1275,8 +1289,8 @@
                       [fill]="chartOptions8.fill"
                     ></apx-chart>
                   </div>
-              }
-              @if(multiLine){
+              } -->
+              <!-- @if(multiLine){
                 <div id="chart">
                     <apx-chart #multiline
                     [series]="chartOptions9.series"
@@ -1292,8 +1306,8 @@
                     [title]="chartOptions9.title"
                   ></apx-chart>
                   </div>
-              }
-              @if(donut){
+              } -->
+              <!-- @if(donut){
                 <div id="donutchart">
                 <apx-chart #donutchart
                     [series]="chartOptions10.series"
@@ -1305,8 +1319,8 @@
                     [legend]="chartOptions10.legend" >
                 </apx-chart>
                   </div>
-              }
-              @if(heatMap){
+              } -->
+              <!-- @if(heatMap){
                 <div id="chart">
                     <apx-chart #heatmapchart
                       [series]="heatMapChartOptions.series"
@@ -1319,8 +1333,8 @@
                       [grid]="heatMapChartOptions.grid"
                     ></apx-chart>
                   </div>
-              }
-              @if(funnel){
+              } -->
+              <!-- @if(funnel){
                 <div id="chart">
                     <apx-chart #funnelChart
                       [series]="funnelChartOptions.series"
@@ -1332,8 +1346,8 @@
                       [title]="funnelChartOptions.title"
                       [legend]="funnelChartOptions.legend"></apx-chart>
                       </div>
-                    }
-              @if(guage){
+                    } -->
+              <!-- @if(guage){
                 <div id="chart">
                     <apx-chart #guageChart
                       [series]="guageChartOptions.series"
@@ -1350,122 +1364,202 @@
                         [stroke]="guageChartOptions.stroke"
                     ></apx-chart>
                   </div>
-              }
+              } -->
             } @else {
             @if(bar && chartId){         
             <div class="card-body">
-                <div >
+                <!-- <div >
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
+                [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
+                [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
+                [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [color]="color" [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontSize]="dataLabelsFontSize" 
+                [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [sortType]="sortType"></app-insight-echart>
             </div>          
             }
-            @if(funnel && chartId){         
+            @else if(funnel && chartId){         
                 <div class="card-body">
-                    <div id="bar-chart">
+                    <!-- <div id="bar-chart">
                         <div id="echartsBar" echarts [options]="eFunnelChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [color]="color" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor"
+                    [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
                 </div>
                 }
-            @if(stocked && chartId){         
+            @else if(stocked && chartId){         
                 <div class="card-body">
-                    <div id="stockedbar-chart">
+                    <!-- <div id="stockedbar-chart">
                         <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                    [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                    [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
+                    [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
+                    [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                 </div>
                 }
-                @if(sidebyside && chartId){         
+            @else if(sidebyside && chartId){         
                     <div class="card-body">
-                        <div id="sidebysidebar-chart">
+                        <!-- <div id="sidebysidebar-chart">
                             <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" 
+                        [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                        [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
+                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
                     </div>
                     }
-            @if(grouped && chartId){         
+            @else if(grouped && chartId){         
                     <div class="card-body">
-                        <div id="groupedbar-chart">
+                        <!-- <div id="groupedbar-chart">
                             <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                        [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
+                        [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
+                        [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                     </div>
             }
-            @if(horizentalStocked && chartId){         
+            @else if(horizentalStocked && chartId){         
                 <div class="card-body">
-                    <div id="bhstockedar-chart">
+                    <!-- <div id="bhstockedar-chart">
                         <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                    [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                    [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
+                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                 </div>
         }
                 
-            @if(area && chartId){
+            @else if(area && chartId){
             <div class="card-body">
-                <div id="area-chart">
+                <!-- <div id="area-chart">
                     <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
+                [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
+                [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
+                [yGridSwitch]="yGridSwitch" [color]="color"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" 
+                [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
+                [ylabelFontWeight]="ylabelFontWeight"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
             </div>
             }
-            @if(line && chartId){
+            @else if(line && chartId){
             <div class="card-body">
-                <div id="line-chart">
+                <!-- <div id="line-chart">
                     <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
+                [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
+                [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
+                [yGridSwitch]="yGridSwitch" [color]="color" [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
+                 [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
+                 [ylabelFontWeight]="ylabelFontWeight"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
             </div>
             }
-            @if(pie && chartId){
+            @else if(pie && chartId){
             <div class="card-body">
-                <div id="pie-chart">
+                <!-- <div id="pie-chart">
                     <div id="echartsBar" echarts [options]="ePieChartOptions" class="echart-charts"></div>
-                </div>
+                </div> -->
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"  [dataLabelsFontFamily]="dataLabelsFontFamily" 
+                [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
             </div>
             }
-            @if(donut && chartId){
+            @else if(donut && chartId){
                 <div class="card-body">
-                    <div id="donut-chart">
+                    <!-- <div id="donut-chart">
                         <div id="echartsBar" echarts [options]="eDonutChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
+                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"
+                    [donutDecimalPlaces]="donutDecimalPlaces"
+                    ></app-insight-echart>
                 </div>
                 }
-            @if(barLine && chartId){
+            @else if(barLine && chartId){
                 <div class="card-body">
-                    <div id="barline-chart">
+                    <!-- <div id="barline-chart">
                         <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" 
+                    [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"
+                    [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
+                    [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                    [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                 </div>
                 }
-                @if(multiLine && chartId){
+                @else if(multiLine && chartId){
                     <div class="card-body">
-                        <div id="multiline-chart">
+                        <!-- <div id="multiline-chart">
                             <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                        [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
+                        [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
+                        [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
+                        [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                     </div>
                     }
-            @if(radar && chartId){
+            @else if(radar && chartId){
                 <div class="card-body">
-                    <div id="radar-chart">
+                    <!-- <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
-                    </div>
+                    </div> -->
+                    <app-insight-echart  [chartType]="chartType" [radarRowData]="radarRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
+                    [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                    [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"></app-insight-echart>
                 </div>
                 }
-                @if(map && chartId){
+                @else if(map && chartId){
                     <div class="card-body">
-                        <div id="map-chart">
-                            <!-- <app-map-echart  [chartRowData]="chartsRowData" [chartColumnData]="chartsColumnData"></app-map-echart> -->
+                        <!-- <div id="map-chart">
                             <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
-                        </div>
+                        </div> -->
+                        <app-insight-echart  [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart>
                     </div>
                     }
                     
-                @if(calendar){
+                @else if(calendar){
                     <div class="card-body">
-                        <div id="calender-chart" style="height: 100vh; overflow-y: scroll;">
+                        <!-- <div id="calender-chart" style="height: 100vh; overflow-y: scroll;">
                             <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="chart-container"></div>  
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData"></app-insight-echart>
                     </div>
                 }
-                @if(heatMap){
+                @else if(heatMap){
                     <div class="card-body">
-                        <div id="heatmap-chart">
+                        <!-- <div id="heatmap-chart">
                             <div id="echartsBar" echarts [options]="eHeatMapChartOptions" class="echart-charts">
                             </div>
-                        </div>
+                        </div> -->
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [decimalPlaces]="decimalPlaces" [displayUnits]="displayUnits"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [backgroundColor]="backgroundColor" [xLabelSwitch]="xLabelSwitch" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily"
+                        [xlabelFontWeight]="xlabelFontWeight" [yLabelSwitch]="yLabelSwitch" [yLabelColor]="yLabelColor" [yLabelFontSize]="[yLabelFontSize]" [yLabelFontFamily]="yLabelFontFamily" [ylabelFontWeight]="ylabelFontWeight"
+                        [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
+                        [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"></app-insight-echart>
                     </div>
                 }
             }
@@ -1848,7 +1942,7 @@
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">
                                                  <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
-                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -1981,7 +2075,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="(table && chartId)" ngbAccordionItem class="accordion-item mb-2">
+                                                    <div *ngIf="((table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0))" ngbAccordionItem class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button ngbAccordionButton class="accordion-button p-3 fw-500 border" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse" aria-expanded="true" aria-controls="collapse">
@@ -2165,7 +2259,7 @@
                                                                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                             <div class="dropup" ngbDropdown >
                                                                                                 <div class="form-group mb-0 p-1">
-                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontFamily" (change)="dimensionsFontFamilyChange()">
+                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontFamily">
                                                                                                         <option value="'Arial', sans-serif">Arial</option>
                                                                                                         <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                         <option value="'Verdana', sans-serif">Verdana</option>
@@ -2183,7 +2277,7 @@
                                                                                                 <div class="bold-italic p-1">
                                                                                                     <div class="row">
                                                                                                         <div class="form-group mb-0 d-flex">
-                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize" (change)="dimensionsFontSizeChange()">
+                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize">
                                                                                                                 <option value="10">10px</option>
                                                                                                                 <option value="11">11px</option>
                                                                                                                 <option value="12">12px</option>
@@ -2196,7 +2290,7 @@
                                                                                                                 <option value="19">19px</option>
                                                                                                                 <option value="20">20px</option>
                                                                                                              </select>
-                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;dimensionsFontWeightChange()">
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;">
                                                                                                                 <p>B</p>
                                                                                                             </div>
                                                                                                             <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2387,7 +2481,7 @@
                                                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                         <div class="dropup" ngbDropdown >
                                                                                             <div class="form-group mb-0 p-1">
-                                                                                                <select class="form-select form-select select2 fs-14" [(ngModel)]="yLabelFontFamily" (change)="measuresFontFamilyChange()">
+                                                                                                <select class="form-select form-select select2 fs-14" [(ngModel)]="yLabelFontFamily">
                                                                                                     <option value="'Arial', sans-serif">Arial</option>
                                                                                                     <option value="'Helvetica', sans-serif">Helvetica</option>
                                                                                                     <option value="'Verdana', sans-serif">Verdana</option>
@@ -2405,7 +2499,7 @@
                                                                                             <div class="bold-italic p-1">
                                                                                                 <div class="row">
                                                                                                     <div class="form-group mb-0 d-flex">
-                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize" (change)="measuresFontSizeChange()">
+                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize">
                                                                                                             <option value="10">10px</option>
                                                                                                             <option value="11">11px</option>
                                                                                                             <option value="12">12px</option>
@@ -2418,7 +2512,7 @@
                                                                                                             <option value="19">19px</option>
                                                                                                             <option value="20">20px</option>
                                                                                                          </select>
-                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;measuresFontWeightChange()">
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#00a5a2': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;">
                                                                                                             <p>B</p>
                                                                                                         </div>
                                                                                                         <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#00a5a2': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2601,7 +2695,7 @@
                                                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                                                     <div class="dropup" ngbDropdown >
                                                                                         <div class="form-group mb-0 p-1">
-                                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="dataLabelsFontFamily" (change)="setDataLabelsFontFamily($event)">
+                                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="dataLabelsFontFamily" >
                                                                                                 <option value="0" selected disabled>family</option>
                                                                                                 <option value="'Arial', sans-serif">Arial</option>
                                                                                                 <option value="'Helvetica', sans-serif">Helvetica</option>
@@ -2620,7 +2714,7 @@
                                                                                         <div class="bold-italic p-1">
                                                                                             <div class="row">
                                                                                                 <div class="form-group mb-0 d-flex">
-                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="dataLabelsFontSize" (change)="setDataLabelsFontSize($event)">
+                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="dataLabelsFontSize">
                                                                                                         <option value="0" selected disabled>size</option>
                                                                                                         <option value="10px">10px</option>
                                                                                                         <option value="11px">11px</option>
@@ -2790,7 +2884,7 @@
                                                                       
                                                                       <div class="buttons">
                                                                           <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                          <button class="btn btn-primary" (click)="updateNumberFormat(); numberPopupTrigger()">Update</button>
+                                                                          <!-- <button class="btn btn-primary" (click)="updateNumberFormat(); numberPopupTrigger()">Update</button> -->
                                                                       </div>
                                                                     </div>
                                                                 }
@@ -3012,7 +3106,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="((table && bandingSwitch) || (kpi || guage) && draggedRows.length === 1) || !(calendar || map || draggedColumns.length === 0 || draggedRows.length ===0)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((table && bandingSwitch && (draggedColumns.length !== 0 || draggedRows.length !==0)) || (((kpi || guage) && draggedRows.length === 1) || !(calendar || map || table)))" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3048,7 +3142,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="backgroundColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="backgroundColor"  (ngModelChange)="setBackgroundColor(backgroundColor)"
+                                                                    [(ngModel)]="backgroundColor"
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -3116,7 +3210,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="gridLineColorSwitch"
                                                                     ngx-colors-trigger 
-                                                                    [(ngModel)]="GridColor"  (ngModelChange)="gridLineColor($event)"
+                                                                    [(ngModel)]="GridColor" 
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
@@ -3290,13 +3384,13 @@
                                                         <div *ngIf="donut" sclass="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                             <div style="display: flex;justify-content: space-between;">
                                                                 <label>Donut Size</label>
-                                                                <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5" (ngModelChange)="changeSize()">
+                                                                <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5">
                                                             </div>
                                                         </div>
                                                         <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                             <div style="display: flex;justify-content: space-between;">
                                                                 <label for="decimalInput">Decimal Places: </label>
-                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" (input)="updateDonut()" min="0" />
+                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" min="0" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -3373,14 +3467,14 @@
                                                         </ngx-colors>
                                                     </div> -->
                                                     <div *ngIf="funnel && isApexCharts">
-                                                        <div style="display: flex; justify-content: space-between;">
+                                                        <!-- <div style="display: flex; justify-content: space-between;">
                                                             <label for="sorting">Sort by:</label>
                                                             <select id="sorting" (change)="sortSeries($event)">
                                                                 <option value="0" selected disabled>select</option>
                                                                 <option value="ascending">Ascending</option>
                                                                 <option value="descending">Descending</option>
                                                             </select>
-                                                        </div>
+                                                        </div> -->
                                                         <div *ngIf="isApexCharts" style="display: flex; justify-content: space-between;">
                                                             <label>Distribution</label>
                                                             <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
@@ -3492,9 +3586,9 @@
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <label for="sorting">Sort by:</label>
-                                                        <select id="sorting" (change)="sortSeries($event)">
+                                                    <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <label for="sorting">Sort by: </label>
+                                                        <select id="sorting" [(ngModel)]="sortType">
                                                             <option value="0" selected disabled>select</option>
                                                             <option value="ascending">Ascending</option>
                                                             <option value="descending">Descending</option>
