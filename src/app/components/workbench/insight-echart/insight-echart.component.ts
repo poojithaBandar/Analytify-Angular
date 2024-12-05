@@ -1495,7 +1495,7 @@ chartInitialize(){
     }
     else{
       this.chartInitialize();
-      // this.chartInstance.setOption(this.chartOptions, true); // Full reset
+      this.chartInstance.setOption(this.chartOptions, true); // Full reset
     }
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -1503,13 +1503,15 @@ chartInitialize(){
       this.chartInitialize();
     }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
-      if(changes['chartsColumnData']?.currentValue.length>0 || changes['dualAxisColumnData']?.currentValue.length>0){
-        this.updateCategories();
+      if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
+        // this.updateCategories();
+        this.resetchartoptions();
       }
     }
     if(changes['chartsRowData'] || changes['dualAxisRowData'] ){
-      if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue.length>0){
-        this.updateSeries();
+      if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue?.length>0){
+        // this.updateSeries();
+        this.resetchartoptions();
       }
     }
     else if(changes['isZoom']){
@@ -1647,9 +1649,6 @@ chartInitialize(){
       this.updateNumberFormat();
     }
   }
-
-
-
   xLabelFontFamilySetOptions(){
     if(this.chartType !== 'heatmap'){
     let obj = {

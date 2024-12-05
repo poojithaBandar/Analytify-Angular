@@ -3568,7 +3568,7 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if((this.draggedColumns.length > 1 && this.draggedRows.length > 0 && (this.pie || this.bar || this.area || this.line || this.donut))) {
+            } else if(((this.pie || this.bar || this.area || this.line || this.donut) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
               this.bar = false;
               this.area = false;
@@ -3591,6 +3591,7 @@ bar["stack"]="Total";
               this.map = false;
               this.sidebysideBar();
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
+              this.chartType = 'sidebyside'
             }
             if(this.table){
               this.tableDisplayPagination();
