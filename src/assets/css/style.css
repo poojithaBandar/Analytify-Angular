@@ -101,7 +101,8 @@ License                         :   Licensed under ThemeForest License
 --- quill
 */
 /* ######## FONT ######## */
-@import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;500;600;700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;500;600;700&display=swap"); */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 /* ######## BOOTSTRAP ######## */
 :root {
   --body-bg-rgb:	234, 241, 251;
@@ -14225,7 +14226,7 @@ section {
 
 body {
   font-size: 0.875rem;
-  font-family: "Kumbh Sans", sans-serif;
+  font-family: "Open Sans", serif;
   background-color: var(--background);
   color: var(--default-text-color);
   line-height: 1.5;
@@ -55392,6 +55393,11 @@ input[type=range]::-webkit-slider-runnable-track {
     background: #00a5a2 !important;
     color: #fefefe;
     cursor: default;
+    
+  }
+  .ngx-pagination{
+    margin-bottom: 0px !important;
+    padding-top: 15px;
   }
   .ngx-pagination{
     margin-bottom:0px !important;
@@ -55409,5 +55415,8 @@ button.btn {
   font-size: 12px;
 }
 p {
+  font-size: 13px;
+}
+button.btn {
   font-size: 13px;
 }
