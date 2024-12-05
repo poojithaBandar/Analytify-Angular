@@ -27,10 +27,25 @@ export class HelpGuideComponent {
   searchErrorMessage : string = '';
 
   constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService){
-  }
+    if(this.router.url.includes('/insights/help-guide/sheets')){
+      this.onModule(3);
+    }
+    if(this.router.url.includes('/insights/help-guide/datasource')){
+      this.onModule(1);
+    }
+    if(this.router.url.includes('/insights/help-guide/dashboard')){
+      this.onModule(5);
+    }
+    if(this.router.url.includes('/insights/help-guide/customSql')){
+      this.onModule(2);
+    }
+    if(this.router.url.includes('/insights/help-guide/previlages')){
+      this.onModule(6);
+    }
+    }
 
   ngOnInit(): void {
-    this.router.navigate(['insights/help-guide']);
+    // this.router.navigate(['insights/help-guide']);
     this.getModulesData();
   }
 
@@ -87,6 +102,6 @@ export class HelpGuideComponent {
       console.log(error);
     }
   });
-  this.router.navigate(['insights/help-guide'], { queryParams: { search: searchValue } });
+  // this.router.navigate(['insights/help-guide'], { queryParams: { search: searchValue } });
   }
 }

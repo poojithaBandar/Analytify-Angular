@@ -153,11 +153,15 @@ apx-chart {
   position: sticky;
   top:90px;
   z-index: 900;
+  border: none !important;
+  box-shadow: none !important;
 }
 .sticky-top-publicUrl{
   position: sticky;
   top: 0;
   z-index: 900;
+  border: none !important;
+  box-shadow: none !important;
 }
 .filter-popup-right{
   position: relative !important;
@@ -322,8 +326,6 @@ a.dashboard-tab-padding.nav-link {
   display: flex;
 }
 #sticky-sidebar {
-  // background-color: #fff;
-  background-color: #fff;
   border: 1px solid #edebeb;
   border-radius: 10px;
 }

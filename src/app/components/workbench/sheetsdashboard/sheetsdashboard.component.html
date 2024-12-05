@@ -2,10 +2,10 @@
 <app-header *ngIf="publicHeader" [isPublicUrl]="publicHeader"></app-header>
 
 <div *ngIf="dashboardView">
-<app-page-header title="Dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
+<app-page-header title="Dashboard" moduleId="dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
 </div>
 <div *ngIf="sheetsNewDashboard">
-  <app-page-header title="Dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
+  <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/insights/sheets" activeitem="Dashboard"></app-page-header>
   </div>
   
   <div *ngIf="isPublicUrl" style="margin-top: 60px;">
@@ -144,7 +144,7 @@
     <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
 <div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
-	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }">
+	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }" class="card p-0" >
         <!-- <div class="card mb-0"> -->
           <!-- <div class="card-body p-0"> -->
             <div class="mobile-nav-icon px-2 mb-1" (click)="togglePanel()">
