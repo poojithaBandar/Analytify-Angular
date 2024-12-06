@@ -42,7 +42,7 @@
             <div class="card-body">
               <div class="table-responsive border" style="height: 26rem;">
                 <table class="table  text-nowrap text-md-nowrap mb-0">
-                  <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2; z-index: 5;">
+                  <thead class="table-primary" style="position: sticky;top: -1px;background-color: #2392c1; z-index: 5;">
                                      <tr>
                                          <th style="color: #fff">Title</th>
                                          <th style="color: #fff">Database Name</th>
@@ -221,8 +221,8 @@
                                                           </select>
                                                       </div>
                                                       <div class=" p-1 mt-3">
-                                                        <a style="border: #00a5a2;" [ngStyle]="gridType === 'fixed' ? { 'background-color': '#00a5a2', 'color': 'white' } : { 'background-color': 'white', 'color': '#00a5a2' }" href="javascript:void(0);" (click)="changeGridType('fixed')" class="btn">Fixed</a>
-                                                        <a style="border: #00a5a2;" [ngStyle]="gridType === 'scroll' ? { 'background-color': '#00a5a2', 'color': 'white' } : { 'background-color': 'white', 'color': '#00a5a2' }" href="javascript:void(0);" (click)="changeGridType('scroll')" class="btn">Scroll</a>
+                                                        <a style="border: #2392c1;" [ngStyle]="gridType === 'fixed' ? { 'background-color': '#2392c1', 'color': 'white' } : { 'background-color': 'white', 'color': '#2392c1' }" href="javascript:void(0);" (click)="changeGridType('fixed')" class="btn">Fixed</a>
+                                                        <a style="border: #2392c1;" [ngStyle]="gridType === 'scroll' ? { 'background-color': '#2392c1', 'color': 'white' } : { 'background-color': 'white', 'color': '#2392c1' }" href="javascript:void(0);" (click)="changeGridType('scroll')" class="btn">Scroll</a>
                                                     </div>
                                                      
                                                        <div class="row">
@@ -721,7 +721,7 @@
                                                         <div >
                                                           <ng-container *ngIf="drillThroughActionList.length > 0; else noData">
                                                             <div *ngFor="let action of drillThroughActionList" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2" (click)="setDrillThrough('',[]);actionId = action.drill_id;getActionData(action.drill_id);"
-                                                              [ngStyle]="{'background-color': actionId === action.drill_id ? '#00a5a2' : 'white','color': actionId === action.drill_id ? 'white' : 'black'}">
+                                                              [ngStyle]="{'background-color': actionId === action.drill_id ? '#2392c1' : 'white','color': actionId === action.drill_id ? 'white' : 'black'}">
                                                               <p class="p-1 mb-0 category-text">{{action.action_name}}</p>
                                                             </div>
                                                           </ng-container>
