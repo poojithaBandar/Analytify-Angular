@@ -1058,7 +1058,7 @@
                 </div>
                 @if(item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1) ){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'scroll'} : {}">
-                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
+                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" (chartClick)="onEChartClick($event,item)" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
                     </div>
                 
               } @else if(!item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1)){
