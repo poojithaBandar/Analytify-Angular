@@ -116,10 +116,10 @@ export class SheetsComponent {
   yLabelFontFamily : string = 'sans-serif';
   xlabelFontWeight : number = 400;
   ylabelFontWeight : number = 400;
-  xLabelColor : string = '#00a5a2';
-  xGridColor : string = '#00a5a2';
-  yLabelColor : string = '#00a5a2';
-  yGridColor : string = '#00a5a2';
+  xLabelColor : string = '#2392c1';
+  xGridColor : string = '#2392c1';
+  yLabelColor : string = '#2392c1';
+  yGridColor : string = '#2392c1';
   filterSearch! : string;
   editFilterSearch! : string;
   tableSearch! : string;
@@ -195,7 +195,7 @@ export class SheetsComponent {
   sheetfilter_querysets_id = null;
   editFilterId: any;
   isValuePresent: any;
-  color = '#00a5a2';
+  color = '#2392c1';
   database_name: any;
   dualAxisColumnData = [] as any;
   filterQuerySetId: any;
@@ -882,7 +882,7 @@ try {
               }
             }
           },
-          colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+          colors: ["#2392c1", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
           labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
           legend: {
             show: true,
@@ -1408,7 +1408,7 @@ try {
               }
             }]
           },
-          colors: ['#00a5a2', '#0dc9c5', '#f43f63'],
+          colors: ['#2392c1', '#0dc9c5', '#f43f63'],
           chart: {
             toolbar: {
               show: true,
@@ -4470,7 +4470,7 @@ bar["stack"]="Total";
       this.kpiColor = '#000000';
       this.GridColor = '#089ffc';
       this.backgroundColor = '#fcfcfc';
-      this.color = '#00a5a2';
+      this.color = '#2392c1';
       this.bandingSwitch = false;
       this.xLabelSwitch = true;
       this.yLabelSwitch = true;
@@ -7803,19 +7803,19 @@ fetchChartData(chartData: any){
 
   setCustomizeOptions(data: any) {
     this.isZoom = data.isZoom || true;
-    this.xGridColor = data.xGridColor || '#00a5a2';
+    this.xGridColor = data.xGridColor || '#2392c1';
     this.xGridSwitch = data.xGridSwitch || false;
     this.xLabelSwitch = data.xLabelSwitch || true;
-    this.xLabelColor = data.xLabelColor || '#00a5a2';
+    this.xLabelColor = data.xLabelColor || '#2392c1';
     this.yLabelSwitch = data.yLabelSwitch || true;
-    this.yGridColor = data.yGridColor || '#00a5a2';
+    this.yGridColor = data.yGridColor || '#2392c1';
     this.yGridSwitch = data.yGridSwitch || false;
-    this.yLabelColor = data.yLabelColor || '#00a5a2';
+    this.yLabelColor = data.yLabelColor || '#2392c1';
     this.xLabelFontFamily = data.xLabelFontFamily || 'sans-serif';
     this.xLabelFontSize = data.xLabelFontSize || 12;
     this.xlabelFontWeight = data.xlabelFontWeight || 400;
     this.backgroundColor = data.backgroundColor || '#fff';
-    this.color = data.color || '#00a5a2';
+    this.color = data.color || '#2392c1';
     this.ylabelFontWeight = data.ylabelFontWeight || 400;
     this.isBold = data.isBold || false;
     this.yLabelFontFamily = data.yLabelFontFamily || 'sans-serif';
@@ -7876,19 +7876,19 @@ fetchChartData(chartData: any){
 
   resetCustomizations(){
     this.isZoom = false;
-    this.xGridColor = '#00a5a2';
+    this.xGridColor = '#2392c1';
     this.xGridSwitch = false;
     this.xLabelSwitch = true;
-    this.xLabelColor = '#00a5a2';
+    this.xLabelColor = '#2392c1';
     this.yLabelSwitch = true;
-    this.yGridColor = '#00a5a2';
+    this.yGridColor = '#2392c1';
     this.yGridSwitch = false;
-    this.yLabelColor = '#00a5a2';
+    this.yLabelColor = '#2392c1';
     this.xLabelFontFamily = 'sans-serif';
     this.xLabelFontSize = 12;
     this.xlabelFontWeight = 400;
     this.backgroundColor = '#fff';
-    this.color = '#00a5a2';
+    this.color = '#2392c1';
     this.ylabelFontWeight = 400;
     this.isBold = false;
     this.yLabelFontFamily = 'sans-serif';
@@ -8989,7 +8989,7 @@ fetchChartData(chartData: any){
         }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #00a5a2';
+        this.selectedElement.style.border = '2px solid #2392c1';
         const color = window.getComputedStyle(element).backgroundColor;
         let object = { dataLabels: { style: { colors : [color] } } };
         let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { colors: color } }} }};
@@ -9540,7 +9540,7 @@ fetchChartData(chartData: any){
       }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #00a5a2';
+        this.selectedElement.style.border = '2px solid #2392c1';
         const color = window.getComputedStyle(element).backgroundColor;
         if(this.bar){
           this.eBarChartOptions.xAxis.axisLabel.color = color;
@@ -10061,7 +10061,7 @@ fetchChartData(chartData: any){
       }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #00a5a2';
+        this.selectedElement.style.border = '2px solid #2392c1';
         const color = window.getComputedStyle(element).backgroundColor;
         if(this.bar){
           this.eBarChartOptions.yAxis.axisLabel.color = color;
@@ -10892,7 +10892,7 @@ fetchChartData(chartData: any){
       }
       const element = event.target as HTMLElement;
       this.selectedElement = event.target as HTMLElement;
-      this.selectedElement.style.border = '2px solid #00a5a2';
+      this.selectedElement.style.border = '2px solid #2392c1';
       this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
     }
     headerColorChange(event:any){
@@ -10901,7 +10901,7 @@ fetchChartData(chartData: any){
       }
       const element = event.target as HTMLElement;
       this.selectedElement = event.target as HTMLElement;
-      this.selectedElement.style.border = '2px solid #00a5a2';
+      this.selectedElement.style.border = '2px solid #2392c1';
       this.headerFontColor = window.getComputedStyle(element).backgroundColor;
     }
     sortedData : TableRow[] = [];
