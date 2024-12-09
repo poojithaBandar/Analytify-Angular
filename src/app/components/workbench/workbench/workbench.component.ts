@@ -590,56 +590,66 @@ export class WorkbenchComponent implements OnInit{
       }
       // quickbooks Connection
       connectQuickBooks(){
-        Swal.fire({
-          title: 'This will redirect to QuickBooks SignIn page',
-          // text: 'This will redirect to QuickBooks SignIn page',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Ok'
-        }).then((result)=>{
-          if(result.isConfirmed){
-            this.workbechService.connectQuickBooks()
-            .subscribe(
-              {
-                next: (data) => {
-                  console.log(data);
-                  // this.routeUrl = data.redirection_url
-                  this.document.location.href = data.redirection_url;
-                  this.loaderService.show();
-                },
-                error: (error) => {
-                  console.log(error);
+        if(location.protocol === 'https:'){
+          Swal.fire({
+            title: 'This will redirect to QuickBooks SignIn page',
+            // text: 'This will redirect to QuickBooks SignIn page',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ok'
+          }).then((result)=>{
+            if(result.isConfirmed){
+              this.workbechService.connectQuickBooks()
+              .subscribe(
+                {
+                  next: (data) => {
+                    console.log(data);
+                    // this.routeUrl = data.redirection_url
+                    this.document.location.href = data.redirection_url;
+                    this.loaderService.show();
+                  },
+                  error: (error) => {
+                    console.log(error);
+                  }
                 }
-              }
-            )
-          }}) 
+              )
+            }}) 
+        }
+        else if(location.protocol === 'http:'){
+          this.toasterservice.info('Currently we are not Supporting to HTTP Protocol,Please use HTTPS.','info',{ positionClass: 'toast-top-right'});
+        }
       }
       connectSalesforce(){
-        Swal.fire({
-        title: 'This will redirect to Salesforce SignIn page',
-        // text: 'This will redirect to Salesforce SignIn page',
-        // icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ok'
-      }).then((result)=>{
-        if(result.isConfirmed){
-          this.workbechService.connectSalesforce()
-          .subscribe(
-            {
-              next: (data) => {
-                console.log(data);
-                // this.routeUrl = data.redirection_url
-                this.document.location.href = data.redirection_url;
-              },
-              error: (error) => {
-                console.log(error);
-              }
-            }
-          )
-        }}) 
+        if(location.protocol === 'https:'){
+          Swal.fire({
+            title: 'This will redirect to Salesforce SignIn page',
+            // text: 'This will redirect to Salesforce SignIn page',
+            // icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ok'
+          }).then((result)=>{
+            if(result.isConfirmed){
+              this.workbechService.connectSalesforce()
+              .subscribe(
+                {
+                  next: (data) => {
+                    console.log(data);
+                    // this.routeUrl = data.redirection_url
+                    this.document.location.href = data.redirection_url;
+                  },
+                  error: (error) => {
+                    console.log(error);
+                  }
+                }
+              )
+            }}) 
+        }
+        else if(location.protocol === 'http:'){
+          this.toasterservice.info('Currently we are not Supporting to HTTP Protocol,Please use HTTPS.','info',{ positionClass: 'toast-top-right'});
+        }
       }
 
     deleteDbConnection(dbId:any,fileId:any){
