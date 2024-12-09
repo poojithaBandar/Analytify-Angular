@@ -218,14 +218,15 @@ export class SheetsdashboardComponent {
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
         }
     }
-    else if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/fileId')){
-      this.sheetsNewDashboard = true;
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-        this.fileId.push(+atob(route.snapshot.params['id1']));
-        this.qrySetId.push(+atob(route.snapshot.params['id2']));
-        this.fromFileId = true;
-        }
-    }else if(currentUrl.includes('insights/home/sheetsdashboard')){
+    // else if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/fileId')){
+    //   this.sheetsNewDashboard = true;
+    //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+    //     this.fileId.push(+atob(route.snapshot.params['id1']));
+    //     this.qrySetId.push(+atob(route.snapshot.params['id2']));
+    //     this.fromFileId = true;
+    //     }
+    // }
+    else if(currentUrl.includes('insights/home/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
       if (route.snapshot.params['id3']) {
@@ -3707,12 +3708,13 @@ const obj ={
     },
     error:(error)=>{
       console.log(error)
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'oops!',
+      //   text: error.error.message,
+      //   width: '400px',
+      // })
     }
   })
 }

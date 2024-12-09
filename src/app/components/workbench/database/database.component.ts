@@ -153,18 +153,18 @@ export class DatabaseComponent {
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);
     }
-    else if(currentUrl.includes('/insights/database-connection/files/tables/')){
-      this.fromFileId=true;
-      this.fileId = +atob(route.snapshot.params['id']);
-     }
+    // else if(currentUrl.includes('/insights/database-connection/files/tables/')){
+    //   this.fromFileId=true;
+    //   this.fileId = +atob(route.snapshot.params['id']);
+    //  }
     else if(currentUrl.includes('/insights/database-connection/savedQuery/')){
-      if(currentUrl.includes('/insights/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
-        this.fileId = +atob(route.snapshot.params['id1']);
-        this.fromFileId = true;
-        this.custumQuerySetid = +atob(route.snapshot.params['id2']);
-        localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-        this.getTablesFromFileId();
-      }
+      // if(currentUrl.includes('/insights/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
+      //   this.fileId = +atob(route.snapshot.params['id1']);
+      //   this.fromFileId = true;
+      //   this.custumQuerySetid = +atob(route.snapshot.params['id2']);
+      //   localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+      //   this.getTablesFromFileId();
+      // }
       if (currentUrl.includes('/insights/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
@@ -196,24 +196,24 @@ export class DatabaseComponent {
         }
       }
     }
-    else if(currentUrl.includes('/insights/database-connection/sheets/fileId')){
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-       this.fileId = +atob(route.snapshot.params['id1']);
-       this.qurtySetId = +atob(route.snapshot.params['id2']);
-       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
-       this.fromFileId = true;
-       this.fromSheetEditDb = true;
-       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
-       if(this.datasourceQuerysetId==='null'){
-         console.log('filterqrysetid',this.datasourceQuerysetId)
-         this.datasourceQuerysetId = null
-       }
-       else{
-           parseInt(this.datasourceQuerysetId)
-           console.log(this.datasourceQuerysetId)
-         }
-       }
-     }
+    // else if(currentUrl.includes('/insights/database-connection/sheets/fileId')){
+    //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+    //    this.fileId = +atob(route.snapshot.params['id1']);
+    //    this.qurtySetId = +atob(route.snapshot.params['id2']);
+    //    localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
+    //    this.fromFileId = true;
+    //    this.fromSheetEditDb = true;
+    //    this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
+    //    if(this.datasourceQuerysetId==='null'){
+    //      console.log('filterqrysetid',this.datasourceQuerysetId)
+    //      this.datasourceQuerysetId = null
+    //    }
+    //    else{
+    //        parseInt(this.datasourceQuerysetId)
+    //        console.log(this.datasourceQuerysetId)
+    //      }
+    //    }
+    //  }
      if(currentUrl.includes('/insights/database-connection/tables/quickbooks/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
@@ -1539,7 +1539,6 @@ markDirty(){
 
   goToSheet(fromParam: string) {
     this.goToSheetButtonClicked = true;
-
       let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
 
     if (this.saveQueryName === '' || this.saveQueryName == null || this.saveQueryName == undefined) {
@@ -1550,55 +1549,56 @@ markDirty(){
         width: '400px',
       })
     } else {
-      if (this.fromFileId) {
-        const encodedFileId = btoa(this.fileId.toString());
-        const encodedQuerySetId = btoa(querySetIdToPass.toString());
-        if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
-          // Encode 'null' to represent a null value
-          const encodedDsQuerySetId = btoa('null');
-          if (this.titleMarkDirty) {
-            let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
-            this.workbechService.updateQuerySetTitle(payload).subscribe({
-              next: (data: any) => {
-                this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-              },
-              error: (error: any) => {
-                console.log(error);
-                Swal.fire({
-                  icon: 'error',
-                  title: 'oops!',
-                  text: error.error.message,
-                  width: '400px',
-                })
-              }
-            });
-          } else {
-            this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-          }
-        } else {
-          // Convert to string and encode
-          const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-          if (this.titleMarkDirty) {
-            let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
-            this.workbechService.updateQuerySetTitle(payload).subscribe({
-              next: (data: any) => {
-                this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-              },
-              error: (error: any) => {
-                console.log(error);
-                Swal.fire({
-                  icon: 'error',
-                  title: 'oops!',
-                  text: error.error.message,
-                  width: '400px',
-                })
-              }
-            });
-          } else {
-            this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-          }
-        }
-      } else if (this.fromDatabasId) {
+      // if (this.fromFileId) {
+      //   const encodedFileId = btoa(this.fileId.toString());
+      //   const encodedQuerySetId = btoa(querySetIdToPass.toString());
+      //   if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
+      //     // Encode 'null' to represent a null value
+      //     const encodedDsQuerySetId = btoa('null');
+      //     if (this.titleMarkDirty) {
+      //       let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
+      //       this.workbechService.updateQuerySetTitle(payload).subscribe({
+      //         next: (data: any) => {
+      //           this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      //         },
+      //         error: (error: any) => {
+      //           console.log(error);
+      //           Swal.fire({
+      //             icon: 'error',
+      //             title: 'oops!',
+      //             text: error.error.message,
+      //             width: '400px',
+      //           })
+      //         }
+      //       });
+      //     } else {
+      //       this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      //     }
+      //   } else {
+      //     // Convert to string and encode
+      //     const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
+      //     if (this.titleMarkDirty) {
+      //       let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
+      //       this.workbechService.updateQuerySetTitle(payload).subscribe({
+      //         next: (data: any) => {
+      //           this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      //         },
+      //         error: (error: any) => {
+      //           console.log(error);
+      //           Swal.fire({
+      //             icon: 'error',
+      //             title: 'oops!',
+      //             text: error.error.message,
+      //             width: '400px',
+      //           })
+      //         }
+      //       });
+      //     } else {
+      //       this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      //     }
+      //   }
+      // }
+        // if (this.fromDatabasId) {
         const encodedDatabaseId = btoa(this.databaseId.toString());
         const encodedQuerySetId = btoa(querySetIdToPass.toString());
         if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
@@ -1647,7 +1647,7 @@ markDirty(){
           }
         }
       }
-    }
+    // }
   }
 
 saveQuery(){
