@@ -11,5 +11,5 @@ import { LoaderComponent } from './shared/loader/loader.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'InsightApps';
+  title = 'Analytify';
 }

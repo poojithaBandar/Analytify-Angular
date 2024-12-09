@@ -5,8 +5,8 @@
 button.BtnNewStyle {
   margin-inline: 0px !important;
   border-radius: 0px !important;
-  background-color: #ccedec45;
-  border: 1px solid #0000003b;
+  background-color: rgb(35 145 192 / 7%);
+  border: 1px solid rgb(35 146 193);
 }
 .nav-link.BtnNewStyle.active {
   background: #ccedec !important;
@@ -90,7 +90,7 @@ button.BtnRowStyle.span-left {
 .example-box {
 padding: 3px 5px;
 // border-bottom: solid 1px #ccc;
-color: rgb(var(--info-rgb))!important;
+color: #2392c1 !important;
 display: flex;
 flex-direction: row;
 align-items: center;
@@ -180,10 +180,10 @@ span.abc-txt {
   display: none;
 }
 :host ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-  color: #00a5a2 !important;
+  color: #2392c1 !important;
 }
 :host ::ng-deep .mat-mdc-tab .mdc-tab-indicator__content--underline {
-  border-color: #00a5a2 !important;
+  border-color: #2392c1 !important;
 }
 #donutchart {
   width: 380px;
@@ -932,7 +932,7 @@ th, td {
   .resetColorButton{
     height: 20px;
     width: 50px;
-    background-color: #00A5A2;
+    background-color: #2392c1;
     border-radius: 5px;
     border: none;
     color: white;
@@ -942,7 +942,7 @@ th, td {
     height: 100% !important;
 }
 .aggregation-select{
-  background-color: #00A5A2;
+  background-color: #2392c1;
 }
   
 .Semantic-layer-card {

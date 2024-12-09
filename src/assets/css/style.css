@@ -106,7 +106,7 @@ License                         :   Licensed under ThemeForest License
 /* ######## BOOTSTRAP ######## */
 :root {
   --body-bg-rgb:	234, 241, 251;
-  --primary-rgb:	0, 165, 162;
+  --primary-rgb:	35, 146, 193;
   --secondary-rgb:	219, 85, 93;
   --warning-rgb:	247, 183, 37;
   --info-rgb:	23, 177, 223;
@@ -7387,7 +7387,7 @@ fieldset:disabled .button-slide-out__above {
   border-start-end-radius: var(--bs-modal-inner-border-radius);
   
   /* rajesh */
-  background-color: #009a97;
+  background-color: #2392c1;
   color: #fff;
   border-radius: 20px 20px 0px 0px !important;
   border: none;
@@ -31717,14 +31717,14 @@ body *::-webkit-scrollbar {
   height: 58px;
   width: 58px;
 }
-.folder-file svg [fill="#00a5a2"] {
+.folder-file svg [fill="#2392c1"] {
   fill: var(--primary-color);
 }
 .folder-file svg [fill="#9dd1d0"] {
   fill: var(--primary05);
 }
 
-.file-manager svg#pdf [fill="#00a5a2"] {
+.file-manager svg#pdf [fill="#2392c1"] {
   fill: var(--primary-color);
 }
 
@@ -55390,7 +55390,7 @@ input[type=range]::-webkit-slider-runnable-track {
   }
   .ngx-pagination .current {
     padding: .1875rem .625rem;
-    background: #00a5a2 !important;
+    background: #2392c1 !important;
     color: #fefefe;
     cursor: default;
     
