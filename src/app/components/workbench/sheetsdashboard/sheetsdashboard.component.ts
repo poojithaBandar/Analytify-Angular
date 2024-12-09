@@ -699,17 +699,28 @@ export class SheetsdashboardComponent {
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
           if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
           sheet.chartOptions.chart.events = {
-            dataPointSelection: function (event: any, chartContext: any, config: any) {
+            markerClick: (event: any, chartContext: any, config: any) => {
               let selectedXValue;
-              if(sheet.chartId == 24 || sheet.chartId == 10 ){
+              if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
                 selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
               } else {
                 selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
               }
-              if(self.actionId && sheet.sheetId === this.sourceSheetId){
+              if(self.actionId && sheet.sheetId === self.sourceSheetId){
+                self.setDrillThrough(selectedXValue, sheet);  
+              }
+            },
+            dataPointSelection: function (event: any, chartContext: any, config: any) {
+              let selectedXValue;
+              if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
+                selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
+              } else {
+                selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
+              }
+              if(self.actionId && sheet.sheetId === self.sourceSheetId){
                 self.setDrillThrough(selectedXValue, sheet);  
               }            
-              if (sheet.drillDownIndex < sheet.drillDownHierarchy.length - 1) {
+              if (sheet.drillDownIndex < sheet.drillDownHierarchy?.length - 1) {
                 // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
                 let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
@@ -1749,12 +1760,26 @@ allowDrop(ev : any): void {
         let self = this;
         if(element.chartOptions && element.chartOptions.chart) {
         element.chartOptions.chart.events = {
+          markerClick: (event: any, chartContext: any, config: any) => {
+            let selectedXValue;
+            if(element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4){
+              selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+            } else {
+              selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+            }
+            if(self.actionId && element.sheetId === self.sourceSheetId){
+              self.setDrillThrough(selectedXValue, element);  
+            }
+          },
           dataPointSelection: function (event: any, chartContext: any, config: any) {
             let selectedXValue;
             if(element.chartId == 24 || element.chartId == 10){
               selectedXValue = element.chartOptions.labels[config.dataPointIndex];
             } else {
               selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+            }
+            if(self.actionId && element.sheetId === self.sourceSheetId){
+              self.setDrillThrough(selectedXValue, element);  
             }
             if (element.drillDownIndex < element.drillDownHierarchy.length - 1) {
               // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
@@ -4721,6 +4746,9 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     })
   }
   getActionData(actionId : any){
+    if(this.actionId && this.actionId != 0){
+      this.setDrillThrough('',[]);
+    }
     console.log(actionId);
     this.workbechService.getDrillThroughAction(actionId).subscribe({
       next:(data)=>{
@@ -5157,8 +5185,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             if (!sheet.originalData) {
               sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
             }
-            sheet.chartOptions.xaxis.categories = categories;
-            sheet.chartOptions.series = this.filteredRowData;
+            sheet.chartOptions = {
+              ...sheet.chartOptions,
+              xaxis: {
+                ...sheet.chartOptions.xaxis,
+                categories: categories,
+              },
+              series: this.filteredRowData,
+            };
           }
         }
         else if (sheet.chartId == '26') {//heatmap
@@ -5406,7 +5440,19 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   }
   onEChartClick(event : any, item : any){
     if(this.actionId && item.sheetId === this.sourceSheetId){
-      this.setDrillThrough(event.name, item);
+      if(item.chartId == '11'){
+        this.setDrillThrough(event.value[0], item);
+      }
+      else if(item.chartId == '12'){
+        const clickedValues = event.data.value; // Get the values for the clicked data
+        const clickedIndex = clickedValues.indexOf(event.value); // Identify the index
+        const clickedIndicatorName = item.chartOptions.radar.indicator[clickedIndex]?.name;
+        this.setDrillThrough(clickedIndicatorName, item);
+      }
+      else{
+        this.setDrillThrough(event.name, item);
+      }
+      // this.setDrillThrough(event.name, item);
       const clickedValue = event.value;  // Value of the clicked data point
       const clickedCategory = event.name;  // X-axis name or category name
       const clickedSeries = event.seriesName;  // Series name (if defined)

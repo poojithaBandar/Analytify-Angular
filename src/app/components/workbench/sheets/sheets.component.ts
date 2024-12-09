@@ -3450,9 +3450,9 @@ bar["stack"]="Total";
                   // console.log(this.chartOptions3.xaxis.categories);
                   // console.log(this.chartOptions3);
                   object = [{data : this.chartsRowData}];
-                  this.barchart.updateSeries(object);
+                  // this.barchart.updateSeries(object);
                   object = {xaxis: {categories : this.chartsColumnData.map((category : any)  => category === null ? 'null' : category), convertedCatToNumeric : true}};
-                  this.barchart.updateOptions(object);
+                  // this.barchart.updateOptions(object);
                   console.log(this.barchart);
                 }
                 else if (this.piechart) {
@@ -3464,9 +3464,9 @@ bar["stack"]="Total";
                   this.chartOptions.xaxis.categories = this.chartsColumnData;
                   this.chartOptions.xaxis.convertedCatToNumeric = true;
                   object = [{data : this.chartsRowData}];
-                  this.linechart.updateSeries(object);
+                  // this.linechart.updateSeries(object);
                   object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
-                  this.linechart.updateOptions(object);
+                  // this.linechart.updateOptions(object);
                   console.log(this.linechart);
                 }
                 else if (this.areachart) {
@@ -3474,27 +3474,27 @@ bar["stack"]="Total";
                   this.chartOptions1.labels = this.chartsColumnData;
                   this.chartOptions1.xaxis.convertedCatToNumeric = true;
                   object = [{data : this.chartsRowData}];
-                  this.areachart.updateSeries(object);
+                  // this.areachart.updateSeries(object);
                   object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
-                  this.areachart.updateOptions(object);
+                  // this.areachart.updateOptions(object);
                   console.log(this.linechart);
                 }
                 else if (this.sidebysideChart) {
                   this.chartOptions2.series = this.dualAxisRowData;
                   this.chartOptions2.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.sidebysideChart.updateSeries(object);
+                  // this.sidebysideChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.sidebysideChart.updateOptions(object);
+                  // this.sidebysideChart.updateOptions(object);
                   console.log(this.sidebysideChart);
                 }
                 else if (this.stockedChart) {
                   this.chartOptions6.series = this.dualAxisRowData;
                   this.chartOptions6.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.stockedChart.updateSeries(object);
+                  // this.stockedChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.stockedChart.updateOptions(object);
+                  // this.stockedChart.updateOptions(object);
                   console.log(this.stockedChart);
                 }
                 else if (this.barlineChart) {
@@ -3505,36 +3505,36 @@ bar["stack"]="Total";
                   this.chartOptions5.labels = categories;
                   this.chartOptions5.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.barlineChart.updateSeries(object);
+                  // this.barlineChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.barlineChart.updateOptions(object);
+                  // this.barlineChart.updateOptions(object);
                   console.log(this.barlineChart);
                 }
                 else if (this.horizontolstockedChart) {
                   this.chartOptions7.series = this.dualAxisRowData;
                   this.chartOptions7.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.horizontolstockedChart.updateSeries(object);
+                  // this.horizontolstockedChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.horizontolstockedChart.updateOptions(object);
+                  // this.horizontolstockedChart.updateOptions(object);
                   console.log(this.horizontolstockedChart);
                 }
                 else if (this.groupedChart) {
                   this.chartOptions8.series = this.dualAxisRowData;
                   this.chartOptions8.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.groupedChart.updateSeries(object);
+                  // this.groupedChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.groupedChart.updateOptions(object);
+                  // this.groupedChart.updateOptions(object);
                   console.log(this.groupedChart);
                 }
                 else if (this.multilineChart) {
                   this.chartOptions9.series = this.dualAxisRowData;
                   this.chartOptions9.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.multilineChart.updateSeries(object);
+                  // this.multilineChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.multilineChart.updateOptions(object);
+                  // this.multilineChart.updateOptions(object);
                   console.log(this.multilineChart);
                 }
                 else if (this.donutchart) {
@@ -3545,18 +3545,18 @@ bar["stack"]="Total";
                   this.heatMapChartOptions.series = this.dualAxisRowData;
                   this.heatMapChartOptions.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.heatmapcharts.updateSeries(object);
+                  // this.heatmapcharts.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.heatmapcharts.updateOptions(object);
+                  // this.heatmapcharts.updateOptions(object);
                   console.log(this.heatmapcharts);
                 }
                 else if (this.funnel) {
                   this.funnelChartOptions.series = this.dualAxisRowData;
                   this.funnelChartOptions.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.funnelCharts.updateSeries(object);
+                  // this.funnelCharts.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.funnelCharts.updateOptions(object);
+                  // this.funnelCharts.updateOptions(object);
                   console.log(this.funnelCharts);
                 } else if(this.map){
                   this.mapChart();
