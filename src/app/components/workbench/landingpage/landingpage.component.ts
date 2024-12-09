@@ -198,21 +198,21 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
 
   this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
 }
-viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
+viewSheet(serverId:any,querysetId:any,sheetId:any){
   this.loaderService.show();
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
-  if (serverId === null || serverId ==='') {
-    const encodedFileId = btoa(fileId.toString());
-    this.router.navigate(['/insights/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+  // if (serverId === null || serverId ==='') {
+  //   const encodedFileId = btoa(fileId.toString());
+  //   this.router.navigate(['/insights/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
-  }
-  else if(fileId === null || fileId === ''){
+  // }
+  //  if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
     this.router.navigate(['/insights/home/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
-  }
+  // }
  
 }
 
@@ -228,18 +228,18 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.router.navigate(['insights/datasources/view-connections']) 
 
   }
-  getTablesFromConnectedDb(dbId:any,fileId:any){
+  getTablesFromConnectedDb(dbId:any){
     // const encodedId = btoa(id.toString());
     // this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
     this.loaderService.show();
-    if(dbId === null){
-      const encodedId = btoa(fileId.toString());
-      this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
-      }
-      if(fileId === null){
+    // if(dbId === null){
+    //   const encodedId = btoa(fileId.toString());
+    //   this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
+    //   }
+      // if(fileId === null){
         const encodedId = btoa(dbId.toString());
         this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
-        }
+        // }
   }
   deleteDashboard(dashboardId:any){
     Swal.fire({
@@ -280,7 +280,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
         )
       }})
   }
-  deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
+  deleteSheet(serverId:any,qurysetId:any,sheetId:any){
     const obj ={
       sheet_id:sheetId,
     }
@@ -300,7 +300,7 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
               confirmButtonText: 'Yes, delete it!'
             }).then((result)=>{
               if(result.isConfirmed){
-                const idToPass = fileId == null ? serverId : fileId;
+                const idToPass =serverId 
                 this.workbechService.deleteSheet(idToPass,qurysetId,sheetId)
                 .subscribe(
                   {
@@ -418,30 +418,30 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
     this.router.navigate(['/insights/saved-queries']) 
 
   }
-  gotoSavedQuery(dbId:any,qrySetId:any,fileId:any,isCustomSql:boolean,dsQrySetId:any){
+  gotoSavedQuery(dbId:any,qrySetId:any,isCustomSql:boolean,dsQrySetId:any){
     if(isCustomSql){ 
-    if(fileId === null){
+    // if(fileId === null){
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
 
     this.router.navigate(['insights/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
-    }
-    if(dbId === null){
-      const encodedFileId = btoa(fileId.toString());
-      const encodedQuerySetId = btoa(qrySetId.toString());
+    // }
+    // if(dbId === null){
+    //   const encodedFileId = btoa(fileId.toString());
+    //   const encodedQuerySetId = btoa(qrySetId.toString());
   
-      this.router.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
-    }
+    //   this.router.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+    // }
 
   }
   else{
     const encodeddbId = btoa(dbId?.toString());
     const encodedqurysetId = btoa(qrySetId.toString());
-    const encodedFileId = btoa(fileId?.toString());
+    // const encodedFileId = btoa(fileId?.toString());
     // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
-    const idToPass = fileId ? encodedFileId : encodeddbId;
-    const fromSource = fileId ? 'fileId' : 'dbId';
+    const idToPass = encodeddbId;
+    const fromSource = 'dbId';
 
     const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
   ? btoa('null') 

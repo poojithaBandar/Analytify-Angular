@@ -226,13 +226,6 @@ export class DatabaseComponent {
     }
   }
   ngOnInit(){
-    // {
-    //   document.querySelector('html')?.getAttribute('data-toggled') != null
-    //     ? document.querySelector('html')?.removeAttribute('data-toggled')
-    //     : document
-    //         .querySelector('html')
-    //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
-    // }
     this.loaderService.hide();
     if(!this.updateQuery && !this.fromSheetEditDb){
       if(this.fromDatabasId){
@@ -263,10 +256,6 @@ export class DatabaseComponent {
     const obj ={
       database_id:this.databaseId,
       queryset_id:this.qurtySetId || this.custumQuerySetid
-    }as any
-    if(this.fromFileId){
-      delete obj.database_id
-      obj.file_id = this.fileId
     }
     this.workbechService.getSavedQueryData(obj).subscribe({
       next:(data:any)=>{
@@ -341,6 +330,7 @@ export class DatabaseComponent {
     console.log(dropdownOptions);
   return dropdownOptions;
   }
+  //need to remove after file id chage
   getTablesFromFileId() {
     this.workbechService.getTablesFromFileId(this.fileId)
       .subscribe({
@@ -358,23 +348,6 @@ export class DatabaseComponent {
       })
 
   }
-//   getTablesFromConnectedDb(){
-//      this.workbechService.getTablesFromConnectedDb(this.databaseId).subscribe({next: (responce) => {
-//     if(Array.isArray(responce.data)){
-//       this.tableList= responce.data
-//     }
-//     else{
-//     this.tableList = this.combineArrays(responce.data)
-//     }
-//     console.log('tablelist',this.tableList)
-//     // this.databaseName = responce.database.database_name
-//     this.databaseId = responce.database.database_id
-//   },
-//   error:(error)=>{
-//     console.log(error);
-//   }
-// })
-// }
 getSchemaTablesFromConnectedDb(){
   const obj ={
     search:this.searchTables,
@@ -386,7 +359,7 @@ getSchemaTablesFromConnectedDb(){
   if(obj.querySetId === '0' || obj.querySetId === 0){
     delete obj.querySetId
   }
-  const IdToPass = this.fromFileId ? this.fileId : this.databaseId
+  const IdToPass = this.databaseId
   this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
    this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
@@ -504,23 +477,6 @@ getTablerowclms(table:any,schema:any){
     }
   })
 }
-// getTableData(){
-//   const obj ={
-//     database_id:this.databaseId,
-//     tables:[[this.draggedtables[0].schema,this.draggedtables[0].table]]
-//   }
-//   this.workbechService.getTableData(obj).subscribe({
-//     next:(data:any)=>{
-//       console.log('single table data',data);
-//       this.cutmquryTable = data
-//       this.qryTime = data.query_exection_time;
-//       this.qryRows = data.no_of_rows;
-//     },
-//     error:(error:any)=>{
-//       console.log(error)
-//     }
-//   })
-// }
 
 onDeleteItem(index: number, tableName : string) {
   // if(index <= 0){
@@ -615,10 +571,6 @@ executeQuery(){
     queryset_id:this.custumQuerySetid,
     query_name:this.saveQueryName,
   }as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
-  }
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
     delete obj.query_name
   }
@@ -660,10 +612,6 @@ downloadExcelFromCustomSql() {
     queryset_id:this.custumQuerySetid,
     query_name:this.saveQueryName,
   }as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
-  }
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
     delete obj.query_name
   }
@@ -748,16 +696,12 @@ joiningTablesWithoutQuerySetId(){
   // console.log(schemaTablePairs)
   const obj ={
     query_set_id:null,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:[],
     joining_conditions:[],
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
   } as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
-  }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
     {
@@ -794,15 +738,11 @@ joiningTables(){
    this.relationOfTables = this.relationOfTables.slice(0,this.joinTypes.length + 1);
   const obj ={
     query_set_id:this.qurtySetId,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id;
-    obj.file_id=this.fileId
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -882,15 +822,11 @@ joiningTablesFromDelete(){
    this.relationOfTables = this.relationOfTables.slice(0,this.joinTypes.length);
   const obj ={
     query_set_id:this.qurtySetId,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:this.relationOfTables,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id;
-    obj.file_id=this.fileId
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -968,16 +904,11 @@ customTableJoin(){
   if(schemaTablePairs.length >= 2){
   const obj ={
     query_set_id:this.qurtySetId,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     joining_tables: schemaTablePairs,
     join_type:this.joinTypes,
     joining_conditions:joiningConditions,
     dragged_array: {dragged_array:this.draggedtables,dragged_array_indexing:this.itemCounters},
-
-  }as any;
-  if(this.fromFileId){
-   delete obj.database_id;
-   obj.file_id = this.fileId
   }
   this.workbechService.joiningTablesTest(obj)
   .subscribe(
@@ -1077,7 +1008,7 @@ clearJoinCondns(){
 
 getJoiningTableData(){
   const obj ={
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     query_id:this.qurtySetId,
     datasource_queryset_id:this.datasourceQuerysetId,
     row_limit:this.rowLimit
@@ -1085,11 +1016,6 @@ getJoiningTableData(){
 if(obj.row_limit === null || obj.row_limit === undefined){
  delete obj.row_limit;
 }
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id=this.fileId
-  }
-
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1121,19 +1047,14 @@ if(obj.row_limit === null || obj.row_limit === undefined){
 
 downloadExcel() {
   const obj ={
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     query_id:this.qurtySetId,
     datasource_queryset_id:this.datasourceQuerysetId,
     row_limit:this.totalRows
   } as any
 if(obj.row_limit === null || obj.row_limit === undefined){
  delete obj.row_limit;
-}
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id=this.fileId
-    
-  }  
+} 
   this.workbechService.getTableJoiningData(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1204,14 +1125,10 @@ openRowsData(modal: any) {
 callColumnWithTable(){
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     query_set_id :querySetIdToPass,
     type_of_filter:'datasource',
     search : this.columnSearch
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.callColumnWithTable(obj).subscribe(
     {
@@ -1283,16 +1200,12 @@ seachColumnDataFilter() {
 selectedColumnGetRows(col:any,datatype:any){
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj ={
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     query_set_id:querySetIdToPass,
     datasource_queryset_id:this.datasourceQuerysetId,
     type_of_filter:'datasource',
     col_name:col,
     data_type:datatype,
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.colName = col;
   this.dataType = datatype;
@@ -1346,7 +1259,7 @@ getSelectedRows() {
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
   const obj = {
     filter_id:null,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
     datasource_querysetid:null,
@@ -1354,12 +1267,7 @@ getSelectedRows() {
     range_values:null,
     col_name:this.colName,
     data_type:this.dataType
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
-
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1391,11 +1299,7 @@ getDsQuerysetId(){
     datasource_queryset_id:this.datasourceQuerysetId,
     queryset_id:querySetIdToPass,
     filter_id:(this.filterParamPass === 'fromcustomsql') ? this.datasourceFilterIdArrayCustomQuery : this.datasourceFilterIdArray,
-    database_id:this.databaseId
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
+    hierarchy_id:this.databaseId
   }
   this.workbechService.getDsQuerysetId(obj).subscribe(
     {
@@ -1427,12 +1331,8 @@ getFilteredList(fromParam:any){
   this.filterParamPass = fromParam
   const obj ={
     query_set_id:querySetIdToPass,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     type_of_filter:'datasource'
-  }as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.getFilteredList(obj).subscribe(
     {
@@ -1468,13 +1368,9 @@ editFilter(id:any){
   this.editFilterId = id;
   const obj ={
     type_filter:'datasource',
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     filter_id:id,
     search : this.columnDataSearch
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.editFilter(obj).subscribe(
     {
@@ -1514,16 +1410,7 @@ deleteFilter(id:any){
       next:(data:any) =>{
         console.log(data)
         if(data){
-          // Swal.fire({
-          //   icon: 'success',
-          //   title: 'Removed!',
-          //   text: ' Filter Removed Successfully',
-          //   width: '400px',
-          //   timer: 2000,
-          //   showConfirmButton: false 
-          // })
           this.toasterService.success('Filter Removed Successfully','success',{ positionClass: 'toast-top-right'});
-
         }
         console.log('filter ids',this.datasourceFilterIdArray)
         if(this.filterParamPass ==='fromcustomsql'){
@@ -1584,7 +1471,7 @@ getSelectedRowsFromEdit() {
 
   const obj = {
     filter_id:this.datasourceFilterId || this.editFilterId,
-    database_id:this.databaseId,
+    hierarchy_id:this.databaseId,
     queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
     datasource_querysetid:null,
@@ -1592,10 +1479,6 @@ getSelectedRowsFromEdit() {
     range_values:null,
     col_name:this.colName,
     data_type:this.dataType
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
     {
@@ -1619,13 +1502,9 @@ getSelectedRowsFromEdit() {
 }
 getfilteredCustomSqlData(){
     const obj ={
-      database_id:this.databaseId,
+      hierarchy_id:this.databaseId,
       query_id:this.custumQuerySetid,
       datasource_queryset_id:this.datasourceQuerysetId
-    }as any;
-    if(this.fromFileId){
-      delete obj.database_id;
-      obj.file_id=this.fileId
     }
     this.workbechService.getTableJoiningData(obj).subscribe(
       {
@@ -1781,7 +1660,6 @@ saveQuery(){
     })
   }else{
   const obj ={
-    
     database_id:this.databaseId,
     query_set_id:this.qurtySetId,
     query_name:this.saveQueryName,
@@ -1822,10 +1700,6 @@ updateCustmQuery(){
     queryset_id:this.custumQuerySetid,
     query_name:this.saveQueryName,
     custom_query:this.sqlQuery
-  }as any
-  if(this.fromFileId){
-    delete obj.database_id
-    obj.file_id = this.fileId
   }
   this.workbechService.updateCustmQuery(obj).subscribe({
     next:(data:any)=>{

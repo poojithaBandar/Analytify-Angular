@@ -196,26 +196,26 @@ getUserSheetsList(){
     }
     })
 }
-viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
+viewSheet(serverId:any,querysetId:any,sheetId:any){
   // const encodedServerId = btoa(serverId.toString());
   const encodedQuerySetId = btoa(querysetId.toString());
   const encodedSheetId = btoa(sheetId.toString());
 
 
-  if (serverId === null || serverId === '') {
-    const encodedFileId = btoa(fileId.toString());
-    this.router.navigate(['/insights/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+  // if (serverId === null || serverId === '') {
+  //   const encodedFileId = btoa(fileId.toString());
+  //   this.router.navigate(['/insights/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
-  }
-  else if(fileId === null || fileId === ''){
+  // }
+  // else if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
     this.router.navigate(['/insights/home/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
-  }
+  // }
 
   // this.router.navigate(['/insights/home/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 }
-deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
+deleteSheet(serverId:any,qurysetId:any,sheetId:any){
   const obj ={
     sheet_id:sheetId,
   }
@@ -235,7 +235,7 @@ deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
             confirmButtonText: 'Yes, delete it!'
           }).then((result)=>{
             if(result.isConfirmed){
-              const idToPass = fileId == null ? serverId : fileId;
+              const idToPass = serverId;
 
               this.workbechService.deleteSheet(idToPass,qurysetId,sheetId)
               .subscribe(
@@ -243,12 +243,6 @@ deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
                   next:(data:any) => {
                     console.log(data);      
                     if(data){
-                      // Swal.fire({
-                      //   icon: 'success',
-                      //   title: 'Deleted!',
-                      //   text: 'Sheet Deleted Successfully',
-                      //   width: '400px',
-                      // })
                       this.toasterService.success('Sheet Deleted Successfully','success',{ positionClass: 'toast-top-right'});
 
                     }
