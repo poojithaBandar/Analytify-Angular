@@ -211,7 +211,7 @@ export class SheetsdashboardComponent {
     if(!this.isPublicUrl){
       this.editDashboard = this.viewTemplateService.editDashboard();
     }
-    if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/dbId')){
+    if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId.push(+atob(route.snapshot.params['id1']));
@@ -1941,7 +1941,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/insights/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/insights/sheetsdashboard/sheets/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         }
       // }
     } else {

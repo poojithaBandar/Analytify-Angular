@@ -165,7 +165,7 @@ export class DatabaseComponent {
       //   localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
       //   this.getTablesFromFileId();
       // }
-      if (currentUrl.includes('/insights/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      if (currentUrl.includes('/insights/database-connection/savedQuery/') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
@@ -178,7 +178,7 @@ export class DatabaseComponent {
       this.fromSavedQuery = true;
       this.getSavedQueryData();
      }
-     else if(currentUrl.includes('/insights/database-connection/sheets/dbId')){
+     else if(currentUrl.includes('/insights/database-connection/sheets/')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -1608,7 +1608,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1621,7 +1621,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         } else {
           // Convert to string and encode
@@ -1630,7 +1630,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1643,7 +1643,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         }
       }

@@ -355,7 +355,7 @@ export class SheetsComponent {
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
-    if(this.router.url.includes('/insights/sheets/dbId')){
+    if(this.router.url.includes('/insights/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -401,7 +401,7 @@ export class SheetsComponent {
   //     // this.sheetRetrive();
   //     }
   //  }
-  if(this.router.url.includes('/insights/home/dbId/sheets/')){
+  if(this.router.url.includes('/insights/home/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -437,7 +437,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    } 
-   if(this.router.url.includes('/insights/sheetsdashboard/sheets/dbId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
     console.log("landing page")
@@ -512,12 +512,12 @@ try {
       if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
         // Encode 'null' to represent a null value
        const encodedDsQuerySetId = btoa('null');
-       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
   
       } else {
         // Convert to string and encode
        const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
     
       } 
      }
@@ -533,12 +533,12 @@ try {
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
   }
@@ -6076,7 +6076,7 @@ gotoDashboard(){
   // if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
   // }
 // if(this.fromFileId){
 //   const encodedFileId = btoa(this.fileId.toString())
