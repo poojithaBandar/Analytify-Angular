@@ -968,7 +968,7 @@
                                  
                                   <div class="form-group">
                                     <label [ngClass]="{'error-label': pathError}" class="col-form-label">Path <span class="text-danger ms-1" >*</span></label>
-                                    <input [ngClass]="{'error-input': pathError}" type="file" class="form-control" [(ngModel)]="path" (change)="uploadfile($event)" [ngModelOptions]="{standalone: true}" autocomplete="fileselet" placeholder="select file" (input)="pathConditionError()">
+                                    <input [ngClass]="{'error-input': pathError}" type="file" class="form-control" [(ngModel)]="path" (change)="uploadfile($event)" accept=".db, .sqlite, .sqlite3 " [ngModelOptions]="{standalone: true}" autocomplete="fileselet" placeholder="select file" (input)="pathConditionError()">
                                     <label for="image">
                                     </label>
                                   </div>
