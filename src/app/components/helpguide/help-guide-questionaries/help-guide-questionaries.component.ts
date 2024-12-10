@@ -84,7 +84,7 @@ export class HelpGuideQuestionariesComponent {
   }
 
   changeQuestionay(slug : string){
-    this.router.navigate(['/insights/help-guide/' + slug]);
+    this.router.navigate(['/analytify/help-guide/' + slug]);
     this.slug = slug;
     this.getQuestionary();
   }

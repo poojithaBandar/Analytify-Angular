@@ -211,21 +211,22 @@ export class SheetsdashboardComponent {
     if(!this.isPublicUrl){
       this.editDashboard = this.viewTemplateService.editDashboard();
     }
-    if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/dbId')){
+    if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId.push(+atob(route.snapshot.params['id1']));
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
         }
     }
-    else if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/fileId')){
-      this.sheetsNewDashboard = true;
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-        this.fileId.push(+atob(route.snapshot.params['id1']));
-        this.qrySetId.push(+atob(route.snapshot.params['id2']));
-        this.fromFileId = true;
-        }
-    }else if(currentUrl.includes('insights/home/sheetsdashboard')){
+    // else if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/fileId')){
+    //   this.sheetsNewDashboard = true;
+    //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+    //     this.fileId.push(+atob(route.snapshot.params['id1']));
+    //     this.qrySetId.push(+atob(route.snapshot.params['id2']));
+    //     this.fromFileId = true;
+    //     }
+    // }
+    else if(currentUrl.includes('analytify/home/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
       if (route.snapshot.params['id3']) {
@@ -237,7 +238,7 @@ export class SheetsdashboardComponent {
           this.dashboardId = +atob(route.snapshot.params['id1'])
         }
       }
-        else if(currentUrl.includes('insights/sheetsdashboard')){
+        else if(currentUrl.includes('analytify/sheetsdashboard')){
           this.sheetsNewDashboard = true;
     }
     
@@ -682,11 +683,11 @@ export class SheetsdashboardComponent {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        if(data.file_id && data.file_id.length){
-          this.fileId = data.file_id;
-        }
+        // if(data.file_id && data.file_id.length){
+        //   this.fileId = data.file_id;
+        // }
         if(data.server_id && data.server_id.length){
-          this.databaseId = data.server_id;
+          this.databaseId = data.hierarchy_id;
         }
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
@@ -926,13 +927,8 @@ export class SheetsdashboardComponent {
           dashboard_name: this.dashboardName,
           dashboard_tag_name: this.dashboardTagName,
           data: this.dashboard,
-          file_id: this.fileId,
+          // file_id: this.fileId,
           donutDecimalPlaces: this.donutDecimalPlaces
-        } as any;
-  
-        if (this.fromFileId) {
-          delete obj.server_id;
-          obj.file_id = this.fileId;
         }
   
         // Save the dashboard data
@@ -947,7 +943,7 @@ export class SheetsdashboardComponent {
   
         // After saving image, navigate
         const encodedDashboardId = btoa(this.dashboardId.toString());
-        this.router.navigate(['/insights/home/sheetsdashboard/' + encodedDashboardId]);
+        this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedDashboardId]);
   
         // Show success message after navigation
         this.toasterService.success('Dashboard Saved Successfully', 'success', { positionClass: 'toast-top-right' });
@@ -1116,24 +1112,24 @@ export class SheetsdashboardComponent {
       let dashboardData = this.assignOriginalDataToDashboard();
       this.setQuerySetIds();
       let obj;
-      if(this.fileId && this.fileId.length){
-        obj ={
-          grid : this.gridType,
-          height: this.heightGrid,
-          width: this.widthGrid,
-          queryset_id:this.qrySetId,
-          sheet_ids:this.sheetsIdArray,
-          dashboard_name:this.dashboardName,
-          dashboard_tag_name:this.dashboardTagName,
-          selected_sheet_ids:this.sheetIdsDataSet,
-          data : dashboardData,
-          sheetTabs : this.sheetTabs,
-          file_id : this.fileId,
-          user_ids:this.usersForUpdateDashboard,
-          role_ids:this.rolesForUpdateDashboard,
-          donutDecimalPlaces : this.donutDecimalPlaces
-        }as any;
-      } else {
+      // if(this.fileId && this.fileId.length){
+      //   obj ={
+      //     grid : this.gridType,
+      //     height: this.heightGrid,
+      //     width: this.widthGrid,
+      //     queryset_id:this.qrySetId,
+      //     sheet_ids:this.sheetsIdArray,
+      //     dashboard_name:this.dashboardName,
+      //     dashboard_tag_name:this.dashboardTagName,
+      //     selected_sheet_ids:this.sheetIdsDataSet,
+      //     data : dashboardData,
+      //     sheetTabs : this.sheetTabs,
+      //     file_id : this.fileId,
+      //     user_ids:this.usersForUpdateDashboard,
+      //     role_ids:this.rolesForUpdateDashboard,
+      //     donutDecimalPlaces : this.donutDecimalPlaces
+      //   }as any;
+      // } else {
         obj ={
           grid : this.gridType,
           height: this.heightGrid,
@@ -1148,13 +1144,13 @@ export class SheetsdashboardComponent {
           sheetTabs : this.sheetTabs,
           user_ids:this.usersForUpdateDashboard,
           role_ids:this.rolesForUpdateDashboard
-        }as any;
-      }
+        }
+      // }
     
-    if(this.fromFileId){
-      delete obj.server_id;
-      obj['file_id'] = this.fileId;
-    }
+    // if(this.fromFileId){
+    //   delete obj.server_id;
+    //   obj['file_id'] = this.fileId;
+    // }
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
@@ -1310,17 +1306,10 @@ export class SheetsdashboardComponent {
 
   sheetsDataWithQuerysetIdTest(){
     let obj ;
-    if(this.fileId && this.fileId.length > 0){
-      obj ={
-        file_id:this.fileId[0],
-        queryset_id:this.qrySetId[0]
-      }
-    } else {
       obj ={
       server_id:this.databaseId[0],
       queryset_id:this.qrySetId[0]
       }
-    }
   
     this.workbechService.sheetsDataWithQuerysetId(obj)
     .subscribe({next: (data) => {
@@ -1337,8 +1326,8 @@ export class SheetsdashboardComponent {
       y: 0,
       x: 0,
       sheetType:sheet.sheet_type,
-      databaseId : sheet.server_id,
-      fileId : sheet.file_id,
+      databaseId : sheet.hierarchy_id,
+      // fileId : sheet.file_id,
       qrySetId : sheet.queryset_id,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
@@ -1411,8 +1400,8 @@ export class SheetsdashboardComponent {
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
-      databaseId : sheet.server_id,
-      fileId : sheet.file_id,
+      databaseId : sheet.hierarchy_id,
+      // fileId : sheet.file_id,
       qrySetId : sheet.queryset_id,
       data: { title: sheet.sheet_name, content: 'Content of card  New', sheetTagName: sheet.sheet_tag_name?sheet.sheet_tag_name:sheet.sheet_name },
       selectedSheet : sheet.selectedSheet,
@@ -1709,7 +1698,7 @@ allowDrop(ev : any): void {
         chartType:copy.chartType,
         databaseId : copy.databaseId,
         qrySetId : copy.qrySetId,
-        fileId : copy.fileId,
+        // fileId : copy.fileId,
         chartId:copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
@@ -1729,11 +1718,11 @@ allowDrop(ev : any): void {
       customizeOptions: copy.customizeOptions
       };
       // this.qrySetId.push(copy.qrySetId);
-      if(copy.fileId){
-        this.fileId.push(copy.fileId);
-      } else {
+      // if(copy.fileId){
+      //   this.fileId.push(copy.fileId);
+      // } else {
         this.databaseId.push(copy.databaseId);
-      }
+      // }
     //   if(element.chartOptions?.chart?.type === 'bar'){
     //      element['chartData'].forEach((item: { name: any; value: any; }) => {
     //       this.colArray.push(item.name);
@@ -1960,16 +1949,16 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         this.toasterService.info('Please Update the dashboard.', 'info', { positionClass: 'toast-top-center' })
       } else {
         let sheetId = sheetdata.sheetId;
-        if (sheetdata.fileId) {
-          this.fileId = sheetdata.fileId;
-          this.qrySetId = sheetdata.qrySetId;
-          const encodedServerId = btoa(this.fileId.toString());
-          const encodedQuerySetId = btoa(this.qrySetId.toString());
-          const encodedSheetId = btoa(sheetId.toString());
-          const encodedDashboardId = btoa(this.dashboardId.toString());
+        // if (sheetdata.fileId) {
+        //   this.fileId = sheetdata.fileId;
+        //   this.qrySetId = sheetdata.qrySetId;
+        //   const encodedServerId = btoa(this.fileId.toString());
+        //   const encodedQuerySetId = btoa(this.qrySetId.toString());
+        //   const encodedSheetId = btoa(sheetId.toString());
+        //   const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/insights/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
-        } else {
+        //   this.router.navigate(['/insights/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+        // } else {
           this.databaseId = sheetdata.databaseId;
           this.qrySetId = sheetdata.qrySetId;
           const encodedServerId = btoa(this.databaseId.toString());
@@ -1977,9 +1966,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/insights/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/analytify/sheetsdashboard/sheets/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         }
-      }
+      // }
     } else {
       this.toasterService.info('Please save the dashboard.', 'info', { positionClass: 'toast-top-center' })
     }
@@ -2009,13 +1998,13 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           this.deleteSheetFilter(item.sheetId);
           this.actionUpdateOnSheetRemove(item.sheetId);
         }
-      if(item.fileId){
-        let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
-        this.fileId.splice(popIndex, 1);
-      } else {
+      // if(item.fileId){
+      //   let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
+      //   this.fileId.splice(popIndex, 1);
+      // } else {
         let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
         this.databaseId.splice(popIndex, 1);
-      }
+      // }
       }
     }
     this.setDashboardNewSheets(item.sheetId, false);
@@ -2055,7 +2044,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     this.loaderService.show();
     this.qrySetId = [];
     this.databaseId = [];
-    this.fileId = [];
+    // this.fileId = [];
     this.disableDashboardUpdate = true;
     const idsArray = this.DahboardListFilters.map((obj:any) => obj.dashboard_filter_id);
     const actionsIds = this.drillThroughActionList.map((Object : any)=> Object.drill_id);
@@ -3744,12 +3733,13 @@ const obj ={
     },
     error:(error)=>{
       console.log(error)
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'oops!',
+      //   text: error.error.message,
+      //   width: '400px',
+      // })
     }
   })
 }
@@ -3870,8 +3860,8 @@ kpiData?: KpiData;
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
         chartId:sheet.chart_id,
-        databaseId : sheet.server_id,
-        fileId : sheet.file_id,
+        databaseId : sheet.hierarchy_id,
+        // fileId : sheet.file_id,
         qrySetId : sheet.queryset_id,
         isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
@@ -4008,7 +3998,7 @@ kpiData?: KpiData;
     this.dashboardName = doc.body.textContent+'';
   }
   sheetsRoute(){
-    this.router.navigate(['/insights/sheets']);  
+    this.router.navigate(['/analytify/sheets']);  
   }
 
 
@@ -4030,8 +4020,8 @@ kpiData?: KpiData;
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        this.fileId = data.file_id;
-        this.databaseId = data.server_id;
+        // this.fileId = data.file_id;
+        this.databaseId = data.hierarchy_id;
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
@@ -4248,8 +4238,8 @@ kpiData?: KpiData;
       // "id":["766"],"input_list":[["Home Appliances"]],
       "dashboard_id":this.dashboardId,
       "sheet_id":item.sheetId,
-      "database_id":item.databaseId,
-      "file_id": item.fileId,
+      "hierarchy_id":item.databaseId,
+      // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
   "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
@@ -4303,9 +4293,9 @@ kpiData?: KpiData;
       input_list:this.dataArray,
       // "id":["766"],"input_list":[["Home Appliances"]],
       "dashboard_id":this.dashboardId,
-      "file_id": item.fileId,
+      // "file_id": item.fileId,
       "sheet_id":item.sheetId,
-      "database_id":item.databaseId,
+      "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
   "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
@@ -4373,8 +4363,8 @@ pageChangeTableDisplay(item:any,page:any){
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
     input_list:this.dataArray,
-    database_id: item.databaseId,
-    file_id: item.fileId,
+    hierarchy_id: item.databaseId,
+    // file_id: item.fileId,
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
@@ -4404,8 +4394,8 @@ pageChangeTableDisplayPublic(item:any,page:any){
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
     input_list:this.dataArray,
-    database_id: item.databaseId,
-    file_id: item.fileId,
+    hierarchy_id: item.databaseId,
+    // file_id: item.fileId,
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,

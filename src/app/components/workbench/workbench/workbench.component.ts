@@ -80,21 +80,21 @@ export class WorkbenchComponent implements OnInit{
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('insights/datasources/view-connections')){
+    if(currentUrl.includes('analytify/datasources/view-connections')){
       this.databaseconnectionsList= true;  
        this.viewNewDbs= false;
     } 
-    if(currentUrl.includes('insights/datasources/new-connections')){
+    if(currentUrl.includes('analytify/datasources/new-connections')){
       this.viewNewDbs = true;
       this.databaseconnectionsList = false;
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
   routeNewDatabase(){
-    this.router.navigate(['insights/datasources/new-connections'])
+    this.router.navigate(['analytify/datasources/new-connections'])
   }
   routeViewDatabase(){
-    this.router.navigate(['insights/datasources/view-connections'])
+    this.router.navigate(['analytify/datasources/view-connections'])
   }
 
     postGreServerName = '';
@@ -135,31 +135,18 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
               console.log(responce);
               console.log('tablelist',this.tableList)
-              this.databaseName = responce.database.database_name
-              this.databaseId = responce.database.database_id
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
+                this.databaseName = responce.database.database_name
+                this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
               console.log(error);
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-              // Swal.fire({
-              //   icon:'error',
-              //   title:'error',
-              //   text:error.error.message,
-              //   width:'600px'
-              // })
-
             }
           }
         )
@@ -185,11 +172,6 @@ export class WorkbenchComponent implements OnInit{
               console.log(responce);
               this.modalService.dismissAll('close');
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Updated Successfully',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
               }
               this.getDbConnectionList();
@@ -197,13 +179,6 @@ export class WorkbenchComponent implements OnInit{
             error: (error) => {
               console.log(error);
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-              // Swal.fire({
-              //   icon:'error',
-              //   title:'error',
-              //   text:error.error.message,
-              //   width:'600px'
-              // })
-
             }
           }
         )
@@ -231,30 +206,19 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
               console.log(responce);
               console.log('tablelist',this.tableList)
-              this.databaseName = responce.database.database_name
-              this.databaseId = responce.database.database_id
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
+                this.databaseName = responce.database.database_name
+                this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
                 this.modalService.dismissAll();
                 this.openOracleForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
               console.log(error);
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-              // Swal.fire({
-              //   icon: 'warning',
-              //   text: error.error.message,
-              //   width: '300px',
-              // })
             }
           }
         )
@@ -279,27 +243,17 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
+                this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
                 this.openMySqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
               console.log(error);
-              // Swal.fire({
-              //   icon: 'warning',
-              //   text: error.error.message,
-              //   width: '300px',
-              // })
             }
           }
         )
@@ -323,27 +277,17 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
+                this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
                 this.openMicrosoftSqlServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
               console.log(error);
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-              // Swal.fire({
-              //   icon: 'warning',
-              //   text: error.error.message,
-              //   width: '300px',
-              // })
             }
           }
         )
@@ -367,17 +311,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
+                this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
                 this.openSnowflakeServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -406,17 +345,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
+                this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
                 this.openMongoDbForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -445,17 +379,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
+                this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -484,17 +413,12 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnection(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.database_id
+                this.databaseId=responce.database?.hierarchy_id
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -528,15 +452,10 @@ export class WorkbenchComponent implements OnInit{
       this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
         console.log(responce)
             if(responce){
-              // Swal.fire({
-              //   icon: 'success',
-              //   title: 'Connected',
-              //   width: '400px',
-              // })
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-              this.fileId=responce.file_id
+              this.fileId=responce.hierarchy_id
               const encodedId = btoa(this.fileId.toString());
-              this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
+              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
             }
           },
           error: (error) => {
@@ -565,16 +484,10 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.DbConnectionFiles(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
-                // Swal.fire({
-                //   icon: 'success',
-                //   title: 'Connected',
-                //   width: '400px',
-                // })
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.fileId=responce.file_id
-               
+                this.fileId=responce.hierarchy_id
                 const encodedId = btoa(this.fileId.toString());
-                this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -642,17 +555,18 @@ export class WorkbenchComponent implements OnInit{
         }}) 
       }
 
-    deleteDbConnection(dbId:any,fileId:any){
+    deleteDbConnection(id:any){
       // const obj ={
       //   database_id:dbId
       // }
       let obj: any = {};
+        obj = { hierarchy_id: id };
 
-      if (dbId) {
-        obj = { database_id: dbId };
-      } else if (fileId) {
-        obj = { file_id: fileId };
-      }
+      // if (dbId) {
+      //   obj = { database_id: dbId };
+      // } else if (fileId) {
+      //   obj = { file_id: fileId };
+      // }
       this.workbechService.deleteDbMsg(obj)
       .subscribe(
         {
@@ -669,19 +583,13 @@ export class WorkbenchComponent implements OnInit{
                 confirmButtonText: 'Yes, delete it!'
               }).then((result)=>{
                 if(result.isConfirmed){
-                  if(dbId){
-                  this.workbechService.deleteDbConnection(dbId)
+                  if(id){
+                  this.workbechService.deleteDbConnection(id)
                   .subscribe(
                     {
                       next:(data:any) => {
                         console.log(data);      
                         if(data){
-                          // Swal.fire({
-                          //   icon: 'success',
-                          //   title: 'Deleted!',
-                          //   text: 'Databse Deleted Successfully',
-                          //   width: '400px',
-                          // })
                           this.toasterservice.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                         }
                         this.getDbConnectionList();
@@ -693,34 +601,34 @@ export class WorkbenchComponent implements OnInit{
                     } 
                   )
                   }
-                  if(fileId){
-                    this.workbechService.deleteFileConnection(fileId)
-                    .subscribe(
-                      {
-                        next:(data:any) => {
-                          console.log(data);      
-                          if(data){
-                            // Swal.fire({
-                            //   icon: 'success',
-                            //   title: 'Deleted!',
-                            //   text: 'Databse Deleted Successfully',
-                            //   width: '400px',
-                            // })
-                            this.toasterservice.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
-                          }
-                          this.getDbConnectionList();
-                        },
-                        error:(error:any)=>{
-                          Swal.fire({
-                            icon: 'warning',
-                            text: error.error.message,
-                            width: '300px',
-                          })
-                          console.log(error)
-                        }
-                      } 
-                    )
-                  }
+                  // if(fileId){
+                  //   this.workbechService.deleteFileConnection(fileId)
+                  //   .subscribe(
+                  //     {
+                  //       next:(data:any) => {
+                  //         console.log(data);      
+                  //         if(data){
+                  //           // Swal.fire({
+                  //           //   icon: 'success',
+                  //           //   title: 'Deleted!',
+                  //           //   text: 'Databse Deleted Successfully',
+                  //           //   width: '400px',
+                  //           // })
+                  //           this.toasterservice.success('Database Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                  //         }
+                  //         this.getDbConnectionList();
+                  //       },
+                  //       error:(error:any)=>{
+                  //         Swal.fire({
+                  //           icon: 'warning',
+                  //           text: error.error.message,
+                  //           width: '300px',
+                  //         })
+                  //         console.log(error)
+                  //       }
+                  //     } 
+                  //   )
+                  // }
                 }})
             }
           },
@@ -753,7 +661,7 @@ export class WorkbenchComponent implements OnInit{
     this.PostGrePassword = '';
     this.OracleServiceName = '';
     this.displayName = editData.display_name;
-    this.databaseId=editData.database_id;
+    this.databaseId=editData.hierarchy_id;
     this.databaseType = editData.database_type;
     if(this.databaseType === 'oracle'){
       this.postGreDatabaseName = editData.service_name;
@@ -829,15 +737,15 @@ export class WorkbenchComponent implements OnInit{
       }
     })
   }
-  getTablesFromConnectedDb(dbId:any,fileId:any){
-    if(dbId === null){
-    const encodedId = btoa(fileId.toString());
-    this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
-    }
-    if(fileId === null){
-      const encodedId = btoa(dbId.toString());
-      this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
-      }
+  getTablesFromConnectedDb(id:any){
+    // if(dbId === null){
+    const encodedId = btoa(id.toString());
+    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+    // }
+    // if(fileId === null){
+    //   const encodedId = btoa(dbId.toString());
+    //   this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+    //   }
 }
 
   onDeleteItem(index: number) {

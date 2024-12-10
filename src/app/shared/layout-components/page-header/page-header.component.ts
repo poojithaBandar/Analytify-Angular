@@ -20,7 +20,9 @@ constructor(private route:Router){}
 
 helpRoute(){
   console.log(this.moduleId)
-  this.route.navigate([`/insights/help-guide/${this.moduleId}`])
+  this.route.navigate([`/analytify/help-guide/${this.moduleId}`])
 }
-  
+routeHome(){
+  this.route.navigate(['/analytify/home'])
+}
 }

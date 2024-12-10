@@ -8,7 +8,7 @@ import { canDeactivateGuard } from '../../can-deactivate.guard';
 
 export const admin: Routes = [
 
-  {path:'insights',children:[ 
+  {path:'analytify',children:[ 
     {
    path: 'datasources/new-connections',
    canActivate:[authGuard],
@@ -66,7 +66,7 @@ export const admin: Routes = [
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
-  path: 'database-connection/sheets/dbId/:id1/:id2/:id3',
+  path: 'database-connection/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
@@ -80,7 +80,7 @@ export const admin: Routes = [
     import('./database/database.component').then((m)=> m.DatabaseComponent)
 },
 {
-  path: 'database-connection/savedQuery/dbId/:id1/:id2',
+  path: 'database-connection/savedQuery/:id1/:id2',
   canActivate:[authGuard],
   canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
@@ -94,7 +94,7 @@ export const admin: Routes = [
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },
 {
-  path: 'sheets/dbId/:id1/:id2/:id3',
+  path: 'sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
@@ -121,7 +121,7 @@ export const admin: Routes = [
    pathMatch: 'full',
 },
 {
-  path: 'sheetscomponent/sheetsdashboard/dbId/:id1/:id2',
+  path: 'sheetscomponent/sheetsdashboard/:id1/:id2',
   canActivate:[authGuard],
   loadComponent: () =>
     import('./sheetsdashboard/sheetsdashboard.component').then((m)=> m.SheetsdashboardComponent),
@@ -149,7 +149,7 @@ export const admin: Routes = [
 },
 
 {
-  path: 'home/dbId/sheets/:id1/:id2/:id3',
+  path: 'home/sheets/:id1/:id2/:id3',
   canActivate:[authGuard],
   canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
@@ -230,7 +230,7 @@ export const admin: Routes = [
   loadComponent: () =>
     import('./sheets/sheets.component').then((m)=> m.SheetsComponent)
 },{
-  path: 'sheetsdashboard/sheets/dbId/:id1/:id2/:id3/:id4',
+  path: 'sheetsdashboard/sheets/:id1/:id2/:id3/:id4',
   canActivate:[authGuard],
   canDeactivate: [canDeactivateGuard],
   loadComponent: () =>
