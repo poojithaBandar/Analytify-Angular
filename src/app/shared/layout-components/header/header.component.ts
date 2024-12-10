@@ -235,7 +235,7 @@ export class HeaderComponent implements OnInit {
     });
   }
   routehelpGuide(){
-    this.router.navigate(['/insights/help-guide']);
+    this.router.navigate(['/analytify/help-guide']);
   }
     Search(searchText: string) {
       if (!searchText) return this.menuItems = [];
@@ -322,14 +322,14 @@ export class HeaderComponent implements OnInit {
   }
 
   routeToUserDashboard(){
-    this.router.navigate(['/insights/users/users-list'])
+    this.router.navigate(['/analytify/users/users-list'])
   }
   routeToRolesDashboard(){
-    this.router.navigate(['/insights/roles/roles-list'])
+    this.router.navigate(['/analytify/roles/roles-list'])
   }
 
   routeToConfigurePage() {
-    this.router.navigate(['/insights/configure-page/configure']);
+    this.router.navigate(['/analytify/configure-page/configure']);
   }
 
 }

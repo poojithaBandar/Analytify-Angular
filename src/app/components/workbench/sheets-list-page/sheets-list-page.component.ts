@@ -209,7 +209,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
   // }
   // else if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
-    this.router.navigate(['/insights/home/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+    this.router.navigate(['/analytify/home/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
   // }
 
@@ -274,7 +274,7 @@ deleteSheet(serverId:any,qurysetId:any,sheetId:any){
 }
 sheetsRoute(){
   if (this.selectedSheet === '0') {
-  this.router.navigate(['/insights/sheets'])  
+  this.router.navigate(['/analytify/sheets'])  
   }else{
   // if (this.dbId === null || this.dbId === undefined) {
   //   const encodedFileId = btoa(this.fileId.toString());
@@ -295,11 +295,11 @@ sheetsRoute(){
     if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
       // Encode 'null' to represent a null value
       const encodedDsQuerySetId = btoa('null');
-      this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
     }
     else {
       const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-        this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+        this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
       }
     } 
   // }

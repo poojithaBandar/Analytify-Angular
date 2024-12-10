@@ -211,7 +211,7 @@ export class SheetsdashboardComponent {
     if(!this.isPublicUrl){
       this.editDashboard = this.viewTemplateService.editDashboard();
     }
-    if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard')){
+    if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId.push(+atob(route.snapshot.params['id1']));
@@ -226,7 +226,7 @@ export class SheetsdashboardComponent {
     //     this.fromFileId = true;
     //     }
     // }
-    else if(currentUrl.includes('insights/home/sheetsdashboard')){
+    else if(currentUrl.includes('analytify/home/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
       if (route.snapshot.params['id3']) {
@@ -238,7 +238,7 @@ export class SheetsdashboardComponent {
           this.dashboardId = +atob(route.snapshot.params['id1'])
         }
       }
-        else if(currentUrl.includes('insights/sheetsdashboard')){
+        else if(currentUrl.includes('analytify/sheetsdashboard')){
           this.sheetsNewDashboard = true;
     }
     
@@ -932,7 +932,7 @@ export class SheetsdashboardComponent {
   
         // After saving image, navigate
         const encodedDashboardId = btoa(this.dashboardId.toString());
-        this.router.navigate(['/insights/home/sheetsdashboard/' + encodedDashboardId]);
+        this.router.navigate(['/analytify/home/sheetsdashboard/' + encodedDashboardId]);
   
         // Show success message after navigation
         this.toasterService.success('Dashboard Saved Successfully', 'success', { positionClass: 'toast-top-right' });
@@ -1941,7 +1941,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/insights/sheetsdashboard/sheets/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/analytify/sheetsdashboard/sheets/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         }
       // }
     } else {
@@ -3973,7 +3973,7 @@ kpiData?: KpiData;
     this.dashboardName = doc.body.textContent+'';
   }
   sheetsRoute(){
-    this.router.navigate(['/insights/sheets']);  
+    this.router.navigate(['/analytify/sheets']);  
   }
 
 
