@@ -30,7 +30,7 @@ export class HelpGuideComponent {
   }
 
   ngOnInit(): void {
-    this.router.navigate(['insights/help-guide']);
+    this.router.navigate(['analytify/help-guide']);
     this.getModulesData();
   }
 
@@ -87,6 +87,6 @@ export class HelpGuideComponent {
       console.log(error);
     }
   });
-  this.router.navigate(['insights/help-guide'], { queryParams: { search: searchValue } });
+  this.router.navigate(['analytify/help-guide'], { queryParams: { search: searchValue } });
   }
 }

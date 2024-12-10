@@ -151,10 +151,10 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   // const encodedQuerySetId = btoa(querysetId.toString());
   const encodedDashboardId = btoa(dashboardId.toString());
 
-  this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
+  this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId])
 }
 dashboardRoute(){
-this.router.navigate(['/insights/sheetsdashboard']);
+this.router.navigate(['/analytify/sheetsdashboard']);
 }
 
 

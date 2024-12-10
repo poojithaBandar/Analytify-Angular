@@ -45,7 +45,7 @@ toggleVisibility1() {
   ) {
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
-      this.router.navigate(['insights/home']);
+      this.router.navigate(['analytify/home']);
     }
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]],
@@ -83,7 +83,7 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }
     if(data.accessToken){
-      this.router.navigate(['insights/home'])
+      this.router.navigate(['analytify/home'])
     }
   },
   error:(error:any)=>{

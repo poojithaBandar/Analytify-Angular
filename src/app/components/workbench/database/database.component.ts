@@ -146,23 +146,23 @@ export class DatabaseComponent {
   itemCounters: any={};
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
-    if(currentUrl.includes('/insights/database-connection/tables/')){
+    if(currentUrl.includes('/analytify/database-connection/tables/')){
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);
     }
-    else if(currentUrl.includes('/insights/database-connection/files/tables/')){
+    else if(currentUrl.includes('/analytify/database-connection/files/tables/')){
       this.fromFileId=true;
       this.fileId = +atob(route.snapshot.params['id']);
      }
-    else if(currentUrl.includes('/insights/database-connection/savedQuery/')){
-      if(currentUrl.includes('/insights/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
+    else if(currentUrl.includes('/analytify/database-connection/savedQuery/')){
+      if(currentUrl.includes('/analytify/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
         this.fileId = +atob(route.snapshot.params['id1']);
         this.fromFileId = true;
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
         this.getTablesFromFileId();
       }
-      if (currentUrl.includes('/insights/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      if (currentUrl.includes('/analytify/database-connection/savedQuery/dbId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
@@ -175,7 +175,7 @@ export class DatabaseComponent {
       this.fromSavedQuery = true;
       this.getSavedQueryData();
      }
-     else if(currentUrl.includes('/insights/database-connection/sheets/dbId')){
+     else if(currentUrl.includes('/analytify/database-connection/sheets/dbId')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -193,7 +193,7 @@ export class DatabaseComponent {
         }
       }
     }
-    else if(currentUrl.includes('/insights/database-connection/sheets/fileId')){
+    else if(currentUrl.includes('/analytify/database-connection/sheets/fileId')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
        this.fileId = +atob(route.snapshot.params['id1']);
        this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -211,12 +211,12 @@ export class DatabaseComponent {
          }
        }
      }
-     if(currentUrl.includes('/insights/database-connection/tables/quickbooks/')){
+     if(currentUrl.includes('/analytify/database-connection/tables/quickbooks/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
     }
-    if(currentUrl.includes('/insights/database-connection/tables/salesforce/')){
+    if(currentUrl.includes('/analytify/database-connection/tables/salesforce/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
@@ -1572,7 +1572,7 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  this.router.navigate(['/insights/datasources/view-connections'])
+  this.router.navigate(['/analytify/datasources/view-connections'])
 }
 
 markDirty(){
@@ -1602,7 +1602,7 @@ markDirty(){
             let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1615,7 +1615,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         } else {
           // Convert to string and encode
@@ -1624,7 +1624,7 @@ markDirty(){
             let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1637,7 +1637,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         }
       } else if (this.fromDatabasId) {
@@ -1650,7 +1650,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1663,7 +1663,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         } else {
           // Convert to string and encode
@@ -1672,7 +1672,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1685,7 +1685,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         }
       }

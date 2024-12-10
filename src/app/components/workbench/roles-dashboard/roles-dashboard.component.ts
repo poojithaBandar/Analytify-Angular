@@ -40,11 +40,11 @@ export class RolesDashboardComponent {
   assaignedUsers =[] as any;
   addRoleDiv = false;
 constructor(public modalService:NgbModal,private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private toasterservice:ToastrService){
-  if(this.router.url.includes('/insights/roles/add-role')){
+  if(this.router.url.includes('/analytify/roles/add-role')){
     this.addRoleDiv = true;
     this.getPrevilagesList();
   }
-  if(this.router.url.includes('/insights/dashboard/role-edit')){
+  if(this.router.url.includes('/analytify/dashboard/role-edit')){
     // this.addRoleDiv = true;
     // this.getPrevilagesList();
     if (route.snapshot.params['id1'] ) {
@@ -55,7 +55,7 @@ constructor(public modalService:NgbModal,private workbechService:WorkbenchServic
       this.getRoleIdDetails(roleId);
     }
   }
-  if(this.router.url.includes('/insights/roles/roles-list')){
+  if(this.router.url.includes('/analytify/roles/roles-list')){
     this.addRoleDiv = false;
   }
 }
@@ -70,12 +70,12 @@ ngOnInit(){
 // }
 addRolesDivOpen(){
 // this.addRoleDiv = true;
-this.router.navigate(['/insights/roles/add-role'])
+this.router.navigate(['/analytify/roles/add-role'])
 }
 updateRolesDivOpen(id:any){
   const encodedRoleId = btoa(id.toString());
   // this.addRoleDiv = true;
-  this.router.navigate(['/insights/dashboard/role-edit/'+encodedRoleId]);
+  this.router.navigate(['/analytify/dashboard/role-edit/'+encodedRoleId]);
   // this.updateRole = true;
   }
 
@@ -235,7 +235,7 @@ if(this.roleTitle === ''){
     next:(data)=>{
       console.log(data);
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.router.navigate(['/insights/roles/roles-list'])
+      this.router.navigate(['/analytify/roles/roles-list'])
      },
     error:(error)=>{
       console.log(error);
@@ -348,6 +348,6 @@ editRoles(){
   }) 
 }
 viewSavedRoles(){
-  this.router.navigate(['/insights/roles/roles-list'])
+  this.router.navigate(['/analytify/roles/roles-list'])
 }
 }
