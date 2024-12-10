@@ -44,7 +44,7 @@ getToken(url:any){
             // this.getCompanyDetails();
             // const quickBooksId = data.quickbooks_id;
             const quickBooksId = btoa(data.quickbooks_id.toString());
-            this.router.navigate(['/insights/database-connection/tables/quickbooks/'+quickBooksId]);
+            this.router.navigate(['/analytify/database-connection/tables/quickbooks/'+quickBooksId]);
           }
         },
         error: (error: any) => {
@@ -56,7 +56,7 @@ getToken(url:any){
               text: error.error.message,
               width: '400px',
             })
-            this.router.navigate(['./insights/datasources/view-connections'])
+            this.router.navigate(['./analytify/datasources/view-connections'])
           }
         }
       }
@@ -78,7 +78,7 @@ getSalesforceToken(url:any){
             // this.getCompanyDetails();
             // const quickBooksId = data.quickbooks_id;
             const salesforceId = btoa(data.salesforce_id.toString());
-            this.router.navigate(['/insights/database-connection/tables/quickbooks/'+salesforceId]);
+            this.router.navigate(['/analytify/database-connection/tables/quickbooks/'+salesforceId]);
           }
         },
         error: (error: any) => {
@@ -90,7 +90,7 @@ getSalesforceToken(url:any){
               text: error.error.message,
               width: '400px',
             })
-            this.router.navigate(['./insights/datasources/view-connections'])
+            this.router.navigate(['./analytify/datasources/view-connections'])
           }
         }
       }

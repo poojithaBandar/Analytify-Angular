@@ -140,13 +140,13 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
 
-    this.route.navigate(['insights/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
+    this.route.navigate(['analytify/database-connection/savedQuery/dbId/'+encodedServerId+'/'+encodedQuerySetId])
     }
     if(dbId === null){
       const encodedFileId = btoa(fileId.toString());
       const encodedQuerySetId = btoa(qrySetId.toString());
   
-      this.route.navigate(['insights/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
+      this.route.navigate(['analytify/database-connection/savedQuery/fileId/'+encodedFileId+'/'+encodedQuerySetId])
     }
 
   }
@@ -162,7 +162,7 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
   ? btoa('null') 
   : btoa(dsQrySetId.toString()); 
-   this.route.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+   this.route.navigate(['/analytify/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     // if (dsQrySetId === null || dsQrySetId === undefined) {
     //   // Encode 'null' to represent a null value

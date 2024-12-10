@@ -204,12 +204,12 @@ viewSheet(serverId:any,fileId:any,querysetId:any,sheetId:any){
 
   if (serverId === null || serverId === '') {
     const encodedFileId = btoa(fileId.toString());
-    this.router.navigate(['/insights/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+    this.router.navigate(['/analytify/home/fileId/sheets/'+encodedFileId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
   }
   else if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
-    this.router.navigate(['/insights/home/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+    this.router.navigate(['/analytify/home/dbId/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
   }
 
@@ -280,7 +280,7 @@ deleteSheet(serverId:any,fileId:any,qurysetId:any,sheetId:any){
 }
 sheetsRoute(){
   if (this.selectedSheet === '0') {
-  this.router.navigate(['/insights/sheets'])  
+  this.router.navigate(['/analytify/sheets'])  
   }else{
   if (this.dbId === null || this.dbId === undefined) {
     const encodedFileId = btoa(this.fileId.toString());
@@ -288,11 +288,11 @@ sheetsRoute(){
     if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
       // Encode 'null' to represent a null value
       const encodedDsQuerySetId = btoa('null');
-      this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
     }
      else {
       const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-        this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+        this.router.navigate(['/analytify/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
       }
     } 
    else if (this.fileId === undefined || this.fileId === null) {
@@ -301,11 +301,11 @@ sheetsRoute(){
     if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
       // Encode 'null' to represent a null value
       const encodedDsQuerySetId = btoa('null');
-      this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+      this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
     }
     else {
       const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-        this.router.navigate(['/insights/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+        this.router.navigate(['/analytify/sheets/dbId' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
       }
     } 
   }

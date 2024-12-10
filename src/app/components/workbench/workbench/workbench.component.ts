@@ -80,21 +80,21 @@ export class WorkbenchComponent implements OnInit{
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('insights/datasources/view-connections')){
+    if(currentUrl.includes('analytify/datasources/view-connections')){
       this.databaseconnectionsList= true;  
        this.viewNewDbs= false;
     } 
-    if(currentUrl.includes('insights/datasources/new-connections')){
+    if(currentUrl.includes('analytify/datasources/new-connections')){
       this.viewNewDbs = true;
       this.databaseconnectionsList = false;
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
   routeNewDatabase(){
-    this.router.navigate(['insights/datasources/new-connections'])
+    this.router.navigate(['analytify/datasources/new-connections'])
   }
   routeViewDatabase(){
-    this.router.navigate(['insights/datasources/view-connections'])
+    this.router.navigate(['analytify/datasources/view-connections'])
   }
 
     postGreServerName = '';
@@ -147,7 +147,7 @@ export class WorkbenchComponent implements OnInit{
                 this.databaseId=responce.database?.database_id
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -244,7 +244,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openOracleForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -289,7 +289,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMySqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -333,7 +333,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMicrosoftSqlServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -377,7 +377,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openSnowflakeServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -416,7 +416,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMongoDbForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -455,7 +455,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -494,7 +494,7 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -536,7 +536,7 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.fileId=responce.file_id
               const encodedId = btoa(this.fileId.toString());
-              this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
+              this.router.navigate(['/analytify/database-connection/files/tables/'+encodedId]);
             }
           },
           error: (error) => {
@@ -574,7 +574,7 @@ export class WorkbenchComponent implements OnInit{
                 this.fileId=responce.file_id
                
                 const encodedId = btoa(this.fileId.toString());
-                this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
+                this.router.navigate(['/analytify/database-connection/files/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -832,11 +832,11 @@ export class WorkbenchComponent implements OnInit{
   getTablesFromConnectedDb(dbId:any,fileId:any){
     if(dbId === null){
     const encodedId = btoa(fileId.toString());
-    this.router.navigate(['/insights/database-connection/files/tables/'+encodedId]);
+    this.router.navigate(['/analytify/database-connection/files/tables/'+encodedId]);
     }
     if(fileId === null){
       const encodedId = btoa(dbId.toString());
-      this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+      this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
       }
 }
 
