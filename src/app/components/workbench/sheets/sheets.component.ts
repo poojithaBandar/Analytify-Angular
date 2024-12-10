@@ -362,7 +362,7 @@ export class SheetsComponent {
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
-    if(this.router.url.includes('/insights/sheets/dbId')){
+    if(this.router.url.includes('/insights/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -408,7 +408,7 @@ export class SheetsComponent {
   //     // this.sheetRetrive();
   //     }
   //  }
-  if(this.router.url.includes('/insights/home/dbId/sheets/')){
+  if(this.router.url.includes('/insights/home/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -444,7 +444,7 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    } 
-   if(this.router.url.includes('/insights/sheetsdashboard/sheets/dbId/')){
+   if(this.router.url.includes('/insights/sheetsdashboard/sheets/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
     console.log("landing page")
@@ -475,10 +475,6 @@ export class SheetsComponent {
   const obj={
     "server_id":this.databaseId,
     "queryset_id":this.qrySetId,
-}as any;
-if(this.fromFileId){
-  delete obj.server_id;
-  obj.file_id=this.fileId;
 }
 try {
   const response: any = await lastValueFrom(this.workbechService.getSheetNames(obj));
@@ -515,41 +511,42 @@ try {
     if(this.isCustomSql){
       const encodeddbId = btoa(this.databaseId?.toString());
       const encodedqurysetId = btoa(this.qrySetId.toString());
-      const encodedFileId = btoa(this.fileId?.toString());
+      // const encodedFileId = btoa(this.fileId?.toString());
 
-      const fromSource = this.fromFileId ? 'fileId' : 'dbId'
-      const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
+      const fromSource = 'dbId'
+      const idToPass =  encodeddbId;
 
       if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
         // Encode 'null' to represent a null value
        const encodedDsQuerySetId = btoa('null');
-       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
   
       } else {
         // Convert to string and encode
        const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/insights/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
     
       } 
      }
     else{
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
-    const encodedFileId = btoa(this.fileId?.toString());
+    // const encodedFileId = btoa(this.fileId?.toString());
     // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
-    const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
-    const fromSource = this.fromFileId ? 'fileId' : 'dbId'
+    const idToPass = encodeddbId;
+    const fromSource ='dbId'
   
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/insights/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])  
+     this.router.navigate(['/insights/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+  
     }
   }
 
@@ -3369,10 +3366,6 @@ bar["stack"]="Total";
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
           "search": this.tableSearch
-        } as any;
-        if (this.fromFileId) {
-          delete obj.db_id;
-          obj.file_id = this.fileId;
         }
         this.workbechService.getColumnsData(obj).subscribe({
           next: (responce: any) => {
@@ -3411,7 +3404,7 @@ bar["stack"]="Total";
           draggedColumnsObj = this.draggedColumnsData
         }
         const obj = {
-          "database_id": this.databaseId,
+          "hierarchy_id": this.databaseId,
           "queryset_id": this.qrySetId,
           "col": draggedColumnsObj,
           "row": this.draggedRowsData,
@@ -3423,10 +3416,6 @@ bar["stack"]="Total";
           "drill_down": this.drillDownObject,
           "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
           "parent_user":this.createdBy
-        } as any;
-        if (this.fromFileId) {
-          delete obj.database_id;
-          obj.file_id = this.fileId;
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
@@ -3646,8 +3635,7 @@ bar["stack"]="Total";
       tableDisplayPagination() {
         if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
           const obj = {
-            database_id: this.databaseId,
-            file_id: this.fileId,
+            hierarchy_id: this.databaseId,
             sheetqueryset_id: this.sheetfilter_querysets_id,
             queryset_id: this.qrySetId,
             page_no: this.pageNo,
@@ -4291,7 +4279,7 @@ bar["stack"]="Total";
               confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
               if (result.isConfirmed) {
-                const idToPass = this.fromFileId ? this.fileId : this.databaseId;
+                const idToPass = this.databaseId;
                 this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
                 // this.workbechService.deleteSheet(this.databaseId, this.qrySetId, this.retriveDataSheet_id).subscribe({
                 //   next: (data: any) => {
@@ -4941,10 +4929,6 @@ const obj={
     "suffix" : this.suffix
   }
 }
-}as any;
-if(this.fromFileId){
-  delete obj.server_id;
-  obj.file_id=this.fileId; 
 }
 console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
@@ -5050,10 +5034,6 @@ sheetRetrive(isDuplicate : boolean){
   const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
-}as any;
-if(this.fromFileId){
-  delete obj.server_id;
-  obj.file_id=this.fileId;
 }
 
 this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
@@ -5907,7 +5887,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   }
   filterDataGet(){
     const obj={
-      "database_id" :this.databaseId,
+      "hierarchy_id" :this.databaseId,
       "query_set_id":this.qrySetId,
       "type_of_filter" : "sheet",
       "datasource_queryset_id" :this.filterQuerySetId,
@@ -5918,10 +5898,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
        "is_calculated": this.filterType == 'calculated' ? true : false
       // "format_date":""
-}as any;
-if(this.fromFileId){
-  delete obj.database_id;
-  obj.file_id=this.fileId;
 }
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -5979,7 +5955,7 @@ if(this.fromFileId){
     this.sortedData = [];
     const obj={
     //"filter_id": this.filter_id,
-    "database_id": this.databaseId,
+    "hierarchy_id": this.databaseId,
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
@@ -5991,10 +5967,6 @@ if(this.fromFileId){
        "is_exclude":this.isExclude,
        "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
        "is_calculated": this.filterType == 'calculated' ? true : false
-}as any;
-if(this.fromFileId){
-  delete obj.database_id;
-  obj.file_id=this.fileId;
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -6015,13 +5987,9 @@ if(this.fromFileId){
     this.filterData = [];
     const obj={
       "type_filter":"chartfilter",
-      "database_id" :this.databaseId,
+      "hierarchy_id" :this.databaseId,
       "filter_id" :this.filter_id,
       "search":this.editFilterSearch
-}as any;
-if(this.fromFileId){
-  delete obj.database_id;
-  obj.file_id=this.fileId;
 }
   this.workbechService.filterEditPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -6054,7 +6022,7 @@ if(this.fromFileId){
     this.sortedData = [];
     const obj={
       "filter_id": this.filter_id,
-      "database_id": this.databaseId,
+      "hierarchy_id": this.databaseId,
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
@@ -6066,10 +6034,6 @@ if(this.fromFileId){
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false
 
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id;
-    obj.file_id=this.fileId;
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -6149,30 +6113,30 @@ editFilterCheck(data:any){
   }
 }
 gotoDashboard(){
-  if(!this.fromFileId){
+  // if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
-  }
-if(this.fromFileId){
-  const encodedFileId = btoa(this.fileId.toString())
-  const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
-}
+  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  // }
+// if(this.fromFileId){
+//   const encodedFileId = btoa(this.fileId.toString())
+//   const encodedQuerySetId = btoa(this.qrySetId.toString());
+//   this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
+// }
 }
 viewDashboard(){
-  if(this.fromFileId){
-    const encodedDatabaseId = btoa(this.fileId.toString());
-    const encodedQuerySetId = btoa(this.qrySetId.toString());
-    const encodedDashboardId = btoa(this.dashboardId.toString());
-    this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  // if(this.fromFileId){
+  //   const encodedDatabaseId = btoa(this.fileId.toString());
+  //   const encodedQuerySetId = btoa(this.qrySetId.toString());
+  //   const encodedDashboardId = btoa(this.dashboardId.toString());
+  //   this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
 
-  } else {
+  // } else {
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
   this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
-  }
+  // }
 
 }
 
@@ -7209,10 +7173,6 @@ fetchChartData(chartData: any){
         const obj = {
           "server_id": this.databaseId,
           "queryset_id": this.qrySetId,
-        } as any;
-        if (this.fromFileId) {
-          delete obj.server_id;
-          obj.file_id = this.fileId;
         }
         this.workbechService.getSheetNames(obj).subscribe({
           next: (responce: any) => {

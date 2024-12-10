@@ -245,7 +245,7 @@
                           currentPage: page,
                           totalItems: totalItems
                         }">
-                            <td (click)="getTablesFromConnectedDb(database.database_id,database.file_id)">
+                            <td (click)="getTablesFromConnectedDb(database.hierarchy_id)">
                                 <a  style="color: #05aff8;" ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                </td>
                             <td *ngIf="database.server_type === 'POSTGRESQL'">
@@ -292,7 +292,7 @@
                                   aria-label="anchor" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
-                                <a aria-label="anchor" (click)="deleteDbConnection(database.database_id,database.file_id)"
+                                <a aria-label="anchor" (click)="deleteDbConnection(database.hierarchy_id)"
                                   class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                   <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                                 </a>
@@ -339,7 +339,7 @@
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
-                                  <a (click)="getTablesFromConnectedDb(database.database_id,database.file_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
+                                  <a (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
                               </h6>
                               
                           </div>
@@ -357,7 +357,7 @@
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                             
                             <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
-                              [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.database_id,database.file_id)"
+                              [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.hierarchy_id)"
                               [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                           </div>
                       </div>

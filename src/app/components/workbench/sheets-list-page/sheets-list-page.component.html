@@ -21,7 +21,7 @@
             <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="pageNo = 1;loadSelectedSheetList();getValuesForSheetRoute($event);"  class="form-select form-select select2 fs-14 form-control border-end-0" >
               <option value="0">All</option>
               @for(sheetlist of sheetsList;track sheetlist.id){
-                <option value="{{sheetlist.id}}" [attr.data-dbid]="sheetlist.server_id" [attr.data-fileid]="sheetlist.file_id" [attr.data-field]="sheetlist.datasource_queryset_id">{{sheetlist.queryset_name}}</option>
+                <option value="{{sheetlist.id}}" [attr.data-dbid]="sheetlist.hierarchy_id" [attr.data-field]="sheetlist.datasource_queryset_id">{{sheetlist.queryset_name}}</option>
               }
   
           </select>
@@ -89,7 +89,7 @@
                               </div>
                               <div class="content">
                                 <span>Sheet Name: </span>
-                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
+                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
                                 <p class="mb-0">Created by: {{sheets.created_by}}</p>
                               </div>
                           </div>                                  
@@ -101,11 +101,11 @@
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
                                   [previledgeId]="18" [isBtn]="false"
-                                  (btnClickEvent)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                                  (btnClickEvent)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                                   [toolTip]="'Edit'" [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
                                   [previledgeId]="19" [isBtn]="false" [toolTip]="'Delete sheet'"
-                                  (btnClickEvent)="deleteSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                                  (btnClickEvent)="deleteSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                                   [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
                               
                               </div>
@@ -217,7 +217,7 @@
                   <div class="ms-2 mt-sm-0 mt-2">
                     <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                       <h6 class="mb-1">
-                          <a (click)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
+                          <a (click)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
                       </h6>
                       
                   </div>
@@ -231,11 +231,11 @@
                   </a>
                   <div class="dropdown-menu" ngbDropdownMenu>
                     <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="18" [isBtn]="false"
-                      [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                      [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                       [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                     <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'"
                       [previledgeId]="19" [isBtn]="false" [tabIndex]="0"
-                      (btnClickEvent)="deleteSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                      (btnClickEvent)="deleteSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                       [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                   </div>
               </div>

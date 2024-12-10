@@ -22,5 +22,7 @@ helpRoute(){
   console.log(this.moduleId)
   this.route.navigate([`/insights/help-guide/${this.moduleId}`])
 }
-  
+routeHome(){
+  this.route.navigate(['/insights/home'])
+}
 }
