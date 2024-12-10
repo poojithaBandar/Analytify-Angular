@@ -153,11 +153,15 @@ apx-chart {
   position: sticky;
   top:90px;
   z-index: 900;
+  border: none !important;
+  box-shadow: none !important;
 }
 .sticky-top-publicUrl{
   position: sticky;
   top: 0;
   z-index: 900;
+  border: none !important;
+  box-shadow: none !important;
 }
 .filter-popup-right{
   position: relative !important;
@@ -166,7 +170,7 @@ apx-chart {
   transform: translate3d(4.16667px, 39.1667px, 0px);
  }
  .checkbox-color{
-  border: 1px solid #00a5a2;
+  border: 1px solid #2392c1;
  }
  .dropdown-menu.filter-popover{
   width: 100%;
@@ -322,8 +326,6 @@ a.dashboard-tab-padding.nav-link {
   display: flex;
 }
 #sticky-sidebar {
-  // background-color: #fff;
-  background-color: #fff;
   border: 1px solid #edebeb;
   border-radius: 10px;
 }
