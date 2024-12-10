@@ -700,17 +700,28 @@ export class SheetsdashboardComponent {
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
           if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
           sheet.chartOptions.chart.events = {
-            dataPointSelection: function (event: any, chartContext: any, config: any) {
+            markerClick: (event: any, chartContext: any, config: any) => {
               let selectedXValue;
-              if(sheet.chartId == 24 || sheet.chartId == 10 ){
+              if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
                 selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
               } else {
                 selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
               }
-              if(self.actionId){
+              if(self.actionId && sheet.sheetId === self.sourceSheetId){
+                self.setDrillThrough(selectedXValue, sheet);  
+              }
+            },
+            dataPointSelection: function (event: any, chartContext: any, config: any) {
+              let selectedXValue;
+              if(sheet.chartId == 24 || sheet.chartId == 10 || sheet.chartId == 17 || sheet.chartId == 4){
+                selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
+              } else {
+                selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
+              }
+              if(self.actionId && sheet.sheetId === self.sourceSheetId){
                 self.setDrillThrough(selectedXValue, sheet);  
               }            
-              if (sheet.drillDownIndex < sheet.drillDownHierarchy.length - 1) {
+              if (sheet.drillDownIndex < sheet.drillDownHierarchy?.length - 1) {
                 // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
                 let nestedKey = sheet.drillDownHierarchy[sheet.drillDownIndex];
@@ -1738,12 +1749,26 @@ allowDrop(ev : any): void {
         let self = this;
         if(element.chartOptions && element.chartOptions.chart) {
         element.chartOptions.chart.events = {
+          markerClick: (event: any, chartContext: any, config: any) => {
+            let selectedXValue;
+            if(element.chartId == 24 || element.chartId == 10 || element.chartId == 17 || element.chartId == 4){
+              selectedXValue = element.chartOptions.labels[config.dataPointIndex];
+            } else {
+              selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+            }
+            if(self.actionId && element.sheetId === self.sourceSheetId){
+              self.setDrillThrough(selectedXValue, element);  
+            }
+          },
           dataPointSelection: function (event: any, chartContext: any, config: any) {
             let selectedXValue;
             if(element.chartId == 24 || element.chartId == 10){
               selectedXValue = element.chartOptions.labels[config.dataPointIndex];
             } else {
               selectedXValue = element.chartOptions.xaxis.categories[config.dataPointIndex];
+            }
+            if(self.actionId && element.sheetId === self.sourceSheetId){
+              self.setDrillThrough(selectedXValue, element);  
             }
             if (element.drillDownIndex < element.drillDownHierarchy.length - 1) {
               // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
@@ -4711,6 +4736,9 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     })
   }
   getActionData(actionId : any){
+    if(this.actionId && this.actionId != 0){
+      this.setDrillThrough('',[]);
+    }
     console.log(actionId);
     this.workbechService.getDrillThroughAction(actionId).subscribe({
       next:(data)=>{
@@ -4855,81 +4883,493 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   applyDrillthroughToDashboard(drillThroughSheetId: string) {
     this.dashboard.forEach((sheet: any) => {
       if (sheet.sheetId == drillThroughSheetId) {
-        if (!sheet.originalData) {
-          sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+        if (sheet.chartId == '1') {//table
+          if (!sheet.originalData) {
+            sheet['originalData'] = _.cloneDeep({ tableData: sheet.tableData });
+          }
+          this.tablePreviewColumn = sheet.columns;
+          this.tablePreviewRow = sheet.rows;
+          let rowCount: any;
+          if (this.tablePreviewColumn[0]?.result?.length) {
+            rowCount = this.tablePreviewColumn[0]?.result?.length;
+          } else {
+            rowCount = this.tablePreviewRow[0]?.result?.length;
+          }
+          //const rowCount = this.tablePreviewRow[0]?.result_data?.length;
+          // Extract column names
+          sheet.tableData.headers = this.tablePreviewColumn.map((col: any) => col.column).concat(this.tablePreviewRow.map((row: any) => row.column));
+          // Create table data
+          sheet.tableData.rows = [];
+          for (let i = 0; i < rowCount; i++) {
+            const row: TableRow = {};
+            this.tablePreviewColumn.forEach((col: any) => {
+              row[col.column] = col.result[i];
+            });
+            this.tablePreviewRow.forEach((rowData: any) => {
+              row[rowData.column] = rowData.result[i];
+            });
+            sheet.tableData.rows.push(row);
+          }
         }
+        else if (sheet.chartId == '6') {//bar
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            sheet.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+            sheet.echartOptions.series[0].data = this.filteredRowData[0].data;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
+            sheet.chartOptions.series = this.filteredRowData;
+          }
+        }
+        else if (sheet.chartId == '24') {//pie
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            let combinedArray = this.filteredRowData[0].data.map((value: any, index: number) => ({
+              value: value,
+              name: this.filteredColumnData[0].values[index]
+            }));
+            sheet.echartOptions.series[0].data = combinedArray;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
+            sheet.chartOptions.series = this.filteredRowData[0].data;
+          }
+        }
+        else if (sheet.chartId == '10') {//donut
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            let combinedArray = this.filteredRowData[0].data.map((value: any, index: number) => ({
+              value: value,
+              name: this.filteredColumnData[0].values[index]
+            }));
+            sheet.echartOptions.series[0].data = combinedArray;
+            sheet.echartOptions = {
+              ...sheet.echartOptions
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
+            sheet.chartOptions.series = this.filteredRowData[0].data;
+          }
+        }
+        else if (sheet.chartId == '13') {//line
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            sheet.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+            sheet.echartOptions.series[0].data = this.filteredRowData[0].data;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
 
-        if (sheet.chartId == '6') {//bar
-          sheet.chartOptions.xaxis.categories = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
-          sheet.chartOptions.series = this.filteredRowData;
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
         }
-        if (sheet.chartId == '24') {//pie
-          sheet.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
-          sheet.chartOptions.series = this.filteredRowData[0].data;
+        else if (sheet.chartId == '17') {//area
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            sheet.echartOptions.xAxis.data = this.filteredColumnData[0].values;
+            sheet.echartOptions.series[0].data = this.filteredRowData[0].data;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.labels = this.filteredColumnData[0].values;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
         }
-        if (sheet.chartId == '10') {//donut
-          sheet.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
-          sheet.chartOptions.series = this.filteredRowData[0].data;
-        }
-        if (sheet.chartId == '13') {//line
-          sheet.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
-          sheet.chartOptions.series = this.filteredRowData;
-        }
-        if (sheet.chartId == '17') {//area
-          sheet.chartOptions.labels = this.filteredColumnData[0].values;
-          sheet.chartOptions.series = this.filteredRowData;
-        }
-        if (sheet.chartId == '7') {//sidebyside
+        else if (sheet.chartId == '7') {//sidebyside
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.xaxis.categories = categories;
-          sheet.chartOptions.series = this.filteredRowData;
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            this.filteredRowData.forEach((bar: any) => {
+              bar["type"] = "bar";
+            });
+            sheet.echartOptions.xAxis.data = _.cloneDeep(categories);
+            sheet.echartOptions.series = _.cloneDeep(this.filteredRowData);
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = categories;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
         }
-        if (sheet.chartId == '2') {//hstacked
+        else if (sheet.chartId == '2') {//hstacked
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.xaxis.categories = categories;
-          sheet.chartOptions.series = this.filteredRowData;
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            this.filteredRowData.forEach((bar: any) => {
+              bar["type"] = "bar";
+              bar["stack"] = "total";
+            });
+            sheet.echartOptions.yAxis.data = _.cloneDeep(categories);
+            sheet.echartOptions.series = _.cloneDeep(this.filteredRowData);
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = categories;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
         }
-        if (sheet.chartId == '5') {//stacked
+        else if (sheet.chartId == '5') {//stacked
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.xaxis.categories = categories;
-          sheet.chartOptions.series = this.filteredRowData;
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            this.filteredRowData.forEach((bar: any) => {
+              bar["type"] = "bar";
+              bar["stack"] = "total";
+            });
+            sheet.echartOptions.xAxis.data = _.cloneDeep(categories);
+            sheet.echartOptions.series = _.cloneDeep(this.filteredRowData);
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = categories;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
         }
-        if (sheet.chartId == '4') {//barline
+        else if (sheet.chartId == '4') {//barline
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.labels = categories;
-          sheet.chartOptions.series[0].data = this.filteredRowData[0].data;
-          sheet.chartOptions.series[1].data = this.filteredRowData[1].data;
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            sheet.echartOptions.xAxis[0].data = categories;
+            sheet.echartOptions.series[0].data = this.filteredRowData[0].data;
+            sheet.echartOptions.series[1].data = this.filteredRowData[1].data;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.labels = categories;
+            sheet.chartOptions.series[0].data = this.filteredRowData[0].data;
+            sheet.chartOptions.series[1].data = this.filteredRowData[1].data;
+          }
         }
-        if (sheet.chartId == '3') {//hgrouped
+        else if (sheet.chartId == '3') {//hgrouped
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.xaxis.categories = categories;
-          sheet.chartOptions.series = this.filteredRowData;
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            this.filteredRowData.forEach((bar: any) => {
+              bar["type"] = "bar";
+            });
+            sheet.echartOptions.yAxis.data = _.cloneDeep(categories);
+            sheet.echartOptions.series = _.cloneDeep(this.filteredRowData);
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = categories;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
         }
-        if (sheet.chartId == '8') {//multiline
+        else if (sheet.chartId == '8') {//multiline
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.xaxis.categories = categories;
-          sheet.chartOptions.series = this.filteredRowData;
-          // sheet.chartOptions = {
-          //   ...sheet.chartOptions,
-          // };
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            this.filteredRowData.forEach((bar: any) => {
+              bar["type"] = "line";
+              bar["stack"] = "total";
+            });
+            sheet.echartOptions.xAxis.data = _.cloneDeep(categories);
+            sheet.echartOptions.series = _.cloneDeep(this.filteredRowData);
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = categories;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
         }
-        if (sheet.chartId == '27') {//funnel
+        else if (sheet.chartId == '27') {//funnel
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.xaxis.categories = categories;
-          sheet.chartOptions.series = this.filteredRowData;
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            const combinedArray: any[] = [];
+            this.filteredColumnData.forEach((item: any) => {
+              this.filteredRowData.forEach((categoryObj: any) => {
+                item.values.forEach((value: any, index: number) => {
+                  combinedArray.push({
+                    name: value,
+                    value: categoryObj.data[index]
+                  });
+                });
+              });
+            });
+            sheet.echartOptions.series[0].data = combinedArray;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          } else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions = {
+              ...sheet.chartOptions,
+              xaxis: {
+                ...sheet.chartOptions.xaxis,
+                categories: categories,
+              },
+              series: this.filteredRowData,
+            };
+          }
         }
-        if (sheet.chartId == '26') {//heatmap
+        else if (sheet.chartId == '26') {//heatmap
           const dimensions: Dimension[] = this.filteredColumnData
           const categories = this.flattenDimensions(dimensions)
-          sheet.chartOptions.xaxis.categories = categories;
-          sheet.chartOptions.series = this.filteredRowData;
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            sheet.echartOptions.xAxis.data = _.cloneDeep(categories);
+            const heatmapData: any[][] = [];
+            this.filteredRowData.forEach((row: { data: (null | undefined)[]; }, rowIndex: any) => {
+              row.data.forEach((value: null | undefined, colIndex: any) => { // Assuming each row has a `data` array
+                if (value !== null && value !== undefined) { // Ensure value is valid
+                  heatmapData.push([colIndex, rowIndex, value]); // [xIndex, yIndex, value]
+                }
+              });
+            });
+            sheet.echartOptions.series.data = heatmapData;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          }
+          else {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+            }
+            sheet.chartOptions.xaxis.categories = categories;
+            sheet.chartOptions.series = this.filteredRowData;
+          }
+        }
+        else if (sheet.chartId == '28') {//guage
+          if (!sheet.originalData) {
+            sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+          }
+          let seriesval = [Math.round((this.filteredRowData[0]?.data[0] / (sheet.chartOptions.plotOptions.radialBar.max - sheet.chartOptions.plotOptions.radialBar.min)) * 100)]
+          sheet.chartOptions.series = seriesval;
+        }
+        if (sheet.chartId == '12') {//radar
+          const dimensions: Dimension[] = this.filteredColumnData;
+          const categories = this.flattenDimensions(dimensions);
+          let radarArray = categories.map((value: any, index: number) => ({
+            name: categories[index]
+          }));
+          let legendArray = this.filteredRowData.map((data: any) => ({
+            name: data.name
+          }));
+          const transformedArray = this.filteredRowData.map((obj: any) => ({
+            name: obj.name,
+            value: obj.data
+          }));
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            sheet.echartOptions.radar.indicator = radarArray;
+            sheet.echartOptions.legend = legendArray;
+            sheet.echartOptions.series[0].data = transformedArray;
+            sheet.echartOptions = {
+              ...sheet.echartOptions,
+            };
+          }
+        }
+        else if (sheet.chartId == '29') {//world MAP
+          if (!sheet.originalData) {
+            sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+          }
+          let minData = 0;
+          const maxData = Math.max(...this.filteredRowData[0].data);
+          let result: any[] = [];
+
+          // Loop through the countries (assuming both data sets align by index)
+          this.filteredColumnData[0].values.forEach((country: string, index: number) => {
+            // Create an object for each country
+            const countryData: any = { name: country, value: this.filteredRowData[0].data[index] };
+
+            // Add each measure to the country object
+            this.filteredRowData.forEach((measure: any) => {
+              const measureName = measure.name; // e.g., sum(Sales), sum(Quantity)
+              const measureValue = measure.data[index]; // Value for that measure
+              countryData[measureName] = measureValue;
+            });
+
+            result.push(countryData);
+          });
+          if (this.filteredRowData && this.filteredRowData[0]?.length > 1) {
+            minData = Math.min(...this.filteredRowData[0].data);
+          }
+          sheet.echartOptions.tooltip = {
+            formatter: (params: any) => {
+              const { name, data } = params;
+              if (data) {
+                const keys = Object.keys(data);
+                const values = Object.values(data);
+                let formattedString = '';
+                keys.forEach((key, index) => {
+                  if (key)
+                    formattedString += `${key}: ${values[index]}<br/>`;
+                });
+
+                return formattedString;
+
+              } else {
+                return `${name}: No Data`;
+              }
+            },
+            trigger: 'item',
+            showDelay: 0,
+            transitionDuration: 0.2
+          };
+          sheet.echartOptions.visualMap.min = minData;
+          sheet.echartOptions.visualMap.max = maxData;
+          sheet.echartOptions.series[0].data = result;
+          sheet.echartOptions = {
+            ...sheet.echartOptions,
+          };
+        }
+        else if (sheet.chartId == '11') {//calendar
+          if (sheet.isEChart) {
+            if (!sheet.originalData) {
+              sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.echartOptions });
+            }
+            let calendarData: any[] = [];
+            let years: Set<any> = new Set();
+            console.log(this.filteredColumnData);
+            console.log(this.filteredRowData);
+            this.filteredColumnData.forEach((data: any) => {
+              data?.values.forEach((column: any, index: any) => {
+                let arr = [new Date(column).toISOString().split('T')[0], this.filteredRowData[0]?.data[index]];
+                calendarData.push(arr);
+
+                const year = new Date(column).getFullYear();
+                years.add(year);
+              })
+            });
+            let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+            let series = yearArray.map((year: any) => {
+              const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
+              return {
+                type: 'heatmap',
+                coordinateSystem: 'calendar',
+                calendarIndex: yearArray.indexOf(year),
+                data: yearData
+              };
+            });
+
+            const calendarHeight = 100;  // Adjust height for better visibility
+            const yearGap = 20;  // Reduced gap between years
+            const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+
+            // Create multiple calendar instances, one for each year
+            let calendars = yearArray.map((year: any, idx: any) => ({
+              top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+              range: year.toString(),
+              cellSize: ['auto', 10],
+              splitLine: {
+                show: true,
+                lineStyle: {
+                  color: '#000',
+                  width: 1
+                }
+              },
+              yearLabel: {
+                margin: 20
+              }
+            }));
+
+            const minValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
+            const maxValue = this.filteredRowData[0].data.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
+            console.log(minValue + ' ' + maxValue);
+
+            sheet.echartOptions.series = series;
+            sheet.echartOptions.calendar = calendars;
+            sheet.echartOptions.visualMap.min = minValue;
+            sheet.echartOptions.visualMap.max = maxValue;
+            sheet.echartOptions = { ...sheet.echartOptions };
+            console.log(calendarData);
+            console.log(sheet.echartOptions);
+          }
+        }
+        if(sheet.chartId == '25'){//KPI
+          if(!sheet.originalData ){
+            sheet['originalData'] = _.cloneDeep(sheet['kpiData']);
+          }
+          let obj = {column : sheet.rows[0].column , result_data : sheet.rows[0].result}
+          sheet['kpiData'].rows = [obj];
+          sheet.kpiData.kpiNumber = this.formatKPINumber(sheet.rows[0].result[0], sheet.kpiData.kpiDecimalUnit , sheet.kpiData.kpiDecimalPlaces, sheet.kpiData.kpiPrefix, sheet.kpiData.kpiSuffix);
         }
         this.filteredColumnData = [];
         this.filteredRowData = [];
@@ -4987,6 +5427,31 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
       }
     })
+  }
+  onEChartClick(event : any, item : any){
+    if(this.actionId && item.sheetId === this.sourceSheetId){
+      if(item.chartId == '11'){
+        this.setDrillThrough(event.value[0], item);
+      }
+      else if(item.chartId == '12'){
+        const clickedValues = event.data.value; // Get the values for the clicked data
+        const clickedIndex = clickedValues.indexOf(event.value); // Identify the index
+        const clickedIndicatorName = item.chartOptions.radar.indicator[clickedIndex]?.name;
+        this.setDrillThrough(clickedIndicatorName, item);
+      }
+      else{
+        this.setDrillThrough(event.name, item);
+      }
+      // this.setDrillThrough(event.name, item);
+      const clickedValue = event.value;  // Value of the clicked data point
+      const clickedCategory = event.name;  // X-axis name or category name
+      const clickedSeries = event.seriesName;  // Series name (if defined)
+
+      // Log the details
+      console.log('Value:', clickedValue);
+      console.log('Category:', clickedCategory);
+      console.log('Series Name:', clickedSeries);
+    }
   }
 }
 // export interface CustomGridsterItem extends GridsterItem {
