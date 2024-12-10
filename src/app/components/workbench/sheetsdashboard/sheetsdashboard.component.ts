@@ -179,6 +179,18 @@ export class SheetsdashboardComponent {
   isDraggingDisabled = false;
   isSampleDashboard: boolean = false;;
 
+  sourceSheetId : any = 0;
+  targetSheetIds : any[] = [];
+  drillThroughQuerySetId : any = 0;
+  dashboardActionsList : any[] = [];
+  actionName = '';
+  sourceSheetList: any[] = [];
+  targetSheetList : any[] = [];
+  isAllTargetSheetsSelected : boolean = false;
+  editActions : boolean = false;
+  actionId : any;
+  drillThroughActionList : any[] =[];
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
@@ -199,21 +211,22 @@ export class SheetsdashboardComponent {
     if(!this.isPublicUrl){
       this.editDashboard = this.viewTemplateService.editDashboard();
     }
-    if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard/dbId')){
+    if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard')){
       this.sheetsNewDashboard = true;
       if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId.push(+atob(route.snapshot.params['id1']));
         this.qrySetId.push(+atob(route.snapshot.params['id2']));
         }
     }
-    else if(currentUrl.includes('analytify/sheetscomponent/sheetsdashboard/fileId')){
-      this.sheetsNewDashboard = true;
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
-        this.fileId.push(+atob(route.snapshot.params['id1']));
-        this.qrySetId.push(+atob(route.snapshot.params['id2']));
-        this.fromFileId = true;
-        }
-    }else if(currentUrl.includes('analytify/home/sheetsdashboard')){
+    // else if(currentUrl.includes('insights/sheetscomponent/sheetsdashboard/fileId')){
+    //   this.sheetsNewDashboard = true;
+    //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+    //     this.fileId.push(+atob(route.snapshot.params['id1']));
+    //     this.qrySetId.push(+atob(route.snapshot.params['id2']));
+    //     this.fromFileId = true;
+    //     }
+    // }
+    else if(currentUrl.includes('analytify/home/sheetsdashboard')){
       this.dashboardView = true;
       this.updateDashbpardBoolen= true
       if (route.snapshot.params['id3']) {
@@ -358,6 +371,7 @@ export class SheetsdashboardComponent {
           this.getSavedDashboardData();
           // this.sheetsDataWithQuerysetId();
           this.getDashboardFilterredList();
+          this.getDrillThroughActionList();
         }
     });    
    
@@ -669,11 +683,11 @@ export class SheetsdashboardComponent {
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        if(data.file_id && data.file_id.length){
-          this.fileId = data.file_id;
-        }
+        // if(data.file_id && data.file_id.length){
+        //   this.fileId = data.file_id;
+        // }
         if(data.server_id && data.server_id.length){
-          this.databaseId = data.server_id;
+          this.databaseId = data.hierarchy_id;
         }
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
@@ -692,7 +706,10 @@ export class SheetsdashboardComponent {
                 selectedXValue = sheet.chartOptions.labels[config.dataPointIndex];
               } else {
                 selectedXValue = sheet.chartOptions.xaxis.categories[config.dataPointIndex];
-              }              
+              }
+              if(self.actionId){
+                self.setDrillThrough(selectedXValue, sheet);  
+              }            
               if (sheet.drillDownIndex < sheet.drillDownHierarchy.length - 1) {
                 // const selectedXValue = element.chartOptions.series[0].data[config.dataPointIndex];
                 console.log('X-axis value:', selectedXValue);
@@ -899,13 +916,8 @@ export class SheetsdashboardComponent {
           dashboard_name: this.dashboardName,
           dashboard_tag_name: this.dashboardTagName,
           data: this.dashboard,
-          file_id: this.fileId,
+          // file_id: this.fileId,
           donutDecimalPlaces: this.donutDecimalPlaces
-        } as any;
-  
-        if (this.fromFileId) {
-          delete obj.server_id;
-          obj.file_id = this.fileId;
         }
   
         // Save the dashboard data
@@ -1089,24 +1101,24 @@ export class SheetsdashboardComponent {
       let dashboardData = this.assignOriginalDataToDashboard();
       this.setQuerySetIds();
       let obj;
-      if(this.fileId && this.fileId.length){
-        obj ={
-          grid : this.gridType,
-          height: this.heightGrid,
-          width: this.widthGrid,
-          queryset_id:this.qrySetId,
-          sheet_ids:this.sheetsIdArray,
-          dashboard_name:this.dashboardName,
-          dashboard_tag_name:this.dashboardTagName,
-          selected_sheet_ids:this.sheetIdsDataSet,
-          data : dashboardData,
-          sheetTabs : this.sheetTabs,
-          file_id : this.fileId,
-          user_ids:this.usersForUpdateDashboard,
-          role_ids:this.rolesForUpdateDashboard,
-          donutDecimalPlaces : this.donutDecimalPlaces
-        }as any;
-      } else {
+      // if(this.fileId && this.fileId.length){
+      //   obj ={
+      //     grid : this.gridType,
+      //     height: this.heightGrid,
+      //     width: this.widthGrid,
+      //     queryset_id:this.qrySetId,
+      //     sheet_ids:this.sheetsIdArray,
+      //     dashboard_name:this.dashboardName,
+      //     dashboard_tag_name:this.dashboardTagName,
+      //     selected_sheet_ids:this.sheetIdsDataSet,
+      //     data : dashboardData,
+      //     sheetTabs : this.sheetTabs,
+      //     file_id : this.fileId,
+      //     user_ids:this.usersForUpdateDashboard,
+      //     role_ids:this.rolesForUpdateDashboard,
+      //     donutDecimalPlaces : this.donutDecimalPlaces
+      //   }as any;
+      // } else {
         obj ={
           grid : this.gridType,
           height: this.heightGrid,
@@ -1121,13 +1133,13 @@ export class SheetsdashboardComponent {
           sheetTabs : this.sheetTabs,
           user_ids:this.usersForUpdateDashboard,
           role_ids:this.rolesForUpdateDashboard
-        }as any;
-      }
+        }
+      // }
     
-    if(this.fromFileId){
-      delete obj.server_id;
-      obj['file_id'] = this.fileId;
-    }
+    // if(this.fromFileId){
+    //   delete obj.server_id;
+    //   obj['file_id'] = this.fileId;
+    // }
     this.workbechService.updateDashboard(obj,this.dashboardId).subscribe({
       next:(data)=>{
         console.log(data);
@@ -1283,17 +1295,10 @@ export class SheetsdashboardComponent {
 
   sheetsDataWithQuerysetIdTest(){
     let obj ;
-    if(this.fileId && this.fileId.length > 0){
-      obj ={
-        file_id:this.fileId[0],
-        queryset_id:this.qrySetId[0]
-      }
-    } else {
       obj ={
       server_id:this.databaseId[0],
       queryset_id:this.qrySetId[0]
       }
-    }
   
     this.workbechService.sheetsDataWithQuerysetId(obj)
     .subscribe({next: (data) => {
@@ -1310,8 +1315,8 @@ export class SheetsdashboardComponent {
       y: 0,
       x: 0,
       sheetType:sheet.sheet_type,
-      databaseId : sheet.server_id,
-      fileId : sheet.file_id,
+      databaseId : sheet.hierarchy_id,
+      // fileId : sheet.file_id,
       qrySetId : sheet.queryset_id,
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
@@ -1384,8 +1389,8 @@ export class SheetsdashboardComponent {
       sheetId:sheet.sheet_id,
       chartType:sheet.chart,
       chartId:sheet.chart_id,
-      databaseId : sheet.server_id,
-      fileId : sheet.file_id,
+      databaseId : sheet.hierarchy_id,
+      // fileId : sheet.file_id,
       qrySetId : sheet.queryset_id,
       data: { title: sheet.sheet_name, content: 'Content of card  New', sheetTagName: sheet.sheet_tag_name?sheet.sheet_tag_name:sheet.sheet_name },
       selectedSheet : sheet.selectedSheet,
@@ -1682,7 +1687,7 @@ allowDrop(ev : any): void {
         chartType:copy.chartType,
         databaseId : copy.databaseId,
         qrySetId : copy.qrySetId,
-        fileId : copy.fileId,
+        // fileId : copy.fileId,
         chartId:copy.chartId,
         chartOptions: copy.chartOptions,
         chartInstance: copy.chartInstance,
@@ -1702,11 +1707,11 @@ allowDrop(ev : any): void {
       customizeOptions: copy.customizeOptions
       };
       // this.qrySetId.push(copy.qrySetId);
-      if(copy.fileId){
-        this.fileId.push(copy.fileId);
-      } else {
+      // if(copy.fileId){
+      //   this.fileId.push(copy.fileId);
+      // } else {
         this.databaseId.push(copy.databaseId);
-      }
+      // }
     //   if(element.chartOptions?.chart?.type === 'bar'){
     //      element['chartData'].forEach((item: { name: any; value: any; }) => {
     //       this.colArray.push(item.name);
@@ -1919,16 +1924,16 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         this.toasterService.info('Please Update the dashboard.', 'info', { positionClass: 'toast-top-center' })
       } else {
         let sheetId = sheetdata.sheetId;
-        if (sheetdata.fileId) {
-          this.fileId = sheetdata.fileId;
-          this.qrySetId = sheetdata.qrySetId;
-          const encodedServerId = btoa(this.fileId.toString());
-          const encodedQuerySetId = btoa(this.qrySetId.toString());
-          const encodedSheetId = btoa(sheetId.toString());
-          const encodedDashboardId = btoa(this.dashboardId.toString());
+        // if (sheetdata.fileId) {
+        //   this.fileId = sheetdata.fileId;
+        //   this.qrySetId = sheetdata.qrySetId;
+        //   const encodedServerId = btoa(this.fileId.toString());
+        //   const encodedQuerySetId = btoa(this.qrySetId.toString());
+        //   const encodedSheetId = btoa(sheetId.toString());
+        //   const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/analytify/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
-        } else {
+        //   this.router.navigate(['/insights/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+        // } else {
           this.databaseId = sheetdata.databaseId;
           this.qrySetId = sheetdata.qrySetId;
           const encodedServerId = btoa(this.databaseId.toString());
@@ -1936,9 +1941,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
-          this.router.navigate(['/analytify/sheetsdashboard/sheets/dbId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
+          this.router.navigate(['/analytify/sheetsdashboard/sheets/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         }
-      }
+      // }
     } else {
       this.toasterService.info('Please save the dashboard.', 'info', { positionClass: 'toast-top-center' })
     }
@@ -1966,14 +1971,15 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         // this.qrySetId.splice(popqryIndex, 1);
         if(this.dashboardId){
           this.deleteSheetFilter(item.sheetId);
+          this.actionUpdateOnSheetRemove(item.sheetId);
         }
-      if(item.fileId){
-        let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
-        this.fileId.splice(popIndex, 1);
-      } else {
+      // if(item.fileId){
+      //   let popIndex = this.fileId.findIndex((number:any) => number == item.fileId);
+      //   this.fileId.splice(popIndex, 1);
+      // } else {
         let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
         this.databaseId.splice(popIndex, 1);
-      }
+      // }
       }
     }
     this.setDashboardNewSheets(item.sheetId, false);
@@ -2013,9 +2019,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     this.loaderService.show();
     this.qrySetId = [];
     this.databaseId = [];
-    this.fileId = [];
+    // this.fileId = [];
     this.disableDashboardUpdate = true;
     const idsArray = this.DahboardListFilters.map((obj:any) => obj.dashboard_filter_id);
+    const actionsIds = this.drillThroughActionList.map((Object : any)=> Object.drill_id);
+    this.deleteDashboardAction(actionsIds);
     this.workbechService.deleteDashbaordFilter({"filter_id" : idsArray}).subscribe({
       next:(data)=>{
         console.log(data);
@@ -3700,12 +3708,13 @@ const obj ={
     },
     error:(error)=>{
       console.log(error)
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
+      this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'oops!',
+      //   text: error.error.message,
+      //   width: '400px',
+      // })
     }
   })
 }
@@ -3826,8 +3835,8 @@ kpiData?: KpiData;
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
         chartId:sheet.chart_id,
-        databaseId : sheet.server_id,
-        fileId : sheet.file_id,
+        databaseId : sheet.hierarchy_id,
+        // fileId : sheet.file_id,
         qrySetId : sheet.queryset_id,
         isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
@@ -3986,8 +3995,8 @@ kpiData?: KpiData;
         this.gridType = data.grid_type;
         this.changeGridType(this.gridType);
         this.qrySetId = data.queryset_id;
-        this.fileId = data.file_id;
-        this.databaseId = data.server_id;
+        // this.fileId = data.file_id;
+        this.databaseId = data.hierarchy_id;
         this.dashboardsheetsIdArray = data.sheet_ids;
         this.dashboard = data.dashboard_data;
         this.sheetIdsDataSet = data.selected_sheet_ids;
@@ -4204,8 +4213,8 @@ kpiData?: KpiData;
       // "id":["766"],"input_list":[["Home Appliances"]],
       "dashboard_id":this.dashboardId,
       "sheet_id":item.sheetId,
-      "database_id":item.databaseId,
-      "file_id": item.fileId,
+      "hierarchy_id":item.databaseId,
+      // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
   "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
@@ -4259,9 +4268,9 @@ kpiData?: KpiData;
       input_list:this.dataArray,
       // "id":["766"],"input_list":[["Home Appliances"]],
       "dashboard_id":this.dashboardId,
-      "file_id": item.fileId,
+      // "file_id": item.fileId,
       "sheet_id":item.sheetId,
-      "database_id":item.databaseId,
+      "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
   "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
@@ -4329,8 +4338,8 @@ pageChangeTableDisplay(item:any,page:any){
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
     input_list:this.dataArray,
-    database_id: item.databaseId,
-    file_id: item.fileId,
+    hierarchy_id: item.databaseId,
+    // file_id: item.fileId,
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
@@ -4360,8 +4369,8 @@ pageChangeTableDisplayPublic(item:any,page:any){
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
     input_list:this.dataArray,
-    database_id: item.databaseId,
-    file_id: item.fileId,
+    hierarchy_id: item.databaseId,
+    // file_id: item.fileId,
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
@@ -4550,6 +4559,434 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         }
       }
     }
+  }
+  getSheetsForActions(){
+    const obj ={
+      dashboard_id:this.dashboardId,
+      queryset_id : this.drillThroughQuerySetId,
+    }
+    this.workbechService.getSheetsInDashboardAction(obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.sourceSheetList = data.sheet_data;
+      },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
+  getTargetSheetsList(){
+    this.targetSheetList =this.sourceSheetList.map(sheet => ({
+      ...sheet,
+      selected: false,
+    })).filter(sheet => sheet.id != this.sourceSheetId);
+    console.log('source:',this.sourceSheetList, 'target: ',this.targetSheetList);
+  }
+  updateSelectedSheets() {
+    this.targetSheetIds = [];
+    const selectedSheets = this.targetSheetList.filter(sheet => sheet.selected);
+    selectedSheets.forEach((sheet:any)=>{
+      this.targetSheetIds.push(sheet.id);
+    });
+    this.isAllTargetSheetsSelected = this.targetSheetList.length === selectedSheets.length;
+    console.log('Selected Sheets:', selectedSheets,this.targetSheetIds);
+    this.disableActionSave();
+  }
+  toggleAllTargetSheets(event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.targetSheetList.forEach((sheet:any)=>{
+      sheet.selected = isChecked;
+    });
+    this.updateSelectedSheets();
+    this.isAllTargetSheetsSelected = isChecked;
+  }
+  disableActionSave(){
+    if(this.actionName && this.drillThroughQuerySetId && this.drillThroughQuerySetId != 0 && this.sourceSheetId && this.sourceSheetId != 0 && this.targetSheetIds.length>0){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+  saveDrillThroughAction() {
+    const Obj = {
+      action_name: this.actionName,
+      queryset_id: this.drillThroughQuerySetId,
+      dashboard_id: this.dashboardId,
+      main_sheet_id: this.sourceSheetId,
+      target_sheet_ids: this.targetSheetIds
+    }
+    this.workbechService.saveDrillThroughAction(Obj).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.actionId = data.dashboard_drill_thorugh_id;
+        this.actionName = '';
+        this.drillThroughQuerySetId = 0;
+        this.sourceSheetId = 0;
+        this.isAllTargetSheetsSelected = false;
+        this.targetSheetList.forEach((sheet:any)=>{
+          sheet.selected = false;
+        });
+        this.targetSheetIds = [];
+        this.clearActionForm();
+        this.editActions = false;
+        this.getDrillThroughActionList();
+        this.toasterService.success('Action Added Successfully', 'success', { positionClass: 'toast-top-center' })
+      },
+      error: (error) => {
+        console.log(error)
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      }
+    })
+  }
+  getDrillThroughActionList(){
+    const Object ={
+      dashboard_id:this.dashboardId
+    }
+    this.workbechService.getDrillThroughActionList(Object).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.drillThroughActionList = data;
+      },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
+  }
+  getEditActionPreview(actionId : any) {
+    this.clearActionForm();
+    this.editActions = true;
+    const object = {
+      id: actionId
+    }
+    this.workbechService.getDrillThroughActionEditPreview(object).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.actionId = data.action_id;
+        this.actionName = data.action_name;
+        this.drillThroughQuerySetId = data.query_id;
+        data.main_sheet_data.forEach((sheet:any)=>{
+          let object = {
+            id : sheet.sheet_id,
+            name : sheet.sheet_name
+          }
+          this.sourceSheetList.push(object);
+          if(sheet.selected){
+            this.sourceSheetId = sheet.sheet_id;
+          }
+        });
+        data.target_sheet_data.forEach((sheet:any)=>{
+          if(sheet.sheet_id != this.sourceSheetId){
+            let object = {
+              id : sheet.sheet_id,
+              name : sheet.sheet_name,
+              selected : sheet.selected
+            }
+            this.targetSheetList.push(object);
+          }
+        });
+        this.updateSelectedSheets();
+      },
+      error: (error) => {
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
+  getActionData(actionId : any){
+    console.log(actionId);
+    this.workbechService.getDrillThroughAction(actionId).subscribe({
+      next:(data)=>{
+        console.log(data);
+        this.actionId = data.drill_through_id;
+        this.sourceSheetId = data.source_sheet_id;
+      },
+      error:(error)=>{
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
+  }
+  updateDrillThroughAction(){
+    const Obj = {
+      drill_through_id:this.actionId,
+      action_name: this.actionName,
+      queryset_id: this.drillThroughQuerySetId,
+      dashboard_id: this.dashboardId,
+      main_sheet_id: this.sourceSheetId,
+      target_sheet_ids: this.targetSheetIds
+    }
+    this.workbechService.updateDrillThroughAction(Obj).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.actionId = data.action_id;
+        this.actionName = '';
+        this.drillThroughQuerySetId = 0;
+        this.sourceSheetId = 0;
+        this.isAllTargetSheetsSelected = false;
+        this.targetSheetList.forEach((sheet:any)=>{
+          sheet.selected = false;
+        });
+        this.targetSheetIds = [];
+        this.getDrillThroughActionList();
+        this.clearActionForm();
+        this.editActions = false;
+        this.toasterService.success('Action Updated Successfully', 'success', { positionClass: 'toast-top-center' })
+      },
+      error: (error) => {
+        console.log(error)
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      }
+    })
+  }
+  deleteDashboardAction(actionId : any){
+    let object = {
+      id : actionId
+    }
+    this.workbechService.deleteDrillThroughAction(object).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.getDrillThroughActionList();
+        this.clearActionForm();
+        this.editActions = false;
+        this.toasterService.success('Action Deleted Successfully', 'Success', { positionClass: 'toast-top-center' });
+        this.resetDrillThroughOnActionDelete(this.dashboardId, data.sheet_ids);
+      },
+      error: (error) => {
+        console.log(error)
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      }
+    });
+  }
+  clearActionForm(){
+    this.actionName = '';
+    this.drillThroughQuerySetId = 0;
+    this.sourceSheetId = 0;
+    this.isAllTargetSheetsSelected = false;
+    this.targetSheetList.forEach((sheet: any) => {
+      sheet.selected = false;
+    });
+    this.targetSheetIds = [];
+    this.sourceSheetList = [];
+    this.targetSheetList = [];
+    this.actionId = '';
+  }
+  setDrillThrough(selectedValue : any, item : any){
+    let selectedXValue;
+    let columnNames : any[] = [];
+    let dataTypes: any[] = [];
+    if(selectedValue == ''){
+      selectedXValue = selectedValue.trim() ? selectedValue.split(',').map((item: string) => [item.trim()]) : [];
+    }
+    else{
+      selectedXValue = selectedValue.split(',').map((item : any) => [item]);
+      item.column_Data.forEach((col: any) => {
+        columnNames.push(col[0]);
+        dataTypes.push(col[1]);
+      });
+    }
+
+    let object = {
+      drill_id: this.actionId,
+      dashboard_id: this.dashboardId,
+      column_name: columnNames,
+      column_data: selectedXValue,
+      datatype: dataTypes
+    }
+    console.log(item);
+    console.log('payload',object);
+
+    this.workbechService.getDrillThroughData(object).subscribe({
+      next: (data) => {
+        console.log(data);
+        data.forEach((sheet:any)=>{
+          sheet.columns.forEach((col:any)=>{
+            let colObject = {
+              name: col.column,
+              values: col.result
+            }
+            this.filteredColumnData.push(colObject);
+            console.log('filtercolumn', this.filteredColumnData);
+          });
+          sheet.rows.forEach((row:any)=>{
+            let rowObject = {
+              name: row.column,
+              data: row.result
+            }
+            this.filteredRowData.push(rowObject);
+            console.log('filterowData', this.filteredRowData);
+          });
+          this.applyDrillthroughToDashboard(sheet.sheet_id);
+        });
+      },
+      error: (error) => {
+        console.log(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
+  }
+  applyDrillthroughToDashboard(drillThroughSheetId: string) {
+    this.dashboard.forEach((sheet: any) => {
+      if (sheet.sheetId == drillThroughSheetId) {
+        if (!sheet.originalData) {
+          sheet['originalData'] = _.cloneDeep({ chartOptions: sheet.chartOptions });
+        }
+
+        if (sheet.chartId == '6') {//bar
+          sheet.chartOptions.xaxis.categories = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '24') {//pie
+          sheet.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
+          sheet.chartOptions.series = this.filteredRowData[0].data;
+        }
+        if (sheet.chartId == '10') {//donut
+          sheet.chartOptions.labels = this.filteredColumnData[0].values.map((category: any) => category === null ? 'null' : category);
+          sheet.chartOptions.series = this.filteredRowData[0].data;
+        }
+        if (sheet.chartId == '13') {//line
+          sheet.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '17') {//area
+          sheet.chartOptions.labels = this.filteredColumnData[0].values;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '7') {//sidebyside
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.xaxis.categories = categories;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '2') {//hstacked
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.xaxis.categories = categories;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '5') {//stacked
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.xaxis.categories = categories;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '4') {//barline
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.labels = categories;
+          sheet.chartOptions.series[0].data = this.filteredRowData[0].data;
+          sheet.chartOptions.series[1].data = this.filteredRowData[1].data;
+        }
+        if (sheet.chartId == '3') {//hgrouped
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.xaxis.categories = categories;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '8') {//multiline
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.xaxis.categories = categories;
+          sheet.chartOptions.series = this.filteredRowData;
+          // sheet.chartOptions = {
+          //   ...sheet.chartOptions,
+          // };
+        }
+        if (sheet.chartId == '27') {//funnel
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.xaxis.categories = categories;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        if (sheet.chartId == '26') {//heatmap
+          const dimensions: Dimension[] = this.filteredColumnData
+          const categories = this.flattenDimensions(dimensions)
+          sheet.chartOptions.xaxis.categories = categories;
+          sheet.chartOptions.series = this.filteredRowData;
+        }
+        this.filteredColumnData = [];
+        this.filteredRowData = [];
+      }
+    });
+  }
+  actionUpdateOnSheetRemove(sheetId : any){
+    let object = {
+      sheet_id : sheetId,
+      dashboard_id : this.dashboardId
+    }
+    this.workbechService.actionUpdateOnSheetRemove(object).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.getDrillThroughActionList();
+        this.toasterService.info(data.message,'info',{ positionClass: 'toast-top-center'})
+      },
+      error: (error) => {
+        console.log(error)
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      }
+    });
+  }
+  resetDrillThroughOnActionDelete(dahboardId : any, sheetIds : any){
+    let object = {
+      dashboard_id : dahboardId,
+      sheets_ids : sheetIds
+    }
+    this.workbechService.resetDrillThroughOnActionDelete(object).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.getDrillThroughActionList();
+        data.forEach((sheet:any)=>{
+          sheet.columns.forEach((col:any)=>{
+            let colObject = {
+              name: col.column,
+              values: col.result
+            }
+            this.filteredColumnData.push(colObject);
+            console.log('filtercolumn', this.filteredColumnData);
+          });
+          sheet.rows.forEach((row:any)=>{
+            let rowObject = {
+              name: row.column,
+              data: row.result
+            }
+            this.filteredRowData.push(rowObject);
+            console.log('filterowData', this.filteredRowData);
+          });
+          this.applyDrillthroughToDashboard(sheet.sheet_id);
+        });
+      },
+      error: (error) => {
+        console.log(error)
+        this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-top-right' })
+      }
+    })
   }
 }
 // export interface CustomGridsterItem extends GridsterItem {

@@ -1,4 +1,4 @@
-<app-page-header title="Dashboard List" title1="Home" activeitem="dashboard"></app-page-header>
+<app-page-header title="Dashboard List" moduleId="dashboard" title1="Home" activeitem="dashboard"></app-page-header>
 
 
 <div class="main-container container-fluid">
@@ -100,7 +100,7 @@
                           <img src="{{dashboard.dashboard_image}}" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)" alt="" class="card-img-top img-cursor" style="height: 140px;">
                     </div>
                     <div class="card-body p-1 mt-1 text-center">
-                        <a  class="fs-18 fw-bold d-block"  [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
+                        <a  class="card-title fw-bold d-block"  [ngbTooltip]="dashboard.dashboard_name.length > 13 ? dashboard.dashboard_name : null" (click)="viewDashboard(dashboard.server_id,dashboard.queryset_id,dashboard.dashboard_id)"> {{dashboard.dashboard_name.length > 13 ? (dashboard.dashboard_name | slice:0:15)+'...' : dashboard.dashboard_name }}</a>
                     </div>
                     <div class=" p-1 text-center">
                       <div class="row">

@@ -1,4 +1,4 @@
-<app-page-header title="Database" title1="Home" activeitem="Database"></app-page-header>
+<app-page-header title="Database" moduleId="datasource" title1="Home" activeitem="Database"></app-page-header>
 
 <div class="main-container container-fluid">
 
@@ -510,6 +510,9 @@
                                         <div class="result-rows d-flex justify-content-end">
 
                                             @if(TabledataJoining){
+                                                 <button class="btn btn-icon btn-outline-primary me-2" (click)="downloadExcel()" type="button">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
                                             <input type="number" [(ngModel)]="rowLimit" id="input-text"
                                                 style="border-radius: 4px 0px 0px 4px;"
                                                 (keydown.enter)="getJoiningTableData()" placeholder="rows"
@@ -671,6 +674,12 @@
                             <div class="result-rows d-flex justify-content-end">
 
                                 @if(custmQryTime){
+                                    <!-- <button class="btn btn-primary me-2" (click)="downloadExcelFromCustomSql()">
+                                        <i class="fa fa-download"></i> Download
+                                    </button>  -->
+                                    <button class="btn btn-icon btn-outline-primary me-2" (click)="downloadExcelFromCustomSql()" type="button">
+                                        <i class="fa fa-download"></i>
+                                    </button>
                                 <input type="number" [(ngModel)]="rowLimit" id="input-text"
                                     style="border-radius: 4px 0px 0px 4px;" (keydown.enter)="executeQuery()"
                                     placeholder="rows" class="form-control w-30">
