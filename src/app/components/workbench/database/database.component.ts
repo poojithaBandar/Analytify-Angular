@@ -771,7 +771,7 @@ joiningTables(){
       this.tableCustomJoinError = true;
       if(error.error?.joining_condition && error.error?.joining_condition.length) {
         this.relationOfTables = error.error?.joining_condition;
-        // this.joinTypes.push("inner");
+        this.joinTypes.push("inner");
         // this.relationOfTables[this.relationOfTables.length - 1] = [{}];
         this.buildCustomJoin();
       }

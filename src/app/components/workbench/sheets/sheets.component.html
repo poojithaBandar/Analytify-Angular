@@ -29,7 +29,7 @@
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
                                 <div class=" p-1" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
-                                <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
+                                <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
                                 <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
                                     <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
                                         <div cdkDropList cdkDropListOrientation="horizontal" class="form-control" 
@@ -389,9 +389,10 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
+                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
                                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
                                                 </div>
