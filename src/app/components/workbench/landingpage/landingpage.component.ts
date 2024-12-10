@@ -196,7 +196,7 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   this.loaderService.show();
   const encodedDashboardId = btoa(dashboardId.toString());
 
-  this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
+  this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId])
 }
 viewSheet(serverId:any,querysetId:any,sheetId:any){
   this.loaderService.show();
@@ -210,7 +210,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
   // }
   //  if(fileId === null || fileId === ''){
     const encodedServerId = btoa(serverId.toString());
-    this.router.navigate(['/insights/home/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
+    this.router.navigate(['/analytify/home/sheets/'+encodedServerId+'/'+encodedQuerySetId+'/'+encodedSheetId])
 
   // }
  
@@ -218,14 +218,14 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
 
  sheetsRoute(){
     this.loaderService.show();
-    this.router.navigate(['/insights/sheets'])  
+    this.router.navigate(['/analytify/sheets'])  
   }
   newConnections(){
     this.loaderService.show();
-    this.router.navigate(['insights/datasources/new-connections']) 
+    this.router.navigate(['analytify/datasources/new-connections']) 
   }
   goToConnections(){
-    this.router.navigate(['insights/datasources/view-connections']) 
+    this.router.navigate(['analytify/datasources/view-connections']) 
 
   }
   getTablesFromConnectedDb(dbId:any){
@@ -238,7 +238,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
     //   }
       // if(fileId === null){
         const encodedId = btoa(dbId.toString());
-        this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
         // }
   }
   deleteDashboard(dashboardId:any){
@@ -407,15 +407,15 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
   }
 
   viewAllSheets(){
-    this.router.navigate(['/insights/sheets-dashboard']) 
+    this.router.navigate(['/analytify/sheets-dashboard']) 
 
   }
   viewAllDashboards(){
-    this.router.navigate(['/insights/dashboards']) 
+    this.router.navigate(['/analytify/dashboards']) 
 
   }
   viewAllSavedQueries(){
-    this.router.navigate(['/insights/saved-queries']) 
+    this.router.navigate(['/analytify/saved-queries']) 
 
   }
   gotoSavedQuery(dbId:any,qrySetId:any,isCustomSql:boolean,dsQrySetId:any){
@@ -424,7 +424,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
 
-    this.router.navigate(['insights/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    this.router.navigate(['analytify/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
     // }
     // if(dbId === null){
     //   const encodedFileId = btoa(fileId.toString());
@@ -446,7 +446,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
     const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
   ? btoa('null') 
   : btoa(dsQrySetId.toString()); 
-   this.router.navigate(['/insights/database-connection/sheets/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+   this.router.navigate(['/analytify/database-connection/sheets/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   }
   }
   // gotoSavedQuery(dbId:any,qrySetId:any,fileId:any){
@@ -470,7 +470,7 @@ viewSheet(serverId:any,querysetId:any,sheetId:any){
   // }
   loadNewDashboard(){
     this.loaderService.show();
-    this.router.navigate(['/insights/sheetsdashboard'])
+    this.router.navigate(['/analytify/sheetsdashboard'])
     }
   viewSampleDashbaordPropertiesTab(name: any, dashboardId: any) {
     this.modalService.open(this.sampleDashboardPropertiesModal);

@@ -140,7 +140,7 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     const encodedServerId = btoa(dbId.toString());
     const encodedQuerySetId = btoa(qrySetId.toString());
 
-    this.route.navigate(['insights/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
+    this.route.navigate(['analytify/database-connection/savedQuery/'+encodedServerId+'/'+encodedQuerySetId])
     // }
     // if(dbId === null){
     //   const encodedFileId = btoa(fileId.toString());
@@ -162,7 +162,7 @@ constructor(private workbechService:WorkbenchService,private route:Router,privat
     const encodedDsQuerySetId = dsQrySetId === null || dsQrySetId === undefined 
   ? btoa('null') 
   : btoa(dsQrySetId.toString()); 
-   this.route.navigate(['/insights/database-connection/sheets/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+   this.route.navigate(['/analytify/database-connection/sheets/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   }
   }
 }

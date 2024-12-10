@@ -362,7 +362,7 @@ export class SheetsComponent {
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
-    if(this.router.url.includes('/insights/sheets')){
+    if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -379,25 +379,25 @@ export class SheetsComponent {
           }
         }
      }
-     if(this.router.url.includes('/insights/sheets/fileId')){
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
-        this.fileId = +atob(route.snapshot.params['id1']);
-        this.qrySetId = +atob(route.snapshot.params['id2']);
-        this.filterQuerySetId = atob(route.snapshot.params['id3']);
-        // this.tabs[0] = this.sheetName;
-        this.sheetTagName = this.sheetName;
-        this.fromFileId = true;
-        if(this.filterQuerySetId==='null'){
-          console.log('filterqrysetid',this.filterQuerySetId)
-          this.filterQuerySetId = null
-        }
-        else{
-            parseInt(this.filterQuerySetId)
-            console.log(this.filterQuerySetId)
-          }
-        }      
-  }
- // if(this.router.url.includes('/insights/home/sheets/')){ //old landing page to sheet 
+  //    if(this.router.url.includes('/analytify/sheets/fileId')){
+  //     if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
+  //       this.fileId = +atob(route.snapshot.params['id1']);
+  //       this.qrySetId = +atob(route.snapshot.params['id2']);
+  //       this.filterQuerySetId = atob(route.snapshot.params['id3']);
+  //       // this.tabs[0] = this.sheetName;
+  //       this.sheetTagName = this.sheetName;
+  //       this.fromFileId = true;
+  //       if(this.filterQuerySetId==='null'){
+  //         console.log('filterqrysetid',this.filterQuerySetId)
+  //         this.filterQuerySetId = null
+  //       }
+  //       else{
+  //           parseInt(this.filterQuerySetId)
+  //           console.log(this.filterQuerySetId)
+  //         }
+  //       }      
+  // }
+  // if(this.router.url.includes('/insights/home/sheets/')){ //old landing page to sheet 
   //   console.log("landing page")
   //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
   //     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -408,7 +408,7 @@ export class SheetsComponent {
   //     // this.sheetRetrive();
   //     }
   //  }
-  if(this.router.url.includes('/insights/home/sheets/')){
+  if(this.router.url.includes('/analytify/home/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -418,33 +418,33 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    }
-   if(this.router.url.includes('/insights/home/fileId/sheets/')){
-    this.fromFileId = true;
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
-      this.fileId = +atob(route.snapshot.params['id1']);
-      this.qrySetId = +atob(route.snapshot.params['id2'])
-      this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
-      console.log(this.retriveDataSheet_id);
-      //this.tabs[0] = this.sheetName;
-      // this.sheetRetrive();
-      }
-   }
+  //  if(this.router.url.includes('/analytify/home/fileId/sheets/')){
+  //   this.fromFileId = true;
+  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
+  //     this.fileId = +atob(route.snapshot.params['id1']);
+  //     this.qrySetId = +atob(route.snapshot.params['id2'])
+  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
+  //     console.log(this.retriveDataSheet_id);
+  //     //this.tabs[0] = this.sheetName;
+  //     // this.sheetRetrive();
+  //     }
+  //  }
 
 
-   if(this.router.url.includes('/insights/sheetsdashboard/sheets/fileId/')){
-    this.sheetsDashboard = true;
-    this.fromFileId = true;
-    console.log("landing page")
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
-      this.fileId = +atob(route.snapshot.params['id1']);
-      this.qrySetId = +atob(route.snapshot.params['id2']);
-      this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
-      this.dashboardId = +atob(route.snapshot.params['id4']);
-      console.log(this.retriveDataSheet_id)
-      // this.sheetRetrive();
-      }
-   } 
-   if(this.router.url.includes('/insights/sheetsdashboard/sheets/')){
+  //  if(this.router.url.includes('/analytify/sheetsdashboard/sheets/fileId/')){
+  //   this.sheetsDashboard = true;
+  //   this.fromFileId = true;
+  //   console.log("landing page")
+  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
+  //     this.fileId = +atob(route.snapshot.params['id1']);
+  //     this.qrySetId = +atob(route.snapshot.params['id2']);
+  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
+  //     this.dashboardId = +atob(route.snapshot.params['id4']);
+  //     console.log(this.retriveDataSheet_id)
+  //     // this.sheetRetrive();
+  //     }
+  //  } 
+   if(this.router.url.includes('/analytify/sheetsdashboard/sheets/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
     console.log("landing page")
@@ -519,12 +519,12 @@ try {
       if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
         // Encode 'null' to represent a null value
        const encodedDsQuerySetId = btoa('null');
-       this.router.navigate(['/insights/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/analytify/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
   
       } else {
         // Convert to string and encode
        const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-       this.router.navigate(['/insights/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/analytify/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
     
       } 
      }
@@ -540,19 +540,19 @@ try {
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/insights/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/analytify/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/insights/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/analytify/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
   }
 
   }
   goToConnections(){
-    this.router.navigate(['/insights/datasources/view-connections'])
+    this.router.navigate(['/analytify/datasources/view-connections'])
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -6116,7 +6116,7 @@ gotoDashboard(){
   // if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  this.router.navigate(['/analytify/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
   // }
 // if(this.fromFileId){
 //   const encodedFileId = btoa(this.fileId.toString())
@@ -6135,7 +6135,7 @@ viewDashboard(){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
-  this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  this.router.navigate(['analytify/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
   // }
 
 }
@@ -6476,7 +6476,7 @@ renameColumns(){
   );
 }
 routeConfigure(){
-  this.router.navigate(['/insights/configure-page/configure'])
+  this.router.navigate(['/analytify/configure-page/configure'])
 }
 
 fetchChartData(chartData: any){

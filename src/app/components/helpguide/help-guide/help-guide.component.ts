@@ -27,19 +27,19 @@ export class HelpGuideComponent {
   searchErrorMessage : string = '';
 
   constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService){
-    if(this.router.url.includes('/insights/help-guide/sheets')){
+    if(this.router.url.includes('/analytify/help-guide/sheets')){
       this.onModule(3);
     }
-    if(this.router.url.includes('/insights/help-guide/datasource')){
+    if(this.router.url.includes('/analytify/help-guide/datasource')){
       this.onModule(1);
     }
-    if(this.router.url.includes('/insights/help-guide/dashboard')){
+    if(this.router.url.includes('/analytify/help-guide/dashboard')){
       this.onModule(5);
     }
-    if(this.router.url.includes('/insights/help-guide/customSql')){
+    if(this.router.url.includes('/analytify/help-guide/customSql')){
       this.onModule(2);
     }
-    if(this.router.url.includes('/insights/help-guide/previlages')){
+    if(this.router.url.includes('/analytify/help-guide/previlages')){
       this.onModule(6);
     }
     }

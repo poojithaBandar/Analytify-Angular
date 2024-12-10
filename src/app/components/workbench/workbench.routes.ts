@@ -8,7 +8,7 @@ import { canDeactivateGuard } from '../../can-deactivate.guard';
 
 export const admin: Routes = [
 
-  {path:'insights',children:[ 
+  {path:'analytify',children:[ 
     {
    path: 'datasources/new-connections',
    canActivate:[authGuard],
