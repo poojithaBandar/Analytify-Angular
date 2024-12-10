@@ -634,6 +634,12 @@ deleteUser(id:any){
       return this.http.get<any>(`${environment.apiUrl}/get_calculation/`+ id + '/' +this.accessToken);
     }
 
+    deleteCalculatedFields(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.delete<any>(`${environment.apiUrl}/delete_calculation/`+ id + '/' +this.accessToken);
+    }
+
     //Drill Through
     getDrillThroughData(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );

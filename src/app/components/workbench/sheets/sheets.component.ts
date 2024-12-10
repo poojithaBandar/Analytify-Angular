@@ -7224,7 +7224,7 @@ fetchChartData(chartData: any){
         next: (response: any) => {
           this.calculatedFieldId = id;
           this.isEditCalculatedField = true;
-          this.calculatedFieldLogic = response[0].cal_logic;
+          this.calculatedFieldLogic = response[0].actual_dragged_logic;
           this.calculatedFieldName = response[0].field_name;
           this.calculatedFieldFunction = response[0].functionName;
           this.nestedCalculatedFieldData = response[0].nestedFunctionName;
@@ -7513,7 +7513,7 @@ fetchChartData(chartData: any){
     validateCalculatedField(){
       switch(this.nestedCalculatedFieldData) {
         case 'abs':
-          if(!this.validateFormula(/^ABS\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^ABS\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7524,7 +7524,7 @@ fetchChartData(chartData: any){
 
         break; 
         case 'ceiling':
-          if(!this.validateFormula(/^CEILING\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^CEILING\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7535,7 +7535,7 @@ fetchChartData(chartData: any){
           }
           break; 
         case 'floor': 
-        if(!this.validateFormula(/^FLOOR\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
         }
@@ -7545,7 +7545,7 @@ fetchChartData(chartData: any){
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7944,6 +7944,28 @@ fetchChartData(chartData: any){
         });
       }
     }
+    deleteCalculationField(id : any){
+      this.workbechService.deleteCalculatedFields(id).subscribe({
+        next: (response: any) => {
+          this.columnsData();
+          this.toasterService.success('Deleted Successfully', 'success', { positionClass: 'toast-top-right' });
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+    }
+
+    addCalculatedField(){
+      if(!this.isEditCalculatedField){
+        this.calculatedFieldName = '';
+     this.calculatedFieldFunction = '';
+     this.nestedCalculatedFieldData = '';
+     this.calculatedFieldLogic = '';
+     this.isEditCalculatedField = false;
+      }
+    }
+
     setDrilldowns(event : any){
       this.drillDownIndex = event.drillDownIndex;
       this.draggedDrillDownColumns = event.draggedDrillDownColumns;
