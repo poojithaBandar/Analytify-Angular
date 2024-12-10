@@ -617,7 +617,13 @@ export class WorkbenchComponent implements OnInit{
             }}) 
         }
         else if(location.protocol === 'http:'){
-          this.toasterservice.info('Currently we are not Supporting to HTTP Protocol,Please use HTTPS.','info',{ positionClass: 'toast-top-right'});
+          // this.toasterservice.info('Currently we are not Supporting to HTTP Protocol,Please use HTTPS.','info',{ positionClass: 'toast-top-right'});
+          Swal.fire({
+            icon: 'error',
+            title: 'We currently do not support configuring this on localhost or using the HTTP protocol.',
+            text: 'Please refer to the help guide for detailed instructions on setting up and configuring HTTPS. The guide includes step-by-step instructions to assist you in enabling HTTPS for your environment.',
+            width: '600px',
+          })
         }
       }
       connectSalesforce(){
@@ -648,7 +654,13 @@ export class WorkbenchComponent implements OnInit{
             }}) 
         }
         else if(location.protocol === 'http:'){
-          this.toasterservice.info('Currently we are not Supporting to HTTP Protocol,Please use HTTPS.','info',{ positionClass: 'toast-top-right'});
+          // this.toasterservice.info('Currently we are not Supporting to HTTP Protocol,Please use HTTPS.','info',{ positionClass: 'toast-top-right'});
+          Swal.fire({
+            icon: 'error',
+            title: 'We currently do not support configuring this on localhost or using the HTTP protocol.',
+            text: 'Please refer to the help guide for detailed instructions on setting up and configuring HTTPS. The guide includes step-by-step instructions to assist you in enabling HTTPS for your environment.',
+            width: '600px',
+          })
         }
       }
 
