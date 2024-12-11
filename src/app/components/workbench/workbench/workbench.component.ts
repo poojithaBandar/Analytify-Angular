@@ -652,7 +652,7 @@ export class WorkbenchComponent implements OnInit{
       this.modalService.open(OpenmdoModal);
     }
     editDbDetails(id:any){
-      const editDataArray  = this.connectionList.filter((item: { database_id: number; }) => item.database_id == id);
+      const editDataArray  = this.connectionList.filter((item: { hierarchy_id: number; }) => item.hierarchy_id == id);
       console.log(editDataArray)
       const editData = editDataArray[0] 
     this.postGreServerName =editData.hostname;
