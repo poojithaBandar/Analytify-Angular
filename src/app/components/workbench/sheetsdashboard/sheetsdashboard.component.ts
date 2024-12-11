@@ -614,7 +614,7 @@ export class SheetsdashboardComponent {
         chartType:sheet.chart,
         chartId:sheet.chart_id,
         qrySetId : sheet.queryset_id,
-        databaseId: sheet.server_id,
+        databaseId: sheet.hierarchy_id,
         isEChart : sheet.sheet_data.isEChart,
         column_Data : sheet.sheet_data.columns_data,
         row_Data : sheet.sheet_data.rows_data,

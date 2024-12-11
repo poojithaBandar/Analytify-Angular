@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkbenchService } from '../../workbench/workbench.service';
 import { FormsModule } from '@angular/forms';
 import { HelpGuideQuestionariesComponent } from '../help-guide-questionaries/help-guide-questionaries.component';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-help-guide',
@@ -26,7 +27,7 @@ export class HelpGuideComponent {
   slug : string = '';
   searchErrorMessage : string = '';
 
-  constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService){
+  constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService,private loaderService:LoaderService){
     if(this.router.url.includes('/analytify/help-guide/sheets')){
       this.onModule(3);
     }
@@ -46,6 +47,7 @@ export class HelpGuideComponent {
 
   ngOnInit(): void {
     // this.router.navigate(['insights/help-guide']);
+    this.loaderService.hide();
     this.getModulesData();
   }
 
