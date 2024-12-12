@@ -200,15 +200,15 @@ span.abc-txt {
  }
  .filter-card-height{
   height: 172px; 
-  overflow-y: scroll;
+  overflow-y: auto;
  }
  .charts-card-height{
-  overflow-y: scroll; 
+  overflow-y: auto; 
   height: 437px;
  }
  .marks-card-height{
   height: 203px; 
-  overflow-y: scroll;
+  overflow-y: auto;
  }
 
  .popup {
@@ -434,7 +434,7 @@ button.viewQueryImg {
 }
 .viewQuery-hgt {
   max-height: 200px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
@@ -455,14 +455,14 @@ button.viewQueryImg {
 }
 .table-card-h{
   height: 510px;
-  overflow-y: scroll
+  overflow-y: auto
 }
 .show-chart-card{
   height: 478px;
 }
 .sheet-table-h{
-  height: 465px;
-   overflow-y: scroll;
+  height: 487px;
+   overflow-y: auto;
 }
 .panel-body-h{
   height: 624px;
@@ -527,8 +527,8 @@ app-insights-button {
   font-size: 12px;
 }
 .sheet-table-h{
-  height: 394px;
-  overflow-y: scroll;
+  height: 415px;
+  overflow-y: auto;
 }
 .show-chart-card {
   height: 400px;
@@ -537,16 +537,16 @@ app-insights-button {
   height: 544px;
 }
 .charts-card-height {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 350px;
 }
 .filter-card-height {
   height: 150px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .marks-card-height{
   height: 164px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .column-text {
   font-size: 12px;
@@ -570,6 +570,24 @@ th, td {
 }
 .echart-charts {
   height: 17rem;
+}
+h6 {
+  font-size: 12px;
+}
+.example-box {
+  font-size: 11px;
+}
+.example-box1{
+  font-size: 11px;
+}
+.form-control{
+  font-size: 12px;
+}
+.nav-link {
+  font-size: 12px;
+}
+.mat-mdc-tab .mdc-tab__text-label{
+  font-size: 12px;
 }
 
 }
@@ -604,23 +622,23 @@ th, td {
     font-size: 12px;
   }
   .sheet-table-h {
-    height: 332px;
-    overflow-y: scroll;
+    height: 350px;
+    overflow-y: auto;
 }
 .show-chart-card {
   height: 338px;
 }
 .filter-card-height {
   height: 130px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .charts-card-height {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 300px;
 }
 .marks-card-height {
   height: 142px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .panel-body-h {
   height: 480px;
@@ -648,6 +666,24 @@ th, td {
 .echart-charts {
   height: 16rem;
 }
+  h6{
+      font-size: 12px;
+  }
+  .example-box {
+    font-size: 10px;
+  }
+  .example-box1{
+    font-size: 10px;
+  }
+  .form-control{
+    font-size: 11px;
+  }
+  .nav-link {
+    font-size: 11px;
+  }
+  .mat-mdc-tab .mdc-tab__text-label{
+    font-size: 11px;
+  }
 }
 
 
@@ -955,13 +991,13 @@ th, td {
   height: 110px;
   min-height: 110px;
   max-height: 110px;
-  overflow-y: scroll;
+  overflow-y: auto;
   outline: none;
   border: 1px solid #edebeb;
   border-radius: 5px;
 }
 .description-text{
-  overflow-y: scroll; 
+  overflow-y: auto; 
   height: 195px; 
   min-height: 195px;  
   max-height: 95px;

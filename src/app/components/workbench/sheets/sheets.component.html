@@ -3,7 +3,7 @@
         <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
             <div class="card mb-0" >
                 <div class="card-body p-0 ">
-                    <div class="border mb-0 p-3 br-0 border-bottom">
+                    <div class="border mb-0 p-2 br-0 border-bottom">
                         <div class="d-flex align-items-center justify-content-between ">
                             <h6 class="mb-0">Connections</h6>
                             <app-insights-button *ngIf="qrySetId" [buttonName]="'Edit'" [classesList]="'add-txt text-info'" [previledgeId]="2" [isBtn]="false"
@@ -12,14 +12,14 @@
                             (btnClickEvent)="goToConnections()"></app-insights-button>
                         </div>
                         </div>
-                        <div class="border mb-0 p-3 br-0 border-bottom">
+                        <div class="border mb-0 p-2 br-0 border-bottom">
                             <h6 class="mb-0">Database</h6>
                             <p class=" mb-0" ngbTooltip="{{database_name}}">{{database_name}}</p> 
                         </div>
                 </div>
                 <div class="card-body p-1">
                     <div class="input-group justify-content-between">
-                    <h6 class="fw-600  mb-0 p-2">Tables</h6>
+                    <h6 class="fw-600  mb-0 p-1">Tables</h6>
 
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown [autoClose]="false" #level1="ngbDropdown">
@@ -38,7 +38,7 @@
                                       
                                         (cdkDropListDropped)="calculatedFieldsDrop($event)">
                                             
-                                            <div style="max-height: 382px; overflow: scroll; padding: 10px;">
+                                            <div style="max-height: 382px; overflow: auto; padding: 10px;">
                                                 <div class="col-lg-12 col-md-12 p-0 m-0">
                                                         <div class="form-group p-0 mb-0">
                                                             <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label>
@@ -448,7 +448,7 @@
                             </div>
                 
                         </div>-->
-                        <div class="modal-body" style="height: 500px; overflow: scroll;">
+                        <div class="modal-body" style="height: 500px; overflow: auto;">
                             @if(dateList.includes(filterType)){
                                 <div class="card panel panel-primary">
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
@@ -550,7 +550,7 @@
                           <button type="button"class="btn-close"aria-label="Close"(click)="isAllSelected = false;modal.dismiss('Cross click')">
                           </button>
                         </div>
-                        <div class="modal-body"  style="height: 500px; overflow: scroll;">
+                        <div class="modal-body"  style="height: 500px; overflow: auto;">
 
                             @if(dateList.includes(filterType)){
                                 <div class="card panel panel-primary">
@@ -785,7 +785,7 @@
                                                 </button>
                                             </div>
                                         
-                                            <div class="modal-body" style="height: 500px; overflow: scroll;">
+                                            <div class="modal-body" style="height: 500px; overflow: auto;">
                                                 <div class="card-body p-0">
                                                     <div class="column-card">
                                                         <p class="fw-semibold mb-1 ">Row : {{columns.column}}</p>
@@ -878,13 +878,13 @@
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'avg' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
-                                                        <li><a [ngClass]="rows.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
-                                                        <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
-                                                        <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')" style="padding: 15px !important;">Sum</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'avg' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')" style="padding: 15px !important;">Avg</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')" style="padding: 15px !important;">Min</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')" style="padding: 15px !important;">Max</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')" style="padding: 15px !important;">Count</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')" style="padding: 15px !important;">Count (Distinct)</a></li>
+                                                        <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" style="padding: 15px !important;">None</a></li>  
                                                     </ul>
                                                 </div>
                                                 <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
@@ -957,7 +957,7 @@
                                                 </button>
                                             </div>
                                         
-                                            <div class="modal-body" style="height: 500px; overflow: scroll;">
+                                            <div class="modal-body" style="height: 500px; overflow: auto;">
                                                 <div class="card-body p-0">
                                                     <div class="column-card">
                                                         <p class="fw-semibold mb-1 ">Row : {{rows.column}}</p>
@@ -1094,7 +1094,7 @@
                     </div>
                    </div>
                 }
-                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: scroll;">
+                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: auto;">
                     <!-- @for(tab of tabs;track tab; let index = $index){ -->
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
@@ -1579,7 +1579,7 @@
         <!-- } -->
         <!-- }-->
                  </div>
-                    <div class="card-footer d-flex p-2" style="overflow-x: scroll; overflow-y: hidden;">
+                    <div class="card-footer d-flex p-2" style="overflow-x: auto; overflow-y: hidden;">
                         <mat-tab-group [selectedIndex]="selectedTabIndex"
                         (selectedIndexChange)="selected.setValue($event)"
                         (selectedTabChange)="onChange($event);" 
@@ -1717,7 +1717,7 @@
                                                       <button type="button"class="btn-close"aria-label="Close"(click)="isAllSelected = false;modal.dismiss('Cross click')">
                                                       </button>
                                                     </div>
-                                                    <div class="modal-body"  style="height: 500px; overflow: scroll;">
+                                                    <div class="modal-body"  style="height: 500px; overflow: auto;">
                                                         <!-- <div class="input-group">
                                                             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"
                                                                 (keyup.enter)="editFilterList()" aria-describedby="button-addon2">
