@@ -7114,7 +7114,7 @@ fetchChartData(chartData: any){
         this.dataLabelsFontPosition = position;
       }
       resetChartColor(){
-        this.color = '#00A5A2';
+        this.color = '#2392c1';
         this.barColor = '#4382F7';
         this.lineColor = '#38FF98';
         this.marksColor2(this.color);
@@ -7514,7 +7514,7 @@ fetchChartData(chartData: any){
     validateCalculatedField(){
       switch(this.nestedCalculatedFieldData) {
         case 'abs':
-          if(!this.validateFormula(/^ABS\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
+          if(!this.validateFormula(/^ABS\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7525,7 +7525,7 @@ fetchChartData(chartData: any){
 
         break; 
         case 'ceiling':
-          if(!this.validateFormula(/^CEILING\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
+          if(!this.validateFormula(/^CEILING\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7536,7 +7536,7 @@ fetchChartData(chartData: any){
           }
           break; 
         case 'floor': 
-        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
+        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
         }
@@ -7546,7 +7546,7 @@ fetchChartData(chartData: any){
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_]+"\."[a-zA-Z0-9_]+")\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7557,7 +7557,7 @@ fetchChartData(chartData: any){
           }
            break; 
         case 'left': 
-        if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -7568,7 +7568,7 @@ fetchChartData(chartData: any){
         }
         break; 
         case 'right': 
-        if(!this.validateFormula(/^RIGHT\(\s*("[a-zA-Z0-9_]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+        if(!this.validateFormula(/^RIGHT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -7590,7 +7590,7 @@ fetchChartData(chartData: any){
         }
         break; 
         case 'length':
-          if(!this.validateFormula(/^LENGTH\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^LENGTH\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7601,7 +7601,7 @@ fetchChartData(chartData: any){
           }
         break; 
         case 'trim':
-          if(!this.validateFormula(/^TRIM\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^TRIM\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7612,7 +7612,7 @@ fetchChartData(chartData: any){
           }
         break; 
         case 'upper':
-          if(!this.validateFormula(/^UPPER\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^UPPER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -7623,7 +7623,7 @@ fetchChartData(chartData: any){
           }
         break; 
         case 'lower':
-          if(!this.validateFormula(/^LOWER\("([a-zA-Z0-9_]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+          if(!this.validateFormula(/^LOWER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;

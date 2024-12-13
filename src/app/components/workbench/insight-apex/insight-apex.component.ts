@@ -1662,6 +1662,7 @@ export class InsightApexComponent {
           horizontal: true,
           barHeight: "80%",
           isFunnel: true,
+          distributed : this.isDistributed,
           dataLabels: {
             position:  this.dataLabelsFontPosition,
           }
@@ -1689,7 +1690,7 @@ export class InsightApexComponent {
       legend: {
         show: false
       },
-      colors: [this.color]
+      colors: this.isDistributed ? [] : [this.color]
     };
   }
   guageChart() {
@@ -2585,9 +2586,9 @@ export class InsightApexComponent {
   }
   colorDistribution(){
     if (this.funnelCharts) {
-      this.chartOptions.colors = [];
+      this.chartOptions.colors = this.isDistributed ? [] : [this.color];
       this.chartOptions.plotOptions.bar.distributed = this.isDistributed;
-      let object = { colors: [], plotOptions: this.chartOptions.plotOptions };
+      let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
       this.funnelCharts.updateOptions(object);
     }
   }
@@ -2667,15 +2668,20 @@ export class InsightApexComponent {
       }
       object = { series: this.chartOptions.series };
     }
-    else if(this.funnelCharts){
-      if(this.chartOptions?.series[0]?.color){
-        this.chartOptions.series[0].color = this.color;
-      }
-      object = { series: this.chartOptions.series }
-    }
+    // else if(this.funnelCharts){
+    //   if(this.chartOptions?.colors){
+    //     this.chartOptions.colors = this.isDistributed ? [] : [this.color];
+    //   }
+    //   object = { colors: this.chartOptions.colors }
+    // }
     else{
       if(this.chartOptions?.colors){
-        this.chartOptions.colors = [this.color];
+        if(this.chartType === 'funnel'){
+          this.chartOptions.colors = this.isDistributed ? [] : [this.color];
+        }
+        else{
+          this.chartOptions.colors = [this.color];
+        }
       }
       object = { colors: this.chartOptions.colors };
     }
@@ -2907,7 +2913,7 @@ export class InsightApexComponent {
 
       this.chartOptions.series[0].data = sortedData.sortedNumbers;
       this.chartOptions.xaxis.categories = sortedData.sortedLabels;
-      this.funnelCharts.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
+      this.funnelCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
     } 
     else if (this.chartType === 'bar') {
       const numbers = this.chartOptions.series[0].data;
@@ -2916,7 +2922,7 @@ export class InsightApexComponent {
 
       this.chartOptions.series[0].data = sortedData.sortedNumbers;
       this.chartOptions.xaxis.categories = sortedData.sortedLabels;
-      this.barCharts.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
+      this.barCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
     }
   }
 }
