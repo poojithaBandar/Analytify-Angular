@@ -38,12 +38,12 @@
                             <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Dashboard</a> -->
                             @if(!showAllDasboards && savedDashboardList.length !== 0){
                             <a class="">
-                                <span class="add-txt text-info card-title me-2 " (click)="showAllDasboards=!showAllDasboards">Show
+                                <span class="add-txt  card-title me-2 " (click)="showAllDasboards=!showAllDasboards">Show
                                     Less <i class="fa fa-angle-double-right"> </i></span>
                             </a>
                             } @if(showAllDasboards && savedDashboardList.length !== 0){
                             <a class="" *ngIf="savedDashboardList.length > 4">
-                                <span class="add-txt text-info card-title me-2" (click)="showAllDasboards=!showAllDasboards">View
+                                <span class="add-txt card-title me-2" (click)="showAllDasboards=!showAllDasboards">View
                                     More <i class="fa fa-angle-double-right"> </i></span>
                             </a>
                             }
@@ -61,7 +61,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"
                                             (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
-                                            style="cursor: pointer;color: #2392c1;">
+                                            style="cursor: pointer;">
                                             {{dashboardList.dashboard_name | slice:0:11}}</h5>
                                         <p class="card-text">Modified on {{dashboardList.Modified}} </p>
                                     </div>
@@ -99,7 +99,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1" ngbTooltip="{{dashboardList.dashboard_name}}"
                                             (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
-                                            style="cursor: pointer;color: #2392c1;">
+                                            style="cursor: pointer;">
                                             {{dashboardList.dashboard_name | slice:0:11}}</h5>
                                         <p class="card-text">Modified on {{dashboardList.Modified}} </p>
                                     </div>
@@ -132,7 +132,7 @@
                         <div class="p-5 d-flex align-items-center justify-content-start">
                             <div class="dashboard-card-title">
                                 <h5 (click)="viewAllDashboards()" class="card-title   mb-1"
-                                    style="cursor: pointer;color: #2392c1;border-bottom: 1px solid;"> View All <i
+                                    style="cursor: pointer;border-bottom: 1px solid;"> View All <i
                                         class="fa fa-angle-double-right"></i> </h5>
                                 <p class="card-text"></p>
                             </div>
@@ -151,12 +151,12 @@
                             <!-- <a class="btn btn-blue-light mb-2 me-3" ><i class="fa fa-plus"></i> Recently Viewed</a> -->
                             @if(!showAllSheets && userSheetsList.length !==0){
                             <a class="">
-                                <span class="add-txt text-info card-title me-2" (click)="showAllSheets=!showAllSheets">Show Less <i
+                                <span class="add-txt card-title me-2" (click)="showAllSheets=!showAllSheets">Show Less <i
                                         class="fa fa-angle-double-right"> </i></span>
                             </a>
                             } @if(showAllSheets && userSheetsList.length !==0){
                             <a class="" *ngIf="userSheetsList.length > 4">
-                                <span class="add-txt text-info card-title me-2" (click)="showAllSheets=!showAllSheets">View More <i
+                                <span class="add-txt card-title me-2" (click)="showAllSheets=!showAllSheets">View More <i
                                         class="fa fa-angle-double-right"> </i></span>
                             </a>
                             }
@@ -226,7 +226,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
-                                            style="cursor: pointer;color: #2392c1;"> {{sheetlist.sheet_name | slice:0:11}}</h5>
+                                            style="cursor: pointer;"> {{sheetlist.sheet_name | slice:0:11}}</h5>
                                         <p class="card-text">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -309,7 +309,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
-                                            style="cursor: pointer;color: #2392c1;"> {{sheetlist.sheet_name | slice:0:16}}</h5>
+                                            style="cursor: pointer;"> {{sheetlist.sheet_name | slice:0:16}}</h5>
                                         <p class="card-text">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
@@ -340,7 +340,7 @@
                         <div class="p-5 d-flex align-items-center justify-content-start">
                             <div class="dashboard-card-title">
                                 <h5 (click)="viewAllSheets()" class="card-title   mb-1"
-                                    style="cursor: pointer;color: #2392c1;border-bottom: 1px solid;"> View All <i
+                                    style="cursor: pointer;border-bottom: 1px solid;"> View All <i
                                         class="fa fa-angle-double-right"></i> </h5>
                                 <p class="card-text"></p>
                             </div>
@@ -355,13 +355,13 @@
                         <div class="view-card">
                             @if(!showAllSavedQueries && savedQueryList.length !==0){
                             <a class="">
-                                <span class="add-txt text-info card-title me-2"
+                                <span class="add-txt card-title me-2"
                                     (click)="showAllSavedQueries=!showAllSavedQueries">Show Less <i
                                         class="fa fa-angle-double-right"> </i></span>
                             </a>
                             } @if(showAllSavedQueries && savedQueryList.length !==0){
                             <a class="" *ngIf="savedQueryList.length > 4">
-                                <span class="add-txt text-info card-title me-2"
+                                <span class="add-txt card-title me-2"
                                     (click)="showAllSavedQueries=!showAllSavedQueries">View More <i
                                         class="fa fa-angle-double-right"> </i></span>
                             </a>
@@ -379,7 +379,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1"
                                             (click)="gotoSavedQuery(savedQuery.hierarchy_id,savedQuery.queryset_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
-                                            ngbTooltip="{{savedQuery.queryset_name}}" style="cursor: pointer;color: #2392c1;">
+                                            ngbTooltip="{{savedQuery.queryset_name}}" style="cursor: pointer;">
                                             {{savedQuery.queryset_name | slice:0:20}}</h5>
                                         <p class="card-text">Modified on {{savedQuery.modified}} </p>
                                     </div>
@@ -409,7 +409,7 @@
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1"
                                             (click)="gotoSavedQuery(savedQuery.hierarchy_id,savedQuery.queryset_id,savedQuery.is_custom_sql,savedQuery?.datasource_filterdata[0]?.datasource_querysetid)"
-                                            ngbTooltip="{{savedQuery.queryset_name}}" style="cursor: pointer;color: #2392c1;">
+                                            ngbTooltip="{{savedQuery.queryset_name}}" style="cursor: pointer;">
                                             {{savedQuery.queryset_name | slice:0:20}}</h5>
                                         <p class="card-text">Modified on {{savedQuery.modified}} </p>
                                     </div>
@@ -441,7 +441,7 @@
                         <div class="p-5 d-flex align-items-center justify-content-start">
                             <div class="dashboard-card-title">
                                 <h5 (click)="viewAllSavedQueries()" class="card-title   mb-1"
-                                    style="cursor: pointer;color: #2392c1;border-bottom: 1px solid;"> View All <i
+                                    style="cursor: pointer;border-bottom: 1px solid;"> View All <i
                                         class="fa fa-angle-double-right"></i> </h5>
                                 <p class="card-text "></p>
                             </div>
@@ -455,7 +455,7 @@
                         <h6 class="fw-bold mb-1 fs-18"> Quick Start</h6>
                         <div class="view-card">
                             <!-- <a class="">
-                                            <span class="add-txt text-info me-2 card-title" >View More <i class="fa fa-angle-double-right"> </i></span>
+                                            <span class="add-txt me-2 card-title" >View More <i class="fa fa-angle-double-right"> </i></span>
                                         </a> -->
                         </div>
                     </div>
@@ -477,7 +477,7 @@
                                     <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" src="{{dashboardList.dashboard_image}}" alt="img" class="card-img-top">
                                 </div>
                                 <div class="card-body p-2 d-flex justify-content-between">
-                                    <h5 (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" class="card-title mb-0" style="cursor: pointer; color: #2392c1;">{{dashboardList.dashboard_name}}</h5>
+                                    <h5 (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)" class="card-title mb-0" style="cursor: pointer; ">{{dashboardList.dashboard_name}}</h5>
                                     <div class="dashboard-option">
                                         <div class="d-flex justify-content-end p-1" ngbDropdown>
                                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"  ngbDropdownToggle
@@ -508,7 +508,7 @@
                 <div class="card-header d-flex justify-content-between">
                     <div class="card-title">Recent Connections</div>
                     <a class="">
-                        <span class="add-txt text-info me-2" (click)="goToConnections()">View All <i class="fa fa-angle-double-right"> </i></span>
+                        <span class="add-txt me-2" (click)="goToConnections()">View All <i class="fa fa-angle-double-right"> </i></span>
                     </a>
                 </div>
                 <div class="card-body mb-0 p-0 " style="padding-right: 10px !important;">
@@ -518,7 +518,7 @@
                                 @for(database of connectionList;track database){
                                 <tr>
                                     <td>
-                                        <a class="card-title" style="color: #2392c1;"
+                                        <a class="card-title" 
                                             (click)="getTablesFromConnectedDb(database.hierarchy_id)"
                                             ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                     </td>
