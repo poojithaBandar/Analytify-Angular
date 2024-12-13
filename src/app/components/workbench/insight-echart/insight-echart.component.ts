@@ -8,6 +8,8 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import _ from 'lodash';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
+import { lastValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 interface Dimension {
   name: string;
   values: string[];
@@ -82,7 +84,7 @@ export class InsightEchartComponent {
 
   series: any[] = [];
   chartOptions: any = {};
-  constructor(private cdr: ChangeDetectorRef){}
+  constructor(private cdr: ChangeDetectorRef,private http: HttpClient){}
 
  
   // ngAfterViewInit() {
@@ -103,7 +105,12 @@ export class InsightEchartComponent {
 
       // Apply initial options
       this.updateChartTest();
-      this.chartInstance.on('click', this.onChartClick.bind(this));
+      if(this.chartType === 'map'){
+        this.chartInstance.on('click', (event) => this.handleChartClick(event));
+      }
+      else{
+        this.chartInstance.on('click', this.onChartClick.bind(this));
+      }
     }
     // const container = document.querySelector('.chart-container') as HTMLElement;
     // this.chartInstance = echarts.init(container);
@@ -2864,6 +2871,42 @@ sortSeries(sortType: any) {
       this.setDrilldowns.emit(dObject);
       // this.setOriginalData();
       // this.dataExtraction();
+    }
+  }
+  private handleChartClick(event: any): void {
+    this.onMapChartClick(event).catch((error) => {
+      console.error('Error handling chart click:', error);
+    });
+  }
+  async onMapChartClick(event: any) {
+    const regionName = event.name;
+    if (regionName === 'United States') {
+      const geoJson = await lastValueFrom(
+        this.http.get<any>(`assets/maps/USA.json`)
+      );
+      echarts.registerMap(regionName, geoJson);
+    } else {
+     
+    }
+    // this.setOriginalData();
+    if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
+      console.log('X-axis value:', regionName);
+      let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
+      this.drillDownIndex++;
+      let obj = { [nestedKey]: regionName };
+      this.drillDownObject.push(obj);
+      // this.map = false;
+      // if (this.drillDownIndex > 0) {
+      //   this.bar = true;
+      //   this.chartId = 6;
+      // }
+      // this.dataExtraction();
+      let dObject = {
+        drillDownIndex : this.drillDownIndex,
+        draggedDrillDownColumns :this.draggedDrillDownColumns,
+        drillDownObject : this.drillDownObject
+      }
+      this.setDrilldowns.emit(dObject);
     }
   }
 }

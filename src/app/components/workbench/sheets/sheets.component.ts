@@ -7014,6 +7014,13 @@ fetchChartData(chartData: any){
           }
         
           goDrillDownBack(){
+            if(this.isMapChartDrillDown && this.drillDownIndex === 1){
+              this.map = true;
+              this.bar = false;
+              this.chartId = 29;
+              this.chartType = 'map';
+              this.isMapChartDrillDown = false;
+            }
             if(this.drillDownIndex > 0) {
               this.drillDownIndex--;
               this.drillDownObject.pop();
@@ -7967,10 +7974,20 @@ fetchChartData(chartData: any){
       }
     }
 
+    isMapChartDrillDown : boolean = false;
     setDrilldowns(event : any){
       this.drillDownIndex = event.drillDownIndex;
       this.draggedDrillDownColumns = event.draggedDrillDownColumns;
       this.drillDownObject = event.drillDownObject;
+      if (this.map) {
+        if (this.drillDownIndex != 0) {
+          this.map = false;
+          this.bar = true;
+          this.chartId = 6;
+          this.chartType = 'bar';
+          this.isMapChartDrillDown = true;
+        }
+      }
       this.setOriginalData();
       this.dataExtraction();
     }
