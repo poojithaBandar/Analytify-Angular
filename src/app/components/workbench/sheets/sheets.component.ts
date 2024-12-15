@@ -7104,7 +7104,7 @@ fetchChartData(chartData: any){
         }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #2392c1';
+        this.selectedElement.style.border = '2px solid var(--primary-color)';
         const color = window.getComputedStyle(element).backgroundColor;
         this.dataLabelsColor = color;
         element.style.border = `1px solid black`;
@@ -7201,7 +7201,7 @@ fetchChartData(chartData: any){
       }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #2392c1';
+        this.selectedElement.style.border = '2px solid var(--primary-color)';
         const color = window.getComputedStyle(element).backgroundColor;
         this.dimensionColor = color;
       
@@ -7212,7 +7212,7 @@ fetchChartData(chartData: any){
       }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #2392c1';
+        this.selectedElement.style.border = '2px solid var(--primary-color)';
         const color = window.getComputedStyle(element).backgroundColor;
         this.measureColor = color;
       
@@ -7904,7 +7904,7 @@ fetchChartData(chartData: any){
       }
       const element = event.target as HTMLElement;
       this.selectedElement = event.target as HTMLElement;
-      this.selectedElement.style.border = '2px solid #2392c1';
+      this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
     }
     headerColorChange(event:any){
@@ -7913,7 +7913,7 @@ fetchChartData(chartData: any){
       }
       const element = event.target as HTMLElement;
       this.selectedElement = event.target as HTMLElement;
-      this.selectedElement.style.border = '2px solid #2392c1';
+      this.selectedElement.style.border = '2px solid var(--primary-color)';
       this.headerFontColor = window.getComputedStyle(element).backgroundColor;
     }
     sortedData : TableRow[] = [];

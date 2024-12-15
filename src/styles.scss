@@ -34,6 +34,7 @@
 @import "../node_modules/filepond/dist/filepond.css";
 // @import "../node_modules/ngx-easy-table/style.css";
 @import "../node_modules/ngx-easy-table/style.css";
+@import "../src/assets/scss/variables";
 
 .ng-select .ng-select-container .ng-value-container .ng-input>input {
     color: var(--default-text-color);

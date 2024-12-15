@@ -88,6 +88,7 @@ export class SwitcherComponent {
       const menuclickclosed = document.getElementById(
         'switcher-menu-click'
       ) as HTMLInputElement;
+      if(menuclickclosed)
       menuclickclosed.checked = true;
     
     //     const mainContentElement = document.querySelector(".main-content") as HTMLElement | null;
@@ -327,6 +328,7 @@ export class SwitcherComponent {
   }
 
   color1 = '#1457e6';
+  textcolor1 = '#1457e6';
   color = '#1ae715';
 
   ImageTheme(type: string) {
@@ -425,6 +427,21 @@ active=1;
       console.log(error);
     }
   })
+  }
+
+  setTextColor(event : any){
+    this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--default-text-color', event.color);
+  }
+
+  setCustomThemeData(customTheme : any){
+    this.dynamicTranparentBgPrimary({color : customTheme.background_colour});
+    this.primary(customTheme.primary_colour_theme);  
+    this.menuTheme(customTheme.menutype);
+    this.headerTheme(customTheme.headertype);
+    this.NavigationChange(customTheme.navigation_styles);
+    this.setTextColor({color : customTheme.textColor});
+    this.DirectionsChange(customTheme.direction);
+
   }
 }
 

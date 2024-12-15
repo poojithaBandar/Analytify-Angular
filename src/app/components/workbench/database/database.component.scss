@@ -273,7 +273,7 @@ a {
   cursor: pointer;
 }
 span.time {
-  background-color: #2392c1;
+  background-color: var(--primary-color);
   color: #fff;
   padding: 3px 10px;
   border-radius: 5px;

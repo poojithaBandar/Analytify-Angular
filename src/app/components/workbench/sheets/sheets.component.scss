@@ -6,7 +6,7 @@ button.BtnNewStyle {
   margin-inline: 0px !important;
   border-radius: 0px !important;
   background-color: rgb(35 145 192 / 7%);
-  border: 1px solid rgb(35 146 193);
+  border: 1px solid var(--primary-color);
 }
 .nav-link.BtnNewStyle.active {
   background: #ccedec !important;
@@ -90,7 +90,7 @@ button.BtnRowStyle.span-left {
 .example-box {
 padding: 3px 5px;
 // border-bottom: solid 1px #ccc;
-color: #2392c1 !important;
+color: var(--primary-color);
 display: flex;
 flex-direction: row;
 align-items: center;
@@ -180,10 +180,10 @@ span.abc-txt {
   display: none;
 }
 :host ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-  color: #2392c1 !important;
+  color: var(--primary-color) !important;
 }
 :host ::ng-deep .mat-mdc-tab .mdc-tab-indicator__content--underline {
-  border-color: #2392c1 !important;
+  border-color: var(--primary-color) !important;
 }
 #donutchart {
   width: 380px;
@@ -968,7 +968,7 @@ th, td {
   .resetColorButton{
     height: 20px;
     width: 50px;
-    background-color: #2392c1;
+    background-color: var(--primary-color);
     border-radius: 5px;
     border: none;
     color: white;
@@ -978,7 +978,7 @@ th, td {
     height: 100% !important;
 }
 .aggregation-select{
-  background-color: #2392c1;
+  background-color: var(--primary-color);
 }
   
 .Semantic-layer-card {

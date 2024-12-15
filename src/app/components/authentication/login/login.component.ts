@@ -6,11 +6,13 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 import Swal from 'sweetalert2';
 import { RolespriviledgesService } from '../../workbench/rolespriviledges.service';
+import { SharedModule } from '../../../shared/sharedmodule';
+import { SwitcherComponent } from '../../../shared/layout-components/switcher/switcher.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule,ReactiveFormsModule],
+  imports: [RouterModule,ReactiveFormsModule,SharedModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -40,7 +42,7 @@ toggleVisibility1() {
   }
 }
   constructor(
-    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,
+    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private switcherComponent: SwitcherComponent,
     private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService
   ) {
     const currentUser = localStorage.getItem('currentUser');
@@ -79,6 +81,17 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     localStorage.setItem('username', JSON.stringify(userName));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);
+    this.switcherComponent.setCustomThemeData( {
+      "navigation_styles": "vertical",
+      "primary_colour_theme": "223, 90, 90",
+      "menu_colours": "4, 44, 72",
+      "header_colours": "255, 255, 255",
+      "background_colour": "#8c9097",
+      "menutype": "dark",
+      "headertype": "dark",
+      "direction": "ltr",
+      "textColor":"red"
+  })
     if(data.previlages){
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }
