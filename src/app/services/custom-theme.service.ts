@@ -9,18 +9,22 @@ export class CustomThemeService {
   currentTheme : any;
   apiCustomTheme : any;
 
-  constructor() { }
+  constructor(private themeService: CustomThemeService) { }
 
   setApiCustomTheme(customTheme : any){
     this.apiCustomTheme = _.cloneDeep(customTheme);
   }
 
   getApiCustomTheme(){
-  return this.apiCustomTheme;
+    if(this.apiCustomTheme){
+      return this.apiCustomTheme;
+    }
+    return JSON.parse(localStorage.getItem("apiCustomTheme")!);
   }
 
   setThemeVariable(variable: string, value: string): void {
     this.currentTheme[variable] = value;
+    this.themeService.setCurrentTheme(JSON.stringify(this.currentTheme));
   }
 
   setCurrentTheme(customTheme : any){
@@ -28,6 +32,9 @@ export class CustomThemeService {
   }
 
   getCurrentTheme(){
-    return this.currentTheme;
+    if(this.currentTheme){
+      return this.currentTheme;
+    }
+    return JSON.parse(localStorage.getItem("customTheme")!);
   }
 }

@@ -82,6 +82,8 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     localStorage.setItem('username', JSON.stringify(userName));
     localStorage.setItem('chartType', chartType);
     localStorage.setItem('userId', userId);  
+    localStorage.setItem('customTheme', JSON.stringify(data.custome_theme)); 
+    localStorage.setItem('apiCustomTheme', JSON.stringify(data.custome_theme)); 
     this.themeService.setApiCustomTheme(data.custome_theme);
     this.themeService.setCurrentTheme(data.custome_theme);
     this.switcherComponent.setCustomThemeData(data.custome_theme);

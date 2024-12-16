@@ -449,7 +449,8 @@ active=1;
 
   setTextColor(event : any){
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--default-text-color', event.color);
-    this.themeService.setThemeVariable('textColor',event.color);
+    localStorage.setItem("textColor", event.color);
+    this.themeService.setThemeVariable('textColor', event.color);
   }
 
   setCustomThemeData(customTheme: any) {
