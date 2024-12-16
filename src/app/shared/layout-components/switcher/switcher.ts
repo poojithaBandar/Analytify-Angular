@@ -271,4 +271,8 @@ export function localStorageBackUp() {
     // html?.style.setProperty('--primary-rgb', type);
     html?.style.setProperty('--primary', type);
   }
+  if (localStorage.getItem('textColor')) {
+    const textColor: any = localStorage.getItem('textColor');
+    html?.style.setProperty('--default-text-color', textColor);
+  }
 }

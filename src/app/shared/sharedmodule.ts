@@ -53,6 +53,7 @@ import { TestPipe } from '../test.pipe';
   
    
   ],
+  providers: [SwitcherComponent],
 
   exports: [
     // ContentLayoutComponent,
