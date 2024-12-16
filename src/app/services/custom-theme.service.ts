@@ -9,7 +9,7 @@ export class CustomThemeService {
   currentTheme : any;
   apiCustomTheme : any;
 
-  constructor(private themeService: CustomThemeService) { }
+  constructor() { }
 
   setApiCustomTheme(customTheme : any){
     this.apiCustomTheme = _.cloneDeep(customTheme);
@@ -24,7 +24,7 @@ export class CustomThemeService {
 
   setThemeVariable(variable: string, value: string): void {
     this.currentTheme[variable] = value;
-    this.themeService.setCurrentTheme(JSON.stringify(this.currentTheme));
+    localStorage.setItem('customTheme', JSON.stringify(this.currentTheme)); 
   }
 
   setCurrentTheme(customTheme : any){
