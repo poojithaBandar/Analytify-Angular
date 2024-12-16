@@ -364,7 +364,7 @@ span.abc-txt {
 }
 
 .copilot-icon {
-  width: 40px; /* Icon width */
+  width: 25px; /* Icon width */
   // height: 20px; /* Icon height */
   margin-right: 8px; /* Space between icon and text */
 }
@@ -460,6 +460,9 @@ button.viewQueryImg {
 .show-chart-card{
   height: 478px;
 }
+.show-chart-card-no-heirarchy{
+  height: 512px;
+}
 .sheet-table-h{
   height: 487px;
    overflow-y: auto;
@@ -532,6 +535,9 @@ app-insights-button {
 }
 .show-chart-card {
   height: 400px;
+}
+.show-chart-card-no-heirarchy{
+  height: 435px;
 }
 .panel-body-h {
   height: 544px;
@@ -627,6 +633,9 @@ h6 {
 }
 .show-chart-card {
   height: 338px;
+}
+.show-chart-card-no-heirarchy{
+  height: 375px;
 }
 .filter-card-height {
   height: 130px;

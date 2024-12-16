@@ -706,7 +706,7 @@
                                 </div>
                             </div>
                             </ng-template>
-                            <li *ngIf="!isPublicUrl" [ngbNavItem]="3" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
+                            <li [ngbNavItem]="3" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
                               <a ngbNavLink class="dashboard-tab-padding">Actions</a>
                                  <ng-template ngbNavContent>
                                      <div class="tab-pane" id="linktabs">
@@ -1363,7 +1363,7 @@
                   </div>
                 </div>
               }
-              <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+              <div *ngIf="['Table', 'KPI'].includes(item['chartType'])" class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
               @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
                 <div class="big-number-container">
                     @for(row of item['kpiData'].rows;track row){

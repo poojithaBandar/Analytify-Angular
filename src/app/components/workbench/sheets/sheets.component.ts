@@ -7135,7 +7135,7 @@ fetchChartData(chartData: any){
         this.dataLabelsFontPosition = position;
       }
       resetChartColor(){
-        this.color = '#00A5A2';
+        this.color = '#2392c1';
         this.barColor = '#4382F7';
         this.lineColor = '#38FF98';
         this.marksColor2(this.color);

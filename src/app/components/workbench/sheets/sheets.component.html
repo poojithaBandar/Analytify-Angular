@@ -1058,7 +1058,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0 show-chart-card">
+            <div class="card mb-0" [ngClass]="(bar || pie || donut) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
                 @if(!(table || kpi)){
                     <div class="input-group">
                 <div class="col-lg-3 col-md-3 p-1">
@@ -3614,7 +3614,7 @@
                                 <li [ngbNavItem]="3">
                                     <a ngbNavLink class="p-1" (click)="getChartSuggestions()">
                                         <button class="copilot-button">
-                                            <img src="./assets/images/copilot.gif" alt="Copilot" class="copilot-icon" />
+                                            <img src="./assets/images/copilot.gif" alt="Copilot" class="copilot-icon border rounded-5" />
                                         </button>
                                     </a>
                                     <ng-template ngbNavContent>
