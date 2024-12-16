@@ -209,7 +209,7 @@ License                         :   Licensed under ThemeForest License
   --body-bg-rgb2:	26, 28, 30;
   --menu-bg:	rgb(var(--body-bg-rgb));
   --menu-border-color:	rgba(255,255,255,0.1);
-  --menu-prime-color:	rgba(255,255,255,0.6);
+  --menu-prime-color:	rgba(255,255,255);
   --header-bg:	rgb(var(--body-bg-rgb));
   --header-prime-color:	rgba(255,255,255,0.6);
   --header-border-color:	rgba(255,255,255,0.1);
@@ -648,7 +648,7 @@ html[data-menu-styles=dark] .app-sidebar .slide-menu.child3 .side-menu__item.act
 }
 html[data-menu-styles=dark][data-theme-mode=light] {
   --menu-bg: rgb(4 44 72 / 98%);
-  --menu-prime-color: rgba(255, 255, 255, 0.6);
+  --menu-prime-color: rgba(255, 255, 255);
 }
 html[data-menu-styles=dark][data-theme-mode=light][data-bg-img=bgimg1] {
   --menu-bg: url(../images/menu-bg-images/bg-img1.jpg);
@@ -695,7 +695,7 @@ html[data-menu-styles=dark][data-theme-mode=light] .side-menu__icon.active .side
 
 html[data-menu-styles=color] {
   --menu-bg: var(--primary-color);
-  --menu-prime-color: rgba(255, 255, 255, 0.8);
+  --menu-prime-color: rgba(255, 255, 255);
   --menu-border-color: rgba(255, 255, 255, 0.1);
 }
 html[data-menu-styles=color][data-nav-layout=vertical] .app-sidebar .main-sidebar-header .header-logo .desktop-dark {
@@ -52782,7 +52782,8 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .tx-fixed-white {
-  color: var(--fixed-white) !important;
+  /* color: var(--fixed-white) !important; */
+  color: var(--menu-prime-color);
 }
 
 .text-gray {

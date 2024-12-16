@@ -133,7 +133,7 @@
                                                                                 <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
                                                                             </li> -->
                                         <div class="dropdown" ngbDropdown  autoClose="outside">
-                                            <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
+                                            <li class="tag rounded-pill bg-primary alert" id="row16" style="color: #fff;">
                                                 <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'full Outer'"
                                                     ngbTooltip="Full Outer Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
                                                     <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active ms-2"
@@ -154,7 +154,7 @@
                                                     <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active ms-2"
                                                         style="padding: 3px;">
                                                 </span>
-                                                <span style="margin-top: 4px;">{{relation.table1}} : {{relation.table2}}</span>
+                                                <p style="margin-top: 4px;">{{relation.table1}} : {{relation.table2}}</p>
                                                                                     <!-- <a class="tag-addon rounded-pill bg-white-transparent"
                                                                                         data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)"
                                                                                         aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a> -->
