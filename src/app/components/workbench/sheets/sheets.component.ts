@@ -48,6 +48,7 @@ import { lastValueFrom, timer } from 'rxjs';
 import { evaluate, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -361,7 +362,7 @@ export class SheetsComponent {
   sortType : any = 0;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService){   
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -461,6 +462,23 @@ export class SheetsComponent {
    this.canDrop = !this.canEditDb
   }
 
+  rgbStringToHex(rgb: string): string {
+    // Split the input string by commas, remove extra spaces, and convert to numbers
+    const [r, g, b] = rgb.split(',').map((value) => parseInt(value.trim(), 10));
+  
+    // Ensure RGB values are within the valid range [0, 255]
+    const clamp = (value: number) => Math.max(0, Math.min(255, value));
+  
+    // Convert RGB to HEX
+    return (
+      '#' +
+      [clamp(r), clamp(g), clamp(b)]
+        .map((x) => x.toString(16).padStart(2, '0')) // Convert to hex and pad
+        .join('')
+        .toUpperCase()
+    );
+  }
+
   ngOnInit(): void {
     this.loaderService.hide();
     this.columnsData();
@@ -468,6 +486,9 @@ export class SheetsComponent {
     this.getSheetNames();
     this.getDashboardsList();
     this.setChartType();
+    // this.colorService.color$.subscribe((color) => {
+    //   this.color = this.rgbStringToHex(color);
+    // });
     // this.sheetRetrive();
   }
  async getSheetNames():Promise<void>{

@@ -80,6 +80,9 @@ export class WorkbenchService {
   tableRelation(obj:any){
     return this.http.post<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj);
   }
+  saveThemes(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/usercustomtheme/`+this.accessToken,obj);
+  }
   getTableData(obj:any){
     return this.http.put<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj)
   }
