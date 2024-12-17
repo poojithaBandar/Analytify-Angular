@@ -455,7 +455,8 @@ active=1;
 
   setCustomThemeData(customTheme: any) {
     if (customTheme.background_colour) {
-      this.dynamicTranparentBgPrimary({ color: customTheme.background_colour });
+      // this.dynamicTranparentBgPrimary({ color: customTheme.background_colour });
+      this.background(customTheme.background_colour,customTheme.background_colour,customTheme.background_colour,'rgba(255,255,255,0.1)','rgb(25, 38, 101)', 'dark','dark')
     }
     this.primary(customTheme.primary_colour_theme);
     this.menuTheme(customTheme.menutype);

@@ -29,7 +29,7 @@ const getAlphafloat = (a: any, alpha: any) => {
 // convertion of hex code to rgba code
 export function hexToRgba(hexValue: any) {
   if (!isValidHex(hexValue)) {
-    return null;
+    return hexValue;
   }
   const chunkSize = Math.floor((hexValue.length - 1) / 3);
   const hexArr = getChunksFromString(hexValue.slice(1), chunkSize);
