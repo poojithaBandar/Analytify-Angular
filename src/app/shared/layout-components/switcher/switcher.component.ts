@@ -2,6 +2,7 @@ import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { NavService } from '../../services/navservice';
 import * as switcher from '../switcher/switcher'
 import { WorkbenchService } from '../../../components/workbench/workbench.service';
+import { SharedService } from '../../services/shared.service';
 @Component({
   selector: 'app-switcher',
   templateUrl: './switcher.component.html',
@@ -12,7 +13,8 @@ export class SwitcherComponent {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private navServices: NavService,
-    private workbenchService: WorkbenchService
+    private workbenchService: WorkbenchService,
+    private sharedService: SharedService
   ) {
     
     const htmlElement =
@@ -412,6 +414,8 @@ active=1;
 
   changeChartType(event : any){
     this.chartType = event.target.value;
+    this.sharedService.setValue(this.chartType);
+
     let object = {
       "user_id": this.userId,
       "chart_type": this.chartType
