@@ -65,6 +65,8 @@ export class InsightEchartComponent {
   @Input() donutDecimalPlaces :any;
   @Input() isBold:any;
   @Input() sortType : any;
+  @Input() dimensionAlignment : any;
+  
   @Input() isSheetSaveOrUpdate : any;
   @Input() drillDownIndex : any;
   @Input() draggedDrillDownColumns : any;
@@ -191,6 +193,7 @@ export class InsightEchartComponent {
           // align: this.xlabelAlignment,// Hide xAxis labels
           interval: 0, // Show all labels
           padding: [10, 0, 10, 0],
+          align: this.dimensionAlignment,
           formatter: function(value:any) {
             return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
         }
@@ -372,6 +375,7 @@ stackedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        align: this.dimensionAlignment
       },
       splitLine: {
         lineStyle: {
@@ -475,7 +479,8 @@ sidebySide(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        color:this.dimensionColor
+        color:this.dimensionColor,
+        align: this.dimensionAlignment
       },
       splitLine: {
         lineStyle: {
@@ -561,7 +566,8 @@ hgroupedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        align: this.xlabelAlignment// Hide xAxis labels
+        // align: this.xlabelAlignment,// Hide xAxis labels
+        align: this.dimensionAlignment
       }
     },
     toggleGridLines: true,
@@ -663,7 +669,8 @@ hstackedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        align: this.xlabelAlignment// Hide xAxis labels
+        // align: this.xlabelAlignment// Hide xAxis labels
+        align: this.dimensionAlignment
       }
     },
     toggleGridLines: true,
@@ -763,7 +770,8 @@ areaChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        align: this.xlabelAlignment// Hide xAxis labels
+        // align: this.xlabelAlignment// Hide xAxis labels
+        align: this.dimensionAlignment
       }
     },
     toggleGridLines: true,
@@ -859,7 +867,8 @@ lineChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        align: this.xlabelAlignment// Hide xAxis labels
+        // align: this.xlabelAlignment// Hide xAxis labels
+        align: this.dimensionAlignment
       }
     },
     toggleGridLines: true,
@@ -1025,6 +1034,7 @@ barLineChart(){
           fontSize: this.xLabelFontSize, // Customize font size
           fontFamily: this.xLabelFontFamily, // Customize font family
           fontWeight: 'bold', // Customize font weight
+          align: this.dimensionAlignment,
           formatter(value:any) {
               return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
           }
@@ -1186,7 +1196,8 @@ multiLineChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        align: this.xlabelAlignment// Hide xAxis labels
+        // align: this.xlabelAlignment// Hide xAxis labels
+        align: this.dimensionAlignment
       }
     },
     toggleGridLines: true,
@@ -1300,12 +1311,13 @@ heatMapChart(){
         axisLabel: {
             show: this.xLabelSwitch,
             interval: 0,
-            rotate: 45,
+            // rotate: 45,
             textStyle: {
                 color: this.xLabelColor,
                 fontSize: this.xLabelFontSize,
                 fontFamily: this.xLabelFontFamily,
                 fontWeight: this.xlabelFontWeight,
+                align: this.dimensionAlignment
             }
         }
     },
@@ -1685,9 +1697,9 @@ chartInitialize(){
         this.xlabelFontWeightSetOption();
       }
     }
-    if(changes['xlabelFontWeight']){
+    if(changes['dimensionAlignment']){
       if(this.chartInstance){
-        this.xlabelFontWeightSetOption();
+        this.dimensionsAlignmentSetOption();
       }
     }
     if(changes['dimensionColor']){
@@ -2374,6 +2386,16 @@ chartInitialize(){
       }
       this.chartInstance.setOption(obj)
   }
+  }
+  dimensionsAlignmentSetOption() {
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align: this.dimensionAlignment
+        }
+      }
+    }
+    this.chartInstance.setOption(obj)
   }
   xGridColorSetOptions(){
     if(this.chartType === 'barline'){

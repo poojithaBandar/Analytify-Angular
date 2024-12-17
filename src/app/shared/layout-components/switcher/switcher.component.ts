@@ -5,6 +5,8 @@ import { WorkbenchService } from '../../../components/workbench/workbench.servic
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { ToastrService } from 'ngx-toastr';
 import { CustomThemeService } from '../../../services/custom-theme.service';
+import { SharedService } from '../../services/shared.service';
+
 @Component({
   selector: 'app-switcher',
   templateUrl: './switcher.component.html',
@@ -16,6 +18,7 @@ export class SwitcherComponent {
     private elementRef: ElementRef,
     private navServices: NavService,
     private workbenchService: WorkbenchService,
+    private sharedService: SharedService,
     private colorService : DefaultColorPickerService,
     private toasterService: ToastrService,
     private themeService : CustomThemeService
@@ -432,6 +435,8 @@ active=1;
 
   changeChartType(event : any){
     this.chartType = event.target.value;
+    this.sharedService.setValue(this.chartType);
+
     let object = {
       "user_id": this.userId,
       "chart_type": this.chartType

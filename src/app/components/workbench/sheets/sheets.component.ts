@@ -48,6 +48,7 @@ import { lastValueFrom, timer } from 'rxjs';
 import { evaluate, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
@@ -362,7 +363,7 @@ export class SheetsComponent {
   sortType : any = 0;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService){   
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -490,6 +491,15 @@ export class SheetsComponent {
     //   this.color = this.rgbStringToHex(color);
     // });
     // this.sheetRetrive();
+    // this.sheetRetrive();
+    const storedValue = localStorage.getItem('myValue');
+    console.log('Value on init from localStorage:', storedValue);
+    this.changeChartPlugin(storedValue);
+  
+    this.sharedService.localStorageValue$.subscribe((value: any) => {
+      console.log('Value changed in Comp2:', value);
+      this.changeChartPlugin(value);
+    });
   }
  async getSheetNames():Promise<void>{
   //this.tabs = [];
@@ -6530,7 +6540,8 @@ fetchChartData(chartData: any){
 
 }
 
-  changeChartPlugin() {
+  changeChartPlugin(value:any) {
+    this.selectedChartPlugin = value;
     if (this.selectedChartPlugin == 'apex') {
       this.isApexCharts = true;
       this.isEChatrts = false;
@@ -7214,7 +7225,7 @@ fetchChartData(chartData: any){
 
     setChartType(){
       this.selectedChartPlugin = localStorage.getItem('chartType')+'';
-      this.changeChartPlugin();
+      this.changeChartPlugin(this.selectedChartPlugin);
     }
     dimensionsColorChange(event:any){
       if (this.selectedElement) {
