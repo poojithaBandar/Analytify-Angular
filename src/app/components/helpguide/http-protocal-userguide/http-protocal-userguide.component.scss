@@ -16,3 +16,17 @@ h6 {
 span{
     margin-inline-start: 1rem !important;
 }
+
+ // for 90% Resolution //
+ @media ( 1420px <= width <= 1560px) {
+    p {
+        font-size: 12px;
+    }
+ }
+
+ // for 100% Resolution //
+ @media ( 1280px <= width <= 1420px) {
+    p {
+        font-size: 11px;
+    }
+ }
