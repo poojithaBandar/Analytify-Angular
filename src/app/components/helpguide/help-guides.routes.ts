@@ -5,7 +5,7 @@ import { authGuard } from '../../auth.guard';
 import { HelpGuideQuestionariesComponent } from './help-guide-questionaries/help-guide-questionaries.component';
 
 const routes: Routes = [
-    {path:'insights',children:[ 
+    {path:'analytify',children:[ 
     { 
       path: 'help-guide', 
       canActivate:[authGuard],

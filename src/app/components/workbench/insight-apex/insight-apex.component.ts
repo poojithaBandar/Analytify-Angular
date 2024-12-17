@@ -5,6 +5,7 @@ import { ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SharedModule } from '../../../shared/sharedmodule';
 import _ from 'lodash';
+import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 
 interface Dimension {
   name: string;
@@ -66,8 +67,10 @@ export class InsightApexComponent {
   @Input() draggedDrillDownColumns : any;
   @Input() drillDownObject : any;
   @Input() sortType : any;
+  @Input() isSheetSaveOrUpdate : any;
 
   @Output() setDrilldowns = new EventEmitter<object>();
+  @Output() saveOrUpdateChart = new EventEmitter<object>();
   
   @ViewChild('barChart') barCharts!: ChartComponent;
   @ViewChild('areaChart') areaCharts!: ChartComponent;
@@ -194,6 +197,12 @@ export class InsightApexComponent {
     }
     if(['funnel','bar'].includes(this.chartType) && changes['sortType'] && changes['sortType']?.currentValue !== 0){
       this.sortSeries(this.sortType);
+    }
+    if(this.isSheetSaveOrUpdate){
+      let object = {
+        chartOptions : this.chartOptions
+      }
+      this.saveOrUpdateChart.emit(object);
     }
     // if(changes['drillDownIndex']){
     //   this.updateDrilldowns();
@@ -1508,16 +1517,16 @@ export class InsightApexComponent {
         }
       },
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 100
-            },
-          }
-        }
-      ],
+      // responsive: [
+      //   {
+      //     breakpoint: 100,
+      //     options: {
+      //       chart: {
+      //         width: 10
+      //       },
+      //     }
+      //   }
+      // ],
       legend: {
         show: this.legendSwitch,
         position: this.legendsAllignment
@@ -1653,6 +1662,7 @@ export class InsightApexComponent {
           horizontal: true,
           barHeight: "80%",
           isFunnel: true,
+          distributed : this.isDistributed,
           dataLabels: {
             position:  this.dataLabelsFontPosition,
           }
@@ -1680,7 +1690,7 @@ export class InsightApexComponent {
       legend: {
         show: false
       },
-      colors: [this.color]
+      colors: this.isDistributed ? [] : [this.color]
     };
   }
   guageChart() {
@@ -1748,15 +1758,18 @@ export class InsightApexComponent {
             name: {
               offsetY: -20,
               show: true,
-              color: '#888',
-              fontSize: '16px'
+              color: this.dataLabelsColor,
+              fontSize: this.dataLabelsFontSize,
+              fontFamily: this.dataLabelsFontFamily,
+              fontWeight: this.isBold ? 700 : 400
             },
             value: {
               formatter: (val: any) => `${val.toFixed(2)}%`, // Displaying percentage
-              color: '#333',
+              show: true,
+              color: this.dataLabelsColor,
               fontSize: this.dataLabelsFontSize,
               fontFamily: this.dataLabelsFontFamily,
-              show: true,
+              fontWeight: this.isBold ? 700 : 400
             },
           },
           min: this.minValueGuage,  // Use user's min value
@@ -2287,7 +2300,7 @@ export class InsightApexComponent {
     let object;
     if(this.guageCharts){
       if(this.chartOptions?.plotOptions?.radialBar?.dataLabels?.value?.color){
-        this.chartOptions.plotOptions.radialBar.dataLabels.value.color = this.dataLabelsColor.toString();
+        this.chartOptions.plotOptions.radialBar.dataLabels.value.color = this.dataLabelsColor;
       }
       object = {plotOptions : this.chartOptions.plotOptions};
     } else{
@@ -2573,9 +2586,9 @@ export class InsightApexComponent {
   }
   colorDistribution(){
     if (this.funnelCharts) {
-      this.chartOptions.colors = [];
+      this.chartOptions.colors = this.isDistributed ? [] : [this.color];
       this.chartOptions.plotOptions.bar.distributed = this.isDistributed;
-      let object = { colors: [], plotOptions: this.chartOptions.plotOptions };
+      let object = { colors: this.chartOptions.colors, plotOptions: this.chartOptions.plotOptions };
       this.funnelCharts.updateOptions(object);
     }
   }
@@ -2655,15 +2668,20 @@ export class InsightApexComponent {
       }
       object = { series: this.chartOptions.series };
     }
-    else if(this.funnelCharts){
-      if(this.chartOptions?.series[0]?.color){
-        this.chartOptions.series[0].color = this.color;
-      }
-      object = { series: this.chartOptions.series }
-    }
+    // else if(this.funnelCharts){
+    //   if(this.chartOptions?.colors){
+    //     this.chartOptions.colors = this.isDistributed ? [] : [this.color];
+    //   }
+    //   object = { colors: this.chartOptions.colors }
+    // }
     else{
       if(this.chartOptions?.colors){
-        this.chartOptions.colors = [this.color];
+        if(this.chartType === 'funnel'){
+          this.chartOptions.colors = this.isDistributed ? [] : [this.color];
+        }
+        else{
+          this.chartOptions.colors = [this.color];
+        }
       }
       object = { colors: this.chartOptions.colors };
     }
@@ -2895,7 +2913,7 @@ export class InsightApexComponent {
 
       this.chartOptions.series[0].data = sortedData.sortedNumbers;
       this.chartOptions.xaxis.categories = sortedData.sortedLabels;
-      this.funnelCharts.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
+      this.funnelCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
     } 
     else if (this.chartType === 'bar') {
       const numbers = this.chartOptions.series[0].data;
@@ -2904,7 +2922,7 @@ export class InsightApexComponent {
 
       this.chartOptions.series[0].data = sortedData.sortedNumbers;
       this.chartOptions.xaxis.categories = sortedData.sortedLabels;
-      this.barCharts.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
+      this.barCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
     }
   }
 }

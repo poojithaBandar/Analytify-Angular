@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, input, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, input, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as echarts from 'echarts';
@@ -67,6 +67,14 @@ export class InsightEchartComponent {
   @Input() sortType : any;
   @Input() dimensionAlignment : any;
   
+  @Input() isSheetSaveOrUpdate : any;
+  @Input() drillDownIndex : any;
+  @Input() draggedDrillDownColumns : any;
+  @Input() drillDownObject : any;
+
+  @Output() saveOrUpdateChart = new EventEmitter<object>();
+  @Output() setDrilldowns = new EventEmitter<object>();
+
   width: string = '100%'; // Width of the chart
   height: string = '400px'; // Height of the chart
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
@@ -97,6 +105,7 @@ export class InsightEchartComponent {
 
       // Apply initial options
       this.updateChartTest();
+      this.chartInstance.on('click', this.onChartClick.bind(this));
     }
     // const container = document.querySelector('.chart-container') as HTMLElement;
     // this.chartInstance = echarts.init(container);
@@ -281,7 +290,10 @@ funnelchart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
-          formatter: '{b}: {c}', // {b} - name, {c} - primary value (default is sales here)
+          formatter: (params: any) => {
+            const formattedValue = this.formatNumber(params.value);
+            return `${params.name}: ${formattedValue}`;
+          }
         },
       },
     ],
@@ -377,7 +389,6 @@ stackedChart(){
       label: {
           show:true, // Enable data labels
           position:'inside', // Position of the labels (e.g., 'top', 'inside', etc.)
-          formatter:'{c}', // Customize the label format (e.g., '{c}' for value)
           //color:'#000', // Customize label color (default black)
           // fontSize:12, // Customize label font size
           // fontWeight:'bold', // Customize label font weight
@@ -386,6 +397,7 @@ stackedChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter:(params:any) => this.formatNumber(params.value) 
       }
   })),        
 
@@ -482,7 +494,6 @@ sidebySide(){
       label: {
           show: true, // Enable data labels
           position: 'top', // Position of the labels (e.g., 'top', 'inside', etc.)
-          formatter: '{c}', // Customize the label format (e.g., '{c}' for value)
           // color: '#000', // Customize label color
           // fontSize: 12, // Customize label font size
           // fontWeight: 'bold', // Customize label font weight
@@ -491,6 +502,7 @@ sidebySide(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter:(params:any) => this.formatNumber(params.value)
       }
   })),
     color:this.color
@@ -585,7 +597,6 @@ hgroupedChart(){
       label:{
           show:true, // Enable data labels
           position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
-          formatter:'{c}', // Display the value of the bar
           // color:'#000', // Default label color (can be updated)
           // fontSize:this.xLabelFontSize, // Default label font size
           // fontWeight:'bold', // Default label font weight
@@ -594,6 +605,7 @@ hgroupedChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter:(params:any) => this.formatNumber(params.value)
       }
   })),
 
@@ -688,7 +700,6 @@ hstackedChart(){
       label:{
           show:true, // Enable data labels
           position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
-          formatter:'{c}', // Display the value of the bar
           // color:'#000', // Default label color (can be updated)
           // fontSize:this.xLabelFontSize, // Default label font size
           // fontWeight:'bold', // Default label font weight
@@ -697,6 +708,7 @@ hstackedChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter:(params:any) => this.formatNumber(params.value)
       }
   })),
     
@@ -790,6 +802,7 @@ areaChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter:(params:any) => this.formatNumber(params.value) 
         },
         type: 'line',
         data: this.chartsRowData,
@@ -886,6 +899,7 @@ lineChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter:(params:any) => this.formatNumber(params.value) 
         },
         type: 'line',
         data: this.chartsRowData,
@@ -1091,6 +1105,7 @@ barLineChart(){
           fontFamily:this.dataLabelsFontFamily,
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
+          formatter:(params:any) => this.formatNumber(params.value) 
         }
       },
 
@@ -1116,6 +1131,7 @@ barLineChart(){
           fontFamily:this.dataLabelsFontFamily,
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
+          formatter:(params:any) => this.formatNumber(params.value) 
         }
       }
     ]
@@ -1210,7 +1226,6 @@ multiLineChart(){
       label:{
           show:true, // Enable data labels
           position:'right', // Position of the labels (e.g., 'top', 'inside', etc.)
-          formatter:'{c}', // Display the value of the bar
           // color:'#000', // Default label color (can be updated)
           // fontSize:this.xLabelFontSize, // Default label font size
           // fontWeight:'bold', // Default label font weight
@@ -1219,6 +1234,7 @@ multiLineChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter:(params:any) => this.formatNumber(params.value) 
       }
   })),
   };
@@ -1264,11 +1280,11 @@ radarChart(){
             ...dataItem,
             label:{
                 show:this.dataLabels,
-                formatter:'{c}',
                 fontFamily:this.dataLabelsFontFamily,
                 fontSize:this.dataLabelsFontSize,
                 fontWeight:this.isBold ? 700 : 400,
                 color:this.dataLabelsColor,
+                formatter:(params:any) => this.formatNumber(params.value) 
             }
         }))
     }
@@ -1339,6 +1355,7 @@ heatMapChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          formatter: (params:any) => this.formatNumber(params.value[2])
           // formatter : (params: { value: number[]; }) => this.formatNumber(params.value[2]) // Assuming value[2] holds the number to format
       },
       emphasis : {
@@ -1571,7 +1588,7 @@ private updateChartOptions(): void {
 }
 
 ngOnInit(){
-  this.chartInitialize()
+  // this.chartInitialize()
 }
 chartInitialize(){
   if(this.chartType ==='bar'){
@@ -1634,9 +1651,9 @@ chartInitialize(){
     }
   }
   ngOnChanges(changes: SimpleChanges) {
-    if(changes['chartType']){
+    // if(changes['chartType']){
       this.chartInitialize();
-    }
+    // }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
         // this.updateCategories();
@@ -1649,7 +1666,7 @@ chartInitialize(){
         this.resetchartoptions();
       }
     }
-    else if(changes['isZoom']){
+    if(changes['isZoom']){
       if (this.chartInstance) {
         this.chartInstance.setOption({
           dataZoom: this.isZoom ? [
@@ -1665,17 +1682,17 @@ chartInitialize(){
         );
       }
     }
-    else if(changes['xLabelFontFamily']){
+    if(changes['xLabelFontFamily']){
       if(this.chartInstance){
         this.xLabelFontFamilySetOptions()
       }
     }
-    else if(changes['xLabelFontSize']){
+    if(changes['xLabelFontSize']){
       if(this.chartInstance){
         this.xLabelFontSizeSetOption();
       }
     }
-    else if(changes['xlabelFontWeight']){
+    if(changes['xlabelFontWeight']){
       if(this.chartInstance){
         this.xlabelFontWeightSetOption();
       }
@@ -1685,97 +1702,97 @@ chartInitialize(){
         this.dimensionsAlignmentSetOption();
       }
     }
-    else if(changes['dimensionColor']){
+    if(changes['dimensionColor']){
       if(this.chartInstance){
         this.dimensionColorSetOption();
       }
     }
-    else if(changes['yLabelFontFamily']){
+    if(changes['yLabelFontFamily']){
       if(this.chartInstance){
         this.yLabelFontFamilySetOptions();
       }
     }
-    else if(changes['yLabelFontSize']){
+    if(changes['yLabelFontSize']){
       if(this.chartInstance){
         this.yLabelFontSizeSetOptions();
       }
     }
-    else if(changes['ylabelFontWeight']){
+    if(changes['ylabelFontWeight']){
       if(this.chartInstance){
         this.ylabelFontWeightSetOptions();
       }
     }
-    else if(changes['measureColor']){
+    if(changes['measureColor']){
       if(this.chartInstance){
         this.measureColorSetOptions();
       }
     }
-    else if(changes['dataLabelsFontFamily']){
+    if(changes['dataLabelsFontFamily']){
       if(this.chartInstance){
         this.dataLabelsFontFamilySetOptions();
       }
     }
-    else if(changes['dataLabelsFontSize']){
+    if(changes['dataLabelsFontSize']){
       if(this.chartInstance){
         this.dataLabelsFontSizeSetOptions();
       }
     }
-    else if(changes['dataLabelsColor']){
+    if(changes['dataLabelsColor']){
       if(this.chartInstance){
         this.dataLabelsColorSetOptions();
       }
     }
-    else if(changes['xLabelSwitch']){
+    if(changes['xLabelSwitch']){
       if(this.chartInstance){
         this.xLabelSwitchSetOptions();
       }
     }
-    else if(changes['yLabelSwitch']){
+    if(changes['yLabelSwitch']){
       if(this.chartInstance){
         this.yLabelSwitchSetOptions();
       }
     }
-    else if(changes['xGridSwitch']){
+    if(changes['xGridSwitch']){
       if(this.chartInstance){
         this.xGridSwitchSetOptions();
       }
     }
-    else if(changes['yGridSwitch']){
+    if(changes['yGridSwitch']){
       if(this.chartInstance){
         this.yGridSwitchSetOptions();
       }
     }
-    else if(changes['legendSwitch']){
+    if(changes['legendSwitch']){
       if(this.chartInstance){
         this.legendSwitchSetOptions();
       }
     }
-    else if(changes['dataLabels']){
+    if(changes['dataLabels']){
       if(this.chartInstance){
         this.dataLabelsSetOptions();
       }
     }
-    else if(changes['color'] || changes['barColor'] || changes['lineColor']){
+    if(changes['color'] || changes['barColor'] || changes['lineColor']){
       if(this.chartInstance){
         this.colorSetOptions();
       }
     }
-    else if(changes['xGridColor']){
+    if(changes['xGridColor']){
       if(this.chartInstance){
         this.xGridColorSetOptions();
       }
     }
-    else if(changes['yGridColor']){
+    if(changes['yGridColor']){
       if(this.chartInstance){
         this.yGridColorSetOptions();
       }
     }
-    else if(changes['backgroundColor']){
+    if(changes['backgroundColor']){
       if(this.chartInstance){
         this.backgroundColorSetOptions();
       }
     }
-    else if(changes['legendsAllignment']){
+    if(changes['legendsAllignment']){
       if(this.chartInstance){
         this.legendsAllignmentSetOptions()
       }
@@ -1789,7 +1806,12 @@ chartInitialize(){
     if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
       this.sortSeries(this.sortType);
     }
-    console.log(this.sortType)
+    if(this.isSheetSaveOrUpdate){
+      let object = {
+        chartOptions : this.chartOptions
+      }
+      this.saveOrUpdateChart.emit(object);
+    }
   }
   xLabelFontFamilySetOptions(){
     if(this.chartType !== 'heatmap'){
@@ -2849,4 +2871,21 @@ sortSeries(sortType: any) {
   this.chartInstance.setOption(obj)
   }
 }
+  onChartClick(event: any) {
+    if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
+      console.log('X-axis value:', event.name);
+      let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
+      this.drillDownIndex++;
+      let obj = { [nestedKey]: event.name };
+      this.drillDownObject.push(obj);
+      let dObject = {
+        drillDownIndex : this.drillDownIndex,
+        draggedDrillDownColumns :this.draggedDrillDownColumns,
+        drillDownObject : this.drillDownObject
+      }
+      this.setDrilldowns.emit(dObject);
+      // this.setOriginalData();
+      // this.dataExtraction();
+    }
+  }
 }

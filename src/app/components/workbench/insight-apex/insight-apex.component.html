@@ -158,16 +158,17 @@
         </apx-chart>
     </div>
 } @else if(chartType === 'donut'){
-    <div id="donutchart">
-        <apx-chart #donutchart
-        [series]="chartOptions.series"
-        [chart]="chartOptions.chart"
-        [labels]="chartOptions.labels"
-        [responsive]="chartOptions.responsive"
-        [plotOptions] = "chartOptions.plotOptions"
-        [dataLabels]="chartOptions.dataLabels"
-        [legend]="chartOptions.legend" >
-        </apx-chart>
+    <div class="card-body">
+        <div id="donutchart">
+            <apx-chart #donutchart
+            [series]="chartOptions.series"
+            [chart]="chartOptions.chart"
+            [labels]="chartOptions.labels"
+            [plotOptions] = "chartOptions.plotOptions"
+            [dataLabels]="chartOptions.dataLabels"
+            [legend]="chartOptions.legend" >
+            </apx-chart>
+        </div>
     </div>
 } @else if(chartType === 'heatmap'){
     <div id="chart">

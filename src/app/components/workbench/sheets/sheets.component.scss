@@ -6,7 +6,7 @@ button.BtnNewStyle {
   margin-inline: 0px !important;
   border-radius: 0px !important;
   background-color: rgb(35 145 192 / 7%);
-  border: 1px solid rgb(35 146 193);
+  border: 1px solid var(--primary-color);
 }
 .nav-link.BtnNewStyle.active {
   background: #ccedec !important;
@@ -90,7 +90,7 @@ button.BtnRowStyle.span-left {
 .example-box {
 padding: 3px 5px;
 // border-bottom: solid 1px #ccc;
-color: #2392c1 !important;
+color: var(--primary-color);
 display: flex;
 flex-direction: row;
 align-items: center;
@@ -180,10 +180,10 @@ span.abc-txt {
   display: none;
 }
 :host ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-  color: #2392c1 !important;
+  color: var(--primary-color) !important;
 }
 :host ::ng-deep .mat-mdc-tab .mdc-tab-indicator__content--underline {
-  border-color: #2392c1 !important;
+  border-color: var(--primary-color) !important;
 }
 #donutchart {
   width: 380px;
@@ -200,15 +200,15 @@ span.abc-txt {
  }
  .filter-card-height{
   height: 172px; 
-  overflow-y: scroll;
+  overflow-y: auto;
  }
  .charts-card-height{
-  overflow-y: scroll; 
+  overflow-y: auto; 
   height: 437px;
  }
  .marks-card-height{
   height: 203px; 
-  overflow-y: scroll;
+  overflow-y: auto;
  }
 
  .popup {
@@ -364,7 +364,7 @@ span.abc-txt {
 }
 
 .copilot-icon {
-  width: 40px; /* Icon width */
+  width: 25px; /* Icon width */
   // height: 20px; /* Icon height */
   margin-right: 8px; /* Space between icon and text */
 }
@@ -434,7 +434,7 @@ button.viewQueryImg {
 }
 .viewQuery-hgt {
   max-height: 200px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
@@ -455,17 +455,20 @@ button.viewQueryImg {
 }
 .table-card-h{
   height: 510px;
-  overflow-y: scroll
+  overflow-y: auto
 }
 .show-chart-card{
   height: 478px;
 }
+.show-chart-card-no-heirarchy{
+  height: 512px;
+}
 .sheet-table-h{
-  height: 468px;
-   overflow-y: scroll;
+  height: 487px;
+   overflow-y: auto;
 }
 .panel-body-h{
-  height: 620px;
+  height: 624px;
 }
 .chart-icon.active {
   border-color:#00a2a5 !important; /* Change to the color you prefer for the active state */
@@ -491,7 +494,7 @@ margin-right: 5px;
 margin-top: 3px;
 }
 .title-padding {
-padding: 4px 17px 4px 17px;
+padding: 5px 4px 5px 3px;
 }
 .input-group.mt-1.p-1.sheet-table-search {
   width: 300px;
@@ -527,26 +530,29 @@ app-insights-button {
   font-size: 12px;
 }
 .sheet-table-h{
-  height: 394px;
-  overflow-y: scroll;
+  height: 415px;
+  overflow-y: auto;
 }
 .show-chart-card {
-  height: 393px;
+  height: 400px;
+}
+.show-chart-card-no-heirarchy{
+  height: 435px;
 }
 .panel-body-h {
-  height: 539px;
+  height: 544px;
 }
 .charts-card-height {
-  overflow-y: scroll;
-  height: 210px;
+  overflow-y: auto;
+  height: 350px;
 }
 .filter-card-height {
   height: 150px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .marks-card-height{
   height: 164px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .column-text {
   font-size: 12px;
@@ -561,7 +567,7 @@ app-insights-button {
   font-size: 12px;
 }
 .title-padding {
-  padding: 4px 26px 4px 17px;
+  padding: 5px 4px 5px 3px;
 }
 th, td {
   border: 1px solid #ddd;
@@ -570,6 +576,24 @@ th, td {
 }
 .echart-charts {
   height: 17rem;
+}
+h6 {
+  font-size: 12px;
+}
+.example-box {
+  font-size: 11px;
+}
+.example-box1{
+  font-size: 11px;
+}
+.form-control{
+  font-size: 12px;
+}
+.nav-link {
+  font-size: 12px;
+}
+.mat-mdc-tab .mdc-tab__text-label{
+  font-size: 12px;
 }
 
 }
@@ -604,26 +628,29 @@ th, td {
     font-size: 12px;
   }
   .sheet-table-h {
-    height: 326px;
-    overflow-y: scroll;
+    height: 350px;
+    overflow-y: auto;
 }
 .show-chart-card {
-  height: 376px;
+  height: 338px;
+}
+.show-chart-card-no-heirarchy{
+  height: 375px;
 }
 .filter-card-height {
   height: 130px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .charts-card-height {
-  overflow-y: scroll;
-  height: 185px;
+  overflow-y: auto;
+  height: 300px;
 }
 .marks-card-height {
   height: 142px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .panel-body-h {
-  height: 475px;
+  height: 480px;
 }
 .column-text {
   font-size: 12px;
@@ -648,6 +675,24 @@ th, td {
 .echart-charts {
   height: 16rem;
 }
+  h6{
+      font-size: 12px;
+  }
+  .example-box {
+    font-size: 10px;
+  }
+  .example-box1{
+    font-size: 10px;
+  }
+  .form-control{
+    font-size: 11px;
+  }
+  .nav-link {
+    font-size: 11px;
+  }
+  .mat-mdc-tab .mdc-tab__text-label{
+    font-size: 11px;
+  }
 }
 
 
@@ -932,7 +977,7 @@ th, td {
   .resetColorButton{
     height: 20px;
     width: 50px;
-    background-color: #2392c1;
+    background-color: var(--primary-color);
     border-radius: 5px;
     border: none;
     color: white;
@@ -942,7 +987,7 @@ th, td {
     height: 100% !important;
 }
 .aggregation-select{
-  background-color: #2392c1;
+  background-color: var(--primary-color);
 }
   
 .Semantic-layer-card {
@@ -955,13 +1000,13 @@ th, td {
   height: 110px;
   min-height: 110px;
   max-height: 110px;
-  overflow-y: scroll;
+  overflow-y: auto;
   outline: none;
   border: 1px solid #edebeb;
   border-radius: 5px;
 }
 .description-text{
-  overflow-y: scroll; 
+  overflow-y: auto; 
   height: 195px; 
   min-height: 195px;  
   max-height: 95px;

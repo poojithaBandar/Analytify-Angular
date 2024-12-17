@@ -1,7 +1,7 @@
 .example-container {
     max-width: 100%;
     max-height: 611px;
-    overflow-y: scroll;
+    overflow-y: auto;
     margin: 0 25px 25px 0;
     display: inline-block;
     vertical-align: top;
@@ -36,7 +36,7 @@
     // border-radius: 4px;
     //overflow: hidden;
     border:none !important;
-    overflow: scroll;
+    overflow: auto;
     display: flex;
 
   }
@@ -48,7 +48,7 @@
     border-radius: 4px;
     // overflow: hidden;
     width: 358px;
-    overflow: scroll;
+    overflow: auto;
     display: block;
   }
   .example-box {
@@ -119,8 +119,6 @@
     color: #c1c1c1;
 }
 .left-sidebar{
-  // border: 1px solid rgba(255, 255, 255, 0.1)!important;
-  border: 1px solid #edebeb !important;
   border-radius: 10px !important;
 }
 // /* width */
@@ -190,7 +188,7 @@ background-color: aliceblue;
 }
 .viewQuery-hgt {
   max-height: 200px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 // .side-card {
@@ -235,7 +233,7 @@ button.TextTransform {
 }
 .drpdwnhgt{
   height: 220px;
-  overflow-y: scroll;
+  overflow-y: auto;
   background-color: #ffffff !important;
 }
 .table-left{
@@ -253,14 +251,14 @@ button.TextTransform {
 }
 .ds-th {
   height: 540px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 a {
   cursor: pointer;
 }
-.cdk-drag.sub-menu-item.example-box.subMenuFlex:hover {
-  background-color: #f0f8ff;
-}
+// .cdk-drag.sub-menu-item.example-box.subMenuFlex:hover {
+//   background-color: #f0f8ff;
+// }
 .table-card-header{
   background-color: #f2fafa;
 }
@@ -275,7 +273,7 @@ a {
   cursor: pointer;
 }
 span.time {
-  background-color: #2392c1;
+  background-color: var(--primary-color);
   color: #fff;
   padding: 3px 10px;
   border-radius: 5px;
@@ -318,7 +316,7 @@ span.time {
     height: 122px;
     min-height: 122px;
     max-height: 122px;
-    overflow-y: scroll;
+    overflow-y: auto;
 outline: none;
     border: 1px solid #edebeb;
     border-radius: 5px;

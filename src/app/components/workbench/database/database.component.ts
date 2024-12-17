@@ -149,7 +149,7 @@ export class DatabaseComponent {
   itemCounters: any={};
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
-    if(currentUrl.includes('/insights/database-connection/tables/')){
+    if(currentUrl.includes('/analytify/database-connection/tables/')){
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);
     }
@@ -157,7 +157,7 @@ export class DatabaseComponent {
     //   this.fromFileId=true;
     //   this.fileId = +atob(route.snapshot.params['id']);
     //  }
-    else if(currentUrl.includes('/insights/database-connection/savedQuery/')){
+    else if(currentUrl.includes('/analytify/database-connection/savedQuery/')){
       // if(currentUrl.includes('/insights/database-connection/savedQuery/fileId') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ){
       //   this.fileId = +atob(route.snapshot.params['id1']);
       //   this.fromFileId = true;
@@ -165,7 +165,7 @@ export class DatabaseComponent {
       //   localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
       //   this.getTablesFromFileId();
       // }
-      if (currentUrl.includes('/insights/database-connection/savedQuery/') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
+      if (currentUrl.includes('/analytify/database-connection/savedQuery/') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
@@ -178,7 +178,7 @@ export class DatabaseComponent {
       this.fromSavedQuery = true;
       this.getSavedQueryData();
      }
-     else if(currentUrl.includes('/insights/database-connection/sheets/')){
+     else if(currentUrl.includes('/analytify/database-connection/sheets/')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qurtySetId = +atob(route.snapshot.params['id2']);
@@ -214,12 +214,12 @@ export class DatabaseComponent {
     //      }
     //    }
     //  }
-     if(currentUrl.includes('/insights/database-connection/tables/quickbooks/')){
+     if(currentUrl.includes('/analytify/database-connection/tables/quickbooks/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
     }
-    if(currentUrl.includes('/insights/database-connection/tables/salesforce/')){
+    if(currentUrl.includes('/analytify/database-connection/tables/salesforce/')){
       this.fromDatabasId=true;
       this.fromQuickbooks= true;
       this.databaseId = +atob(route.snapshot.params['id']);
@@ -771,7 +771,7 @@ joiningTables(){
       this.tableCustomJoinError = true;
       if(error.error?.joining_condition && error.error?.joining_condition.length) {
         this.relationOfTables = error.error?.joining_condition;
-        // this.joinTypes.push("inner");
+        this.joinTypes.push("inner");
         // this.relationOfTables[this.relationOfTables.length - 1] = [{}];
         this.buildCustomJoin();
       }
@@ -1530,7 +1530,7 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  this.router.navigate(['/insights/datasources/view-connections'])
+  this.router.navigate(['/analytify/datasources/view-connections'])
 }
 
 markDirty(){
@@ -1608,7 +1608,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1621,7 +1621,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         } else {
           // Convert to string and encode
@@ -1630,7 +1630,7 @@ markDirty(){
             let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
-                this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+                this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
               },
               error: (error: any) => {
                 console.log(error);
@@ -1643,7 +1643,7 @@ markDirty(){
               }
             });
           } else {
-            this.router.navigate(['/insights/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
+            this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
           }
         }
       }

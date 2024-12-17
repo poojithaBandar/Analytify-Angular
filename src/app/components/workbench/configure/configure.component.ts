@@ -46,7 +46,7 @@ export class ConfigureComponent {
               this.router.navigateByUrl(previousUrl);
               localStorage.removeItem('previousUrl'); // Clear the stored URL
             } else {
-              this.router.navigate(['insights/home']); // Redirect to a default route if no previous URL
+              this.router.navigate(['analytify/home']); // Redirect to a default route if no previous URL
             }
           });
         }
