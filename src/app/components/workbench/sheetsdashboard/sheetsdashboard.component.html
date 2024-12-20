@@ -1063,23 +1063,25 @@
                 
               } @else if(item['isEChart'] && item['chartId']=== 29){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
-                    <app-insight-echart style="width: 500px !important;height: 500px !important;" *ngIf="chartType == 'map'" [isZoom]="item['customizeOptions']?.isZoom" [chartType]="chartType" [drillDownIndex]="item['drillDownIndex']"
+                  @if(chartType == 'map') {
+                    <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [chartType]="chartType" [drillDownIndex]="item['drillDownIndex']"
                       [draggedDrillDownColumns]="item['drillDownHierarchy']" [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)"
                       [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData"
                       [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart>
-                    
-                    <app-insight-echart *ngIf="chartType == 'bar'" [isZoom]="item['customizeOptions']?.isZoom" [isBold]="item['customizeOptions']?.isBold" [chartType]="chartType" [chartsRowData]="chartsRowData"
-                      [chartsColumnData]="chartsColumnData" [backgroundColor]="item['customizeOptions']?.backgroundColor" [xlabelAlignment]="item['customizeOptions']?.xlabelAlignment"
-                      [xGridColor]="item['customizeOptions']?.xGridColor" [xGridSwitch]="item['customizeOptions']?.xGridSwitch" [xLabelColor]="item['customizeOptions']?.xLabelColor" [xLabelSwitch]="item['customizeOptions']?.xLabelSwitch"
-                      [xLabelFontFamily]="item['customizeOptions']?.xLabelFontFamily" [xLabelFontSize]="item['customizeOptions']?.xLabelFontSize" [xlabelFontWeight]="item['customizeOptions']?.xlabelFontWeight"
-                      [yLabelColor]="item['customizeOptions']?.yLabelColor" [yGridSwitch]="item['customizeOptions']?.yGridSwitch" [yLabelSwitch]="item['customizeOptions']?.yLabelSwitch"
-                      [yLabelFontFamily]="item['customizeOptions']?.yLabelFontFamily" [yLabelFontSize]="item['customizeOptions']?.yLabelFontSize" [ylabelFontWeight]="item['customizeOptions']?.ylabelFontWeight"
-                      [yGridColor]="item['customizeOptions']?.yGridColor" [yGridSwitch]="item['customizeOptions']?.yGridSwitch" [color]="item['customizeOptions']?.color" [measureColor]="item['customizeOptions']?.measureColor"
-                      [dimensionColor]="item['customizeOptions']?.dimensionColor" [dataLabelsFontSize]="item['customizeOptions']?.dataLabelsFontSize"
-                      [dataLabelsFontFamily]="item['customizeOptions']?.dataLabelsFontFamily" [dataLabelsColor]="item['customizeOptions']?.dataLabelsColor" [displayUnits]="item['customizeOptions']?.displayUnits"
-                      [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix" [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
-                      [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']" [drillDownObject]="item['drillDownObject']"
-                      (setDrilldowns)="mapchartDrillDown($event, item)"></app-insight-echart>
+                  } @else if(chartType == 'bar') {
+                    <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [isBold]="item['customizeOptions']?.isBold" [chartType]="chartType" [chartsRowData]="chartsRowData"
+                    [chartsColumnData]="chartsColumnData" [backgroundColor]="item['customizeOptions']?.backgroundColor" [xlabelAlignment]="item['customizeOptions']?.xlabelAlignment"
+                    [xGridColor]="item['customizeOptions']?.xGridColor" [xGridSwitch]="item['customizeOptions']?.xGridSwitch" [xLabelColor]="item['customizeOptions']?.xLabelColor" [xLabelSwitch]="item['customizeOptions']?.xLabelSwitch"
+                    [xLabelFontFamily]="item['customizeOptions']?.xLabelFontFamily" [xLabelFontSize]="item['customizeOptions']?.xLabelFontSize" [xlabelFontWeight]="item['customizeOptions']?.xlabelFontWeight"
+                    [yLabelColor]="item['customizeOptions']?.yLabelColor" [yGridSwitch]="item['customizeOptions']?.yGridSwitch" [yLabelSwitch]="item['customizeOptions']?.yLabelSwitch"
+                    [yLabelFontFamily]="item['customizeOptions']?.yLabelFontFamily" [yLabelFontSize]="item['customizeOptions']?.yLabelFontSize" [ylabelFontWeight]="item['customizeOptions']?.ylabelFontWeight"
+                    [yGridColor]="item['customizeOptions']?.yGridColor" [yGridSwitch]="item['customizeOptions']?.yGridSwitch" [color]="item['customizeOptions']?.color" [measureColor]="item['customizeOptions']?.measureColor"
+                    [dimensionColor]="item['customizeOptions']?.dimensionColor" [dataLabelsFontSize]="item['customizeOptions']?.dataLabelsFontSize"
+                    [dataLabelsFontFamily]="item['customizeOptions']?.dataLabelsFontFamily" [dataLabelsColor]="item['customizeOptions']?.dataLabelsColor" [displayUnits]="item['customizeOptions']?.displayUnits"
+                    [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix" [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
+                    [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']" [drillDownObject]="item['drillDownObject']"
+                    (setDrilldowns)="mapchartDrillDown($event, item)"></app-insight-echart>
+                  }
                 </div>
               } @else if(!item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1)){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">

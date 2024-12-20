@@ -1641,6 +1641,7 @@ chartInitialize(){
   else if(this.chartType === 'map'){
     this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
       echarts.registerMap('world', geoJson);
+      this.chartInstance.resize();
     });
     this.mapChart();
   }
