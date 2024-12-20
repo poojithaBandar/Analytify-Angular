@@ -5225,6 +5225,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.guage = false;
           this.map = true;
           this.calendar = false;
+          this.chartType = 'map';
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -5807,6 +5808,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 11){
+        this.chartType = 'calendar';
         this.eCalendarChartOptions = this.sheetResponce.savedChartOptions;
         this.eCalendarChartOptions.tooltip.formatter =  function (params: any) {
           const date = params.data[0];

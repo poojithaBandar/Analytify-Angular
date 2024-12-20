@@ -118,8 +118,16 @@ export class InsightEchartComponent {
   }
 
   updateChartTest(){
-    this.chartInstance.setOption(
-      this.chartOptions,true);
+    if(this.chartType === 'map'){
+      this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+        echarts.registerMap('world', geoJson);
+        this.chartInstance?.setOption(this.chartOptions,true);
+      });
+    }
+    else{
+      this.chartInstance?.setOption(
+        this.chartOptions,true);
+    }
   }
 
   updateChart() {
@@ -1631,6 +1639,9 @@ chartInitialize(){
     this.calendarChart();
   }
   else if(this.chartType === 'map'){
+    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+      echarts.registerMap('world', geoJson);
+    });
     this.mapChart();
   }
 }
@@ -1807,6 +1818,7 @@ chartInitialize(){
       }
       this.saveOrUpdateChart.emit(object);
     }
+    console.log(this.chartOptions);
   }
   xLabelFontFamilySetOptions(){
     if(this.chartType !== 'heatmap'){
