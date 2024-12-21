@@ -8,6 +8,8 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import _ from 'lodash';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
+import { lastValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 interface Dimension {
   name: string;
   values: string[];
@@ -65,8 +67,6 @@ export class InsightEchartComponent {
   @Input() donutDecimalPlaces :any;
   @Input() isBold:any;
   @Input() sortType : any;
-  @Input() dimensionAlignment : any;
-  
   @Input() isSheetSaveOrUpdate : any;
   @Input() drillDownIndex : any;
   @Input() draggedDrillDownColumns : any;
@@ -84,7 +84,7 @@ export class InsightEchartComponent {
 
   series: any[] = [];
   chartOptions: any = {};
-  constructor(private cdr: ChangeDetectorRef){}
+  constructor(private cdr: ChangeDetectorRef,private http: HttpClient){}
 
  
   // ngAfterViewInit() {
@@ -105,7 +105,12 @@ export class InsightEchartComponent {
 
       // Apply initial options
       this.updateChartTest();
-      this.chartInstance.on('click', this.onChartClick.bind(this));
+      if(this.chartType === 'map'){
+        this.chartInstance.on('click', (event) => this.handleChartClick(event));
+      }
+      else{
+        this.chartInstance.on('click', this.onChartClick.bind(this));
+      }
     }
     // const container = document.querySelector('.chart-container') as HTMLElement;
     // this.chartInstance = echarts.init(container);
@@ -113,8 +118,16 @@ export class InsightEchartComponent {
   }
 
   updateChartTest(){
-    this.chartInstance.setOption(
-      this.chartOptions,true);
+    if(this.chartType === 'map'){
+      this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+        echarts.registerMap('world', geoJson);
+        this.chartInstance?.setOption(this.chartOptions,true);
+      });
+    }
+    else{
+      this.chartInstance?.setOption(
+        this.chartOptions,true);
+    }
   }
 
   updateChart() {
@@ -193,7 +206,6 @@ export class InsightEchartComponent {
           // align: this.xlabelAlignment,// Hide xAxis labels
           interval: 0, // Show all labels
           padding: [10, 0, 10, 0],
-          align: this.dimensionAlignment,
           formatter: function(value:any) {
             return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
         }
@@ -375,7 +387,6 @@ stackedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        align: this.dimensionAlignment
       },
       splitLine: {
         lineStyle: {
@@ -479,8 +490,7 @@ sidebySide(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        color:this.dimensionColor,
-        align: this.dimensionAlignment
+        color:this.dimensionColor
       },
       splitLine: {
         lineStyle: {
@@ -566,8 +576,7 @@ hgroupedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        // align: this.xlabelAlignment,// Hide xAxis labels
-        align: this.dimensionAlignment
+        align: this.xlabelAlignment// Hide xAxis labels
       }
     },
     toggleGridLines: true,
@@ -669,8 +678,7 @@ hstackedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        // align: this.xlabelAlignment// Hide xAxis labels
-        align: this.dimensionAlignment
+        align: this.xlabelAlignment// Hide xAxis labels
       }
     },
     toggleGridLines: true,
@@ -770,8 +778,7 @@ areaChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        // align: this.xlabelAlignment// Hide xAxis labels
-        align: this.dimensionAlignment
+        align: this.xlabelAlignment// Hide xAxis labels
       }
     },
     toggleGridLines: true,
@@ -867,8 +874,7 @@ lineChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        // align: this.xlabelAlignment// Hide xAxis labels
-        align: this.dimensionAlignment
+        align: this.xlabelAlignment// Hide xAxis labels
       }
     },
     toggleGridLines: true,
@@ -1034,7 +1040,6 @@ barLineChart(){
           fontSize: this.xLabelFontSize, // Customize font size
           fontFamily: this.xLabelFontFamily, // Customize font family
           fontWeight: 'bold', // Customize font weight
-          align: this.dimensionAlignment,
           formatter(value:any) {
               return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
           }
@@ -1196,8 +1201,7 @@ multiLineChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
-        // align: this.xlabelAlignment// Hide xAxis labels
-        align: this.dimensionAlignment
+        align: this.xlabelAlignment// Hide xAxis labels
       }
     },
     toggleGridLines: true,
@@ -1311,13 +1315,12 @@ heatMapChart(){
         axisLabel: {
             show: this.xLabelSwitch,
             interval: 0,
-            // rotate: 45,
+            rotate: 45,
             textStyle: {
                 color: this.xLabelColor,
                 fontSize: this.xLabelFontSize,
                 fontFamily: this.xLabelFontFamily,
                 fontWeight: this.xlabelFontWeight,
-                align: this.dimensionAlignment
             }
         }
     },
@@ -1636,6 +1639,10 @@ chartInitialize(){
     this.calendarChart();
   }
   else if(this.chartType === 'map'){
+    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+      echarts.registerMap('world', geoJson);
+      this.chartInstance.resize();
+    });
     this.mapChart();
   }
 }
@@ -1697,9 +1704,9 @@ chartInitialize(){
         this.xlabelFontWeightSetOption();
       }
     }
-    if(changes['dimensionAlignment']){
+    if(changes['xlabelFontWeight']){
       if(this.chartInstance){
-        this.dimensionsAlignmentSetOption();
+        this.xlabelFontWeightSetOption();
       }
     }
     if(changes['dimensionColor']){
@@ -1812,6 +1819,7 @@ chartInitialize(){
       }
       this.saveOrUpdateChart.emit(object);
     }
+    console.log(this.chartOptions);
   }
   xLabelFontFamilySetOptions(){
     if(this.chartType !== 'heatmap'){
@@ -2387,16 +2395,6 @@ chartInitialize(){
       this.chartInstance.setOption(obj)
   }
   }
-  dimensionsAlignmentSetOption() {
-    let obj ={
-      xAxis :{
-        axisLabel :{
-          align: this.dimensionAlignment
-        }
-      }
-    }
-    this.chartInstance.setOption(obj)
-  }
   xGridColorSetOptions(){
     if(this.chartType === 'barline'){
       let obj ={
@@ -2886,6 +2884,42 @@ sortSeries(sortType: any) {
       this.setDrilldowns.emit(dObject);
       // this.setOriginalData();
       // this.dataExtraction();
+    }
+  }
+  private handleChartClick(event: any): void {
+    this.onMapChartClick(event).catch((error) => {
+      console.error('Error handling chart click:', error);
+    });
+  }
+  async onMapChartClick(event: any) {
+    const regionName = event.name;
+    if (regionName === 'United States') {
+      const geoJson = await lastValueFrom(
+        this.http.get<any>(`assets/maps/USA.json`)
+      );
+      echarts.registerMap(regionName, geoJson);
+    } else {
+     
+    }
+    // this.setOriginalData();
+    if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
+      console.log('X-axis value:', regionName);
+      let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
+      this.drillDownIndex++;
+      let obj = { [nestedKey]: regionName };
+      this.drillDownObject.push(obj);
+      // this.map = false;
+      // if (this.drillDownIndex > 0) {
+      //   this.bar = true;
+      //   this.chartId = 6;
+      // }
+      // this.dataExtraction();
+      let dObject = {
+        drillDownIndex : this.drillDownIndex,
+        draggedDrillDownColumns :this.draggedDrillDownColumns,
+        drillDownObject : this.drillDownObject
+      }
+      this.setDrilldowns.emit(dObject);
     }
   }
 }

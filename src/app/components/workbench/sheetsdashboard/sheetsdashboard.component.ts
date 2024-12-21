@@ -48,6 +48,7 @@ import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
 import { tap } from 'rxjs/operators'; 
+import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 
 interface TableRow {
   [key: string]: any;
@@ -95,7 +96,7 @@ interface KpiData {
   ],
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule, InsightEchartComponent],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -686,7 +687,7 @@ export class SheetsdashboardComponent {
         // if(data.file_id && data.file_id.length){
         //   this.fileId = data.file_id;
         // }
-        if(data.hierarchy_id && data.hierarchy_id.length){
+        if(data.server_id && data.server_id.length){
           this.databaseId = data.hierarchy_id;
         }
         this.dashboardsheetsIdArray = data.sheet_ids;
@@ -732,7 +733,20 @@ export class SheetsdashboardComponent {
               }
             }
           };
-        } else if(sheet.chartId == 29){
+          } else if (sheet.chartId == 29) {
+            this.chartType = 'map';
+            sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
+              this.chartsColumnData.push(data.name);
+              this.chartsRowData.push(data.value);
+            });
+            this.dualAxisColumnData = [{
+              name: sheet?.column_Data[0][0],
+              values: this.chartsColumnData
+            }]
+            this.dualAxisRowData = [{
+              name: sheet?.row_Data[0][0],
+              data: this.chartsRowData
+            }]
           sheet.echartOptions.tooltip= {
             formatter: (params: any) => {
               const { name, data } = params;
@@ -1782,6 +1796,19 @@ allowDrop(ev : any): void {
           }
         };
       }else if(element.chartId == 29 && element.echartOptions){
+        this.chartType = 'map';
+        element.echartOptions?.series[0]?.data?.forEach((data:any)=>{
+          this.chartsColumnData.push(data.name);
+          this.chartsRowData.push(data.value);
+        });
+        this.dualAxisColumnData = [{
+          name : element?.column_Data[0][0],
+          values : this.chartsColumnData 
+        }]
+        this.dualAxisRowData = [{
+          name : element?.row_Data[0][0],
+          data : this.chartsRowData
+        }]
         element.echartOptions.tooltip= {
           formatter: (params: any) => {
             const { name, data } = params;
@@ -4076,6 +4103,19 @@ kpiData?: KpiData;
               }
             };
           } else if(sheet.chartId == 29){
+            this.chartType = 'map';
+            sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
+              this.chartsColumnData.push(data.name);
+              this.chartsRowData.push(data.value);
+            });
+            this.dualAxisColumnData = [{
+              name: sheet?.column_Data[0][0],
+              values: this.chartsColumnData
+            }]
+            this.dualAxisRowData = [{
+              name: sheet?.row_Data[0][0],
+              data: this.chartsRowData
+            }]
             sheet.echartOptions.tooltip= {
               formatter: (params: any) => {
                 const { name, data } = params;
@@ -4279,6 +4319,10 @@ kpiData?: KpiData;
           values: res.result_data
         }
         this.filteredColumnData.push(obj1);
+        if (item.chartId == '29') {
+          this.dualAxisColumnData = this.filteredColumnData;
+          this.chartsColumnData = this.dualAxisColumnData[0].values;
+        }
         console.log('filtercolumn',this.filteredColumnData)
       });
       data.data.row.forEach((res:any) => {
@@ -4287,10 +4331,21 @@ kpiData?: KpiData;
           data: res.result_data
         }
         this.filteredRowData.push(obj);
+        if (item.chartId == '29') {
+          this.dualAxisRowData = this.filteredRowData;
+          this.chartsRowData = this.dualAxisRowData[0].data;
+        }
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '');
-  
+      if(item.chartId == '29'){
+        if (item.drillDownIndex != 0) {
+          this.chartType = 'bar';
+        }
+        else {
+          this.chartType = 'map';
+        }
+      }
         },
       error:(error)=>{
         console.log(error)
@@ -4335,6 +4390,10 @@ kpiData?: KpiData;
           values: res.result_data
         }
         this.filteredColumnData.push(obj1);
+        if (item.chartId == '29') {
+          this.dualAxisColumnData = this.filteredColumnData;
+          this.chartsColumnData = this.dualAxisColumnData[0].values;
+        }
         console.log('filtercolumn',this.filteredColumnData)
       });
       data.data.row.forEach((res:any) => {
@@ -4343,10 +4402,21 @@ kpiData?: KpiData;
           data: res.result_data
         }
         this.filteredRowData.push(obj);
+        if (item.chartId == '29') {
+          this.dualAxisRowData = this.filteredRowData;
+          this.chartsRowData = this.dualAxisRowData[0].data;
+        }
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '');
-  
+      if(item.chartId == '29'){
+        if (item.drillDownIndex != 0) {
+          this.chartType = 'bar';
+        }
+        else {
+          this.chartType = 'map';
+        }
+      }
         },
       error:(error)=>{
         console.log(error)
@@ -4996,6 +5066,23 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.dataExtraction(item);
       }
     }
+  }
+  chartType : string = '';
+  chartsColumnData : any[] = [];
+  chartsRowData :  any[] = [];
+  dualAxisRowData : any = [];
+  dualAxisColumnData : any = [];
+  mapchartDrillDown(event: any, item : any) {
+    item.drillDownIndex = event.drillDownIndex;
+    item.drillDownHierarchy = event.draggedDrillDownColumns;
+    item.drillDownObject = event.drillDownObject;
+    if(this.isPublicUrl){
+      this.publicDataExtraction(item);
+    }
+    else{
+      this.dataExtraction(item);
+    }
+    
   }
 }
 // export interface CustomGridsterItem extends GridsterItem {

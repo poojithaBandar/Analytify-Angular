@@ -6,7 +6,7 @@ button.BtnNewStyle {
   margin-inline: 0px !important;
   border-radius: 0px !important;
   background-color: rgb(35 145 192 / 7%);
-  border: 1px solid var(--primary-color);
+  border: 1px solid rgb(35 146 193);
 }
 .nav-link.BtnNewStyle.active {
   background: #ccedec !important;
@@ -90,7 +90,7 @@ button.BtnRowStyle.span-left {
 .example-box {
 padding: 3px 5px;
 // border-bottom: solid 1px #ccc;
-color: var(--primary-color);
+color: #2392c1 !important;
 display: flex;
 flex-direction: row;
 align-items: center;
@@ -180,10 +180,10 @@ span.abc-txt {
   display: none;
 }
 :host ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-  color: var(--primary-color) !important;
+  color: #2392c1 !important;
 }
 :host ::ng-deep .mat-mdc-tab .mdc-tab-indicator__content--underline {
-  border-color: var(--primary-color) !important;
+  border-color: #2392c1 !important;
 }
 #donutchart {
   width: 380px;
@@ -200,15 +200,15 @@ span.abc-txt {
  }
  .filter-card-height{
   height: 172px; 
-  overflow-y: auto;
+  overflow-y: scroll;
  }
  .charts-card-height{
-  overflow-y: auto; 
+  overflow-y: scroll; 
   height: 437px;
  }
  .marks-card-height{
   height: 203px; 
-  overflow-y: auto;
+  overflow-y: scroll;
  }
 
  .popup {
@@ -434,7 +434,7 @@ button.viewQueryImg {
 }
 .viewQuery-hgt {
   max-height: 200px;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 @media (max-width: 768px) {
@@ -455,7 +455,7 @@ button.viewQueryImg {
 }
 .table-card-h{
   height: 510px;
-  overflow-y: auto
+  overflow-y: scroll
 }
 .show-chart-card{
   height: 478px;
@@ -464,8 +464,8 @@ button.viewQueryImg {
   height: 512px;
 }
 .sheet-table-h{
-  height: 487px;
-   overflow-y: auto;
+  height: 465px;
+   overflow-y: scroll;
 }
 .panel-body-h{
   height: 624px;
@@ -530,8 +530,8 @@ app-insights-button {
   font-size: 12px;
 }
 .sheet-table-h{
-  height: 415px;
-  overflow-y: auto;
+  height: 394px;
+  overflow-y: scroll;
 }
 .show-chart-card {
   height: 400px;
@@ -543,16 +543,16 @@ app-insights-button {
   height: 544px;
 }
 .charts-card-height {
-  overflow-y: auto;
+  overflow-y: scroll;
   height: 350px;
 }
 .filter-card-height {
   height: 150px;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .marks-card-height{
   height: 164px;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .column-text {
   font-size: 12px;
@@ -576,24 +576,6 @@ th, td {
 }
 .echart-charts {
   height: 17rem;
-}
-h6 {
-  font-size: 12px;
-}
-.example-box {
-  font-size: 11px;
-}
-.example-box1{
-  font-size: 11px;
-}
-.form-control{
-  font-size: 12px;
-}
-.nav-link {
-  font-size: 12px;
-}
-.mat-mdc-tab .mdc-tab__text-label{
-  font-size: 12px;
 }
 
 }
@@ -628,8 +610,8 @@ h6 {
     font-size: 12px;
   }
   .sheet-table-h {
-    height: 350px;
-    overflow-y: auto;
+    height: 332px;
+    overflow-y: scroll;
 }
 .show-chart-card {
   height: 338px;
@@ -639,15 +621,15 @@ h6 {
 }
 .filter-card-height {
   height: 130px;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .charts-card-height {
-  overflow-y: auto;
+  overflow-y: scroll;
   height: 300px;
 }
 .marks-card-height {
   height: 142px;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .panel-body-h {
   height: 480px;
@@ -675,24 +657,6 @@ th, td {
 .echart-charts {
   height: 16rem;
 }
-  h6{
-      font-size: 12px;
-  }
-  .example-box {
-    font-size: 10px;
-  }
-  .example-box1{
-    font-size: 10px;
-  }
-  .form-control{
-    font-size: 11px;
-  }
-  .nav-link {
-    font-size: 11px;
-  }
-  .mat-mdc-tab .mdc-tab__text-label{
-    font-size: 11px;
-  }
 }
 
 
@@ -977,7 +941,7 @@ th, td {
   .resetColorButton{
     height: 20px;
     width: 50px;
-    background-color: var(--primary-color);
+    background-color: #2392c1;
     border-radius: 5px;
     border: none;
     color: white;
@@ -987,7 +951,7 @@ th, td {
     height: 100% !important;
 }
 .aggregation-select{
-  background-color: var(--primary-color);
+  background-color: #2392c1;
 }
   
 .Semantic-layer-card {
@@ -1000,13 +964,13 @@ th, td {
   height: 110px;
   min-height: 110px;
   max-height: 110px;
-  overflow-y: auto;
+  overflow-y: scroll;
   outline: none;
   border: 1px solid #edebeb;
   border-radius: 5px;
 }
 .description-text{
-  overflow-y: auto; 
+  overflow-y: scroll; 
   height: 195px; 
   min-height: 195px;  
   max-height: 95px;

@@ -2,11 +2,6 @@ import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { NavService } from '../../services/navservice';
 import * as switcher from '../switcher/switcher'
 import { WorkbenchService } from '../../../components/workbench/workbench.service';
-import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
-import { ToastrService } from 'ngx-toastr';
-import { CustomThemeService } from '../../../services/custom-theme.service';
-import { SharedService } from '../../services/shared.service';
-
 @Component({
   selector: 'app-switcher',
   templateUrl: './switcher.component.html',
@@ -17,11 +12,7 @@ export class SwitcherComponent {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private navServices: NavService,
-    private workbenchService: WorkbenchService,
-    private sharedService: SharedService,
-    private colorService : DefaultColorPickerService,
-    private toasterService: ToastrService,
-    private themeService : CustomThemeService
+    private workbenchService: WorkbenchService
   ) {
     
     const htmlElement =
@@ -83,13 +74,11 @@ export class SwitcherComponent {
     const htmlElement =
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'dir', type);
-    this.themeService.setThemeVariable('direction',type);
     localStorage.setItem('insightapps-dir', type);
   }
   NavigationChange(type: string) {
     const htmlElement = this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-nav-layout', type);
-    this.themeService.setThemeVariable('navigation_styles',type);
     if(type == 'horizontal'){
       this.renderer.setAttribute(htmlElement, 'data-nav-style', 'menu-click');
       this.renderer.removeAttribute(htmlElement, 'data-vertical-style');
@@ -99,7 +88,6 @@ export class SwitcherComponent {
       const menuclickclosed = document.getElementById(
         'switcher-menu-click'
       ) as HTMLInputElement;
-      if(menuclickclosed)
       menuclickclosed.checked = true;
     
     //     const mainContentElement = document.querySelector(".main-content") as HTMLElement | null;
@@ -189,7 +177,6 @@ export class SwitcherComponent {
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-menu-styles', type);
     localStorage.setItem('insightapps-menu-mode', type); 
-    this.themeService.setThemeVariable('menutype',type);
     if(type =="dark"){
       const darkMenu = document.getElementById(
         'switcher-menu-dark'
@@ -211,7 +198,6 @@ export class SwitcherComponent {
       this.elementRef.nativeElement.ownerDocument.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-header-styles', type);
     localStorage.setItem('insightappsHeader', type);
-    this.themeService.setThemeVariable('headertype',type);
   }
   closeMenu(type1: any) {
     if (type1 == 'icon-hover' || type1 == 'menu-hover') {
@@ -230,9 +216,7 @@ export class SwitcherComponent {
 
   primary(type: string) {
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--primary-rgb', type);
-    this.colorService.setColor(type ? type : '');
     localStorage.setItem('insightapps-primary-mode', type);
-    this.themeService.setThemeVariable('primary_colour_theme',type);
     // localStorage.removeItem('insightappslight-primary-color');
   }
   background(bodyBg: string, darkBg: string,lightBg:string,inputBorder:string,formControl:string, event: string, type1: string) {
@@ -241,7 +225,7 @@ export class SwitcherComponent {
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--light-rgb', lightBg);
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--form-control-bg', formControl);
     this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--input-border', inputBorder);
-    this.themeService.setThemeVariable('background_colour',bodyBg);
+
     localStorage.setItem('insightapps-background-mode-body', bodyBg);
     localStorage.setItem('insightapps-background-mode-dark', darkBg);
     localStorage.setItem('insightapps-background-mode-light', lightBg);
@@ -274,9 +258,7 @@ export class SwitcherComponent {
     );
 
     switcher.dynamicLightPrimaryColor(dynamicPrimaryLight, this.color1);
-    let primaryColor = switcher.hexToRgba(this.color1);
-    this.colorService.setColor(primaryColor ? primaryColor : '');
-    this.themeService.setThemeVariable('primary_colour_theme',primaryColor ? primaryColor : '255,255,255');
+
     localStorage.setItem('insightappslight-primary-color', switcher.hexToRgba(this.color1) || '');
     localStorage.setItem('insightappslight-mode', 'true');
     this.body?.classList.remove('transparent-mode');
@@ -306,8 +288,6 @@ export class SwitcherComponent {
       dynamicPrimaryBgTrasnsparent,
       this.color4
     );
-    let bgColor = switcher.hexToRgba(this.color4);
-    this.themeService.setThemeVariable('background_colour',bgColor ? bgColor : '255,255,255');
 
     // Adding
     localStorage.setItem('bodyBgRGB', switcher.hexToRgba(this.color4) || '');
@@ -347,7 +327,6 @@ export class SwitcherComponent {
   }
 
   color1 = '#1457e6';
-  textcolor1 = '#1457e6';
   color = '#1ae715';
 
   ImageTheme(type: string) {
@@ -355,65 +334,63 @@ export class SwitcherComponent {
     localStorage.setItem('insightapps-image', type);
   }
   reset() {
-   let themeData = this.themeService.getApiCustomTheme();
-   this.setCustomThemeData(themeData);
     // localStorage.clear();
-    // const html: any = this.elementRef.nativeElement.ownerDocument.documentElement;
-    // const body: any = document.querySelector('body');
-    // html.style = '';
-    // html.setAttribute('data-theme-mode', 'light');
-    // html.setAttribute('data-vertical-style', 'overlay');
-    // html.setAttribute('dir', 'ltr');
-    // html.setAttribute('data-nav-layout', 'vertical');
-    // html.removeAttribute('data-page-style', 'regular');
-    // html.removeAttribute('data-width', 'full-width');
-    // html.removeAttribute('data-menu-position', 'fixed');
-    // html.removeAttribute('data-header-position', 'fixed');
-    // html.setAttribute('data-header-styles', 'light');
-    // html.setAttribute('data-menu-styles', 'dark');
-    // html.removeAttribute('data-bg-img', 'dark');
-    // html.removeAttribute('data-toggled', 'overlay');
-    // body.removeAttribute('data-theme-mode');
-    // html.removeAttribute("data-nav-style")
-    // localStorage.setItem('insightapps-menu-mode', 'dark');
-    // const darkMenu = document.getElementById(
-    //   'switcher-menu-dark'
-    // ) as HTMLInputElement;
-    // if (darkMenu) {
-    //   darkMenu.checked = true;
-    // }
-    // const menuclickclosed = document.getElementById(
-    //   'switcher-menu-click'
-    // ) as HTMLInputElement;
-    // if (menuclickclosed) {
-    //   menuclickclosed.checked = false;
-    // }
-    // const lightclickchecked = document.getElementById(
-    //   'switcher-light-theme'
-    // ) as HTMLInputElement;
-    // if (lightclickchecked) {
-    //   lightclickchecked.checked = true;
-    // }
+    const html: any = this.elementRef.nativeElement.ownerDocument.documentElement;
+    const body: any = document.querySelector('body');
+    html.style = '';
+    html.setAttribute('data-theme-mode', 'light');
+    html.setAttribute('data-vertical-style', 'overlay');
+    html.setAttribute('dir', 'ltr');
+    html.setAttribute('data-nav-layout', 'vertical');
+    html.removeAttribute('data-page-style', 'regular');
+    html.removeAttribute('data-width', 'full-width');
+    html.removeAttribute('data-menu-position', 'fixed');
+    html.removeAttribute('data-header-position', 'fixed');
+    html.setAttribute('data-header-styles', 'light');
+    html.setAttribute('data-menu-styles', 'dark');
+    html.removeAttribute('data-bg-img', 'dark');
+    html.removeAttribute('data-toggled', 'overlay');
+    body.removeAttribute('data-theme-mode');
+    html.removeAttribute("data-nav-style")
+    localStorage.setItem('insightapps-menu-mode', 'dark');
+    const darkMenu = document.getElementById(
+      'switcher-menu-dark'
+    ) as HTMLInputElement;
+    if (darkMenu) {
+      darkMenu.checked = true;
+    }
+    const menuclickclosed = document.getElementById(
+      'switcher-menu-click'
+    ) as HTMLInputElement;
+    if (menuclickclosed) {
+      menuclickclosed.checked = false;
+    }
+    const lightclickchecked = document.getElementById(
+      'switcher-light-theme'
+    ) as HTMLInputElement;
+    if (lightclickchecked) {
+      lightclickchecked.checked = true;
+    }
 
-    // const ltrclickchecked = document.getElementById(
-    //   'switcher-ltr'
-    // ) as HTMLInputElement;
-    // if (ltrclickchecked) {
-    //   ltrclickchecked.checked = true;
-    // }
+    const ltrclickchecked = document.getElementById(
+      'switcher-ltr'
+    ) as HTMLInputElement;
+    if (ltrclickchecked) {
+      ltrclickchecked.checked = true;
+    }
 
-    // const verticalclickchecked = document.getElementById(
-    //   'switcher-vertical'
-    // ) as HTMLInputElement;
-    // if (verticalclickchecked) {
-    //   verticalclickchecked.checked = true;
-    // }
-    // const defaultclickchecked = document.getElementById(
-    //   'switcher-default-menu'
-    // ) as HTMLInputElement;
-    // if (defaultclickchecked) {
-    //   defaultclickchecked.checked = true;
-    // }
+    const verticalclickchecked = document.getElementById(
+      'switcher-vertical'
+    ) as HTMLInputElement;
+    if (verticalclickchecked) {
+      verticalclickchecked.checked = true;
+    }
+    const defaultclickchecked = document.getElementById(
+      'switcher-default-menu'
+    ) as HTMLInputElement;
+    if (defaultclickchecked) {
+      defaultclickchecked.checked = true;
+    }
 
     // switcher.checkOptions();
   }
@@ -435,8 +412,6 @@ active=1;
 
   changeChartType(event : any){
     this.chartType = event.target.value;
-    this.sharedService.setValue(this.chartType);
-
     let object = {
       "user_id": this.userId,
       "chart_type": this.chartType
@@ -447,39 +422,6 @@ active=1;
       localStorage.setItem('chartType',this.chartType)
     },
     error: (error) => {
-      console.log(error);
-    }
-  })
-  }
-
-  setTextColor(event : any){
-    this.elementRef.nativeElement.ownerDocument.documentElement?.style.setProperty('--default-text-color', event.color);
-    localStorage.setItem("textColor", event.color);
-    this.themeService.setThemeVariable('textColor', event.color);
-  }
-
-  setCustomThemeData(customTheme: any) {
-    if (customTheme.background_colour) {
-      // this.dynamicTranparentBgPrimary({ color: customTheme.background_colour });
-      this.background(customTheme.background_colour,customTheme.background_colour,customTheme.background_colour,'rgba(255,255,255,0.1)','rgb(25, 38, 101)', 'dark','dark')
-    }
-    this.primary(customTheme.primary_colour_theme);
-    this.menuTheme(customTheme.menutype);
-    this.headerTheme(customTheme.headertype);
-    this.NavigationChange(customTheme.navigation_styles);
-    this.setTextColor({ color: customTheme.textColor });
-    this.DirectionsChange(customTheme.direction);
-
-  }
-
-  saveThemes(){
-    let object = this.themeService.getCurrentTheme();
-    this.workbenchService.saveThemes(object).subscribe({next: (responce:any) => {
-      console.log(responce);
-      this.toasterService.success('Themes updated successfully.','success',{ positionClass: 'toast-top-right'});
-    },
-    error: (error) => {
-      this.toasterService.error('Failed to update');
       console.log(error);
     }
   })

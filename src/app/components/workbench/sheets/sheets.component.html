@@ -3,7 +3,7 @@
         <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
             <div class="card mb-0" >
                 <div class="card-body p-0 ">
-                    <div class="border mb-0 p-2 br-0 border-bottom">
+                    <div class="border mb-0 p-3 br-0 border-bottom">
                         <div class="d-flex align-items-center justify-content-between ">
                             <h6 class="mb-0">Connections</h6>
                             <app-insights-button *ngIf="qrySetId" [buttonName]="'Edit'" [classesList]="'add-txt text-info'" [previledgeId]="2" [isBtn]="false"
@@ -12,14 +12,14 @@
                             (btnClickEvent)="goToConnections()"></app-insights-button>
                         </div>
                         </div>
-                        <div class="border mb-0 p-2 br-0 border-bottom">
+                        <div class="border mb-0 p-3 br-0 border-bottom">
                             <h6 class="mb-0">Database</h6>
                             <p class=" mb-0" ngbTooltip="{{database_name}}">{{database_name}}</p> 
                         </div>
                 </div>
                 <div class="card-body p-1">
                     <div class="input-group justify-content-between">
-                    <h6 class="fw-600  mb-0 p-1">Tables</h6>
+                    <h6 class="fw-600  mb-0 p-2">Tables</h6>
 
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown [autoClose]="false" #level1="ngbDropdown">
@@ -38,7 +38,7 @@
                                       
                                         (cdkDropListDropped)="calculatedFieldsDrop($event)">
                                             
-                                            <div style="max-height: 382px; overflow: auto; padding: 10px;">
+                                            <div style="max-height: 382px; overflow: scroll; padding: 10px;">
                                                 <div class="col-lg-12 col-md-12 p-0 m-0">
                                                         <div class="form-group p-0 mb-0">
                                                             <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label>
@@ -448,7 +448,7 @@
                             </div>
                 
                         </div>-->
-                        <div class="modal-body" style="height: 500px; overflow: auto;">
+                        <div class="modal-body" style="height: 500px; overflow: scroll;">
                             @if(dateList.includes(filterType)){
                                 <div class="card panel panel-primary">
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
@@ -550,7 +550,7 @@
                           <button type="button"class="btn-close"aria-label="Close"(click)="isAllSelected = false;modal.dismiss('Cross click')">
                           </button>
                         </div>
-                        <div class="modal-body"  style="height: 500px; overflow: auto;">
+                        <div class="modal-body"  style="height: 500px; overflow: scroll;">
 
                             @if(dateList.includes(filterType)){
                                 <div class="card panel panel-primary">
@@ -785,7 +785,7 @@
                                                 </button>
                                             </div>
                                         
-                                            <div class="modal-body" style="height: 500px; overflow: auto;">
+                                            <div class="modal-body" style="height: 500px; overflow: scroll;">
                                                 <div class="card-body p-0">
                                                     <div class="column-card">
                                                         <p class="fw-semibold mb-1 ">Row : {{columns.column}}</p>
@@ -878,13 +878,13 @@
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')" style="padding: 15px !important;">Sum</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'avg' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')" style="padding: 15px !important;">Avg</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')" style="padding: 15px !important;">Min</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')" style="padding: 15px !important;">Max</a></li>
-                                                        <li><a [ngClass]="rows.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')" style="padding: 15px !important;">Count</a></li>
-                                                        <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')" style="padding: 15px !important;">Count (Distinct)</a></li>
-                                                        <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" style="padding: 15px !important;">None</a></li>  
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'avg' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
+                                                        <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
                                                     </ul>
                                                 </div>
                                                 <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
@@ -957,7 +957,7 @@
                                                 </button>
                                             </div>
                                         
-                                            <div class="modal-body" style="height: 500px; overflow: auto;">
+                                            <div class="modal-body" style="height: 500px; overflow: scroll;">
                                                 <div class="card-body p-0">
                                                     <div class="column-card">
                                                         <p class="fw-semibold mb-1 ">Row : {{rows.column}}</p>
@@ -1026,7 +1026,7 @@
                             
                         </div>
                     </div>
-                    <div  [ngStyle]="{'display': ((bar || pie || donut) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center">
+                    <div  [ngStyle]="{'display': ((bar || pie || donut || map) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
                                                        <label for="inputName" class="form-control mb-0">Hierarchy</label>
@@ -1061,14 +1061,14 @@
             <div class="card mb-0" [ngClass]="(bar || pie || donut) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
                 @if(!(table || kpi)){
                     <div class="input-group">
-                <!-- <div class="col-lg-3 col-md-3 p-1">
+                <div class="col-lg-3 col-md-3 p-1">
                     <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
                         (change)="changeChartPlugin()">
                         <option *ngIf="!(radar || calendar || map)" value="apex">Apex</option>
                         <option *ngIf="!(guage)" value="echart">EChart</option>
                     </select>
-                </div> -->
-                @if((pie || bar || donut) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
+                </div>
+                @if((pie || bar || donut || map) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 p-1">
                                         <button class="btn btn-primary " (click)="goDrillDownBack()" style="padding: 4px;">
                                             <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
@@ -1094,7 +1094,7 @@
                     </div>
                    </div>
                 }
-                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: auto;">
+                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: scroll;">
                     <!-- @for(tab of tabs;track tab; let index = $index){ -->
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
@@ -1373,7 +1373,7 @@
                 <!-- <div >
                     <div echarts [options]="eBarChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor"
                 [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor"
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
@@ -1388,7 +1388,7 @@
                     <!-- <div id="bar-chart">
                         <div id="echartsBar" echarts [options]="eFunnelChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [color]="color" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
@@ -1398,7 +1398,7 @@
                     <!-- <div id="stockedbar-chart">
                         <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                     [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
@@ -1412,7 +1412,7 @@
                         <!-- <div id="sidebysidebar-chart">
                             <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" 
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
@@ -1426,7 +1426,7 @@
                         <!-- <div id="groupedbar-chart">
                             <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
@@ -1440,7 +1440,7 @@
                     <!-- <div id="bhstockedar-chart">
                         <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                     [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
@@ -1454,7 +1454,7 @@
                 <!-- <div id="area-chart">
                     <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
@@ -1468,7 +1468,7 @@
                 <!-- <div id="line-chart">
                     <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
                 </div> -->
-                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
@@ -1508,7 +1508,7 @@
                     <!-- <div id="barline-chart">
                         <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" 
                     [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
@@ -1521,7 +1521,7 @@
                         <!-- <div id="multiline-chart">
                             <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
@@ -1535,7 +1535,7 @@
                     <!-- <div id="radar-chart">
                         <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
                     </div> -->
-                    <app-insight-echart  [chartType]="chartType" [radarRowData]="radarRowData"  [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                    <app-insight-echart  [chartType]="chartType" [radarRowData]="radarRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -1547,7 +1547,8 @@
                             <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
                         </div> -->
                         <app-insight-echart  [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                        [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                        [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
+                        (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
                     }
                     
@@ -1566,7 +1567,7 @@
                             <div id="echartsBar" echarts [options]="eHeatMapChartOptions" class="echart-charts">
                             </div>
                         </div> -->
-                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [decimalPlaces]="decimalPlaces" [displayUnits]="displayUnits"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [decimalPlaces]="decimalPlaces" [displayUnits]="displayUnits"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xLabelSwitch]="xLabelSwitch" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily"
                         [xlabelFontWeight]="xlabelFontWeight" [yLabelSwitch]="yLabelSwitch" [yLabelColor]="yLabelColor" [yLabelFontSize]="[yLabelFontSize]" [yLabelFontFamily]="yLabelFontFamily" [ylabelFontWeight]="ylabelFontWeight"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
@@ -1579,7 +1580,7 @@
         <!-- } -->
         <!-- }-->
                  </div>
-                    <div class="card-footer d-flex p-2" style="overflow-x: auto; overflow-y: hidden;">
+                    <div class="card-footer d-flex p-2" style="overflow-x: scroll; overflow-y: hidden;">
                         <mat-tab-group [selectedIndex]="selectedTabIndex"
                         (selectedIndexChange)="selected.setValue($event)"
                         (selectedTabChange)="onChange($event);" 
@@ -1717,7 +1718,7 @@
                                                       <button type="button"class="btn-close"aria-label="Close"(click)="isAllSelected = false;modal.dismiss('Cross click')">
                                                       </button>
                                                     </div>
-                                                    <div class="modal-body"  style="height: 500px; overflow: auto;">
+                                                    <div class="modal-body"  style="height: 500px; overflow: scroll;">
                                                         <!-- <div class="input-group">
                                                             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"
                                                                 (keyup.enter)="editFilterList()" aria-describedby="button-addon2">
@@ -2012,17 +2013,17 @@
                                                                                                                     <option value="20px">20px</option>
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
-                                                                                                                    [ngStyle]="{'background-color': headerFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
+                                                                                                                    [ngStyle]="{'background-color': headerFontWeight === 700 ? '#2392c1': '#fafcfc'}"
                                                                                                                     (click)="isBold = !isBold;headerFontWeight = isBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
-                                                                                                                    [ngStyle]="{'background-color': headerFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
+                                                                                                                    [ngStyle]="{'background-color': headerFontStyle === 'italic' ? '#2392c1': '#fafcfc'}"
                                                                                                                     (click)="isItalic = !isItalic;headerFontStyle = isItalic ? 'italic' : 'normal' ">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
-                                                                                                                    [ngStyle]="{'background-color': headerFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
+                                                                                                                    [ngStyle]="{'background-color': headerFontDecoration === 'underline' ? '#2392c1': '#fafcfc'}"
                                                                                                                     (click)="isUnderline = !isUnderline;headerFontDecoration = isUnderline ? 'underline' : 'none' ">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
@@ -2062,13 +2063,13 @@
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': headerFontAlignment == 'left' ? '#2392c1': '#fafcfc'}" (click)="headerFontAlignment = 'left'">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': headerFontAlignment == 'center' ? '#2392c1': '#fafcfc'}" (click)="headerFontAlignment = 'center'">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="headerFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': headerFontAlignment == 'right' ? '#2392c1': '#fafcfc'}" (click)="headerFontAlignment = 'right'">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -2145,17 +2146,17 @@
                                                                                                                     <option value="20px">20px</option>
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
-                                                                                                                    [ngStyle]="{'background-color': tableDataFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontWeight === 700 ? '#2392c1': '#fafcfc'}"
                                                                                                                     (click)="isBold = !isBold;tableDataFontWeight = isBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
-                                                                                                                    [ngStyle]="{'background-color': tableDataFontStyle === 'italic' ? 'var(--primary-color)': '#fafcfc'}"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontStyle === 'italic' ? '#2392c1': '#fafcfc'}"
                                                                                                                     (click)="isItalic = !isItalic;tableDataFontStyle = isItalic ? 'italic' : 'normal' ">
                                                                                                                     <p>I</p>
                                                                                                                 </div>
                                                                                                                 <div class="underline-text"
-                                                                                                                    [ngStyle]="{'background-color': tableDataFontDecoration === 'underline' ? 'var(--primary-color)': '#fafcfc'}"
+                                                                                                                    [ngStyle]="{'background-color': tableDataFontDecoration === 'underline' ? '#2392c1': '#fafcfc'}"
                                                                                                                     (click)="isUnderline = !isUnderline;tableDataFontDecoration = isUnderline ? 'underline' : 'none' ">
                                                                                                                     <p>U</p>
                                                                                                                 </div>
@@ -2195,13 +2196,13 @@
                                                                                                                 <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                               </div>
                                                                                                               <div class="form-group mb-0 alignment-sides">
-                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'left'">
+                                                                                                                 <div class="align-left" [ngStyle]="{'background-color': tableDataFontAlignment == 'left' ? '#2392c1': '#fafcfc'}" (click)="tableDataFontAlignment = 'left'">
                                                                                                                     <i class="fa fa-align-left"></i>
                                                                                                                 </div>
-                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'center'">
+                                                                                                                <div  class="align-center" [ngStyle]="{'background-color': tableDataFontAlignment == 'center' ? '#2392c1': '#fafcfc'}" (click)="tableDataFontAlignment = 'center'">
                                                                                                                     <i class="fa fa-align-center"></i>
                                                                                                                 </div>
-                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="tableDataFontAlignment = 'right'">
+                                                                                                                <div class="align-right" [ngStyle]="{'background-color': tableDataFontAlignment == 'right' ? '#2392c1': '#fafcfc'}" (click)="tableDataFontAlignment = 'right'">
                                                                                                                     <i class="fa fa-align-right"></i>
                                                                                                                 </div>
                                                                                                             </div>
@@ -2302,13 +2303,13 @@
                                                                                                                 <option value="19">19px</option>
                                                                                                                 <option value="20">20px</option>
                                                                                                              </select>
-                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#2392c1': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;">
                                                                                                                 <p>B</p>
                                                                                                             </div>
-                                                                                                            <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
+                                                                                                            <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
                                                                                                                 <p>I</p>
                                                                                                             </div>
-                                                                                                            <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
+                                                                                                            <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
                                                                                                                 <p>U</p>
                                                                                                             </div>
                                                                                                         </div>
@@ -2333,7 +2334,7 @@
                                                                           </div>
                                                                           <span ngbTooltip=""></span>
                                                                         </div>
-                                                                        <div class="sub-menu-item mb-0">
+                                                                        <div *ngIf="isApexCharts" class="sub-menu-item mb-0">
                                                                             <div class="row">
                                                                               <div class="">
                                                                                   <div class="font-color-card">
@@ -2347,13 +2348,13 @@
                                                                                                             <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                           </div>
                                                                                                           <div class="form-group mb-0 alignment-sides">
-                                                                                                             <div class="align-left" [ngStyle]="{'background-color': dimensionAlignment == 'left' ? 'var(--primary-color)': '#fafcfc'}" (click)="allignmentChange('left','dimension')">
+                                                                                                             <div class="align-left" [ngStyle]="{'background-color': dimensionAlignment == 'left' ? '#2392c1': '#fafcfc'}" (click)="allignmentChange('left','dimension')">
                                                                                                                 <i class="fa fa-align-left"></i>
                                                                                                             </div>
-                                                                                                            <div  class="align-center" [ngStyle]="{'background-color': dimensionAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="allignmentChange('center','dimension')">
+                                                                                                            <div  class="align-center" [ngStyle]="{'background-color': dimensionAlignment == 'center' ? '#2392c1': '#fafcfc'}" (click)="allignmentChange('center','dimension')">
                                                                                                                 <i class="fa fa-align-center"></i>
                                                                                                             </div>
-                                                                                                            <div class="align-right" [ngStyle]="{'background-color': dimensionAlignment == 'right' ? 'var(--primary-color)': '#fafcfc'}" (click)="allignmentChange('right','dimension')">
+                                                                                                            <div class="align-right" [ngStyle]="{'background-color': dimensionAlignment == 'right' ? '#2392c1': '#fafcfc'}" (click)="allignmentChange('right','dimension')">
                                                                                                                 <i class="fa fa-align-right"></i>
                                                                                                             </div>
                                                                                                         </div>
@@ -2524,13 +2525,13 @@
                                                                                                             <option value="19">19px</option>
                                                                                                             <option value="20">20px</option>
                                                                                                          </select>
-                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#2392c1': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;">
                                                                                                             <p>B</p>
                                                                                                         </div>
-                                                                                                        <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
+                                                                                                        <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
                                                                                                             <p>I</p>
                                                                                                         </div>
-                                                                                                        <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
+                                                                                                        <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
                                                                                                             <p>U</p>
                                                                                                         </div>
                                                                                                     </div>
@@ -2569,13 +2570,13 @@
                                                                                                       <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                                     </div>
                                                                                                     <div class="form-group mb-0 alignment-sides">
-                                                                                                       <div class="justify-bottom" [ngStyle]="{'background-color': measureAlignment == 'bottom' ? 'var(--primary-color)': '#fafcfc'}" (click)="allignmentChange('bottom','measure')">
+                                                                                                       <div class="justify-bottom" [ngStyle]="{'background-color': measureAlignment == 'bottom' ? '#2392c1': '#fafcfc'}" (click)="allignmentChange('bottom','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
-                                                                                                      <div  class="justify-middle" [ngStyle]="{'background-color': measureAlignment == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="allignmentChange('center','measure')">
+                                                                                                      <div  class="justify-middle" [ngStyle]="{'background-color': measureAlignment == 'center' ? '#2392c1': '#fafcfc'}" (click)="allignmentChange('center','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
-                                                                                                      <div class="justify-top" [ngStyle]="{'background-color': measureAlignment == 'top' ? 'var(--primary-color)': '#fafcfc'}" (click)="allignmentChange('top','measure')">
+                                                                                                      <div class="justify-top" [ngStyle]="{'background-color': measureAlignment == 'top' ? '#2392c1': '#fafcfc'}" (click)="allignmentChange('top','measure')">
                                                                                                           <i class="fa fa-align-justify"></i>
                                                                                                       </div>
                                                                                                   </div>
@@ -2740,13 +2741,13 @@
                                                                                                         <option value="19px">19px</option>
                                                                                                         <option value="20px">20px</option>
                                                                                                      </select>
-                                                                                                     <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('B')">
+                                                                                                     <div class="bold-text" [ngStyle]="{'background-color': isBold ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontStyle('B')">
                                                                                                         <p>B</p>
                                                                                                     </div>
-                                                                                                    <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
+                                                                                                    <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
                                                                                                         <p>I</p>
                                                                                                     </div>
-                                                                                                    <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
+                                                                                                    <div *ngIf="false" class="underline-text" [ngStyle]="{'background-color': isUnderline ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontStyle('U')">
                                                                                                         <p>U</p>
                                                                                                     </div>
                                                                                                 </div>
@@ -2787,13 +2788,13 @@
                                                                                           <button class="btn btn-blue-light Automatic-btn">Automatic</button>                                                                                                 
                                                                                         </div>
                                                                                         <div class="form-group mb-0 alignment-sides">
-                                                                                           <div class="align-left" [ngStyle]="{'background-color': dataLabelsFontPosition == 'bottom' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontPosition('bottom')">
+                                                                                           <div class="align-left" [ngStyle]="{'background-color': dataLabelsFontPosition == 'bottom' ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontPosition('bottom')">
                                                                                               <i class="fa fa-align-left"></i>
                                                                                           </div>
-                                                                                          <div  class="align-center" [ngStyle]="{'background-color': dataLabelsFontPosition == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontPosition('center')">
+                                                                                          <div  class="align-center" [ngStyle]="{'background-color': dataLabelsFontPosition == 'center' ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontPosition('center')">
                                                                                               <i class="fa fa-align-center"></i>
                                                                                           </div>
-                                                                                          <div class="align-right" [ngStyle]="{'background-color': dataLabelsFontPosition == 'top' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontPosition('top')">
+                                                                                          <div class="align-right" [ngStyle]="{'background-color': dataLabelsFontPosition == 'top' ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontPosition('top')">
                                                                                               <i class="fa fa-align-right"></i>
                                                                                           </div>
                                                                                         </div>
@@ -2803,13 +2804,13 @@
                                                                                             <button class="btn btn-blue-light Automatic-btn">Automatic</button>
                                                                                         </div>
                                                                                         <div class="form-group mb-0 alignment-sides">
-                                                                                            <div class="justify-bottom" [ngStyle]="{'background-color': dataLabelsFontPosition == 'bottom' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontPosition('bottom')">
+                                                                                            <div class="justify-bottom" [ngStyle]="{'background-color': dataLabelsFontPosition == 'bottom' ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontPosition('bottom')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
-                                                                                            <div class="justify-middle" [ngStyle]="{'background-color': dataLabelsFontPosition == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)=" setDataLabelsFontPosition('center')">
+                                                                                            <div class="justify-middle" [ngStyle]="{'background-color': dataLabelsFontPosition == 'center' ? '#2392c1': '#fafcfc'}" (click)=" setDataLabelsFontPosition('center')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
-                                                                                            <div class="justify-top" [ngStyle]="{'background-color': dataLabelsFontPosition == 'top' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontPosition('top')">
+                                                                                            <div class="justify-top" [ngStyle]="{'background-color': dataLabelsFontPosition == 'top' ? '#2392c1': '#fafcfc'}" (click)="setDataLabelsFontPosition('top')">
                                                                                                 <i class="fa fa-align-justify"></i>
                                                                                             </div>
                                                                                         </div>
@@ -3532,7 +3533,7 @@
                                                             </ngx-colors>
                                                         </div> -->
                                                     </div>
-                                                    <div *ngIf="(((pie && chartId) || donut || bar))  && draggedColumns && draggedColumns.length == 1 && dateList.includes(draggedColumns[0]['data_type'])" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="(isApexCharts && ((pie && chartId) || donut || bar))  && draggedColumns && draggedColumns.length == 1 && dateList.includes(draggedColumns[0]['data_type'])" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton

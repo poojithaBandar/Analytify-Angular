@@ -19,7 +19,7 @@
             </div>
             <!-- <div class="card mb-0 br-0">
             </div> -->
-            <div class="mb-0 br-0 pt-0" style="height: 550px; overflow: auto;">
+            <div class="mb-0 br-0 pt-0" style="height: 550px; overflow: scroll;">
                 <div class="mb-0 p-0 me-2 py-1 border-bottom-0">
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"
@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                <div class="card-body p-0" style="overflow: auto;">
+                <div class="card-body p-0" style="overflow: scroll;">
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
                         <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
                             class="accordion-item">
@@ -44,7 +44,7 @@
                             </h6>
                             <div ngbAccordionCollapse id="collapse{{i}}" class="accordion-collapse collapse"
                                 [class.show]="i === 0" aria-labelledby="heading" data-bs-parent="#accordionExample">
-                                <div class="accordion-body p-1 overflow-auto database-dropdown" ngbAccordionBody
+                                <div class="accordion-body p-1 overflow-scroll database-dropdown" ngbAccordionBody
                                     style="    height: auto;max-height: 350px;">
                                     <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
@@ -122,7 +122,7 @@
                         </div>
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                             <div class="card databse-T-H mb-0 br-0">
-                                <div class="card-body overflow-auto ">
+                                <div class="card-body overflow-scroll ">
                                     @if(relationOfTables.length){
                                     <ul class="tags">
                                         @for(relation of tableJoiningList;track relation;let i = $index){
@@ -133,7 +133,7 @@
                                                                                 <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
                                                                             </li> -->
                                         <div class="dropdown" ngbDropdown  autoClose="outside">
-                                            <li class="tag rounded-pill bg-primary alert" id="row16" style="color: #fff;">
+                                            <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
                                                 <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'full Outer'"
                                                     ngbTooltip="Full Outer Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
                                                     <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active ms-2"
@@ -154,7 +154,7 @@
                                                     <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active ms-2"
                                                         style="padding: 3px;">
                                                 </span>
-                                                <p style="margin-top: 4px;">{{relation.table1}} : {{relation.table2}}</p>
+                                                <span style="margin-top: 4px;">{{relation.table1}} : {{relation.table2}}</span>
                                                                                     <!-- <a class="tag-addon rounded-pill bg-white-transparent"
                                                                                         data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)"
                                                                                         aria-hidden="true" style="padding: 4px;"><i class="fe fe-x"></i></a> -->
@@ -532,12 +532,12 @@
                                         @if(TabledataJoining.length){
                                         <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                         }@else{
-                                        <div class="table-responsive" style="overflow-y: auto;height: 233px;"
+                                        <div class="table-responsive" style="overflow-y: scroll;height: 233px;"
                                             [class.table-left]="draggedtables?.length > 1 && !isOpen"
                                             [class.table-right]="draggedtables?.length === 1 || (draggedtables?.length > 1 && isOpen)">
                                             <table
                                                 class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                                <thead style="position: sticky;top: -1px; background-color: var(--primary-color);">
+                                                <thead style="position: sticky;top: -1px; background-color: #2392c1;">
                                                     <tr>
                                                         @for(data of TabledataJoining.column_data;track data){
                                                         <th>{{data}}</th>
@@ -593,7 +593,7 @@
                 <h6 class="mb-0">Database</h6>
                 <p class="mb-0">{{databaseName}}</p>
             </div>
-            <div class="card mb-0  br-0" style="height: 504px;overflow-y: auto;">
+            <div class="card mb-0  br-0" style="height: 504px;overflow-y: scroll;">
                 <div class="sidebar">
                     @for(menu of schematableList;track menu){
                     <div class="menu-item">
@@ -694,10 +694,10 @@
                         <div class="card-body d-flex align-items-center justify-content-center p-0">
 
                             <div *ngIf="cutmquryTable" class="table-responsive"
-                                style="overflow-y: auto;height: 233px;">
+                                style="overflow-y: scroll;height: 233px;">
                                 <table
                                     class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                    <thead style="position: sticky;top: -1px; background-color: var(--primary-color);">
+                                    <thead style="position: sticky;top: -1px; background-color: #2392c1;">
                                         <tr>
                                             @for(data of cutmquryTable.column_data;track data){
                                             <th>{{data}}</th>
