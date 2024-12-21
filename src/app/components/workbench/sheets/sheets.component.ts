@@ -3845,9 +3845,9 @@ bar["stack"]="Total";
           this.chartType = 'guage';
           this.guageChart();
         } else if(this.map){
+          this.chartType = 'map';
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
             echarts.registerMap('world', geoJson);  // Register the map data
-            this.chartType = 'map';
             this.mapChart();
           });
         } else if(this.calendar){
