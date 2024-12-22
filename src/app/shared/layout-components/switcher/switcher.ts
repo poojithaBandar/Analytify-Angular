@@ -29,7 +29,7 @@ const getAlphafloat = (a: any, alpha: any) => {
 // convertion of hex code to rgba code
 export function hexToRgba(hexValue: any) {
   if (!isValidHex(hexValue)) {
-    return null;
+    return hexValue;
   }
   const chunkSize = Math.floor((hexValue.length - 1) / 3);
   const hexArr = getChunksFromString(hexValue.slice(1), chunkSize);
@@ -270,5 +270,9 @@ export function localStorageBackUp() {
     const type: any = localStorage.getItem("insightappslight-primary-color1");
     // html?.style.setProperty('--primary-rgb', type);
     html?.style.setProperty('--primary', type);
+  }
+  if (localStorage.getItem('textColor')) {
+    const textColor: any = localStorage.getItem('textColor');
+    html?.style.setProperty('--default-text-color', textColor);
   }
 }

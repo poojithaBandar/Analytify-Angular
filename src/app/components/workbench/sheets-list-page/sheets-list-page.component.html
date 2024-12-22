@@ -18,7 +18,7 @@
 
 
           <div class="input-group">
-            <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="pageNo = 1;loadSelectedSheetList();getValuesForSheetRoute($event);"  class="form-select form-select select2 fs-14 form-control border-end-0" >
+            <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="pageNo = 1;loadSelectedSheetList('fromSelect');getValuesForSheetRoute($event);"  class="form-select form-select select2 fs-14 form-control border-end-0" >
               <option value="0">All</option>
               @for(sheetlist of sheetsList;track sheetlist.id){
                 <option value="{{sheetlist.id}}" [attr.data-dbid]="sheetlist.hierarchy_id" [attr.data-field]="sheetlist.datasource_queryset_id">{{sheetlist.queryset_name}}</option>
@@ -42,7 +42,7 @@
           @if(!gridView){
             <div class="table-responsive border" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
-                    <thead class="table-primary" style="position: sticky;top: -1px;background-color: #2392c1;">
+                    <thead class="table-primary bg-primary" style="position: sticky;top: -1px;">
                         <tr>
                             <th>Title</th>
                             <!-- <th>Created On</th> -->
@@ -89,7 +89,7 @@
                               </div>
                               <div class="content">
                                 <span>Sheet Name: </span>
-                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
+                                <a  style="cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
                                 <p class="mb-0">Created by: {{sheets.created_by}}</p>
                               </div>
                           </div>                                  
@@ -189,7 +189,7 @@
             totalItems: totalItems
           }"  class="col-md-12 col-xl-3">
           <div class="card card-box-shadow ">
-            <div class="card-header tiled-header-bg tiled-card-header-padding">
+            <div class="card-header tiled-header-bg bg-primary tiled-card-header-padding">
               <div class="d-sm-flex align-items-center">
                 <div class="user-image">
                     <span class="avatar avatar rounded-circle">

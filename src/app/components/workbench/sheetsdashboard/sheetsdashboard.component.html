@@ -42,7 +42,7 @@
             <div class="card-body">
               <div class="table-responsive border" style="height: 26rem;">
                 <table class="table  text-nowrap text-md-nowrap mb-0">
-                  <thead class="table-primary" style="position: sticky;top: -1px;background-color: #2392c1; z-index: 5;">
+                  <thead class="table-primary bg-primary" style="position: sticky;top: -1px; z-index: 5;">
                                      <tr>
                                          <th style="color: #fff">Title</th>
                                          <th style="color: #fff">Database Name</th>
@@ -166,7 +166,7 @@
                                                 <h6 class="mb-0">Database</h6>
                                                 <p class="mb-0">{{databaseName}}</p>
                                             </div> -->
-                                            <div class=" mb-0  mt-0 br-0 overflow-scroll h-400" >
+                                            <div class=" mb-0  mt-0 br-0 overflow-auto h-400" >
                                                 <div class="text-wrap">
                                                     <div class="dropdown-samples">
                                                       <h6 class="dropdown-header sheets-title" style="display: flex; justify-content: space-between;line-height: 2;">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
@@ -221,8 +221,8 @@
                                                           </select>
                                                       </div>
                                                       <div class=" p-1 mt-3">
-                                                        <a style="border: #2392c1;" [ngStyle]="gridType === 'fixed' ? { 'background-color': '#2392c1', 'color': 'white' } : { 'background-color': 'white', 'color': '#2392c1' }" href="javascript:void(0);" (click)="changeGridType('fixed')" class="btn">Fixed</a>
-                                                        <a style="border: #2392c1;" [ngStyle]="gridType === 'scroll' ? { 'background-color': '#2392c1', 'color': 'white' } : { 'background-color': 'white', 'color': '#2392c1' }" href="javascript:void(0);" (click)="changeGridType('scroll')" class="btn">Scroll</a>
+                                                        <a style="border: var(--primary-color);" [ngStyle]="gridType === 'fixed' ? { 'background-color': 'var(--primary-color)', 'color': 'white' } : { 'background-color': 'white', 'color': 'var(--primary-color)' }" href="javascript:void(0);" (click)="changeGridType('fixed')" class="btn">Fixed</a>
+                                                        <a style="border: var(--primary-color);" [ngStyle]="gridType === 'scroll' ? { 'background-color': 'var(--primary-color)', 'color': 'white' } : { 'background-color': 'white', 'color': 'var(--primary-color)' }" href="javascript:void(0);" (click)="changeGridType('scroll')" class="btn">Scroll</a>
                                                     </div>
                                                      
                                                        <div class="row">
@@ -314,7 +314,7 @@
                                             </div>
                                               <label class="form-label">Apply to Selected worksheets</label>
                                            
-                                            <div class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
+                                            <div class="form body border p-2" style="max-height: 200px;  overflow: auto;">
 
                                               <div *ngIf="sheetsFilterNames?.length > 0" class="form-check">
 
@@ -394,7 +394,7 @@
                                           </div>
                                             <label class="form-label">Apply to Selected worksheets</label>
                                          
-                                          <div class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
+                                          <div class="form body border p-2" style="max-height: 200px;  overflow: auto;">
 
                                             <div class="form-check">
 
@@ -490,7 +490,7 @@
                                                                   <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text" style="color: #aeb1b6;">{{ getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
                                                                   <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button>
 
-                                                                  <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;background-color: #ffffff;max-height: 240px;overflow-y: auto;">
+                                                                  <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;max-height: 240px;overflow-y: auto;">
                                                                     <div class="scrollable-content" style="max-height: calc(100% - 50px); overflow-y: auto;"> <!-- Adjust the height to account for buttons -->
                                                                     <div class="input-group">
                                                                       <input type="text" [(ngModel)]="filterList.searchText" class="form-control border-end-0" placeholder="Search" aria-describedby="button-addon2">
@@ -514,7 +514,7 @@
                                                                       </div>
                                                                   <!-- } -->
                                                                 </div>
-                                                                  <div class="fixed-buttons p-2" style="display: flex; justify-content: space-between;">
+                                                                  <div class="card mb-0 fixed-buttons p-2" style="display: flex; justify-content: space-between; flex-direction: row;">
                                                                     <div class="">
                                                                       <input type="checkbox" id="exclude" (click)="excludeFilterIdList(filterList,$event);" [(ngModel)]="filterList.isExclude" class="form-check-input">
                                                                       <label for="exclude" class="form-check-label">Exclude</label>
@@ -767,7 +767,7 @@
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
-                    <div class="title-container" *ngIf="!editor">
+                    <div class="title-container border" *ngIf="!editor">
                       <input *ngIf="!dashboardId && !editor" (click)="editor =true && !isPublicUrl" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
                       <div *ngIf="dashboardId && !editor" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
                        
@@ -853,13 +853,13 @@
             <div  cdkDropList #destinationList1="cdkDropList" [cdkDropListData]="dashboardTest"
             (cdkDropListDropped)="dropTest2($event)">
             @if(displayTabs){
-            <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: scroll;"  [style.height.px]="heightGrid"
+            <div *ngIf="sheetTabs !== undefined && sheetTabs.length > 0" id="capture-element-2" style="margin: 0;overflow: auto;"  [style.height.px]="heightGrid"
               [style.width.px]="widthGrid">
               <!-- <div style="height: inherit;" > -->
                 <gridster [options]="options" #gridsterTab>
                   <gridster-item [item]="item" *ngFor="let item of dashboardTest;let i = index"
-                    [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
-                    <div class="card mb-0" style="height: 100%;overflow: scroll;">
+                    [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
+                    <div class="card mb-0" style="height: 100%;overflow: auto;">
                       <div class="card-header d-flex justify-content-between p-1">
                         <h6>{{ item.data?.title }}</h6>       
                         <div *ngIf="!isPublicUrl" class="dashboard-option">
@@ -1008,7 +1008,7 @@
           }
           </div>
         
-        <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
+        <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
@@ -1057,7 +1057,7 @@
                       </div>
                 </div>
                 @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1) ){
-                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'scroll'} : {}">
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'auto'} : {}">
                     <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" (chartClick)="onEChartClick($event,item)" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
                     </div>
                 
@@ -1084,14 +1084,14 @@
                   }
                 </div>
               } @else if(!item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1)){
-                <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
+                <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
     
                   <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
                     <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
                     [cdkDropListData]="nestedDashboard" style="margin: 0px;"
                    (cdkDropListDropped)="dropNested($event,item)" #gridster>
                    <gridster-item [item]="nestedItem" *ngFor="let nestedItem of nestedDashboard">
-                    <div class="card-header d-flex justify-content-between p-1" style="overflow: scroll;">
+                    <div class="card-header d-flex justify-content-between p-1" style="overflow: auto;">
                       <h6>{{ nestedItem.data?.title }}</h6>
                       <div class="dashboard-option">
                           <div class=" p-1" ngbDropdown>
@@ -1466,7 +1466,6 @@
 </div>
 </div>
   }
-
 
 
 

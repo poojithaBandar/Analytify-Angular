@@ -6,11 +6,14 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 import Swal from 'sweetalert2';
 import { RolespriviledgesService } from '../../workbench/rolespriviledges.service';
+import { SharedModule } from '../../../shared/sharedmodule';
+import { SwitcherComponent } from '../../../shared/layout-components/switcher/switcher.component';
+import { CustomThemeService } from '../../../services/custom-theme.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule,ReactiveFormsModule],
+  imports: [RouterModule,ReactiveFormsModule,SharedModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -40,7 +43,7 @@ toggleVisibility1() {
   }
 }
   constructor(
-    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,
+    @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,private router: Router,private switcherComponent: SwitcherComponent,private themeService : CustomThemeService,
     private renderer: Renderer2, private rolesService : RolespriviledgesService, private sanitizer: DomSanitizer,private formBuilder:FormBuilder,private authService:AuthService
   ) {
     const currentUser = localStorage.getItem('currentUser');
@@ -78,7 +81,12 @@ this.authService.login(this.f['email'].value,this.f['password'].value)
     localStorage.setItem('currentUser', JSON.stringify(userToken));
     localStorage.setItem('username', JSON.stringify(userName));
     localStorage.setItem('chartType', chartType);
-    localStorage.setItem('userId', userId);
+    localStorage.setItem('userId', userId);  
+    localStorage.setItem('customTheme', JSON.stringify(data.custome_theme)); 
+    localStorage.setItem('apiCustomTheme', JSON.stringify(data.custome_theme)); 
+    this.themeService.setApiCustomTheme(data.custome_theme);
+    this.themeService.setCurrentTheme(data.custome_theme);
+    this.switcherComponent.setCustomThemeData(data.custome_theme);
     if(data.previlages){
       this.rolesService.setRoleBasedPreviledges(data.previlages);
     }

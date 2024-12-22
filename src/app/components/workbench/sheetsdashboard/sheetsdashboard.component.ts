@@ -687,7 +687,7 @@ export class SheetsdashboardComponent {
         // if(data.file_id && data.file_id.length){
         //   this.fileId = data.file_id;
         // }
-        if(data.server_id && data.server_id.length){
+        if(data.hierarchy_id && data.hierarchy_id.length){
           this.databaseId = data.hierarchy_id;
         }
         this.dashboardsheetsIdArray = data.sheet_ids;

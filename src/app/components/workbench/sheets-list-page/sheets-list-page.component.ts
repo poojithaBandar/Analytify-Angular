@@ -72,11 +72,13 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
         }
       }    
   }
-  loadSelectedSheetList(){
+  loadSelectedSheetList(value:any){
     if(this.selectedSheetList > 0){
+      const pageNo = value === 'fromSelect' ? 1 : this.pageNo;
+
     const Obj ={
       search:this.sheetName,
-      page_no:1,
+      page_no:pageNo,
       page_count:this.itemsPerPage,
       queryset_id:this.selectedSheetList
     }
@@ -132,7 +134,7 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
           this.totalItems = data.total_items
           console.log('sheetsList',data)
           this.selectedSheetList = 0;
-          this.loadSelectedSheetList();
+          this.loadSelectedSheetList('fromPagechange');
   
         },
         error:(error:any)=>{
@@ -151,7 +153,7 @@ pageChangegetUserSheetsList(page:any){
 this.pageNo=page;
 if(this.selectedSheetList !== 0)
 {
-  this.loadSelectedSheetList();
+  this.loadSelectedSheetList('fromPagechange');
 }else{
 this.getUserSheetsList();
 }
