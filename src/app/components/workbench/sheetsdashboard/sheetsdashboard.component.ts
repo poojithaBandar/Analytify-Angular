@@ -373,7 +373,10 @@ export class SheetsdashboardComponent {
           // this.sheetsDataWithQuerysetId();
           this.getDashboardFilterredList();
         }
-        this.getDrillThroughActionList();
+        if(this.dashboardId != undefined || null){
+          this.getDrillThroughActionList();
+        }
+
     });    
    
     //this.getSheetData();
@@ -609,7 +612,7 @@ export class SheetsdashboardComponent {
         rows: 1,
         y: 10,
         x: 10,
-        fileId : sheet.file_id,
+        // fileId : sheet.file_id,
         sheetType:sheet.sheet_type,
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
@@ -1111,7 +1114,21 @@ export class SheetsdashboardComponent {
       })
     );
   }
+  saveDashboardimageUpdate(){
+    var formData: any = new FormData();
+    formData.append("dashboard_id", this.dashboardId);
+    formData.append("imagepath", this.imageFile, this.imagename.name);
   
+     this.workbechService.saveDAshboardimage(formData).subscribe({
+      next:(data)=>{
+        console.log(data)
+      },
+      error:(error)=>{
+        console.log(error);
+      }
+     })
+   
+  }
   updateDashboard(){
     this.takeScreenshot();
       this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
@@ -1176,7 +1193,7 @@ export class SheetsdashboardComponent {
         // })
         this.dashboardsheetsIdArray = this.sheetsIdArray;
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
-
+        this.saveDashboardimageUpdate();
         this.endMethod(); 
       },
       error:(error)=>{
@@ -3904,7 +3921,11 @@ kpiData?: KpiData;
         qrySetId : sheet.queryset_id,
         isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
-        selectedSheet : sheet.selectedSheet,
+        selectedSheet: sheet.selectedSheet,
+        column_Data: sheet.sheet_data.columns_data,
+        row_Data: sheet.sheet_data.rows_data,
+        drillDownHierarchy: sheet.sheet_data.drillDownHierarchy,
+        isDrillDownData: sheet.sheet_data.isDrillDownData,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {

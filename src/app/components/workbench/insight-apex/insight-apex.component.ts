@@ -68,7 +68,9 @@ export class InsightApexComponent {
   @Input() drillDownObject : any;
   @Input() sortType : any;
   @Input() isSheetSaveOrUpdate : any;
-
+  @Input() dataLabelsBarFontPosition:any;
+  @Input() dataLabelsLineFontPosition:any;
+  @Input() selectedColorScheme:any;
   @Output() setDrilldowns = new EventEmitter<object>();
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   
@@ -141,6 +143,12 @@ export class InsightApexComponent {
     if(changes['dataLabelsFontSize']){
       this.setDataLabelsFontSize();
     }
+    // if(changes['dataLabelsBarFontPosition']){
+    //   this.setDataLabelsBarFontPosition();
+    // }
+    // if(changes['dataLabelsLineFontPosition']){
+    //   this.setDataLabelsLineFontPosition();
+    // }
     if(changes['isBold']){
       this.setDataLabelsFontWeight();
     }
@@ -183,7 +191,7 @@ export class InsightApexComponent {
     if(changes['backgroundColor']){
       this.setBackgroundColor();
     }
-    if(changes['barColor'] || changes['lineColor'] || changes['color']){
+    if(changes['barColor'] || changes['lineColor'] || changes['color'] || changes['selectedColorScheme']){
       this.setChartColor();
     }
     if(changes['gridColor']){
@@ -754,7 +762,7 @@ export class InsightApexComponent {
           }
         }
       },
-      // colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+       colors:this.selectedColorScheme,
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
       legend: {
         show: this.legendSwitch,
@@ -789,7 +797,7 @@ export class InsightApexComponent {
           }
         }]
       },
-      colors: ['#00a5a2', '#0dc9c5', '#f43f63'],
+      colors: this.selectedColorScheme,
       chart: {
         toolbar: {
           show: true,
@@ -808,7 +816,7 @@ export class InsightApexComponent {
         },
         type: 'bar',
         height: 320,
-        background: this.backgroundColor
+        background: this.backgroundColor,
       },
       plotOptions: {
         bar: {
@@ -912,6 +920,7 @@ export class InsightApexComponent {
           }
         }]
       },
+      colors: this.selectedColorScheme,
       chart: {
         type: "bar",
         height: 350,
@@ -1018,13 +1027,23 @@ export class InsightApexComponent {
           name: this.dualAxisRowData[0]?.name,
           type: "column",
           data: this.dualAxisRowData[0]?.data,
-          color: this.barColor
+          color: this.barColor,
+          dataLabels: {
+            enabled: true,
+            offsetX: 0,
+            offsetY: (this.dataLabelsBarFontPosition === 'center' ? 0 : (this.dataLabelsBarFontPosition === 'top' ? -10 : 10)),
+          },
         },
         {
           name: this.dualAxisRowData[1]?.name,
           type: "line",
           data: this.dualAxisRowData[1]?.data,
-          color: this.lineColor
+          color: this.lineColor,
+          dataLabels: {
+            enabled: true,
+            offsetX: 0,
+            offsetY: (this.dataLabelsLineFontPosition === 'center' ? 0 : (this.dataLabelsLineFontPosition === 'left' ? -10 : 10)),
+          },
         }
       ],
       annotations: {
@@ -1091,7 +1110,8 @@ export class InsightApexComponent {
       dataLabels: {
         enabled: true,
         formatter: this.formatNumber.bind(this),
-        offsetY: -20,
+        // offsetY: (this.dataLabelsBarFontPosition === 'center' ? 0 : (this.dataLabelsBarFontPosition === 'top' ? -10 : 10)),
+        // offsetX: (this.dataLabelsLineFontPosition === 'center' ? 0 : (this.dataLabelsLineFontPosition === 'left' ? -10 : 10)),
         style: {
           fontSize: this.dataLabelsFontSize,
           fontFamily: this.dataLabelsFontFamily,
@@ -1193,6 +1213,7 @@ export class InsightApexComponent {
           enabled: true
         }
       },
+      colors: this.selectedColorScheme,
       responsive: [
         {
           breakpoint: 480,
@@ -1286,6 +1307,7 @@ export class InsightApexComponent {
         height: 430,
         background: this.backgroundColor,
       },
+      colors: this.selectedColorScheme,
       plotOptions: {
         bar: {
           horizontal: true,
@@ -1394,6 +1416,7 @@ export class InsightApexComponent {
         type: "line",
         background: this.backgroundColor,
       },
+      colors: this.selectedColorScheme,
       dataLabels: {
         enabled: true,
         formatter: this.formatNumber.bind(this),
@@ -1516,6 +1539,7 @@ export class InsightApexComponent {
           }
         }
       },
+      colors: this.selectedColorScheme,
       labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
       // responsive: [
       //   {
@@ -1575,6 +1599,7 @@ export class InsightApexComponent {
         type: 'heatmap',
         background: this.backgroundColor,
       },
+      colors: this.selectedColorScheme,
       plotOptions: {
         heatmap: {
           shadeIntensity: 0.5,
@@ -1690,7 +1715,7 @@ export class InsightApexComponent {
       legend: {
         show: false
       },
-      colors: this.isDistributed ? [] : [this.color]
+      colors: this.isDistributed ? [] : [this.selectedColorScheme]
     };
   }
   guageChart() {
@@ -2245,6 +2270,54 @@ export class InsightApexComponent {
       this.guageCharts.updateOptions(object);
     }
   }
+  setDataLabelsLineFontPosition(){
+    if(this.barLineCharts){
+    if(this.dataLabelsLineFontPosition === 'center')
+    {
+    this.chartOptions.dataLabels.offsetY = '0';
+    let object = {dataLabels:this.chartOptions.dataLabels}
+    this.barLineCharts.updateOptions(object);
+    }
+    if(this.dataLabelsLineFontPosition === 'top')
+      {
+      this.chartOptions.dataLabels.offsetY = '-10';
+      let object = {dataLabels:this.chartOptions.dataLabels}
+      this.barLineCharts.updateOptions(object);
+      }
+      if(this.dataLabelsLineFontPosition === 'bottom')
+        {
+        this.chartOptions.dataLabels.offsetY = '10';
+        let object = {dataLabels:this.chartOptions.dataLabels}
+        this.barLineCharts.updateOptions(object);
+        }
+      }
+  }
+  setDataLabelsBarFontPosition(){
+    if(this.barLineCharts){
+      if(this.dataLabelsLineFontPosition === 'center')
+      {
+      this.chartOptions.series[0].dataLabels.offsetY = '0';
+      let object = {series:[{dataLabels:{offsetY:'0'}},
+        {
+
+        }
+      ]}
+      this.barLineCharts.updateOptions(object);
+      }
+      if(this.dataLabelsLineFontPosition === 'top')
+        {
+        this.chartOptions.dataLabels.offsetX = '-10';
+        let object = {dataLabels:this.chartOptions.dataLabels}
+        this.barLineCharts.updateOptions(object);
+        }
+        if(this.dataLabelsLineFontPosition === 'bottom')
+          {
+          this.chartOptions.dataLabels.offsetX = '10';
+          let object = {dataLabels:this.chartOptions.dataLabels}
+          this.barLineCharts.updateOptions(object);
+          }
+        }
+  }
   setDataLabelsFontWeight(){
     let object;
     if(this.guageCharts){
@@ -2657,6 +2730,7 @@ export class InsightApexComponent {
     else if (this.guageCharts) {
       this.guageCharts.updateOptions(object);
     }
+
   }
   }
   setChartColor(){
@@ -2674,10 +2748,14 @@ export class InsightApexComponent {
     //   }
     //   object = { colors: this.chartOptions.colors }
     // }
+    else if(this.sideBySideCharts || this.pieCharts || this.stockedCharts || this.horizontalStockedCharts || this.groupedCharts || this.multiLineCharts || this.donutCharts || this.heatmapCharts)  {
+      this.chartOptions.colors = this.selectedColorScheme
+      object = { colors: this.chartOptions.colors };
+    }
     else{
       if(this.chartOptions?.colors){
         if(this.chartType === 'funnel'){
-          this.chartOptions.colors = this.isDistributed ? [] : [this.color];
+          this.chartOptions.colors = this.isDistributed ? [] : [this.selectedColorScheme];
         }
         else{
           this.chartOptions.colors = [this.color];
@@ -2703,6 +2781,30 @@ export class InsightApexComponent {
     }
     else if (this.guageCharts) {
       this.guageCharts.updateOptions(object);
+    }
+    else if(this.sideBySideCharts){
+      this.sideBySideCharts.updateOptions(object);
+    }
+    else if(this.pieCharts){
+      this.pieCharts.updateOptions(object);
+    }
+    else if(this.donutCharts){
+      this.donutCharts.updateOptions(object);
+    }
+    else if(this.stockedCharts){
+      this.stockedCharts.updateOptions(object);
+    }
+    else if(this.horizontalStockedCharts){
+      this.horizontalStockedCharts.updateOptions(object);
+    }
+    else if(this.groupedCharts){
+      this.groupedCharts.updateOptions(object);
+    }
+    else if(this.multiLineCharts){
+      this.multiLineCharts.updateOptions(object);
+    }
+    else if(this.heatmapCharts){
+      this.heatmapCharts.updateOptions(object);
     }
   }
   gridLineColor(){
@@ -2892,12 +2994,14 @@ export class InsightApexComponent {
     }
   }
   sort(sortType: any, numbers: any, labels: any) {
-    const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+    let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
   
     if (sortType === 'ascending') {
       pairedData.sort((a: any, b: any) => a[0] - b[0]);
     } else if (sortType === 'descending') {
       pairedData.sort((a: any, b: any) => b[0] - a[0]);
+    } else if(sortType === 'none'){
+      pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
     }
 
     const sortedNumbers = pairedData.map((pair: any) => pair[0]);
