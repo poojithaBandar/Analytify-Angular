@@ -4472,8 +4472,31 @@ kpiData?: KpiData;
   }
 
   toggleSidebar() {
-    const mainContainer = document.querySelector('.main-container');
-    mainContainer?.classList.toggle('sidebar-hidden');
+    const sidebar = document.getElementById("sticky-sidebar");
+    const dashboardContent = document.getElementById("dashboard-content");
+    if (sidebar?.classList.contains("d-none")) {
+      sidebar.classList.remove("d-none");
+      sidebar.classList.add("col-xl-2");
+      sidebar.classList.add("col-lg-2");
+      sidebar.classList.add("col-md-2");
+      dashboardContent?.classList.remove("col-lg-12");
+      dashboardContent?.classList.remove("col-xl-12");
+      dashboardContent?.classList.remove("col-md-12");
+      dashboardContent?.classList.add("col-lg-10");
+      dashboardContent?.classList.add("col-xl-10");
+      dashboardContent?.classList.add("col-md-10");
+  } else {
+      sidebar?.classList.add("d-none");
+      sidebar?.classList.remove("col-xl-2");
+      sidebar?.classList.remove("col-lg-2");
+      sidebar?.classList.remove("col-md-2");
+      dashboardContent?.classList.remove("col-lg-10");
+      dashboardContent?.classList.remove("col-xl-10");
+      dashboardContent?.classList.remove("col-md-10");
+      dashboardContent?.classList.add("col-xl-12");
+      dashboardContent?.classList.add("col-lg-12");
+      dashboardContent?.classList.add("col-md-12");
+  }
 }
 //tablePagination
 tableSearchDashboard(item:any){
