@@ -10,7 +10,7 @@
   
   <div *ngIf="isPublicUrl" style="margin-top: 60px;">
     
-    <app-page-header (btnClickEvent)="toggleSidebar()" title="{{dashboardName}}" title1="public" [isPublicUrl]="isPublicUrl" activeitem="Dashboard"></app-page-header>
+    <app-page-header (btnClickEvent)="toggleSidebar()" title="{{dashboardName}}" title1="public" [isPublicUrl]="false" activeitem="Dashboard"></app-page-header>
     </div>
   <!-- <div *ngIf="publicHeader">
     <app-page-header [publicHeader]="true"></app-page-header>
@@ -767,6 +767,12 @@
     </div>
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
+      <div class="d-flex">
+        <button type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="btn btn-icon btn-primary-light me-2 rounded-5 mt-3">
+          <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 24px;"></i>
+          <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 24px;"></i>
+      </button>
+      
          <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
@@ -821,6 +827,7 @@
                 </div>
             </div>
         </div> 
+      </div> 
         <!-- <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="gridItemSize"  (change)="changeGridItemSize()" aria-label="Sheet" > -->
 
     
@@ -1013,6 +1020,7 @@
           </div>
         
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
+        
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>

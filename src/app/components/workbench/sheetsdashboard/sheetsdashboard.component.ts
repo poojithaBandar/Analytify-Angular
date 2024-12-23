@@ -4470,7 +4470,7 @@ kpiData?: KpiData;
     this.cdr.detectChanges();  // Force change detection
 
   }
-
+  issheetListPaneOpen : boolean = true;
   toggleSidebar() {
     const sidebar = document.getElementById("sticky-sidebar");
     const dashboardContent = document.getElementById("dashboard-content");
