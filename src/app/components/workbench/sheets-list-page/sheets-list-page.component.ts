@@ -166,6 +166,10 @@ onChangeofPagecount(count:any){
 
 }
 getUserSheetsList(){
+  if(this.selectedSheetList !== 0)
+    {
+      this.loadSelectedSheetList('fromPagechange');
+    }else{
   const Obj ={
     search:this.sheetName,
     page_no:this.pageNo,
@@ -197,6 +201,7 @@ getUserSheetsList(){
       })
     }
     })
+  }
 }
 viewSheet(serverId:any,querysetId:any,sheetId:any){
   // const encodedServerId = btoa(serverId.toString());
