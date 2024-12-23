@@ -3921,7 +3921,11 @@ kpiData?: KpiData;
         qrySetId : sheet.queryset_id,
         isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
-        selectedSheet : sheet.selectedSheet,
+        selectedSheet: sheet.selectedSheet,
+        column_Data: sheet.sheet_data.columns_data,
+        row_Data: sheet.sheet_data.rows_data,
+        drillDownHierarchy: sheet.sheet_data.drillDownHierarchy,
+        isDrillDownData: sheet.sheet_data.isDrillDownData,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
