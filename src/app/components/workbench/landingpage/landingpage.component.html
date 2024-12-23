@@ -631,8 +631,6 @@
       </div>
       <div class="modal-footer">
         <button type="button" [disabled]="!selectedRoleIds?.length || !selectedUserIds?.length" *ngIf="!createUrl" (click)="saveDashboardProperties()" class="btn ripple btn-primary">Apply</button>
-        <button type="button" *ngIf="createUrl" (click)="publishDashboard()" class="btn ripple btn-primary">Publish</button>
-
         <button
           type="button"
           class="btn ripple btn-secondary"

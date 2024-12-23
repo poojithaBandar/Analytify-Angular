@@ -4449,6 +4449,11 @@ kpiData?: KpiData;
     this.cdr.detectChanges();  // Force change detection
 
   }
+
+  toggleSidebar() {
+    const mainContainer = document.querySelector('.main-container');
+    mainContainer?.classList.toggle('sidebar-hidden');
+}
 //tablePagination
 tableSearchDashboard(item:any){
   this.tablePageNo=1;

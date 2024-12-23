@@ -280,7 +280,8 @@ sharePublish(value:any){
     this.createUrl = true;
     this.shareAsPrivate = false
     const publicDashboardId = btoa(this.dashboardId.toString());
-    this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
+    this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId;
+    this.publishDashboard();
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;
