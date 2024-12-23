@@ -144,8 +144,9 @@
   } @else {
     
     <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
-  <div id="sidebar" class="sidebar"  [ngClass]="{ 'header-visibile': isPublicUrl}">
-    <div class="" id="sticky-sidebar">
+      <div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
+
+    <div class="col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }" class="card p-0" >
         <!-- <div class="card mb-0"> -->
           <!-- <div class="card-body p-0"> -->
@@ -764,9 +765,8 @@
       <!-- </div> -->
       </div>
     </div>
-    </div>
-    <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }">
-    <div >
+    <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
+    <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
          <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
@@ -1467,8 +1467,8 @@
           <img [src]="screenshotSrc" alt="Screenshot">
         </div> -->
     </div>
-    </div>
-
+    <!-- </div> -->
+</div>
 </div>
   }
 
