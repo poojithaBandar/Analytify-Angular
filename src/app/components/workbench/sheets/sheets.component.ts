@@ -4380,6 +4380,7 @@ bar["stack"]="Total";
     this.displayedColumns = [];
     this.retriveDataSheet_id = '';
     this.getChartData();
+    this.columnsData();
     if(selectedSheetId){
       this.retriveDataSheet_id = selectedSheetId;
       this.sheetRetrive(false);
