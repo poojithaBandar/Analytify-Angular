@@ -9,7 +9,8 @@
   </div>
   
   <div *ngIf="isPublicUrl" style="margin-top: 60px;">
-    <app-page-header title="{{dashboardName}}" title1="public" activeitem="Dashboard"></app-page-header>
+    
+    <app-page-header (btnClickEvent)="toggleSidebar()" title="{{dashboardName}}" title1="public" [isPublicUrl]="isPublicUrl" activeitem="Dashboard"></app-page-header>
     </div>
   <!-- <div *ngIf="publicHeader">
     <app-page-header [publicHeader]="true"></app-page-header>
@@ -141,9 +142,10 @@
       </div>
     </div>
   } @else {
+    
     <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
-<div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
-    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
+  <div id="sidebar" class="sidebar"  [ngClass]="{ 'header-visibile': isPublicUrl}">
+    <div class="" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }" class="card p-0" >
         <!-- <div class="card mb-0"> -->
           <!-- <div class="card-body p-0"> -->
@@ -762,7 +764,9 @@
       <!-- </div> -->
       </div>
     </div>
-    <div class="col-xl-10 col-md-12">
+    </div>
+    <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }">
+    <div >
          <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
@@ -1015,7 +1019,7 @@
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
               <div class="card mb-0 grid-item-border" style="height: 100%;">
                 <div class="card-header d-flex justify-content-between p-1">
-                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10) && item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
+                  @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) && item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                     <!-- <div class="col-lg-3 col-md-3"> -->
                       <button class="btn btn-primary " style="margin-right: 10px;" (click)="goDrillDownBack(item)"><i class="fa fa-arrow-left "></i> </button>
                    <!-- </div> -->
@@ -1056,11 +1060,33 @@
                         </div>
                       </div>
                 </div>
-                @if(item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1) ){
+                @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1) ){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'auto'} : {}">
                     <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" (chartClick)="onEChartClick($event,item)" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
                     </div>
                 
+              } @else if(item['isEChart'] && item['chartId']=== 29){
+                <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
+                  @if(chartType == 'map') {
+                    <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [chartType]="chartType" [drillDownIndex]="item['drillDownIndex']"
+                      [draggedDrillDownColumns]="item['drillDownHierarchy']" [drillDownObject]="item['drillDownObject']" (setDrilldowns)="mapchartDrillDown($event, item)"
+                      [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData"
+                      [dualAxisColumnData]="dualAxisColumnData"></app-insight-echart>
+                  } @else if(chartType == 'bar') {
+                    <app-insight-echart [isZoom]="item['customizeOptions']?.isZoom" [isBold]="item['customizeOptions']?.isBold" [chartType]="chartType" [chartsRowData]="chartsRowData"
+                    [chartsColumnData]="chartsColumnData" [backgroundColor]="item['customizeOptions']?.backgroundColor" [xlabelAlignment]="item['customizeOptions']?.xlabelAlignment"
+                    [xGridColor]="item['customizeOptions']?.xGridColor" [xGridSwitch]="item['customizeOptions']?.xGridSwitch" [xLabelColor]="item['customizeOptions']?.xLabelColor" [xLabelSwitch]="item['customizeOptions']?.xLabelSwitch"
+                    [xLabelFontFamily]="item['customizeOptions']?.xLabelFontFamily" [xLabelFontSize]="item['customizeOptions']?.xLabelFontSize" [xlabelFontWeight]="item['customizeOptions']?.xlabelFontWeight"
+                    [yLabelColor]="item['customizeOptions']?.yLabelColor" [yGridSwitch]="item['customizeOptions']?.yGridSwitch" [yLabelSwitch]="item['customizeOptions']?.yLabelSwitch"
+                    [yLabelFontFamily]="item['customizeOptions']?.yLabelFontFamily" [yLabelFontSize]="item['customizeOptions']?.yLabelFontSize" [ylabelFontWeight]="item['customizeOptions']?.ylabelFontWeight"
+                    [yGridColor]="item['customizeOptions']?.yGridColor" [yGridSwitch]="item['customizeOptions']?.yGridSwitch" [color]="item['customizeOptions']?.color" [measureColor]="item['customizeOptions']?.measureColor"
+                    [dimensionColor]="item['customizeOptions']?.dimensionColor" [dataLabelsFontSize]="item['customizeOptions']?.dataLabelsFontSize"
+                    [dataLabelsFontFamily]="item['customizeOptions']?.dataLabelsFontFamily" [dataLabelsColor]="item['customizeOptions']?.dataLabelsColor" [displayUnits]="item['customizeOptions']?.displayUnits"
+                    [decimalPlaces]="item['customizeOptions']?.decimalPlaces" [prefix]="item['customizeOptions']?.prefix" [suffix]="item['customizeOptions']?.suffix" [sortType]="item['customizeOptions']?.sortType"
+                    [drillDownIndex]="item['drillDownIndex']" [draggedDrillDownColumns]="item['drillDownHierarchy']" [drillDownObject]="item['drillDownObject']"
+                    (setDrilldowns)="mapchartDrillDown($event, item)"></app-insight-echart>
+                  }
+                </div>
               } @else if(!item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1)){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
     
@@ -1441,10 +1467,10 @@
           <img [src]="screenshotSrc" alt="Screenshot">
         </div> -->
     </div>
-</div>
+    </div>
+
 </div>
   }
-
 
 
 

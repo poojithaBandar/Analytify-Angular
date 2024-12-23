@@ -8,6 +8,10 @@ import { SharedModule } from '../../../shared/sharedmodule';
 import _ from 'lodash';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
+import { lastValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
+
 interface Dimension {
   name: string;
   values: string[];
@@ -32,7 +36,7 @@ export class InsightEchartComponent {
   @Input() radarRowData:any;
   @Input() displayUnits:any;
   @Input() decimalPlaces:any;
-
+  @Input() dataLabelsFontPosition:any;
   @Input() backgroundColor:any
   @Input() xlabelAlignment:any;
   @Input() xGridColor:any;
@@ -66,12 +70,13 @@ export class InsightEchartComponent {
   @Input() isBold:any;
   @Input() sortType : any;
   @Input() dimensionAlignment : any;
-  
+  @Input() dataLabelsBarFontPosition:any;
+  @Input() dataLabelsLineFontPosition:any;
   @Input() isSheetSaveOrUpdate : any;
   @Input() drillDownIndex : any;
   @Input() draggedDrillDownColumns : any;
   @Input() drillDownObject : any;
-
+  @Input() selectedColorScheme :any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
 
@@ -84,7 +89,7 @@ export class InsightEchartComponent {
 
   series: any[] = [];
   chartOptions: any = {};
-  constructor(private cdr: ChangeDetectorRef){}
+  constructor(private cdr: ChangeDetectorRef,private http: HttpClient){}
 
  
   // ngAfterViewInit() {
@@ -105,7 +110,12 @@ export class InsightEchartComponent {
 
       // Apply initial options
       this.updateChartTest();
-      this.chartInstance.on('click', this.onChartClick.bind(this));
+      if(this.chartType === 'map'){
+        this.chartInstance.on('click', (event) => this.handleChartClick(event));
+      }
+      else{
+        this.chartInstance.on('click', this.onChartClick.bind(this));
+      }
     }
     // const container = document.querySelector('.chart-container') as HTMLElement;
     // this.chartInstance = echarts.init(container);
@@ -113,8 +123,16 @@ export class InsightEchartComponent {
   }
 
   updateChartTest(){
-    this.chartInstance.setOption(
-      this.chartOptions,true);
+    if(this.chartType === 'map'){
+      this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+        echarts.registerMap('world', geoJson);
+        this.chartInstance?.setOption(this.chartOptions,true);
+      });
+    }
+    else{
+      this.chartInstance?.setOption(
+        this.chartOptions,true);
+    }
   }
 
   updateChart() {
@@ -234,7 +252,8 @@ export class InsightEchartComponent {
             borderRadius: 5
           },
           label: { show: true,
-            position: 'center',
+            position: this.dataLabelsFontPosition,
+            align:'center',
             fontFamily:this.dataLabelsFontFamily,
             fontSize:this.dataLabelsFontSize,
             fontWeight:this.isBold ? 700 : 400,
@@ -275,7 +294,7 @@ funnelchart(){
     });
   });
   this.chartOptions = {
-    color:[this.color],
+    color:this.selectedColorScheme,
     tooltip: {
       trigger: 'item',
     },
@@ -286,6 +305,7 @@ funnelchart(){
         data: combinedArray,
         label: {
           show: true,
+          position:this.dataLabelsFontPosition,
           fontFamily:this.dataLabelsFontFamily,
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
@@ -309,6 +329,7 @@ stackedChart(){
   });
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     legend: {
       orient: 'vertical',
       left: 'left'
@@ -388,7 +409,7 @@ stackedChart(){
       ...series,
       label: {
           show:true, // Enable data labels
-          position:'inside', // Position of the labels (e.g., 'top', 'inside', etc.)
+          position:this.dataLabelsFontPosition, // Position of the labels (e.g., 'top', 'inside', etc.)
           //color:'#000', // Customize label color (default black)
           // fontSize:12, // Customize label font size
           // fontWeight:'bold', // Customize label font weight
@@ -412,6 +433,7 @@ sidebySide(){
   });
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     legend: {
       orient: 'vertical',
       left: 'left'
@@ -493,7 +515,7 @@ sidebySide(){
       ...series,
       label: {
           show: true, // Enable data labels
-          position: 'top', // Position of the labels (e.g., 'top', 'inside', etc.)
+          position: this.dataLabelsFontPosition, // Position of the labels (e.g., 'top', 'inside', etc.)
           // color: '#000', // Customize label color
           // fontSize: 12, // Customize label font size
           // fontWeight: 'bold', // Customize label font weight
@@ -505,8 +527,6 @@ sidebySide(){
           formatter:(params:any) => this.formatNumber(params.value)
       }
   })),
-    color:this.color
-
   };
 }
 hgroupedChart(){
@@ -518,6 +538,7 @@ hgroupedChart(){
   });
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     legend: {
       orient: 'vertical',
       left: 'left'
@@ -621,6 +642,7 @@ hstackedChart(){
   });
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     legend: {
       orient: 'vertical',
       left: 'left'
@@ -802,6 +824,7 @@ areaChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          position:this.dataLabelsFontPosition,
           formatter:(params:any) => this.formatNumber(params.value) 
         },
         type: 'line',
@@ -899,6 +922,7 @@ lineChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          position:this.dataLabelsFontPosition,
           formatter:(params:any) => this.formatNumber(params.value) 
         },
         type: 'line',
@@ -918,13 +942,14 @@ pieChart(){
   // let legendObject = this.setEchartLegendAlignment();
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     tooltip: {
       trigger: 'item'
     },
     legend: {
       orient: 'vertical',
       left: 'left',
-      type:'scroll',
+      // type:'scroll',
       show: this.legendSwitch 
       },
           label: {
@@ -958,6 +983,7 @@ donutChart(){
   // let legendObject = this.setEchartLegendAlignment();
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     tooltip: {
       trigger: 'item'
     },
@@ -1030,6 +1056,7 @@ barLineChart(){
           type: 'shadow'
         },
         axisLabel: {
+          show:this.xLabelSwitch,
           color: this.xLabelColor, // Customize label color
           fontSize: this.xLabelFontSize, // Customize font size
           fontFamily: this.xLabelFontFamily, // Customize font family
@@ -1050,6 +1077,7 @@ barLineChart(){
     yAxis: [
       {
         type: 'value',
+        show:this.yLabelSwitch,
         name: 'Bar Axis',
         position: 'left',
         axisLabel: {
@@ -1071,9 +1099,11 @@ barLineChart(){
       },
       {
         type: 'value',
+        show:this.yLabelSwitch,
         name: 'Line Axis',
         position: 'right',
         axisLabel: {
+          show:this.yLabelSwitch,
           color: '#333', // Customize label color
           fontSize: 12, // Customize font size
           position: 'left',
@@ -1105,6 +1135,8 @@ barLineChart(){
           fontFamily:this.dataLabelsFontFamily,
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
+          position:this.dataLabelsBarFontPosition,
+          align:'center',
           formatter:(params:any) => this.formatNumber(params.value) 
         }
       },
@@ -1131,6 +1163,7 @@ barLineChart(){
           fontFamily:this.dataLabelsFontFamily,
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
+          position:this.dataLabelsFontPosition,
           formatter:(params:any) => this.formatNumber(params.value) 
         }
       }
@@ -1147,6 +1180,7 @@ multiLineChart(){
   });
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     legend: {
       orient: 'vertical',
       left: 'left'
@@ -1284,6 +1318,7 @@ radarChart(){
                 fontSize:this.dataLabelsFontSize,
                 fontWeight:this.isBold ? 700 : 400,
                 color:this.dataLabelsColor,
+                position:this.dataLabelsFontPosition,
                 formatter:(params:any) => this.formatNumber(params.value) 
             }
         }))
@@ -1296,6 +1331,7 @@ heatMapChart(){
   const categories = this.flattenDimensions(dimensions);
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
+    color:this.selectedColorScheme,
     tooltip: {
         position: 'top'
     },
@@ -1355,6 +1391,7 @@ heatMapChart(){
           fontSize:this.dataLabelsFontSize,
           fontWeight:this.isBold ? 700 : 400,
           color:this.dataLabelsColor,
+          position:this.dataLabelsFontPosition,
           formatter: (params:any) => this.formatNumber(params.value[2])
           // formatter : (params: { value: number[]; }) => this.formatNumber(params.value[2]) // Assuming value[2] holds the number to format
       },
@@ -1438,6 +1475,7 @@ calendarChart() {
 ];
 
 this.chartOptions = {
+  color:this.selectedColorScheme,
   tooltip: {
       position: 'top',
       formatter: function (params: any) {
@@ -1460,7 +1498,7 @@ this.chartOptions = {
       height: totalHeight,
       containLabel: true
   },
-  dataZoom: dataZoomConfig 
+  dataZoom: this.isZoom 
 };
 
   console.log(this.chartOptions,'calender');
@@ -1636,6 +1674,10 @@ chartInitialize(){
     this.calendarChart();
   }
   else if(this.chartType === 'map'){
+    this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
+      echarts.registerMap('world', geoJson);
+      this.chartInstance.resize();
+    });
     this.mapChart();
   }
 }
@@ -1742,6 +1784,21 @@ chartInitialize(){
         this.dataLabelsColorSetOptions();
       }
     }
+    if(changes['dataLabelsFontPosition']){
+      if(this.chartInstance){
+        this.dataLabelsFontPositionSetOptions();
+      }
+    }
+    if(changes['dataLabelsBarFontPosition']){
+      if(this.chartInstance){
+        this.dataLabelsBarFontPositionSetOptions();
+      }
+    }
+    if(changes['dataLabelsLineFontPosition']){
+      if(this.chartInstance){
+        this.dataLabelsLineFontPositionSetOptions();
+      }
+    }
     if(changes['xLabelSwitch']){
       if(this.chartInstance){
         this.xLabelSwitchSetOptions();
@@ -1772,7 +1829,7 @@ chartInitialize(){
         this.dataLabelsSetOptions();
       }
     }
-    if(changes['color'] || changes['barColor'] || changes['lineColor']){
+    if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme']){
       if(this.chartInstance){
         this.colorSetOptions();
       }
@@ -1795,6 +1852,11 @@ chartInitialize(){
     if(changes['legendsAllignment']){
       if(this.chartInstance){
         this.legendsAllignmentSetOptions()
+      }
+    }
+    if(changes['selectedColorScheme']){
+      if(this.chartInstance){
+        this.selectedColorSchemeSetOptions()
       }
     }
     if((changes['displayUnits'] || changes['decimalPlaces'] || changes['prefix'] || changes['suffix'] || changes['donutDecimalPlaces']) && !changes['chartType']){
@@ -2233,6 +2295,117 @@ chartInitialize(){
        this.chartInstance.setOption(obj)
      }
   }
+  dataLabelsFontPositionSetOptions(){
+    // if(this.chartType ==='barline'){
+    //   let obj ={
+    //    series: [
+    //      {
+    //        label: {
+    //         position: this.dataLabelsFontPosition, // Update for 'Bar Axis'
+    //        },
+    //      },
+    //      {
+    //       label: {
+    //         position: this.dataLabelsFontPosition, 
+    //        },
+    //      },
+    //    ],
+    //   }
+    //    this.chartInstance.setOption(obj)
+    //  }
+      if(this.chartType === 'radar'){
+      this.chartOptions.series[0].data.forEach((dataItem: { label: { position: any; }; }) => {
+        if (dataItem.label) { // Ensure label exists before updating
+            dataItem.label.position = this.dataLabelsFontPosition;
+        }
+    });
+       this.chartInstance.setOption(this.chartOptions,true)
+     }
+     else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
+      this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
+        series.label.position = this.dataLabelsFontPosition; 
+    });
+    this.chartInstance.setOption(this.chartOptions,true)
+     }
+     else{
+      if(this.dataLabelsFontPosition === 'center'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'inside'
+            }
+          }]
+        }
+        this.chartInstance.setOption(obj)
+
+      }
+      else{
+        let obj ={
+          series :[
+           {
+            label :{
+             position: this.dataLabelsFontPosition
+            }
+          }]
+        }
+        this.chartInstance.setOption(obj)
+
+      }
+     }
+  }
+  dataLabelsBarFontPositionSetOptions(){
+      if(this.chartType ==='barline'){
+        if(this.dataLabelsBarFontPosition === 'center'){
+      let obj ={
+       series: [
+         {
+           label: {
+            position: 'inside',
+           
+          },
+         },
+         {
+       
+         },
+       ],
+      }
+       this.chartInstance.setOption(obj)
+    }
+    else{
+      let obj ={
+        series: [
+          {
+            label: {
+             position:this.dataLabelsBarFontPosition,
+           },
+          },
+          {
+        
+          },
+        ],
+       }
+        this.chartInstance.setOption(obj)
+    }
+     }
+  }
+  dataLabelsLineFontPositionSetOptions(){
+    if(this.chartType ==='barline'){
+    let obj ={
+      series: [
+        {
+       
+        },
+        {
+          label: {
+            position:this.dataLabelsLineFontPosition,
+          },
+        },
+      ],
+     }
+      this.chartInstance.setOption(obj)
+   }
+  }
   xLabelSwitchSetOptions(){
     if(this.chartType === 'barline'){
       let obj ={
@@ -2259,12 +2432,10 @@ chartInitialize(){
     if(this.chartType === 'barline'){
       let obj ={
         yAxis :[{
-
+          show:this.yLabelSwitch,
         },
       {
-        axisLabel :{
           show: this.yLabelSwitch
-        }
       }
     ]
       }
@@ -2379,6 +2550,14 @@ chartInitialize(){
     ]
       }
       this.chartInstance.setOption(obj)
+    } else if(this.chartType === 'funnel' || this.chartType === 'stocked'
+       || this.chartType === 'sidebyside' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' ||  
+       this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' || this.chartType === 'heatmap' || 
+       this.chartType === 'calendar'){
+      let obj ={
+        color:this.selectedColorScheme
+       }
+       this.chartInstance.setOption(obj)
     }
     else{
       let obj ={
@@ -2505,7 +2684,9 @@ chartInitialize(){
     let obj ={
       legend :{
           top : 'top',
-          orient:'horizantal'
+          orient:'horizontal',
+          right : null,
+          show:true
       },
     }
     this.chartInstance.setOption(obj)
@@ -2514,7 +2695,8 @@ chartInitialize(){
     let obj ={
       legend :{
           bottom : 'bottom',
-          orient:'horizantal'
+          orient:'horizontal',
+          show:true
       },
     }
     this.chartInstance.setOption(obj)
@@ -2523,7 +2705,8 @@ chartInitialize(){
     let obj ={
       legend :{
           left : 'left',
-          orient:'vertical'
+          orient:'vertical',
+          show:true
       },
     }
     this.chartInstance.setOption(obj)
@@ -2532,7 +2715,8 @@ chartInitialize(){
     let obj ={
       legend :{
           right : 'right',
-          orient:'vertical'
+          orient:'vertical',
+          show:true
       },
     }
     this.chartInstance.setOption(obj)
@@ -2572,6 +2756,13 @@ chartInitialize(){
       this.chartInstance.setOption(obj)
     }
   }
+  }
+  selectedColorSchemeSetOptions(){
+    let obj = {
+      color:this.selectedColorScheme
+    }
+    this.chartInstance.setOption(obj)
+
   }
   donutSizeChange(){
     let obj ={
@@ -2842,12 +3033,14 @@ updateSeries(){
 
 }
 sort(sortType: any, numbers: any, labels: any) {
-  const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+  let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
 
   if (sortType === 'ascending') {
     pairedData.sort((a: any, b: any) => a[0] - b[0]);
   } else if (sortType === 'descending') {
     pairedData.sort((a: any, b: any) => b[0] - a[0]);
+  } else if(sortType === 'none'){
+    pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
   }
 
   const sortedNumbers = pairedData.map((pair: any) => pair[0]);
@@ -2886,6 +3079,42 @@ sortSeries(sortType: any) {
       this.setDrilldowns.emit(dObject);
       // this.setOriginalData();
       // this.dataExtraction();
+    }
+  }
+  private handleChartClick(event: any): void {
+    this.onMapChartClick(event).catch((error) => {
+      console.error('Error handling chart click:', error);
+    });
+  }
+  async onMapChartClick(event: any) {
+    const regionName = event.name;
+    if (regionName === 'United States') {
+      const geoJson = await lastValueFrom(
+        this.http.get<any>(`assets/maps/USA.json`)
+      );
+      echarts.registerMap(regionName, geoJson);
+    } else {
+     
+    }
+    // this.setOriginalData();
+    if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
+      console.log('X-axis value:', regionName);
+      let nestedKey = this.draggedDrillDownColumns[this.drillDownIndex];
+      this.drillDownIndex++;
+      let obj = { [nestedKey]: regionName };
+      this.drillDownObject.push(obj);
+      // this.map = false;
+      // if (this.drillDownIndex > 0) {
+      //   this.bar = true;
+      //   this.chartId = 6;
+      // }
+      // this.dataExtraction();
+      let dObject = {
+        drillDownIndex : this.drillDownIndex,
+        draggedDrillDownColumns :this.draggedDrillDownColumns,
+        drillDownObject : this.drillDownObject
+      }
+      this.setDrilldowns.emit(dObject);
     }
   }
 }

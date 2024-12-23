@@ -601,7 +601,8 @@
 
               
                 <div class="d-flex justify-content-center canvas-footer flex-wrap"> 
-                    <a class="btn btn-primary m-1" (click)="saveThemes()">Apply</a>
+                    <a class="btn btn-primary m-1" (click)="saveThemes(true)">Default</a>
+                    <a class="btn btn-primary m-1" (click)="saveThemes(false)">Apply</a>
                     <a href="javascript:void(0);" id="reset-all" class="btn btn-danger m-1" (click)="reset()">Reset</a> 
                 </div>
             </div>

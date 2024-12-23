@@ -23,8 +23,12 @@ export class CustomThemeService {
   }
 
   setThemeVariable(variable: string, value: string): void {
+    if(this.currentTheme){
     this.currentTheme[variable] = value;
     localStorage.setItem('customTheme', JSON.stringify(this.currentTheme)); 
+    } else {
+      this.currentTheme = JSON.parse(localStorage.getItem("customTheme") ?? '""');;
+    }
   }
 
   setCurrentTheme(customTheme : any){

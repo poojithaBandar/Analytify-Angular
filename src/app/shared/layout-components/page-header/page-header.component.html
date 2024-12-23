@@ -1,5 +1,8 @@
    <!-- PAGE-HEADER -->
    <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-2">
+    <button  *ngIf="isPublicUrl" type="button" class="btn btn-icon btn-primary-light me-3 rounded-5 hamburger-menu">
+        <i class="fa fa-bars" (click)="toggleSidebar()" style=" font-size: 24px;"></i>
+</button>
     <h1 class="page-title">{{title}}</h1>
     <div *ngIf="!multiLevel" class="d-flex"> 
         <button type="button"  (click)="helpRoute()" class="btn btn-icon btn-primary-light me-3 rounded-5">

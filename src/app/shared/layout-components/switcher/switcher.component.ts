@@ -356,7 +356,7 @@ export class SwitcherComponent {
   }
   reset() {
    let themeData = this.themeService.getApiCustomTheme();
-   this.setCustomThemeData(themeData);
+   this.setCustomThemeData(themeData,true);
     // localStorage.clear();
     // const html: any = this.elementRef.nativeElement.ownerDocument.documentElement;
     // const body: any = document.querySelector('body');
@@ -458,10 +458,14 @@ active=1;
     this.themeService.setThemeVariable('textColor', event.color);
   }
 
-  setCustomThemeData(customTheme: any) {
-    if (customTheme.background_colour) {
+  setCustomThemeData(customTheme: any,reset? : boolean) {
+    if (customTheme.background_colour && customTheme.background_colour.length > 0) {
       // this.dynamicTranparentBgPrimary({ color: customTheme.background_colour });
       this.background(customTheme.background_colour,customTheme.background_colour,customTheme.background_colour,'rgba(255,255,255,0.1)','rgb(25, 38, 101)', 'dark','dark')
+    } else if(reset &&  customTheme.background_colour.length > 0){
+      customTheme.background_colour = "243,246,249"
+      this.background(customTheme.background_colour,customTheme.background_colour,customTheme.background_colour,'rgba(255,255,255,0.1)','rgb(25, 38, 101)', 'dark','dark')
+
     }
     this.primary(customTheme.primary_colour_theme);
     this.menuTheme(customTheme.menutype);
@@ -472,10 +476,43 @@ active=1;
 
   }
 
-  saveThemes(){
-    let object = this.themeService.getCurrentTheme();
+  saveThemes(isDefault: boolean){
+    let object : any ;
+    if(isDefault){
+      this.themeChange('light','light');
+      object = {
+        background_colour
+          :
+          "",
+        header_colours
+          :
+          "255, 255, 255",
+        headertype
+          :
+          "light",
+        menu_colours
+          :
+          "4, 44, 72",
+        menutype
+          :
+          "dark",
+        navigation_styles
+          :
+          "vertical",
+        primary_colour_theme
+          :
+          "35, 146, 193",
+        textColor
+          :
+          "#333335"
+      }
+    this.setCustomThemeData(object)
+    } else {
+    object = this.themeService.getCurrentTheme();
+    }
     this.workbenchService.saveThemes(object).subscribe({next: (responce:any) => {
       console.log(responce);
+      this.themeService.setApiCustomTheme(object);
       this.toasterService.success('Themes updated successfully.','success',{ positionClass: 'toast-top-right'});
     },
     error: (error) => {
@@ -485,4 +522,3 @@ active=1;
   })
   }
 }
-

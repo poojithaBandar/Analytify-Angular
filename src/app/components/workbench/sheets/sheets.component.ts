@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -332,6 +332,8 @@ export class SheetsComponent {
   dataLabelsFontFamily : string = 'sans-serif';
   dataLabelsFontSize : any = '12px';
   dataLabelsFontPosition : any = 'top';
+  dataLabelsBarFontPosition : any = 'top';
+  dataLabelsLineFontPosition : any = 'top';
   measureAlignment : any = 'center';
   dimensionAlignment : any = 'center';
   colorPalette = COLOR_PALETTE;
@@ -361,6 +363,15 @@ export class SheetsComponent {
   headerFontAlignment : any = 'left';
 
   sortType : any = 0;
+
+  colorSchemes = [
+    ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
+    ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
+    ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
+    ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
+    ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
+  ];
+  selectedColorScheme=[] as  any;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
@@ -501,6 +512,16 @@ export class SheetsComponent {
       this.changeChartPlugin(value);
     });
   }
+
+  selectColorScheme(scheme: string[]) {
+    this.selectedColorScheme = scheme;
+    console.log('color pallete', this.selectedColorScheme)
+  }
+  getGradient(colors: string[]): string {
+    return `linear-gradient(to right, ${colors.join(', ')})`;
+  }
+
+
  async getSheetNames():Promise<void>{
   //this.tabs = [];
   const obj={
@@ -3876,9 +3897,9 @@ bar["stack"]="Total";
           this.chartType = 'guage';
           this.guageChart();
         } else if(this.map){
+          this.chartType = 'map';
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
             echarts.registerMap('world', geoJson);  // Register the map data
-            this.chartType = 'map';
             this.mapChart();
           });
         } else if(this.calendar){
@@ -4380,6 +4401,7 @@ bar["stack"]="Total";
     this.displayedColumns = [];
     this.retriveDataSheet_id = '';
     this.getChartData();
+    this.columnsData();
     if(selectedSheetId){
       this.retriveDataSheet_id = selectedSheetId;
       this.sheetRetrive(false);
@@ -4796,6 +4818,7 @@ sheetSave(){
     labelAlignment : this.xlabelAlignment,
     backgroundColor : this.backgroundColor,
     color : this.color,
+    selectedColorScheme:this.selectedColorScheme,
     ylabelFontWeight : this.ylabelFontWeight,
     isBold : this.isBold,
     yLabelFontFamily : this.yLabelFontFamily,
@@ -5256,6 +5279,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.guage = false;
           this.map = true;
           this.calendar = false;
+          this.chartType = 'map';
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
@@ -5838,6 +5862,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 11){
+        this.chartType = 'calendar';
         this.eCalendarChartOptions = this.sheetResponce.savedChartOptions;
         this.eCalendarChartOptions.tooltip.formatter =  function (params: any) {
           const date = params.data[0];
@@ -6539,7 +6564,16 @@ fetchChartData(chartData: any){
           this.dataExtraction();
 
 }
-
+customizechangeChartPlugin() {
+  if (this.selectedChartPlugin == 'apex') {
+    this.isApexCharts = true;
+    this.isEChatrts = false;
+  } else {
+    this.isApexCharts = false;
+    this.isEChatrts = true;
+  }
+  this.reAssignChartData();
+}
   changeChartPlugin(value:any) {
     this.selectedChartPlugin = value;
     if (this.selectedChartPlugin == 'apex') {
@@ -6680,80 +6714,83 @@ fetchChartData(chartData: any){
   }
 
   setCustomizeOptions(data: any) {
-    this.isZoom = data.isZoom || true;
-    this.xGridColor = data.xGridColor || '#2392c1';
-    this.xGridSwitch = data.xGridSwitch || false;
-    this.xLabelSwitch = data.xLabelSwitch || true;
-    this.xLabelColor = data.xLabelColor || '#2392c1';
-    this.yLabelSwitch = data.yLabelSwitch || true;
-    this.yGridColor = data.yGridColor || '#2392c1';
-    this.yGridSwitch = data.yGridSwitch || false;
-    this.yLabelColor = data.yLabelColor || '#2392c1';
-    this.xLabelFontFamily = data.xLabelFontFamily || 'sans-serif';
-    this.xLabelFontSize = data.xLabelFontSize || 12;
-    this.xlabelFontWeight = data.xlabelFontWeight || 400;
-    this.backgroundColor = data.backgroundColor || '#fff';
-    this.color = data.color || '#2392c1';
-    this.ylabelFontWeight = data.ylabelFontWeight || 400;
-    this.isBold = data.isBold || false;
-    this.yLabelFontFamily = data.yLabelFontFamily || 'sans-serif';
-    this.yLabelFontSize = data.yLabelFontSize || 12;
-    this.bandingSwitch = data.bandingSwitch || false;
-    this.backgroundColorSwitch = data.backgroundColorSwitch || false;
-    this.chartColorSwitch = data.chartColorSwitch || false;
-    this.barColorSwitch = data.barColorSwitch || false;
-    this.lineColorSwitch = data.lineColorSwitch || false;
-    this.gridLineColorSwitch = data.gridLineColorSwitch || false;
-    this.xLabelColorSwitch = data.xLabelColorSwitch || false;
-    this.xGridLineColorSwitch = data.xGridLineColorSwitch || false;
-    this.yLabelColorSwitch = data.yLabelColorSwitch || false;
-    this.yGridLineColorSwitch = data.yGridLineColorSwitch || false;
-    this.bandingColorSwitch = data.bandingColorSwitch || false;
-    this.kpiColorSwitch = data.kpiColorSwitch || false;
-    this.funnelColorSwitch = data.funnelColorSwitch || false;
-    this.color1 = data.color1 || undefined;
-    this.color2 = data.color2 || undefined;
-    this.kpiColor = data.kpiColor || '#000000';
-    this.barColor = data.barColor || '#4382f7';
-    this.lineColor = data.lineColor || '#38ff98';
-    this.GridColor = data.GridColor || '#089ffc';
-    this.legendSwitch = data.legendSwitch || true;
-    this.dataLabels = data.dataLabels || true;
-    this.label = data.label || true;
-    this.donutSize = data.donutSize || 50;
-    this.isDistributed = data.isDistributed || false;
-    this.kpiFontSize = data.kpiFontSize || 3;
-    this.minValueGuage = data.minValueGuage || 0;
-    this.maxValueGuage = data.maxValueGuage || 100;
-    this.donutDecimalPlaces = data.donutDecimalPlaces || 0;
-    this.decimalPlaces = data.decimalPlaces || 0;
-    this.legendsAllignment = data.legendsAllignment || 'bottom';
+    this.isZoom = data.isZoom ?? true;
+    this.xGridColor = data.xGridColor ?? '#2392c1';
+    this.xGridSwitch = data.xGridSwitch ?? false;
+    this.xLabelSwitch = data.xLabelSwitch ?? true;
+    this.xLabelColor = data.xLabelColor ?? '#2392c1';
+    this.yLabelSwitch = data.yLabelSwitch ?? true;
+    this.yGridColor = data.yGridColor ?? '#2392c1';
+    this.yGridSwitch = data.yGridSwitch ?? false;
+    this.yLabelColor = data.yLabelColor ?? '#2392c1';
+    this.xLabelFontFamily = data.xLabelFontFamily ?? 'sans-serif';
+    this.xLabelFontSize = data.xLabelFontSize ?? 12;
+    this.xlabelFontWeight = data.xlabelFontWeight ?? 400;
+    this.backgroundColor = data.backgroundColor ?? '#fff';
+    this.color = data.color ?? '#2392c1';
+    this.selectedColorScheme = data.selectedColorScheme ?? ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.ylabelFontWeight = data.ylabelFontWeight ?? 400;
+    this.isBold = data.isBold ?? false;
+    this.yLabelFontFamily = data.yLabelFontFamily ?? 'sans-serif';
+    this.yLabelFontSize = data.yLabelFontSize ?? 12;
+    this.bandingSwitch = data.bandingSwitch ?? false;
+    this.backgroundColorSwitch = data.backgroundColorSwitch ?? false;
+    this.chartColorSwitch = data.chartColorSwitch ?? false;
+    this.barColorSwitch = data.barColorSwitch ?? false;
+    this.lineColorSwitch = data.lineColorSwitch ?? false;
+    this.gridLineColorSwitch = data.gridLineColorSwitch ?? false;
+    this.xLabelColorSwitch = data.xLabelColorSwitch ?? false;
+    this.xGridLineColorSwitch = data.xGridLineColorSwitch ?? false;
+    this.yLabelColorSwitch = data.yLabelColorSwitch ?? false;
+    this.yGridLineColorSwitch = data.yGridLineColorSwitch ?? false;
+    this.bandingColorSwitch = data.bandingColorSwitch ?? false;
+    this.kpiColorSwitch = data.kpiColorSwitch ?? false;
+    this.funnelColorSwitch = data.funnelColorSwitch ?? false;
+    this.color1 = data.color1 ?? undefined;
+    this.color2 = data.color2 ?? undefined;
+    this.kpiColor = data.kpiColor ?? '#000000';
+    this.barColor = data.barColor ?? '#4382f7';
+    this.lineColor = data.lineColor ?? '#38ff98';
+    this.GridColor = data.GridColor ?? '#089ffc';
+    this.legendSwitch = data.legendSwitch ?? true;
+    this.dataLabels = data.dataLabels ?? true;
+    this.label = data.label ?? true;
+    this.donutSize = data.donutSize ?? 50;
+    this.isDistributed = data.isDistributed ?? false;
+    this.kpiFontSize = data.kpiFontSize ?? 3;
+    this.minValueGuage = data.minValueGuage ?? 0;
+    this.maxValueGuage = data.maxValueGuage ?? 100;
+    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 0;
+    this.decimalPlaces = data.decimalPlaces ?? 0;
+    this.legendsAllignment = data.legendsAllignment ?? 'bottom';
     this.displayUnits = data.displayUnits || 'none';
-    this.suffix = data.suffix || '';
-    this.prefix = data.prefix || '';
-    this.dataLabelsFontFamily = data.dataLabelsFontFamily || 'sans-serif';
-    this.dataLabelsFontSize = data.dataLabelsFontSize || '12px';
-    this.dataLabelsFontPosition = data.dataLabelsFontPosition || 'top';
-    this.measureAlignment = data.measureAlignment || 'center';
-    this.dimensionAlignment = data.dimensionAlignment || 'center';
-    this.dimensionColor = data.dimensionColor || '#2392c1';
-    this.measureColor = data.measureColor || '#2392c1';
-    this.dataLabelsColor = data.dataLabelsColor || '#0a5a2';
-    this.tableDataFontFamily = data.tableDataFontFamily || 'sans-serif';
-    this.tableDataFontSize = data.tableDataFontSize || '12px';
-    this.tableDataFontWeight = data.tableDataFontWeight || 400;
-    this.tableDataFontStyle = data.tableDataFontStyle || 'normal';
-    this.tableDataFontDecoration = data.tableDataFontDecoration || 'none';
-    this.tableDataFontColor = data.tableDataFontColor || '#000000';
-    this.tableDataFontAlignment = data.tableDataFontAlignment || 'left';
-    this.headerFontFamily = data.headerFontFamily || "'Arial', sans-serif";
-    this.headerFontSize = data.headerFontSize || '16px';
-    this.headerFontWeight = data.headerFontWeight || 700;
-    this.headerFontStyle = data.headerFontStyle || 'normal';
-    this.headerFontDecoration = data.headerFontDecoration || 'none';
-    this.headerFontColor = data.headerFontColor || '#000000'
-    this.headerFontAlignment = data.headerFontAlignment || 'left';
-    this.sortType = data.sortType || 0;
+    this.suffix = data.suffix ?? '';
+    this.prefix = data.prefix ?? '';
+    this.dataLabelsFontFamily = data.dataLabelsFontFamily ?? 'sans-serif';
+    this.dataLabelsFontSize = data.dataLabelsFontSize ?? '12px';
+    this.dataLabelsFontPosition = data.dataLabelsFontPosition ?? 'top';
+    this.measureAlignment = data.measureAlignment ?? 'center';
+    this.dimensionAlignment = data.dimensionAlignment ?? 'center';
+    this.dimensionColor = data.dimensionColor ?? '#2392c1';
+    this.measureColor = data.measureColor ?? '#2392c1';
+    this.dataLabelsColor = data.dataLabelsColor ?? '#0a5a2';
+    this.tableDataFontFamily = data.tableDataFontFamily ?? 'sans-serif';
+    this.tableDataFontSize = data.tableDataFontSize ?? '12px';
+    this.tableDataFontWeight = data.tableDataFontWeight ?? 400;
+    this.tableDataFontStyle = data.tableDataFontStyle ?? 'normal';
+    this.tableDataFontDecoration = data.tableDataFontDecoration ?? 'none';
+    this.tableDataFontColor = data.tableDataFontColor ?? '#000000';
+    this.tableDataFontAlignment = data.tableDataFontAlignment ?? 'left';
+    this.headerFontFamily = data.headerFontFamily ?? "'Arial', sans-serif";
+    this.headerFontSize = data.headerFontSize ?? '16px';
+    this.headerFontWeight = data.headerFontWeight ?? 700;
+    this.headerFontStyle = data.headerFontStyle ?? 'normal';
+    this.headerFontDecoration = data.headerFontDecoration ?? 'none';
+    this.headerFontColor = data.headerFontColor ?? '#000000'
+    this.headerFontAlignment = data.headerFontAlignment ?? 'left';
+    this.sortType = data.sortType ?? 0;
+    this.dataLabelsLineFontPosition =data.dataLabelsLineFontPosition ?? 'top';
+    this.dataLabelsBarFontPosition = data.dataLabelsBarFontPosition ?? 'top';
   }
 
   resetCustomizations(){
@@ -6771,6 +6808,7 @@ fetchChartData(chartData: any){
     this.xlabelFontWeight = 400;
     this.backgroundColor = '#fff';
     this.color = '#2392c1';
+    this.selectedColorScheme = ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
     this.ylabelFontWeight = 400;
     this.isBold = false;
     this.yLabelFontFamily = 'sans-serif';
@@ -6831,6 +6869,8 @@ fetchChartData(chartData: any){
     this.headerFontColor = '#000000'
     this.headerFontAlignment = 'left';
     this.sortType = 0;
+    this.dataLabelsLineFontPosition = 'top';
+    this.dataLabelsBarFontPosition = 'top';
   }
 
   sendPrompt() {
@@ -7046,6 +7086,13 @@ fetchChartData(chartData: any){
           }
         
           goDrillDownBack(){
+            if(this.isMapChartDrillDown && this.drillDownIndex === 1){
+              this.map = true;
+              this.bar = false;
+              this.chartId = 29;
+              this.chartType = 'map';
+              this.isMapChartDrillDown = false;
+            }
             if(this.drillDownIndex > 0) {
               this.drillDownIndex--;
               this.drillDownObject.pop();
@@ -7144,6 +7191,12 @@ fetchChartData(chartData: any){
       }
       setDataLabelsFontPosition(position:any){
         this.dataLabelsFontPosition = position;
+      }
+      setDataLabelsBarFontPosition(position:any){
+        this.dataLabelsBarFontPosition = position;
+      }
+      setDataLabelsLineFontPosition(position:any){
+        this.dataLabelsLineFontPosition = position;
       }
       resetChartColor(){
         this.color = '#2392c1';
@@ -7999,10 +8052,20 @@ fetchChartData(chartData: any){
       }
     }
 
+    isMapChartDrillDown : boolean = false;
     setDrilldowns(event : any){
       this.drillDownIndex = event.drillDownIndex;
       this.draggedDrillDownColumns = event.draggedDrillDownColumns;
       this.drillDownObject = event.drillDownObject;
+      if (this.map) {
+        if (this.drillDownIndex != 0) {
+          this.map = false;
+          this.bar = true;
+          this.chartId = 6;
+          this.chartType = 'bar';
+          this.isMapChartDrillDown = true;
+        }
+      }
       this.setOriginalData();
       this.dataExtraction();
     }

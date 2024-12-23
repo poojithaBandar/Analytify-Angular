@@ -48,6 +48,7 @@ import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
 import { tap } from 'rxjs/operators'; 
+import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 
 interface TableRow {
   [key: string]: any;
@@ -95,7 +96,7 @@ interface KpiData {
   ],
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule, InsightEchartComponent],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -372,7 +373,10 @@ export class SheetsdashboardComponent {
           // this.sheetsDataWithQuerysetId();
           this.getDashboardFilterredList();
         }
-        this.getDrillThroughActionList();
+        if(this.dashboardId != undefined || null){
+          this.getDrillThroughActionList();
+        }
+
     });    
    
     //this.getSheetData();
@@ -608,7 +612,7 @@ export class SheetsdashboardComponent {
         rows: 1,
         y: 10,
         x: 10,
-        fileId : sheet.file_id,
+        // fileId : sheet.file_id,
         sheetType:sheet.sheet_type,
         sheetId:sheet.sheet_id,
         chartType:sheet.chart,
@@ -732,7 +736,20 @@ export class SheetsdashboardComponent {
               }
             }
           };
-        } else if(sheet.chartId == 29){
+          } else if (sheet.chartId == 29) {
+            this.chartType = 'map';
+            sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
+              this.chartsColumnData.push(data.name);
+              this.chartsRowData.push(data.value);
+            });
+            this.dualAxisColumnData = [{
+              name: sheet?.column_Data[0][0],
+              values: this.chartsColumnData
+            }]
+            this.dualAxisRowData = [{
+              name: sheet?.row_Data[0][0],
+              data: this.chartsRowData
+            }]
           sheet.echartOptions.tooltip= {
             formatter: (params: any) => {
               const { name, data } = params;
@@ -1097,7 +1114,21 @@ export class SheetsdashboardComponent {
       })
     );
   }
+  saveDashboardimageUpdate(){
+    var formData: any = new FormData();
+    formData.append("dashboard_id", this.dashboardId);
+    formData.append("imagepath", this.imageFile, this.imagename.name);
   
+     this.workbechService.saveDAshboardimage(formData).subscribe({
+      next:(data)=>{
+        console.log(data)
+      },
+      error:(error)=>{
+        console.log(error);
+      }
+     })
+   
+  }
   updateDashboard(){
     this.takeScreenshot();
       this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
@@ -1162,7 +1193,7 @@ export class SheetsdashboardComponent {
         // })
         this.dashboardsheetsIdArray = this.sheetsIdArray;
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
-
+        this.saveDashboardimageUpdate();
         this.endMethod(); 
       },
       error:(error)=>{
@@ -1782,6 +1813,19 @@ allowDrop(ev : any): void {
           }
         };
       }else if(element.chartId == 29 && element.echartOptions){
+        this.chartType = 'map';
+        element.echartOptions?.series[0]?.data?.forEach((data:any)=>{
+          this.chartsColumnData.push(data.name);
+          this.chartsRowData.push(data.value);
+        });
+        this.dualAxisColumnData = [{
+          name : element?.column_Data[0][0],
+          values : this.chartsColumnData 
+        }]
+        this.dualAxisRowData = [{
+          name : element?.row_Data[0][0],
+          data : this.chartsRowData
+        }]
         element.echartOptions.tooltip= {
           formatter: (params: any) => {
             const { name, data } = params;
@@ -3877,7 +3921,11 @@ kpiData?: KpiData;
         qrySetId : sheet.queryset_id,
         isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
-        selectedSheet : sheet.selectedSheet,
+        selectedSheet: sheet.selectedSheet,
+        column_Data: sheet.sheet_data.columns_data,
+        row_Data: sheet.sheet_data.rows_data,
+        drillDownHierarchy: sheet.sheet_data.drillDownHierarchy,
+        isDrillDownData: sheet.sheet_data.isDrillDownData,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
@@ -4076,6 +4124,19 @@ kpiData?: KpiData;
               }
             };
           } else if(sheet.chartId == 29){
+            this.chartType = 'map';
+            sheet.echartOptions?.series[0]?.data?.forEach((data: any) => {
+              this.chartsColumnData.push(data.name);
+              this.chartsRowData.push(data.value);
+            });
+            this.dualAxisColumnData = [{
+              name: sheet?.column_Data[0][0],
+              values: this.chartsColumnData
+            }]
+            this.dualAxisRowData = [{
+              name: sheet?.row_Data[0][0],
+              data: this.chartsRowData
+            }]
             sheet.echartOptions.tooltip= {
               formatter: (params: any) => {
                 const { name, data } = params;
@@ -4279,6 +4340,10 @@ kpiData?: KpiData;
           values: res.result_data
         }
         this.filteredColumnData.push(obj1);
+        if (item.chartId == '29') {
+          this.dualAxisColumnData = this.filteredColumnData;
+          this.chartsColumnData = this.dualAxisColumnData[0].values;
+        }
         console.log('filtercolumn',this.filteredColumnData)
       });
       data.data.row.forEach((res:any) => {
@@ -4287,10 +4352,21 @@ kpiData?: KpiData;
           data: res.result_data
         }
         this.filteredRowData.push(obj);
+        if (item.chartId == '29') {
+          this.dualAxisRowData = this.filteredRowData;
+          this.chartsRowData = this.dualAxisRowData[0].data;
+        }
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '');
-  
+      if(item.chartId == '29'){
+        if (item.drillDownIndex != 0) {
+          this.chartType = 'bar';
+        }
+        else {
+          this.chartType = 'map';
+        }
+      }
         },
       error:(error)=>{
         console.log(error)
@@ -4335,6 +4411,10 @@ kpiData?: KpiData;
           values: res.result_data
         }
         this.filteredColumnData.push(obj1);
+        if (item.chartId == '29') {
+          this.dualAxisColumnData = this.filteredColumnData;
+          this.chartsColumnData = this.dualAxisColumnData[0].values;
+        }
         console.log('filtercolumn',this.filteredColumnData)
       });
       data.data.row.forEach((res:any) => {
@@ -4343,10 +4423,21 @@ kpiData?: KpiData;
           data: res.result_data
         }
         this.filteredRowData.push(obj);
+        if (item.chartId == '29') {
+          this.dualAxisRowData = this.filteredRowData;
+          this.chartsRowData = this.dualAxisRowData[0].data;
+        }
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '');
-  
+      if(item.chartId == '29'){
+        if (item.drillDownIndex != 0) {
+          this.chartType = 'bar';
+        }
+        else {
+          this.chartType = 'map';
+        }
+      }
         },
       error:(error)=>{
         console.log(error)
@@ -4379,6 +4470,11 @@ kpiData?: KpiData;
     this.cdr.detectChanges();  // Force change detection
 
   }
+
+  toggleSidebar() {
+    const mainContainer = document.querySelector('.main-container');
+    mainContainer?.classList.toggle('sidebar-hidden');
+}
 //tablePagination
 tableSearchDashboard(item:any){
   this.tablePageNo=1;
@@ -4996,6 +5092,23 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.dataExtraction(item);
       }
     }
+  }
+  chartType : string = '';
+  chartsColumnData : any[] = [];
+  chartsRowData :  any[] = [];
+  dualAxisRowData : any = [];
+  dualAxisColumnData : any = [];
+  mapchartDrillDown(event: any, item : any) {
+    item.drillDownIndex = event.drillDownIndex;
+    item.drillDownHierarchy = event.draggedDrillDownColumns;
+    item.drillDownObject = event.drillDownObject;
+    if(this.isPublicUrl){
+      this.publicDataExtraction(item);
+    }
+    else{
+      this.dataExtraction(item);
+    }
+    
   }
 }
 // export interface CustomGridsterItem extends GridsterItem {
