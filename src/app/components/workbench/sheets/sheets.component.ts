@@ -302,7 +302,7 @@ export class SheetsComponent {
   lineColor : any = '#38ff98';
   dataLabels:boolean = true;
   label : boolean = true;
-  isDistributed : boolean = false;
+  isDistributed : boolean = true;
   kpiFontSize: string = '3';
   kpiColor: string = '#000000';
 
@@ -6756,7 +6756,7 @@ customizechangeChartPlugin() {
     this.dataLabels = data.dataLabels ?? true;
     this.label = data.label ?? true;
     this.donutSize = data.donutSize ?? 50;
-    this.isDistributed = data.isDistributed ?? false;
+    this.isDistributed = data.isDistributed ?? true;
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
     this.maxValueGuage = data.maxValueGuage ?? 100;
@@ -6836,7 +6836,7 @@ customizechangeChartPlugin() {
     this.dataLabels = true;
     this.label = true;
     this.donutSize = 50;
-    this.isDistributed = false;
+    this.isDistributed = true;
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
     this.maxValueGuage = 100;
