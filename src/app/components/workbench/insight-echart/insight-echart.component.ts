@@ -11,6 +11,7 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import { lastValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
+import { bottom } from '@popperjs/core';
 
 interface Dimension {
   name: string;
@@ -947,9 +948,10 @@ pieChart(){
       trigger: 'item'
     },
     legend: {
-      orient: 'vertical',
-      left: 'left',
-      // type:'scroll',
+      bottom: '0%', 
+          left: 'center', 
+          orient: 'horizontal',
+          type:'scroll',
       show: this.legendSwitch 
       },
           label: {
@@ -988,9 +990,10 @@ donutChart(){
       trigger: 'item'
     },
     legend: {
-      orient: 'vertical',
-      left: 'left',
-      type:'scroll',
+      bottom: '0%', 
+          left: 'center', 
+          orient: 'horizontal',
+          type:'scroll',
       show: this.legendSwitch // Control legend visibility
   },            
   label: {
@@ -1693,9 +1696,12 @@ chartInitialize(){
     }
   }
   ngOnChanges(changes: SimpleChanges) {
-    // if(changes['chartType']){
+    if (!this.chartInstance) {
       this.chartInitialize();
-    // }
+    }
+     if(changes['chartType']){
+      this.chartInitialize();
+     }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
       if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
         // this.updateCategories();
@@ -1874,6 +1880,7 @@ chartInitialize(){
       }
       this.saveOrUpdateChart.emit(object);
     }
+    console.log(this.chartOptions);
   }
   xLabelFontFamilySetOptions(){
     if(this.chartType !== 'heatmap'){
@@ -2683,42 +2690,49 @@ chartInitialize(){
     if(this.legendsAllignment === 'top'){
     let obj ={
       legend :{
-          top : 'top',
-          orient:'horizontal',
-          right : null,
-          show:true
+        top: 'top',
+        left: 'center',
+        orient: 'horizontal',
+        show: this.legendSwitch 
       },
     }
+    this.chartOptions.legend = obj;
     this.chartInstance.setOption(obj)
   }
   else if(this.legendsAllignment === 'bottom'){
     let obj ={
       legend :{
-          bottom : 'bottom',
-          orient:'horizontal',
-          show:true
+          bottom: '0%', 
+          left: 'center', 
+          orient: 'horizontal',
+          show: this.legendSwitch 
       },
     }
+    this.chartOptions.legend = obj;
     this.chartInstance.setOption(obj)
   }
   else if(this.legendsAllignment === 'left'){
     let obj ={
       legend :{
-          left : 'left',
-          orient:'vertical',
-          show:true
+          left: '0%', 
+          top: 'center', 
+          orient: 'vertical',
+          show: this.legendSwitch 
       },
     }
+    this.chartOptions.legend = obj;
     this.chartInstance.setOption(obj)
   }
   else if(this.legendsAllignment === 'right'){
     let obj ={
       legend :{
-          right : 'right',
-          orient:'vertical',
-          show:true
+         right: '0%', 
+         top: 'center', 
+         orient: 'vertical',
+         show: this.legendSwitch 
       },
     }
+    this.chartOptions.legend = obj;
     this.chartInstance.setOption(obj)
   }
   }
