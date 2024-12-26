@@ -372,9 +372,12 @@ a {
   }
   .tiled-card-body-padding {
     padding: 10px;
-}
-.tiled-card-header-padding {
-  padding: 10px !important;
+  }
+  .tiled-card-header-padding {
+    padding: 10px !important;
+  }
+  span {
+    font-size: 12px;
 }
 }
 
@@ -420,10 +423,13 @@ a {
   }
   .tiled-card-body-padding {
     padding: 10px;
-}
-.tiled-card-header-padding {
-  padding: 10px !important;
-}
+  }
+  .tiled-card-header-padding {
+    padding: 10px !important;
+  }
+  span {
+    font-size: 11px;
+  }
   }
 
    // for 110% Resolution //

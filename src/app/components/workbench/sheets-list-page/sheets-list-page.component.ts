@@ -73,7 +73,7 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
       }    
   }
   loadSelectedSheetList(value:any){
-    if(this.selectedSheetList > 0){
+    if(this.selectedSheetList >= 0){
       const pageNo = value === 'fromSelect' ? 1 : this.pageNo;
 
     const Obj ={
@@ -81,12 +81,15 @@ constructor(private workbechService:WorkbenchService,private router:Router,priva
       page_no:pageNo,
       page_count:this.itemsPerPage,
       queryset_id:this.selectedSheetList
-    }
+    } as any
     if(Obj.search == '' || Obj.search == null){
       delete Obj.search;
     }
     if(Obj.page_count == undefined || Obj.page_count == null){
       delete Obj.page_count;
+    }
+    if(Obj.queryset_id == '0'){
+      delete Obj.queryset_id
     }
     this.workbechService.getUserSheetListPutTest(Obj).subscribe(
       {
