@@ -295,7 +295,7 @@ export class WorkbenchComponent implements OnInit{
         console.log(responce)
             if(responce){
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-              this.databaseId=responce.database?.hierarchy_id
+              this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
               this.openConnectWiseForm = false;
               const encodedId = btoa(this.databaseId.toString());

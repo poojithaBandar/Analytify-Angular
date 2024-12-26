@@ -584,19 +584,19 @@
                                   </div>
                                   <div class="form-group">
                                       <label [ngClass]="{'error-label': siteURLError}" for="message-text" class="col-form-label">Site URL<span class="text-danger ms-1" >*</span></label>
-                                      <input [ngClass]="{'error-input': siteURLError}" type="text" class="form-control" [(ngModel)]="siteURL" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://staging.connectwisedev.com" (input)="siteUrlError()">
+                                      <input [ngClass]="{'error-input': siteURLError}" type="text" class="form-control" [(ngModel)]="siteURL" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://connectwise.com" (input)="siteUrlError()">
                                   </div>
                                   <div class="form-group">
                                       <label [ngClass]="{'error-label': publicKeyError}" class="col-form-label">Public Key<span class="text-danger ms-1" >*</span></label>
-                                      <input [ngClass]="{'error-input': publicKeyError}" type="text" class="form-control" [(ngModel)]="publicKey" [ngModelOptions]="{standalone: true}" placeholder="e.g. F3SlWhE5HIiCYI8T" (input)="publicConnectWiseError()">
+                                      <input [ngClass]="{'error-input': publicKeyError}" type="text" class="form-control" [(ngModel)]="publicKey" [ngModelOptions]="{standalone: true}" placeholder="e.g.  F3SlPrE4ajaCYI8S" (input)="publicConnectWiseError()">
                                   </div>
                                   <div class="form-group">
                                       <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
-                                      <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. iE1j84LFEoQWZVgb" (input)="privateConnectWiseError()">
+                                      <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                                   </div>
-                                  <div class="mb-2">
+                                  <div class="mb-4">
                                     <label [ngClass]="{'error-label': clientIDError}" class="col-form-label">Client Id <span class="text-danger ms-1" >*</span></label>
-                                    <input [ngClass]="{'error-input': clientIDError}" type="text" class="form-control" [(ngModel)]="clientId" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. 006d3e9d-26aa-461b-914c-1b6901beea3" (input)="clientIdError()">
+                                    <input [ngClass]="{'error-input': clientIDError}" type="text" class="form-control" [(ngModel)]="clientId" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdError()">
                                   </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
@@ -613,13 +613,10 @@
                         <img src="./assets/images/Db_server_images/connectwise-logo.jpg" alt="" class="rounded-circle bg-white" style="border: 3px solid #078f8c;">
                       </span>
                   </div>
-                  <div class="card-body" style="padding-top: 70px; height: 70vh;">
+                  <div class="card-body" style="padding-top: 70px; height: 60vh;">
                     <ul class="">
                       <li> <span class="mt-1">ConnectWise provides a seamless combination of Remote Monitoring and Management (RMM) tools with Professional Services Automation (PSA), enabling IT service providers to manage their operations effectively.
                       </span></li>                    
-                      Gain complete visibility into your IT environment through an intuitive dashboard that helps you monitor, manage, and automate tasks efficiently.
-                      Automate routine IT tasks such as patch management, ticketing, and network monitoring, freeing up time for strategic activities.                     
-                      Access advanced analytics and detailed reporting to track system performance, improve workflows, and demonstrate value to clients.
                       <li><h6 class=" mt-3"><strong>Inputs to connect</strong></h6></li>
                       <li><span class="mb-0"><strong>Company ID:</strong> This ID uniquely identifies your company in the ConnectWise system, ensuring accurate data handling and integration.
                       </span></li>
