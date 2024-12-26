@@ -47,6 +47,7 @@ export class WorkbenchComponent implements OnInit{
   databaseType:any;
   openPostgreSqlForm= false;
   openMySqlForm = false;
+  openConnectWiseForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -104,6 +105,11 @@ export class WorkbenchComponent implements OnInit{
     PostGrePassword = '';
     OracleServiceName = '';
     displayName ='';
+    clientId = '';
+    companyId = '';
+    siteURL = '';
+    publicKey = '';
+    privateKey = '';
     path='';
 
   emptyVariables(){
@@ -115,6 +121,11 @@ export class WorkbenchComponent implements OnInit{
     this.OracleServiceName = '';
     this.displayName ='';
     this.path='';
+    this.clientId = '';
+    this.privateKey = '';
+    this.publicKey = '';
+    this.siteURL = '';
+    this.companyId = '';
   }  
     openPostgreSql(){
     this.openPostgreSqlForm=true;
@@ -229,6 +240,76 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectWise(){
+      this.openConnectWiseForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
+    companyIdError(){
+      if(this.companyId){
+        this.companyIDError = false;
+      }else{
+        this.companyIDError = true;
+      }
+    }
+
+    siteUrlError(){
+      if(this.siteURL){
+        this.siteURLError = false;
+      }else{
+        this.siteURLError = true;
+      }
+    }
+    privateConnectWiseError(){
+      if(this.privateKey){
+        this.privateKeyError = false;
+      }else{
+        this.privateKeyError = true;
+      }
+    }
+    publicConnectWiseError(){
+      if(this.publicKey){
+        this.publicKeyError = false;
+      }else{
+        this.publicKeyError = true;
+      }
+    }
+    clientIdError(){
+      if(this.clientId){
+        this.clientIDError = false;
+      }else{
+        this.clientIDError = true;
+      }
+    }
+    connectWiseSignIn(){
+      const obj={
+        "company_id":this.companyId,
+        "site_url": this.siteURL,
+        "public_key":this.publicKey,
+        "private_key": this.privateKey,
+        "client_id": this.clientId
+    }
+      this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce.database?.hierarchy_id
+              this.modalService.dismissAll();
+              this.openConnectWiseForm = false;
+              const encodedId = btoa(this.databaseId.toString());
+              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
     mySqlSignIn(){
       const obj={
           "database_type":"mysql",
@@ -763,6 +844,7 @@ export class WorkbenchComponent implements OnInit{
   this.openSnowflakeServerForm = false;
   this.ibmDb2Form= false;
   this.sqlLiteForm = false;
+  this.openConnectWiseForm = false;
 
   this.postGreServerName = '';
   this.postGrePortName = '';
@@ -772,6 +854,11 @@ export class WorkbenchComponent implements OnInit{
   this.OracleServiceName = '';
   this.displayName ='';
   this.fileData = '';
+  this.clientId = '';
+  this.privateKey = '';
+  this.publicKey = '';
+  this.siteURL = '';
+  this.companyId = '';
   }
 
   serverError:boolean = false;
@@ -781,6 +868,11 @@ export class WorkbenchComponent implements OnInit{
   displayNameError:boolean = false;
   passwordError:boolean = false;
   pathError:boolean = false;
+  clientIDError:boolean = false;
+  siteURLError:boolean = false;
+  privateKeyError:boolean = false;
+  publicKeyError:boolean = false;
+  companyIDError:boolean = false;
   disableConnectBtn = true;
   serverConditionError(){
     if(this.postGreServerName){
