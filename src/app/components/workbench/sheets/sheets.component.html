@@ -1282,7 +1282,7 @@
                                         <!-- } -->
                                     </div>
                                 }
-                                @if(isApexCharts && !table){
+                                @if(isApexCharts && !table && !kpi){
               <!-- @if(bar && chartId){ -->
 
                 <app-insight-apex [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisColumnData]="dualAxisColumnData" 
@@ -1297,7 +1297,7 @@
                 [dimensionAlignment]="dimensionAlignment" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                 [donutDecimalPlaces]="donutDecimalPlaces" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"
                 [drillDownObject]="drillDownObject" [sortType]="sortType" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [dataLabelsBarFontPosition]="dataLabelsBarFontPosition"
-                [dataLabelsLineFontPosition]="dataLabelsLineFontPosition"
+                [dataLabelsLineFontPosition]="dataLabelsLineFontPosition" [selectedColorScheme]="selectedColorScheme"
                 (saveOrUpdateChart)="setChartOptions($event)" (setDrilldowns)="setDrilldowns($event)">
                 </app-insight-apex>
               <!--<h6>Bar Chart</h6>
@@ -1585,7 +1585,7 @@
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
-                    [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
+                    [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                     [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
@@ -3031,35 +3031,41 @@
                                                                                   </div>
                                                                               </ul>
                                                                           </div>
-                                                                  </div>
-                                                                  <div class="font-color-card">
-                                                                    <p class="mb-0">Line Alignments</p>
-                                                                    <div class="dropup" ngbDropdown>
-                                                                        <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
-                                                                        <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                                            <div class="dropup" ngbDropdown >
-                                                                              
-                                                                              <div class=" p-1 mt-2 mb-2" *ngIf="barLine">
-                                                                                  <div class="form-group mb-0 text-center" (click)="setDataLabelsLineFontPosition('top')">
-                                                                                      <button class="btn btn-blue-light Automatic-btn">Automatic</button>
-                                                                                  </div>
-                                                                                  <div class="form-group mb-0 alignment-sides">
-                                                                                      <div class="justify-bottom" [ngStyle]="{'background-color': dataLabelsLineFontPosition == 'bottom' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsLineFontPosition('bottom')">
-                                                                                          <i class="fa fa-align-justify"></i>
-                                                                                      </div>
-                                                                                      <div class="justify-middle" [ngStyle]="{'background-color': dataLabelsLineFontPosition == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsLineFontPosition('center')">
-                                                                                          <i class="fa fa-align-justify"></i>
-                                                                                      </div>
-                                                                                      <div class="justify-top" [ngStyle]="{'background-color': dataLabelsLineFontPosition == 'top' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsLineFontPosition('top')">
-                                                                                          <i class="fa fa-align-justify"></i>
-                                                                                      </div>
-                                                                                  </div>
-                                                                              </div>
-                                                                             
-                                                                            </div>
-                                                                        </ul>
-                                                                    </div>
+                                                                  </div>                                                 
+                                                                </div>
+                                                              </div>
                                                             </div>
+                                                            <div class="sub-menu-item  p-2 mb-0" *ngIf="barLine && isEChatrts">
+                                                                <div class="row">
+                                                                  <div class="">
+                                                                    <div class="font-color-card">
+                                                                        <p class="mb-0">Line Alignments</p>
+                                                                        <div class="dropup" ngbDropdown>
+                                                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                                                                <div class="dropup" ngbDropdown >
+                                                                                  
+                                                                                  <div class=" p-1 mt-2 mb-2" *ngIf="barLine">
+                                                                                      <div class="form-group mb-0 text-center" (click)="setDataLabelsLineFontPosition('top')">
+                                                                                          <button class="btn btn-blue-light Automatic-btn">Automatic</button>
+                                                                                      </div>
+                                                                                      <div class="form-group mb-0 alignment-sides">
+                                                                                          <div class="justify-bottom" [ngStyle]="{'background-color': dataLabelsLineFontPosition == 'bottom' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsLineFontPosition('bottom')">
+                                                                                              <i class="fa fa-align-justify"></i>
+                                                                                          </div>
+                                                                                          <div class="justify-middle" [ngStyle]="{'background-color': dataLabelsLineFontPosition == 'center' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsLineFontPosition('center')">
+                                                                                              <i class="fa fa-align-justify"></i>
+                                                                                          </div>
+                                                                                          <div class="justify-top" [ngStyle]="{'background-color': dataLabelsLineFontPosition == 'top' ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsLineFontPosition('top')">
+                                                                                              <i class="fa fa-align-justify"></i>
+                                                                                          </div>
+                                                                                      </div>
+                                                                                  </div>
+                                                                                 
+                                                                                </div>
+                                                                            </ul>
+                                                                        </div>
+                                                                </div>                                                 
                                                                 </div>
                                                               </div>
                                                             </div>
@@ -3602,7 +3608,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <!-- <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <label>color</label>
                                                                     <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetChartColor()">
                                                                         <span></span>
@@ -3612,7 +3618,7 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'" (ngModelChange)="marksColor2($event)">
                                                                     </ngx-colors>
-                                                                </div>
+                                                                </div> -->
      
                                                             </ng-template>
                                                           </div>
@@ -3752,15 +3758,7 @@
                                                         [format]="'hex'">
                                                         </ngx-colors>
                                                     </div> -->
-                                                    <div *ngIf="funnel && isApexCharts">
-                                                        <!-- <div style="display: flex; justify-content: space-between;">
-                                                            <label for="sorting">Sort by:</label>
-                                                            <select id="sorting" (change)="sortSeries($event)">
-                                                                <option value="0" selected disabled>select</option>
-                                                                <option value="ascending">Ascending</option>
-                                                                <option value="descending">Descending</option>
-                                                            </select>
-                                                        </div> -->
+                                                    <!-- <div *ngIf="funnel && isApexCharts">
                                                         <div *ngIf="isApexCharts" style="display: flex; justify-content: space-between;">
                                                             <label>Distribution</label>
                                                             <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
@@ -3770,42 +3768,7 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <!-- <div style="display: flex;justify-content: space-between;">
-                                                            <label>Font</label>
-                                                            <select [(ngModel)]="funnelDLFontFamily" style="width: 30%;" (change)="funnelFontChange($event,'family')">
-                                                                <option value="0" selected disabled>family</option>
-                                                                <option value="'Arial', sans-serif">Arial</option>
-                                                                <option value="'Helvetica', sans-serif">Helvetica</option>
-                                                                <option value="'Verdana', sans-serif">Verdana</option>
-                                                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                                                                <option value="'Times New Roman', serif">Times New Roman</option>
-                                                                <option value="'Georgia', serif">Georgia</option>
-                                                                <option value="'Merriweather', serif">Merriweather</option>
-                                                                <option value="'Roboto', sans-serif">Roboto</option>
-                                                            </select>
-                                                            <select [(ngModel)]="funnelDLFontSize" (change)="funnelFontChange($event,'size')" style="width: 30%;">
-                                                                <option value="0" selected disabled>size</option>
-                                                                <option value="10px">10px</option>
-                                                                <option value="12px">12px</option>
-                                                                <option value="14px">14px</option>
-                                                                <option value="16px">16px</option>
-                                                                <option value="18px">18px</option>
-                                                                <option value="20px">20px</option>
-                                                            </select>
-                                                            <select [(ngModel)]="funnelDLAllign" (change)="funnelFontChange($event,'allign')">
-                                                                <option value="0" selected disabled>allign</option>
-                                                                <option value="top">Right</option>
-                                                                <option value="center">center</option>
-                                                                <option value="bottom">Left</option>
-                                                            </select>
-                                                        </div> -->
-                                                        <!-- <div style="display: flex;justify-content: space-between;" *ngIf="!isDistributed">
-                                                            <label>color</label>
-                                                            <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                            <ngx-colors [(ngModel)]="funnelColor" ngx-colors-trigger [format]="'hex'" (change)="funnelColorChange($event)">
-                                                            </ngx-colors>
-                                                        </div> -->
-                                                    </div>
+                                                    </div> -->
                                                     <div *ngIf="(((pie && chartId) || donut || bar))  && draggedColumns && draggedColumns.length == 1 && dateList.includes(draggedColumns[0]['data_type'])" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
@@ -3876,6 +3839,7 @@
                                                         <label for="sorting">Sort by: </label>
                                                         <select id="sorting" [(ngModel)]="sortType">
                                                             <option value="0" selected disabled>select</option>
+                                                            <option value="none">None</option>
                                                             <option value="ascending">Ascending</option>
                                                             <option value="descending">Descending</option>
                                                         </select>

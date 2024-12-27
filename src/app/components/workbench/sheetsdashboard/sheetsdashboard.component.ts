@@ -3921,7 +3921,11 @@ kpiData?: KpiData;
         qrySetId : sheet.queryset_id,
         isEChart : sheet.sheet_data.isEChart,
         data: { title: sheet.sheet_name, content: 'Content of card New', sheetTagName:sheet.sheet_tag_name? sheet.sheet_tag_name:sheet.sheet_name },
-        selectedSheet : sheet.selectedSheet,
+        selectedSheet: sheet.selectedSheet,
+        column_Data: sheet.sheet_data.columns_data,
+        row_Data: sheet.sheet_data.rows_data,
+        drillDownHierarchy: sheet.sheet_data.drillDownHierarchy,
+        isDrillDownData: sheet.sheet_data.isDrillDownData,
         kpiData: sheet.sheet_type === 'Chart' && sheet.chart_id === 25
         ? (() => {
             this.kpiData = {
@@ -4466,10 +4470,33 @@ kpiData?: KpiData;
     this.cdr.detectChanges();  // Force change detection
 
   }
-
+  issheetListPaneOpen : boolean = true;
   toggleSidebar() {
-    const mainContainer = document.querySelector('.main-container');
-    mainContainer?.classList.toggle('sidebar-hidden');
+    const sidebar = document.getElementById("sticky-sidebar");
+    const dashboardContent = document.getElementById("dashboard-content");
+    if (sidebar?.classList.contains("d-none")) {
+      sidebar.classList.remove("d-none");
+      sidebar.classList.add("col-xl-2");
+      sidebar.classList.add("col-lg-2");
+      sidebar.classList.add("col-md-2");
+      dashboardContent?.classList.remove("col-lg-12");
+      dashboardContent?.classList.remove("col-xl-12");
+      dashboardContent?.classList.remove("col-md-12");
+      dashboardContent?.classList.add("col-lg-10");
+      dashboardContent?.classList.add("col-xl-10");
+      dashboardContent?.classList.add("col-md-10");
+  } else {
+      sidebar?.classList.add("d-none");
+      sidebar?.classList.remove("col-xl-2");
+      sidebar?.classList.remove("col-lg-2");
+      sidebar?.classList.remove("col-md-2");
+      dashboardContent?.classList.remove("col-lg-10");
+      dashboardContent?.classList.remove("col-xl-10");
+      dashboardContent?.classList.remove("col-md-10");
+      dashboardContent?.classList.add("col-xl-12");
+      dashboardContent?.classList.add("col-lg-12");
+      dashboardContent?.classList.add("col-md-12");
+  }
 }
 //tablePagination
 tableSearchDashboard(item:any){

@@ -1715,7 +1715,7 @@ export class InsightApexComponent {
       legend: {
         show: false
       },
-      colors: this.isDistributed ? [] : [this.selectedColorScheme]
+      colors: this.selectedColorScheme
     };
   }
   guageChart() {
@@ -2755,7 +2755,7 @@ export class InsightApexComponent {
     else{
       if(this.chartOptions?.colors){
         if(this.chartType === 'funnel'){
-          this.chartOptions.colors = this.isDistributed ? [] : [this.selectedColorScheme];
+          this.chartOptions.colors = this.selectedColorScheme;
         }
         else{
           this.chartOptions.colors = [this.color];
@@ -2994,12 +2994,14 @@ export class InsightApexComponent {
     }
   }
   sort(sortType: any, numbers: any, labels: any) {
-    const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+    let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
   
     if (sortType === 'ascending') {
       pairedData.sort((a: any, b: any) => a[0] - b[0]);
     } else if (sortType === 'descending') {
       pairedData.sort((a: any, b: any) => b[0] - a[0]);
+    } else if(sortType === 'none'){
+      pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
     }
 
     const sortedNumbers = pairedData.map((pair: any) => pair[0]);

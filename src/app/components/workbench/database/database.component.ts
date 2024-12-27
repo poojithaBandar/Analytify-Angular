@@ -147,6 +147,7 @@ export class DatabaseComponent {
   filteredTablesT2: any[] = [];
   filterParamPass:any;
   itemCounters: any={};
+  sheetCustmSqlDisable = true;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/analytify/database-connection/tables/')){
@@ -185,6 +186,7 @@ export class DatabaseComponent {
       localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
       this.fromDatabasId = true;
       this.fromSheetEditDb = true;
+      this.sheetCustmSqlDisable = false;
       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
       if(this.datasourceQuerysetId==='null'){
         console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -366,7 +368,7 @@ getSchemaTablesFromConnectedDb(){
    console.log('filteredscemas',this.filteredSchematableList)
        this.databaseName = data.database.database;
         this.hostName = data.database.hostname;
-        this.saveQueryName = data.queryset_name;
+        // this.saveQueryName = data.queryset_name;
     console.log(data)
 
 },
@@ -569,7 +571,7 @@ executeQuery(){
     custom_query: this.sqlQuery,
     row_limit:this.rowLimit,
     queryset_id:this.custumQuerySetid,
-    query_name:this.saveQueryName,
+    // query_name:this.saveQueryName,
   }as any
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
     delete obj.query_name
@@ -584,6 +586,10 @@ executeQuery(){
         this.cutmquryTable = data
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
+        if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
+          this.saveQueryName = data.query_set_name;
+          this.titleMarkDirty = true;
+        }
         // this.qurtySetId = data.query_set_id;
         this.custumQuerySetid = data.query_set_id
         this.showingRowsCustomQuery=data.no_of_rows
@@ -1026,7 +1032,10 @@ if(obj.row_limit === null || obj.row_limit === undefined){
         this.totalRows = data.total_rows;
         this.showingRows = data.no_of_rows;
         this.gotoSheetButtonDisable = false;
-        // this.saveQueryName = data.queryset_name;
+        if(this.saveQueryName ==='' || this.saveQueryName === null || this.saveQueryName === undefined){
+        this.saveQueryName = data.queryset_name;
+        this.titleMarkDirty = true;
+        }
         this.queryBuilt = data.custom_query;
         if(this.TabledataJoining?.column_data?.length === 0){
           this.gotoSheetButtonDisable = true;
@@ -1540,7 +1549,7 @@ markDirty(){
   goToSheet(fromParam: string) {
     this.goToSheetButtonClicked = true;
       let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
-
+      let querySetIdToDelete = (fromParam === 'fromcustomsql') ? this.qurtySetId : this.custumQuerySetid
     if (this.saveQueryName === '' || this.saveQueryName == null || this.saveQueryName == undefined) {
       Swal.fire({
         icon: 'error',
@@ -1605,7 +1614,7 @@ markDirty(){
           // Encode 'null' to represent a null value
           const encodedDsQuerySetId = btoa('null');
           if (this.titleMarkDirty) {
-            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
+            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName,delete_query_id:querySetIdToDelete}
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
                 this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
@@ -1627,7 +1636,7 @@ markDirty(){
           // Convert to string and encode
           const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
           if (this.titleMarkDirty) {
-            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
+            let payload = { database_id: this.databaseId, query_set_id: querySetIdToPass, query_name: this.saveQueryName,delete_query_id:querySetIdToDelete}
             this.workbechService.updateQuerySetTitle(payload).subscribe({
               next: (data: any) => {
                 this.router.navigate(['/analytify/sheets' + '/' + encodedDatabaseId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])

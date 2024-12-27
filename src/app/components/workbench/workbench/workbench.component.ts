@@ -47,6 +47,8 @@ export class WorkbenchComponent implements OnInit{
   databaseType:any;
   openPostgreSqlForm= false;
   openMySqlForm = false;
+  openConnectWiseForm = false;
+  openHaloPSAForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -76,6 +78,7 @@ export class WorkbenchComponent implements OnInit{
   totalItems:any;
   fileData:any;
   viewDatasourceList = false;
+  selectedMicroSoftAuthType: string | null = null;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
@@ -104,6 +107,14 @@ export class WorkbenchComponent implements OnInit{
     PostGrePassword = '';
     OracleServiceName = '';
     displayName ='';
+    clientId = '';
+    companyId = '';
+    siteURL = '';
+    siteURLPSA = '';
+    clientSecret = '';
+    clientIdPSA = '';
+    publicKey = '';
+    privateKey = '';
     path='';
 
   emptyVariables(){
@@ -115,6 +126,15 @@ export class WorkbenchComponent implements OnInit{
     this.OracleServiceName = '';
     this.displayName ='';
     this.path='';
+    this.clientId = '';
+    this.privateKey = '';
+    this.publicKey = '';
+    this.siteURL = '';
+    this.companyId = '';
+    this.siteURLPSA = '';
+    this.clientIdPSA = '';
+    this.clientSecret = '';
+    
   }  
     openPostgreSql(){
     this.openPostgreSqlForm=true;
@@ -229,6 +249,129 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
+    connectWise(){
+      this.openConnectWiseForm=true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
+    connectHaloPSA(){
+      this.openHaloPSAForm = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
+    companyIdError(){
+      if(this.companyId){
+        this.companyIDError = false;
+      }else{
+        this.companyIDError = true;
+      }
+    }
+
+    siteUrlError(){
+      if(this.siteURL){
+        this.siteURLError = false;
+      }else{
+        this.siteURLError = true;
+      }
+    }
+    siteUrlPSAError(){
+      if(this.siteURLPSA){
+        this.siteURLErrorPSA = false;
+      }else{
+        this.siteURLErrorPSA = true;
+      }
+    }
+    clientSecretsError(){
+      if(this.clientSecret){
+        this.clientSecretError = false;
+      }else{
+        this.clientSecretError = true;
+      }
+    }
+    clientIdErrorPSA(){
+      if(this.clientIdPSA){
+        this.clientIDPSAError = false;
+      }else{
+        this.clientIDPSAError = true;
+      }
+    }
+    privateConnectWiseError(){
+      if(this.privateKey){
+        this.privateKeyError = false;
+      }else{
+        this.privateKeyError = true;
+      }
+    }
+    publicConnectWiseError(){
+      if(this.publicKey){
+        this.publicKeyError = false;
+      }else{
+        this.publicKeyError = true;
+      }
+    }
+    clientIdError(){
+      if(this.clientId){
+        this.clientIDError = false;
+      }else{
+        this.clientIDError = true;
+      }
+    }
+    connectWiseSignIn(){
+      const obj={
+        "company_id":this.companyId,
+        "site_url": this.siteURL,
+        "public_key":this.publicKey,
+        "private_key": this.privateKey,
+        "client_id": this.clientId
+    }
+      this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              this.openConnectWiseForm = false;
+              const encodedId = btoa(this.databaseId.toString());
+              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
+    haloPSASignIn(){
+      const obj = {
+        "site_url": this.siteURLPSA,
+        "client_id": this.clientIdPSA,
+        "client_secret": this.clientSecret
+      }
+      this.workbechService.haloPSAConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              this.openHaloPSAForm = false;
+              const encodedId = btoa(this.databaseId.toString());
+              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
     mySqlSignIn(){
       const obj={
           "database_type":"mysql",
@@ -273,6 +416,7 @@ export class WorkbenchComponent implements OnInit{
           "password":this.PostGrePassword,
           "display_name":this.displayName,
           "database": this.postGreDatabaseName,
+          "authentication_type":this.selectedMicroSoftAuthType
       }
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
@@ -763,6 +907,8 @@ export class WorkbenchComponent implements OnInit{
   this.openSnowflakeServerForm = false;
   this.ibmDb2Form= false;
   this.sqlLiteForm = false;
+  this.openConnectWiseForm = false;
+  this.openHaloPSAForm = false;
 
   this.postGreServerName = '';
   this.postGrePortName = '';
@@ -772,6 +918,12 @@ export class WorkbenchComponent implements OnInit{
   this.OracleServiceName = '';
   this.displayName ='';
   this.fileData = '';
+  this.clientId = '';
+  this.privateKey = '';
+  this.publicKey = '';
+  this.siteURL = '';
+  this.companyId = '';
+  this.siteURLPSA = '';
   }
 
   serverError:boolean = false;
@@ -781,6 +933,14 @@ export class WorkbenchComponent implements OnInit{
   displayNameError:boolean = false;
   passwordError:boolean = false;
   pathError:boolean = false;
+  clientIDError:boolean = false;
+  siteURLError:boolean = false;
+  siteURLErrorPSA:boolean = false;
+  clientIDPSAError:boolean = false;
+  clientSecretError: boolean = false;
+  privateKeyError:boolean = false;
+  publicKeyError:boolean = false;
+  companyIDError:boolean = false;
   disableConnectBtn = true;
   serverConditionError(){
     if(this.postGreServerName){
@@ -847,7 +1007,27 @@ export class WorkbenchComponent implements OnInit{
     }
   }
   errorCheck(){
-    if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
+    if(this.openMicrosoftSqlServerForm){
+      if(this.selectedMicroSoftAuthType === 'Windows Authentication'){
+        if(this.serverError || this.portError || this.databaseError || this.displayNameError){
+          this.disableConnectBtn = true;
+        } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.displayName)) {
+          this.disableConnectBtn = true;
+        } else{
+          this.disableConnectBtn = false;
+        }
+      }
+      else{
+         if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
+          this.disableConnectBtn = true;
+        } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
+          this.disableConnectBtn = true;
+        } else{
+          this.disableConnectBtn = false;
+        }
+      }
+    }
+    else if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
       this.disableConnectBtn = true;
     } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
       this.disableConnectBtn = true;

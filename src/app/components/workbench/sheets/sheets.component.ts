@@ -302,7 +302,7 @@ export class SheetsComponent {
   lineColor : any = '#38ff98';
   dataLabels:boolean = true;
   label : boolean = true;
-  isDistributed : boolean = false;
+  isDistributed : boolean = true;
   kpiFontSize: string = '3';
   kpiColor: string = '#000000';
 
@@ -4039,10 +4039,10 @@ bar["stack"]="Total";
         this.dataExtraction();
       }
     }
-    dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz'];
-    integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double'];
+    dateList = ['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(datetime)','timestamptz'];
+    integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
     boolList = ['bool', 'boolean'];
-    stringList = ['varchar','bp char','text','varchar2','NVchar2','char','Nchar','character varying','string'];
+    stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
     rowdrop(event: CdkDragDrop<string[]>){
       this.sortedData = [];
       console.log(event)
@@ -4401,6 +4401,7 @@ bar["stack"]="Total";
     this.displayedColumns = [];
     this.retriveDataSheet_id = '';
     this.getChartData();
+    this.columnsData();
     if(selectedSheetId){
       this.retriveDataSheet_id = selectedSheetId;
       this.sheetRetrive(false);
@@ -6756,7 +6757,7 @@ customizechangeChartPlugin() {
     this.dataLabels = data.dataLabels ?? true;
     this.label = data.label ?? true;
     this.donutSize = data.donutSize ?? 50;
-    this.isDistributed = data.isDistributed ?? false;
+    this.isDistributed = data.isDistributed ?? true;
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
     this.maxValueGuage = data.maxValueGuage ?? 100;
@@ -6836,7 +6837,7 @@ customizechangeChartPlugin() {
     this.dataLabels = true;
     this.label = true;
     this.donutSize = 50;
-    this.isDistributed = false;
+    this.isDistributed = true;
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
     this.maxValueGuage = 100;

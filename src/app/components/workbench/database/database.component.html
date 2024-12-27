@@ -84,7 +84,7 @@
                                 <i class="fa fa-filter"></i> Apply Filters
                             </a>
                             }
-                            <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light ms-1'"
+                            <app-insights-button *ngIf="sheetCustmSqlDisable" [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light ms-1'"
                                 [previledgeId]="54" [isBtn]="true" (btnClickEvent)="customSql=true;tableJoiningUI=false"
                                 [isIcon]="false"></app-insights-button>
                             <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72"
@@ -638,11 +638,13 @@
                         <div class="right">
                             <a *ngIf="!fromSavedQuery" class="btn btn-blue-light m-1"
                                 (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
+                                @if(custmQryTime){
                             <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
                                 (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromcustomsql')"
                                 class="modal-effect btn btn-primary m-1">
                                 <i class="fa fa-filter"></i> Apply Filters
                             </a>
+                                }
                         </div>
                     </div>
                     <div class="card-body p-2">
