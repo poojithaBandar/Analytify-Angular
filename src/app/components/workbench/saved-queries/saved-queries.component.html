@@ -1,4 +1,4 @@
-<app-page-header title="Database Connections" title1="Home" activeitem="Data Source"></app-page-header>
+<app-page-header title="Database Connections" moduleId="customSql" title1="Home" activeitem="Data Source"></app-page-header>
 
 <div class="main-container container-fluid">
     <div class="row" class="card" style="padding-top: 15px;">
@@ -29,7 +29,7 @@
           @if(!gridView){
             <div class="table-responsive border" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
-                    <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
+                    <thead class="table-primary bg-primary" style="position: sticky;top: -1px;">
                         <tr>
                             <th>Query</th>
                             <th>Database</th>
@@ -45,14 +45,14 @@
                             totalItems: totalItems
                           }">
                             <td>
-                                <a  style="color: #05aff8;" ngbTooltip="{{data.queryset_name}}"> {{data.queryset_name | slice:0:15}}</a>
+                                <a ngbTooltip="{{data.queryset_name}}"> {{data.queryset_name | slice:0:15}}</a>
                                </td>
                             <td>{{data.database_name}}</td>
                             <td>{{data.created}}</td>
                             <td>{{data.modified}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
-                            <a aria-label="anchor" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
+                            <a aria-label="anchor" (click)="gotoSavedQuery(data.hierarchy_id,data.queryset_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                 <i class="ri-edit-line" ngbTooltip="Edit database"></i></a>
                             <a aria-label="anchor" (click)="deleteSavedQuery(data.queryset_id)" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                 <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
@@ -73,14 +73,14 @@
                 totalItems: totalItems
               }" class="col-md-12 col-xl-3">
               <div class="card card-box-shadow ">
-                <div class="card-header tiled-header-bg">
+                <div class="card-header tiled-header-bg bg-primary tiled-card-header-padding">
                   <div class="d-sm-flex align-items-center">
                     <!-- <span class="avatar avatar-xl rounded-circle">
                         <img src="./assets/images/charts/table-tiled-icon.jpg" alt="" class="rounded-circle"></span> -->
                       <div class="ms-2 mt-sm-0 mt-2">
                         <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                           <h6 class="mb-1">
-                              <a ngbTooltip="{{data.queryset_name}}" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)"  class="float-start"> {{data.queryset_name | slice:0:15}}</a>
+                              <a ngbTooltip="{{data.queryset_name}}" (click)="gotoSavedQuery(data.hierarchy_id,data.queryset_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)"  class="float-start"> {{data.queryset_name | slice:0:15}}</a>
                           </h6>
                           
                       </div>
@@ -93,7 +93,7 @@
                               class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                       </a>
                       <div class="dropdown-menu" ngbDropdownMenu>
-                         <a class="dropdown-item" tabindex="0" (click)="gotoSavedQuery(data.server_id,data.queryset_id,data.file_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)">
+                         <a class="dropdown-item" tabindex="0" (click)="gotoSavedQuery(data.hierarchy_id,data.queryset_id,data.is_custom_sql,data?.datasource_filterdata[0]?.datasource_querysetid)">
                                 <i class="fe fe-edit me-2 d-inline-flex"></i> Edit</a>
                             <a  class="dropdown-item  btn btn-secondary-light" tabindex="0" (click)="deleteSavedQuery(data.queryset_id)" >
                                 <i class="fe fe-trash me-2 d-inline-flex"></i> Delete</a>
@@ -101,7 +101,7 @@
                   </div>
                 </div>
                 </div>
-                <div class="card-body ">
+                <div class="card-body tiled-card-body-padding">
                     <div class="row">
                       
                         <div  class="col-md-12">

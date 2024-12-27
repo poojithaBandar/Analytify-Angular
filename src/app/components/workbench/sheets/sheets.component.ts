@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -44,7 +44,12 @@ import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatT
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, timer } from 'rxjs';
+import { evaluate, parse } from 'mathjs';
+import { InsightApexComponent } from '../insight-apex/insight-apex.component';
+import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import { SharedService } from '../../../shared/services/shared.service';
+import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -64,6 +69,7 @@ interface RangeSliderModel {
 @Component({
   selector: 'app-sheets',
   standalone: true,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NGX_ECHARTS_CONFIG,
@@ -72,7 +78,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -115,14 +121,16 @@ export class SheetsComponent {
   yLabelFontFamily : string = 'sans-serif';
   xlabelFontWeight : number = 400;
   ylabelFontWeight : number = 400;
-  xLabelColor : string = '#00a5a2';
-  xGridColor : string = '#00a5a2';
-  yLabelColor : string = '#00a5a2';
-  yGridColor : string = '#00a5a2';
+  xLabelColor : string = '#2392c1';
+  xGridColor : string = '#2392c1';
+  yLabelColor : string = '#2392c1';
+  yGridColor : string = '#2392c1';
   filterSearch! : string;
   editFilterSearch! : string;
   tableSearch! : string;
   isMeasureEdit : boolean = false;
+  calculatedFieldName! : string
+  isEditCalculatedField : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -192,7 +200,7 @@ export class SheetsComponent {
   sheetfilter_querysets_id = null;
   editFilterId: any;
   isValuePresent: any;
-  color = '#00a5a2';
+  color = '#2392c1';
   database_name: any;
   dualAxisColumnData = [] as any;
   filterQuerySetId: any;
@@ -233,6 +241,8 @@ export class SheetsComponent {
   isCustomSql = false;
   canDrop = true;
   createdBy : any;
+  calculatedFieldFunction : string = '';
+  nestedCalculatedFieldData : string = '';
   @ViewChild('barChart') barchart!: ChartComponent;
   @ViewChild(' bar-chart') eBarchart!: any;
   @ViewChild('areaChart') areachart!: ChartComponent;
@@ -260,7 +270,6 @@ export class SheetsComponent {
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
-  drillDownLevel : any[] = [];
   drillDownObject: any[] = [];
   sheetCustomQuery: any;
   KPINumber: any;
@@ -293,7 +302,7 @@ export class SheetsComponent {
   lineColor : any = '#38ff98';
   dataLabels:boolean = true;
   label : boolean = true;
-  isDistributed : boolean = false;
+  isDistributed : boolean = true;
   kpiFontSize: string = '3';
   kpiColor: string = '#000000';
 
@@ -323,13 +332,51 @@ export class SheetsComponent {
   dataLabelsFontFamily : string = 'sans-serif';
   dataLabelsFontSize : any = '12px';
   dataLabelsFontPosition : any = 'top';
+  dataLabelsBarFontPosition : any = 'top';
+  dataLabelsLineFontPosition : any = 'top';
   measureAlignment : any = 'center';
   dimensionAlignment : any = 'center';
   colorPalette = COLOR_PALETTE;
+  dimensionColor = '#2392c1';
+  measureColor = '#2392c1';
+  dataLabelsColor = '#2392c1';  isValidCalculatedField! : boolean;
+  validationMessage: string = '';
+  calculatedFieldId: any;
+  calculatedFieldLogic! : string ;
+  columnMapping: { [key: string]: string } = {};
+  filterCalculatedFieldLogic: any = '';
+
+  tableDataFontFamily : string = 'sans-serif';
+  tableDataFontSize : any = '12px';
+  tableDataFontWeight : any = 400;
+  tableDataFontStyle : any = 'normal';
+  tableDataFontDecoration : any = 'none';
+  tableDataFontColor : any = '#000000';
+  tableDataFontAlignment : any = 'left';
+
+  headerFontFamily : any = "'Arial', sans-serif";
+  headerFontSize : any = '16px';
+  headerFontWeight : any = 700;
+  headerFontStyle : any = 'normal';
+  headerFontDecoration : any = 'none';
+  headerFontColor : any = '#000000'
+  headerFontAlignment : any = 'left';
   hasUnSavedChanges = false;
-  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,
-    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient){   
-    if(this.router.url.includes('/insights/sheets/dbId')){
+
+  sortType : any = 0;
+
+  colorSchemes = [
+    ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
+    ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
+    ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
+    ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
+    ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
+  ];
+  selectedColorScheme=[] as  any;
+
+  constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
+    private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
+    if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.qrySetId = +atob(route.snapshot.params['id2']);
@@ -346,25 +393,25 @@ export class SheetsComponent {
           }
         }
      }
-     if(this.router.url.includes('/insights/sheets/fileId')){
-      if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
-        this.fileId = +atob(route.snapshot.params['id1']);
-        this.qrySetId = +atob(route.snapshot.params['id2']);
-        this.filterQuerySetId = atob(route.snapshot.params['id3']);
-        // this.tabs[0] = this.sheetName;
-        this.sheetTagName = this.sheetName;
-        this.fromFileId = true;
-        if(this.filterQuerySetId==='null'){
-          console.log('filterqrysetid',this.filterQuerySetId)
-          this.filterQuerySetId = null
-        }
-        else{
-            parseInt(this.filterQuerySetId)
-            console.log(this.filterQuerySetId)
-          }
-        }      
-  }
- // if(this.router.url.includes('/insights/home/sheets/')){ //old landing page to sheet 
+  //    if(this.router.url.includes('/analytify/sheets/fileId')){
+  //     if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
+  //       this.fileId = +atob(route.snapshot.params['id1']);
+  //       this.qrySetId = +atob(route.snapshot.params['id2']);
+  //       this.filterQuerySetId = atob(route.snapshot.params['id3']);
+  //       // this.tabs[0] = this.sheetName;
+  //       this.sheetTagName = this.sheetName;
+  //       this.fromFileId = true;
+  //       if(this.filterQuerySetId==='null'){
+  //         console.log('filterqrysetid',this.filterQuerySetId)
+  //         this.filterQuerySetId = null
+  //       }
+  //       else{
+  //           parseInt(this.filterQuerySetId)
+  //           console.log(this.filterQuerySetId)
+  //         }
+  //       }      
+  // }
+  // if(this.router.url.includes('/insights/home/sheets/')){ //old landing page to sheet 
   //   console.log("landing page")
   //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
   //     this.databaseId = +atob(route.snapshot.params['id1']);
@@ -375,7 +422,7 @@ export class SheetsComponent {
   //     // this.sheetRetrive();
   //     }
   //  }
-  if(this.router.url.includes('/insights/home/dbId/sheets/')){
+  if(this.router.url.includes('/analytify/home/sheets/')){
     if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
       this.databaseId = +atob(route.snapshot.params['id1']);
       this.qrySetId = +atob(route.snapshot.params['id2'])
@@ -385,33 +432,33 @@ export class SheetsComponent {
       // this.sheetRetrive();
       }
    }
-   if(this.router.url.includes('/insights/home/fileId/sheets/')){
-    this.fromFileId = true;
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
-      this.fileId = +atob(route.snapshot.params['id1']);
-      this.qrySetId = +atob(route.snapshot.params['id2'])
-      this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
-      console.log(this.retriveDataSheet_id);
-      //this.tabs[0] = this.sheetName;
-      // this.sheetRetrive();
-      }
-   }
+  //  if(this.router.url.includes('/analytify/home/fileId/sheets/')){
+  //   this.fromFileId = true;
+  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3']) {
+  //     this.fileId = +atob(route.snapshot.params['id1']);
+  //     this.qrySetId = +atob(route.snapshot.params['id2'])
+  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3'])
+  //     console.log(this.retriveDataSheet_id);
+  //     //this.tabs[0] = this.sheetName;
+  //     // this.sheetRetrive();
+  //     }
+  //  }
 
 
-   if(this.router.url.includes('/insights/sheetsdashboard/sheets/fileId/')){
-    this.sheetsDashboard = true;
-    this.fromFileId = true;
-    console.log("landing page")
-    if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
-      this.fileId = +atob(route.snapshot.params['id1']);
-      this.qrySetId = +atob(route.snapshot.params['id2']);
-      this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
-      this.dashboardId = +atob(route.snapshot.params['id4']);
-      console.log(this.retriveDataSheet_id)
-      // this.sheetRetrive();
-      }
-   } 
-   if(this.router.url.includes('/insights/sheetsdashboard/sheets/dbId/')){
+  //  if(this.router.url.includes('/analytify/sheetsdashboard/sheets/fileId/')){
+  //   this.sheetsDashboard = true;
+  //   this.fromFileId = true;
+  //   console.log("landing page")
+  //   if (route.snapshot.params['id1'] && route.snapshot.params['id2'] && route.snapshot.params['id3'] && route.snapshot.params['id4']) {
+  //     this.fileId = +atob(route.snapshot.params['id1']);
+  //     this.qrySetId = +atob(route.snapshot.params['id2']);
+  //     this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
+  //     this.dashboardId = +atob(route.snapshot.params['id4']);
+  //     console.log(this.retriveDataSheet_id)
+  //     // this.sheetRetrive();
+  //     }
+  //  } 
+   if(this.router.url.includes('/analytify/sheetsdashboard/sheets/')){
     this.sheetsDashboard = true;
     this.fromFileId = false;
     console.log("landing page")
@@ -428,6 +475,23 @@ export class SheetsComponent {
    this.canDrop = !this.canEditDb
   }
 
+  rgbStringToHex(rgb: string): string {
+    // Split the input string by commas, remove extra spaces, and convert to numbers
+    const [r, g, b] = rgb.split(',').map((value) => parseInt(value.trim(), 10));
+  
+    // Ensure RGB values are within the valid range [0, 255]
+    const clamp = (value: number) => Math.max(0, Math.min(255, value));
+  
+    // Convert RGB to HEX
+    return (
+      '#' +
+      [clamp(r), clamp(g), clamp(b)]
+        .map((x) => x.toString(16).padStart(2, '0')) // Convert to hex and pad
+        .join('')
+        .toUpperCase()
+    );
+  }
+
   ngOnInit(): void {
     this.loaderService.hide();
     this.columnsData();
@@ -435,17 +499,35 @@ export class SheetsComponent {
     this.getSheetNames();
     this.getDashboardsList();
     this.setChartType();
+    // this.colorService.color$.subscribe((color) => {
+    //   this.color = this.rgbStringToHex(color);
+    // });
     // this.sheetRetrive();
+    // this.sheetRetrive();
+    const storedValue = localStorage.getItem('myValue');
+    console.log('Value on init from localStorage:', storedValue);
+    this.changeChartPlugin(storedValue);
+  
+    this.sharedService.localStorageValue$.subscribe((value: any) => {
+      console.log('Value changed in Comp2:', value);
+      this.changeChartPlugin(value);
+    });
   }
+
+  selectColorScheme(scheme: string[]) {
+    this.selectedColorScheme = scheme;
+    console.log('color pallete', this.selectedColorScheme)
+  }
+  getGradient(colors: string[]): string {
+    return `linear-gradient(to right, ${colors.join(', ')})`;
+  }
+
+
  async getSheetNames():Promise<void>{
   //this.tabs = [];
   const obj={
     "server_id":this.databaseId,
     "queryset_id":this.qrySetId,
-}as any;
-if(this.fromFileId){
-  delete obj.server_id;
-  obj.file_id=this.fileId;
 }
 try {
   const response: any = await lastValueFrom(this.workbechService.getSheetNames(obj));
@@ -482,48 +564,48 @@ try {
     if(this.isCustomSql){
       const encodeddbId = btoa(this.databaseId?.toString());
       const encodedqurysetId = btoa(this.qrySetId.toString());
-      const encodedFileId = btoa(this.fileId?.toString());
+      // const encodedFileId = btoa(this.fileId?.toString());
 
-      const fromSource = this.fromFileId ? 'fileId' : 'dbId'
-      const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
+      const fromSource = 'dbId'
+      const idToPass =  encodeddbId;
 
       if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
         // Encode 'null' to represent a null value
        const encodedDsQuerySetId = btoa('null');
-       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/analytify/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
   
       } else {
         // Convert to string and encode
        const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-       this.router.navigate(['/insights/database-connection/savedQuery/'+fromSource+'/'+idToPass+'/'+encodedqurysetId])
+       this.router.navigate(['/analytify/database-connection/savedQuery'+'/'+idToPass+'/'+encodedqurysetId])
     
       } 
      }
     else{
     const encodeddbId = btoa(this.databaseId?.toString());
     const encodedqurysetId = btoa(this.qrySetId.toString());
-    const encodedFileId = btoa(this.fileId?.toString());
+    // const encodedFileId = btoa(this.fileId?.toString());
     // this.router.navigate(['/insights/database-connection/sheets/'+encodeddbId+'/'+encodedqurysetId])
 
-    const idToPass = this.fromFileId ? encodedFileId : encodeddbId;
-    const fromSource = this.fromFileId ? 'fileId' : 'dbId'
+    const idToPass = encodeddbId;
+    const fromSource ='dbId'
   
     if (this.filterQuerySetId === null || this.filterQuerySetId === undefined) {
       // Encode 'null' to represent a null value
      const encodedDsQuerySetId = btoa('null');
-     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/analytify/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
 
     } else {
       // Convert to string and encode
      const encodedDsQuerySetId = btoa(this.filterQuerySetId.toString());
-     this.router.navigate(['/insights/database-connection/sheets/'+fromSource+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
+     this.router.navigate(['/analytify/database-connection/sheets'+'/'+idToPass+'/'+encodedqurysetId+'/'+encodedDsQuerySetId])
   
     }
   }
 
   }
   goToConnections(){
-    this.router.navigate(['/insights/datasources/view-connections'])
+    this.router.navigate(['/analytify/datasources/view-connections'])
   }
   toggleSubMenu(menu: any) {
     menu.expanded = !menu.expanded;
@@ -856,7 +938,7 @@ try {
               }
             }
           },
-          colors: ["#00a5a2", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
+          colors: ["#2392c1", "#31d1ce", "#f5b849", "#49b6f5", "#e6533c"],
           labels: this.chartsColumnData.map((category: any) => category === null ? 'null' : category),
           legend: {
             show: true,
@@ -988,7 +1070,7 @@ try {
             dataLabels: {
               enabled: true,
               formatter: this.formatNumber.bind(this),
-              offsetY: -20,
+              offsetY: -10,
               style: {
                 fontSize: '12px',
                 colors: [this.color],
@@ -1196,7 +1278,7 @@ try {
             dataLabels: {
               enabled: true,
               formatter: this.formatNumber.bind(this),
-              offsetY: -20,
+              offsetY: -10,
               style: {
                 fontSize: '12px',
                 colors: [this.color],
@@ -1382,7 +1464,7 @@ try {
               }
             }]
           },
-          colors: ['#00a5a2', '#0dc9c5', '#f43f63'],
+          colors: ['#2392c1', '#0dc9c5', '#f43f63'],
           chart: {
             toolbar: {
               show: true,
@@ -1976,7 +2058,7 @@ bar["stack"]="total";
           },
           toolbox: {
             feature: {
-              magicType: { show: true, type: ['line', 'bar', 'stack'] },
+              magicType: { show: true, type: ['bar', 'line'] },
               restore: { show: true },
               saveAsImage: { show: true }
             }
@@ -2011,7 +2093,8 @@ bar["stack"]="total";
           yAxis: [
             {
               type: 'value',
-              name: 'Bar',
+              name: 'Bar Axis',
+              position: 'left',
               axisLabel: {
                 color: '#333', // Customize label color
                 fontSize: 12, // Customize font size
@@ -2031,7 +2114,8 @@ bar["stack"]="total";
             },
             {
               type: 'value',
-              name: 'Line',
+              name: 'Line Axis',
+              position: 'right',
               axisLabel: {
                 color: '#333', // Customize label color
                 fontSize: 12, // Customize font size
@@ -2080,7 +2164,7 @@ bar["stack"]="total";
               name: this.dualAxisRowData[0]?.name,
               type: 'bar',
               // xAxisIndex: 1,
-              yAxisIndex: 1,
+              // yAxisIndex: 1,
               // tooltip: {
               //   valueFormatter: function (value) {
               //     return value + ' ml';
@@ -2844,10 +2928,10 @@ bar["stack"]="Total";
               type:'scroll',
               show: this.legendSwitch // Control legend visibility
           },            
-          // label: {
-          //     show : this.dataLabels,
-          //     formatter: '{b}: {d}%',
-          //   },
+          label: {
+              show : this.dataLabels,
+              formatter: '{b}: {d}%',
+            },
             series: [
               {
                 type: 'pie',
@@ -3335,10 +3419,6 @@ bar["stack"]="Total";
           "db_id": this.databaseId,
           "queryset_id": this.qrySetId,
           "search": this.tableSearch
-        } as any;
-        if (this.fromFileId) {
-          delete obj.db_id;
-          obj.file_id = this.fileId;
         }
         this.workbechService.getColumnsData(obj).subscribe({
           next: (responce: any) => {
@@ -3368,6 +3448,7 @@ bar["stack"]="Total";
         this.chartsRowData = [];
         this.dualAxisRowData = [];
         this.radarRowData = [];
+        this.sortedData = [];
         let draggedColumnsObj;
         if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
           draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
@@ -3376,7 +3457,7 @@ bar["stack"]="Total";
           draggedColumnsObj = this.draggedColumnsData
         }
         const obj = {
-          "database_id": this.databaseId,
+          "hierarchy_id": this.databaseId,
           "queryset_id": this.qrySetId,
           "col": draggedColumnsObj,
           "row": this.draggedRowsData,
@@ -3388,10 +3469,6 @@ bar["stack"]="Total";
           "drill_down": this.drillDownObject,
           "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
           "parent_user":this.createdBy
-        } as any;
-        if (this.fromFileId) {
-          delete obj.database_id;
-          obj.file_id = this.fileId;
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
@@ -3410,28 +3487,28 @@ bar["stack"]="Total";
                 let object : any;
                 if (this.barchart) {
                   this.chartOptions3.series[0].data = this.chartsRowData;
-                  this.chartOptions3.xaxis.categories = this.chartsColumnData;
+                  this.chartOptions3.xaxis.categories = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                   this.chartOptions3.xaxis.convertedCatToNumeric = true;
                   // console.log(this.chartOptions3.xaxis.categories);
                   // console.log(this.chartOptions3);
                   object = [{data : this.chartsRowData}];
-                  this.barchart.updateSeries(object);
-                  object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
-                  this.barchart.updateOptions(object);
+                  // this.barchart.updateSeries(object);
+                  object = {xaxis: {categories : this.chartsColumnData.map((category : any)  => category === null ? 'null' : category), convertedCatToNumeric : true}};
+                  // this.barchart.updateOptions(object);
                   console.log(this.barchart);
                 }
                 else if (this.piechart) {
                   this.chartOptions4.series = this.chartsRowData;
-                  this.chartOptions4.labels = this.chartsColumnData;
+                  this.chartOptions4.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                 }
                 else if (this.linechart) {
                   this.chartOptions.series[0].data = this.chartsRowData;
                   this.chartOptions.xaxis.categories = this.chartsColumnData;
                   this.chartOptions.xaxis.convertedCatToNumeric = true;
                   object = [{data : this.chartsRowData}];
-                  this.linechart.updateSeries(object);
+                  // this.linechart.updateSeries(object);
                   object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
-                  this.linechart.updateOptions(object);
+                  // this.linechart.updateOptions(object);
                   console.log(this.linechart);
                 }
                 else if (this.areachart) {
@@ -3439,27 +3516,27 @@ bar["stack"]="Total";
                   this.chartOptions1.labels = this.chartsColumnData;
                   this.chartOptions1.xaxis.convertedCatToNumeric = true;
                   object = [{data : this.chartsRowData}];
-                  this.areachart.updateSeries(object);
+                  // this.areachart.updateSeries(object);
                   object = {xaxis: {categories : this.chartsColumnData, convertedCatToNumeric : true}};
-                  this.areachart.updateOptions(object);
+                  // this.areachart.updateOptions(object);
                   console.log(this.linechart);
                 }
                 else if (this.sidebysideChart) {
                   this.chartOptions2.series = this.dualAxisRowData;
                   this.chartOptions2.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.sidebysideChart.updateSeries(object);
+                  // this.sidebysideChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.sidebysideChart.updateOptions(object);
+                  // this.sidebysideChart.updateOptions(object);
                   console.log(this.sidebysideChart);
                 }
                 else if (this.stockedChart) {
                   this.chartOptions6.series = this.dualAxisRowData;
                   this.chartOptions6.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.stockedChart.updateSeries(object);
+                  // this.stockedChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.stockedChart.updateOptions(object);
+                  // this.stockedChart.updateOptions(object);
                   console.log(this.stockedChart);
                 }
                 else if (this.barlineChart) {
@@ -3470,58 +3547,58 @@ bar["stack"]="Total";
                   this.chartOptions5.labels = categories;
                   this.chartOptions5.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.barlineChart.updateSeries(object);
+                  // this.barlineChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.barlineChart.updateOptions(object);
+                  // this.barlineChart.updateOptions(object);
                   console.log(this.barlineChart);
                 }
                 else if (this.horizontolstockedChart) {
                   this.chartOptions7.series = this.dualAxisRowData;
                   this.chartOptions7.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.horizontolstockedChart.updateSeries(object);
+                  // this.horizontolstockedChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.horizontolstockedChart.updateOptions(object);
+                  // this.horizontolstockedChart.updateOptions(object);
                   console.log(this.horizontolstockedChart);
                 }
                 else if (this.groupedChart) {
                   this.chartOptions8.series = this.dualAxisRowData;
                   this.chartOptions8.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.groupedChart.updateSeries(object);
+                  // this.groupedChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.groupedChart.updateOptions(object);
+                  // this.groupedChart.updateOptions(object);
                   console.log(this.groupedChart);
                 }
                 else if (this.multilineChart) {
                   this.chartOptions9.series = this.dualAxisRowData;
                   this.chartOptions9.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.multilineChart.updateSeries(object);
+                  // this.multilineChart.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.multilineChart.updateOptions(object);
+                  // this.multilineChart.updateOptions(object);
                   console.log(this.multilineChart);
                 }
                 else if (this.donutchart) {
                   this.chartOptions10.series = this.chartsRowData;
-                  this.chartOptions10.labels = this.chartsColumnData;
+                  this.chartOptions10.labels = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
                 }
                 else if (this.heatMap) {
                   this.heatMapChartOptions.series = this.dualAxisRowData;
                   this.heatMapChartOptions.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.heatmapcharts.updateSeries(object);
+                  // this.heatmapcharts.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.heatmapcharts.updateOptions(object);
+                  // this.heatmapcharts.updateOptions(object);
                   console.log(this.heatmapcharts);
                 }
                 else if (this.funnel) {
                   this.funnelChartOptions.series = this.dualAxisRowData;
                   this.funnelChartOptions.xaxis.categories = categories;
                   object = [{data : this.dualAxisRowData}];
-                  this.funnelCharts.updateSeries(object);
+                  // this.funnelCharts.updateSeries(object);
                   object = {xaxis: {categories : categories}};
-                  this.funnelCharts.updateOptions(object);
+                  // this.funnelCharts.updateOptions(object);
                   console.log(this.funnelCharts);
                 } else if(this.map){
                   this.mapChart();
@@ -3561,7 +3638,7 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if((this.draggedColumns.length > 1 && this.draggedRows.length > 0 && (this.pie || this.bar || this.area || this.line || this.donut))) {
+            } else if(((this.pie || this.bar || this.area || this.line || this.donut) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
               this.bar = false;
               this.area = false;
@@ -3583,7 +3660,9 @@ bar["stack"]="Total";
               this.calendar = false;
               this.map = false;
               this.sidebysideBar();
+              this.chartType = 'sidebyside';
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
+              this.chartType = 'sidebyside'
             }
             if(this.table){
               this.tableDisplayPagination();
@@ -3598,6 +3677,7 @@ bar["stack"]="Total";
       }
 
       pageChangeTableDisplay(page:any){
+        this.sortedData = [];
         this.pageNo=page;
         this.tableDisplayPagination();
       }
@@ -3609,8 +3689,7 @@ bar["stack"]="Total";
       tableDisplayPagination() {
         if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
           const obj = {
-            database_id: this.databaseId,
-            file_id: this.fileId,
+            hierarchy_id: this.databaseId,
             sheetqueryset_id: this.sheetfilter_querysets_id,
             queryset_id: this.qrySetId,
             page_no: this.pageNo,
@@ -3708,6 +3787,7 @@ bar["stack"]="Total";
           });
           console.log('dualAxisColumnDatathis', this.dualAxisColumnData)
           console.log(this.dualAxisRowData);
+          this.cdr.detectChanges();
           let rowCount: any;
           if (this.tablePreviewColumn[0]?.result_data?.length) {
             rowCount = this.tablePreviewColumn[0]?.result_data?.length;
@@ -3767,57 +3847,74 @@ bar["stack"]="Total";
           //   this.chartsData.push(aa);
           // }
         }
-      }
 
+      }
+      chartType : string ='';
       chartsOptionsSet(){
         if (this.bar) {
+          this.chartType = 'bar';
           this.barChart();
         } else if (this.area) {
+          this.chartType = 'area';
           this.areaChart();
         } else if (this.line) {
+          this.chartType = 'line';
           this.lineChart();
         } else if (this.pie) {
+          this.chartType = 'pie';
           this.pieChart();
         } else if (this.sidebyside) {
+          this.chartType = 'sidebyside';
           this.sidebysideBar();
         } else if (this.stocked) {
+          this.chartType = 'stocked';
           this.stockedBar();
         } else if (this.barLine) {
+          this.chartType = 'barline';
           this.barLineChart();
         } else if (this.horizentalStocked) {
+          this.chartType = 'hstocked';
           this.horizentalStockedBar();
         } else if (this.grouped) {
+          this.chartType = 'hgrouped';
           this.hGrouped();
         } else if (this.multiLine) {
+          this.chartType = 'multiline';
           this.multiLineChart();
         } else if (this.donut) {
+          this.chartType = 'donut';
           this.donutChart();
         } else if (this.radar) {
+          this.chartType = 'radar';
           this.radarChart();
         } else if (this.heatMap) {
+          this.chartType = 'heatmap';
           this.heatMapChart();
         } else if (this.kpi){
           this.KPIChart();
         } else if (this.funnel){
+          this.chartType = 'funnel';
           this.funnelChart();
         }else if(this.guage){
+          this.chartType = 'guage';
           this.guageChart();
         } else if(this.map){
+          this.chartType = 'map';
           this.http.get('./assets/maps/world.json').subscribe((geoJson: any) => {
             echarts.registerMap('world', geoJson);  // Register the map data
-      
-            // Initialize the chart after the map is registered
             this.mapChart();
           });
         } else if(this.calendar){
+          this.chartType = 'calendar';
           this.calendarChart();
         }
-        
+
       }
 
+
       mapChart(){
-       let minData = 0;
-       const maxData = Math.max(...this.chartsRowData);
+       let minData : number = 0;
+       let maxData: number = Math.max(...this.chartsRowData);
        let result:any[] = [];
 
        // Loop through the countries (assuming both data sets align by index)
@@ -3835,9 +3932,12 @@ bar["stack"]="Total";
          result.push(countryData);
        });
     if(this.chartsColumnData && this.chartsColumnData.length > 1){
-    minData = Math.min(...this.chartsRowData);
+    minData= Math.min(...this.chartsRowData);
     }
-
+    if(Number.isNaN(minData) || Number.isNaN(maxData)){
+      minData = 0;
+      maxData = 1;
+    }
     
     this.eMapChartOptions = {
       tooltip: {
@@ -3895,6 +3995,7 @@ bar["stack"]="Total";
       storeColumnData = [] as any;
       storeRowData = [] as any;
       columndrop(event: CdkDragDrop<string[]>){
+        this.sortedData = [];
         console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
         this.storeColumnData.push(event.previousContainer.data);
@@ -3914,7 +4015,11 @@ bar["stack"]="Total";
       console.log('New element index:', event.currentIndex);
       const columnIndexMap = new Map((this.draggedColumns as any[]).map((col, index) => [col.column, index]));
       //this.draggedColumnsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
-      this.draggedColumnsData.splice(event.currentIndex, 0, [element.column, element.data_type, "", ""]);
+      if(element.data_type == 'calculated') {
+        this.draggedColumnsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+      } else {
+      this.draggedColumnsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+      }
       // this.draggedColumnsData = (this.draggedColumnsData as any[]).sort((a, b) => {
       //   const indexA = columnIndexMap.get(a[0]) ?? -1;
       //   const indexB = columnIndexMap.get(b[0]) ?? -1;
@@ -3936,11 +4041,12 @@ bar["stack"]="Total";
         this.dataExtraction();
       }
     }
-    dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz'];
-    integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double'];
+    dateList = ['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(datetime)','timestamptz'];
+    integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
     boolList = ['bool', 'boolean'];
-    stringList = ['varchar','bp char','text','varchar2','NVchar2','char','Nchar','character varying','string'];
+    stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
     rowdrop(event: CdkDragDrop<string[]>){
+      this.sortedData = [];
       console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
       // this.storeRowData.push(event.previousContainer.data); 
@@ -3959,7 +4065,11 @@ bar["stack"]="Total";
     event.currentIndex = this.draggedRows.indexOf(element);
     const rowIndexMap = new Map((this.draggedRows as any[]).map((row, index) => [row.column, index]));
     //this.draggedRowsData.push([this.schemaName,this.tableName,this.table_alias,element.column,element.data_type,""])
+    if(element.data_type == 'calculated') {
+      this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+    } else {
     this.draggedRowsData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+    }
     // this.draggedRowsData = (this.draggedRowsData as any[]).sort((a, b) => {
     //   const indexA = rowIndexMap.get(a[0]) ?? -1;
     //   const indexB = rowIndexMap.get(b[0]) ?? -1;
@@ -4027,6 +4137,7 @@ bar["stack"]="Total";
     }
   }
   dragStartedColumn(index:any,column:any){
+    this.sortedData = [];
     console.log(this.draggedColumns);
     console.log(this.draggedColumnsData);
     console.log(index);
@@ -4056,6 +4167,7 @@ bar["stack"]="Total";
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
+    this.sortedData = [];
     this.draggedRows.splice(index, 1);
     this.draggedRowsData.splice(index, 1);
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
@@ -4155,7 +4267,9 @@ bar["stack"]="Total";
   tabs : any [] = [];
   selected = new FormControl(0);
   addSheet(isDuplicate : boolean) {
-    this.active = 1;
+    if (this.active !== 3){
+      this.active = 1;
+    }
     this.retriveDataSheet_id = '';
     this.draggedDrillDownColumns = [];
     this.drillDownObject = [];
@@ -4220,7 +4334,7 @@ bar["stack"]="Total";
               confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
               if (result.isConfirmed) {
-                const idToPass = this.fromFileId ? this.fileId : this.databaseId;
+                const idToPass = this.databaseId;
                 this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
                 // this.workbechService.deleteSheet(this.databaseId, this.qrySetId, this.retriveDataSheet_id).subscribe({
                 //   next: (data: any) => {
@@ -4343,6 +4457,7 @@ bar["stack"]="Total";
     this.displayedColumns = [];
     this.retriveDataSheet_id = '';
     this.getChartData();
+    this.columnsData();
     if(selectedSheetId){
       this.retriveDataSheet_id = selectedSheetId;
       this.sheetRetrive(false);
@@ -4476,6 +4591,7 @@ bar["stack"]="Total";
       this.multiLineXaxis = [];
       this.donutYaxis = [];
       this.donutXaxis = [];
+      this.sortedData = [];
       this.table = true;
       this.bar = false;
       this.pie = false;
@@ -4511,7 +4627,7 @@ bar["stack"]="Total";
       this.kpiColor = '#000000';
       this.GridColor = '#089ffc';
       this.backgroundColor = '#fcfcfc';
-      this.color = '#00a5a2';
+      this.color = '#2392c1';
       this.bandingSwitch = false;
       this.xLabelSwitch = true;
       this.yLabelSwitch = true;
@@ -4592,7 +4708,7 @@ sheetSave(){
   if(this.bar && this.chartId == 6){
     console.log(this.chartOptions3);
     this.saveBar = this.chartsRowData;
-    this.barXaxis = this.chartsColumnData;
+    this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if (this.originalData) {
       this.saveBar = this.originalData.data;
       this.barXaxis = this.originalData.categories;
@@ -4613,7 +4729,7 @@ sheetSave(){
   }
   if(this.pie && this.chartId == 24){
     this.savePie = this.chartsRowData;
-    this.pieXaxis = this.chartsColumnData;
+    this.pieXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     if(this.isApexCharts) {
       savedChartOptions = _.cloneDeep(this.chartOptions4);
       this.pieOptions = this.chartOptions4;
@@ -4720,7 +4836,7 @@ sheetSave(){
   if(this.donut && this.chartId == 10){
     
     this.donutYaxis = this.chartsRowData;
-    this.donutXaxis = this.chartsColumnData;
+    this.donutXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
     
     if (this.originalData) {
       this.donutYaxis = this.originalData.data;
@@ -4775,6 +4891,7 @@ sheetSave(){
   if(this.calendar && this.chartId == 11){
     savedChartOptions = this.eCalendarChartOptions;
   }
+  savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
     isZoom : this.isZoom,
     xGridColor : this.xGridColor,
@@ -4791,6 +4908,7 @@ sheetSave(){
     labelAlignment : this.xlabelAlignment,
     backgroundColor : this.backgroundColor,
     color : this.color,
+    selectedColorScheme:this.selectedColorScheme,
     ylabelFontWeight : this.ylabelFontWeight,
     isBold : this.isBold,
     yLabelFontFamily : this.yLabelFontFamily,
@@ -4811,7 +4929,6 @@ sheetSave(){
     color1 : this.color1,
     color2 : this.color2,
     kpiColor : this.kpiColor,
-    funnelColor : this.funnelColor,
     barColor : this.barColor,
     lineColor : this.lineColor,
     GridColor : this.GridColor,
@@ -4834,7 +4951,24 @@ sheetSave(){
     dataLabelsFontPosition: this.dataLabelsFontPosition,
     measureAlignment: this.measureAlignment,
     dimensionAlignment: this.dimensionAlignment,
-
+    tableDataFontFamily: this.tableDataFontFamily,
+    tableDataFontSize: this.tableDataFontSize,
+    tableDataFontWeight: this.tableDataFontWeight,
+    tableDataFontStyle: this.tableDataFontStyle,
+    tableDataFontDecoration: this.tableDataFontDecoration,
+    tableDataFontColor: this.tableDataFontColor,
+    tableDataFontAlignment: this.tableDataFontAlignment,
+    headerFontFamily: this.headerFontFamily,
+    headerFontSize: this.headerFontSize,
+    headerFontWeight: this.headerFontWeight,
+    headerFontStyle: this.headerFontStyle,
+    headerFontDecoration: this.headerFontDecoration,
+    headerFontColor: this.headerFontColor,
+    headerFontAlignment: this.headerFontAlignment,
+    dimeansionColor:this.dimensionColor,
+    measureColor:this.measureColor,
+    dataLabelsColor:this.dataLabelsColor,
+    sortType : this.sortType
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -4940,10 +5074,6 @@ const obj={
     "suffix" : this.suffix
   }
 }
-}as any;
-if(this.fromFileId){
-  delete obj.server_id;
-  obj.file_id=this.fileId; 
 }
 console.log(this.retriveDataSheet_id)
 if(this.retriveDataSheet_id){
@@ -5049,44 +5179,40 @@ sheetRetrive(isDuplicate : boolean){
   const obj={
   "queryset_id":this.qrySetId,
   "server_id": this.databaseId,
-}as any;
-if(this.fromFileId){
-  delete obj.server_id;
-  obj.file_id=this.fileId;
 }
 
 this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (responce:any) => {
         if(isDuplicate){
           this.retriveDataSheet_id = '';
         } else {
-          this.retriveDataSheet_id = responce.sheet_id;
-          this.sheetName = responce.sheet_name;
-          this.sheetTitle = responce.sheet_name;
-          this.sheetfilter_querysets_id = responce.sheetfilter_querysets_id || responce.sheet_filter_quereyset_ids;
+          this.retriveDataSheet_id = responce?.sheet_id;
+          this.sheetName = responce?.sheet_name;
+          this.sheetTitle = responce?.sheet_name;
+          this.sheetfilter_querysets_id = responce?.sheetfilter_querysets_id || responce?.sheet_filter_quereyset_ids;
           if(!responce.sheet_tag_name){
-            this.sheetTagName = responce.sheet_name;
+            this.sheetTagName = responce?.sheet_name;
           }
           else{
-            this.sheetTagName = responce.sheet_tag_name;
+            this.sheetTagName = responce?.sheet_tag_name;
           }
         }
-        this.chartId = responce.chart_id;
-        this.sheetChartId = responce.chart_id;
-        this.sheetCustomQuery = responce.custom_query;
-        this.sheetResponce = responce.sheet_data;
-        this.draggedColumns=this.sheetResponce.columns;
-        this.filterQuerySetId = responce.datasource_queryset_id;
-        this.draggedRows = this.sheetResponce.rows;
-        this.mulColData = responce.col_data;
-        this.mulRowData = responce.row_data;
-        this.tablePaginationRows=responce.row_data;
-        this.tablePaginationColumn=responce.col_data;
-        this.dimetionMeasure = responce.filters_data;
-        this.createdBy = responce.created_by;
-        this.color1 = responce.sheet_data?.results?.color1;
-        this.color2 = responce.sheet_data?.results?.color2;
-        this.tablePaginationCustomQuery = responce.custom_query;
-        this.donutDecimalPlaces = this.sheetResponce.results.decimalplaces;
+        this.chartId = responce?.chart_id;
+        this.sheetChartId = responce?.chart_id;
+        this.sheetCustomQuery = responce?.custom_query;
+        this.sheetResponce = responce?.sheet_data;
+        this.draggedColumns=this.sheetResponce?.columns;
+        this.filterQuerySetId = responce?.datasource_queryset_id;
+        this.draggedRows = this.sheetResponce?.rows;
+        this.mulColData = responce?.col_data;
+        this.mulRowData = responce?.row_data;
+        this.tablePaginationRows=responce?.row_data;
+        this.tablePaginationColumn=responce?.col_data;
+        this.dimetionMeasure = responce?.filters_data;
+        this.createdBy = responce?.created_by;
+        this.color1 = responce?.sheet_data?.results?.color1;
+        this.color2 = responce?.sheet_data?.results?.color2;
+        this.tablePaginationCustomQuery = responce?.custom_query;
+        this.donutDecimalPlaces = this.sheetResponce?.results.decimalplaces;
         if(this.sheetResponce?.numberFormat?.decimalPlaces){ 
           this.decimalPlaces = this.sheetResponce?.numberFormat?.decimalPlaces;
         }
@@ -5101,13 +5227,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
-        responce.filters_data.forEach((filter: any)=>{
+        responce?.filters_data.forEach((filter: any)=>{
           this.filterId.push(filter.filter_id);
         })
-        this.isEChatrts = this.sheetResponce.isEChart;
-        this.isApexCharts = this.sheetResponce.isApexChart;
-        this.dateDrillDownSwitch = this.sheetResponce.isDrillDownData;
-        this.draggedDrillDownColumns = this.sheetResponce.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
+        this.isEChatrts = this.sheetResponce?.isEChart;
+        this.isApexCharts = this.sheetResponce?.isApexChart;
+        this.dateDrillDownSwitch = this.sheetResponce?.isDrillDownData;
+        this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
         } else {
@@ -5118,7 +5244,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.displayUnits = 'none';
         
         if(this.sheetResponce.columns_data){
-          this.draggedColumnsData = this.sheetResponce.columns_data;
+          this.draggedColumnsData = this.sheetResponce?.columns_data;
         }
         else{
           this.draggedColumns.forEach((res:any) => {
@@ -5126,7 +5252,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           });
         }
         if(this.sheetResponce.rows_data){
-          this.draggedRowsData = this.sheetResponce.rows_data;
+          this.draggedRowsData = this.sheetResponce?.rows_data;
         }
         else{
           this.draggedRows.forEach((res:any) => {
@@ -5137,10 +5263,10 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
           // this.tableData = this.sheetResponce.results.tableData;
-          this.displayedColumns = this.sheetResponce.results.tableColumns;
-          this.bandingSwitch = this.sheetResponce.results.banding;
-          this.color1 = this.sheetResponce.results.color1;
-          this.color2 = this.sheetResponce.results.color2;
+          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          this.bandingSwitch = this.sheetResponce?.results.banding;
+          this.color1 = this.sheetResponce?.results?.color1;
+          this.color2 = this.sheetResponce?.results?.color2;
           this.table = true;
           this.bar = false;
           this.pie = false;
@@ -5163,18 +5289,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.tableDisplayPagination();
         }
         if(responce.chart_id == 25){
-          this.tablePreviewRow = this.sheetResponce.results.kpiData;
-          this.KPINumber = this.sheetResponce.results.kpiNumber;
-          this.kpiFontSize = this.sheetResponce.results.kpiFontSize;
-          this.kpiColor = this.sheetResponce.results.kpicolor;
-          if(this.sheetResponce.results.kpiPrefix) {
+          this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
+          this.KPINumber = this.sheetResponce?.results?.kpiNumber;
+          this.kpiFontSize = this.sheetResponce?.results?.kpiFontSize;
+          this.kpiColor = this.sheetResponce?.results?.kpicolor;
+          if(this.sheetResponce?.results?.kpiPrefix) {
             this.KPIPrefix = this.sheetResponce.results.kpiPrefix;
           }
-          if(this.sheetResponce.results.kpiSuffix) {
+          if(this.sheetResponce?.results?.kpiSuffix) {
             this.KPISuffix = this.sheetResponce.results.kpiSuffix;
           }
-          this.KPIDisplayUnits = this.sheetResponce.results.kpiDecimalUnit,
-          this.KPIDecimalPlaces = this.sheetResponce.results.kpiDecimalPlaces,
+          this.KPIDisplayUnits = this.sheetResponce?.results?.kpiDecimalUnit,
+          this.KPIDecimalPlaces = this.sheetResponce?.results?.kpiDecimalPlaces,
           this.table = false;
           this.bar = false;
           this.pie = false;
@@ -5200,7 +5326,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             echarts.registerMap('world', geoJson);  // Register the map data
       
             // Initialize the chart after the map is registered
-            this.eMapChartOptions = this.sheetResponce.savedChartOptions;
+            this.eMapChartOptions = this.sheetResponce?.savedChartOptions;
             this.eMapChartOptions.tooltip = {
               formatter: (params: any) => {
                 const { name, data } = params;
@@ -5243,10 +5369,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.guage = false;
           this.map = true;
           this.calendar = false;
+          this.chartType = 'map';
         }
        if(responce.chart_id == 6){
         // this.chartsRowData = this.sheetResponce.results.barYaxis;
         // this.chartsColumnData = this.sheetResponce.results.barXaxis;
+        this.chartType = 'bar';
        if(this.isApexCharts){
         const self = this;
         this.chartOptions3 = this.sheetResponce.savedChartOptions;
@@ -5300,6 +5428,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 24){
+        this.chartType = 'pie';
         if(this.isApexCharts){
           const self = this;
           this.chartOptions4 = this.sheetResponce.savedChartOptions;
@@ -5350,6 +5479,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 13){
+        this.chartType = 'line';
         if(this.isApexCharts){
           const self = this;
           this.chartOptions = this.sheetResponce.savedChartOptions;
@@ -5400,6 +5530,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 17){
+        this.chartType = 'area';
         if(this.isApexCharts){
           this.chartOptions1 = this.sheetResponce.savedChartOptions;
           this.chartOptions1.xaxis.convertedCatToNumeric = true;
@@ -5435,6 +5566,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 7){
+        this.chartType = 'sidebyside';
         if(this.isApexCharts){
         this.chartOptions2 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions2?.dataLabels){
@@ -5468,6 +5600,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 5){
+        this.chartType = 'stocked';
         if(this.isApexCharts){
         this.chartOptions6 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions6?.dataLabels){
@@ -5501,6 +5634,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 4){
+        this.chartType = 'barline';
         if(this.isApexCharts){
           this.chartOptions5 = this.sheetResponce.savedChartOptions;
           this.chartOptions5.dataLabels.formatter = this.formatNumber.bind(this);
@@ -5537,6 +5671,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 12){
+        this.chartType = 'radar';
         this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.radarChart();
         this.bar = false;
@@ -5565,6 +5700,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           }
        }
        if(responce.chart_id == 2){
+        this.chartType = 'hstocked';
         if(this.isApexCharts){
         this.chartOptions7 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions7?.dataLabels){
@@ -5598,6 +5734,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 3){
+        this.chartType = 'hgrouped';
         if(this.isApexCharts){
         this.chartOptions8 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions8?.dataLabels){
@@ -5631,6 +5768,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 8){
+        this.chartType = 'multiline';
         if(this.isApexCharts){
         this.chartOptions9 = this.sheetResponce.savedChartOptions;
         if(this.chartOptions9?.dataLabels){
@@ -5664,6 +5802,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 10){
+        this.chartType = 'donut';
         if(this.isApexCharts){
         this.chartOptions10 = this.sheetResponce.savedChartOptions;
         this.legendSwitch = this.chartOptions10?.legend?.show;
@@ -5722,6 +5861,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 26){
+        this.chartType = 'heatmap';
         if(this.isApexCharts){
           this.heatMapChartOptions = this.sheetResponce.savedChartOptions;
           if(this.heatMapChartOptions?.dataLabels){
@@ -5752,6 +5892,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 27){
+        this.chartType = 'funnel';
          if(this.isEChatrts){
           this.eFunnelChartOptions = this.sheetResponce.savedChartOptions;
          } else {
@@ -5764,10 +5905,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         }
         this.isDistributed = this.funnelChartOptions?.plotOptions?.bar?.distributed;
-        this.funnelDLAllign = this.funnelChartOptions?.plotOptions?.bar?.dataLabels?.position;
-        this.funnelDLFontFamily = this.funnelChartOptions?.dataLabels?.style?.fontFamily;
-        this.funnelDLFontSize = this.funnelChartOptions?.dataLabels?.style?.fontSize;
-        // this.funnelColor = this.funnelChartOptions?.series[0]?.color;
       }
         this.bar = false;
         this.table = false;
@@ -5790,6 +5927,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 28){
+        this.chartType = 'guage';
         this.guageChartOptions = this.sheetResponce.savedChartOptions;
         this.maxValueGuage = this.guageChartOptions.plotOptions.radialBar.max;
         this.minValueGuage =  this.guageChartOptions.plotOptions.radialBar.min;
@@ -5814,6 +5952,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
        }
        if(responce.chart_id == 11){
+        this.chartType = 'calendar';
         this.eCalendarChartOptions = this.sheetResponce.savedChartOptions;
         this.eCalendarChartOptions.tooltip.formatter =  function (params: any) {
           const date = params.data[0];
@@ -5841,9 +5980,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = true;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
-        setTimeout(()=>{
-          this.updateNumberFormat('fromSheetRetrieve');
-        }, 1000);
+        // setTimeout(()=>{
+        //   // this.updateNumberFormat();
+        // }, 1000);
       },
       error: (error) => {
         console.log(error);
@@ -5862,7 +6001,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
     });
+    if(data.data_type == 'calculated'){
+      this.filterName = data.field_name;
+      this.filterCalculatedFieldLogic = data.column;
+    } else {
     this.filterName = data.column;
+    }
     this.filterType = data.data_type;
     this.filterDataGet();
   }
@@ -5890,19 +6034,17 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   }
   filterDataGet(){
     const obj={
-      "database_id" :this.databaseId,
+      "hierarchy_id" :this.databaseId,
       "query_set_id":this.qrySetId,
       "type_of_filter" : "sheet",
       "datasource_queryset_id" :this.filterQuerySetId,
       "col_name":this.filterName,
        "data_type":this.filterType,
        "search":this.filterSearch,
-       "parent_user":this.createdBy
+       "parent_user":this.createdBy,
+       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+       "is_calculated": this.filterType == 'calculated' ? true : false
       // "format_date":""
-}as any;
-if(this.fromFileId){
-  delete obj.database_id;
-  obj.file_id=this.fileId;
 }
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -5910,8 +6052,8 @@ if(this.fromFileId){
         this.filterData = convertedArray;
 
         if(this.dateList.includes(responce.dtype)){
-          this.floor = new Date(this.filterData[0]).getTime();
-          this.ceil = new Date(this.filterData[this.filterData.length - 1]).getTime();
+          this.floor = new Date(this.filterData[0].label).getTime();
+          this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
           this.minValue = this.floor;
           this.maxValue = this.ceil;
           this.options = {
@@ -5957,9 +6099,10 @@ if(this.fromFileId){
   }
   filterDataPut(){
     // this.dimetionMeasure = [];
+    this.sortedData = [];
     const obj={
     //"filter_id": this.filter_id,
-    "database_id": this.databaseId,
+    "hierarchy_id": this.databaseId,
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
@@ -5968,11 +6111,9 @@ if(this.fromFileId){
     "col_name":this.filterName,
        "data_type":this.filterType,
        "parent_user":this.createdBy,
-       "is_exclude":this.isExclude
-}as any;
-if(this.fromFileId){
-  delete obj.database_id;
-  obj.file_id=this.fileId;
+       "is_exclude":this.isExclude,
+       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+       "is_calculated": this.filterType == 'calculated' ? true : false
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -5994,19 +6135,16 @@ if(this.fromFileId){
     this.filterData = [];
     const obj={
       "type_filter":"chartfilter",
-      "database_id" :this.databaseId,
+      "hierarchy_id" :this.databaseId,
       "filter_id" :this.filter_id,
       "search":this.editFilterSearch
-}as any;
-if(this.fromFileId){
-  delete obj.database_id;
-  obj.file_id=this.fileId;
 }
   this.workbechService.filterEditPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filter_id = responce.filter_id;
         this.filterName=responce.column_name;
         this.filterType=responce.data_type;
+        this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
@@ -6029,9 +6167,10 @@ if(this.fromFileId){
   }
   filterDataEditArray = [] as any;
   filterDataEditPut(){
+    this.sortedData = [];
     const obj={
       "filter_id": this.filter_id,
-      "database_id": this.databaseId,
+      "hierarchy_id": this.databaseId,
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
@@ -6039,12 +6178,10 @@ if(this.fromFileId){
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
       "data_type":this.filterType,
-      "is_exclude":this.isExclude
+      "is_exclude":this.isExclude,
+      "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+      "is_calculated": this.filterType == 'calculated' ? true : false
 
-  }as any;
-  if(this.fromFileId){
-    delete obj.database_id;
-    obj.file_id=this.fileId;
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -6061,6 +6198,7 @@ if(this.fromFileId){
     this.hasUnSavedChanges=true;
   }
   filterDelete(index:any,filterId:any){
+  this.sortedData = [];
   this.workbechService.filterDelete(filterId).subscribe({next: (responce:any) => {
         this.dimetionMeasure.splice(index, 1);
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
@@ -6125,30 +6263,30 @@ editFilterCheck(data:any){
   }
 }
 gotoDashboard(){
-  if(!this.fromFileId){
+  // if(!this.fromFileId){
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/dbId'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
-  }
-if(this.fromFileId){
-  const encodedFileId = btoa(this.fileId.toString())
-  const encodedQuerySetId = btoa(this.qrySetId.toString());
-  this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
-}
+  this.router.navigate(['/analytify/sheetscomponent/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId])
+  // }
+// if(this.fromFileId){
+//   const encodedFileId = btoa(this.fileId.toString())
+//   const encodedQuerySetId = btoa(this.qrySetId.toString());
+//   this.router.navigate(['/insights/sheetscomponent/sheetsdashboard/fileId'+'/'+ encodedFileId +'/' +encodedQuerySetId])
+// }
 }
 viewDashboard(){
-  if(this.fromFileId){
-    const encodedDatabaseId = btoa(this.fileId.toString());
-    const encodedQuerySetId = btoa(this.qrySetId.toString());
-    const encodedDashboardId = btoa(this.dashboardId.toString());
-    this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  // if(this.fromFileId){
+  //   const encodedDatabaseId = btoa(this.fileId.toString());
+  //   const encodedQuerySetId = btoa(this.qrySetId.toString());
+  //   const encodedDashboardId = btoa(this.dashboardId.toString());
+  //   this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
 
-  } else {
+  // } else {
   const encodedDatabaseId = btoa(this.databaseId.toString());
   const encodedQuerySetId = btoa(this.qrySetId.toString());
   const encodedDashboardId = btoa(this.dashboardId.toString());
-  this.router.navigate(['insights/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
-  }
+  this.router.navigate(['analytify/home/sheetsdashboard'+'/'+ encodedDatabaseId +'/' +encodedQuerySetId +'/' + encodedDashboardId])
+  // }
 
 }
 
@@ -6207,7 +6345,6 @@ else if(this.barLine){
   }else{
     this.eBarLineChartOptions.series[0].itemStyle.color = this.barColor;
     this.eBarLineChartOptions.series[1].lineStyle.color = this.lineColor;
-
   }
 }
 else if(this.horizentalStocked){
@@ -6252,25 +6389,7 @@ else if(this.guage){
 else if(this.radar){
   this.eRadarChartOptions.color = color;
 }
-if(this.isApexCharts){
-this.updateChart(object);
-}else{
-  this.updateEchartOptions();
 }
-}
-// scolor : any;
-// barColors(color:any, index: any){
-//   if(index === 0){
-//     this.chartOptions2.series[0].color = color;
-//   }
-//   if(index === 1){
-//     this.chartOptions2.series[1].color = color;
-//   }
-//   if(index === 2){
-//     this.chartOptions2.series[2].color = color;
-//   }
-//   this.updateChart();
-// }
 rename(index:any,name:any,event:any){
   this.oldColumn = '';
 this.oldColumn = name;
@@ -6356,587 +6475,9 @@ renameColumns(){
     let object : any = {};
     if (section === 'dimension') {
       this.dimensionAlignment = event;
-      if (event === 'center') {
-        object = {xaxis: {labels : {offsetX : 0}, categories: this.chartsColumnData}};
-        if(this.bar){
-          if(this.isApexCharts){
-          this.chartOptions3.xaxis.labels.offsetX = 0;
-          }else{
-            this.xlabelAlignment = 'Middle'
-            this.eBarChartOptions.xAxis.nameLocation = 'Middle';
-          }
-        }
-        else if(this.areachart){
-          this.chartOptions1.xaxis.labels.offsetX = 0;
-        }
-        else if(this.linechart){
-          this.chartOptions.xaxis.labels.offsetX = 0;
-        }
-        else if(this.sidebysideChart){
-          this.chartOptions2.xaxis.labels.offsetX = 0;
-        }
-        else if(this.stockedChart){
-          this.chartOptions6.xaxis.labels.offsetX = 0;
-        }
-        else if(this.barlineChart){
-          this.chartOptions5.xaxis.labels.offsetX = 0;
-        }
-        else if(this.horizontolstockedChart){
-          this.chartOptions7.xaxis.labels.offsetX = 0;
-        }
-        else if(this.groupedChart){
-          this.chartOptions8.xaxis.labels.offsetX = 0;
-        }
-        else if(this.multilineChart){
-          this.chartOptions9.xaxis.labels.offsetX = 0;
-        }
-        else if(this.heatMap){
-          this.heatMapChartOptions.xaxis.labels.offsetX = 0;
-        }
-
-      }
-      if (event === 'left') {
-        object = {xaxis: {labels : {offsetX : -10}, categories: this.chartsColumnData}};
-        if(this.bar){
-          if(this.isApexCharts){
-          this.chartOptions3.xaxis.labels.offsetX = -10;
-          }else{
-            this.xlabelAlignment = 'End'
-            this.eBarChartOptions.xAxis.nameLocation = 'End';
-          }
-        }
-        else if(this.areachart){
-          this.chartOptions1.xaxis.labels.offsetX = -10;
-        }
-        else if(this.linechart){
-          this.chartOptions.xaxis.labels.offsetX = -10;
-        }
-        else if(this.sidebysideChart){
-          this.chartOptions2.xaxis.labels.offsetX = -10;
-        }
-        else if(this.stockedChart){
-          this.chartOptions6.xaxis.labels.offsetX = -10;
-        }
-        else if(this.barlineChart){
-          this.chartOptions5.xaxis.labels.offsetX = -10;
-        }
-        else if(this.horizontolstockedChart){
-          this.chartOptions7.xaxis.labels.offsetX = -10;
-        }
-        else if(this.groupedChart){
-          this.chartOptions8.xaxis.labels.offsetX = -10;
-        }
-        else if(this.multilineChart){
-          this.chartOptions9.xaxis.labels.offsetX = -10;
-        }
-        else if(this.heatMap){
-          this.heatMapChartOptions.xaxis.labels.offsetX = -10;
-        }
-      }
-      if (event === 'right') {
-        object = {xaxis: {labels : {offsetX : 10}, categories: this.chartsColumnData}};
-        if(this.bar){
-          if(this.isApexCharts){
-          this.chartOptions3.xaxis.labels.offsetX = 10;
-          }else{
-            this.xlabelAlignment = 'Start'
-            this.eBarChartOptions.xAxis.nameLocation = 'Start';
-          }
-        }
-        else if(this.areachart){
-          this.chartOptions1.xaxis.labels.offsetX = 10;
-        }
-        else if(this.linechart){
-          this.chartOptions.xaxis.labels.offsetX = 10;
-        }
-        else if(this.sidebysideChart){
-          this.chartOptions2.xaxis.labels.offsetX = 10;
-        }
-        else if(this.stockedChart){
-          this.chartOptions6.xaxis.labels.offsetX = 10;
-        }
-        else if(this.barlineChart){
-          this.chartOptions5.xaxis.labels.offsetX = 10;
-        }
-        else if(this.horizontolstockedChart){
-          this.chartOptions7.xaxis.labels.offsetX = 10;
-        }
-        else if(this.groupedChart){
-          this.chartOptions8.xaxis.labels.offsetX = 10;
-        }
-        else if(this.multilineChart){
-          this.chartOptions9.xaxis.labels.offsetX = 10;
-        }
-        else if(this.heatMap){
-          this.heatMapChartOptions.xaxis.labels.offsetX = 10;
-        }
-      }
     }
     else {
       this.measureAlignment = event;
-      if (event === 'center') {
-        object = {yaxis: {labels : {offsetY : 0, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-        if(this.barchart){
-          if (this.chartOptions3.yaxis.length > 0) {
-            (this.chartOptions3.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions3.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.areachart){
-          if (this.chartOptions1.yaxis.length > 0) {
-            (this.chartOptions1.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions1.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.linechart){
-          if (this.chartOptions.yaxis.length > 0) {
-            (this.chartOptions.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.sidebysideChart){
-          if (this.chartOptions2.yaxis.length > 0) {
-            (this.chartOptions2.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions2.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.stockedChart){
-          if (this.chartOptions6.yaxis.length > 0) {
-            (this.chartOptions6.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions6.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.barlineChart){
-          if (this.chartOptions5.yaxis.length > 0) {
-            (this.chartOptions5.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions5.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.horizontolstockedChart){
-          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-          if (this.chartOptions7.yaxis.length > 0) {
-            (this.chartOptions7.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions7.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.groupedChart){
-          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-          if (this.chartOptions8.yaxis.length > 0) {
-            (this.chartOptions8.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions8.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.multilineChart){
-          if (this.chartOptions9.yaxis.length > 0) {
-            (this.chartOptions9.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.chartOptions9.yaxis.labels.offsetY = 0;
-          }
-        }
-        else if(this.heatMap){
-          if (this.heatMapChartOptions.yaxis.length > 0) {
-            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 0;
-            })
-          }
-          else {
-            this.heatMapChartOptions.yaxis.labels.offsetY = 0;
-          }
-        }
-      }
-      if (event === 'top') {
-        object = {yaxis: {labels : {offsetY : -10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-        if(this.barchart){
-          if (this.chartOptions3.yaxis.length > 0) {
-            (this.chartOptions3.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions3.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.areachart){
-          if (this.chartOptions1.yaxis.length > 0) {
-            (this.chartOptions1.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions1.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.linechart){
-          if (this.chartOptions.yaxis.length > 0) {
-            (this.chartOptions.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.sidebysideChart){
-          if (this.chartOptions2.yaxis.length > 0) {
-            (this.chartOptions2.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions2.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.stockedChart){
-          if (this.chartOptions6.yaxis.length > 0) {
-            (this.chartOptions6.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions6.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.barlineChart){
-          if (this.chartOptions5.yaxis.length > 0) {
-            (this.chartOptions5.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions5.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.horizontolstockedChart){
-          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-          if (this.chartOptions7.yaxis.length > 0) {
-            (this.chartOptions7.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions7.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.groupedChart){
-          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-          if (this.chartOptions8.yaxis.length > 0) {
-            (this.chartOptions8.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions8.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.multilineChart){
-          if (this.chartOptions9.yaxis.length > 0) {
-            (this.chartOptions9.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.chartOptions9.yaxis.labels.offsetY = -10;
-          }
-        }
-        else if(this.heatMap){
-          if (this.heatMapChartOptions.yaxis.length > 0) {
-            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = -10;
-            })
-          }
-          else {
-            this.heatMapChartOptions.yaxis.labels.offsetY = -10;
-          }
-        }
-      }
-      if (event === 'bottom') {
-        object = {yaxis: {labels : {offsetY : 10, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-        if(this.barchart){
-          if (this.chartOptions3.yaxis.length > 0) {
-            (this.chartOptions3.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions3.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.areachart){
-          if (this.chartOptions1.yaxis.length > 0) {
-            (this.chartOptions1.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions1.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.linechart){
-          if (this.chartOptions.yaxis.length > 0) {
-            (this.chartOptions.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.sidebysideChart){
-          if (this.chartOptions2.yaxis.length > 0) {
-            (this.chartOptions2.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions2.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.stockedChart){
-          if (this.chartOptions6.yaxis.length > 0) {
-            (this.chartOptions6.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions6.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.barlineChart){
-          if (this.chartOptions5.yaxis.length > 0) {
-            (this.chartOptions5.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions5.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.horizontolstockedChart){
-          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-          if (this.chartOptions7.yaxis.length > 0) {
-            (this.chartOptions7.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions7.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.groupedChart){
-          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-          if (this.chartOptions8.yaxis.length > 0) {
-            (this.chartOptions8.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions8.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.multilineChart){
-          if (this.chartOptions9.yaxis.length > 0) {
-            (this.chartOptions9.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.chartOptions9.yaxis.labels.offsetY = 10;
-          }
-        }
-        else if(this.heatMap){
-          if (this.heatMapChartOptions.yaxis.length > 0) {
-            (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
-              data.labels.offsetY = 10;
-            })
-          }
-          else {
-            this.heatMapChartOptions.yaxis.labels.offsetY = 10;
-          }
-        }
-      }
-    }
-    if(this.isApexCharts){
-    this.updateChart(object);
-    }else{
-      this.updateEchartOptions();
-    }
-  }
-  updateChart(object : any) {
-    if (object.fromsheetretrieve) {
-      delete object.fromsheetretrieve
-      this.hasUnSavedChanges = false;
-    } else {
-      this.hasUnSavedChanges = true;
-    }
-    if (this.barchart) {
-      this.barchart.updateOptions(object);
-      console.log(this.chartOptions3);
-      console.log(this.barchart);
-    }
-    else if(this.areachart){
-      this.areachart.updateOptions(object);
-      console.log(this.chartOptions1);
-      console.log(this.areachart);
-    }
-    else if(this.linechart){
-      this.linechart.updateOptions(object);
-      console.log(this.chartOptions);
-      console.log(this.linechart);
-    }
-    else if(this.sidebysideChart){
-      this.sidebysideChart.updateOptions(object);
-      console.log(this.chartOptions2);
-      console.log(this.sidebysideChart);
-    }
-    else if(this.stockedChart){
-      this.stockedChart.updateOptions(object);
-      console.log(this.chartOptions6);
-      console.log(this.stockedChart);
-    }
-    else if(this.barlineChart){
-      this.barlineChart.updateOptions(object);
-      console.log(this.chartOptions5);
-      console.log(this.barlineChart);
-    }
-    else if(this.horizontolstockedChart){
-      this.horizontolstockedChart.updateOptions(object);
-      console.log(this.chartOptions7);
-      console.log(this.horizontolstockedChart);
-    }
-    else if(this.groupedChart){
-      this.groupedChart.updateOptions(object);
-      console.log(this.chartOptions8);
-      console.log(this.groupedChart);
-    }
-    else if(this.multilineChart){
-      this.multilineChart.updateOptions(object);
-      console.log(this.chartOptions9);
-      console.log(this.multilineChart);
-    }
-    else if(this.piechart){
-      this.piechart.updateOptions(object);
-      console.log(this.chartOptions4);
-      console.log(this.piechart);
-    }
-    else if(this.donutchart){
-      this.donutchart.updateOptions(object);
-      console.log(this.chartOptions10);
-      console.log(this.donutchart);
-    }
-    else if(this.funnel){
-      this.funnelCharts.updateOptions(object);
-      console.log(this.funnelChartOptions);
-      console.log(this.funnelCharts);
-    }
-    else if(this.guage){
-      this.guageCharts.updateOptions(object);
-      console.log(this.guageCharts);
-    }
-    else if(this.heatMap){
-      this.heatmapcharts.updateOptions(object);
-      console.log(this.heatMapChartOptions);
-      console.log(this.heatmapcharts);
-    }
-    // this.hasUnSavedChanges = true;
-  }
-
-  updateEchartOptions(value?:any){
-    const chartElement = document.getElementsByClassName('echart-charts')[0] as HTMLElement;
-    if (this.bar) {
-      echarts.init(chartElement).setOption(this.eBarChartOptions);
-      console.log('barchartoptionsafterupdate', this.eBarChartOptions)
-    }
-    if (this.area) {
-      echarts.init(chartElement).setOption(this.eAreaChartOptions);
-      console.log('areachart optionsafterupdate', this.eAreaChartOptions)
-    }
-    if (this.line) {
-      echarts.init(chartElement).setOption(this.eLineChartOptions);
-      console.log('linechart optionsafterupdate', this.eLineChartOptions)
-    }
-    if (this.sidebyside) {
-      echarts.init(chartElement).setOption(this.eSideBySideBarChartOptions);
-      console.log('eSideBySideBarChartOptions afterupdate', this.eSideBySideBarChartOptions)
-    }
-    if (this.stocked) {
-      echarts.init(chartElement).setOption(this.eStackedBarChartOptions);
-      console.log('eStackedBarChartOptions afterupdate', this.eStackedBarChartOptions)
-    }
-    if (this.radar) {
-      echarts.init(chartElement).setOption(this.eRadarChartOptions);
-      console.log('eRadarChartOptions optionsafterupdate', this.eRadarChartOptions)
-    }
-    if (this.heatMap) {
-      echarts.init(chartElement).setOption(this.eHeatMapChartOptions);
-      console.log('eHeatMapChartOptions optionsafterupdate', this.eHeatMapChartOptions)
-    }
-    if (this.pie) {
-      echarts.init(chartElement).setOption(this.ePieChartOptions);
-      console.log('ePieChartOptions optionsafterupdate', this.ePieChartOptions)
-    }
-    if (this.donut) {
-      echarts.init(chartElement).setOption(this.eDonutChartOptions);
-      console.log('eDonutChartOptions optionsafterupdate', this.eDonutChartOptions)
-    }
-    if (this.grouped) {
-      echarts.init(chartElement).setOption(this.eGroupedBarChartOptions);
-      console.log('eGroupedBarChartOptions optionsafterupdate', this.eGroupedBarChartOptions)
-    }
-    if (this.multiLine) {
-      echarts.init(chartElement).setOption(this.eMultiLineChartOptions);
-      console.log('eMultiLineChartOptions optionsafterupdate', this.eMultiLineChartOptions)
-    }
-    if (this.barLine) {
-      echarts.init(chartElement).setOption(this.eBarLineChartOptions);
-      console.log('eBarLineChartOptions optionsafterupdate', this.eBarLineChartOptions)
-    }
-    if (this.horizentalStocked) {
-      echarts.init(chartElement).setOption(this.ehorizontalStackedBarChartOptions);
-      console.log('ehorizontalStackedBarChartOptions optionsafterupdate', this.ehorizontalStackedBarChartOptions)
-    }
-    if (this.funnel) {
-      echarts.init(chartElement).setOption(this.eFunnelChartOptions);
-      console.log('eFunnelChartOptions optionsafterupdate', this.eFunnelChartOptions)
-    }
-    if(value === 'fromSheetretrieve'){
-    this.hasUnSavedChanges = false;
-    }else{
-      this.hasUnSavedChanges = true;
     }
   }
   toggleSwitch(type : string) {
@@ -6950,582 +6491,33 @@ renameColumns(){
     }
     else if(type === 'xlabel'){
       this.xLabelSwitch = !this.xLabelSwitch;
-      const dimensions: Dimension[] = this.dualAxisColumnData;
-      const categories = this.flattenDimensions(dimensions);
-      object = { xaxis: {labels: {show: this.xLabelSwitch}, categories: this.chartsColumnData}};
-      if(this.bar){
-        if(this.isApexCharts){
-        this.chartOptions3.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions3.xaxis.categories = this.chartsColumnData;
-        }else{
-          this.eBarChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.area){
-        if(this.isApexCharts){
-        this.chartOptions1.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions1.xaxis.categories = this.chartsColumnData;
-        }else{
-          this.eAreaChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        this.chartOptions.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions.xaxis.categories = this.chartsColumnData;
-        }else{
-          this.eLineChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        this.chartOptions2.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions2.xaxis.categories = categories;
-        }else{
-          this.eSideBySideBarChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        this.chartOptions6.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions6.xaxis.categories = categories;
-        }else{
-          this.eStackedBarChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        this.chartOptions5.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions5.xaxis.categories = categories;
-        }
-        this.eBarLineChartOptions.xAxis[0].axisLabel.show = this.xLabelSwitch;
-      }
-      else if(this.horizentalStocked){
-        if(this.isApexCharts){
-        this.chartOptions7.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions7.xaxis.categories = categories;
-        }else{
-          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.grouped){
-        if(this.isApexCharts){
-        this.chartOptions8.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions8.xaxis.categories = categories;
-        }else{
-          this.eGroupedBarChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        this.chartOptions9.xaxis.labels.show = this.xLabelSwitch;
-        this.chartOptions9.xaxis.categories = categories;
-        }else{
-          this.eMultiLineChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        this.heatMapChartOptions.xaxis.labels.show = this.xLabelSwitch;
-        this.heatMapChartOptions.xaxis.categories = categories;
-        }else{
-          this.eHeatMapChartOptions.xAxis.axisLabel.show = this.xLabelSwitch;
-        }
-      }
-
     }
     else if(type === 'ylabel'){
       this.yLabelSwitch = !this.yLabelSwitch;
-      // object = { yaxis: {labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-      object = {yaxis: {labels : {show: this.yLabelSwitch, offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-      if(this.bar){
-        if(this.isApexCharts){
-        if(this.chartOptions3.yaxis.length >0){
-          (this.chartOptions3.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions3.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eBarChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.area){
-        if(this.isApexCharts){
-        if(this.chartOptions1.yaxis.length >0){
-          (this.chartOptions1.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions1.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eAreaChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        if(this.chartOptions.yaxis.length >0){
-          (this.chartOptions.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eLineChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        if(this.chartOptions2.yaxis.length >0){
-          (this.chartOptions2.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions2.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eSideBySideBarChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        if(this.chartOptions6.yaxis.length >0){
-          (this.chartOptions6.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions6.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eStackedBarChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        if(this.chartOptions5.yaxis.length >0){
-          (this.chartOptions5.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions5.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eBarLineChartOptions.yAxis[1].axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.horizentalStocked){
-        object = {yaxis: {labels : {show: this.yLabelSwitch, offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if(this.chartOptions7.yaxis.length >0){
-          (this.chartOptions7.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions7.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.grouped){
-        object = {yaxis: {labels : {show: this.yLabelSwitch, offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if(this.chartOptions8.yaxis.length >0){
-          (this.chartOptions8.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions8.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eGroupedBarChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        if(this.chartOptions9.yaxis.length >0){
-          (this.chartOptions9.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.chartOptions9.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eMultiLineChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        if(this.heatMapChartOptions.yaxis.length >0){
-          (this.heatMapChartOptions.yaxis as any[]).forEach((data)=>{
-            data.labels.show = this.yLabelSwitch;
-          })
-        }
-        else{
-          this.heatMapChartOptions.yaxis.labels.show = this.yLabelSwitch;
-        }
-      }else{
-        this.eHeatMapChartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
-      }
-    }
     }
     else if(type === 'xgrid'){
       this.xGridSwitch = !this.xGridSwitch;
-      object = {grid: {xaxis: {lines: {show: this.xGridSwitch}}}};
-      if(this.bar){
-        if(this.isApexCharts){
-        this.chartOptions3.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eBarChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.area){
-        if(this.isApexCharts){
-        this.chartOptions1.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eAreaChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        this.chartOptions.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eLineChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        this.chartOptions2.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eSideBySideBarChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        this.chartOptions6.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eStackedBarChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        this.chartOptions5.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eBarLineChartOptions.xAxis[0].splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.horizentalStocked){
-        if(this.isApexCharts){
-        this.chartOptions7.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.ehorizontalStackedBarChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.grouped){
-        if(this.isApexCharts){
-        this.chartOptions8.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eGroupedBarChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        this.chartOptions9.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eMultiLineChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        this.heatMapChartOptions.grid.xaxis.lines.show = this.xGridSwitch;
-        }else{
-          this.eHeatMapChartOptions.xAxis.splitLine.show = this.xGridSwitch;
-        }
-      }
     }
     else if(type === 'ygrid'){
       this.yGridSwitch = !this.yGridSwitch;
-      object = {grid: {yaxis: {lines: {show: this.yGridSwitch}}}};
-      if(this.bar){
-        if(this.isApexCharts){
-        this.chartOptions3.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eBarChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.area){
-        if(this.isApexCharts){
-        this.chartOptions1.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eBarChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        this.chartOptions.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eLineChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        this.chartOptions2.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eSideBySideBarChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        this.chartOptions6.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eStackedBarChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        this.chartOptions5.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eBarLineChartOptions.yAxis[0].splitLine.show = this.yGridSwitch;
-          this.eBarLineChartOptions.yAxis[1].splitLine.show = this.yGridSwitch;
-
-        }
-      }
-      else if(this.horizentalStocked){
-        if(this.isApexCharts){
-        this.chartOptions7.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.ehorizontalStackedBarChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.grouped){
-        if(this.isApexCharts){
-        this.chartOptions8.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eGroupedBarChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        this.chartOptions9.grid.yaxis.lines.show = this.yGridSwitch;
-        }else{
-          this.eMultiLineChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        this.heatMapChartOptions.grid.yaxis.lines.show = this.yGridSwitch;
-        }
-        else{
-          this.eHeatMapChartOptions.yAxis.splitLine.show = this.yGridSwitch;
-        }
-      }
     }
     else if(type === 'legend'){
       this.legendSwitch = !this.legendSwitch;
-      object = {legend: {show: this.legendSwitch}};
-      if(this.pie){
-        if(this.isApexCharts){
-        this.chartOptions4.legend.show = this.legendSwitch;
-        }
-        else{
-          this.ePieChartOptions.legend.show = this.legendSwitch;
-        }
-      }
-      else if(this.donut){
-        if(this.isApexCharts){
-        this.chartOptions10.legend.show = this.legendSwitch;
-        }else{
-          this.eDonutChartOptions.legend.show = this.legendSwitch;
-        }
-      }
-    else if(this.radar){
-      this.eRadarChartOptions.legend.show = this.legendSwitch;
-    }
     }
     else if(type === 'dataLabels'){
       this.dataLabels = !this.dataLabels;
-      object = {dataLabels: {enabled: this.dataLabels}}; 
-      if(this.pie){
-        if(this.isApexCharts){
-        this.chartOptions4.dataLabels.enabled = this.dataLabels;
-        }else{
-          this.ePieChartOptions.series[0].label.show = this.dataLabels;
-        }
-      }
-      else if(this.donut){
-        if(this.isApexCharts){
-        this.chartOptions10.dataLabels.enabled = this.dataLabels;
-        }else{
-          this.eDonutChartOptions.series[0].label.show = this.dataLabels;
-        }
-      }
-      else if(this.radar){
-        this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { show: boolean; }; }) => {
-          dataItem.label.show = this.dataLabels; // Show or hide labels based on checkbox state
-      });      }
     }
     else if(type === 'label'){
       this.label = !this.label;
-      object = {plotOptions: {pie: {donut: {labels: {show: this.label}}}}}
-      if(this.donut){
-        this.chartOptions10.plotOptions.pie.donut.labels.show = this.label;
-      }
     }
     else if(type === 'distributed'){
       this.isDistributed = !this.isDistributed;
-      if(this.isApexCharts){
-      object = {plotOptions: {bar: {distributed: this.isDistributed}}};
-      this.funnelChartOptions.plotOptions.bar.distributed = this.isDistributed;
-      }else{
-      // this.eFunnelChartOptions.series[0].label
-      }
-    }
-    if(this.isApexCharts){
-    this.updateChart(object);
-    }else{
-      this.updateEchartOptions();
     }
   }
   enableZoom(){
     this.isZoom = !this.isZoom;
-    if (this.bar) {
-      this.eBarChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.line){
-      this.eLineChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.area){
-      this.eAreaChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.sidebyside){
-      this.eSideBySideBarChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.stocked){
-      this.eStackedBarChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.heatMap){
-      this.eHeatMapChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.barLine){
-      this.eBarLineChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.horizentalStocked){
-      this.ehorizontalStackedBarChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.grouped){
-      this.eGroupedBarChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    if(this.multiLine){
-      this.eMultiLineChartOptions.dataZoom = this.isZoom ? [{
-        type: 'slider',
-        show: true
-      }] : [{
-        type: 'slider',
-        show: false
-      }];
-    }
-    this.updateEchartOptions()
   }
 
-  changeAlignment(){
-
-    if(this.bar){
-      this.barChart();
-    }
-    else if(this.area){
-      this.areaChart();
-    }
-    else if(this.line){
-      this.lineChart();
-    }
-    else if(this.barLine){
-      this.barLineChart();
-    }
-    else if(this.sidebyside){
-      this.sidebysideBar();
-    }
-    else if(this.stocked){
-      this.stockedBar();
-    }
-    else if(this.horizentalStocked){
-      this.horizentalStockedBar();
-    }
-    else if(this.grouped){
-      this.hGrouped();
-    }
-    else if(this.multiLine){
-      this.multiLineChart();
-    }
-    else if(this.heatMap){
-      this.heatMapChart();
-    }
-  }
   formattedData : any[] = [];
   formatNumber(value: number): string {
     let formattedNumber = value+'';
@@ -7634,7 +6626,7 @@ renameColumns(){
   );
 }
 routeConfigure(){
-  this.router.navigate(['/insights/configure-page/configure'])
+  this.router.navigate(['/analytify/configure-page/configure'])
 }
 
 fetchChartData(chartData: any){
@@ -7665,8 +6657,18 @@ fetchChartData(chartData: any){
           this.dataExtraction();
 
 }
-
-  changeChartPlugin() {
+customizechangeChartPlugin() {
+  if (this.selectedChartPlugin == 'apex') {
+    this.isApexCharts = true;
+    this.isEChatrts = false;
+  } else {
+    this.isApexCharts = false;
+    this.isEChatrts = true;
+  }
+  this.reAssignChartData();
+}
+  changeChartPlugin(value:any) {
+    this.selectedChartPlugin = value;
     if (this.selectedChartPlugin == 'apex') {
       this.isApexCharts = true;
       this.isEChatrts = false;
@@ -7674,17 +6676,18 @@ fetchChartData(chartData: any){
       this.isApexCharts = false;
       this.isEChatrts = true;
     }
-    if(this.retriveDataSheet_id){
-      if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
-        this.sheetRetrive(false);
-      } else {
-        this.reAssignChartData();
-        this.resetCustomizations();
-      }
-    } else{
-      this.reAssignChartData();
-      this.resetCustomizations();
-    }
+    // if(this.retriveDataSheet_id){
+    //   if((this.sheetResponce.isEChart && this.isEChatrts && (this.sheetChartId === this.chartId)) || (this.sheetResponce.isApexChart && this.isApexCharts && (this.sheetChartId === this.chartId))){
+    //     this.sheetRetrive(false);
+    //   } else {
+    //     this.reAssignChartData();
+    //     this.resetCustomizations();
+    //   }
+    // } else{
+    //   this.reAssignChartData();
+    //   this.resetCustomizations();
+    // }
+    this.reAssignChartData();
   }
   reAssignChartData() {
     if (this.bar) {
@@ -7800,83 +6803,105 @@ fetchChartData(chartData: any){
           this.eHeatMapChartOptions.yAxis.splitLine.lineStyle.color = this.yGridColor;
       }
     }
-     this.updateEchartOptions();
+     // this.updateEchartOptions();
   }
 
   setCustomizeOptions(data: any) {
-    this.isZoom = data.isZoom || true;
-    this.xGridColor = data.xGridColor || '#00a5a2';
-    this.xGridSwitch = data.xGridSwitch || false;
-    this.xLabelSwitch = data.xLabelSwitch || true;
-    this.xLabelColor = data.xLabelColor || '#00a5a2';
-    this.yLabelSwitch = data.yLabelSwitch || true;
-    this.yGridColor = data.yGridColor || '#00a5a2';
-    this.yGridSwitch = data.yGridSwitch || false;
-    this.yLabelColor = data.yLabelColor || '#00a5a2';
-    this.xLabelFontFamily = data.xLabelFontFamily || 'sans-serif';
-    this.xLabelFontSize = data.xLabelFontSize || 12;
-    this.xlabelFontWeight = data.xlabelFontWeight || 400;
-    this.backgroundColor = data.backgroundColor || '#fff';
-    this.color = data.color || '#00a5a2';
-    this.ylabelFontWeight = data.ylabelFontWeight || 400;
-    this.isBold = data.isBold || false;
-    this.yLabelFontFamily = data.yLabelFontFamily || 'sans-serif';
-    this.yLabelFontSize = data.yLabelFontSize || 12;
-    this.bandingSwitch = data.bandingSwitch || false;
-    this.backgroundColorSwitch = data.backgroundColorSwitch || false;
-    this.chartColorSwitch = data.chartColorSwitch || false;
-    this.barColorSwitch = data.barColorSwitch || false;
-    this.lineColorSwitch = data.lineColorSwitch || false;
-    this.gridLineColorSwitch = data.gridLineColorSwitch || false;
-    this.xLabelColorSwitch = data.xLabelColorSwitch || false;
-    this.xGridLineColorSwitch = data.xGridLineColorSwitch || false;
-    this.yLabelColorSwitch = data.yLabelColorSwitch || false;
-    this.yGridLineColorSwitch = data.yGridLineColorSwitch || false;
-    this.bandingColorSwitch = data.bandingColorSwitch || false;
-    this.kpiColorSwitch = data.kpiColorSwitch || false;
-    this.funnelColorSwitch = data.funnelColorSwitch || false;
-    this.color1 = data.color1 || undefined;
-    this.color2 = data.color2 || undefined;
-    this.kpiColor = data.kpiColor || '#000000';
-    this.barColor = data.barColor || '#4382f7';
-    this.lineColor = data.lineColor || '#38ff98';
-    this.GridColor = data.GridColor || '#089ffc';
-    this.legendSwitch = data.legendSwitch || true;
-    this.dataLabels = data.dataLabels || true;
-    this.label = data.label || true;
-    this.donutSize = data.donutSize || 50;
-    this.isDistributed = data.isDistributed || false;
-    this.kpiFontSize = data.kpiFontSize || 3;
-    this.minValueGuage = data.minValueGuage || 0;
-    this.maxValueGuage = data.maxValueGuage || 100;
-    this.donutDecimalPlaces = data.donutDecimalPlaces || 0;
-    this.decimalPlaces = data.decimalPlaces || 0;
-    this.legendsAllignment = data.legendsAllignment || 'bottom';
+    this.isZoom = data.isZoom ?? true;
+    this.xGridColor = data.xGridColor ?? '#2392c1';
+    this.xGridSwitch = data.xGridSwitch ?? false;
+    this.xLabelSwitch = data.xLabelSwitch ?? true;
+    this.xLabelColor = data.xLabelColor ?? '#2392c1';
+    this.yLabelSwitch = data.yLabelSwitch ?? true;
+    this.yGridColor = data.yGridColor ?? '#2392c1';
+    this.yGridSwitch = data.yGridSwitch ?? false;
+    this.yLabelColor = data.yLabelColor ?? '#2392c1';
+    this.xLabelFontFamily = data.xLabelFontFamily ?? 'sans-serif';
+    this.xLabelFontSize = data.xLabelFontSize ?? 12;
+    this.xlabelFontWeight = data.xlabelFontWeight ?? 400;
+    this.backgroundColor = data.backgroundColor ?? '#fff';
+    this.color = data.color ?? '#2392c1';
+    this.selectedColorScheme = data.selectedColorScheme ?? ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.ylabelFontWeight = data.ylabelFontWeight ?? 400;
+    this.isBold = data.isBold ?? false;
+    this.yLabelFontFamily = data.yLabelFontFamily ?? 'sans-serif';
+    this.yLabelFontSize = data.yLabelFontSize ?? 12;
+    this.bandingSwitch = data.bandingSwitch ?? false;
+    this.backgroundColorSwitch = data.backgroundColorSwitch ?? false;
+    this.chartColorSwitch = data.chartColorSwitch ?? false;
+    this.barColorSwitch = data.barColorSwitch ?? false;
+    this.lineColorSwitch = data.lineColorSwitch ?? false;
+    this.gridLineColorSwitch = data.gridLineColorSwitch ?? false;
+    this.xLabelColorSwitch = data.xLabelColorSwitch ?? false;
+    this.xGridLineColorSwitch = data.xGridLineColorSwitch ?? false;
+    this.yLabelColorSwitch = data.yLabelColorSwitch ?? false;
+    this.yGridLineColorSwitch = data.yGridLineColorSwitch ?? false;
+    this.bandingColorSwitch = data.bandingColorSwitch ?? false;
+    this.kpiColorSwitch = data.kpiColorSwitch ?? false;
+    this.funnelColorSwitch = data.funnelColorSwitch ?? false;
+    this.color1 = data.color1 ?? undefined;
+    this.color2 = data.color2 ?? undefined;
+    this.kpiColor = data.kpiColor ?? '#000000';
+    this.barColor = data.barColor ?? '#4382f7';
+    this.lineColor = data.lineColor ?? '#38ff98';
+    this.GridColor = data.GridColor ?? '#089ffc';
+    this.legendSwitch = data.legendSwitch ?? true;
+    this.dataLabels = data.dataLabels ?? true;
+    this.label = data.label ?? true;
+    this.donutSize = data.donutSize ?? 50;
+    this.isDistributed = data.isDistributed ?? true;
+    this.kpiFontSize = data.kpiFontSize ?? 3;
+    this.minValueGuage = data.minValueGuage ?? 0;
+    this.maxValueGuage = data.maxValueGuage ?? 100;
+    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 0;
+    this.decimalPlaces = data.decimalPlaces ?? 0;
+    this.legendsAllignment = data.legendsAllignment ?? 'bottom';
     this.displayUnits = data.displayUnits || 'none';
-    this.suffix = data.suffix || '';
-    this.prefix = data.prefix || '';
-    this.dataLabelsFontFamily = data.dataLabelsFontFamily || 'sans-serif';
-    this.dataLabelsFontSize = data.dataLabelsFontSize || '12px';
-    this.dataLabelsFontPosition = data.dataLabelsFontPosition || 'top';
-    this.measureAlignment = data.measureAlignment || 'center';
-    this.dimensionAlignment = data.dimensionAlignment || 'center';
+    this.suffix = data.suffix ?? '';
+    this.prefix = data.prefix ?? '';
+    this.dataLabelsFontFamily = data.dataLabelsFontFamily ?? 'sans-serif';
+    this.dataLabelsFontSize = data.dataLabelsFontSize ?? '12px';
+    this.dataLabelsFontPosition = data.dataLabelsFontPosition ?? 'top';
+    this.measureAlignment = data.measureAlignment ?? 'center';
+    this.dimensionAlignment = data.dimensionAlignment ?? 'center';
+    this.dimensionColor = data.dimensionColor ?? '#2392c1';
+    this.measureColor = data.measureColor ?? '#2392c1';
+    this.dataLabelsColor = data.dataLabelsColor ?? '#0a5a2';
+    this.tableDataFontFamily = data.tableDataFontFamily ?? 'sans-serif';
+    this.tableDataFontSize = data.tableDataFontSize ?? '12px';
+    this.tableDataFontWeight = data.tableDataFontWeight ?? 400;
+    this.tableDataFontStyle = data.tableDataFontStyle ?? 'normal';
+    this.tableDataFontDecoration = data.tableDataFontDecoration ?? 'none';
+    this.tableDataFontColor = data.tableDataFontColor ?? '#000000';
+    this.tableDataFontAlignment = data.tableDataFontAlignment ?? 'left';
+    this.headerFontFamily = data.headerFontFamily ?? "'Arial', sans-serif";
+    this.headerFontSize = data.headerFontSize ?? '16px';
+    this.headerFontWeight = data.headerFontWeight ?? 700;
+    this.headerFontStyle = data.headerFontStyle ?? 'normal';
+    this.headerFontDecoration = data.headerFontDecoration ?? 'none';
+    this.headerFontColor = data.headerFontColor ?? '#000000'
+    this.headerFontAlignment = data.headerFontAlignment ?? 'left';
+    this.sortType = data.sortType ?? 0;
+    this.dataLabelsLineFontPosition =data.dataLabelsLineFontPosition ?? 'top';
+    this.dataLabelsBarFontPosition = data.dataLabelsBarFontPosition ?? 'top';
   }
 
   resetCustomizations(){
     this.isZoom = false;
-    this.xGridColor = '#00a5a2';
+    this.xGridColor = '#2392c1';
     this.xGridSwitch = false;
     this.xLabelSwitch = true;
-    this.xLabelColor = '#00a5a2';
+    this.xLabelColor = '#2392c1';
     this.yLabelSwitch = true;
-    this.yGridColor = '#00a5a2';
+    this.yGridColor = '#2392c1';
     this.yGridSwitch = false;
-    this.yLabelColor = '#00a5a2';
+    this.yLabelColor = '#2392c1';
     this.xLabelFontFamily = 'sans-serif';
     this.xLabelFontSize = 12;
     this.xlabelFontWeight = 400;
     this.backgroundColor = '#fff';
-    this.color = '#00a5a2';
+    this.color = '#2392c1';
+    this.selectedColorScheme = ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
     this.ylabelFontWeight = 400;
     this.isBold = false;
     this.yLabelFontFamily = 'sans-serif';
@@ -7904,7 +6929,7 @@ fetchChartData(chartData: any){
     this.dataLabels = true;
     this.label = true;
     this.donutSize = 50;
-    this.isDistributed = false;
+    this.isDistributed = true;
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
     this.maxValueGuage = 100;
@@ -7919,6 +6944,26 @@ fetchChartData(chartData: any){
     this.dataLabelsFontPosition = 'top';
     this.measureAlignment = 'center';
     this.dimensionAlignment = 'center';
+    this.dimensionColor = '#2392c1';
+    this.measureColor = '#2392c1';
+    this.dataLabelsColor = '#2392c1';
+    this.tableDataFontFamily = 'sans-serif';
+    this.tableDataFontSize = '12px';
+    this.tableDataFontWeight = 400;
+    this.tableDataFontStyle = 'normal';
+    this.tableDataFontDecoration = 'none';
+    this.tableDataFontColor = '#000000';
+    this.tableDataFontAlignment = 'left';
+    this.headerFontFamily = "'Arial', sans-serif";
+    this.headerFontSize = '16px';
+    this.headerFontWeight = 700;
+    this.headerFontStyle = 'normal';
+    this.headerFontDecoration = 'none';
+    this.headerFontColor = '#000000'
+    this.headerFontAlignment = 'left';
+    this.sortType = 0;
+    this.dataLabelsLineFontPosition = 'top';
+    this.dataLabelsBarFontPosition = 'top';
   }
 
   sendPrompt() {
@@ -8064,149 +7109,6 @@ fetchChartData(chartData: any){
       }
     })
   }
-  gridLineColor(color: any){
-    let object : any;
-    if(color){
-      object = {grid: { borderColor: color }}
-      if(this.barchart){
-        this.chartOptions3.grid.borderColor = color;
-      }
-      else if(this.areachart){
-        this.chartOptions1.grid.borderColor = color;
-      }
-      else if(this.linechart){
-        this.chartOptions.grid.borderColor = color;
-      }
-      else if(this.sidebysideChart){
-        this.chartOptions2.grid.borderColor = color;
-      }
-      else if(this.stockedChart){
-        this.chartOptions6.grid.borderColor = color;
-      }
-      else if(this.barlineChart){
-        this.chartOptions5.grid.borderColor = color;
-      }
-      else if(this.horizontolstockedChart){
-        this.chartOptions7.grid.borderColor = color;
-      }
-      else if(this.groupedChart){
-        this.chartOptions8.grid.borderColor = color;
-      }
-      else if(this.multilineChart){
-        this.chartOptions9.grid.borderColor = color;
-      }
-      this.updateChart(object);
-    }
-  }
-  setBackgroundColor(color: any){
-    let object:any;
-    if (color) {
-      object = { chart: { background: color } };
-      if (this.bar) {
-        if (this.isApexCharts) {
-          this.chartOptions3.chart.background = color;
-        } else {
-          this.eBarChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.area) {
-        if (this.isApexCharts) {
-          this.chartOptions1.chart.background = color;
-        } else {
-          this.eAreaChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.line) {
-        if (this.isApexCharts) {
-          this.chartOptions.chart.background = color;
-        } else {
-          this.eLineChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.sidebyside) {
-        if (this.isApexCharts) {
-          this.chartOptions2.chart.background = color;
-        } else {
-          this.eSideBySideBarChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.stocked) {
-        if (this.isApexCharts) {
-          this.chartOptions6.chart.background = color;
-        } else {
-          this.eStackedBarChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.barLine) {
-        if (this.isApexCharts) {
-          this.chartOptions5.chart.background = color;
-        } else {
-          this.eBarLineChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.horizentalStocked) {
-        if (this.isApexCharts) {
-          this.chartOptions7.chart.background = color;
-        } else {
-          this.ehorizontalStackedBarChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.grouped) {
-        if (this.isApexCharts) {
-          this.chartOptions8.chart.background = color;
-        } else {
-          this.eGroupedBarChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.multiLine) {
-        if (this.isApexCharts) {
-          this.chartOptions9.chart.background = color;
-        } else {
-          this.eMultiLineChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.pie) {
-        if (this.isApexCharts) {
-          this.chartOptions4.chart.background = color;
-        } else {
-          this.ePieChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.donut) {
-        if (this.isApexCharts) {
-          this.chartOptions10.chart.background = color;
-        } else {
-          this.eDonutChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.heatMap) {
-        if (this.isApexCharts) {
-          this.heatMapChartOptions.chart.background = color;
-        } else {
-          this.eHeatMapChartOptions.backgroundColor = color;
-        }
-      }
-      else if (this.funnel) {
-        if (this.isApexCharts) {
-          this.funnelChartOptions.chart.background = color;
-        } else {
-          this.eFunnelChartOptions.backgroundColor = color;
-        }
-      }
-      else if(this.radar){
-        this.eRadarChartOptions.backgroundColor = color;
-      }
-      else if(this.guage){
-        this.guageChartOptions.chart.background = color;
-
-      }
-      if (this.isApexCharts) {
-        this.updateChart(object);
-      } else {
-        this.updateEchartOptions();
-      }
-    }
-  }
   openDateFormatModal(modal: any){
     this.modalService.open(modal, {
       centered: true,
@@ -8264,16 +7166,18 @@ fetchChartData(chartData: any){
           this.draggedDrillDownColumns.push(item.column);
         }
   }
+
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
-        (this.draggedDrillDownColumns as any[]).forEach((data,index)=>{
-          (data as any[]).forEach((aa)=>{ 
-           if(column === aa){
-              this.draggedDrillDownColumns.splice(index, 1);
-            }
-         } );
-        });   
+    if (index <= 0) {
+      this.drillDownIndex = 0;
+      this.draggedDrillDownColumns = [];
+      this.drillDownObject = [];
+    } else if (index <= this.drillDownIndex) {
+      this.drillDownObject = this.drillDownObject.slice(0, index - 1);
+      this.drillDownIndex = index - 1;
+    } 
        this.dataExtraction();
       }
 
@@ -8296,6 +7200,13 @@ fetchChartData(chartData: any){
           }
         
           goDrillDownBack(){
+            if(this.isMapChartDrillDown && this.drillDownIndex === 1){
+              this.map = true;
+              this.bar = false;
+              this.chartId = 29;
+              this.chartType = 'map';
+              this.isMapChartDrillDown = false;
+            }
             if(this.drillDownIndex > 0) {
               this.drillDownIndex--;
               this.drillDownObject.pop();
@@ -8305,92 +7216,6 @@ fetchChartData(chartData: any){
   
   changeLegendsAllignment(allignment:any){
     this.legendsAllignment = allignment;
-      let object : any = {legend: {position: allignment}};
-      if(this.pie){
-        if(this.isApexCharts){
-        this.legendsAllignment = allignment;
-        this.chartOptions4.legend.position = allignment;
-        }else{
-          this.ePieChartOptions.legend.left = null;
-        this.ePieChartOptions.legend.right = null;
-        this.ePieChartOptions.legend.top = null;
-        this.ePieChartOptions.legend.bottom = null;
-          switch (allignment) {
-            case 'top':
-                // this.ePieChartOptions.legend.left = 'center';
-                this.ePieChartOptions.legend.top = 'top';
-                break;
-            case 'bottom':
-                // this.ePieChartOptions.legend.left = 'center';
-                this.ePieChartOptions.legend.bottom = 'bottom';
-                break;
-            case 'left':
-                this.ePieChartOptions.legend.left = 'left';
-                // this.ePieChartOptions.legend.top = 'center';
-                break;
-            case 'right':
-                this.ePieChartOptions.legend.right = 'right';
-                // this.ePieChartOptions.legend.top = 'center';
-                break;
-            default:
-                break;
-        }
-        }
-      }
-      else if(this.donut){
-        if(this.isApexCharts){
-        this.legendsAllignment = allignment;
-        this.chartOptions10.legend.position = allignment;
-        }else{
-          this.eDonutChartOptions.legend.left = null;
-        this.eDonutChartOptions.legend.right = null;
-        this.eDonutChartOptions.legend.top = null;
-        this.eDonutChartOptions.legend.bottom = null;
-          switch (allignment) {
-            case 'top':
-                // this.ePieChartOptions.legend.left = 'center';
-                this.eDonutChartOptions.legend.top = 'top';
-                break;
-            case 'bottom':
-                // this.ePieChartOptions.legend.left = 'center';
-                this.eDonutChartOptions.legend.bottom = 'bottom';
-                break;
-            case 'left':
-                this.eDonutChartOptions.legend.left = 'left';
-                // this.ePieChartOptions.legend.top = 'center';
-                break;
-            case 'right':
-                this.eDonutChartOptions.legend.right = 'right';
-                // this.ePieChartOptions.legend.top = 'center';
-                break;
-            default:
-                break;
-        }
-        }
-      }
-      else if(this.radar){
-        
-        this.eRadarChartOptions.legend.left = allignment === 'left' ? 'left' : 
-        allignment === 'right' ? 'right' :
-        allignment === 'top' ? 'top' : 
-        'bottom';
-      }
-      if(this.isApexCharts){
-      this.updateChart(object);
-      }else{
-        this.updateEchartOptions();
-      }
-    
-  }
-
-  changeSize(){
-    if(this.isEChatrts){
-      this.donutChart();
-    } else {
-    let object : any = {plotOptions: { pie: {donut: {size: this.donutSize+'%'}}}};
-    this.chartOptions10.plotOptions.pie.donut.size = this.donutSize+'%';
-    this.updateChart(object);
-    }
   }
 
   setOriginalData(){
@@ -8409,116 +7234,7 @@ fetchChartData(chartData: any){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
           }
         }
-      }
-      sort(event: any, numbers: any, labels: any) {
-        const pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
-      
-        if (event.target.value === 'ascending') {
-          pairedData.sort((a: any, b: any) => a[0] - b[0]);
-        } else if (event.target.value === 'descending') {
-          pairedData.sort((a: any, b: any) => b[0] - a[0]);
-        }
-
-        const sortedNumbers = pairedData.map((pair: any) => pair[0]);
-        const sortedLabels = pairedData.map((pair: any) => pair[1]);
-      
-        return { sortedNumbers, sortedLabels };
-      }
-      
-      sortSeries(event: any) {
-        if (this.funnel) {
-          if(this.isEChatrts){
-            let numbers : any[] = [];
-            let labels: any[] = [];
-            this.eFunnelChartOptions.series[0].data.forEach((data:any)=>{
-              numbers.push(data.value);
-              labels.push(data.name);
-            })
-            // const labels = this.eFunnelChartOptions.series[0].data.name;
-            const sortedData = this.sort(event, numbers, labels);
-            const funnelData : any[] = [];
-            console.log(sortedData);
-            sortedData.sortedLabels.forEach((name: any, index: number) => {
-              funnelData.push({
-                name: name,
-                value: sortedData.sortedNumbers[index]
-              });
-            });
-            this.eFunnelChartOptions.series[0].data = funnelData;
-            this.updateEchartOptions();
-          } else{
-            const numbers = this.funnelChartOptions.series[0].data;
-            const labels = this.funnelChartOptions.xaxis.categories;
-            const sortedData = this.sort(event, numbers, labels);
-
-            this.funnelChartOptions.series[0].data = sortedData.sortedNumbers;
-            this.funnelChartOptions.xaxis.categories = sortedData.sortedLabels;
-            this.funnelCharts.updateSeries([{ data: sortedData.sortedNumbers }]);
-            this.funnelCharts.updateOptions({ xaxis: { categories: sortedData.sortedLabels } });
-          }
-        } 
-        else if (this.bar) {
-          if(this.isEChatrts){
-            // this.eBarchart.setOption({
-            //   xAxis: {
-            //     data: this.chartsColumnData.map(item => item.name),
-            //   },
-            //   series: [
-            //     {
-            //       data: thiss.barData.map(item => item.value),
-            //     },
-            //   ],
-            // });
-            const numbers = this.eBarChartOptions.series[0].data;
-            const labels = this.eBarChartOptions.xAxis.data;
-            const sortedData = this.sort(event, numbers, labels);
-            this.eBarChartOptions.series[0].data = sortedData.sortedNumbers;
-            this.eBarChartOptions.xAxis.data = sortedData.sortedLabels;
-            this.updateEchartOptions();
-          } else {
-            const numbers = this.chartOptions3.series[0].data;
-            const labels = this.chartOptions3.xaxis.categories;
-            const sortedData = this.sort(event, numbers, labels);
-            console.log(numbers);
-            this.chartOptions3.series[0].data = sortedData.sortedNumbers;
-            this.chartOptions3.xaxis.categories = sortedData.sortedLabels;
-            this.barchart.updateSeries([{ data: sortedData.sortedNumbers }]);
-            this.barchart.updateOptions({xaxis:{categories: sortedData.sortedLabels}});
-          }
-        }
-      }      
-      funnelDLAllign:any;
-      funnelDLFontFamily:any;
-      funnelDLFontSize:any;
-      funnelFontChange(event:any,type:any){
-        let font = event.target.value;
-        let object = {};
-        if(type === 'family'){
-          this.funnelChartOptions.dataLabels.style.fontFamily = font;
-          object = { datalabels: { style: { fontFamily: font } } };
-          object = this.funnelChartOptions
-        } else if(type === 'size'){
-          let size = event.target.value;
-          this.funnelChartOptions.dataLabels.style.fontSize = size;
-          object = { datalabels: { style: { fontSize: size } } };
-          object = this.funnelChartOptions;
-        } else if(type === 'allign'){
-          let allign = event.target.value;
-          this.funnelChartOptions.plotOptions.bar.dataLabels.position = allign;
-          object = { plotOptions: { bar: { dataLabels: { position: allign } } } }
-        }
-        this.updateChart(object);
-      }
-      funnelColor:any;
-      funnelColorChange(event:any){
-      if(this.funnelColor){
-        let selectedColor = event;
-        this.funnelChartOptions.series[0].color = selectedColor;
-        let object = {series: [{color: selectedColor}]}
-        object = this.funnelChartOptions;
-        this.updateChart(object);
-      }
-      }
+      }     
       viewQuery(modal:any){
         this.modalService.open(modal, {
           centered: true,
@@ -8563,402 +7279,9 @@ fetchChartData(chartData: any){
       }
       donutDecimalPlaces: number = 0;
 
-      updateDonut(){
-        this.donutchart.updateOptions(this.chartOptions10);
-      }
-
-      setDataLabelsFontFamily(event:any){
-        let font = event.target.value;
-        let object = { dataLabels: { style: { fontFamily: font } } };
-        let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { fontFamily: font } }} }};
-        if(this.bar){
-          if(this.isApexCharts){
-          this.chartOptions3.dataLabels.style.fontFamily = font;
-          }else{
-            this.eBarChartOptions.series[0].label.fontFamily = font;
-          }
-          //  object = this.chartOptions3;
-        }
-        else if(this.area){
-          if(this.isApexCharts){
-          this.chartOptions1.dataLabels.style.fontFamily = font;
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions1;
-          }else{
-            this.eAreaChartOptions.series[0].label.fontFamily = font;
-          }
-        }
-        else if(this.line){
-          if(this.isApexCharts){
-          this.chartOptions.dataLabels.style.fontFamily = font;
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions;
-          }else{
-            this.eLineChartOptions.series[0].label.fontFamily = font;
-          }
-        }
-        else if(this.sidebyside){
-          if(this.isApexCharts){
-          this.chartOptions2.dataLabels.style.fontFamily = font;
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions2;
-          }else{
-            this.eSideBySideBarChartOptions.series.forEach((series:any) => {
-              series.label.fontFamily = font; // Set new font family
-          });          
-        }
-        }
-        else if(this.stocked){
-          if(this.isApexCharts){
-          this.chartOptions6.dataLabels.style.fontFamily = font;
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions6;
-          }else{
-            this.eStackedBarChartOptions.series.forEach((series:any) => {
-              series.label.fontFamily = font; // Set new font family
-          });    
-          }
-        }
-        else if(this.barLine){
-          if(this.isApexCharts){
-          this.chartOptions5.dataLabels.style.fontFamily = font;
-          }else{
-            this.eBarLineChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
-              series.label.fontFamily = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions5;
-        }
-        else if(this.horizentalStocked){
-          if(this.isApexCharts){
-          this.chartOptions7.dataLabels.style.fontFamily = font;
-          }else{
-            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
-              series.label.fontFamily = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions7;
-        }
-        else if(this.grouped){
-          if(this.isApexCharts){
-          this.chartOptions8.dataLabels.style.fontFamily = font;
-          }else{
-            this.eGroupedBarChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
-              series.label.fontFamily = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions8;
-        }
-        else if(this.multiLine){
-          if(this.isApexCharts){
-          this.chartOptions9.dataLabels.style.fontFamily = font;
-          }else{
-            this.eMultiLineChartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
-              series.label.fontFamily = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontFamily: font } } };
-          // object = this.chartOptions9;
-        }
-        else if(this.heatMap){
-          if(this.isApexCharts){
-          this.heatMapChartOptions.dataLabels.style.fontFamily = font;
-          }else{
-            this.eHeatMapChartOptions.series[0].label.fontFamily = font;
-          }
-        }
-        else if(this.funnel){
-          if(this.isApexCharts){
-          this.funnelChartOptions.dataLabels.style.fontFamily = font;
-          }else{
-          this.eFunnelChartOptions.series[0].label.fontFamily = font  
-          }
-        }
-        else if(this.radar){
-          this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { fontFamily: any; }; }) => {
-            if (dataItem.label) { // Ensure label exists before updating
-                dataItem.label.fontFamily = font;
-            }
-        });
-        }
-        else if(this.guage){
-          this.guageChartOptions.plotOptions.radialBar.dataLabels.value.fontFamily = font;
-        }
-        if(this.isApexCharts){
-          if(this.guage){
-            this.updateChart(guageObject);
-          }else{
-            this.updateChart(object);
-          }
-        }else{
-          this.updateEchartOptions();
-        }
-      }
-
-      setDataLabelsFontSize(event:any){
-        let font = event.target.value;
-        let object = { dataLabels: { style: { fontSize: font } } };
-        let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { fontSize: font } }} }};
-
-        if(this.bar){
-          if(this.isApexCharts){
-          this.chartOptions3.dataLabels.style.fontSize = font;
-          }else{
-            this.eBarChartOptions.series[0].label.fontSize = font;
-          }
-        }
-        else if(this.area){
-          if(this.isApexCharts){
-          this.chartOptions1.dataLabels.style.fontSize = font;
-          }else{
-            this.eAreaChartOptions.series[0].label.fontSize = font;
-          }
-        }
-        else if(this.line){
-          if(this.isApexCharts){
-          this.chartOptions.dataLabels.style.fontSize = font;
-          // object = { dataLabels: { style: { fontSize: font } } };
-          // object = this.chartOptions;
-          }else{
-            this.eLineChartOptions.series[0].label.fontSize = font;
-          }
-        }
-        else if(this.sidebyside){
-          if(this.isApexCharts){
-          this.chartOptions2.dataLabels.style.fontSize = font;
-          // object = { dataLabels: { style: { fontSize: font } } };
-          // object = this.chartOptions2;
-          }else{
-            this.eSideBySideBarChartOptions.series.forEach((series:any) => {
-              series.label.fontSize = font; // Set new font family
-          });    
-          }
-        }
-        else if(this.stocked){
-          if(this.isApexCharts){
-          this.chartOptions6.dataLabels.style.fontSize = font;
-          // object = { dataLabels: { style: { fontSize: font } } };
-          // object = this.chartOptions6;
-          }else{
-            this.eStackedBarChartOptions.series.forEach((series:any) => {
-              series.label.fontSize = font; // Set new font family
-          });           }
-        }
-        else if(this.barLine){
-          if(this.isApexCharts){
-          this.chartOptions5.dataLabels.style.fontSize = font;
-          }else{
-            this.eBarLineChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
-              series.label.fontSize = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontSize: font } } };
-          // object = this.chartOptions5;
-        }
-        else if(this.horizentalStocked){
-          if(this.isApexCharts){
-          this.chartOptions7.dataLabels.style.fontSize = font;
-          }else{
-            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
-              series.label.fontSize = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontSize: font } } };
-          // object = this.chartOptions7;
-        }
-        else if(this.grouped){
-          if(this.isApexCharts){
-          this.chartOptions8.dataLabels.style.fontSize = font;
-          }else{
-            this.eGroupedBarChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
-              series.label.fontSize = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontSize: font } } };
-          // object = this.chartOptions8;
-        }
-        else if(this.multiLine){
-          if(this.isApexCharts){
-          this.chartOptions9.dataLabels.style.fontSize = font;
-          }else{
-            this.eMultiLineChartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
-              series.label.fontSize = font; 
-          });
-          }
-          // object = { dataLabels: { style: { fontSize: font } } };
-          // object = this.chartOptions9;
-        }
-        else if(this.heatMap){
-          if(this.isApexCharts){
-          this.heatMapChartOptions.dataLabels.style.fontSize = font;
-          }else{
-            this.eHeatMapChartOptions.series[0].label.fontSize = font;
-          }
-        }
-        else if(this.funnel){
-          if(this.isApexCharts){
-          this.funnelChartOptions.dataLabels.style.fontSize = font;
-          }else{
-            this.eFunnelChartOptions.series[0].label.fontSize = font  
-          }
-        }
-        if(this.radar){
-          this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { fontSize: any; }; }) => {
-            if (dataItem.label) { // Ensure label exists before updating
-                dataItem.label.fontSize = font;
-            }
-        });
-        }
-        if(this.guage){
-          this.guageChartOptions.plotOptions.radialBar.dataLabels.value.fontSize = font;
-        }
-        if(this.isApexCharts){
-          if(this.guage){
-            this.updateChart(guageObject)
-          }else{
-        this.updateChart(object);
-          }
-        }else{
-          this.updateEchartOptions();
-        }
-      }
-
       setDataLabelsFontStyle(fontStyle:any){
-        let font: number;
-        let object;
         if(fontStyle === 'B'){
           this.isBold = !this.isBold;
-          font = this.isBold ? 700 : 400;
-          object = { dataLabels: { style: { fontWeight: font } } };
-          let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { fontWeight: font } }} }};
-
-          if(this.bar){
-            if(this.isApexCharts){
-            this.chartOptions3.dataLabels.style.fontWeight = font;
-            }else{
-              this.eBarChartOptions.series[0].label.fontWeight = font;
-            }
-            // object = this.chartOptions3;
-          }
-          else if(this.area){
-            if(this.isApexCharts){
-            this.chartOptions1.dataLabels.style.fontWeight = font;
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions1;
-            }else{
-              this.eAreaChartOptions.series[0].label.fontWeight = font;
-            }
-          }
-          else if(this.line){
-            if(this.isApexCharts){
-            this.chartOptions.dataLabels.style.fontWeight = font;
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions;
-            }else{
-              this.eLineChartOptions.series[0].label.fontWeight = font;
-            }
-          }
-          else if(this.sidebyside){
-            if(this.isApexCharts){
-            this.chartOptions2.dataLabels.style.fontWeight = font;
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions2;
-            }else{
-              this.eSideBySideBarChartOptions.series.forEach((series:any) => {
-                series.label.fontWeight = font; // Set new font family
-            });    
-            }
-          }
-          else if(this.stocked){
-            if(this.isApexCharts){
-            this.chartOptions6.dataLabels.style.fontWeight = font;
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions6;
-            }else{
-              this.eStackedBarChartOptions.series.forEach((series:any) => {
-                series.label.fontWeight = font; // Set new font family
-            });             }
-          }
-          else if(this.barLine){
-            if(this.isApexCharts){
-            this.chartOptions5.dataLabels.style.fontWeight = font;
-            }else{
-              this.eBarLineChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
-                series.label.fontWeight = font; 
-            });
-            }
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions5;
-          }
-          else if(this.horizentalStocked){
-            if(this.isApexCharts){
-            this.chartOptions7.dataLabels.style.fontWeight = font;
-            }else{
-              this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
-                series.label.fontWeight = font; 
-            });
-            }
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions7;
-          }
-          else if(this.grouped){
-            if(this.isApexCharts){
-            this.chartOptions8.dataLabels.style.fontWeight = font;
-            }else{
-              this.eGroupedBarChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
-                series.label.fontWeight = font; 
-            });
-            }
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions8;
-          }
-          else if(this.multiLine){
-            if(this.isApexCharts){
-            this.chartOptions9.dataLabels.style.fontWeight = font;
-            }else{
-              this.eMultiLineChartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
-                series.label.fontWeight = font; 
-            });
-            }
-            // object = { dataLabels: { style: { fontWeight: font } } };
-            // object = this.chartOptions9;
-          }
-          else if(this.heatMap){
-            if(this.isApexCharts){
-            this.heatMapChartOptions.dataLabels.style.fontWeight = font;
-            }else{
-              this.eHeatMapChartOptions.series[0].label.fontWeight = font;
-            }
-          }
-          else if(this.funnel){
-            if(this.isApexCharts){
-            this.funnelChartOptions.dataLabels.style.fontWeight = font;
-            }else{
-              this.eFunnelChartOptions.series[0].label.fontWeight = font  
-            }
-          }
-          else if(this.radar){
-            this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { fontWeight: number; }; }) => {
-              if (dataItem.label) { // Ensure label exists before updating
-                  dataItem.label.fontWeight = font;
-              }
-          });
-          }
-          else if(this.guage){
-            this.guageChartOptions.plotOptions.radialBar.dataLabels.value.fontWeight = font;
-          }
-          if(this.isApexCharts){
-            if(this.guage){
-          this.updateChart(guageObject);
-            }else{
-              this.updateChart(object)
-            }
-          }else{
-            this.updateEchartOptions();
-          }
         }
         else if(fontStyle === 'I'){
           this.isItalic = !this.isItalic;
@@ -8974,220 +7297,23 @@ fetchChartData(chartData: any){
         }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #00a5a2';
+        this.selectedElement.style.border = '2px solid var(--primary-color)';
         const color = window.getComputedStyle(element).backgroundColor;
-        let object = { dataLabels: { style: { colors : [color] } } };
-        let guageObject = {plotOptions: {radialBar:{dataLabels: { value: { colors: color } }} }};
-
-        if(this.bar){
-          if(this.isApexCharts){
-          this.chartOptions3.dataLabels.style.colors = [color];
-          // object = { dataLabels: { style: { colors : [color] } } };
-          }else{
-            this.eBarChartOptions.series[0].label.color = color;
-          }
-          // object = this.chartOptions3;
-        }
-        else if(this.area){
-          if(this.isApexCharts){
-          this.chartOptions1.dataLabels.style.colors = [color];
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions1;
-          }else{
-            this.eAreaChartOptions.series[0].label.color = color;
-          }
-        }
-        else if(this.line){
-          if(this.isApexCharts){
-          this.chartOptions.dataLabels.style.colors = [color];
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions;
-          }else{
-            this.eLineChartOptions.series[0].label.color = color;
-          }
-        }
-        else if(this.sidebyside){
-          if(this.isApexCharts){
-          this.chartOptions2.dataLabels.style.colors = [color];
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions2;
-          }else{
-            this.eSideBySideBarChartOptions.series.forEach((series:any) => {
-              series.label.color = color; // Set new font family
-          }); 
-          }
-        }
-        else if(this.stocked){
-          if(this.isApexCharts){
-          this.chartOptions6.dataLabels.style.colors = [color];
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions6;
-          }else{
-            this.eStackedBarChartOptions.series.forEach((series:any) => {
-              series.label.color = color; // Set new font family
-          }); 
-          }
-        }
-        else if(this.barLine){
-          if(this.isApexCharts){
-          this.chartOptions5.dataLabels.style.colors = [color];
-          }else{
-            this.eBarLineChartOptions.series.forEach((series: { label: { color: any; }; }) => {
-              series.label.color = color; 
-          });
-          }
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions5;
-        }
-        else if(this.horizentalStocked){
-          if(this.isApexCharts){
-          this.chartOptions7.dataLabels.style.colors = [color];
-          }else{
-            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { color: any; }; }) => {
-              series.label.color = color; 
-          });
-          }
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions7;
-        }
-        else if(this.grouped){
-          if(this.isApexCharts){
-          this.chartOptions8.dataLabels.style.colors = [color];
-          }else{
-            this.eGroupedBarChartOptions.series.forEach((series: { label: { color: any; }; }) => {
-              series.label.color = color; 
-          });
-          }
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions8;
-        }
-        else if(this.multiLine){
-          if(this.isApexCharts){
-          this.chartOptions9.dataLabels.style.colors = [color];
-          }else{
-            this.eMultiLineChartOptions.series.forEach((series: { label: { color: any; }; }) => {
-              series.label.color = color; 
-          });
-          }
-          // object = { dataLabels: { style: { colors : [color] } } };
-          // object = this.chartOptions9;
-        }
-        else if(this.heatMap){
-          if(this.isApexCharts){
-          this.heatMapChartOptions.dataLabels.style.colors = [color];
-          }else{
-            this.eHeatMapChartOptions.series[0].label.color = color;
-          }
-        }
-        else if(this.funnel){
-          if(this.isApexCharts){
-          this.funnelChartOptions.dataLabels.style.colors = [color];
-          }else{
-            this.eFunnelChartOptions.series[0].label.color = color;  
-          }
-        }
-        else if(this.radar){
-          this.eRadarChartOptions.series[0].data.forEach((dataItem: { label: { color: string; }; }) => {
-            dataItem.label.color = color;
-        });        }
-        if(this.guage){
-          this.guageChartOptions.plotOptions.radialBar.dataLabels.value.colors = color.toString();
-        }
+        this.dataLabelsColor = color;
         element.style.border = `1px solid black`;
         this.selectedElement = element;
-        if(this.isApexCharts){
-          if(this.guage){
-            this.updateChart(guageObject)
-          }else{
-        this.updateChart(object);
-          }
-        }else{
-          this.updateEchartOptions();
-        }
       }
-
       setDataLabelsFontPosition(position:any){
         this.dataLabelsFontPosition = position;
-        let object = { plotOptions: { bar: { dataLabels: { position: position } } } };
-        if(this.bar){
-          if(this.isApexCharts){
-          this.chartOptions3.plotOptions.bar.dataLabels.position = position;
-          }else{
-            this.eBarChartOptions.series[0].label.position = position;
-          }
-        }
-        else if(this.line){
-          this.eLineChartOptions.series[0].label.position = position;
-        }
-        else if(this.area){
-          this.eAreaChartOptions.series[0].label.position = position;
-        }
-        else if(this.sidebyside){
-          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
-          if(this.isApexCharts){
-          this.chartOptions2.plotOptions.bar.dataLabels.position = position;
-          }else{
-          this.eSideBySideBarChartOptions.series.forEach((series:any) => {
-            series.label.position = position; // Set new font family
-        });   
-        } 
-        }
-        else if(this.stocked){
-          if(this.isApexCharts){
-          this.chartOptions6.plotOptions.bar.dataLabels.position = position;
-          }else{
-            this.eStackedBarChartOptions.series.forEach((series:any) => {
-              series.label.position = position; // Set new font family
-          }); 
-          }
-        }
-        else if(this.barLine){
-          if(this.isApexCharts){
-          this.chartOptions5.plotOptions.bar.dataLabels.position = position;
-          }else{
-            this.eBarLineChartOptions.series.forEach((series: { label: { position: any; }; }) => {
-              series.label.position = position; 
-          });
-          }
-        }
-        else if(this.horizentalStocked){
-          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
-          if(this.isApexCharts){
-          this.chartOptions7.plotOptions.bar.dataLabels.position = position;
-          }else{
-            this.ehorizontalStackedBarChartOptions.series.forEach((series: { label: { position: any; }; }) => {
-              series.label.position = position; 
-          });
-          }
-        }
-        else if(this.grouped){
-          // object = { plotOptions: { bar: { dataLabels: { position: position } } } };
-          if(this.isApexCharts){
-          this.chartOptions8.plotOptions.bar.dataLabels.position = position;
-          }else{
-            this.eGroupedBarChartOptions.series.forEach((series: { label: { position: any; }; }) => {
-              series.label.position = position; 
-          });
-          }
-        }
-        else if(this.heatMap){
-          if(this.isApexCharts){
-          this.heatMapChartOptions.plotOptions.bar.dataLabels.position = position;
-          }else{
-            this.eHeatMapChartOptions.series[0].label.position = position;
-          }
-        }
-        else if(this.funnel){
-          this.funnelChartOptions.plotOptions.bar.dataLabels.position = position;
-        }
-        if(this.isApexCharts){
-        this.updateChart(object);
-        }else{
-          this.updateEchartOptions();
-        }
+      }
+      setDataLabelsBarFontPosition(position:any){
+        this.dataLabelsBarFontPosition = position;
+      }
+      setDataLabelsLineFontPosition(position:any){
+        this.dataLabelsLineFontPosition = position;
       }
       resetChartColor(){
-        this.color = '#00A5A2';
+        this.color = '#2392c1';
         this.barColor = '#4382F7';
         this.lineColor = '#38FF98';
         this.marksColor2(this.color);
@@ -9198,11 +7324,9 @@ fetchChartData(chartData: any){
       }
       resetGridColor(){
         this.GridColor = '#0f0f0f';
-        this.gridLineColor(this.GridColor);
       }
       resetBackgroundColor(){
         this.backgroundColor = '#ffffff';
-        this.setBackgroundColor(this.backgroundColor);
       }
       resetKpiColor(){
         this.kpiColor = '#0f0f0f';
@@ -9220,6 +7344,7 @@ fetchChartData(chartData: any){
         //   // If the "Go to Sheet" button is clicked, skip the alert
         //   return Promise.resolve(true);
         // }
+        this.loaderService.hide();
         return Swal.fire({
           position: "center",
           icon: "warning",
@@ -9234,7 +7359,7 @@ fetchChartData(chartData: any){
             return true;
           } else {
             // User clicked "No", prevent navigation
-            this.loaderService.hide();
+            // this.loaderService.hide();
             return false;
           }
         });
@@ -9249,10 +7374,6 @@ fetchChartData(chartData: any){
         const obj = {
           "server_id": this.databaseId,
           "queryset_id": this.qrySetId,
-        } as any;
-        if (this.fromFileId) {
-          delete obj.server_id;
-          obj.file_id = this.fileId;
         }
         this.workbechService.getSheetNames(obj).subscribe({
           next: (responce: any) => {
@@ -9272,242 +7393,7 @@ fetchChartData(chartData: any){
 
     setChartType(){
       this.selectedChartPlugin = localStorage.getItem('chartType')+'';
-      this.changeChartPlugin();
-    }
-
-    dimensionsFontFamilyChange(){
-      let  object = {xaxis: {labels: {style: {fontFamily: this.xLabelFontFamily}}, categories: this.chartsColumnData}};
-      if(this.bar){
-        if(this.isApexCharts){
-        this.chartOptions3.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-      }else{
-        this.eBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
-      }
-    }
-      else if (this.area) {
-        if(this.isApexCharts){
-        this.chartOptions1.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eAreaChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        this.chartOptions.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eLineChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        this.chartOptions2.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eSideBySideBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        this.chartOptions6.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eStackedBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily; 
-        }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        this.chartOptions5.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eBarLineChartOptions.xAxis[0].axisLabel.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      else if(this.horizentalStocked){
-        if(this.isApexCharts){
-        this.chartOptions7.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      else if(this.grouped){
-        if(this.isApexCharts){
-        this.chartOptions8.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eGroupedBarChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        this.chartOptions9.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eMultiLineChartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        this.heatMapChartOptions.xaxis.labels.style.fontFamily = this.xLabelFontFamily;
-        }else{
-          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.fontFamily = this.xLabelFontFamily;
-        }
-      }
-      if(this.isApexCharts){
-      this.updateChart(object);
-      }else{
-        this.updateEchartOptions();
-      }
-    }
-    dimensionsFontSizeChange(){
-      let  object = {xaxis: {labels: {style: {fontSize: this.xLabelFontSize}}, categories: this.chartsColumnData}};
-      if(this.bar){
-        if(this.isApexCharts){
-        this.chartOptions3.xaxis.labels.style.fontSize = this.xLabelFontSize;
-        }else{
-          this.eBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
-        }
-      }
-      else if (this.area) {
-        if(this.isApexCharts){
-        this.chartOptions1.xaxis.labels.style.fontSize = this.xLabelFontSize;
-        }else{
-        this.eAreaChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;  
-        }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        this.chartOptions.xaxis.labels.style.fontSize = this.xLabelFontSize;
-         }else{
-        this.eLineChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;  
-        }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        this.chartOptions2.xaxis.labels.style.fontSize = this.xLabelFontSize;
-      }else{
-        this.eSideBySideBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;  
-        }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        this.chartOptions6.xaxis.labels.style.fontSize = this.xLabelFontSize;
-      }else{
-        this.eStackedBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;  
-        }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        this.chartOptions5.xaxis.labels.style.fontSize = this.xLabelFontSize;
-        }else{
-          this.eBarLineChartOptions.xAxis[0].axisLabel.fontSize = this.xLabelFontSize;
-        }
-      }
-      else if(this.horizentalStocked){
-        if(this.isApexCharts){
-        this.chartOptions7.xaxis.labels.style.fontSize = this.xLabelFontSize;
-        }else{
-          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
-        }
-      }
-      else if(this.grouped){
-        if(this.isApexCharts){
-        this.chartOptions8.xaxis.labels.style.fontSize = this.xLabelFontSize;
-        }else{
-          this.eGroupedBarChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
-        }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        this.chartOptions9.xaxis.labels.style.fontSize = this.xLabelFontSize;
-        }else{
-          this.eMultiLineChartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize
-        }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        this.heatMapChartOptions.xaxis.labels.style.fontSize = this.xLabelFontSize;
-        }else{
-          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.fontSize = this.xLabelFontSize
-        }
-      }
-      if(this.isApexCharts){
-      this.updateChart(object);
-      }else{
-        this.updateEchartOptions();
-      }
-    }
-    dimensionsFontWeightChange(){
-      let  object = {xaxis: {labels: {style: {fontWeight: this.xlabelFontWeight}}, categories: this.chartsColumnData}};
-      if(this.bar){
-        if(this.isApexCharts){
-        this.chartOptions3.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
-        }
-      }
-      else if (this.area) {
-        if(this.isApexCharts){
-        this.chartOptions1.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eAreaChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
-        }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        this.chartOptions.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eLineChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
-        }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        this.chartOptions2.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eSideBySideBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
-        }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        this.chartOptions6.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eStackedBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
-        }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        this.chartOptions5.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eBarLineChartOptions.xAxis[0].axisLabel.fontWeight = this.xlabelFontWeight;
-        }
-      }
-      else if(this.horizentalStocked){
-        if(this.isApexCharts){
-        this.chartOptions7.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
-        }
-      }
-      else if(this.grouped){
-        if(this.isApexCharts){
-        this.chartOptions8.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eGroupedBarChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight
-        }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        this.chartOptions9.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eMultiLineChartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight
-        }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        this.heatMapChartOptions.xaxis.labels.style.fontWeight = this.xlabelFontWeight;
-        }else{
-          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.fontWeight = this.xlabelFontWeight
-        }
-      }
-      if(this.isApexCharts){
-      this.updateChart(object);
-      }else{
-        this.updateEchartOptions();
-      }
+      this.changeChartPlugin(this.selectedChartPlugin);
     }
     dimensionsColorChange(event:any){
       if (this.selectedElement) {
@@ -9515,502 +7401,10 @@ fetchChartData(chartData: any){
       }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #00a5a2';
+        this.selectedElement.style.border = '2px solid var(--primary-color)';
         const color = window.getComputedStyle(element).backgroundColor;
-        if(this.bar){
-          this.eBarChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.line){
-          this.eLineChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.area){
-          this.eAreaChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.sidebyside){
-          this.eSideBySideBarChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.stocked){
-          this.eStackedBarChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.barLine){
-          this.eBarLineChartOptions.xAxis[0].axisLabel.color = color;
-        }
-        if(this.horizentalStocked){
-          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.grouped){
-          this.eGroupedBarChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.multiLine){
-          this.eMultiLineChartOptions.xAxis.axisLabel.color = color;
-        }
-        if(this.heatMap){
-          this.eHeatMapChartOptions.xAxis.axisLabel.textStyle.color = color;
-        }
-        this.updateEchartOptions();
-    }
-    measuresFontFamilyChange(){
-      // let object = { yaxis: [{show: this.yLabelSwitch, labels: {show: this.yLabelSwitch, style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)} }] };
-      let object;
-      object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-      if (this.bar) {
-        if(this.isApexCharts){
-        if (this.chartOptions3.yaxis.length > 0) {
-          (this.chartOptions3.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions3.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      else if (this.area) {
-        if(this.isApexCharts){
-        if (this.chartOptions1.yaxis.length > 0) {
-          (this.chartOptions1.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions1.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-        }else{
-          this.eAreaChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-        }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        if (this.chartOptions.yaxis.length > 0) {
-          (this.chartOptions.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eLineChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        if (this.chartOptions2.yaxis.length > 0) {
-          (this.chartOptions2.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions2.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eSideBySideBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        if (this.chartOptions6.yaxis.length > 0) {
-          (this.chartOptions6.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions6.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eStackedBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        if (this.chartOptions5.yaxis.length > 0) {
-          (this.chartOptions5.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions5.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { fontFamily: string; }; }) => {
-          axis.axisLabel.fontFamily = this.yLabelFontFamily; // Update Y-axis label size
-        });
-      }
-      }
-      else if(this.horizentalStocked){
-        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if (this.chartOptions7.yaxis.length > 0) {
-          (this.chartOptions7.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions7.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      else if(this.grouped){
-        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if (this.chartOptions8.yaxis.length > 0) {
-          (this.chartOptions8.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions8.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eGroupedBarChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        if (this.chartOptions9.yaxis.length > 0) {
-          (this.chartOptions9.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions9.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eMultiLineChartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        if (this.heatMapChartOptions.yaxis.length > 0) {
-          (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.heatMapChartOptions.yaxis.labels.style.fontFamily = this.yLabelFontFamily;
-        }
-      }else{
-        this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.fontFamily = this.yLabelFontFamily;
-      }
-      }
-      if(this.isApexCharts){
-      this.updateChart(object);
-      }else{
-        this.updateEchartOptions();
-      }
-    }
-    measuresFontSizeChange(){
-      // let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)} }] };
-      let object;
-      object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-      if (this.bar) {
-        if(this.isApexCharts){
-        if (this.chartOptions3.yaxis.length > 0) {
-          (this.chartOptions3.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions3.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-        this.eBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-
-      }
-      }
-      else if (this.area) {
-        if(this.isApexCharts){
-        if (this.chartOptions1.yaxis.length > 0) {
-          (this.chartOptions1.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions1.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-        this.eAreaChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-      }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        if (this.chartOptions.yaxis.length > 0) {
-          (this.chartOptions.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontFamily = this.yLabelFontFamily;
-          })
-        }
-        else {
-          this.chartOptions.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-        }else{
-          this.eLineChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-        }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        if (this.chartOptions2.yaxis.length > 0) {
-          (this.chartOptions2.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions2.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-        }else{
-          this.eSideBySideBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-        }
-
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        if (this.chartOptions6.yaxis.length > 0) {
-          (this.chartOptions6.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions6.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-        this.eStackedBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-      }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        if (this.chartOptions5.yaxis.length > 0) {
-          (this.chartOptions5.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions5.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-         this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { fontSize: number; }; }) => {
-          axis.axisLabel.fontSize = this.yLabelFontSize; // Update Y-axis label size
-        });
-        }
-      }
-      else if(this.horizentalStocked){
-        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if (this.chartOptions7.yaxis.length > 0) {
-          (this.chartOptions7.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions7.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-        this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-      }
-      }
-      else if(this.grouped){
-        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if (this.chartOptions8.yaxis.length > 0) {
-          (this.chartOptions8.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions8.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-        this.eGroupedBarChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-      }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        if (this.chartOptions9.yaxis.length > 0) {
-          (this.chartOptions9.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.chartOptions9.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-        this.eMultiLineChartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
-      }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        if (this.heatMapChartOptions.yaxis.length > 0) {
-          (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontSize = this.yLabelFontSize;
-          })
-        }
-        else {
-          this.heatMapChartOptions.yaxis.labels.style.fontSize = this.yLabelFontSize;
-        }
-      }else{
-        this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.fontSize = this.yLabelFontSize;
-      }
-      }
-      if(this.isApexCharts){
-      this.updateChart(object);
-      }else{
-        this.updateEchartOptions();
-      }
-    }
-    measuresFontWeightChange(){
-      // let object = { yaxis: [{ labels: { style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)} }] };
-      let object;
-      object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-      if (this.bar) {
-        if(this.isApexCharts){
-        if (this.chartOptions3.yaxis.length > 0) {
-          (this.chartOptions3.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions3.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if (this.area) {
-        if(this.isApexCharts){
-        if (this.chartOptions1.yaxis.length > 0) {
-          (this.chartOptions1.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions1.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eAreaChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if(this.line){
-        if(this.isApexCharts){
-        if (this.chartOptions.yaxis.length > 0) {
-          (this.chartOptions.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eLineChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if(this.sidebyside){
-        if(this.isApexCharts){
-        if (this.chartOptions2.yaxis.length > 0) {
-          (this.chartOptions2.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions2.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eSideBySideBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if(this.stocked){
-        if(this.isApexCharts){
-        if (this.chartOptions6.yaxis.length > 0) {
-          (this.chartOptions6.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions6.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eStackedBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if(this.barLine){
-        if(this.isApexCharts){
-        if (this.chartOptions5.yaxis.length > 0) {
-          (this.chartOptions5.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions5.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { fontWeight: number; }; }) => {
-          axis.axisLabel.fontWeight = this.ylabelFontWeight; // Update Y-axis label size
-        });      }
-      }
-      else if(this.horizentalStocked){
-        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if (this.chartOptions7.yaxis.length > 0) {
-          (this.chartOptions7.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions7.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if(this.groupedChart){
-        object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }}}};
-        if(this.isApexCharts){
-        if (this.chartOptions8.yaxis.length > 0) {
-          (this.chartOptions8.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions8.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eGroupedBarChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if(this.multiLine){
-        if(this.isApexCharts){
-        if (this.chartOptions9.yaxis.length > 0) {
-          (this.chartOptions9.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.chartOptions9.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eMultiLineChartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      else if(this.heatMap){
-        if(this.isApexCharts){
-        if (this.heatMapChartOptions.yaxis.length > 0) {
-          (this.heatMapChartOptions.yaxis as any[]).forEach((data) => {
-            data.labels.style.fontWeight = this.ylabelFontWeight;
-          })
-        }
-        else {
-          this.heatMapChartOptions.yaxis.labels.style.fontWeight = this.ylabelFontWeight;
-        }
-      }else{
-        this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.fontWeight = this.ylabelFontWeight;
-      }
-      }
-      if(this.isApexCharts){
-      this.updateChart(object);
-      }else{
-        this.updateEchartOptions();
-      }
+        this.dimensionColor = color;
+      
     }
     measuresColorChange(event:any){
       if (this.selectedElement) {
@@ -10018,149 +7412,783 @@ fetchChartData(chartData: any){
       }
         const element = event.target as HTMLElement;
         this.selectedElement = event.target as HTMLElement;
-        this.selectedElement.style.border = '2px solid #00a5a2';
+        this.selectedElement.style.border = '2px solid var(--primary-color)';
         const color = window.getComputedStyle(element).backgroundColor;
-        if(this.bar){
-          this.eBarChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.line){
-          this.eLineChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.area){
-          this.eAreaChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.sidebyside){
-          this.eSideBySideBarChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.stocked){
-          this.eStackedBarChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.barLine){
-          this.eBarLineChartOptions.yAxis.forEach((axis: { axisLabel: { color: any; }; }) => {
-            axis.axisLabel.color = color; // Update Y-axis label size
-          });
-        }
-        if(this.horizentalStocked){
-          this.ehorizontalStackedBarChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.multiLine){
-          this.eMultiLineChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.grouped){
-          this.eGroupedBarChartOptions.yAxis.axisLabel.color = color;
-        }
-        if(this.heatMap){
-          this.eHeatMapChartOptions.yAxis.axisLabel.textStyle.color = color;
-        }
-        this.updateEchartOptions();
+        this.measureColor = color;
+      
     }
 
     // updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}})
-    updateNumberFormat(value:any){
-      let object;
-      if(this.isApexCharts){
-        if(this.heatMap){
-          object = {dataLabels:{formatter: this.formatNumber.bind(this)}};
+
+    fetchCalculatedFields(id : any){
+      this.workbechService.fetchCalculatedFields(id).subscribe({
+        next: (response: any) => {
+          this.calculatedFieldId = id;
+          this.isEditCalculatedField = true;
+          this.calculatedFieldLogic = response[0].actual_dragged_logic;
+          this.calculatedFieldName = response[0].field_name;
+          this.calculatedFieldFunction = response[0].functionName;
+          this.nestedCalculatedFieldData = response[0].nestedFunctionName;
+        },
+        error: (error) => {
+          console.log(error);
         }
-        else if(this.funnel){
-          object = {dataLabels:{formatter: (val: any, opts: any) => {
-            const category = opts.w.config.xaxis.categories[opts.dataPointIndex];
-            const formattedValue = this.formatNumber(val);
-            return `${category}: ${formattedValue}`;
-        }}};
+      })
+    }
+
+    dropCalculatedField(tableName: string , columnName : string){
+      let regex;
+      let hasContentInsideParentheses;
+      switch(this.nestedCalculatedFieldData) {
+        case 'abs': 
+          this.calculatedFieldLogic = 'ABS("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'ceiling':
+          this.calculatedFieldLogic = 'CEILING("' + tableName + '"."' + columnName + '")';
+          break; 
+        case 'floor': 
+        this.calculatedFieldLogic = 'FLOOR("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'round':
+        this.calculatedFieldLogic = 'ROUND("' + tableName + '"."' + columnName + '")';
+           break; 
+        case 'left': 
+        regex = /^LEFT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
+        this.calculatedFieldLogic.trim();
+        if (!this.calculatedFieldLogic.startsWith('LEFT(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        const params = this.calculatedFieldLogic.slice(5, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2] = params.split(',');
+        if (param2 === undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
         }
-        else if(this.horizentalStocked || this.grouped){
-          object = { xaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
+        this.calculatedFieldLogic = "LEFT("+'"'+tableName+'"."'+columnName+'",'+param2+")";    
+      }
+        break; 
+        case 'right': 
+        this.calculatedFieldLogic.trim();
+        regex = /^RIGHT\(\s*[^,]*\s*,\s*[^)]*\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('RIGHT(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        const params = this.calculatedFieldLogic.slice(6, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2] = params.split(',');
+        if (param2 === undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
         }
+        this.calculatedFieldLogic = "RIGHT("+'"'+tableName+'"."'+columnName+'",'+param2+")";   
+      }
+        break;
+        case 'mid': 
+        this.calculatedFieldLogic = "SUBSTRING("+'"'+tableName+'"."'+columnName+'"'+ " FROM   FOR  " + ")";
+        break; 
+        case 'length':
+          this.calculatedFieldLogic = 'LENGTH("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'trim':
+          this.calculatedFieldLogic = 'TRIM("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'upper': 
+        this.calculatedFieldLogic = 'UPPER("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'lower': 
+        this.calculatedFieldLogic = 'LOWER("' + tableName + '"."' + columnName + '")';
+        break; 
+        case 'replace': 
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        regex = /^REPLACE\(\s*([^,]*)\s*,\s*([^,]*)\s*,\s*([^,]*)\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('REPLACE(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        const params = this.calculatedFieldLogic.slice(7, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2, param3] = params.split(',');
+        if (param2 === undefined || param3 == undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
+        }
+        this.calculatedFieldLogic = "REPLACE("+'"'+tableName+'"."'+columnName+'",'+param2+ ',' + param3 + ")";  
+      } 
+        break; 
+        case 'split': 
+        this.calculatedFieldLogic = this.calculatedFieldLogic.trim();
+        regex = /^split_part\(\s*([^,]*)\s*,\s*([^,]*)\s*,\s*([^,]*)\s*\)$/;
+        if (!this.calculatedFieldLogic.startsWith('split_part(') || !this.calculatedFieldLogic.endsWith(')') || !regex.test(this.calculatedFieldLogic)) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Invalid Syntax.";
+        } else{
+        const params = this.calculatedFieldLogic.slice(10, -1).trim(); // Removes 'LEFT(' and ')'
+        const [param1, param2, param3] = params.split(',');
+        if (param2 === undefined || param3 == undefined) {
+          this.isValidCalculatedField = false;
+          this.validationMessage = "Missing Parameters.";
+        }
+        this.calculatedFieldLogic = "split_part("+'"'+tableName+'"."'+columnName+'",'+param2+ ',' + param3 + ")";  
+      }
+        break; 
+        case 'find': 
+        this.calculatedFieldLogic = "POSITION( '' IN "+'"'+tableName+'"."'+columnName + '"' +")";  
+        break; 
+        case 'dateadd':
+          this.calculatedFieldLogic = '"'+tableName+'"."'+columnName + '" ' +"+ INTERVAL ''";  
+        break;
+        case 'datediff':
+          this.calculatedFieldLogic = 'CURRENT_DATE - "'+tableName+'"."'+columnName + '"' ;
+        break; 
+        case 'datepart': 
+        this.calculatedFieldLogic = 'DATE_PART("year", ' + '"'+ tableName +'"."'+ columnName + '")';
+        break; 
+        case 'now': break; 
+        case 'today': break; 
+        case 'parse': 
+        this.calculatedFieldLogic = 'TO_CHAR("'+ tableName +'"."'+ columnName + '", "dd-mm-yyyy")';
+        break; 
+        case 'average':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + ')';
+          }
+          break; 
+        case 'count':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
+        case 'countd':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + ')';
+          }
+        break;
+        case 'max':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
+        case 'min':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
+        case 'sum':
+          hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
+          if (hasContentInsideParentheses) {
+            let newString = '"' + tableName + '"."' + columnName + '")';
+            this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
+          } else {
+            this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + ')';
+          }
+        break; 
+        
+      }
+    }
+
+  calculatedFieldsDrop(event: CdkDragDrop<string[]>) {
+    console.log(event)
+    let item: any = event.previousContainer.data[event.previousIndex];
+    if (item && item.column && item.table_name) {
+      if (!(this.calculatedFieldFunction == 'logical' || this.calculatedFieldFunction == 'arithematic')) {
+        this.dropCalculatedField(item.table_name, item.column); 
+      } else {
+        if (this.calculatedFieldLogic?.length) {
+          this.calculatedFieldLogic = this.calculatedFieldLogic + '"' + item.table_name + '"."' + item.column + '"';
+        } else {
+          this.calculatedFieldLogic = '"' + item.table_name + '"."' + item.column + '"';
+        }
+      }
+    }
+  }
+
+  applyCalculatedFields(event: any, ngbdropdownevent: any) {
+    if (!(this.calculatedFieldFunction == 'arithematic')) {
+      this.validateCalculatedField();
+    } else {
+      this.validateExpression();
+    }
+    if (this.isValidCalculatedField) {
+      if (this.isEditCalculatedField) {
+        let requestObj = {
+          query_set_id: this.qrySetId,
+          database_id: this.databaseId,
+          field_name: this.calculatedFieldName,
+          actual_fields_logic: this.calculatedFieldLogic,
+          cal_field_id: this.calculatedFieldId,
+          functionName: this.calculatedFieldFunction,
+          nestedFunctionName: this.nestedCalculatedFieldData
+        }
+        this.workbechService.editCalculatedFields(requestObj).subscribe({
+          next: (responce: any) => {
+            this.isEditCalculatedField = false;
+            event.close();
+            ngbdropdownevent.close();
+            this.columnsData();
+            this.validationMessage = '';
+            this.toasterService.success('Updated Field Successfully', 'success', { positionClass: 'toast-top-right' });
+
+          },
+          error: (error) => {
+            this.validationMessage = error?.error?.error;
+            console.log(error);
+          }
+        })
+      } else {
+        let requestObj = {
+          query_set_id: this.qrySetId,
+          database_id: this.databaseId,
+          field_name: this.calculatedFieldName,
+          actual_fields_logic: this.calculatedFieldLogic,
+          functionName: this.calculatedFieldFunction,
+          nestedFunctionName: this.nestedCalculatedFieldData
+        }
+        this.workbechService.applyCalculatedFields(requestObj).subscribe({
+          next: (responce: any) => {
+            this.validationMessage = '';
+            this.isEditCalculatedField = false;
+            event.close();
+            this.columnsData();
+            this.toasterService.success('Added Successfully', 'success', { positionClass: 'toast-top-right' });
+
+          },
+          error: (error) => {
+            this.validationMessage = error?.error?.error;
+            console.log(error);
+          }
+        })
+      }
+    }
+  }
+
+    // Step 1: Check for valid characters
+    private preValidateExpression(expression: string): void {
+      // Check for adjacent parentheses without an operator
+      if (/\)\s*\(/.test(expression)) {
+        throw new Error('Invalid expression: Missing operator between parentheses.');
+      }
+    }
+
+    validateExpression(): void {
+      try {
+        this.preValidateExpression(this.calculatedFieldLogic);
+        const regex = /"([^"]+)"\.\"([^"]+)\"/g;
+        let validateFieldData = _.cloneDeep(this.calculatedFieldLogic);
+        validateFieldData = validateFieldData.replace(regex, (_, tableName, columnName) => {
+          return `${tableName}_${columnName}`;
+        });
+        parse(validateFieldData);
+        this.isValidCalculatedField = true;
+      } catch (error) {
+        this.validationMessage = (error as Error).message;
+        this.isValidCalculatedField = false;
+      }
+    }
+
+    validateFormula(regex: RegExp){
+      return regex.test(this.calculatedFieldLogic);
+    }
+
+    validateCalculatedField(){
+      switch(this.nestedCalculatedFieldData) {
+        case 'abs':
+          if(!this.validateFormula(/^ABS\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+
+        break; 
+        case 'ceiling':
+          if(!this.validateFormula(/^CEILING\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+        case 'floor': 
+        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+        }
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'round':
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+           break; 
+        case 'left': 
+        if(!this.validateFormula(/^LEFT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
         else{
-          object = {yaxis: {labels : {offsetY : (this.measureAlignment === 'center' ? 0 : (this.measureAlignment === 'top' ? -10 : 10)), style: { fontFamily: this.yLabelFontFamily,fontSize: this.yLabelFontSize, fontWeight: this.ylabelFontWeight }, formatter: this.formatNumber.bind(this)}}};
-          // object = { yaxis: {labels: {formatter: this.formatNumber.bind(this)}}};
+          this.isValidCalculatedField = true;
+          return true;
         }
-        if(value='fromSheetRetrieve'){
-          (object as any).fromsheetretrieve = true;
-          this.updateChart(object);
-          console.log(object)
-        }else{
-        this.updateChart(object);
+        break; 
+        case 'right': 
+        if(!this.validateFormula(/^RIGHT\(\s*("[a-zA-Z0-9_()]+"\.\"[a-zA-Z0-9_\(\)\[\]]+\")\s*,\s*(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break;
+        case 'mid': 
+        if(!this.validateFormula(/^SUBSTRING\(\s*"([^"]+)"\.\"([^"]+)\"\s+FROM\s+(\d+)\s+FOR\s+(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'length':
+          if(!this.validateFormula(/^LENGTH\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'trim':
+          if(!this.validateFormula(/^TRIM\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'upper':
+          if(!this.validateFormula(/^UPPER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'lower':
+          if(!this.validateFormula(/^LOWER\("([a-zA-Z0-9_()]+)"\."([a-zA-Z0-9_\(\)]+)"\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'replace': 
+        if(!this.validateFormula(/^REPLACE\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*\"([^\"]*)\"\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'split': 
+        if(!this.validateFormula(/^split_part\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*(\d+)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'find':
+          if(!this.validateFormula(/^POSITION\(\s*(['"])([^\1]+)\1\s+IN\s+"([^"]+)"\.\"([^"]+)\"\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+          case 'dateadd': 
+          if(!this.validateFormula(/\+\s*INTERVAL/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break;
+          case 'datediff':
+            this.isValidCalculatedField = true;
+              return true;
+          break; 
+          case 'datepart': 
+          if(!this.validateFormula(/^DATE_PART\(\s*(.+?)\s*,\s*(.+?)\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+          case 'now': 
+          this.isValidCalculatedField = true;
+            return true;
+          break; 
+          case 'today': 
+          this.isValidCalculatedField = true;
+            return true;
+          break; 
+          case 'parse':
+            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*'dd-mm-yyyy'\s*\)$/)){
+              this.isValidCalculatedField = false;
+              this.validationMessage = 'Invalid Syntax';
+              return false;
+            } 
+            else{
+              this.isValidCalculatedField = true;
+              return true;
+            }
+          break; 
+          case 'case': 
+          if(!this.validateFormula(/^CASE\s+(WHEN\s+.+?\s+THEN\s+.+?(\s+WHEN\s+.+?\s+THEN\s+.+?)*(\s+ELSE\s+.+?)?\s+END)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          } 
+          break; 
+        case 'ifnull': 
+        if(!this.validateFormula(/^COALESCE\(\s*([^,]+(?:\s*,\s*[^,]+)*)\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'average': 
+        if(!this.validateFormula(/^AVERAGE\(\s*.+?\s*\)$/)){
+          this.isValidCalculatedField = false;
+          this.validationMessage = 'Invalid Syntax';
+          return false;
+        } 
+        else{
+          this.isValidCalculatedField = true;
+          return true;
+        }
+        break; 
+        case 'count':
+          if(!this.validateFormula(/^COUNT\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'countd':
+          if(!this.validateFormula(/^COUNT\(\s*DISTINCT\s+.+\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          
+        break;
+        case 'max':
+          if(!this.validateFormula(/^MAX\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+          break; 
+        case 'min':
+          if(!this.validateFormula(/^MIN\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }
+        break; 
+        case 'sum':
+          if(!this.validateFormula(/^SUM\(\s*.+?\s*\)$/)){
+            this.isValidCalculatedField = false;
+            this.validationMessage = 'Invalid Syntax';
+            return false;
+          } 
+          else{
+            this.isValidCalculatedField = true;
+            return true;
+          }  
+        break; 
+        
+      }
+    }
+
+    calculatedFieldData(){
+      this.nestedCalculatedFieldData = '';
+      this.calculatedFieldLogic = '';
+    }
+
+    nestedCalculatedFieldFunction(){
+      switch(this.nestedCalculatedFieldData) {
+        case 'abs':
+          this.calculatedFieldLogic = 'ABS()';
+        break; 
+        case 'ceiling':
+          this.calculatedFieldLogic = 'CEILING()';
+          break; 
+        case 'floor': 
+        this.calculatedFieldLogic = 'FLOOR()';
+        break; 
+        case 'round':
+        this.calculatedFieldLogic = 'ROUND()';
+           break; 
+        case 'left': 
+        this.calculatedFieldLogic = 'LEFT( , )';
+        break; 
+        case 'right': 
+        this.calculatedFieldLogic = 'RIGHT( , )';
+        break;
+        case 'mid': 
+        this.calculatedFieldLogic = 'SUBSTRING( from  for )';
+        break; 
+        case 'length': 
+        this.calculatedFieldLogic = 'LENGTH()';
+        break; 
+        case 'trim':
+         this.calculatedFieldLogic = 'TRIM()';
+        break; 
+        case 'upper': 
+        this.calculatedFieldLogic = 'UPPER()';
+        break; 
+        case 'lower': 
+        this.calculatedFieldLogic = 'LOWER()';
+        break; 
+        case 'replace': 
+        this.calculatedFieldLogic = 'REPLACE(, ,)';
+        break; 
+        case 'split':
+          this.calculatedFieldLogic = 'split_part(, ,)';
+        break; 
+        case 'find':
+          this.calculatedFieldLogic = "POSITION( '' IN )";
+        break; 
+        case 'dateadd': 
+        this.calculatedFieldLogic = 'CURRENT_DATE + INTERVAL ';
+        break;
+        case 'datediff':
+          this.calculatedFieldLogic = 'CURRENT_DATE - ';
+        break; 
+        case 'datepart': 
+        this.calculatedFieldLogic = "DATE_PART('year', current_timestamp)";
+        break; 
+        case 'now': 
+        this.calculatedFieldLogic = 'current_timestamp()';
+        break; 
+        case 'today': 
+        this.calculatedFieldLogic = 'CURRENT_DATE()';
+        break; 
+        case 'parse':
+          this.calculatedFieldLogic = "TO_CHAR(, 'dd-mm-yyyy')";
+        break; 
+        case 'case':
+          this.calculatedFieldLogic = 'CASE expression WHEN value THEN result ELSE default END';
+        break; 
+        case 'ifnull':
+          this.calculatedFieldLogic = 'COALESCE()';
+        break; 
+        case 'average':
+          this.calculatedFieldLogic = 'AVG()';
+        break; 
+        case 'count': 
+        this.calculatedFieldLogic = 'COUNT()';
+        break; 
+        case 'countd':
+          this.calculatedFieldLogic = 'COUNTD()';
+        break;
+        case 'max':
+          this.calculatedFieldLogic = 'MAX()';
+        break; 
+        case 'min':
+          this.calculatedFieldLogic = 'MIN()';
+        break; 
+        case 'sum': 
+        this.calculatedFieldLogic = 'SUM()';
+        break; 
+        
+      }
+    }
+    tableDataColorChange(event:any){
+      if (this.selectedElement) {
+        this.selectedElement.style.border = 'none';
+      }
+      const element = event.target as HTMLElement;
+      this.selectedElement = event.target as HTMLElement;
+      this.selectedElement.style.border = '2px solid var(--primary-color)';
+      this.tableDataFontColor = window.getComputedStyle(element).backgroundColor;
+    }
+    headerColorChange(event:any){
+      if (this.selectedElement) {
+        this.selectedElement.style.border = 'none';
+      }
+      const element = event.target as HTMLElement;
+      this.selectedElement = event.target as HTMLElement;
+      this.selectedElement.style.border = '2px solid var(--primary-color)';
+      this.headerFontColor = window.getComputedStyle(element).backgroundColor;
+    }
+    sortedData : TableRow[] = [];
+    tableColumnSort(sortType:any, column : any){
+      this.sortedData = [...this.tableDataDisplay];
+      if(sortType === 'default'){
+        this.sortedData = [];
+      }
+      else if(sortType === 'ascending'){
+        this.sortedData.sort((a, b) => {
+          if (a[column] < b[column]) {
+            return -1;
+          }
+          if (a[column] > b[column]) {
+            return 1;
+          }
+          return 0;
+        });
+      }
+      else if(sortType === 'descending'){
+        this.sortedData.sort((a, b) => {
+          if (a[column] > b[column]) {
+            return -1;
+          }
+          if (a[column] < b[column]) {
+            return 1;
+          }
+          return 0;
+        });
+      }
+    }
+    deleteCalculationField(id : any){
+      this.workbechService.deleteCalculatedFields(id).subscribe({
+        next: (response: any) => {
+          this.columnsData();
+          this.toasterService.success('Deleted Successfully', 'success', { positionClass: 'toast-top-right' });
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+    }
+
+    addCalculatedField(){
+      if(!this.isEditCalculatedField){
+        this.calculatedFieldName = '';
+     this.calculatedFieldFunction = '';
+     this.nestedCalculatedFieldData = '';
+     this.calculatedFieldLogic = '';
+     this.isEditCalculatedField = false;
+      }
+    }
+
+    isMapChartDrillDown : boolean = false;
+    setDrilldowns(event : any){
+      this.drillDownIndex = event.drillDownIndex;
+      this.draggedDrillDownColumns = event.draggedDrillDownColumns;
+      this.drillDownObject = event.drillDownObject;
+      if (this.map) {
+        if (this.drillDownIndex != 0) {
+          this.map = false;
+          this.bar = true;
+          this.chartId = 6;
+          this.chartType = 'bar';
+          this.isMapChartDrillDown = true;
         }
       }
-      else if(this.isEChatrts){
-        if(this.bar){
-          this.eBarChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.line){
-          this.eLineChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.area){
-          this.eAreaChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eAreaChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.pie){
-          this.ePieChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
-          this.ePieChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.donut){
-          this.eDonutChartOptions.series[0].label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eDonutChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.sidebyside){
-          this.eSideBySideBarChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value);
-          })
-          // this.eSideBySideBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eSideBySideBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.stocked){
-          this.eStackedBarChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value);
-          })
-          // this.eStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eStackedBarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.barLine){
-          this.eBarLineChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value);
-          })
-          // this.eBarLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eBarLineChartOptions.yAxis[0].axisLabel.formatter = (value:any) => this.formatNumber(value);
-          this.eBarLineChartOptions.yAxis[1].axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.horizentalStocked){
-          this.ehorizontalStackedBarChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value);
-          })
-          // this.ehorizontalStackedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.ehorizontalStackedBarChartOptions.xAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.grouped){
-          this.eGroupedBarChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value);
-          })
-          // this.eGroupedBarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eGroupedBarChartOptions.xAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.multiLine){
-          this.eMultiLineChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value);
-          })
-          // this.eMultiLineChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          this.eMultiLineChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.radar){
-          this.eRadarChartOptions.series.forEach((data : any)=>{
-            data.data.forEach((measure:any)=>{
-              measure.label.formatter = (params:any) => this.formatNumber(params.value);
-            })
-          })
-          // this.eRadarChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          // this.eRadarChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        } else if(this.heatMap){
-          this.eHeatMapChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => this.formatNumber(params.value[2]);
-          })
-          // this.eHeatMapChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-        } else if(this.funnel){
-          this.eFunnelChartOptions.series.forEach((data : any)=>{
-            data.label.formatter = (params:any) => {
-              const formattedValue = this.formatNumber(params.value);
-              return `${params.name}: ${formattedValue}`;
-          };
-          })
-          // this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
-          // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
-        }
-        this.updateEchartOptions('fromSheetretrieve');
-      }
+      this.setOriginalData();
+      this.dataExtraction();
+    }
+    isSheetSaveOrUpdate : boolean = false;
+    chartOptionsSet : any;
+    setChartOptions(event : any){
+      this.chartOptionsSet = event.chartOptions;
+      this.sheetSave();
+      this.isSheetSaveOrUpdate = false;
     }
 }

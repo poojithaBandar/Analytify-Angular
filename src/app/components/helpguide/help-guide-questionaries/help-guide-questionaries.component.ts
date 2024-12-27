@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,16 +15,16 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './help-guide-questionaries.component.scss'
 })
 export class HelpGuideQuestionariesComponent {
-  slug : string = '';
+  @Input() slug : string = '';
   userGuideData : any[]=[];
   ModulesData : any[] = [];
   questionariesData : any[] = [];
   searchValue : string = '';
 
   constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService,private sanitizer: DomSanitizer){
-    if (route.snapshot.params['slug']) {
-       this.slug = route.snapshot.params['slug'];
-    }
+    // if (route.snapshot.params['slug']) {
+    //    this.slug = route.snapshot.params['slug'];
+    // }
   }
   ngOnInit(): void {
     // this.getModulesData();
@@ -84,7 +84,6 @@ export class HelpGuideQuestionariesComponent {
   }
 
   changeQuestionay(slug : string){
-    this.router.navigate(['/insights/help-guide/' + slug]);
     this.slug = slug;
     this.getQuestionary();
   }

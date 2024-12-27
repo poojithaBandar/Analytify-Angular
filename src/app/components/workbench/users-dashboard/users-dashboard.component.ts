@@ -63,16 +63,16 @@ export class UsersDashboardComponent {
         ])]],
       conformpassword: ['', Validators.required],
     })
-    if (this.router.url.includes('/insights/users/add-user')) {
+    if (this.router.url.includes('/analytify/users/add-user')) {
       this.addUserDiv();
     }
-    if (this.router.url.includes('/insights/users/edit-user/')) {
+    if (this.router.url.includes('/analytify/users/edit-user/')) {
       if (route.snapshot.params['id']) {
         const userId = +atob(route.snapshot.params['id']);
         this.getUserIdDetails(userId);
       }
     }
-    if (this.router.url.includes('/insights/users/users-list')) {
+    if (this.router.url.includes('/analytify/users/users-list')) {
       this.getUserList();
     }
     }
@@ -204,7 +204,7 @@ toggleClass1 = "off-line";
       }
   }
   closeAddUserForm(){
-    this.router.navigate(['/insights/users/users-list'])
+    this.router.navigate(['/analytify/users/users-list'])
   }
 
   setRoles() {
@@ -251,7 +251,7 @@ toggleClass1 = "off-line";
     return selectedRoles;
   }
   gotoAddRole(){
-    this.router.navigate(['/insights/roles/add-role'])
+    this.router.navigate(['/analytify/roles/add-role'])
   }
 getAddedRolesList(){
   this.workbechService.getAddedRolesList().subscribe({
@@ -272,11 +272,11 @@ getAddedRolesList(){
   }) 
 }
 addUserRoute(){
-  this.router.navigate(['/insights/users/add-user'])
+  this.router.navigate(['/analytify/users/add-user'])
   
 }
 viewUsers(){
-  this.router.navigate(['/insights/users/users-list'])
+  this.router.navigate(['/analytify/users/users-list'])
 }
 addUser(){
   if (!this.addUserForm.value.is_active) {
@@ -375,7 +375,7 @@ deleteUser(id:any){
 }
 editUserRoute(id:any){
   const userId = btoa(id.toString());
-  this.router.navigate(['/insights/users/edit-user/'+userId])
+  this.router.navigate(['/analytify/users/edit-user/'+userId])
 }
 
 getUserIdDetails(id:any){
@@ -446,7 +446,7 @@ editUserApiCall(){
       console.log(data);
       this.addUserDivForm = false;
       this.toasterservice.success(data.message,'success',{ positionClass: 'toast-top-right'});
-      this.router.navigate(['/insights/users/users-list'])    
+      this.router.navigate(['/analytify/users/users-list'])    
      },
     error:(error)=>{
       console.log(error);

@@ -5,11 +5,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkbenchService } from '../../workbench/workbench.service';
 import { FormsModule } from '@angular/forms';
+import { HelpGuideQuestionariesComponent } from '../help-guide-questionaries/help-guide-questionaries.component';
+import { LoaderService } from '../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-help-guide',
   standalone: true,
-  imports: [SharedModule,NgbModule,CommonModule,FormsModule],
+  imports: [SharedModule,NgbModule,CommonModule,FormsModule, HelpGuideQuestionariesComponent],
   templateUrl: './help-guide.component.html',
   styleUrl: './help-guide.component.scss'
 })
@@ -21,11 +23,31 @@ export class HelpGuideComponent {
   isSearch : boolean = false;
   searchValue : string = '';
   searchData : any[] = [];
+  isQuestionary : boolean = false;
+  slug : string = '';
+  searchErrorMessage : string = '';
 
-  constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService){
-  }
+  constructor(private router:Router,private route:ActivatedRoute,private workbenchService:WorkbenchService,private loaderService:LoaderService){
+    if(this.router.url.includes('/analytify/help-guide/sheets')){
+      this.onModule(3);
+    }
+    if(this.router.url.includes('/analytify/help-guide/datasource')){
+      this.onModule(1);
+    }
+    if(this.router.url.includes('/analytify/help-guide/dashboard')){
+      this.onModule(5);
+    }
+    if(this.router.url.includes('/analytify/help-guide/customSql')){
+      this.onModule(2);
+    }
+    if(this.router.url.includes('/analytify/help-guide/previlages')){
+      this.onModule(6);
+    }
+    }
 
   ngOnInit(): void {
+    // this.router.navigate(['insights/help-guide']);
+    this.loaderService.hide();
     this.getModulesData();
   }
 
@@ -57,21 +79,31 @@ export class HelpGuideComponent {
   }
 
   goToQuestionary(slug:string){
-    this.router.navigate(['/insights/help-guide/'+slug])
+    this.slug = slug;
+    this.isQuestionary = true;
+    this.isSearch = false;
+    this.isModules = false;
+    // this.router.navigate(['/insights/help-guide/'+slug]);
   }
 
   getSearchData(searchValue : string){
     this.isSearch = true;
+    this.isQuestionary = false;
+    this.isModules = false;
     let object = {
        "search": searchValue
     }
     this.workbenchService.getUserHelpGuideSearch(object).subscribe({next: (responce:any) => {
       console.log(responce);
+      this.searchErrorMessage = '';
       this.searchData = responce.user_guide_data;
     },
     error: (error) => {
+      this.searchErrorMessage = error.error.message;
+      this.searchData = [];
       console.log(error);
     }
-  })
+  });
+  // this.router.navigate(['insights/help-guide'], { queryParams: { search: searchValue } });
   }
 }

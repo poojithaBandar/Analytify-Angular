@@ -151,10 +151,10 @@ viewDashboard(serverId:any,querysetId:any,dashboardId:any){
   // const encodedQuerySetId = btoa(querysetId.toString());
   const encodedDashboardId = btoa(dashboardId.toString());
 
-  this.router.navigate(['/insights/home/sheetsdashboard/'+encodedDashboardId])
+  this.router.navigate(['/analytify/home/sheetsdashboard/'+encodedDashboardId])
 }
 dashboardRoute(){
-this.router.navigate(['/insights/sheetsdashboard']);
+this.router.navigate(['/analytify/sheetsdashboard']);
 }
 
 
@@ -280,10 +280,12 @@ sharePublish(value:any){
     this.createUrl = true;
     this.shareAsPrivate = false
     const publicDashboardId = btoa(this.dashboardId.toString());
-    this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
+    this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId;
+    this.publishDashboard();
   } else if(value === 'private'){
     this.createUrl = false;
     this.shareAsPrivate = true;
+    this.publishedDashboard = false;
   }
   }
 copyUrl(): void {

@@ -36,7 +36,14 @@ a {
 }
 .table-responsive{
     height: 523px;
-    overflow: hidden;
+    overflow: auto;
+}
+.card.img-shadow:hover {
+    box-shadow: 0 16px 32px #21212126;
+}
+tr:hover {
+    box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078);
+    border-radius: 20px;
 }
 
      // for Mobile Resolution //
@@ -91,6 +98,9 @@ a {
             height: 510px;
             overflow: hidden;
         }
+        .card-text {
+            font-size: 12px;
+        }
     }
 
       // for 100% Resolution //
@@ -133,6 +143,9 @@ a {
         .table-responsive{
             height: 493px;
             overflow: hidden;
+        }
+        .card-text{
+            font-size: 11px;
         }
   }
 

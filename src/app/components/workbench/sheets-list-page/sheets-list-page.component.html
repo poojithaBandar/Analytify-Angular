@@ -1,4 +1,4 @@
-<app-page-header title="Sheets List" title1="Home" activeitem="Sheets"></app-page-header>
+<app-page-header title="Sheets List" moduleId="sheets" title1="Home" activeitem="Sheets"></app-page-header>
 
 
 <div class="main-container container-fluid">
@@ -18,10 +18,10 @@
 
 
           <div class="input-group">
-            <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="loadSelectedSheetList();getValuesForSheetRoute($event)"  class="form-select form-select select2 fs-14 form-control border-end-0" >
+            <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="pageNo = 1;loadSelectedSheetList('fromSelect');getValuesForSheetRoute($event);"  class="form-select form-select select2 fs-14 form-control border-end-0" >
               <option value="0">All</option>
               @for(sheetlist of sheetsList;track sheetlist.id){
-                <option value="{{sheetlist.id}}" [attr.data-dbid]="sheetlist.server_id" [attr.data-fileid]="sheetlist.file_id" [attr.data-field]="sheetlist.datasource_queryset_id">{{sheetlist.queryset_name}}</option>
+                <option value="{{sheetlist.id}}" [attr.data-dbid]="sheetlist.hierarchy_id" [attr.data-field]="sheetlist.datasource_queryset_id">{{sheetlist.queryset_name}}</option>
               }
   
           </select>
@@ -42,7 +42,7 @@
           @if(!gridView){
             <div class="table-responsive border" style="height: 26rem;">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
-                    <thead class="table-primary" style="position: sticky;top: -1px;background-color: #00a5a2;">
+                    <thead class="table-primary bg-primary" style="position: sticky;top: -1px;">
                         <tr>
                             <th>Title</th>
                             <!-- <th>Created On</th> -->
@@ -89,7 +89,7 @@
                               </div>
                               <div class="content">
                                 <span>Sheet Name: </span>
-                                <a  style="color: #05aff8;cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
+                                <a  style="cursor: pointer;" ngbTooltip="{{sheets.sheet_name}}" (click)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)" > {{sheets.sheet_name | slice:0:15}}</a>
                                 <p class="mb-0">Created by: {{sheets.created_by}}</p>
                               </div>
                           </div>                                  
@@ -101,11 +101,11 @@
                               <div class="hstack gap-2 fs-1">
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light'"
                                   [previledgeId]="18" [isBtn]="false"
-                                  (btnClickEvent)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                                  (btnClickEvent)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                                   [toolTip]="'Edit'" [faIconList]="'ri-edit-line'" [isIcon]="true"></app-insights-button>
                                 <app-insights-button [classesList]="'btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light'"
-                                  [previledgeId]="19" [isBtn]="false" [toolTip]="'Delete database'"
-                                  (btnClickEvent)="deleteSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                                  [previledgeId]="19" [isBtn]="false" [toolTip]="'Delete sheet'"
+                                  (btnClickEvent)="deleteSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                                   [faIconList]="'ri-delete-bin-7-line'" [isIcon]="true"></app-insights-button>
                               
                               </div>
@@ -189,7 +189,7 @@
             totalItems: totalItems
           }"  class="col-md-12 col-xl-3">
           <div class="card card-box-shadow ">
-            <div class="card-header tiled-header-bg">
+            <div class="card-header tiled-header-bg bg-primary tiled-card-header-padding">
               <div class="d-sm-flex align-items-center">
                 <div class="user-image">
                     <span class="avatar avatar rounded-circle">
@@ -217,7 +217,7 @@
                   <div class="ms-2 mt-sm-0 mt-2">
                     <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                       <h6 class="mb-1">
-                          <a (click)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
+                          <a (click)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"  ngbTooltip="{{sheets.sheet_name}}"  class="float-start">{{sheets.sheet_name | slice:0:15}}</a>
                       </h6>
                       
                   </div>
@@ -231,17 +231,17 @@
                   </a>
                   <div class="dropdown-menu" ngbDropdownMenu>
                     <app-insights-button [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="18" [isBtn]="false"
-                      [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                      [tabIndex]="0" (btnClickEvent)="viewSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                       [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                     <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'"
                       [previledgeId]="19" [isBtn]="false" [tabIndex]="0"
-                      (btnClickEvent)="deleteSheet(sheets.server_id,sheets.file_id,sheets.queryset_id,sheets.sheet_id)"
+                      (btnClickEvent)="deleteSheet(sheets.hierarchy_id,sheets.queryset_id,sheets.sheet_id)"
                       [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                   </div>
               </div>
             </div>
             </div>
-            <div class="card-body ">
+            <div class="card-body tiled-card-body-padding">
                 <div class="row">
                   
                     <div  class="col-md-12">
@@ -285,9 +285,7 @@
                         <span class="fs-14" [ngbTooltip]="sheets.queryset_name?.length > 13 ? sheets.queryset_name : null" >{{sheets.queryset_name?.length > 13 ? (sheets.queryset_name | slice: 0: 13)+ '...' : sheets.queryset_name}}</span>
                       </div>
                   </div>
-                    
                     </div>
-                  
                 </div>
             </div>
            </div> 
@@ -297,7 +295,7 @@
         }
             <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetUserSheetsList((page = $event))"></pagination-controls>
             <div  style="float: right;font-size: 15px; margin-top: -30px;">
-              <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getUserSheetsList()" class="form-control" style="cursor: pointer;">
+              <select *ngIf="savedSheetsList.length > 9" [(ngModel)]="itemsPerPage" (ngModelChange)="getUserSheetsList()" class="form-control" style="cursor: pointer;">
                     <option  value="10"> 10</option>
                     <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
                     <option [disabled]="!(totalItems > 20)" value="30"> 30</option>

@@ -45,6 +45,11 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/database_connection/`+this.accessToken,obj);
   }
+  connectWiseConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/connectwise/`+this.accessToken,obj);
+  }
   DbConnectionFiles(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
@@ -79,6 +84,9 @@ export class WorkbenchService {
 
   tableRelation(obj:any){
     return this.http.post<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj);
+  }
+  saveThemes(obj:any){
+    return this.http.post<any>(`${environment.apiUrl}/usercustomtheme/`+this.accessToken,obj);
   }
   getTableData(obj:any){
     return this.http.put<any>(`${environment.apiUrl}/get_table_relationship/`+this.accessToken,obj)
@@ -614,5 +622,108 @@ deleteUser(id:any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/userconfig/`+this.accessToken,object);
+    }
+
+    applyCalculatedFields(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/calculation/`+this.accessToken,object);
+    }
+
+    editCalculatedFields(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/calculation/`+this.accessToken,object);
+    }
+
+    fetchCalculatedFields(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.get<any>(`${environment.apiUrl}/get_calculation/`+ id + '/' +this.accessToken);
+    }
+
+    deleteCalculatedFields(id : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.delete<any>(`${environment.apiUrl}/delete_calculation/`+ id + '/' +this.accessToken);
+    }
+
+    //Drill Through
+    getDrillThroughData(object : any, isPublicUrl : any){
+      if(isPublicUrl){
+        return this.http.post<any>(`${environment.apiUrl}/public/dashboard_drill_through/`,object);
+      }
+      else {
+        const currentUser = localStorage.getItem('currentUser');
+        this.accessToken = JSON.parse(currentUser!)['Token'];
+        return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through/`+this.accessToken,object);
+      }
+    }
+
+    getSheetsInDashboardAction(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through_sheets/`+this.accessToken,object);
+    }
+
+    saveDrillThroughAction(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through_save/`+this.accessToken,object);
+    }
+
+    updateDrillThroughAction(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.put<any>(`${environment.apiUrl}/dashboard_drill_through_save/`+this.accessToken,object);
+    }
+
+    getDrillThroughAction(id : any, isPublicUrl : any){
+      let object = {
+        action_id: id
+      }
+      if(isPublicUrl){
+        return this.http.post<any>(`${environment.apiUrl}/public/dashboard_drill_through_get/`,object);
+      }
+      else {
+        const currentUser = localStorage.getItem('currentUser');
+        this.accessToken = JSON.parse(currentUser!)['Token'];
+        return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through_get/`+this.accessToken,object);
+      }
+    }
+
+    getDrillThroughActionList(object : any, isPublicUrl : any){
+      if(isPublicUrl){
+        return this.http.post<any>(`${environment.apiUrl}/public/dashboard_drill_through_action_list/`,object);
+      }
+      else {
+        const currentUser = localStorage.getItem('currentUser');
+        this.accessToken = JSON.parse(currentUser!)['Token'];
+        return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through_action_list/`+this.accessToken,object);
+      }
+    }
+
+    getDrillThroughActionEditPreview(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through_action_detail/`+this.accessToken,object);
+    }
+
+    deleteDrillThroughAction(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through_delete/`+this.accessToken,object);
+    }
+
+    actionUpdateOnSheetRemove(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/dashboard_drill_through_action_sheet_update/`+this.accessToken,object);
+    }
+
+    resetDrillThroughOnActionDelete(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/drill_noaction_sheet/`+this.accessToken,object);
     }
 }

@@ -101,11 +101,12 @@ License                         :   Licensed under ThemeForest License
 --- quill
 */
 /* ######## FONT ######## */
-@import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;500;600;700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;500;600;700&display=swap"); */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 /* ######## BOOTSTRAP ######## */
 :root {
   --body-bg-rgb:	234, 241, 251;
-  --primary-rgb:	0, 165, 162;
+  --primary-rgb:	35, 146, 193;
   --secondary-rgb:	219, 85, 93;
   --warning-rgb:	247, 183, 37;
   --info-rgb:	23, 177, 223;
@@ -208,7 +209,7 @@ License                         :   Licensed under ThemeForest License
   --body-bg-rgb2:	26, 28, 30;
   --menu-bg:	rgb(var(--body-bg-rgb));
   --menu-border-color:	rgba(255,255,255,0.1);
-  --menu-prime-color:	rgba(255,255,255,0.6);
+  --menu-prime-color:	rgba(255,255,255);
   --header-bg:	rgb(var(--body-bg-rgb));
   --header-prime-color:	rgba(255,255,255,0.6);
   --header-border-color:	rgba(255,255,255,0.1);
@@ -647,7 +648,7 @@ html[data-menu-styles=dark] .app-sidebar .slide-menu.child3 .side-menu__item.act
 }
 html[data-menu-styles=dark][data-theme-mode=light] {
   --menu-bg: rgb(4 44 72 / 98%);
-  --menu-prime-color: rgba(255, 255, 255, 0.6);
+  --menu-prime-color: rgba(255, 255, 255);
 }
 html[data-menu-styles=dark][data-theme-mode=light][data-bg-img=bgimg1] {
   --menu-bg: url(../images/menu-bg-images/bg-img1.jpg);
@@ -694,7 +695,7 @@ html[data-menu-styles=dark][data-theme-mode=light] .side-menu__icon.active .side
 
 html[data-menu-styles=color] {
   --menu-bg: var(--primary-color);
-  --menu-prime-color: rgba(255, 255, 255, 0.8);
+  --menu-prime-color: rgba(255, 255, 255);
   --menu-border-color: rgba(255, 255, 255, 0.1);
 }
 html[data-menu-styles=color][data-nav-layout=vertical] .app-sidebar .main-sidebar-header .header-logo .desktop-dark {
@@ -7386,7 +7387,7 @@ fieldset:disabled .button-slide-out__above {
   border-start-end-radius: var(--bs-modal-inner-border-radius);
   
   /* rajesh */
-  background-color: #009a97;
+  background-color: var(--primary-color);
   color: #fff;
   border-radius: 20px 20px 0px 0px !important;
   border: none;
@@ -14225,7 +14226,7 @@ section {
 
 body {
   font-size: 0.875rem;
-  font-family: "Kumbh Sans", sans-serif;
+  font-family: "Open Sans", serif;
   background-color: var(--background);
   color: var(--default-text-color);
   line-height: 1.5;
@@ -31716,14 +31717,14 @@ body *::-webkit-scrollbar {
   height: 58px;
   width: 58px;
 }
-.folder-file svg [fill="#00a5a2"] {
+.folder-file svg [fill="#2392c1"] {
   fill: var(--primary-color);
 }
 .folder-file svg [fill="#9dd1d0"] {
   fill: var(--primary05);
 }
 
-.file-manager svg#pdf [fill="#00a5a2"] {
+.file-manager svg#pdf [fill="#2392c1"] {
   fill: var(--primary-color);
 }
 
@@ -33233,7 +33234,7 @@ img {
 .landing-top-header::before {
   position: absolute;
   content: "";
-  background-color: rgba(21, 58, 84, 0.8);
+  background: var(--menu-bg);
   width: 100%;
   height: 100%;
   left: 0;
@@ -52781,7 +52782,8 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .tx-fixed-white {
-  color: var(--fixed-white) !important;
+  /* color: var(--fixed-white) !important; */
+  color: var(--menu-prime-color);
 }
 
 .text-gray {
@@ -55389,9 +55391,14 @@ input[type=range]::-webkit-slider-runnable-track {
   }
   .ngx-pagination .current {
     padding: .1875rem .625rem;
-    background: #00a5a2 !important;
+    background: var(--primary-color) !important;
     color: #fefefe;
     cursor: default;
+    
+  }
+  .ngx-pagination{
+    margin-bottom: 0px !important;
+    padding-top: 15px;
   }
   .ngx-pagination{
     margin-bottom:0px !important;
@@ -55409,5 +55416,8 @@ button.btn {
   font-size: 12px;
 }
 p {
+  font-size: 13px;
+}
+button.btn {
   font-size: 13px;
 }
