@@ -48,6 +48,7 @@ export class WorkbenchComponent implements OnInit{
   openPostgreSqlForm= false;
   openMySqlForm = false;
   openConnectWiseForm = false;
+  openHaloPSAForm = false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -108,6 +109,9 @@ export class WorkbenchComponent implements OnInit{
     clientId = '';
     companyId = '';
     siteURL = '';
+    siteURLPSA = '';
+    clientSecret = '';
+    clientIdPSA = '';
     publicKey = '';
     privateKey = '';
     path='';
@@ -126,6 +130,10 @@ export class WorkbenchComponent implements OnInit{
     this.publicKey = '';
     this.siteURL = '';
     this.companyId = '';
+    this.siteURLPSA = '';
+    this.clientIdPSA = '';
+    this.clientSecret = '';
+    
   }  
     openPostgreSql(){
     this.openPostgreSqlForm=true;
@@ -247,6 +255,13 @@ export class WorkbenchComponent implements OnInit{
       this.emptyVariables();
     }
 
+    connectHaloPSA(){
+      this.openHaloPSAForm = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+      this.emptyVariables();
+    }
+
     companyIdError(){
       if(this.companyId){
         this.companyIDError = false;
@@ -260,6 +275,27 @@ export class WorkbenchComponent implements OnInit{
         this.siteURLError = false;
       }else{
         this.siteURLError = true;
+      }
+    }
+    siteUrlPSAError(){
+      if(this.siteURLPSA){
+        this.siteURLErrorPSA = false;
+      }else{
+        this.siteURLErrorPSA = true;
+      }
+    }
+    clientSecretsError(){
+      if(this.clientSecret){
+        this.clientSecretError = false;
+      }else{
+        this.clientSecretError = true;
+      }
+    }
+    clientIdErrorPSA(){
+      if(this.clientIdPSA){
+        this.clientIDPSAError = false;
+      }else{
+        this.clientIDPSAError = true;
       }
     }
     privateConnectWiseError(){
@@ -298,6 +334,31 @@ export class WorkbenchComponent implements OnInit{
               this.databaseId=responce?.hierarchy_id;
               this.modalService.dismissAll();
               this.openConnectWiseForm = false;
+              const encodedId = btoa(this.databaseId.toString());
+              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
+    haloPSASignIn(){
+      const obj = {
+        "site_url": this.siteURLPSA,
+        "client_id": this.clientIdPSA,
+        "client_secret": this.clientSecret
+      }
+      this.workbechService.haloPSAConnection(obj).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=responce?.hierarchy_id;
+              this.modalService.dismissAll();
+              this.openHaloPSAForm = false;
               const encodedId = btoa(this.databaseId.toString());
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
             }
@@ -845,6 +906,7 @@ export class WorkbenchComponent implements OnInit{
   this.ibmDb2Form= false;
   this.sqlLiteForm = false;
   this.openConnectWiseForm = false;
+  this.openHaloPSAForm = false;
 
   this.postGreServerName = '';
   this.postGrePortName = '';
@@ -859,6 +921,7 @@ export class WorkbenchComponent implements OnInit{
   this.publicKey = '';
   this.siteURL = '';
   this.companyId = '';
+  this.siteURLPSA = '';
   }
 
   serverError:boolean = false;
@@ -870,6 +933,9 @@ export class WorkbenchComponent implements OnInit{
   pathError:boolean = false;
   clientIDError:boolean = false;
   siteURLError:boolean = false;
+  siteURLErrorPSA:boolean = false;
+  clientIDPSAError:boolean = false;
+  clientSecretError: boolean = false;
   privateKeyError:boolean = false;
   publicKeyError:boolean = false;
   companyIDError:boolean = false;
