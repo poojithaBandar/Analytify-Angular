@@ -78,6 +78,7 @@ export class WorkbenchComponent implements OnInit{
   totalItems:any;
   fileData:any;
   viewDatasourceList = false;
+  selectedMicroSoftAuthType: string | null = null;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
@@ -415,6 +416,7 @@ export class WorkbenchComponent implements OnInit{
           "password":this.PostGrePassword,
           "display_name":this.displayName,
           "database": this.postGreDatabaseName,
+          "authentication_type":this.selectedMicroSoftAuthType
       }
         this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
           console.log(responce)
@@ -1005,7 +1007,27 @@ export class WorkbenchComponent implements OnInit{
     }
   }
   errorCheck(){
-    if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
+    if(this.openMicrosoftSqlServerForm){
+      if(this.selectedMicroSoftAuthType === 'Windows Authentication'){
+        if(this.serverError || this.portError || this.databaseError || this.displayNameError){
+          this.disableConnectBtn = true;
+        } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.displayName)) {
+          this.disableConnectBtn = true;
+        } else{
+          this.disableConnectBtn = false;
+        }
+      }
+      else{
+         if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
+          this.disableConnectBtn = true;
+        } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
+          this.disableConnectBtn = true;
+        } else{
+          this.disableConnectBtn = false;
+        }
+      }
+    }
+    else if(this.serverError || this.portError || this.databaseError || this.userNameError || this.displayNameError || this.passwordError){
       this.disableConnectBtn = true;
     } else if(!(this.postGreServerName && this.postGrePortName && this.postGreDatabaseName && this.postGreUserName && this.displayName && this.PostGrePassword)) {
       this.disableConnectBtn = true;

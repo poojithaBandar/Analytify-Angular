@@ -82,6 +82,12 @@
   .tiled-card-header-padding {
     padding: 10px !important;
   }
+  h1#inputModalLabel {
+    font-size: 16px !important;
+  }
+  .form-label{
+    font-size: 13px;
+  }
   }
 
   // for 100% Resolution //
@@ -129,5 +135,11 @@
   }
   .tiled-card-header-padding {
     padding: 10px !important;
+  }
+  h1#inputModalLabel {
+    font-size: 15px !important;
+  }
+  .form-label{
+    font-size: 12px;
   }
 }
