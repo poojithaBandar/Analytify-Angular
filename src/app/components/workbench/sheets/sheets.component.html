@@ -890,66 +890,7 @@
                                                 <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
                                         </div>
-                                        <!-- <div class="dropup" ngbDropdown>
-                                            <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
-                                            <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                <div class="dropup" ngbDropdown>
-                                                   
-                                                    <li  *ngIf="!isMeasureEdit" class=" text-center">@if(rows.alias){
-                                                        {{ rows.alias }}
-                                                    }
-                                                    @else if(rows.type){
-                                                        {{ rows.type }} ({{rows.column}})
-                                                    }@else{   
-                                                         {{ rows.column }}
-                                                    }  <i (click)="isMeasureEdit = true;" class="fa fa-pencil "></i> 
-                                                    </li>
-                                                   
-                                               
-                                                    <li  *ngIf="isMeasureEdit"><input  type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class=" dropdown-item form-control checkbox-color" style="cursor: auto;">
-                                                    </li>
-                                                    <div class="d-flex" style="align-items: center;">
-                                                        <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
-                                                        <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
-                                                    </div>
-                                                    <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
-                                                        <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a></li>  
-                                                    </ul>
-                                                </div>
-                                                <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
-                                            </ul>
-                                        </div> -->
-
-                                        <!-- <div class="" ngbDropdown>
-                                            <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
-                                                
-                                                <div class="dropdown-menu  cu" ngbDropdownMenu style="float: right;">
-                                                    <div class="d-inline-block float-right" ngbDropdown>
-                                                        <a class="btn btn-outline-light mx-0 " data-bs-toggle="dropdown" ngbDropdownToggle  style="text-align: left !important; width: 65%;"> Aggregation
-                                                            <i class="fe fe-chevron-right fs-18 text-body-secondary"></i>
-                                                            <div class="dropdown-menu  cu" ngbDropdownMenu>
-                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')">None</a>
-                                                            </div>
-                                                        </a> 
-                                                    </div>
-                                                    <a class="btn btn-secondary-light mx-0" style="text-align: left !important;width: 65%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> 
-                                                </div>
-
-                                            </a>
-                                        </div> -->
+                                        
                                         <ng-template #aggregateUserModal let-modal>
                                             <div class="modal-header">
                                                 <h6 class="modal-title">Aggregated measures</h6>
@@ -984,29 +925,7 @@
                                                 </button>
                                             </div>
                                         </ng-template>
-                                        <!-- <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="openSuperScaledModal(aggregateModal)"></i> -->
-                                       <!--  <i class="fe fe-more-vertical fs-18 text-body-secondary" (click)="toggleDropdown()"></i>
-                                        <select  class="form-control" [(ngModel)]="measureValue" [class.show]="isDropdownVisible" (change)="rowMeasuresCount(rows,index,measureValue)">
-                                            <option value="sum">Sum</option>
-                                            <option value="avg">Avg</option>
-                                            <option value="min">Min</option>
-                                            <option value="max">Max</option>
-                                            <option value="count">Count</option>
-                                          </select>
-                                         <div class="dropdown">
-                                            <button (click)="toggleDropdown()" class="dropdown-button">
-                                              <span>▼</span> 
-                                            </button>
-                                            <div class="dropdown-content" [class.show]="isDropdownVisible">
-                                                <select  class="form-control" [(ngModel)]="measureValue"  (change)="rowMeasuresCount(rows,index,measureValue)">
-                                                    <option value="sum">Sum</option>
-                                                    <option value="avg">Avg</option>
-                                                    <option value="min">Min</option>
-                                                    <option value="max">Max</option>
-                                                    <option value="count">Count</option>
-                                                  </select>
-                                            </div>
-                                          </div>-->
+                                        
                                         
                                     </div>
                                     }
@@ -1165,209 +1084,7 @@
                 [dataLabelsLineFontPosition]="dataLabelsLineFontPosition" [selectedColorScheme]="selectedColorScheme"
                 (saveOrUpdateChart)="setChartOptions($event)" (setDrilldowns)="setDrilldowns($event)">
                 </app-insight-apex>
-              <!--<h6>Bar Chart</h6>
-              <figure id="bar"></figure>-->
-
-              <!-- <div class="card-body">
-                <div id="bar-chart" class="chartfit">
-                    <apx-chart #barChart 
-                    [series]="chartOptions3.series"
-                    [chart]="chartOptions3.chart" 
-                    [title]="chartOptions3.title"
-                    [xaxis]="chartOptions3.xaxis"
-                    [yaxis]="chartOptions3.yaxis"
-                    [grid]="chartOptions3.grid"
-                    [plotOptions]="chartOptions3.plotOptions"
-                    [dataLabels]="chartOptions3.dataLabels"
-                    [fill]="chartOptions3.fill"
-                    [colors]="chartOptions3.colors">
-                    </apx-chart>
-                </div>
-            </div> -->
-              <!-- } -->
-              <!-- @if(area && chartId){
-                <div class="card-body">
-                    <div id="area-chart">
-                        <apx-chart #areaChart
-                        [series]="chartOptions1.series" [chart]="chartOptions1.chart"
-                        [xaxis]="chartOptions1.xaxis" [stroke]="chartOptions1.stroke"
-                        [dataLabels]="chartOptions1.dataLabels" [yaxis]="chartOptions1.yaxis"
-                        [labels]="chartOptions1.labels" [legend]="chartOptions1.legend"  [grid]="chartOptions1.grid"
-                        [title]="chartOptions1.title" [subtitle]="chartOptions1.subtitle"[colors]="chartOptions1.colors"></apx-chart>
-                    </div>
-                </div>
-              } -->
-              <!-- @if(line && chartId){
-                <div class="card-body">
-                    <div id="line-chart">
-                        <apx-chart #lineChart
-                        [series]="chartOptions.series || []" [chart]="chartOptions.chart"
-                        [xaxis]="chartOptions.xaxis" [dataLabels]="chartOptions.dataLabels" [yaxis]="chartOptions.yaxis"
-                        [grid]="chartOptions.grid" [stroke]="chartOptions.stroke"
-                        [title]="chartOptions.title" [colors]="chartOptions.colors"></apx-chart>
-                    </div>
-                </div>
-              } -->
-              <!-- @if(pie && chartId){ -->
-             <!-- <h6>Pie Chart</h6>
-             <figure id="pie"></figure>-->
-             <!-- <div class="card-body">
-                <div id="pie-basic">
-                    <apx-chart #piechart
-                    [series]="chartOptions4.series" [chart]="chartOptions4.chart" [legend]="chartOptions4.legend"
-                    [labels]="chartOptions4.labels" [responsive]="chartOptions4.responsive" [colors]="chartOptions4.colors" [dataLabels]="chartOptions4.dataLabels"></apx-chart>
-                </div>
-            </div> -->
-              <!-- } -->
-              
-             
-              <!-- @if(sidebyside && chartId){
-                <div class="card-body">
-                    <div id="column-chart">
-                        <apx-chart #sidebyside
-                        [series]="chartOptions2.series" [chart]="chartOptions2.chart"
-                        [dataLabels]="chartOptions2.dataLabels" [plotOptions]="chartOptions2.plotOptions"
-                        [yaxis]="chartOptions2.yaxis" [legend]="chartOptions2.legend" [fill]="chartOptions2.fill"
-                        [stroke]="chartOptions2.stroke" [tooltip]="chartOptions2.tooltip" [colors]="chartOptions2.colors" [grid]="chartOptions2.grid"
-                        [xaxis]="chartOptions2.xaxis"></apx-chart>
-                    </div>
-                </div>
-              } -->
-              <!-- @if(stocked){
-                <div id="chart">
-                    <apx-chart #stocked
-                      [series]="chartOptions6.series"
-                      [chart]="chartOptions6.chart"
-                      [dataLabels]="chartOptions6.dataLabels"
-                      [plotOptions]="chartOptions6.plotOptions"
-                      [responsive]="chartOptions6.responsive"
-                      [xaxis]="chartOptions6.xaxis"
-                      [yaxis]="chartOptions6.yaxis"
-                      [legend]="chartOptions6.legend"
-                      [fill]="chartOptions6.fill"
-                      [grid]="chartOptions6.grid"
-                    ></apx-chart>
-                  </div>
-              } -->
-             <!-- @if(barLine){
-                <div class="card-body">
-                    <div id="mixed-linecolumn">
-                        <apx-chart #barline
-                        [series]="chartOptions5.series" [chart]="chartOptions5.chart"
-                        [yaxis]="chartOptions5.yaxis" [xaxis]="chartOptions5.xaxis" [labels]="chartOptions5.labels"
-                        [stroke]="chartOptions5.stroke" [title]="chartOptions5.title"  [grid]="chartOptions5.grid"
-                        [dataLabels]="chartOptions5.dataLabels" [fill]="chartOptions5.fill"
-                        [tooltip]="chartOptions5.tooltip"[colors]="chartOptions5.colors"></apx-chart>
-                    </div>
-                </div>
-             } -->
-             <!-- @if(horizentalStocked){
-                <div id="chart">
-                    <apx-chart #horizentalstocked
-                      [series]="chartOptions7.series"
-                      [chart]="chartOptions7.chart"
-                      [dataLabels]="chartOptions7.dataLabels"
-                      [plotOptions]="chartOptions7.plotOptions"
-                      [responsive]="chartOptions7.responsive"
-                      [xaxis]="chartOptions7.xaxis"
-                      [yaxis]="chartOptions7.yaxis"
-                      [grid]="chartOptions7.grid"
-                      [legend]="chartOptions7.legend"
-                      [fill]="chartOptions7.fill"
-                    ></apx-chart>
-                  </div>
-              } -->
-              <!-- @if(grouped){
-                <div id="chart">
-                    <apx-chart #grouped
-                      [series]="chartOptions8.series"
-                      [chart]="chartOptions8.chart"
-                      [dataLabels]="chartOptions8.dataLabels"
-                      [plotOptions]="chartOptions8.plotOptions"
-                      [responsive]="chartOptions8.responsive"
-                      [xaxis]="chartOptions8.xaxis"
-                      [yaxis]="chartOptions8.yaxis"
-                      [grid]="chartOptions8.grid"
-                      [legend]="chartOptions8.legend"
-                      [fill]="chartOptions8.fill"
-                    ></apx-chart>
-                  </div>
-              } -->
-              <!-- @if(multiLine){
-                <div id="chart">
-                    <apx-chart #multiline
-                    [series]="chartOptions9.series"
-                    [chart]="chartOptions9.chart"
-                    [xaxis]="chartOptions9.xaxis"
-                    [stroke]="chartOptions9.stroke"
-                    [tooltip]="chartOptions9.tooltip"
-                    [dataLabels]="chartOptions9.dataLabels"
-                    [legend]="chartOptions9.legend"
-                    [markers]="chartOptions9.markers"
-                    [grid]="chartOptions9.grid"
-                    [yaxis]="chartOptions9.yaxis"
-                    [title]="chartOptions9.title"
-                  ></apx-chart>
-                  </div>
-              } -->
-              <!-- @if(donut){
-                <div id="donutchart">
-                <apx-chart #donutchart
-                    [series]="chartOptions10.series"
-                    [chart]="chartOptions10.chart"
-                    [labels]="chartOptions10.labels"
-                    [responsive]="chartOptions10.responsive"
-                    [plotOptions] = "chartOptions10.plotOptions"
-                    [dataLabels]="chartOptions10.dataLabels"
-                    [legend]="chartOptions10.legend" >
-                </apx-chart>
-                  </div>
-              } -->
-              <!-- @if(heatMap){
-                <div id="chart">
-                    <apx-chart #heatmapchart
-                      [series]="heatMapChartOptions.series"
-                      [chart]="heatMapChartOptions.chart"   
-                      [xaxis]="heatMapChartOptions.xaxis"
-                      [yaxis]="heatMapChartOptions.yaxis"
-                      [plotOptions]="heatMapChartOptions.plotOptions"
-                      [dataLabels]="heatMapChartOptions.dataLabels"
-                      [legend]="heatMapChartOptions.legend"
-                      [grid]="heatMapChartOptions.grid"
-                    ></apx-chart>
-                  </div>
-              } -->
-              <!-- @if(funnel){
-                <div id="chart">
-                    <apx-chart #funnelChart
-                      [series]="funnelChartOptions.series"
-                      [chart]="funnelChartOptions.chart"
-                      [dataLabels]="funnelChartOptions.dataLabels"
-                      [plotOptions]="funnelChartOptions.plotOptions"
-                      [xaxis]="funnelChartOptions.xaxis"
-                      [colors]="funnelChartOptions.colors"
-                      [title]="funnelChartOptions.title"
-                      [legend]="funnelChartOptions.legend"></apx-chart>
-                      </div>
-                    } -->
-              <!-- @if(guage){
-                <div id="chart">
-                    <apx-chart #guageChart
-                      [series]="guageChartOptions.series"
-                      [chart]="guageChartOptions.chart"   
-                      [xaxis]="guageChartOptions.xaxis"
-                      [yaxis]="guageChartOptions.yaxis"
-                      [plotOptions]="guageChartOptions.plotOptions"
-                      [dataLabels]="guageChartOptions.dataLabels"
-                      [legend]="guageChartOptions.legend"
-                      [grid]="guageChartOptions.grid"
-                      [labels]="guageChartOptions.labels"
-                       [tooltip]="guageChartOptions.tooltip"
-                         [fill]="guageChartOptions.fill"
-                        [stroke]="guageChartOptions.stroke"
-                    ></apx-chart>
-                  </div>
-              } -->
+    
             } @else {
             @if(bar && chartId){         
             <div class="card-body">
@@ -1387,10 +1104,6 @@
             }
             @else if(funnel && chartId){         
                 <div class="card-body">
-                    <!-- <div id="bar-chart">
-                        <div id="echartsBar" echarts [options]="eFunnelChartOptions" class="echart-charts"></div>
-                    </div> -->
-
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [color]="color" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -1398,10 +1111,6 @@
                 }
             @else if(stocked && chartId){         
                 <div class="card-body">
-                    <!-- <div id="stockedbar-chart">
-                        <div id="echartsBar" echarts [options]="eStackedBarChartOptions" class="echart-charts"></div>
-                    </div> -->
-
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
@@ -1413,10 +1122,6 @@
                 }
             @else if(sidebyside && chartId){         
                     <div class="card-body">
-                        <!-- <div id="sidebysidebar-chart">
-                            <div id="echartsBar" echarts [options]="eSideBySideBarChartOptions" class="echart-charts"></div>
-                        </div> -->
-
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" 
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
@@ -1428,10 +1133,6 @@
                     }
             @else if(grouped && chartId){         
                     <div class="card-body">
-                        <!-- <div id="groupedbar-chart">
-                            <div id="echartsBar" echarts [options]="eGroupedBarChartOptions" class="echart-charts"></div>
-                        </div> -->
-
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
@@ -1443,10 +1144,6 @@
             }
             @else if(horizentalStocked && chartId){         
                 <div class="card-body">
-                    <!-- <div id="bhstockedar-chart">
-                        <div id="echartsBar" echarts [options]="ehorizontalStackedBarChartOptions" class="echart-charts"></div>
-                    </div> -->
-
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
@@ -1458,10 +1155,6 @@
                 
             @else if(area && chartId){
             <div class="card-body">
-                <!-- <div id="area-chart">
-                    <div id="echartsBar" echarts [options]="eAreaChartOptions" class="echart-charts"></div>
-                </div> -->
-
                 <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
@@ -1473,10 +1166,6 @@
             }
             @else if(line && chartId){
             <div class="card-body">
-                <!-- <div id="line-chart">
-                    <div id="echartsBar" echarts [options]="eLineChartOptions" class="echart-charts"></div>
-                </div> -->
-
                 <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" 
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
@@ -1489,34 +1178,25 @@
             }
             @else if(pie && chartId){
             <div class="card-body">
-                <!-- <div id="pie-chart">
-                    <div id="echartsBar" echarts [options]="ePieChartOptions" class="echart-charts"></div>
-                </div> -->
                 <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                 [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels"  [dataLabelsFontFamily]="dataLabelsFontFamily" [selectedColorScheme]="selectedColorScheme"
                 [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                 [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
-                (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
+                (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)" [leftLegend]="leftLegend" [topLegend]="topLegend" [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"></app-insight-echart>
             </div>
             }
             @else if(donut && chartId){
                 <div class="card-body">
-                    <!-- <div id="donut-chart">
-                        <div id="echartsBar" echarts [options]="eDonutChartOptions" class="echart-charts"></div>
-                    </div> -->
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType" [donutSize]="donutSize" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" [selectedColorScheme]="selectedColorScheme"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment"
                     [donutDecimalPlaces]="donutDecimalPlaces" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
-                    (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)"
+                    (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)" [leftLegend]="leftLegend" [topLegend]="topLegend" [rightLegend]="rightLegend" [bottomLegend]="bottomLegend" [legendOrient]="legendOrient"
                     ></app-insight-echart>
                 </div>
                 }
             @else if(barLine && chartId){
                 <div class="card-body">
-                    <!-- <div id="barline-chart">
-                        <div id="echartsBar" echarts [options]="eBarLineChartOptions" class="echart-charts"></div>
-                    </div> -->
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" [xLabelSwitch]="xLabelSwitch" [yLabelSwitch]="yLabelSwitch"
                     [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"
@@ -1527,10 +1207,6 @@
                 }
                 @else if(multiLine && chartId){
                     <div class="card-body">
-                        <!-- <div id="multiline-chart">
-                            <div id="echartsBar" echarts [options]="eMultiLineChartOptions" class="echart-charts"></div>
-                        </div> -->
-
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
@@ -1542,10 +1218,6 @@
                     }
             @else if(radar && chartId){
                 <div class="card-body">
-                    <!-- <div id="radar-chart">
-                        <div id="echartsBar" echarts [options]="eRadarChartOptions" class="echart-charts"></div>
-                    </div> -->
-
                     <app-insight-echart  [chartType]="chartType" [radarRowData]="radarRowData" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [legendSwitch]="legendSwitch" [xLabelColor]="xLabelColor" [dataLabels]="dataLabels" [dataLabelsFontFamily]="dataLabelsFontFamily" 
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [legendsAllignment]="legendsAllignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
@@ -1554,9 +1226,6 @@
                 }
                 @else if(map && chartId){
                     <div class="card-body">
-                        <!-- <div id="map-chart">
-                            <div id="echartsBar" echarts [options]="eMapChartOptions" class="echart-charts"></div>  
-                        </div> -->
                         <app-insight-echart  [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
                         (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -1565,20 +1234,12 @@
                     
                 @else if(calendar){
                     <div class="card-body">
-                        <!-- <div id="calender-chart" style="height: 100vh; overflow-y: scroll;">
-                            <div id="echartsBar" echarts [options]="eCalendarChartOptions" class="chart-container"></div>  
-                        </div> -->
                         <app-insight-echart [isZoom]="isZoom"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [selectedColorScheme]="selectedColorScheme"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
                 }
                 @else if(heatMap){
                     <div class="card-body">
-                        <!-- <div id="heatmap-chart">
-                            <div id="echartsBar" echarts [options]="eHeatMapChartOptions" class="echart-charts">
-                            </div>
-                        </div> -->
-
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" 
                         [decimalPlaces]="decimalPlaces" [displayUnits]="displayUnits"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xLabelSwitch]="xLabelSwitch" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" [selectedColorScheme]="selectedColorScheme"
@@ -1615,34 +1276,7 @@
          </mat-tab-group>
          
                         <ul ngbnav="" id="footer-tab border-1 " role="tablist" class="nav nav-pills fs-12 " style=" display: contents;">
-                            <!--  <li role="presentation" class="nav-item">
-                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-right">
-                                                            <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-left" class="fa fa-caret-left"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li role="presentation" class="nav-item">
-                                                       <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle span-left">
-                                                            <i data-bs-toggle="tooltip" ngbtooltip="fa fa-caret-right" class="fa fa-caret-right"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li role="presentation" class="nav-item">
-                                                        <button type="button " ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-23" aria-disabled="false" aria-controls="ngb-nav-23-panel" class="nav-link BtnNewStyle active"> Sheet 1</button>
-                                                    </li>
-                                                    <li role="presentation" class="nav-item">
-                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 2</button>
-                                                    </li>
-                                                    <li role="presentation" class="nav-item">
-                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 3</button>
-                                                    </li>
-                                                    <li role="presentation" class="nav-item">
-                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 4</button>
-                                                    </li>
-                                                    <li role="presentation" class="nav-item">
-                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 5</button>
-                                                    </li>
-                                                    <li role="presentation" class="nav-item">
-                                                        <button type="button" ngbnavlink="" data-bs-toggle="tab" role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle">Sheet 6</button>
-                                                    </li>-->
+                            
                             <div>
                                 <li role="presentation" class="nav-item">
                                     <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
@@ -1904,62 +1538,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div *ngIf="isApexCharts && !(table && chartId)" class="card mb-0 marks-card-height" >
-                                                <div class="card-header justify-content-between align-items-center">
-                                                    <div class="card-title fs-12">Marks </div>
-                                                </div>
-                                                <div class="card-body" style=" padding: 2px 12px;">
-                                                    <div class="row"> 
-                                                        <div *ngIf="!barlineChart" class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                                            <div class="" ngbDropdown>
-                            
-                                                            <ngx-colors 
-                                                           ngx-colors-trigger 
-                                                           [(ngModel)]="color"  (ngModelChange)="marksColor2($event)"
-                                                           [format] = "'hex'"
-                                                            ></ngx-colors>
-                                                                <span class="mark-txt fs-11">Color</span>
-                                                            </div>
-                                                            
-                                                        </div>
-                                                        <div *ngIf="barlineChart" class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                                            <div class="" ngbDropdown>
-                                                                <ngx-colors ngx-colors-trigger [(ngModel)]="barColor" (ngModelChange)="marksColor2($event)" [format]="'hex'"></ngx-colors>
-                                                                <span class="mark-txt fs-11">bar color</span>
-                                                            </div>
-                                                        </div>
-                                                        <div *ngIf="barlineChart" class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                                            <div class="" ngbDropdown>
-                                                                <ngx-colors ngx-colors-trigger [(ngModel)]="lineColor" (ngModelChange)="marksColor2($event)" [format]="'hex'"></ngx-colors>
-                                                                <span class="mark-txt fs-11">line color</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                                            <a href="javascript:void(0);">
-                                                                <img src="./assets/images/marks/title.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                                            </a>
-                                                            <span class="mark-txt fs-11">Text</span>
-                                                        </div>
-                                                        <div class="col-3 px-2 m-1 border text-center sub-menu-item">
-                                                            <div class="" ngbDropdown>
-                                                                <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                                                    aria-haspopup="true" aria-expanded="false" class=""><img _ngcontent-ng-c394438746="" src="./assets/images/marks/size.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                                                </a>
-                                                                <div class="dropdown-menu p-3" ngbDropdownMenu>
-                                                                    <input type="range" class="form-range" id="customRange1">
-                                                                </div>
-                                                            </div>
-                                                            <span class="mark-txt fs-11">Size</span>
-                                                        </div>
-                                                        <div class="col-3 px-1 m-1 border text-center sub-menu-item">
-                                                            <a href="javascript:void(0);">
-                                                                <img src="./assets/images/marks/tooltip.png" alt="img" class="rounded-2 w-70 mrk-t mt-1">
-                                                            </a>
-                                                            <span class="mark-txt fs-11">Tooltip</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> -->
+                                          
                                         </div>
                                     </ng-template>
                                 </li>
@@ -2292,19 +1871,6 @@
                                                               <ng-template>
                                                                 <div >
                                                                   <div class="sub-menu-item  p-2" >
-                                                                    <!-- <div class="row">
-                                                                        <label class="col-md-4 form-label px-1 fs-14">Font</label>
-                                                                        <div class="col-md-8">
-                                                                            <div class="form-group mb-1">
-                                                                                <select class="form-select form-select select2 fs-14" (change)="fontChange($event,'dimension')">
-                                                                                    <option value="calibri" style="font-family: Calibri, sans-serif; font-size: 12px;">Calibri, Bold, 12px</option>
-                                                                                    <option value="arial" style="font-family: Arial, sans-serif; font-size: 14px;">Arial, Bold, 14px</option>
-                                                                                    <option value="times" style="font-family: Times New Roman, serif; font-size: 16px;">Times New Roman, Bold, 16px</option>
-                                                                                    <option value="verdana" style="font-family: Verdana, sans-serif; font-size: 12pt;">Verdana, Bold, 12px</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div> -->
                                                                           <div class="row">
                                                                             <div class="" >
                                                                                 <div class="font-color-card">
@@ -2408,72 +1974,7 @@
                                                                             </div>
                                                                           </div>
                                                                         </div>
-                                                                    <!-- <div *ngIf="!isApexCharts" class="row">
-                                                                        <label class="col-md-4 form-label px-1 fs-14">Font-Size</label>
-                                                                        <div class="col-md-8">
-                                                                            <div class="form-group mb-1">
-                                                                                <select [(ngModel)]="xLabelFontSize" (change)="changeAlignment()" class="form-select form-select select2 fs-14">
-                                                                                    <option value="9">9</option>
-                                                                                    <option value="10">10</option>
-                                                                                    <option value="11">11</option>
-                                                                                    <option value="12">12</option>
-                                                                                    <option value="14">14</option>
-                                                                                    <option value="16">16</option>
-                                                                                    <option value="18">18</option>
-                                                                                    <option value="20">20</option>
-                                                                                    <option value="22">22</option>
-                                                                                    <option value="24">24</option>
-                                                                                    <option value="26">26</option>
-                                                                                    <option value="28">28</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div *ngIf="!isApexCharts" class="row">
-                                                                        <label class="col-md-5 form-label px-1 fs-14">Font-Family</label>
-                                                                        <div class="col-md-7">
-                                                                            <div class="form-group mb-1">
-                                                                                <select [(ngModel)]="xLabelFontFamily" (change)="changeAlignment()" class="form-select form-select select2 fs-14" >
-                                                                                    <option value="Algerian">Algerian</option>
-                                                                                    <option value="Arial">Arial</option>
-                                                                                    <option value="Bahnschrift">Bahnschrift</option>
-                                                                                    <option value="italic">Italic</option>
-                                                                                    <option value="sans-serif">Sans Serif</option>
-                                                                                    <option value="Calibri">Calibri</option>
-                            
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div *ngIf="!isApexCharts" class="row">
-                                                                        <label class="col-md-5 form-label px-1 fs-14">Font-Weight</label>
-                                                                        <div class="col-md-7">
-                                                                            <div class="form-group mb-1">
-                                                                                <select  [(ngModel)]="xlabelFontWeight" (change)="changeAlignment()" class="form-select form-select select2 fs-14">
-                                                                                    <option value="100">100</option>
-                                                                                    <option value="200">200</option>
-                                                                                    <option value="300">400</option>
-                                                                                    <option value="400">500</option>
-                                                                                    <option value="500">600</option>
-                                                                                    <option value="600">700</option>
-                                                                                    <option value="700">800</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div> -->
-                                                                    <!-- <div class="row">
-                                                                        <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
-                                                                        <div class="col-md-8">
-                                                                            <div class="form-group mb-1">
-                                                                                <select class="form-select form-select select2 fs-14"  [(ngModel)]="labelAlignment" (change)="allignmentChange($event,'dimension')">
-                                                                                    <option value="center">center</option>
-                                                                                    <option value="left">left</option>
-                                                                                    <option value="right">right</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div> -->
+                                                                   
                                                                     <span ngbTooltip=""></span>
                                                                   </div>
                                                                 </div>
@@ -2505,28 +2006,14 @@
                                                               data-bs-parent="#accordionExample"
                                                                >
                                                               <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
-                                                                <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
-                                                                    <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
-                                                                </button> -->
+                                                            
                                                                 <ng-template>
                                                                   <div >
                                                                     <div class="sub-menu-item  p-2" >
                                                                         <div class="row">
                                                                             
                                                                         </div>
-                                                                      <!-- <div class="row">
-                                                                          <label class="col-md-4 form-label px-1 fs-14">Font</label>
-                                                                          <div class="col-md-8">
-                                                                              <div class="form-group mb-1">
-                                                                                 <select class="form-select form-select select2 fs-14" (change)="fontChange($event,'measures')">
-                                                                                    <option value="calibri" style="font-family: Calibri, sans-serif; font-size: 12px;">Calibri, Bold, 12px</option>
-                                                                                    <option value="arial" style="font-family: Arial, sans-serif; font-size: 14px;">Arial, Bold, 14px</option>
-                                                                                    <option value="times" style="font-family: Times New Roman, serif; font-size: 16px;">Times New Roman, Bold, 16px</option>
-                                                                                    <option value="verdana" style="font-family: Verdana, sans-serif; font-size: 12pt;">Verdana, Bold, 12px</option>
-                                                                                  </select>
-                                                                              </div>
-                                                                          </div>
-                                                                      </div> -->
+                                                                      
                                                                       <div class="row">
                                                                         <div class="" >
                                                                             <div class="font-color-card">
@@ -2630,81 +2117,7 @@
                                                                         </div>
                                                                       </div>
                                                                     </div>
-                                                                      <!-- @if(kpi){
-                                                                        <div class="row">
-                                                                          <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
-                                                                          <input type="number" id="decimal-places" [(ngModel)]="KPIDecimalPlaces" (change)="formatKPINumber()" min="0">
-                                                                          </div>
-                                                                          <div class="row">
-                                                                          <label for="display-units">Display Units:</label>
-                                                                          <select id="display-units" [(ngModel)]="KPIDisplayUnits" (change)="formatKPINumber()">
-                                                                            <option value="none">None</option>
-                                                                            <option value="K">Thousands (K)</option>
-                                                                            <option value="M">Millions (M)</option>
-                                                                            <option value="B">Billions (B)</option>
-                                                                            <option value="G">Billions (G)</option>
-                                                                          </select>
-                                                                          </div>
-                                                                          <div class="row">
-                                                                          <label for="prefix">Prefix:</label>
-                                                                          <input type="text" id="prefix" [(ngModel)]="KPIPrefix" (input)="formatKPINumber()">
-                                                                          </div>
-                                                                          <div class="row">
-                                                                          <label for="suffix">Suffix:</label>
-                                                                          <input type="text" id="suffix" [(ngModel)]="KPISuffix" (input)="formatKPINumber()">
-                               </div>
-                                                                      } -->
-                                                                      <!-- <div class="row">
-                                                                          <label class="col-md-4 form-label px-1 fs-14">Alignment</label>
-                                                                          <div class="col-md-8">
-                                                                              <div class="form-group mb-1">
-                                                                                 <select class="form-select form-select select2 fs-14" (change)="allignmentChange($event,'measures')">
-                                                                                    <option value="center">center</option>
-                                                                                    <option value="up">up</option>
-                                                                                    <option value="down">down</option>
-                                                                                  </select>
-                                                                              </div>
-                                                                          </div>
-                                                                      </div> -->
-                                                                      <!-- @if(!kpi){
-                                                                      <div class="row">
-                                                                          <label class="col-md-4 form-label px-1 fs-14">Numbers</label>
-                                                                          <div class="col-md-8">
-                                                                              <div class="form-group mb-1">
-                                                                                <select class="form-select form-select select2 fs-14" (change)="numberPopupTrigger()">
-                                                                                    <option value="1">123.456</option>
-                                                                                    <option value="2">Number(custom)</option>
-                                                                                </select>
-                                                                              </div>
-                                                                          </div>
-                                                                      </div>
-                                                                    }
-                                                                      @if(numberPopup){
-                                                                        <div class="number-formatting number-popup popup-content">
-                                                                            <label for="decimal-places">Decimal places:</label>
-                                                                            <input type="number" id="decimal-places" [(ngModel)]="decimalPlaces" min="0">
-                                                                            
-                                                                            <label for="display-units">Display Units:</label>
-                                                                            <select id="display-units" [(ngModel)]="displayUnits">
-                                                                              <option value="none">None</option>
-                                                                              <option value="K">Thousands (K)</option>
-                                                                              <option value="M">Millions (M)</option>
-                                                                              <option value="B">Billions (B)</option>
-                                                                              <option value="G">Billions (G)</option>
-                                                                            </select>
-                                                                            
-                                                                            <label for="prefix">Prefix:</label>
-                                                                            <input type="text" id="prefix" [(ngModel)]="prefix">
-                                                                            
-                                                                            <label for="suffix">Suffix:</label>
-                                                                            <input type="text" id="suffix" [(ngModel)]="suffix">
-                                                                            
-                                                                            <div class="buttons">
-                                                                                <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                                <button class="btn btn-primary" (click)="updateChart(heatMap?{dataLabels:{formatter: this.formatNumber.bind(this)}}:{ yaxis: {labels: {formatter: this.formatNumber.bind(this)}}}); numberPopupTrigger()">Update</button>
-                                                                            </div>
-                                                                          </div>
-                                                                      } -->
+                                                                     
                                                                       <span ngbTooltip=""></span>
                                                                     </div>
                                                                   </div>
@@ -2934,15 +2347,7 @@
                                                                 </div>
                                                               </div>
                                                             </div>
-                                                              <!-- <div class="p-2" style="display: flex;justify-content: space-between;" *ngIf="bar || sidebyside || stocked || horizentalStocked || grouped">
-                                                                <label>Position</label>
-                                                                <select class="form-select form-select select2 fs-14" (change)="dataLabelsFontPosition($event)" style="width: 40%; height: 30px;">
-                                                                    <option value="0" selected disabled>select</option>
-                                                                    <option value="top">TOP</option>
-                                                                    <option value="center">CENTER</option>
-                                                                    <option value="bottom">BOTTOM</option>
-                                                                </select>
-                                                              </div> -->
+                                                       
                                                               @if(kpi){
                                                                 <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-2">
                                                                   <label for="col-md-4 form-label px-1 fs-14">Decimal places and Round:</label>
@@ -2977,14 +2382,7 @@
                                                                             <li><a ngbDropdownItem class="dropdown-item" ngbDropdownItem (click)="numberPopupTrigger()">Number(custom)</a></li>
                                                                         </ul>
                                                                     </div>
-                                                                    <!-- <div class="col-md-8">
-                                                                        <div class="form-group mb-1">
-                                                                          <select class="form-select form-select select2 fs-14" (onChange)="numberPopupTrigger()">
-                                                                              <option selected disabled value="1">123.456</option>
-                                                                              <option value="2">Number(custom)</option>
-                                                                          </select>
-                                                                        </div>
-                                                                    </div> -->
+                                                                 
                                                                 </div>
                                                               
                                                                 @if(numberPopup){
@@ -3029,22 +2427,7 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <!-- <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0) && bandingSwitch" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >Banding color </p>
-                                                        </div>
-                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="color1"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                         <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="color2"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
+                                             
                                                     <div *ngIf="(table && chartId) && (draggedColumns.length !== 0 || draggedRows.length !==0)" class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2 p-3">
                                                         <div  style="font-size: 15px;">
                                                             <label>Page Length</label>
@@ -3069,56 +2452,7 @@
                                                             <span></span>
                                                         </div>
                                                     </div>
-                                                    <!-- <div *ngIf="!isApexCharts && !calendar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >background Color </p>
-                                                        </div>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="backgroundColor"  (ngModelChange)="marksColor($event,6)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div>   -->
-                                                    <!-- <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >X-label Color </p>
-                                                        </div>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="xLabelColor"  (ngModelChange)="marksColor($event,5)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >X-Grid Line Color </p>
-                                                        </div>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="xGridColor"  (ngModelChange)="marksColor($event,1)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >Y-label Color </p>
-                                                        </div>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="yLabelColor"  (ngModelChange)="marksColor($event,2)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >Y-Grid Line Color </p>
-                                                        </div>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="yGridColor"  (ngModelChange)="marksColor($event,3)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
+                                                  
                                                     <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
@@ -3372,24 +2706,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <!-- <div *ngIf="!isApexCharts && xLabelSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                                    <div class=""> 
-                                                                        <p >X-label Color </p>
-                                                                    </div>
-                                                                    <div *ngIf="xLabelColorSwitch" class="toggle toggle-sm on mb-0" (click)="xLabelColorSwitch = !xLabelColorSwitch; resetColor()">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <div *ngIf="!xLabelColorSwitch" class="toggle toggle-sm off mb-0" (click)="xLabelColorSwitch = !xLabelColorSwitch;">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <ngx-colors *ngIf="xLabelColorSwitch"
-                                                                    ngx-colors-trigger 
-                                                                    [(ngModel)]="xLabelColor"  (ngModelChange)="marksColor($event,5)"
-                                                                    [format] = "'hex'"
-                                                                     ></ngx-colors>
-                                                                </div>  
-                                                                <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                                </div>   -->
+                                                                
                                                                 <div *ngIf="!isApexCharts && xGridSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >X-Grid Line Color </p>
@@ -3406,22 +2723,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <!-- <div *ngIf="!isApexCharts && yLabelSwitch && !(pie || donut || calendar || kpi)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                                    <div class=""> 
-                                                                        <p >Y-label Color </p>
-                                                                    </div>
-                                                                    <div *ngIf="yLabelColorSwitch" class="toggle toggle-sm on mb-0" (click)="yLabelColorSwitch = !yLabelColorSwitch; resetColor()">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <div *ngIf="!yLabelColorSwitch" class="toggle toggle-sm off mb-0" (click)="yLabelColorSwitch = !yLabelColorSwitch;">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <ngx-colors *ngIf="yLabelColorSwitch"
-                                                                    ngx-colors-trigger 
-                                                                    [(ngModel)]="yLabelColor"  (ngModelChange)="marksColor($event,2)"
-                                                                    [format] = "'hex'"
-                                                                     ></ngx-colors>
-                                                                </div> -->
+                                                               
                                                                 <div *ngIf="!isApexCharts && yGridSwitch && !(pie || donut || calendar || kpi || radar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Y-Grid Line Color </p>
@@ -3473,17 +2775,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <!-- <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                                    <label>color</label>
-                                                                    <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetChartColor()">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <div *ngIf="!funnelColorSwitch" class="toggle toggle-sm off mb-0" (click)="funnelColorSwitch = !funnelColorSwitch;">
-                                                                        <span></span>
-                                                                    </div>
-                                                                    <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'" (ngModelChange)="marksColor2($event)">
-                                                                    </ngx-colors>
-                                                                </div> -->
+                                                      
      
                                                             </ng-template>
                                                           </div>
@@ -3552,88 +2844,13 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- <div *ngIf="isApexCharts && (xGridSwitch || yGridSwitch) && !((table && chartId) || (pie && chartId) || donut || kpi || funnel || heatMap || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >Grid Line Color </p>
-                                                        </div>
-                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="GridColor"  (change)="gridLineColor($event)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="isApexCharts  && !((table && chartId) || kpi || guage)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >Background Color </p>
-                                                        </div>
-                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="apexbBgColor"  (change)="apexbBackgroundColor($event)"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
+                                                    
                                                     <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="font-size" step="1" >Font Size</label>
                                                         <input type="number" [(ngModel)]="kpiFontSize" style="width: 30%;">
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
-                                                    <!-- <div *ngIf="kpi" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <label for="color">Color:</label>
-                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="kpiColor"
-                                                        [format] = "'hex'"
-                                                         ></ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barlineChart||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || guage || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >Chart Color </p>
-                                                        </div>
-                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="color" 
-                                                        (ngModelChange)="marksColor2($event)"
-                                                        [format]="'hex'"></ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >bar color </p>
-                                                        </div>
-                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="barColor" 
-                                                        (ngModelChange)="marksColor2($event)" 
-                                                        [format]="'hex'">
-                                                        </ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="barlineChart" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                        <div class=""> 
-                                                            <p >line color </p>
-                                                        </div>
-                                                        <button  class="btn btn-primary update-btn" (click)="resetColor()">Reset</button>
-                                                        <ngx-colors 
-                                                        ngx-colors-trigger 
-                                                        [(ngModel)]="lineColor" 
-                                                        (ngModelChange)="marksColor2($event)" 
-                                                        [format]="'hex'">
-                                                        </ngx-colors>
-                                                    </div> -->
-                                                    <!-- <div *ngIf="funnel && isApexCharts">
-                                                        <div *ngIf="isApexCharts" style="display: flex; justify-content: space-between;">
-                                                            <label>Distribution</label>
-                                                            <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
-                                                                <span></span>
-                                                            </div>
-                                                            <div *ngIf="!isDistributed" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('distributed')">
-                                                                <span></span>
-                                                            </div>
-                                                        </div>
-                                                    </div> -->
+                                                   
                                                     <div *ngIf="(((pie && chartId) || donut || bar))  && draggedColumns && draggedColumns.length == 1 && dateList.includes(draggedColumns[0]['data_type'])" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
@@ -3694,10 +2911,10 @@
                                                     <div *ngIf="guage" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <div>
                                                             <label for="minValue">Enter Minimum Value:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="minValueGuage" id="minValue" (change)="customMinMaxGuage()" />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="minValueGuage" id="minValue"  />
                                                           
                                                             <label for="maxValue">Enter Maximum Value:</label>
-                                                            <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue" (change)="customMinMaxGuage()" />
+                                                            <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue"  />
                                                         </div>
                                                     </div>
                                                     <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">

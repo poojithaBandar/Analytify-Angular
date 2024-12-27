@@ -78,6 +78,11 @@ export class InsightEchartComponent {
   @Input() draggedDrillDownColumns : any;
   @Input() drillDownObject : any;
   @Input() selectedColorScheme :any;
+  @Input() topLegend:any;
+  @Input() rightLegend:any;
+  @Input() bottomLegend:any;
+  @Input() legendOrient:any;
+  @Input() leftLegend:any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
 
@@ -948,9 +953,11 @@ pieChart(){
       trigger: 'item'
     },
     legend: {
-      bottom: '0%', 
-          left: 'center', 
-          orient: 'horizontal',
+          bottom: this.bottomLegend, 
+          left: this.leftLegend, 
+          orient: this.legendOrient,
+          right:this.rightLegend,
+          top:this.topLegend,
           type:'scroll',
       show: this.legendSwitch 
       },
@@ -976,6 +983,7 @@ pieChart(){
     }
     ]
   };
+  console.log('pieoptions',this.chartOptions)
 }
 donutChart(){
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
@@ -990,9 +998,11 @@ donutChart(){
       trigger: 'item'
     },
     legend: {
-      bottom: '0%', 
-          left: 'center', 
-          orient: 'horizontal',
+      bottom: this.bottomLegend, 
+          left: this.leftLegend, 
+          orient: this.legendOrient,
+          right:this.rightLegend,
+          top:this.topLegend,
           type:'scroll',
       show: this.legendSwitch // Control legend visibility
   },            
@@ -1037,9 +1047,8 @@ barLineChart(){
       }
     },
     dataZoom: {
-      show: true,
-      start: 0,
-      end: 100
+      show: this.isZoom,
+      type: 'slider'
     },
     toolbox: {
       feature: {
@@ -2690,9 +2699,11 @@ chartInitialize(){
     if(this.legendsAllignment === 'top'){
     let obj ={
       legend :{
-        top: 'top',
-        left: 'center',
-        orient: 'horizontal',
+        top: this.topLegend,
+        left: this.leftLegend,
+        orient: this.legendOrient,
+        bottom:'null',
+        right:'null',
         show: this.legendSwitch 
       },
     }
@@ -2702,10 +2713,13 @@ chartInitialize(){
   else if(this.legendsAllignment === 'bottom'){
     let obj ={
       legend :{
-          bottom: '0%', 
-          left: 'center', 
-          orient: 'horizontal',
-          show: this.legendSwitch 
+          bottom: this.bottomLegend, 
+          left: this.leftLegend, 
+          orient: this.legendOrient,
+          // right:'null',
+          // top:'null',
+          show: this.legendSwitch,
+
       },
     }
     this.chartOptions.legend = obj;
@@ -2714,9 +2728,9 @@ chartInitialize(){
   else if(this.legendsAllignment === 'left'){
     let obj ={
       legend :{
-          left: '0%', 
-          top: 'center', 
-          orient: 'vertical',
+          left: this.leftLegend, 
+          top: this.topLegend, 
+          orient: this.legendOrient,
           show: this.legendSwitch 
       },
     }
@@ -2726,9 +2740,9 @@ chartInitialize(){
   else if(this.legendsAllignment === 'right'){
     let obj ={
       legend :{
-         right: '0%', 
-         top: 'center', 
-         orient: 'vertical',
+         right: this.rightLegend, 
+         top:this.topLegend, 
+         orient:this.legendOrient,
          show: this.legendSwitch 
       },
     }
