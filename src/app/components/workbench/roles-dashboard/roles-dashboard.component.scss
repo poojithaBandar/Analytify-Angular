@@ -106,6 +106,21 @@
   .tiled-card-header-padding {
     padding: 10px !important;
   }
+  h1#inputModalLabel {
+    font-size: 16px !important;
+  }
+  .form-label{
+    font-size: 13px;
+  }
+  .h6, h6 {
+    font-size: 12px;
+  }
+  option {
+    font-size: 12px;
+  }
+  .col-md-6.p-0.border {
+    max-width: 46% !important;
+  }
   }
 
   // for 100% Resolution //
@@ -153,5 +168,20 @@
   }
   .tiled-card-header-padding {
     padding: 10px !important;
+  }
+  h1#inputModalLabel {
+    font-size: 15px !important;
+  }
+  .form-label{
+    font-size: 12px;
+  }
+  .h6, h6 {
+    font-size: 12px;
+  }
+  option {
+    font-size: 12px;
+  }
+  .col-md-6.p-0.border {
+    max-width: 46% !important;
   }
 }
