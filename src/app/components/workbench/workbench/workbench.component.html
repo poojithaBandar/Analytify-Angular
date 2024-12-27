@@ -716,6 +716,23 @@
                         </div>
                         <div class="card-body">
                             <form>
+                              <div class="form-group">
+                                <label for="authType" class="col-form-label">
+                                  Authentication Type <span class="text-danger ms-1">*</span>
+                                </label>
+                                <select
+                                id="authType"
+                                class="form-select my-2"
+                                aria-label="Authentication Type"
+                                [(ngModel)]="selectedMicroSoftAuthType"
+                                (change)="errorCheck()"
+                                [ngModelOptions]="{ standalone: true }">
+                                <option value='null' disabled selected>Select Authentication Type</option>
+                                  <option value="Windows Authentication">Windows Authentication</option>
+                                  <option value="SQL Server Authentication">SQL Server Authentication</option>
+                                </select>
+                              </div>
+                              <div *ngIf="selectedMicroSoftAuthType">
                                     <div class="form-group">
                                         <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">Server<span class="text-danger ms-1" >*</span></label>
                                         <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
@@ -728,7 +745,7 @@
                                       <label [ngClass]="{'error-label': databaseError}" class="col-form-label">Database<span class="text-danger ms-1" >*</span></label>
                                       <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. sqlserver" (input)="databaseConditionError()">
                                   </div>
-                                    <div class="form-group">
+                                    <div  *ngIf="selectedMicroSoftAuthType === 'SQL Server Authentication'" class="form-group">
                                         <label [ngClass]="{'error-label': userNameError}" class="col-form-label">User Name <span class="text-danger ms-1" >*</span></label>
                                         <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
                                     </div>
@@ -736,11 +753,12 @@
                                       <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
                                       <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                                     </div>
-                                    <div class="form-group">
+                                    <div *ngIf="selectedMicroSoftAuthType === 'SQL Server Authentication'" class="form-group">
                                         <label [ngClass]="{'error-label': passwordError}" class="col-form-label">Password <span class="text-danger ms-1" >*</span></label>
                                         <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
                                         <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                   
                                 </div>
+                              </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
                                     <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">Connect</button>

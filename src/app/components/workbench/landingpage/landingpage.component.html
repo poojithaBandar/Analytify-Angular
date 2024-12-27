@@ -29,7 +29,6 @@
     </div>
     <div class="row mt-1">
         <div class="col-xl-9">
-           
             <div *ngIf="viewDashboardList" class="card" style="padding: 15px;">
                 <div class="row">
                     <div class="d-flex align-items-center justify-content-between border-bottom mb-3">
@@ -84,13 +83,11 @@
                                                 <app-insights-button [classesList]="'dropdown-item  btn btn-secondary-light'"
                                                     [previledgeId]="35" [isBtn]="false" [buttonName]="' Delete'"
                                                     (btnClickEvent)="deleteDashboard(dashboardList.dashboard_id)"
-                                                    [faIconList]="'fe fe-trash'" [isIcon]="true"></app-insights-button>
-            
+                                                    [faIconList]="'fe fe-trash'" [isIcon]="true"></app-insights-button>           
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-            
+                                </div>            
                             </div>
                             <div *ngIf="!showAllDasboards && i < 11" class="card  img-shadow">
                                 <img (click)="viewDashboard(dashboardList.server_id,dashboardList.queryset_id,dashboardList.dashboard_id)"
