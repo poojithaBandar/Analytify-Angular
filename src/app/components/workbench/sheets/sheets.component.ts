@@ -3981,6 +3981,7 @@ bar["stack"]="Total";
 
       KPIChart(){
         this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
+        this.formatKPINumber();
       }
       tableNameMethod(schemaname: any, tablename: any, tableAlias: any){
         this.schemaName = '';
@@ -4039,7 +4040,7 @@ bar["stack"]="Total";
         this.dataExtraction();
       }
     }
-    dateList = ['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(datetime)','timestamptz'];
+    dateList = ['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)','nullable(time)','nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)','nullable(timestamp without time zone)','nullable(timezone)','nullable(time zone)','nullable(timestamptz)','nullable(datetime)','datetime64','datetime32'];
     integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
     boolList = ['bool', 'boolean'];
     stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
@@ -5943,6 +5944,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     this.filterDateRange = [this.minDate, this.maxDate];
   }
   formatExtractType : string = '';
+  extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
+  extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     const obj={
       "hierarchy_id" :this.databaseId,
@@ -5950,7 +5953,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "type_of_filter" : "sheet",
       "datasource_queryset_id" :this.filterQuerySetId,
       "col_name":this.filterName,
-      "data_type":this.filterType,
+      "data_type":this.extractAggregateTypes.includes(this.formatExtractType) ? 'aggregate' : this.filterType,
       "search":this.filterSearch,
       "parent_user":this.createdBy,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
@@ -6025,6 +6028,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "is_exclude":this.isExclude,
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
+    "format_date" : this.formatExtractType
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -6034,6 +6038,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.dataExtraction();
         this.filterDataArray = [];
         this.filterDateRange = [];
+        this.formatExtractType = '';
       },
       error: (error) => {
         console.log(error);
@@ -6056,6 +6061,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterType=responce.data_type;
         this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
+        this.formatExtractType = this.extractTypesForTab.includes(responce?.format_type) ? responce?.format_type : '';
+        if(this.formatExtractType){
+          this.activeTabId = 3;
+        }
+        else {
+          this.activeTabId = 1;
+        }
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
         });
