@@ -84,7 +84,7 @@
                                 <i class="fa fa-filter"></i> Apply Filters
                             </a>
                             }
-                            <app-insights-button [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light ms-1'"
+                            <app-insights-button *ngIf="sheetCustmSqlDisable" [buttonName]="'Custom SQL'" [classesList]="'btn btn-blue-light ms-1'"
                                 [previledgeId]="54" [isBtn]="true" (btnClickEvent)="customSql=true;tableJoiningUI=false"
                                 [isIcon]="false"></app-insights-button>
                             <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72"
@@ -133,7 +133,7 @@
                                                                                 <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
                                                                             </li> -->
                                         <div class="dropdown" ngbDropdown  autoClose="outside">
-                                            <li class="tag rounded-pill bg-primary alert" id="row16" style="color: #fff;">
+                                            <li class="tag rounded-pill bg-primary alert" id="row16" style="color: #fff;" (click)="searchTermT1 = '';relation.searchTermT2='';filterColumnsT1();filterColumnsT2(relation)">
                                                 <span ngbDropdownToggle data-bs-toggle="dropdown" class="dropdown-toggle" *ngIf="relation.join === 'full Outer'"
                                                     ngbTooltip="Full Outer Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
                                                     <img src="./assets/images/charts/full-outer.png" class="rounded-2 mrk-t  chart-icon active ms-2"
@@ -638,11 +638,13 @@
                         <div class="right">
                             <a *ngIf="!fromSavedQuery" class="btn btn-blue-light m-1"
                                 (click)="customSql=false;tableJoiningUI=true">Back to Table Joining</a>
+                                @if(custmQryTime){
                             <a data-bs-effect="effect-super-scaled" data-bs-toggle="modal"
                                 (click)="openSuperScaled(applyFiltersModal);getFilteredList('fromcustomsql')"
                                 class="modal-effect btn btn-primary m-1">
                                 <i class="fa fa-filter"></i> Apply Filters
                             </a>
+                                }
                         </div>
                     </div>
                     <div class="card-body p-2">

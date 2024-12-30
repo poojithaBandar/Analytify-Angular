@@ -1715,7 +1715,7 @@ export class InsightApexComponent {
       legend: {
         show: false
       },
-      colors: this.isDistributed ? [] : [this.selectedColorScheme]
+      colors: this.selectedColorScheme
     };
   }
   guageChart() {
@@ -2755,7 +2755,7 @@ export class InsightApexComponent {
     else{
       if(this.chartOptions?.colors){
         if(this.chartType === 'funnel'){
-          this.chartOptions.colors = this.isDistributed ? [] : [this.selectedColorScheme];
+          this.chartOptions.colors = this.selectedColorScheme;
         }
         else{
           this.chartOptions.colors = [this.color];

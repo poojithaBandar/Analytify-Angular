@@ -73,6 +73,19 @@ td {
   .tiled-card-header-padding {
     padding: 10px !important;
   }
+  .table thead th {
+    color: #fff;
+    font-size: 12px;
+  }
+  p {
+    font-size: 11px !important;
+  }
+  .w-7 {
+    width: 2rem !important;
+  }
+  .h-7 {
+    height: 2rem !important;
+  }
 }
 
   // for 100% Resolution //
@@ -120,5 +133,18 @@ td {
   }
   .tiled-card-header-padding {
     padding: 10px !important;
+  }
+  .table thead th {
+    color: #fff;
+    font-size: 12px;
+  }
+  p {
+    font-size: 11px !important;
+  }
+  .w-7 {
+    width: 2rem !important;
+  }
+  .h-7 {
+    height: 2rem !important;
   }
 }

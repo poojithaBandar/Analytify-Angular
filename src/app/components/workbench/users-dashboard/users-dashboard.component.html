@@ -180,7 +180,7 @@
   <div class="row" class="card" style="padding: 20px;">
     <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
         <form [formGroup]="addUserForm">
-            <div class="modal-header justify-conent-between">
+            <div class="modal-header justify-conent-between rounded-0 p-2">
               <h1 *ngIf="!userEditHidePassword" class="modal-title fs-5 d-flex justify-conent-between" id="inputModalLabel">Add User</h1>
               <h1 *ngIf="userEditHidePassword" class="modal-title fs-5 d-flex justify-conent-between" id="inputModalLabel">Edit User</h1>        
               <button  type="button" class="btn btn-primary" (click)="viewUsers()" style="border-radius: 4px 4px 4px 4px;"> View Users</button>    
