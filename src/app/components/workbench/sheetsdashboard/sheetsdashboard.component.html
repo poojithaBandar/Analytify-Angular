@@ -767,11 +767,11 @@
     </div>
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
-      <div class="d-flex">
-        <button type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="btn btn-icon btn-primary-light me-2 rounded-5 mt-3">
+      <div class="" style="display: flex; align-items: center;">
+        <button type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="btn btn-icon btn-primary-light me-2 rounded-5">
           <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 24px;"></i>
           <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 24px;"></i>
-      </button>
+        </button>
       
          <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">
