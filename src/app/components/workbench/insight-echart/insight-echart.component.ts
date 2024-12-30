@@ -1712,16 +1712,16 @@ chartInitialize(){
       this.chartInitialize();
      }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
-      if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
+      // if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
         // this.updateCategories();
         this.resetchartoptions();
-      }
+      // }
     }
     if(changes['chartsRowData'] || changes['dualAxisRowData'] ){
-      if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue?.length>0){
+      // if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue?.length>0){
         // this.updateSeries();
         this.resetchartoptions();
-      }
+      // }
     }
     if(changes['isZoom']){
       if (this.chartInstance) {
