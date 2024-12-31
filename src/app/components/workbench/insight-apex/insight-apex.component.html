@@ -90,6 +90,7 @@
           [legend]="chartOptions.legend"
           [fill]="chartOptions.fill"
           [grid]="chartOptions.grid"
+          [colors]="chartOptions.colors"
         ></apx-chart>
     </div>
 } @else if(chartType === 'barline'){
@@ -123,7 +124,8 @@
         [yaxis]="chartOptions.yaxis"
         [grid]="chartOptions.grid"
         [legend]="chartOptions.legend"
-        [fill]="chartOptions.fill">
+        [fill]="chartOptions.fill"
+        [colors]="chartOptions.colors">
         </apx-chart>
     </div>
 } @else if(chartType === 'hgrouped'){
@@ -138,7 +140,8 @@
         [yaxis]="chartOptions.yaxis"
         [grid]="chartOptions.grid"
         [legend]="chartOptions.legend"
-        [fill]="chartOptions.fill">
+        [fill]="chartOptions.fill"
+        [colors]="chartOptions.colors">
         </apx-chart>
     </div>
 } @else if(chartType === 'multiline'){
@@ -154,7 +157,8 @@
         [markers]="chartOptions.markers"
         [grid]="chartOptions.grid"
         [yaxis]="chartOptions.yaxis"
-        [title]="chartOptions.title">
+        [title]="chartOptions.title"
+        [colors]="chartOptions.colors">
         </apx-chart>
     </div>
 } @else if(chartType === 'donut'){
@@ -166,7 +170,8 @@
             [labels]="chartOptions.labels"
             [plotOptions] = "chartOptions.plotOptions"
             [dataLabels]="chartOptions.dataLabels"
-            [legend]="chartOptions.legend" >
+            [legend]="chartOptions.legend" 
+            [colors]="chartOptions.colors">
             </apx-chart>
         </div>
     </div>
@@ -180,7 +185,8 @@
         [plotOptions]="chartOptions.plotOptions"
         [dataLabels]="chartOptions.dataLabels"
         [legend]="chartOptions.legend"
-        [grid]="chartOptions.grid">
+        [grid]="chartOptions.grid"
+        [colors]="chartOptions.colors">
         </apx-chart>
     </div>
 } @else if(chartType === 'funnel'){
@@ -210,7 +216,8 @@
         [labels]="chartOptions.labels"
         [tooltip]="chartOptions.tooltip"
         [fill]="chartOptions.fill"
-        [stroke]="chartOptions.stroke">
+        [stroke]="chartOptions.stroke"
+        [colors]="chartOptions.colors">
         </apx-chart>
     </div>
 }
