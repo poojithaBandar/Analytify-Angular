@@ -3029,7 +3029,7 @@ routeConfigure(){
 }
 
 fetchChartData(chartData: any){
-  this.hierarchyId = chartData.database_id;
+  this.databaseId = chartData.hierarchy_id;
   this.qrySetId = chartData.queryset_id;
   this.draggedColumnsData = chartData.col;
   this.draggedRowsData = chartData.row;
