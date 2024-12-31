@@ -95,7 +95,7 @@ interface KpiData {
     },
   ],
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
-    CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, 
+    CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule, InsightEchartComponent],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
@@ -132,10 +132,11 @@ export class SheetsdashboardComponent {
  columnFilterNames = [] as any;
  columnFilterNamesEdit = [] as any;
  querySetNames = [] as any;
- selectedQuerySetId! : any
+ selectedQuerySetId =[] as any;
  selectClmn:any;
  selectClmnEdit:any;
  selectdColmnDtype:any;
+ selectedColumnQuerySetId:any;
  selectdColmnDtypeEdit:any;
  filterName = '';
  dashboardFilterId:any;
@@ -2572,7 +2573,9 @@ this.selectedQuerySetId = 0;
 this.selectedOption = null;
 this.sheetsFilterNames =[];
 }
-
+databaseNames =[] as any;
+selectedDatabase: string = '';
+unfilteredQuerySetData =[] as any;
 getQuerySetForFilter(){
   const obj ={
     dashboard_id:this.dashboardId
@@ -2580,7 +2583,9 @@ getQuerySetForFilter(){
   this.workbechService.getQuerySetInDashboardFilter(obj).subscribe({
     next:(data)=>{
       console.log(data);
-      this.querySetNames=data;
+       this.unfilteredQuerySetData=data;
+      this.databaseNames = Object.keys(data);
+
 
     },
     error:(error)=>{
@@ -2596,8 +2601,21 @@ getQuerySetForFilter(){
     }
   })
 }
+onDatabaseChange(){
+    // Get the queryset data for the selected database
+    const selectedDatabaseObj = this.unfilteredQuerySetData[this.selectedDatabase];
+    
+    // Update the filtered queryset data based on selected database
+    if (selectedDatabaseObj) {
+      console.log(selectedDatabaseObj)
+      this.querySetNames = [...selectedDatabaseObj];
+    }
+
+}
+
 
 getColumnsForFilter(){
+  if(this.selectedQuerySetId.length > 0){
   const obj ={
     dashboard_id:this.dashboardId,
     queryset_id : this.selectedQuerySetId,
@@ -2621,6 +2639,10 @@ getColumnsForFilter(){
     }
   })
   this.cdr.detectChanges();
+}else{
+  this.dropdownOptions = [];
+
+}
 }
 getColumnsForFilterEdit(selectedqryId:any,dashboardId:any){
 this.dashboardId= dashboardId,
@@ -2640,6 +2662,8 @@ buildDropdownOptions(tables:any) {
       group: tableName,  
       value: column.column_name, 
       column_dtype: column.column_dtype,
+      selectedQueryId:column.query_id,
+      tableNameForColumn:column.table_name,
       searchKey: `${tableName} ${column.column_name}` 
     }));
     this.dropdownOptions = [...this.dropdownOptions, ...tableOptions];
@@ -2651,9 +2675,10 @@ onOptionSelected(selectedItem: any) {
   if (selectedItem) {
     const selectedColumn = selectedItem.value;  // Column name
     const selectedDataType = selectedItem.column_dtype;  // Column data type
-    this.tableNameSelectedForFilter = selectedItem.group;
+    this.tableNameSelectedForFilter = selectedItem.tableNameForColumn;
     this.selectClmn=selectedColumn,
-    this.selectdColmnDtype=selectedDataType
+    this.selectdColmnDtype=selectedDataType,
+    this.selectedColumnQuerySetId = selectedItem.selectedQueryId
 
     console.log('Selected Column:', selectedColumn);
     console.log('Selected Data Type:', selectedDataType);
@@ -2759,7 +2784,8 @@ if(this.filterName === ''){
     sheets:this.selectedRows,
     datatype:this.selectdColmnDtype,
     queryset_id:this.selectedQuerySetId,
-    table_name:this.tableNameSelectedForFilter
+    table_name:this.tableNameSelectedForFilter,
+    selected_query:this.selectedColumnQuerySetId
   }
   this.workbechService.selectedDatafromFilter(Obj).subscribe({
     next:(data)=>{
@@ -2769,6 +2795,7 @@ if(this.filterName === ''){
       this.sheetsFilterNames = []
       this.selectClmn = '';
       this.columnFilterNames=[];
+      this.dropdownOptions = [];
       this.filterName = '';
       this.isAllSelected = false;
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
@@ -3773,7 +3800,9 @@ const obj ={
   sheets:this.selectedRowsEdit,
   datatype:this.selectdColmnDtype,
   queryset_id:this.editquerysetId,
-  table_name:this.tableNameSelectedForFilter
+  table_name:this.tableNameSelectedForFilter,
+  selected_query:this.selectedColumnQuerySetId
+
 }
   this.workbechService.updatesDashboardFilters(obj).subscribe({
     next:(data)=>{

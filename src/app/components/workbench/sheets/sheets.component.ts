@@ -1726,7 +1726,7 @@ sheetSave(){
     headerFontDecoration: this.headerFontDecoration,
     headerFontColor: this.headerFontColor,
     headerFontAlignment: this.headerFontAlignment,
-    dimeansionColor:this.dimensionColor,
+    dimernsionColor:this.dimensionColor,
     measureColor:this.measureColor,
     dataLabelsColor:this.dataLabelsColor,
     sortType : this.sortType,
@@ -3027,33 +3027,32 @@ renameColumns(){
 routeConfigure(){
   this.router.navigate(['/analytify/configure-page/configure'])
 }
-
 fetchChartData(chartData: any){
-  this.databaseId = chartData.hierarchy_id;
-  this.qrySetId = chartData.queryset_id;
-  this.draggedColumnsData = chartData.col;
-  this.draggedRowsData = chartData.row;
-  this.draggedColumns = chartData.columns;
-  this.draggedRows = chartData.rows;
-  this.filterId =[];
-  this.filterQuerySetId = null,
-  this.sheetfilter_querysets_id = null;
-  
-  console.log("This is ShaetData",chartData)
-  this.sheetTitle = chartData.chart_title;
-  this.sheetTagName = chartData.chart_title;
-  if (chartData.chart_type.toLowerCase().includes("bar")){
-    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
-  }else if (chartData.chart_type.toLowerCase().includes("pie")){
-    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
-  }else if (chartData.chart_type.toLowerCase().includes("line")){
-    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
-  }else if (chartData.chart_type.toLowerCase().includes("area")){
-    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
-  }else if (chartData.chart_type.toLowerCase().includes("donut")){
-    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
-  }
-  this.dataExtraction();
+  this.hierarchyId = chartData.database_id;
+          this.qrySetId = chartData.queryset_id;
+          this.draggedColumnsData = chartData.col;
+          this.draggedRowsData = chartData.row;
+          this.draggedColumns = chartData.columns;
+          this.draggedRows = chartData.rows;
+          this.filterId =[];
+          this.filterQuerySetId = null,
+          this.sheetfilter_querysets_id = null;
+          
+          console.log("This is ShaetData",chartData)
+          this.sheetTitle = chartData.chart_title;
+          this.sheetTagName = chartData.chart_title;
+          if (chartData.chart_type.toLowerCase().includes("bar")){
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+          }else if (chartData.chart_type.toLowerCase().includes("pie")){
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+          }else if (chartData.chart_type.toLowerCase().includes("line")){
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+          }else if (chartData.chart_type.toLowerCase().includes("area")){
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+          }else if (chartData.chart_type.toLowerCase().includes("donut")){
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
+          }
+          this.dataExtraction();
 
 }
 customizechangeChartPlugin() {
