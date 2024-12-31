@@ -326,6 +326,7 @@ export class SheetsComponent {
   bottomLegend:any = '0%'
   rightLegend:any = null;
   sortType : any = 0;
+  hierarchyId:any;
 
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
@@ -993,7 +994,7 @@ try {
         this.dataExtraction();
       }
     }
-    dateList = ['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(datetime)','timestamptz'];
+    dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32'];
     integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
     boolList = ['bool', 'boolean'];
     stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
@@ -3028,31 +3029,31 @@ routeConfigure(){
 }
 
 fetchChartData(chartData: any){
-  this.databaseId = chartData.database_id;
-          this.qrySetId = chartData.queryset_id;
-          this.draggedColumnsData = chartData.col;
-          this.draggedRowsData = chartData.row;
-          this.draggedColumns = chartData.columns;
-          this.draggedRows = chartData.rows;
-          this.filterId =[];
-          this.filterQuerySetId = null,
-          this.sheetfilter_querysets_id = null;
-          
-          console.log("This is ShaetData",chartData)
-          this.sheetTitle = chartData.chart_title;
-          this.sheetTagName = chartData.chart_title;
-          if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
-          }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
-          }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
-          }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
-          }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
-          }
-          this.dataExtraction();
+  this.databaseId = chartData.hierarchy_id;
+  this.qrySetId = chartData.queryset_id;
+  this.draggedColumnsData = chartData.col;
+  this.draggedRowsData = chartData.row;
+  this.draggedColumns = chartData.columns;
+  this.draggedRows = chartData.rows;
+  this.filterId =[];
+  this.filterQuerySetId = null,
+  this.sheetfilter_querysets_id = null;
+  
+  console.log("This is ShaetData",chartData)
+  this.sheetTitle = chartData.chart_title;
+  this.sheetTagName = chartData.chart_title;
+  if (chartData.chart_type.toLowerCase().includes("bar")){
+    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+  }else if (chartData.chart_type.toLowerCase().includes("pie")){
+    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+  }else if (chartData.chart_type.toLowerCase().includes("line")){
+    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+  }else if (chartData.chart_type.toLowerCase().includes("area")){
+    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+  }else if (chartData.chart_type.toLowerCase().includes("donut")){
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
+  }
+  this.dataExtraction();
 
 }
 customizechangeChartPlugin() {
