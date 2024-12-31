@@ -279,15 +279,42 @@
                                               <input type="text" placeholder="Enter Filter Name" [(ngModel)]="filterName" class="form-control checkbox-color">
                                             </div>
                                             <div class="form-group p-1 mb-0">
+                                              <label class="form-label">Database Name<span class="text-red">*</span>
+                                              </label>
+                                              <select id="databaseSelect" [(ngModel)]="selectedDatabase"  (change)="onDatabaseChange()" class="form-select form-select select2 "  >
+                                              <option value="" disabled selected style="color: #999999 !important;">Select Database name</option>
+                                                <option *ngFor="let database of databaseNames" [value]="database">{{ database }}</option>
+                                              </select>
+                                            </div>
+                                            <div class="form-group p-1 mb-0">
                                               <label class="form-label">Query Set Name <span class="text-red">*</span>
                                               </label>
-                                              <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"   class="form-select form-select select2 " >
-                                                <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
-                                                @for(querySet of querySetNames;track querySet.queryset_id){
-                                                  <option [ngbTooltip]="querySet.queryset_name"
-                                                  [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
-                                                }
-                                            </select>
+                                              <!-- <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"   class="form-select form-select select2 " >
+                                                                                            <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
+                                                                                            @for(querySet of querySetNames;track querySet.queryset_id){
+                                                                                              <option [ngbTooltip]="querySet.queryset_name"
+                                                                                              [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
+                                                                                            }
+                                                                                        </select> -->
+                                                 
+                                                                                        
+                                                                                        <ng-select
+                                                                                        [(ngModel)]="selectedQuerySetId"
+                                                                                        (change)="getColumnsForFilter()"
+                                                                                        class="form-control p-0"
+                                                                                        [closeOnSelect]="false"
+                                                                                        [multiple]="true"
+                                                                                        placeholder="Select Queryset name"
+                                                                                      >
+                                                                                        <ng-option
+                                                                                          *ngFor="let querySet of querySetNames;"
+                                                                                          [value]="querySet.queryset_id"
+                                                                                          [ngbTooltip]="querySet.queryset_name"
+                                                                                          [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'"
+                                                                                        >
+                                                                                          {{ querySet.queryset_name }}
+                                                                                        </ng-option>
+                                                                                      </ng-select>
                                             </div>
                                     
                                             <div class="form-group p-1">
@@ -310,7 +337,7 @@
                                             
                                               <!-- Template for displaying each option -->
                                               <ng-template ng-option-tmp let-item="item">
-                                                {{ item.value }}  <!-- Display the column name -->
+                                                {{ item.value }}(<span>{{ item.tableNameForColumn }}</span>) <!-- Display the column name -->
                                               </ng-template>
                                             
                                             </ng-select>
@@ -336,7 +363,7 @@
 
                                             <div class="py-2 mt-3">
                                               <button type="button" [disabled]="!isAnyRowSelected() || !selectedOption || selectedQuerySetId === 0"  (click)="getSelectedData();columnSearch = ''" class="btn ripple btn-primary me-2">Save</button>
-                                              <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';columnSearch = '';closeFilterModal();sheetsFilterNames =[];isAllSelected = false;columnFilterNames =[]"> Cancel </button>
+                                              <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';columnSearch = '';closeFilterModal();sheetsFilterNames =[];isAllSelected = false;columnFilterNames =[];selectedDatabase=''"> Cancel </button>
                                           </div>
                                           </ul>
                                         </div>
@@ -767,11 +794,11 @@
     </div>
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
-      <div class="d-flex">
-        <button type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="btn btn-icon btn-primary-light me-2 rounded-5 mt-3">
+      <div class="" style="display: flex; align-items: center;">
+        <button type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="btn btn-icon btn-primary-light me-2 rounded-5">
           <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 24px;"></i>
           <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 24px;"></i>
-      </button>
+        </button>
       
          <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;  z-index: 999;">
             <div class="card-body p-1">

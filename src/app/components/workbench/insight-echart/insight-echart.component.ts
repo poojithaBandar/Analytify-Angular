@@ -5,7 +5,7 @@ import * as echarts from 'echarts';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SharedModule } from '../../../shared/sharedmodule';
-import _ from 'lodash';
+import _, { inRange } from 'lodash';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { lastValueFrom } from 'rxjs';
@@ -78,6 +78,11 @@ export class InsightEchartComponent {
   @Input() draggedDrillDownColumns : any;
   @Input() drillDownObject : any;
   @Input() selectedColorScheme :any;
+  @Input() topLegend:any;
+  @Input() rightLegend:any;
+  @Input() bottomLegend:any;
+  @Input() legendOrient:any;
+  @Input() leftLegend:any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
 
@@ -366,20 +371,22 @@ stackedChart(){
      
       splitLine: {
         lineStyle: {
-          color: this.xGridColor
-        }, show: this.xGridSwitch
+          color: this.yGridColor
+        }, show: this.yGridSwitch
       },
       axisLine: {
         lineStyle: {
-          color: this.xLabelColor,
+          color: this.yLabelColor,
         },
       },
       axisLabel: {
-        show: this.xLabelSwitch,
-        fontFamily: this.xLabelFontFamily,
-        fontSize: this.xLabelFontSize,
-        fontWeight: this.xlabelFontWeight,
-        align: this.xlabelAlignment// Hide xAxis labels
+        show: this.yLabelSwitch,
+        fontFamily: this.yLabelFontFamily,
+        fontSize: this.yLabelFontSize,
+        fontWeight: this.ylabelFontWeight,
+        color:this.measureColor,
+
+        // align: this.ylabelAlignment// Hide xAxis labels
       }
     },
     toggleGridLines: true,
@@ -397,6 +404,7 @@ stackedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
         align: this.dimensionAlignment
       },
       splitLine: {
@@ -470,21 +478,22 @@ sidebySide(){
      
       splitLine: {
         lineStyle: {
-          color: this.xGridColor
+          color: this.yGridColor
         }, 
-        show: this.xGridSwitch
+        show: this.yGridSwitch
       },
       axisLine: {
         lineStyle: {
-          color: this.xLabelColor,
+          color: this.yLabelColor,
         },
       },
       axisLabel: {
-        show: this.xLabelSwitch,
-        fontFamily: this.xLabelFontFamily,
-        fontSize: this.xLabelFontSize,
-        fontWeight: this.xlabelFontWeight,
-        align: this.xlabelAlignment// Hide xAxis labels
+        show: this.yLabelSwitch,
+        fontFamily: this.yLabelFontFamily,
+        fontSize: this.yLabelFontSize,
+        fontWeight: this.ylabelFontWeight,
+        color:this.measureColor,
+        // align: this.yla// Hide xAxis labels
       }
     },
     toggleGridLines: true,
@@ -494,11 +503,11 @@ sidebySide(){
       nameLocation:this.xlabelAlignment,
       axisLine: {
         lineStyle: {
-          color: this.yLabelColor
+          color: this.xLabelColor
         }
       },
       axisLabel: {
-        show: this.yLabelSwitch,
+        show: this.xLabelSwitch,
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
@@ -507,9 +516,9 @@ sidebySide(){
       },
       splitLine: {
         lineStyle: {
-          color: this.yGridColor
+          color: this.xGridColor
         },
-        show: this.yGridSwitch
+        show: this.xGridSwitch
       }
     },
     series: yaxisOptions.map((series: any) => ({
@@ -588,6 +597,7 @@ hgroupedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
         // align: this.xlabelAlignment,// Hide xAxis labels
         align: this.dimensionAlignment
       }
@@ -603,9 +613,11 @@ hgroupedChart(){
       },
       axisLabel: {
         show: this.yLabelSwitch,
-        fontFamily: this.xLabelFontFamily,
-        fontSize: this.xLabelFontSize,
-        fontWeight: this.xlabelFontWeight,
+        fontFamily: this.yLabelFontFamily,
+        fontSize: this.yLabelFontSize,
+        fontWeight: this.ylabelFontWeight,
+        color:this.measureColor,
+
       },
       splitLine: {
         lineStyle: {
@@ -692,6 +704,7 @@ hstackedChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
         // align: this.xlabelAlignment// Hide xAxis labels
         align: this.dimensionAlignment
       }
@@ -707,9 +720,11 @@ hstackedChart(){
       },
       axisLabel: {
         show: this.yLabelSwitch,
-        fontFamily: this.xLabelFontFamily,
-        fontSize: this.xLabelFontSize,
-        fontWeight: this.xlabelFontWeight,
+        fontFamily: this.yLabelFontFamily,
+        fontSize: this.yLabelFontSize,
+        fontWeight: this.ylabelFontWeight,
+        color:this.measureColor,
+
       },
       splitLine: {
         lineStyle: {
@@ -793,6 +808,7 @@ areaChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
         // align: this.xlabelAlignment// Hide xAxis labels
         align: this.dimensionAlignment
       }
@@ -810,6 +826,8 @@ areaChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color:this.measureColor,
+
       },
       splitLine: {
         lineStyle: {
@@ -891,6 +909,7 @@ lineChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
         // align: this.xlabelAlignment// Hide xAxis labels
         align: this.dimensionAlignment
       }
@@ -908,6 +927,8 @@ lineChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color:this.measureColor,
+
       },
       splitLine: {
         lineStyle: {
@@ -948,9 +969,11 @@ pieChart(){
       trigger: 'item'
     },
     legend: {
-      bottom: '0%', 
-          left: 'center', 
-          orient: 'horizontal',
+          bottom: this.bottomLegend, 
+          left: this.leftLegend, 
+          orient: this.legendOrient,
+          right:this.rightLegend,
+          top:this.topLegend,
           type:'scroll',
       show: this.legendSwitch 
       },
@@ -976,6 +999,7 @@ pieChart(){
     }
     ]
   };
+  console.log('pieoptions',this.chartOptions)
 }
 donutChart(){
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
@@ -990,9 +1014,11 @@ donutChart(){
       trigger: 'item'
     },
     legend: {
-      bottom: '0%', 
-          left: 'center', 
-          orient: 'horizontal',
+      bottom: this.bottomLegend, 
+          left: this.leftLegend, 
+          orient: this.legendOrient,
+          right:this.rightLegend,
+          top:this.topLegend,
           type:'scroll',
       show: this.legendSwitch // Control legend visibility
   },            
@@ -1037,9 +1063,8 @@ barLineChart(){
       }
     },
     dataZoom: {
-      show: true,
-      start: 0,
-      end: 100
+      show: this.isZoom,
+      type: 'slider'
     },
     toolbox: {
       feature: {
@@ -1233,6 +1258,7 @@ multiLineChart(){
         fontFamily: this.xLabelFontFamily,
         fontSize: this.xLabelFontSize,
         fontWeight: this.xlabelFontWeight,
+        color: this.dimensionColor,
         // align: this.xlabelAlignment// Hide xAxis labels
         align: this.dimensionAlignment
       }
@@ -1247,9 +1273,11 @@ multiLineChart(){
       },
       axisLabel: {
         show: this.yLabelSwitch,
-        fontFamily: this.xLabelFontFamily,
-        fontSize: this.xLabelFontSize,
-        fontWeight: this.xlabelFontWeight,
+        fontFamily: this.yLabelFontFamily,
+        fontSize: this.yLabelFontSize,
+        fontWeight: this.ylabelFontWeight,
+        color:this.measureColor,
+
       },
       splitLine: {
         lineStyle: {
@@ -1334,7 +1362,6 @@ heatMapChart(){
   const categories = this.flattenDimensions(dimensions);
   this.chartOptions = {
     backgroundColor: this.backgroundColor,
-    color:this.selectedColorScheme,
     tooltip: {
         position: 'top'
     },
@@ -1381,7 +1408,7 @@ heatMapChart(){
         // bottom : '15%',
         top: '5%',
         inRange : {
-            color : ['#ffffff', '#ff0000'] // Adjust colors as needed
+          color:this.selectedColorScheme,
         }
     },
     series : [{
@@ -1703,16 +1730,16 @@ chartInitialize(){
       this.chartInitialize();
      }
     if(changes['chartsColumnData']  || changes['dualAxisColumnData'] ){
-      if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
+      // if(changes['chartsColumnData']?.currentValue?.length>0 || changes['dualAxisColumnData']?.currentValue?.length>0){
         // this.updateCategories();
         this.resetchartoptions();
-      }
+      // }
     }
     if(changes['chartsRowData'] || changes['dualAxisRowData'] ){
-      if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue?.length>0){
+      // if(changes['chartsRowData']?.currentValue?.length>0 || changes['dualAxisRowData']?.currentValue?.length>0){
         // this.updateSeries();
         this.resetchartoptions();
-      }
+      // }
     }
     if(changes['isZoom']){
       if (this.chartInstance) {
@@ -2559,12 +2586,21 @@ chartInitialize(){
       this.chartInstance.setOption(obj)
     } else if(this.chartType === 'funnel' || this.chartType === 'stocked'
        || this.chartType === 'sidebyside' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' ||  
-       this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' || this.chartType === 'heatmap' || 
+       this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' || 
        this.chartType === 'calendar'){
       let obj ={
         color:this.selectedColorScheme
        }
        this.chartInstance.setOption(obj)
+    }else if(this.chartType ==='heatmap'){
+      let obj ={
+        visualMap :{
+          inRange :{
+            color:this.selectedColorScheme
+          }
+        }
+      }
+      this.chartInstance.setOption(obj)
     }
     else{
       let obj ={
@@ -2690,9 +2726,11 @@ chartInitialize(){
     if(this.legendsAllignment === 'top'){
     let obj ={
       legend :{
-        top: 'top',
-        left: 'center',
-        orient: 'horizontal',
+        top: this.topLegend,
+        left: this.leftLegend,
+        orient: this.legendOrient,
+        bottom:'null',
+        right:'null',
         show: this.legendSwitch 
       },
     }
@@ -2702,10 +2740,13 @@ chartInitialize(){
   else if(this.legendsAllignment === 'bottom'){
     let obj ={
       legend :{
-          bottom: '0%', 
-          left: 'center', 
-          orient: 'horizontal',
-          show: this.legendSwitch 
+          bottom: this.bottomLegend, 
+          left: this.leftLegend, 
+          orient: this.legendOrient,
+          // right:'null',
+          // top:'null',
+          show: this.legendSwitch,
+
       },
     }
     this.chartOptions.legend = obj;
@@ -2714,9 +2755,9 @@ chartInitialize(){
   else if(this.legendsAllignment === 'left'){
     let obj ={
       legend :{
-          left: '0%', 
-          top: 'center', 
-          orient: 'vertical',
+          left: this.leftLegend, 
+          top: this.topLegend, 
+          orient: this.legendOrient,
           show: this.legendSwitch 
       },
     }
@@ -2726,9 +2767,9 @@ chartInitialize(){
   else if(this.legendsAllignment === 'right'){
     let obj ={
       legend :{
-         right: '0%', 
-         top: 'center', 
-         orient: 'vertical',
+         right: this.rightLegend, 
+         top:this.topLegend, 
+         orient:this.legendOrient,
          show: this.legendSwitch 
       },
     }
@@ -2935,6 +2976,9 @@ updateCategories(){
     let obj ={
       legend:{
         data:legendArray
+      },
+      radar:{
+        indicator:radarArray
       }
     }
     this.chartInstance.setOption(obj)
