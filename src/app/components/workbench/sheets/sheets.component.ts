@@ -936,6 +936,7 @@ try {
 
       KPIChart(){
         this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
+        this.formatKPINumber();
       }
       tableNameMethod(schemaname: any, tablename: any, tableAlias: any){
         this.schemaName = '';
@@ -2531,6 +2532,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     this.maxDate = `${maxDateObj.getFullYear()}/${(maxDateObj.getMonth() + 1).toString().padStart(2, '0')}/${maxDateObj.getDate().toString().padStart(2, '0')}`;
     this.filterDateRange = [this.minDate, this.maxDate];
   }
+  formatExtractType : string = '';
+  extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
+  extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
     const obj={
       "hierarchy_id" :this.databaseId,
@@ -2538,12 +2542,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "type_of_filter" : "sheet",
       "datasource_queryset_id" :this.filterQuerySetId,
       "col_name":this.filterName,
-       "data_type":this.filterType,
-       "search":this.filterSearch,
-       "parent_user":this.createdBy,
-       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
-       "is_calculated": this.filterType == 'calculated' ? true : false
-      // "format_date":""
+      "data_type":this.extractAggregateTypes.includes(this.formatExtractType) ? 'aggregate' : this.filterType,
+      "search":this.filterSearch,
+      "parent_user":this.createdBy,
+      "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+      "is_calculated": this.filterType == 'calculated' ? true : false,
+      "format_date" : this.formatExtractType
 }
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2608,11 +2612,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "range_values": this.filterDateRange,
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
-       "data_type":this.filterType,
-       "parent_user":this.createdBy,
-       "is_exclude":this.isExclude,
-       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
-       "is_calculated": this.filterType == 'calculated' ? true : false
+    "data_type":this.filterType,
+    "parent_user":this.createdBy,
+    "is_exclude":this.isExclude,
+    "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
+    "is_calculated": this.filterType == 'calculated' ? true : false,
+    "format_date" : this.formatExtractType
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2622,6 +2627,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.dataExtraction();
         this.filterDataArray = [];
         this.filterDateRange = [];
+        this.formatExtractType = '';
       },
       error: (error) => {
         console.log(error);
@@ -2644,6 +2650,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterType=responce.data_type;
         this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
+        this.formatExtractType = this.extractTypesForTab.includes(responce?.format_type) ? responce?.format_type : '';
+        if(this.formatExtractType){
+          this.activeTabId = 3;
+        }
+        else {
+          this.activeTabId = 1;
+        }
         responce.result.forEach((element:any) => {
           this.filterData.push(element);
         });
