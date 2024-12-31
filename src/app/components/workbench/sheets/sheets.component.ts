@@ -326,6 +326,7 @@ export class SheetsComponent {
   bottomLegend:any = '0%'
   rightLegend:any = null;
   sortType : any = 0;
+  hierarchyId:any;
 
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
@@ -3028,31 +3029,31 @@ routeConfigure(){
 }
 
 fetchChartData(chartData: any){
-  this.databaseId = chartData.database_id;
-          this.qrySetId = chartData.queryset_id;
-          this.draggedColumnsData = chartData.col;
-          this.draggedRowsData = chartData.row;
-          this.draggedColumns = chartData.columns;
-          this.draggedRows = chartData.rows;
-          this.filterId =[];
-          this.filterQuerySetId = null,
-          this.sheetfilter_querysets_id = null;
-          
-          console.log("This is ShaetData",chartData)
-          this.sheetTitle = chartData.chart_title;
-          this.sheetTagName = chartData.chart_title;
-          if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
-          }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
-          }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
-          }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
-          }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
-          }
-          this.dataExtraction();
+  this.hierarchyId = chartData.database_id;
+  this.qrySetId = chartData.queryset_id;
+  this.draggedColumnsData = chartData.col;
+  this.draggedRowsData = chartData.row;
+  this.draggedColumns = chartData.columns;
+  this.draggedRows = chartData.rows;
+  this.filterId =[];
+  this.filterQuerySetId = null,
+  this.sheetfilter_querysets_id = null;
+  
+  console.log("This is ShaetData",chartData)
+  this.sheetTitle = chartData.chart_title;
+  this.sheetTagName = chartData.chart_title;
+  if (chartData.chart_type.toLowerCase().includes("bar")){
+    this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+  }else if (chartData.chart_type.toLowerCase().includes("pie")){
+    this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+  }else if (chartData.chart_type.toLowerCase().includes("line")){
+    this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+  }else if (chartData.chart_type.toLowerCase().includes("area")){
+    this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+  }else if (chartData.chart_type.toLowerCase().includes("donut")){
+    this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
+  }
+  this.dataExtraction();
 
 }
 customizechangeChartPlugin() {
