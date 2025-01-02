@@ -578,6 +578,10 @@
                       </div>
                       <div class="card-body">
                           <form>
+                            <div class="form-group">
+                              <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                              <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                            </div>
                                   <div class="form-group">
                                       <label [ngClass]="{'error-label': companyIDError}" for="recipient-name" class="col-form-label">Company Id<span class="text-danger ms-1" >*</span></label>
                                       <input [ngClass]="{'error-input': companyIDError}" type="text" class="form-control" [(ngModel)]="companyId" [ngModelOptions]="{standalone: true}" placeholder="Company Id" (input)="companyIdError()">
@@ -600,7 +604,7 @@
                                   </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || clientIDError || privateKeyError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId) ">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">Connect</button>
                               </div>
                           </form>
                       </div>
@@ -650,6 +654,10 @@
                           placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdErrorPSA()">
                       </div>
                       <div class="form-group">
+                        <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                      </div>
+                      <div class="form-group">
                         <label [ngClass]="{'error-label': clientSecretError}" for="recipient-name" class="col-form-label">Client
                           Secret<span class="text-danger ms-1">*</span></label>
                         <input [ngClass]="{'error-input': clientSecretError}" type="text" class="form-control"
@@ -667,7 +675,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="haloPSASignIn()"
-                          [disabled]="(clientIDPSAError || siteURLErrorPSA || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA ) ">Connect</button>
+                          [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameConditionError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">Connect</button>
                       </div>
                     </form>
                   </div>

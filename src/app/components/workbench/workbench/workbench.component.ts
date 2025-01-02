@@ -326,7 +326,8 @@ export class WorkbenchComponent implements OnInit{
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
-        "client_id": this.clientId
+        "client_id": this.clientId,
+        "display_name": this.displayName
     }
       this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
         console.log(responce)
@@ -351,7 +352,8 @@ export class WorkbenchComponent implements OnInit{
       const obj = {
         "site_url": this.siteURLPSA,
         "client_id": this.clientIdPSA,
-        "client_secret": this.clientSecret
+        "client_secret": this.clientSecret,
+        "display_name": this.displayName
       }
       this.workbechService.haloPSAConnection(obj).subscribe({next: (responce) => {
         console.log(responce)
@@ -976,6 +978,13 @@ export class WorkbenchComponent implements OnInit{
     }
     this.databaseConditionError();
     this.errorCheck();
+  }
+  displayNameIntegrationConditionError(){
+    if(this.displayName){
+      this.displayNameError = false;
+    }else{
+      this.displayNameError = true;
+    }
   }
   displayNameConditionError(){
     if(this.displayName){
