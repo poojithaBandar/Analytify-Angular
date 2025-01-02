@@ -321,8 +321,8 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
-                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="openSuperScaled(content,dimensions)"> Apply Filters </button>
-                                            <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
+                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                            <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                            <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                             <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
                                         </div>
@@ -348,8 +348,8 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                             <div class="dropdown-menu" ngbDropdownMenu>
-                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScaled(content,measures)"> Apply Filters </a>
-                                                <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; openSuperScaled(content,measures)"> Apply Filters </a>
+                                                <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                                 <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
                                             </div>
@@ -389,8 +389,8 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScaled(content,measures)"> Apply Filters </button>
-                                                    <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
                                                    <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
@@ -454,7 +454,7 @@
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
                                             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
-                                                <li [ngbNavItem]="1">
+                                                <li [ngbNavItem]="1" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
@@ -476,7 +476,7 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
-                                                <li [ngbNavItem]="2">
+                                                <li [ngbNavItem]="2" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
                                                     <a ngbNavLink class="p-3">Range of dates</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
@@ -494,6 +494,75 @@
                                                                   (highValueChange)="updateDateRange()"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                <li [ngbNavItem]="3" (click)="filterSearch = '';">
+                                                    <a ngbNavLink class="p-3">Extract</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane" id="linktabs">
+                                                            <div class="card-body p-0">
+                                                                <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                  <li (click)="formatExtractType = 'year'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Years</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'quarter'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Quaters</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'month'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Months</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'day'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Days</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'week numbers'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Week numbers</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'weekdays'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Weekdays</label>
+                                                                  </li>
+                                                                </ul>
+                                                                <ul *ngIf="!formatExtractType">
+                                                                  <li (click)="formatExtractType = 'count'; filterDataGet()">
+                                                                     <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Count</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'count_distinct'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                   <label for="defaultCheck1" class="form-check-label">Count (Distinct)</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'min'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                   <label for="defaultCheck1" class="form-check-label">Minimum</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'max'; filterDataGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                   <label for="defaultCheck1" class="form-check-label">Maximum</label>
+                                                                  </li>
+                                                                </ul>
+                                                                @if(formatExtractType){
+                                                                <div style="display: flex;">
+                                                                    <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button>
+                                                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                </div>
+                                                                <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                                    @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input"
+                                                                            (click)="filterCheck($event,data.label)">
+                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                    </div>
+                                                                    }
+                                                                </div>
+                                                                }
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -557,7 +626,7 @@
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
                                             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
-                                                <li [ngbNavItem]="1">
+                                                <li [ngbNavItem]="1" [class.disabled]="formatExtractType">
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
@@ -576,7 +645,7 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
-                                                <li [ngbNavItem]="2">
+                                                <li [ngbNavItem]="2" [class.disabled]="formatExtractType">
                                                     <a ngbNavLink class="p-3">Range of dates</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
@@ -594,6 +663,74 @@
                                                                   (highValueChange)="updateDateRange()"
                                                                 ></ngx-slider>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                <li [ngbNavItem]="3" [class.disabled]="!formatExtractType">
+                                                    <a ngbNavLink class="p-3">Extract</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane" id="linktabs">
+                                                            <div class="card-body p-0">
+                                                                <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                  <li (click)="formatExtractType = 'year'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Years</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'quarter'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Quaters</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'month'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Months</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'day'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Days</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'week number'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Week numbers</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'weekdays'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Weekdays</label>
+                                                                  </li>
+                                                                </ul>
+                                                                <ul *ngIf="!formatExtractType">
+                                                                  <li (click)="formatExtractType = 'count'; filterEditGet()">
+                                                                     <i class="fa fa-calendar-o me-1"></i>
+                                                                    <label for="defaultCheck1" class="form-check-label">Count</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'count_distinct'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                   <label for="defaultCheck1" class="form-check-label">Count (Distinct)</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'min'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                   <label for="defaultCheck1" class="form-check-label">Minimum</label>
+                                                                  </li>
+                                                                  <li (click)="formatExtractType = 'max'; filterEditGet()">
+                                                                    <i class="fa fa-calendar-o me-1"></i>
+                                                                   <label for="defaultCheck1" class="form-check-label">Maximum</label>
+                                                                  </li>
+                                                                </ul>
+                                                                @if(formatExtractType){
+                                                                    <div style="display: flex;">
+                                                                        <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
+                                                                        <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                        <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                    </div>
+                                                                    @for(data of filterData;track data){
+                                                                        @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                            <div class="form-check">
+                                                                                <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                                <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                }
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -738,8 +875,8 @@
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                             <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
-                                                <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Date</li>
-                                                <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                <li class="btn btn-primary-light dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Date</li>
+                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                     <li><a [ngClass]="columns.type === 'year' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
                                                     <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
@@ -752,8 +889,8 @@
                                                 </ul>
                                             </div>
                                             <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
-                                                <li class="dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Measure</li>
-                                                <i class="fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                <li class="btn btn-primary-light dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Measure</li>
+                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                     <li><a [ngClass]="columns.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
                                                     <li><a [ngClass]="columns.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
@@ -1047,8 +1184,7 @@
                                                                 currentPage: page,
                                                                 totalItems: totalItems }) ; let i = index"
                                         [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}"
-                                        [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
+                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2), 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
                                         'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 'color': tableDataFontColor }">
                                         @for(column of tableColumnsDisplay;track column){
                                         <td [ngStyle]="{ 'text-align': tableDataFontAlignment }">{{ row[column] }}</td>
@@ -1114,7 +1250,7 @@
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
                     [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
-                    [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
+                    [xlabelAlignment]="xlabelAlignment" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
                     [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [selectedColorScheme]="selectedColorScheme"
                     [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -1123,7 +1259,7 @@
             @else if(sidebyside && chartId){         
                     <div class="card-body">
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" 
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
@@ -1134,7 +1270,7 @@
             @else if(grouped && chartId){         
                     <div class="card-body">
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [selectedColorScheme]="selectedColorScheme"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
@@ -1145,7 +1281,7 @@
             @else if(horizentalStocked && chartId){         
                 <div class="card-body">
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment"  [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                    [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                    [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                     [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
                     [yLabelColor]="yLabelColor" [yGridColor]="yGridColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
                     [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
@@ -1160,7 +1296,7 @@
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
                 [yGridSwitch]="yGridSwitch" [color]="color"  [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" 
-                [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
+                [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [yLabelFontFamily]="yLabelFontFamily"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                 [ylabelFontWeight]="ylabelFontWeight"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
             </div>
             }
@@ -1171,7 +1307,7 @@
                 [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize"
                 [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor"
                 [yGridSwitch]="yGridSwitch" [color]="color" [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily"
-                 [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize"
+                 [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor" [yLabelFontFamily]="yLabelFontFamily"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                  [ylabelFontWeight]="ylabelFontWeight"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" 
                  [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
             </div>
@@ -1199,7 +1335,7 @@
                 <div class="card-body">
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                     [backgroundColor]="backgroundColor" [xLabelColor]="xLabelColor" [xLabelFontSize]="xLabelFontSize" [xLabelFontFamily]="xLabelFontFamily" [xLabelSwitch]="xLabelSwitch" [yLabelSwitch]="yLabelSwitch"
-                    [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"
+                    [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [barColor]="barColor" [lineColor]="lineColor"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                     [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsColor]="dataLabelsColor"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [dataLabelsBarFontPosition]="dataLabelsBarFontPosition" [dataLabelsLineFontPosition]="dataLabelsLineFontPosition"
                     [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -1208,7 +1344,7 @@
                 @else if(multiLine && chartId){
                     <div class="card-body">
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"
+                        [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch"  [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment"
                         [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [selectedColorScheme]="selectedColorScheme"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize" 
@@ -1377,7 +1513,7 @@
                                                                 <div class="tab-menu-heading tab-menu-heading-boxed">
                                                                     <div class="tabs-menu-boxed">
                                                                         <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
-                                                                            <li [ngbNavItem]="1">
+                                                                            <li [ngbNavItem]="1" [class.disabled]="formatExtractType">
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane active" id="activetabs">
@@ -1396,7 +1532,7 @@
                                                                                     </div>
                                                                                 </ng-template>
                                                                             </li>
-                                                                            <li [ngbNavItem]="2">
+                                                                            <li [ngbNavItem]="2" [class.disabled]="formatExtractType">
                                                                                 <a ngbNavLink class="p-3">Range of dates</a>
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane" id="linktabs">
@@ -1414,6 +1550,74 @@
                                                                                               (highValueChange)="updateDateRange()"
                                                                                             ></ngx-slider>
                                                                                             </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="3" [class.disabled]="!formatExtractType">
+                                                                                <a ngbNavLink class="p-3">Extract</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane" id="linktabs">
+                                                                                        <div class="card-body p-0">
+                                                                                            <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                                              <li (click)="formatExtractType = 'year'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                                <label for="defaultCheck1" class="form-check-label">Years</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'quarter'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                                <label for="defaultCheck1" class="form-check-label">Quaters</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'month'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                                <label for="defaultCheck1" class="form-check-label">Months</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'day'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                                <label for="defaultCheck1" class="form-check-label">Days</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'week number'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                                <label for="defaultCheck1" class="form-check-label">Week numbers</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'weekdays'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                                <label for="defaultCheck1" class="form-check-label">Weekdays</label>
+                                                                                              </li>
+                                                                                            </ul>
+                                                                                            <ul *ngIf="!formatExtractType">
+                                                                                              <li (click)="formatExtractType = 'count'; filterEditGet()">
+                                                                                                 <i class="fa fa-calendar-o me-1"></i>
+                                                                                                <label for="defaultCheck1" class="form-check-label">Count</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'count_distinct'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                               <label for="defaultCheck1" class="form-check-label">Count (Distinct)</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'min'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                               <label for="defaultCheck1" class="form-check-label">Minimum</label>
+                                                                                              </li>
+                                                                                              <li (click)="formatExtractType = 'max'; filterEditGet()">
+                                                                                                <i class="fa fa-calendar-o me-1"></i>
+                                                                                               <label for="defaultCheck1" class="form-check-label">Maximum</label>
+                                                                                              </li>
+                                                                                            </ul>
+                                                                                            @if(formatExtractType){
+                                                                                                <div style="display: flex;">
+                                                                                                    <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
+                                                                                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                                                    <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                                </div>
+                                                                                                @for(data of filterData;track data){
+                                                                                                    @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                                                        <div class="form-check">
+                                                                                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                                                        </div>
+                                                                                                    }
+                                                                                                }
+                                                                                            }
                                                                                         </div>
                                                                                     </div>
                                                                                 </ng-template>

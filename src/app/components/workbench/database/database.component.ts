@@ -179,6 +179,13 @@ export class DatabaseComponent {
       this.fromSavedQuery = true;
       this.getSavedQueryData();
      }
+     else if(currentUrl.includes('/analytify/database-connection/customSql/')){
+      this.custumQuerySetid = localStorage.getItem('customQuerySetId') || 0;
+      this.fromDatabasId=true
+      this.databaseId = +atob(route.snapshot.params['id']);
+      this.customSql=true;
+      this.tableJoiningUI=false;
+     }
      else if(currentUrl.includes('/analytify/database-connection/sheets/')){
      if (route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
       this.databaseId = +atob(route.snapshot.params['id1']);
@@ -229,24 +236,34 @@ export class DatabaseComponent {
   }
   ngOnInit(){
     this.loaderService.hide();
+    if(this.customSql){
+      this.getSavedQueryData();
+      this.getSchemaTablesFromConnectedDb();
+    }else{
     if(!this.updateQuery && !this.fromSheetEditDb){
       if(this.fromDatabasId){
     // this.getTablesFromConnectedDb();
     this.getSchemaTablesFromConnectedDb();
       }
-      if(this.fromFileId){
-        this.getTablesFromFileId();
-      }
     this.getTablesfromPrevious()
   }
   if(this.fromSheetEditDb){
     this.getTablesfromPrevious();
-    if(this.fromFileId){
-      this.getTablesFromFileId();
-    }else if(this.fromDatabasId){
+ if(this.fromDatabasId){
       this.getSchemaTablesFromConnectedDb();
     }
   }
+}
+  }
+  backToTableJoining(){
+    this.gotoSheetButtonDisable = true;
+    const encodedId = btoa(this.databaseId.toString());
+    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+  }
+  custmSqlUI(){
+    this.gotoSheetButtonDisable = true;
+    const encodedId = btoa(this.databaseId.toString());
+    this.router.navigate(['/analytify/database-connection/customSql/'+encodedId]);
   }
   toggleCard() {
     this.isOpen = !this.isOpen;
@@ -257,7 +274,7 @@ export class DatabaseComponent {
   getSavedQueryData(){
     const obj ={
       database_id:this.databaseId,
-      queryset_id:this.qurtySetId || this.custumQuerySetid
+      queryset_id: this.custumQuerySetid
     }
     this.workbechService.getSavedQueryData(obj).subscribe({
       next:(data:any)=>{
@@ -269,6 +286,7 @@ export class DatabaseComponent {
         this.custmQryRows = data.no_of_rows;
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows;
+        this.datasourceQuerysetId = data.datasorce_queryset_id;
         // if(this.fromSavedQuery){
         //   if(data.file_id === null)
         //   this.getSchemaTablesFromConnectedDb();
@@ -285,7 +303,8 @@ export class DatabaseComponent {
     const querysetId = localStorage.getItem('QuerySetId') || 0;
     this.qurtySetId = querysetId
     if (querysetId !== 0) {
-      const IdToPass = this.fromFileId ? this.fileId : this.databaseId
+      const IdToPass = this.databaseId
+      // const querySetIdToPass = this.from
       this.workbechService.getTablesfromPrevious(IdToPass, querysetId).subscribe({
         next: (data) => {
           console.log(data);
@@ -295,6 +314,7 @@ export class DatabaseComponent {
           this.itemCounters = data.dragged_data.json_data.dragged_array_indexing;
           this.joinTypes = data.dragged_data.join_type;
           this.saveQueryName= data.dragged_data.queryset_name;
+          this.datasourceQuerysetId = data.dragged_data.dastasource_queryset_id;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
             this.joiningTables();
@@ -333,23 +353,23 @@ export class DatabaseComponent {
   return dropdownOptions;
   }
   //need to remove after file id chage
-  getTablesFromFileId() {
-    this.workbechService.getTablesFromFileId(this.fileId)
-      .subscribe({
-        next: (data) => {
-          this.schematableList = data?.data?.schemas;
-          // console.log('filteredscemas',this.filteredSchematableList)
-          this.databaseName = data.filename;
-          //  this.hostName = data.database.hostname;
-          console.log(data)
+  // getTablesFromFileId() {
+  //   this.workbechService.getTablesFromFileId(this.fileId)
+  //     .subscribe({
+  //       next: (data) => {
+  //         this.schematableList = data?.data?.schemas;
+  //         // console.log('filteredscemas',this.filteredSchematableList)
+  //         this.databaseName = data.filename;
+  //         //  this.hostName = data.database.hostname;
+  //         console.log(data)
 
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      })
+  //       },
+  //       error: (error) => {
+  //         console.log(error);
+  //       }
+  //     })
 
-  }
+  // }
 getSchemaTablesFromConnectedDb(){
   const obj ={
     search:this.searchTables,
@@ -564,6 +584,21 @@ clrQuery(){
   this.custmQryTime='';
   this.custmQryRows='';
   // this.gotoSheetButtonDisable = true;
+  this.clearFiltersOnClearQuery();
+}
+clearFiltersOnClearQuery(){
+  if(this.custumQuerySetid !== 0 || this.custumQuerySetid !== null || this.custumQuerySetid !== '0' ){
+  this.workbechService.clearFiltersOnClearQuery(this.custumQuerySetid)
+  .subscribe(
+    {
+      next:(data:any) =>{
+        console.log(data)
+      },
+      error:(error:any)=>{
+      console.error(error);
+    }
+    })
+  }
 }
 executeQuery(){
   const obj ={
@@ -575,6 +610,8 @@ executeQuery(){
   }as any
   if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
     delete obj.query_name
+  }if(this.custumQuerySetid === 0 || this.custumQuerySetid === '0'){
+    delete obj.queryset_id
   }
   this.workbechService.executeQuery(obj)
   .subscribe(
@@ -587,11 +624,12 @@ executeQuery(){
         this.custmQryTime = data.query_exection_time;
         this.custmQryRows = data.no_of_rows;
         if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
-          this.saveQueryName = data.query_set_name;
+          this.saveQueryName = data.query_name;
           this.titleMarkDirty = true;
         }
         // this.qurtySetId = data.query_set_id;
         this.custumQuerySetid = data.query_set_id
+        localStorage.setItem('customQuerySetId', JSON.stringify(this.custumQuerySetid));
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows
         console.log('custumQuery Data',this.cutmquryTable)

@@ -57,6 +57,7 @@ testVariableToChange! : string ;
 
 constructor(private router:Router,private workbechService:WorkbenchService,private templateService:ViewTemplateDrivenService,public modalService:NgbModal,private cdr: ChangeDetectorRef,private toasterservice:ToastrService,private loaderService : LoaderService){
   localStorage.setItem('QuerySetId', '0');
+  localStorage.setItem('customQuerySetId', '0');
   this.viewDatabbses=this.templateService.viewDtabase();
   this.viewSheets = this.templateService.viewSheets();
   this.viewDashboardList = this.templateService.viewDashboard();

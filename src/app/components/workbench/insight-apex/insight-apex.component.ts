@@ -219,47 +219,52 @@ export class InsightApexComponent {
   }
 
   updateSeries() {
-    if (this.barCharts) {
+    if (this.chartType === 'bar') {
       this.chartOptions.series[0].data = this.chartsRowData;
-      this.barCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.areaCharts) {
+      this.barCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'area') {
       this.chartOptions.series[0].data = this.chartsRowData;
-      this.areaCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.lineCharts) {
+      this.areaCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'line') {
       this.chartOptions.series[0].data = this.chartsRowData;
-      this.lineCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.pieCharts) {
+      this.lineCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'pie') {
       this.chartOptions.series = this.chartsRowData;
-      this.pieCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.sideBySideCharts) {
+      this.pieCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'sidebyside') {
       this.chartOptions.series = this.dualAxisRowData;
-      this.sideBySideCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.stockedCharts) {
+      this.sideBySideCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'stocked') {
       this.chartOptions.series = this.dualAxisRowData;
-      this.stockedCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.barLineCharts) {
+      this.stockedCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'barline') {
       this.chartOptions.series[0].data = this.dualAxisRowData[0]?.data;
       this.chartOptions.series[1].data = this.dualAxisRowData[1]?.data;
-      this.barLineCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.horizontalStockedCharts) {
+      this.barLineCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'hstocked') {
       this.chartOptions.series = this.dualAxisRowData;
-      this.horizontalStockedCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.groupedCharts) {
+      this.horizontalStockedCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'hgrouped') {
       this.chartOptions.series = this.dualAxisRowData;
-      this.groupedCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.multiLineCharts) {
+      this.groupedCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'multiline') {
       this.chartOptions.series = this.dualAxisRowData;
-      this.multiLineCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.donutCharts) {
+      this.multiLineCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'donut') {
       this.chartOptions.series = this.chartsRowData;
-      this.donutCharts.updateOptions({ series: this.chartOptions.series });
-    } else if (this.funnelCharts) {
+      this.donutCharts?.updateOptions({ series: this.chartOptions.series });
+    } else if (this.chartType === 'funnel') {
       this.chartOptions.series = this.dualAxisRowData;
-      this.funnelCharts.updateOptions({ series: this.chartOptions.series });
+      this.funnelCharts?.updateOptions({ series: this.chartOptions.series });
     } 
-    else if (this.heatmapCharts) {
+    else if (this.chartType === 'heatmap') {
       this.chartOptions.series = this.dualAxisRowData;
-      this.heatmapCharts.updateOptions({ series: this.chartOptions.series });
+      this.heatmapCharts?.updateOptions({ series: this.chartOptions.series });
+    }
+    let isValid = this.validateSeriesData(this.chartOptions.series);
+    if (!isValid) {
+      this.chartOptions.series = [];
+      console.log('invalid series data');
     }
   }
   updateCategories(){
@@ -376,6 +381,11 @@ export class InsightApexComponent {
     } else if(this.chartType === 'guage'){
       this.guageChart();
     }
+    let isValid = this.validateSeriesData(this.chartOptions.series);
+    if (!isValid) {
+      this.chartOptions.series = [];
+      console.log('invalid series data');
+    }
   }
 
   flattenDimensions(dimensions: Dimension[]): string[] {
@@ -384,7 +394,15 @@ export class InsightApexComponent {
       return dimensions.map(dim => dim.values[index] === null ? 'null' : dim.values[index] || '').join(',');
     });
   }
-
+  validateSeriesData(series: any[]): boolean {
+    if(['pie', 'donut'].includes(this.chartType)) {
+      return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
+    } else {
+      return series?.every((set) =>
+        set?.data?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null)
+      );
+    }
+  }
   barChart() {
     const self = this;
     this.chartOptions = {
@@ -2735,7 +2753,7 @@ export class InsightApexComponent {
   }
   setChartColor(){
     let object;
-    if(this.barLineCharts){
+    if(this.chartType === 'barline'){
       if(this.chartOptions?.series[0]?.color || this.chartOptions?.series[1]?.color){
         this.chartOptions.series[0].color = this.barColor;
         this.chartOptions.series[1].color = this.lineColor;
@@ -2748,63 +2766,63 @@ export class InsightApexComponent {
     //   }
     //   object = { colors: this.chartOptions.colors }
     // }
-    else if(this.sideBySideCharts || this.pieCharts || this.stockedCharts || this.horizontalStockedCharts || this.groupedCharts || this.multiLineCharts || this.donutCharts || this.heatmapCharts)  {
+    else if(['sidebyside','stocked','hstocked','hgrouped','multiline','heatmap','funnel','pie','donut'].includes(this.chartType))  {
       this.chartOptions.colors = this.selectedColorScheme
       object = { colors: this.chartOptions.colors };
     }
-    else{
+    else if(['bar','area','line','guage'].includes(this.chartType)){
       if(this.chartOptions?.colors){
-        if(this.chartType === 'funnel'){
-          this.chartOptions.colors = this.selectedColorScheme;
-        }
-        else{
+        // if(this.chartType === 'funnel'){
+        //   this.chartOptions.colors = this.selectedColorScheme;
+        // }
+        // else{
           this.chartOptions.colors = [this.color];
-        }
+        // }
       }
       object = { colors: this.chartOptions.colors };
     }
 
-    if (this.barCharts) {
-      this.barCharts.updateOptions(object);
+    if (this.chartType === 'bar') {
+      this.barCharts?.updateOptions(object);
     }
-    else if (this.areaCharts) {
-      this.areaCharts.updateOptions(object);
+    else if (this.chartType === 'area') {
+      this.areaCharts?.updateOptions(object);
     }
-    else if (this.lineCharts) {
-      this.lineCharts.updateOptions(object);
+    else if (this.chartType === 'line') {
+      this.lineCharts?.updateOptions(object);
     }
-    else if (this.barLineCharts) {
-      this.barLineCharts.updateOptions(object);
+    else if (this.chartType === 'barline') {
+      this.barLineCharts?.updateOptions(object);
     }
-    else if (this.funnelCharts) {
-      this.funnelCharts.updateOptions(object);
+    else if (this.chartType === 'funnel') {
+      this.funnelCharts?.updateOptions(object);
     }
-    else if (this.guageCharts) {
-      this.guageCharts.updateOptions(object);
+    else if (this.chartType === 'guage') {
+      this.guageCharts?.updateOptions(object);
     }
-    else if(this.sideBySideCharts){
-      this.sideBySideCharts.updateOptions(object);
+    else if(this.chartType === 'sidebyside'){
+      this.sideBySideCharts?.updateOptions(object);
     }
-    else if(this.pieCharts){
-      this.pieCharts.updateOptions(object);
+    else if(this.chartType === 'pie'){
+      this.pieCharts?.updateOptions(object);
     }
-    else if(this.donutCharts){
-      this.donutCharts.updateOptions(object);
+    else if(this.chartType === 'donut'){
+      this.donutCharts?.updateOptions(object);
     }
-    else if(this.stockedCharts){
-      this.stockedCharts.updateOptions(object);
+    else if(this.chartType === 'stocked'){
+      this.stockedCharts?.updateOptions(object);
     }
-    else if(this.horizontalStockedCharts){
-      this.horizontalStockedCharts.updateOptions(object);
+    else if(this.chartType === 'hstocked'){
+      this.horizontalStockedCharts?.updateOptions(object);
     }
-    else if(this.groupedCharts){
-      this.groupedCharts.updateOptions(object);
+    else if(this.chartType === 'hgrouped'){
+      this.groupedCharts?.updateOptions(object);
     }
-    else if(this.multiLineCharts){
-      this.multiLineCharts.updateOptions(object);
+    else if(this.chartType === 'multiline'){
+      this.multiLineCharts?.updateOptions(object);
     }
-    else if(this.heatmapCharts){
-      this.heatmapCharts.updateOptions(object);
+    else if(this.chartType === 'heatmap'){
+      this.heatmapCharts?.updateOptions(object);
     }
   }
   gridLineColor(){

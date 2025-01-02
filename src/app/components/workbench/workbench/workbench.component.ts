@@ -82,6 +82,7 @@ export class WorkbenchComponent implements OnInit{
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
+    localStorage.setItem('customQuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('analytify/datasources/view-connections')){
       this.databaseconnectionsList= true;  
@@ -326,7 +327,8 @@ export class WorkbenchComponent implements OnInit{
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
-        "client_id": this.clientId
+        "client_id": this.clientId,
+        "display_name": this.displayName
     }
       this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
         console.log(responce)
@@ -351,7 +353,8 @@ export class WorkbenchComponent implements OnInit{
       const obj = {
         "site_url": this.siteURLPSA,
         "client_id": this.clientIdPSA,
-        "client_secret": this.clientSecret
+        "client_secret": this.clientSecret,
+        "display_name": this.displayName
       }
       this.workbechService.haloPSAConnection(obj).subscribe({next: (responce) => {
         console.log(responce)
@@ -976,6 +979,13 @@ export class WorkbenchComponent implements OnInit{
     }
     this.databaseConditionError();
     this.errorCheck();
+  }
+  displayNameIntegrationConditionError(){
+    if(this.displayName){
+      this.displayNameError = false;
+    }else{
+      this.displayNameError = true;
+    }
   }
   displayNameConditionError(){
     if(this.displayName){

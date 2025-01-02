@@ -278,16 +278,43 @@
                                               </label>
                                               <input type="text" placeholder="Enter Filter Name" [(ngModel)]="filterName" class="form-control checkbox-color">
                                             </div>
+                                            <!-- <div class="form-group p-1 mb-0">
+                                              <label class="form-label">Database Name<span class="text-red">*</span>
+                                              </label>
+                                              <select id="databaseSelect" [(ngModel)]="selectedDatabase"  (change)="onDatabaseChange()" class="form-select form-select select2 "  >
+                                              <option value="" disabled selected style="color: #999999 !important;">Select Database name</option>
+                                                <option *ngFor="let database of databaseNames" [value]="database">{{ database }}</option>
+                                              </select>
+                                            </div> -->
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Query Set Name <span class="text-red">*</span>
                                               </label>
-                                              <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"   class="form-select form-select select2 " >
-                                                <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
-                                                @for(querySet of querySetNames;track querySet.queryset_id){
-                                                  <option [ngbTooltip]="querySet.queryset_name"
-                                                  [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
-                                                }
-                                            </select>
+                                              <!-- <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"   class="form-select form-select select2 " >
+                                                                                            <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
+                                                                                            @for(querySet of querySetNames;track querySet.queryset_id){
+                                                                                              <option [ngbTooltip]="querySet.queryset_name"
+                                                                                              [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
+                                                                                            }
+                                                                                        </select> -->
+                                                 
+                                                                                        
+                                                                                        <ng-select
+                                                                                        [(ngModel)]="selectedQuerySetId"
+                                                                                        (change)="getColumnsForFilter()"
+                                                                                        class="form-control p-0"
+                                                                                        [closeOnSelect]="false"
+                                                                                        [multiple]="true"
+                                                                                        placeholder="Select Queryset name"
+                                                                                      >
+                                                                                        <ng-option
+                                                                                          *ngFor="let querySet of querySetNames;"
+                                                                                          [value]="querySet.queryset_id"
+                                                                                          [ngbTooltip]="querySet.queryset_name"
+                                                                                          [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'"
+                                                                                        >
+                                                                                          {{ querySet.queryset_name }}
+                                                                                        </ng-option>
+                                                                                      </ng-select>
                                             </div>
                                     
                                             <div class="form-group p-1">
@@ -310,7 +337,7 @@
                                             
                                               <!-- Template for displaying each option -->
                                               <ng-template ng-option-tmp let-item="item">
-                                                {{ item.value }}  <!-- Display the column name -->
+                                                {{ item.value }}(<span>{{ item.tableNameForColumn }}</span>) <!-- Display the column name -->
                                               </ng-template>
                                             
                                             </ng-select>
@@ -336,7 +363,7 @@
 
                                             <div class="py-2 mt-3">
                                               <button type="button" [disabled]="!isAnyRowSelected() || !selectedOption || selectedQuerySetId === 0"  (click)="getSelectedData();columnSearch = ''" class="btn ripple btn-primary me-2">Save</button>
-                                              <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';columnSearch = '';closeFilterModal();sheetsFilterNames =[];isAllSelected = false;columnFilterNames =[]"> Cancel </button>
+                                              <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';columnSearch = '';closeFilterModal();sheetsFilterNames =[];isAllSelected = false;columnFilterNames =[];selectedDatabase=''"> Cancel </button>
                                           </div>
                                           </ul>
                                         </div>
@@ -353,6 +380,11 @@
                                             <label class="form-label">Filter Name <span  class="text-red">*</span>
                                             </label>
                                             <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
+                                          </div>
+                                          <div class="form-group p-1 mb-0">
+                                            <label class="form-label">Database Name<span class="text-red">*</span>
+                                            </label>
+                                          <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button>
                                           </div>
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Query Set Name <span class="text-red">*</span>
@@ -1293,7 +1325,8 @@
                       [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                       [yaxis]="item.chartOptions.yaxis!"
                       [legend]="item.chartOptions.legend!"
-                      [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
+                      [fill]="item.chartOptions.fill!"
+                      [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"
                     ></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 4">
@@ -1314,6 +1347,7 @@
                     [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!"
+                    [colors]="item.chartOptions.colors!"
                     (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 3">
@@ -1326,6 +1360,7 @@
                     [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                     [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
+                    [colors]="item.chartOptions.colors!"
                     [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
@@ -1341,18 +1376,20 @@
                     [markers]="item.chartOptions.markers!"
                     [grid]="item.chartOptions.grid!"
                     [yaxis]="item.chartOptions.yaxis!"
+                    [colors]="item.chartOptions.colors!"
                     [title]="item.chartOptions.title!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
-                  <div *ngIf="item.chartOptions && item['chartId'] === 10">
-                    <apx-chart
+                  <div *ngIf="item.chartOptions && item['chartId'] === 10" id="donutchart">
+                    <apx-chart #donutchart
                     [series]="item?.chartOptions?.series!"
                     [chart]="item?.chartOptions?.chart!"
                     [labels]="item?.chartOptions?.labels!"
                     [responsive]="item?.chartOptions?.responsive!"
                     [legend]="item.chartOptions.legend!"
                     [plotOptions]="item.chartOptions.plotOptions!"
-                    [dataLabels]="item.chartOptions.dataLabels!" (chartInit)="onChartInit($event, item)" >
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)" >
                 </apx-chart>
                   </div>
 
@@ -1364,7 +1401,8 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [legend]="item.chartOptions.legend!"
                     [grid]="item.chartOptions.grid!"
-                    [yaxis]="item.chartOptions.yaxis!" (chartInit)="onChartInit($event, item)"
+                    [yaxis]="item.chartOptions.yaxis!"
+                    [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
 
@@ -1432,8 +1470,7 @@
                            <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
                     <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
                     [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                    [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}"
-                    [ngStyle]="{ 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,
+                    [ngStyle]="{ 'background-color': (i % 2 === 0 ? item?.tableData?.color1 : item?.tableData?.color2), 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,
                     'font-style': item['customizeOptions']?.tableDataFontStyle, 'text-decoration': item['customizeOptions']?.tableDataFontDecoration }">
                       <!-- @for(column of item.tableData?.headers;track column){
                       <td>{{ row[column] }}</td>
