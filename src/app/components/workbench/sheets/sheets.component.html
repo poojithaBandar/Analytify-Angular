@@ -1184,8 +1184,7 @@
                                                                 currentPage: page,
                                                                 totalItems: totalItems }) ; let i = index"
                                         [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                        [ngStyle]="{'background-color': (i % 2 === 0 ? color1 : color2)}"
-                                        [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
+                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2), 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
                                         'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 'color': tableDataFontColor }">
                                         @for(column of tableColumnsDisplay;track column){
                                         <td [ngStyle]="{ 'text-align': tableDataFontAlignment }">{{ row[column] }}</td>

@@ -1320,7 +1320,8 @@
                       [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                       [yaxis]="item.chartOptions.yaxis!"
                       [legend]="item.chartOptions.legend!"
-                      [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
+                      [fill]="item.chartOptions.fill!"
+                      [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"
                     ></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 4">
@@ -1341,6 +1342,7 @@
                     [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!"
+                    [colors]="item.chartOptions.colors!"
                     (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 3">
@@ -1353,6 +1355,7 @@
                     [xaxis]="{ categories: item?.chartOptions?.xaxis?.categories, labels: item?.chartOptions?.xaxis?.labels }"
                     [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
+                    [colors]="item.chartOptions.colors!"
                     [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
@@ -1368,18 +1371,20 @@
                     [markers]="item.chartOptions.markers!"
                     [grid]="item.chartOptions.grid!"
                     [yaxis]="item.chartOptions.yaxis!"
+                    [colors]="item.chartOptions.colors!"
                     [title]="item.chartOptions.title!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
-                  <div *ngIf="item.chartOptions && item['chartId'] === 10">
-                    <apx-chart
+                  <div *ngIf="item.chartOptions && item['chartId'] === 10" id="donutchart">
+                    <apx-chart #donutchart
                     [series]="item?.chartOptions?.series!"
                     [chart]="item?.chartOptions?.chart!"
                     [labels]="item?.chartOptions?.labels!"
                     [responsive]="item?.chartOptions?.responsive!"
                     [legend]="item.chartOptions.legend!"
                     [plotOptions]="item.chartOptions.plotOptions!"
-                    [dataLabels]="item.chartOptions.dataLabels!" (chartInit)="onChartInit($event, item)" >
+                    [dataLabels]="item.chartOptions.dataLabels!"
+                    [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)" >
                 </apx-chart>
                   </div>
 
@@ -1391,7 +1396,8 @@
                     [dataLabels]="item.chartOptions.dataLabels!"
                     [legend]="item.chartOptions.legend!"
                     [grid]="item.chartOptions.grid!"
-                    [yaxis]="item.chartOptions.yaxis!" (chartInit)="onChartInit($event, item)"
+                    [yaxis]="item.chartOptions.yaxis!"
+                    [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
 
@@ -1459,8 +1465,7 @@
                            <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
                     <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
                     [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                    [ngStyle]="{'background-color': (i % 2 === 0 ? item.tableData?.color1 : item.tableData?.color2)}"
-                    [ngStyle]="{ 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,
+                    [ngStyle]="{ 'background-color': (i % 2 === 0 ? item?.tableData?.color1 : item?.tableData?.color2), 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,
                     'font-style': item['customizeOptions']?.tableDataFontStyle, 'text-decoration': item['customizeOptions']?.tableDataFontDecoration }">
                       <!-- @for(column of item.tableData?.headers;track column){
                       <td>{{ row[column] }}</td>
