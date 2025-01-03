@@ -82,6 +82,7 @@ export class WorkbenchComponent implements OnInit{
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
+    localStorage.setItem('customQuerySetId', '0');
     const currentUrl = this.router.url; 
     if(currentUrl.includes('analytify/datasources/view-connections')){
       this.databaseconnectionsList= true;  
