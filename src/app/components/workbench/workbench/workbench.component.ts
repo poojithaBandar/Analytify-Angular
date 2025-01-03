@@ -173,6 +173,61 @@ export class WorkbenchComponent implements OnInit{
         )
 
     }
+
+    connectWiseUpdate(){
+      const obj = {
+        "company_id":this.companyId,
+        "site_url": this.siteURL,
+        "public_key":this.publicKey,
+        "private_key": this.privateKey,
+        "client_id": this.clientId,
+        "display_name": this.displayName,
+        "hierarchy_id":this.databaseId
+    }
+
+      this.workbechService.connectWiseConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+    
+    haloPSAUpdate(){
+      const obj = {
+        "site_url": this.siteURLPSA,
+        "client_id": this.clientIdPSA,
+        "client_secret": this.clientSecret,
+        "display_name": this.displayName,
+        "hierarchy_id":this.databaseId
+      }
+
+      this.workbechService.haloPSAConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
+
     DatabaseUpdate(){
       const obj={
           // "database_type":"postgresql",
@@ -183,7 +238,7 @@ export class WorkbenchComponent implements OnInit{
           "password":this.PostGrePassword,
           "database": this.postGreDatabaseName,
           "display_name":this.displayName,
-          database_id:this.databaseId
+          "database_id":this.databaseId
       }as any
       if(this.databaseType === 'oracle'){
         delete obj.database
@@ -798,25 +853,39 @@ export class WorkbenchComponent implements OnInit{
     editDbConnectionModal(OpenmdoModal: any) {
       this.modalService.open(OpenmdoModal);
     }
-    editDbDetails(id:any){
-      const editDataArray  = this.connectionList.filter((item: { hierarchy_id: number; }) => item.hierarchy_id == id);
-      console.log(editDataArray)
-      const editData = editDataArray[0] 
-    this.postGreServerName =editData.hostname;
-    this.postGrePortName = editData.port;
-    this.postGreUserName = editData.username;
-    this.PostGrePassword = '';
-    this.OracleServiceName = '';
-    this.displayName = editData.display_name;
-    this.databaseId=editData.hierarchy_id;
+  editDbDetails(id: any) {
+    const editDataArray = this.connectionList.filter((item: { hierarchy_id: number; }) => item.hierarchy_id == id);
+    console.log(editDataArray)
+    const editData = editDataArray[0]
     this.databaseType = editData.database_type;
-    if(this.databaseType === 'oracle'){
-      this.postGreDatabaseName = editData.service_name;
-    }else{
-      this.postGreDatabaseName = editData.database;
+    this.databaseId = editData.hierarchy_id;
+    if (this.databaseType == "connectwise") {
+      this.companyId = editData.company_id;
+        this.siteURL = editData.site_url;
+        this.publicKey = editData.public_key;
+        this.privateKey = editData.private_key;
+        this.clientId = editData.client_id;
+        this.displayName = editData.display_name;
+    } else if (this.databaseType == "halops") {
+      this.siteURLPSA = editData.site_url;
+      this.clientIdPSA = editData.client_id;
+      this.clientSecret = editData.client_secret;
+      this.displayName = editData.display_name;
+    } else {
+      this.postGreServerName = editData.hostname;
+      this.postGrePortName = editData.port;
+      this.postGreUserName = editData.username;
+      this.PostGrePassword = '';
+      this.OracleServiceName = '';
+      this.displayName = editData.display_name;
+      if (this.databaseType === 'oracle') {
+        this.postGreDatabaseName = editData.service_name;
+      } else {
+        this.postGreDatabaseName = editData.database;
+      }
+      this.errorCheck();
     }
-    this.errorCheck();
-    }
+  }
 
     Openmdo(OpenmdoModal: any) {
       this.modalService.open(OpenmdoModal);

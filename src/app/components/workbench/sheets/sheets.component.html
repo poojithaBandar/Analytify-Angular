@@ -321,7 +321,7 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
-                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,dimensions)"> Apply Filters </button>
                                             <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                            <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                             <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
@@ -348,7 +348,7 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                             <div class="dropdown-menu" ngbDropdownMenu>
-                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; openSuperScaled(content,measures)"> Apply Filters </a>
+                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,measures)"> Apply Filters </a>
                                                 <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                <!-- <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Export</a>
                                                 <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);"> Delete</a>-->
@@ -389,7 +389,7 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
@@ -599,7 +599,7 @@
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0">
+                            <div class="col text-left p-0" *ngIf="activeTabId !== 3">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
@@ -626,7 +626,7 @@
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
                                             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
-                                                <li [ngbNavItem]="1" [class.disabled]="formatExtractType">
+                                                <li [ngbNavItem]="1" [class.disabled]="formatExtractType || (activeTabId !== 1)">
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
@@ -645,7 +645,7 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
-                                                <li [ngbNavItem]="2" [class.disabled]="formatExtractType">
+                                                <li [ngbNavItem]="2" [class.disabled]="formatExtractType || (activeTabId !== 2)">
                                                     <a ngbNavLink class="p-3">Range of dates</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
@@ -667,7 +667,7 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
-                                                <li [ngbNavItem]="3" [class.disabled]="!formatExtractType">
+                                                <li [ngbNavItem]="3" [class.disabled]="!formatExtractType || (activeTabId !== 3)">
                                                     <a ngbNavLink class="p-3">Extract</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
@@ -775,7 +775,7 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0">
+                            <div class="col text-left p-0" *ngIf="activeTabId !== 3">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
@@ -1513,7 +1513,7 @@
                                                                 <div class="tab-menu-heading tab-menu-heading-boxed">
                                                                     <div class="tabs-menu-boxed">
                                                                         <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
-                                                                            <li [ngbNavItem]="1" [class.disabled]="formatExtractType">
+                                                                            <li [ngbNavItem]="1" [class.disabled]="formatExtractType || (activeTabId !== 1)">
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane active" id="activetabs">
@@ -1532,7 +1532,7 @@
                                                                                     </div>
                                                                                 </ng-template>
                                                                             </li>
-                                                                            <li [ngbNavItem]="2" [class.disabled]="formatExtractType">
+                                                                            <li [ngbNavItem]="2" [class.disabled]="formatExtractType || (activeTabId !== 2)">
                                                                                 <a ngbNavLink class="p-3">Range of dates</a>
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane" id="linktabs">
@@ -1554,7 +1554,7 @@
                                                                                     </div>
                                                                                 </ng-template>
                                                                             </li>
-                                                                            <li [ngbNavItem]="3" [class.disabled]="!formatExtractType">
+                                                                            <li [ngbNavItem]="3" [class.disabled]="!formatExtractType || (activeTabId !== 3)">
                                                                                 <a ngbNavLink class="p-3">Extract</a>
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane" id="linktabs">
@@ -1660,7 +1660,7 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0">
+                                                        <div class="col text-left p-0" *ngIf="activeTabId !== 3">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
