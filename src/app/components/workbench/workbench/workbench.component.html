@@ -153,6 +153,63 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
           </div>
           <div class="modal-body">
+            @if(databaseType == 'connectwise') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                  <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': companyIDError}" for="recipient-name" class="col-form-label">Company Id<span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': companyIDError}" type="text" class="form-control" [(ngModel)]="companyId" [ngModelOptions]="{standalone: true}" placeholder="Company Id" (input)="companyIdError()">
+                      </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': siteURLError}" for="message-text" class="col-form-label">Site URL<span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': siteURLError}" type="text" class="form-control" [(ngModel)]="siteURL" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://connectwise.com" (input)="siteUrlError()">
+                      </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': publicKeyError}" class="col-form-label">Public Key<span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': publicKeyError}" type="text" class="form-control" [(ngModel)]="publicKey" [ngModelOptions]="{standalone: true}" placeholder="e.g.  F3SlPrE4ajaCYI8S" (input)="publicConnectWiseError()">
+                      </div>
+                      <div class="mb-2">
+                          <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
+                          <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
+                      </div>
+                      <div class="mb-2">
+                        <label [ngClass]="{'error-label': clientIDError}" class="col-form-label">Client Id <span class="text-danger ms-1" >*</span></label>
+                        <input [ngClass]="{'error-input': clientIDError}" type="text" class="form-control" [(ngModel)]="clientId" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdError()">
+                      </div>
+              </form>
+            } @else if(databaseType == 'halops') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': clientIDPSAError}" class="col-form-label">Client Id <span
+                    class="text-danger ms-1">*</span></label>
+                <input [ngClass]="{'error-input': clientIDPSAError}" type="text" class="form-control"
+                  [(ngModel)]="clientIdPSA" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+                  placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdErrorPSA()">
+              </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                    </div>
+
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': clientSecretError}" for="recipient-name" class="col-form-label">Client
+                    Secret<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': clientSecretError}" type="text" class="form-control"
+                    [(ngModel)]="clientSecret" [ngModelOptions]="{standalone: true}"
+                    placeholder="12fgbcbb-9876-2345-asdf-218541bcf2d1-d1f8a3f7-34gf-45hj-78jh-295142fas34e"
+                    (input)="clientSecretsError()"> </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': siteURLErrorPSA}" for="message-text" class="col-form-label">Site
+                    URL<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': siteURLErrorPSA}" type="text" class="form-control"
+                    [(ngModel)]="siteURLPSA" [ngModelOptions]="{standalone: true}" placeholder="e.g. https://HaloPSA.com"
+                    (input)="siteUrlPSAError()">
+                   </div>
+              </form>
+            } @else {
             <form>
               <div class="mb-2">
                 <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
@@ -184,10 +241,21 @@
                 <button class="btn btn-light" style="float: right;margin-top: -35px;" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
               </div>
             </form>
+          }
           </div>
           <div class="modal-footer">
+            @if(databaseType == 'connectwise') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">Update</button>
+      
+            } @else if(databaseType == 'halops') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName )">Update</button>
+      
+            } @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
+            }
           </div>
         </div>
       </div>
@@ -675,7 +743,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="haloPSASignIn()"
-                          [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameConditionError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">Connect</button>
+                          [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">Connect</button>
                       </div>
                     </form>
                   </div>
