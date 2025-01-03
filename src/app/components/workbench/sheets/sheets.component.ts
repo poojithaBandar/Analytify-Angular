@@ -995,7 +995,7 @@ try {
         this.dataExtraction();
       }
     }
-    dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32'];
+    dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
     integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
     boolList = ['bool', 'boolean'];
     stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
@@ -2555,8 +2555,18 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterData = convertedArray;
 
         if(this.dateList.includes(responce.dtype)){
-          this.floor = new Date(this.filterData[0].label).getTime();
-          this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
+          let rawLabel = this.filterData[0].label;
+          let datePart = rawLabel.split(" ")[0];
+          let [year, month, day] = datePart.split("-");
+          this.floor = new Date(`${year}-${month}-${day}`).getTime();
+          // this.floor = new Date(this.filterData[0].label).getTime();
+
+          rawLabel = this.filterData[this.filterData.length - 1].label;
+          datePart = rawLabel.split(" ")[0];
+          [year, month, day] = datePart.split("-");
+          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+          // this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
+
           this.minValue = this.floor;
           this.maxValue = this.ceil;
           this.options = {
@@ -2617,7 +2627,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "is_exclude":this.isExclude,
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
-    "format_date" : this.formatExtractType
+    "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2654,6 +2664,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
+        else if(responce?.format_type === 'year/month/day'){
+          this.activeTabId = 2;
+        }
         else {
           this.activeTabId = 1;
         }
@@ -2665,7 +2678,43 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.filterDataArray.push(filter.label);
           }
         })
-        if(this.dateList.includes(responce.dtype)){
+        if(this.dateList.includes(responce.data_type) && responce?.range_values){
+          let rawLabel = this.filterData[0].label;
+          let datePart = rawLabel.split(" ")[0];
+          let [year, month, day] = datePart.split("/");
+          this.floor = new Date(`${year}-${month}-${day}`).getTime();
+
+          rawLabel = this.filterData[this.filterData.length - 1].label;
+          datePart = rawLabel.split(" ")[0];
+          [year, month, day] = datePart.split("/");
+          this.ceil = new Date(`${year}-${month}-${day}`).getTime();
+
+          rawLabel = responce.range_values[0];
+          datePart = rawLabel.split(" ")[0];
+          [year, month, day] = datePart.split("/");
+
+          this.minValue = new Date(`${year}-${month}-${day}`).getTime();
+
+          rawLabel = responce.range_values[responce.range_values.length - 1];
+          datePart = rawLabel.split(" ")[0];
+          [year, month, day] = datePart.split("/");
+
+          this.maxValue = new Date(`${year}-${month}-${day}`).getTime();
+
+          this.options = {
+            floor: this.floor,
+            ceil: this.ceil,
+            step: 24 * 60 * 60 * 1000,
+            showSelectionBar: true,
+            selectionBarGradient: {
+              from: '#5a66f1',
+              to: '#5a66f1',
+            },
+            translate: (value: number): string => {
+              return new Date(value).toLocaleDateString();
+            }
+          };
+
           this.updateDateRange();
           this.filterDateRange = [];
         }
