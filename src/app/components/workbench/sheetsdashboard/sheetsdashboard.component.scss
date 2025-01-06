@@ -369,7 +369,12 @@ p {
   margin: 0 auto;
 }
 
-
+.form-check {
+  display: flex;
+  min-height: 1.5rem;
+  padding-inline-start: 1.5em;
+  margin-block-end: 0.125rem;
+}
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
 .dashboard-title-card{

@@ -2567,11 +2567,13 @@ openSuperScaled(modal: any) {
   });
 this.editFilters = false;
 this.filterName = '';
+this.selectedDatabase='';
 this.dropdownOptions = [];
 this.querySetNames = [];
 this.selectedQuerySetId = 0;
 this.selectedOption = null;
 this.sheetsFilterNames =[];
+this.selectedColumnQuerySetId = null;
 }
 databaseNames =[] as any;
 selectedDatabase: string = '';
@@ -2601,6 +2603,7 @@ getQuerySetForFilter(){
     }
   })
 }
+selectedDbIdForFilter:any;
 onDatabaseChange(){
     // Get the queryset data for the selected database
     const selectedDatabaseObj = this.unfilteredQuerySetData[this.selectedDatabase];
@@ -2609,6 +2612,7 @@ onDatabaseChange(){
     if (selectedDatabaseObj) {
       console.log(selectedDatabaseObj)
       this.querySetNames = [...selectedDatabaseObj];
+      this.selectedDbIdForFilter = this.querySetNames[0].hierarchy_id
     }
 
 }
@@ -2627,6 +2631,39 @@ getColumnsForFilter(){
       this.columnFilterNames=data.response_data.tables;
       this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
       this.buildDropdownOptions(this.columnFilterNames); 
+    },
+    error:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  })
+  this.cdr.detectChanges();
+}else{
+  this.dropdownOptions = [];
+
+}
+
+}
+
+ColumnsForFilterEdit(){
+  if(this.selectedQuerySetId.length > 0){
+  const obj ={
+    dashboard_id:this.dashboardId,
+    queryset_id : this.selectedQuerySetId,
+    search : this.columnSearch
+  }
+  this.workbechService.getColumnsInDashboardFilter(obj).subscribe({
+    next:(data)=>{
+      console.log(data);
+      this.columnFilterNames=data.response_data.tables;
+      this.sheetsFilterNamesFromEdit= data.sheets?.map((obj: any) => ({ ...obj, selected: false }));
+      this.buildDropdownOptions(this.columnFilterNames); 
+      this.updateSelectedRowsEdit()
     },
     error:(error)=>{
       console.log(error)
@@ -2785,7 +2822,8 @@ if(this.filterName === ''){
     datatype:this.selectdColmnDtype,
     queryset_id:this.selectedQuerySetId,
     table_name:this.tableNameSelectedForFilter,
-    selected_query:this.selectedColumnQuerySetId
+    selected_query:this.selectedColumnQuerySetId,
+    hierarchy_id:this.selectedDbIdForFilter
   }
   this.workbechService.selectedDatafromFilter(Obj).subscribe({
     next:(data)=>{
@@ -3706,7 +3744,7 @@ addfilterOnEdit(){
 this.selectedQuerySetId = 0;
 this.selectedOption ='';
 }
-
+dbIdforEditFilter:any;
 editFiltersData(id:any){
   this.editFilters=true;
   const obj ={
@@ -3723,9 +3761,15 @@ editFiltersData(id:any){
       this.selectdColmnDtypeEdit = data.datatype;
       this.editquerysetId = data.query_id;
       this.tableNameSelectedForFilter = data.table_name;
+      this.querySetNames=data.unselected_query;
+      this.dbIdforEditFilter = data.hierarchy_id;
+      this.selectedColumnQuerySetId= data.selected_query;
+      this.selectedQuerySetId = data.selected_query_id.map(
+        (item: { queryset_id: any; }) => item.queryset_id
+      );
       this.updateSelectedRowsEdit();
-      this.getColumnsFromEdit(data.query_id,data.dashboard_id);
-      this.getColumnsForFilterEdit(data.query_id,data.dashboard_id);
+      // this.getColumnsFromEdit(data.query_id,data.dashboard_id);
+      this.getColumnsForFilterEdit(this.selectedQuerySetId,data.dashboard_id);
       this.selectedOption=data.selected_column;
 
       this.selectClmn=data.selected_column;
@@ -3743,36 +3787,36 @@ editFiltersData(id:any){
   })
 }
 
-getColumnsFromEdit(qryId:any,dashboardIID:any){
-    const obj ={
-      dashboard_id:dashboardIID,
-      queryset_id : qryId
-    }
-    this.editquerysetId = qryId
-  this.workbechService.getColumnsInDashboardFilter(obj).subscribe({
-    next:(data)=>{
-      console.log(data);
-      this.columnFilterNamesEdit=data.response_data?.columns;
+// getColumnsFromEdit(qryId:any,dashboardIID:any){
+//     const obj ={
+//       dashboard_id:dashboardIID,
+//       queryset_id : qryId
+//     }
+//     this.editquerysetId = qryId
+//   this.workbechService.getColumnsInDashboardFilter(obj).subscribe({
+//     next:(data)=>{
+//       console.log(data);
+//       this.columnFilterNamesEdit=data.response_data?.columns;
 
-    },
-    error:(error)=>{
-      console.log(error)
-      Swal.fire({
-        icon: 'error',
-        title: 'oops!',
-        text: error.error.message,
-        width: '400px',
-      })
-    }
-  })
-}
+//     },
+//     error:(error)=>{
+//       console.log(error)
+//       Swal.fire({
+//         icon: 'error',
+//         title: 'oops!',
+//         text: error.error.message,
+//         width: '400px',
+//       })
+//     }
+//   })
+// }
 isAnySheetSelected(){
   return this.sheetsFilterNamesFromEdit.some((sheet: { selected: any; }) => sheet.selected);
 }
 updateSelectedRowsEdit(){
   this.selectedRowsEdit = this.sheetsFilterNamesFromEdit
   .filter((row: { selected: any; }) => row.selected)
-  .map((row: { sheet_id: any; }) => row.sheet_id);
+  .map((row: { id: any; }) => row.id);
 console.log('selected rows', this.selectedRowsEdit);
 this.isAllSelected = this.sheetsFilterNamesFromEdit.every((row: { selected: any; }) => row.selected);
 }
@@ -3799,9 +3843,10 @@ const obj ={
   column:this.selectClmn,
   sheets:this.selectedRowsEdit,
   datatype:this.selectdColmnDtype,
-  queryset_id:this.editquerysetId,
+  queryset_id:this.selectedQuerySetId,
   table_name:this.tableNameSelectedForFilter,
-  selected_query:this.selectedColumnQuerySetId
+  selected_query:this.selectedColumnQuerySetId,
+  hierarchy_id:this.dbIdforEditFilter
 
 }
   this.workbechService.updatesDashboardFilters(obj).subscribe({
@@ -4553,7 +4598,7 @@ pageChangeTableDisplay(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, false , false, false, false, '');
+      this.setDashboardSheetData(data.data, true , false, false, false, '');
     },error:(error)=>{
       console.log(error.error.message);
     }
