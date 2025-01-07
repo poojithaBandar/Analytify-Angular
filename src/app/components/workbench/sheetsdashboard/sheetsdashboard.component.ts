@@ -2605,6 +2605,12 @@ getQuerySetForFilter(){
 }
 selectedDbIdForFilter:any;
 onDatabaseChange(){
+  this.selectedQuerySetId = null;
+  this.querySetNames = [];
+  this.selectedOption = null;
+  this.dropdownOptions = [];
+  this.sheetsFilterNames =[];
+
     // Get the queryset data for the selected database
     const selectedDatabaseObj = this.unfilteredQuerySetData[this.selectedDatabase];
     
@@ -2619,6 +2625,8 @@ onDatabaseChange(){
 
 
 getColumnsForFilter(){
+  this.selectedOption = null;
+  this.sheetsFilterNames =[];
   if(this.selectedQuerySetId.length > 0){
   const obj ={
     dashboard_id:this.dashboardId,
@@ -2651,6 +2659,9 @@ getColumnsForFilter(){
 }
 
 ColumnsForFilterEdit(){
+  this.selectedOption = null;
+  this.sheetsFilterNamesFromEdit =[];
+
   if(this.selectedQuerySetId.length > 0){
   const obj ={
     dashboard_id:this.dashboardId,
@@ -2684,6 +2695,7 @@ ColumnsForFilterEdit(){
 getColumnsForFilterEdit(selectedqryId:any,dashboardId:any){
 this.dashboardId= dashboardId,
 this.selectedQuerySetId = selectedqryId
+this.selectedOption = null;
  this.getColumnsForFilter();
 this.loadSelectedForEditing()
 
@@ -3745,6 +3757,7 @@ this.selectedQuerySetId = 0;
 this.selectedOption ='';
 }
 dbIdforEditFilter:any;
+databaseNameForEditFilter:any;
 editFiltersData(id:any){
   this.editFilters=true;
   const obj ={
@@ -3764,6 +3777,7 @@ editFiltersData(id:any){
       this.querySetNames=data.unselected_query;
       this.dbIdforEditFilter = data.hierarchy_id;
       this.selectedColumnQuerySetId= data.selected_query;
+      this.databaseNameForEditFilter = data.database_name;
       this.selectedQuerySetId = data.selected_query_id.map(
         (item: { queryset_id: any; }) => item.queryset_id
       );
@@ -3853,23 +3867,12 @@ const obj ={
     next:(data)=>{
       console.log(data);
       this.modalService.dismissAll('close');
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: 'Done',
-      //   text: 'Filter Updated Successfully',
-      //   width: '400px',
-      // })
+      this.getDashboardFilterredList();
       this.toasterService.success('Filter Updated Successfully','success',{ positionClass: 'toast-top-right'});
     },
     error:(error)=>{
       console.log(error)
       this.toasterService.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
-      // Swal.fire({
-      //   icon: 'error',
-      //   title: 'oops!',
-      //   text: error.error.message,
-      //   width: '400px',
-      // })
     }
   })
 }

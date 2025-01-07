@@ -381,11 +381,11 @@
                                             </label>
                                             <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
                                           </div>
-                                          <!-- <div class="form-group p-1 mb-0">
+                                          <div class="form-group p-1 mb-0">
                                             <label class="form-label">Database Name<span class="text-red">*</span>
                                             </label>
-                                          <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button>
-                                          </div> -->
+                                          <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{databaseNameForEditFilter}}</button>
+                                          </div>
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Query Set Name <span class="text-red">*</span>
                                             </label>
@@ -1071,7 +1071,7 @@
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
-        [cdkDropListData]="dashboard" style="margin: 0px;"
+        [cdkDropListData]="dashboard" style="margin: 0px;  background-image: url('./assets/images/brand/insightApps-logo-Public.png'); background-size: cover; background-position: center;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
               <div class="card mb-0 grid-item-border" style="height: 100%;">
