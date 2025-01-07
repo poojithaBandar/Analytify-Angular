@@ -1071,7 +1071,7 @@
         <div  id="capture-element" style="margin: auto 0px;"[ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }"  [style.height.px]="heightGrid" [style.width.px]="widthGrid">
         
         <gridster [options]="options" cdkDropList #destinationList="cdkDropList"
-        [cdkDropListData]="dashboard" style="margin: 0px;  background-image: url('./assets/images/brand/insightApps-logo-Public.png'); background-size: cover; background-position: center;"
+        [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
               <div class="card mb-0 grid-item-border" style="height: 100%;">
