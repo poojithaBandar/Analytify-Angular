@@ -5,10 +5,10 @@
     @if(tableJoiningUI){
         <div class="main-container container-fluid">
     <div class="row">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card mb-3 left-sidebar border">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card mb-3 mt-1 left-sidebar border">
             <div class="p-2 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
-                    <h6 class="mb-0 border-bottom">Connections</h6>
+                    <h6 class="mb-0">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" [ngbTooltip]="hostName?.length > 15 ? hostName : null">{{hostName?.length > 15 ? (hostName| slice:0:15)+'...':hostName}}</p>
@@ -20,7 +20,7 @@
             <!-- <div class="card mb-0 br-0">
             </div> -->
             <div class="mb-0 br-0 pt-0" style="height: 550px; overflow: auto;">
-                <div class="mb-0 p-0 me-2 py-1 border-bottom-0">
+                <div class="mb-0 p-0 py-1 border-bottom-0">
                     <div class="input-group ">
                         <input type="text" class="form-control border-end-0" placeholder="Search Tables"
                             [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
@@ -54,7 +54,7 @@
                                             [cdkDropListData]="menu.tables" [cdkDropListConnectedTo]="[destinationList]"
                                             (cdkDropListDropped)="drop($event)">
                                             <div *ngFor="let submenu of menu.tables"
-                                                class="sub-menu-item example-box subMenuFlex p-2" cdkDrag>
+                                                class="sub-menu-item example-box subMenuFlex p-2 border rounded-3" cdkDrag>
                                                 <i class="fa fa-table" style="padding-right:10px;"></i>
                                                 <span [ngbTooltip]="submenu.table.length > 15 ? submenu.table : null">{{submenu.table ? (submenu.table.length > 15 ? (submenu.table| slice:0:15)+'...':submenu.table) : ''}}</span>
                                             </div>
@@ -71,7 +71,7 @@
         <div class="col-xl-10 col-md-12 p-1">
             <div class=" p-0 ">
                 <div class="col-xl-12 col-md-12 p-0">
-                    <div class="card mb-0 p-4 br-0" style="display: flex;flex-direction: row; border-radius: 10px 10px 0px 0px !important;">
+                    <div class="card mb-0 p-3 border bg-light" style="display: flex;flex-direction: row; border-radius: 10px 10px 0px 0px !important;">
                         <div class="flex-grow-1 ">
                             <input type="text" [(ngModel)]="saveQueryName" (change)="markDirty()" placeholder="Title"
                                 aria-label="Sheet" class="form-control">
@@ -95,14 +95,14 @@
                             <!-- <a class="btn btn-blue-light m-1" (click)="customSql=true;tableJoiningUI=false">New Custom SQL</a> -->
                         </div>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex border">
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                             <div class="card card-body databse-T-H mb-0 br-0 p-0">
                                 <div class="card-body example-list-drop  mb-0" cdkDropList
                                     #destinationList="cdkDropList" [cdkDropListData]="draggedtables"
                                     (cdkDropListDropped)="tableCustomJoinError ? '' : drop($event)">
                                     @for(item of draggedtables;track $index){
-                                        <div class="example-box p-2 border border-dark-subtle" style="cursor: auto;">{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
+                                        <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1" style="cursor: auto;">{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
                                         <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
                                         <a aria-label="anchor" (click)="onDeleteItem($index,item.alias)"
@@ -122,7 +122,7 @@
                         </div>
                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0">
                             <div class="card databse-T-H mb-0 br-0">
-                                <div class="card-body overflow-auto ">
+                                <div class="card-body overflow-auto " style="border-left: 1px solid #dbdbdb;">
                                     @if(relationOfTables.length){
                                     <ul class="tags">
                                         @for(relation of tableJoiningList;track relation;let i = $index){
@@ -298,8 +298,8 @@
                                 class="table-joining-card p-0 col-xxl-6 col-xl-6 col-lg-6 col-md-6">
 
                                 <div class="">
-                                    <div class="card mb-0 br-0 joining-T-H br-0" style="border-radius: 0px 0px 10px 10px !important;">
-                                        <div class="card-header d-flex align-items-center justify-content-between"
+                                    <div class="card mb-0 border joining-T-H br-0" >
+                                        <div class="card-header bg-light d-flex align-items-center justify-content-between"
                                             style="padding: 21px;">
                                             <h6 class="m-0">Table Custom Join</h6>
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()"
@@ -486,9 +486,9 @@
                             </div>
                             <div class="p-0"
                                 [ngClass]="draggedtables?.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
-                                <div class="card mb-0 br-0 joining-T-H" style="border-radius: 0px 0px 10px 10px !important;" [ngClass]="isOpen ? 'right-card':''"
+                                <div class="card mb-0 border joining-T-H"  [ngClass]="isOpen ? 'right-card':''"
                                     [class.expanded]="!isOpen">
-                                    <div class="card-header d-flex align-items-center"
+                                    <div class="card-header bg-light d-flex align-items-center"
                                         style="display: flex; justify-content: space-between;">
                                         <div class="d-flex">
                                             @if(draggedtables?.length > 1){
@@ -581,19 +581,19 @@
     }
     @if(customSql){
     <div class="row main-container">
-        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1">
-            <div class="card  p-2 mb-0 br-0 border-bottom d-block">
+        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 p-1 card mb-3 mt-1 border">
+            <div class="p-2 br-0 mb-0 border-bottom d-block ">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0">Connections</h6>
                     <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
             </div>
-            <div class="card mb-0 p-2 br-0 border-bottom">
+            <div class="p-2 br-0 mb-0 border-bottom d-block ">
                 <h6 class="mb-0">Database</h6>
                 <p class="mb-0">{{databaseName}}</p>
             </div>
-            <div class="card mb-0  br-0" style="height: 504px;overflow-y: auto;">
+            <div class="card mb-0 mt-1 br-0" style="height: 504px;overflow-y: auto;">
                 <div class="sidebar">
                     @for(menu of schematableList;track menu){
                     <div class="menu-item">
@@ -629,8 +629,8 @@
         </div>
         <div class="col-xl-10 col-md-12 p-1">
             <div class="card-body p-0 ">
-                <div class="card mb-0" style="height: 250px;">
-                    <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="card mb-0 border" style="height: 250px;">
+                    <div class="card-header bg-light d-flex align-items-center justify-content-between">
                         <div class="flex-grow-1">
                             <input type="text" (change)="markDirty()" placeholder="Title" [(ngModel)]="saveQueryName"
                                 aria-label="Sheet" class="form-control">
@@ -666,8 +666,8 @@
                     </div>
                 </div>
                 <div class="col-xl-12 col-md-12 p-0 mt-1">
-                    <div class="card mb-0" style="height: 349px;">
-                        <div class="card-header d-flex align-items-center justify-content-between">
+                    <div class="card mb-0 border" style="height: 349px;">
+                        <div class="card-header bg-light d-flex align-items-center justify-content-between">
                             <div class="d-flex">
                                 <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
                                 <p *ngIf="custmQryTime" class="border mb-0 bg-light" style="line-height: 2;">Showing
@@ -784,7 +784,7 @@
         <!-- column Data filter -->
         @if(columnRowFilter){
         <div class="modal-header">
-            <h6 class="modal-title">Filters1</h6>
+            <h6 class="modal-title"> Data Filter</h6>
             <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');columnDataSearch =''">
             </button>
         </div>

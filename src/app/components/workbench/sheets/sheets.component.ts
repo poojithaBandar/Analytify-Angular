@@ -1302,6 +1302,7 @@ try {
                       // })
                       this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
                       this.getChartData();
+                      this.retriveDataSheet_id = '';
                     }
                   },
                   error: (error: any) => {
@@ -2547,7 +2548,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "parent_user":this.createdBy,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
-      "format_date" : this.formatExtractType
+      "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType
 }
   this.workbechService.filterPost(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2557,13 +2558,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.dateList.includes(responce.dtype)){
           let rawLabel = this.filterData[0].label;
           let datePart = rawLabel.split(" ")[0];
-          let [year, month, day] = datePart.split("-");
+          let [year, month, day] = datePart.split("/");
           this.floor = new Date(`${year}-${month}-${day}`).getTime();
           // this.floor = new Date(this.filterData[0].label).getTime();
 
           rawLabel = this.filterData[this.filterData.length - 1].label;
           datePart = rawLabel.split(" ")[0];
-          [year, month, day] = datePart.split("-");
+          [year, month, day] = datePart.split("/");
           this.ceil = new Date(`${year}-${month}-${day}`).getTime();
           // this.ceil = new Date(this.filterData[this.filterData.length - 1].label).getTime();
 
