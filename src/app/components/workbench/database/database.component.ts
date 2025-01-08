@@ -576,15 +576,17 @@ buildCustomRelation(){
         console.log(error)
       }
       })
-
 }
 clrQuery(){
   this.sqlQuery = ''
   this.cutmquryTable=[];
   this.custmQryTime='';
   this.custmQryRows='';
+  this.datasourceQuerysetId = null;
+  this.datasourceFilterIdArrayCustomQuery = [];
   // this.gotoSheetButtonDisable = true;
   this.clearFiltersOnClearQuery();
+
 }
 clearFiltersOnClearQuery(){
   if(this.custumQuerySetid !== 0 || this.custumQuerySetid !== null || this.custumQuerySetid !== '0' ){
