@@ -439,7 +439,7 @@
                                           
                                             <!-- Template for displaying each option -->
                                             <ng-template ng-option-tmp let-item="item">
-                                              {{ item.value }} <!-- Display the column name -->
+                                              {{ item.value }} (<span>{{ item.tableNameForColumn }}</span>) <!-- Display the column name -->
                                             </ng-template>
                                           
                                           </ng-select>
