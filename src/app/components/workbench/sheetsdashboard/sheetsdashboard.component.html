@@ -1,12 +1,12 @@
 
 <app-header *ngIf="publicHeader" [isPublicUrl]="publicHeader"></app-header>
 
-<div *ngIf="dashboardView">
+<!-- <div *ngIf="dashboardView"> -->
 <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" activeitem="Dashboard"></app-page-header>
-</div>
-<div *ngIf="sheetsNewDashboard">
+<!-- </div> -->
+<!-- <div *ngIf="sheetsNewDashboard">
   <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/analytify/sheets" activeitem="Dashboard"></app-page-header>
-  </div>
+  </div> -->
   
   <div *ngIf="isPublicUrl" style="margin-top: 60px;">
     
@@ -381,11 +381,11 @@
                                             </label>
                                             <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
                                           </div>
-                                          <!-- <div class="form-group p-1 mb-0">
+                                          <div class="form-group p-1 mb-0">
                                             <label class="form-label">Database Name<span class="text-red">*</span>
                                             </label>
-                                          <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button>
-                                          </div> -->
+                                          <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{databaseNameForEditFilter}}</button>
+                                          </div>
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Query Set Name <span class="text-red">*</span>
                                             </label>
@@ -396,7 +396,24 @@
                                   
                                           </select> -->
                                           <!-- <p>{{querysetNameEdit}}</p> -->
-                                          <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button>
+                                          <!-- <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button> -->
+
+                                          <ng-select
+                                          [(ngModel)]="selectedQuerySetId"
+                                          (change)="ColumnsForFilterEdit()"
+                                          class="form-control p-0"
+                                          [closeOnSelect]="false"
+                                          [multiple]="true"
+                                          placeholder="Select Queryset name"
+                                        >
+                                          <ng-option
+                                            *ngFor="let querySet of querySetNames;"
+                                            [value]="querySet.queryset_id"
+                                            [ngbTooltip]="querySet.queryset_name"
+                                          >
+                                            {{ querySet.queryset_name }}
+                                          </ng-option>
+                                        </ng-select>
                                           </div>
                                   
                                           <div class="form-group p-1">
@@ -441,7 +458,7 @@
 
                                             <div class="form-check">
                                               <input type="checkbox" [id]="'defaultCheck' + i"  name="rows1{{i}}"[(ngModel)]="rows1.selected" (change)="updateSelectedRowsEdit()" class="form-check-input"> 
-                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows1.sheet_name}}</p> </label>
+                                              <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows1.name ? rows1.name : rows1?.label?.name}}</p> </label>
                                             </div>
                                           }
                                           </div>

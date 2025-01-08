@@ -1517,7 +1517,7 @@ getSelectedRowsFromEdit() {
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
 
   const obj = {
-    filter_id:this.datasourceFilterId || this.editFilterId,
+    filter_id: this.editFilterId,
     hierarchy_id:this.databaseId,
     queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
