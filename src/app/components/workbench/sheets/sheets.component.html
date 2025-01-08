@@ -1,9 +1,9 @@
 <div class="main-container container-fluid mt-5"> 
     <div class="row" style="position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;">
         <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
-            <div class="card mb-0" >
+            <div class="card mb-0 border rounded-3 p-1" >
                 <div class="card-body p-0 ">
-                    <div class="border mb-0 p-2 br-0 border-bottom">
+                    <div class=" mb-0 p-2 br-0 border-bottom">
                         <div class="d-flex align-items-center justify-content-between ">
                             <h6 class="mb-0">Connections</h6>
                             <app-insights-button *ngIf="qrySetId" [buttonName]="'Edit'" [classesList]="'add-txt text-info'" [previledgeId]="2" [isBtn]="false"
@@ -12,7 +12,7 @@
                             (btnClickEvent)="goToConnections()"></app-insights-button>
                         </div>
                         </div>
-                        <div class="border mb-0 p-2 br-0 border-bottom">
+                        <div class=" mb-0 p-2 br-0 ">
                             <h6 class="mb-0">Database</h6>
                             <p class=" mb-0" ngbTooltip="{{database_name}}">{{database_name}}</p> 
                         </div>
@@ -282,7 +282,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="tableSearch"
                             (keyup.enter)="columnsData()" aria-describedby="button-addon2">
-                        <button class="btn btn-primary border me-2" (click)="columnsData()" type="button" id="button-addon2"
+                        <button class="btn btn-primary border" (click)="columnsData()" type="button" id="button-addon2"
                             style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                     </div>
                     <div class="sheet-table-h">
@@ -796,9 +796,9 @@
             </div>
         </div>
         <div class="col-xxl-8 col-xl-8 col-lg-7 col-md-7 p-1 mt-3">
-           <div class="card p-0 mb-1">
+           <div class="card p-0 mb-1 border">
            
-                <div class="card p-0 mb-1 bg-light">
+                <div class="card p-0 mb-1 bg-light" style="border: none !important;">
                     <div class="card-body title-padding">
                         <div class="row align-items-center">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12 maind-flex" >
@@ -849,12 +849,12 @@
                     <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
-                                <label for="inputName" class="form-control mb-0 column-text">Columns</label>
+                                <label for="inputName" class="form-control mb-0 column-text border">Columns</label>
                             </div>
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" 
                                 style="position: relative;min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
@@ -970,12 +970,12 @@
                     <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                             <div class="card-area d-flex gap-2">
-                                <label for="inputName" class="form-control mb-0 row-text">Rows</label>
+                                <label for="inputName" class="form-control mb-0 row-text border">Rows</label>
                             </div> 
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
                            
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" style="
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" style="
                                 position: relative; min-height: 33px; padding: 2px;"
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
@@ -1085,11 +1085,11 @@
                     <div  [ngStyle]="{'display': ((bar || pie || donut || map) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
-                                                       <label for="inputName" class="form-control mb-0">Hierarchy</label>
+                                                       <label for="inputName" class="form-control mb-0 border">Hierarchy</label>
                                                    </div> 
                                                 </div>
                                             <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
-                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
+                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" 
                                                     style="position: relative;min-height: 33px; padding: 2px;" 
                                                 #drilldownList="cdkDropList" 
                                                     [cdkDropListData]="draggedDrillDownColumns" 
@@ -1114,7 +1114,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0" [ngClass]="(bar || pie || donut) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
+            <div class="card mb-0 border" [ngClass]="(bar || pie || donut) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
                 @if(!(table || kpi)){
                     <div class="input-group">
                 <!-- <div class="col-lg-3 col-md-3 p-1">
@@ -1150,7 +1150,7 @@
                     </div>
                    </div>
                 }
-                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: auto;">
+                 <div class="card-body p-1 border-bottom" style="display: flex; justify-content: center; align-items: center; overflow-y: auto;">
                     <!-- @for(tab of tabs;track tab; let index = $index){ -->
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
@@ -1471,7 +1471,7 @@
 
              </div>
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 mt-3 p-1">
-                <div class="card panel panel-primary">
+                <div class="card panel panel-primary border">
                     <div class="tab-menu-heading tab-menu-heading-boxed">
                         <div class="tabs-menu1">
                             <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" style="justify-content: space-between;">
@@ -1480,8 +1480,8 @@
                                     <a ngbNavLink class="p-1">Data</a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane active" id="activetabs">
-                                            <div class="border  mb-1 filter-card-height" >
-                                                <div class="card-header justify-content-start align-items-center">
+                                            <div class="border rounded-3 mb-1 filter-card-height" >
+                                                <div class="card-header  bg-light justify-content-start align-items-center">
                                                     <div class="card-title fs-12">Filters </div>
                                                 </div>
                                                 <div class="card-body p-1">
@@ -1674,8 +1674,8 @@
                                                     </div>
                                                   </ng-template>
                                             </div>
-                                            <div class="border mb-1 charts-card-height">
-                                                <div class="card-header justify-content-between align-items-center">
+                                            <div class="border mb-1 rounded-3 charts-card-height">
+                                                <div class="card-header  bg-light justify-content-between align-items-center">
                                                     <div class="card-title fs-12">Charts</div>
                                                 </div>
                                                 <div class="card-body" style=" padding: 2px 12px;">
@@ -1683,7 +1683,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
-                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light rounded-2" style="text-align: center;">Single Axis</div>
+                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light " style="text-align: center;">Single Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
                                                         </div>
@@ -1711,7 +1711,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
-                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light rounded-2" style="text-align: center;">Dual Axis</div>
+                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light " style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': sidebyside}"></a>
                                                         </div>
