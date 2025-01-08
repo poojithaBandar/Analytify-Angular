@@ -2411,6 +2411,43 @@ chartInitialize(){
     });
     this.chartInstance.setOption(this.chartOptions,true)
      }
+     else if(this.chartType ==='funnel'){
+      if(this.dataLabelsFontPosition === 'center'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'inside'
+            }
+          }]
+        }
+        this.chartInstance.setOption(obj);
+        this.chartOptions.series[0].label.position = 'inside' ;
+      } else if(this.dataLabelsFontPosition === 'top'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'right'
+            }
+          }]
+        }
+        this.chartInstance.setOption(obj);
+        this.chartOptions.series[0].label.position = 'right' ;
+      }
+      else if(this.dataLabelsFontPosition === 'bottom'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'left'
+            }
+          }]
+        }
+        this.chartInstance.setOption(obj);
+        this.chartOptions.series[0].label.position = 'left' ;
+      }
+     }
      else{
       if(this.dataLabelsFontPosition === 'center'){
         let obj ={
@@ -3225,8 +3262,8 @@ sortSeries(sortType: any) {
     }
   }
   this.chartInstance.setOption(obj);
-  this.chartOptions.series[0].data = sortedData.sortedNumbers;
-  this.chartOptions.xAxis.data = sortedData.sortedLabels;
+  // this.chartOptions.series[0].data = sortedData.sortedNumbers;
+  // this.chartOptions.xAxis.data = sortedData.sortedLabels;
 
   }
 }
