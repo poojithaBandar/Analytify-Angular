@@ -1198,7 +1198,13 @@ export class SheetsdashboardComponent {
         this.endMethod(); 
       },
       error:(error)=>{
-        console.log(error)
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error?.error?.message,
+          width: '400px',
+        });
       }
     })
   }
