@@ -336,6 +336,7 @@ export class SheetsComponent {
     ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   ];
   selectedColorScheme=[] as  any;
+  hasUnSavedChanges = false;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
@@ -714,6 +715,7 @@ try {
           }
         }
         )
+        this.hasUnSavedChanges=true;
       }
 
       pageChangeTableDisplay(page:any){
@@ -1198,6 +1200,7 @@ try {
     }
     this.resetCustomizations();
     this.chartsOptionsSet(); 
+    this.hasUnSavedChanges=true;
   }
   // enableDisableCharts(){
   //   console.log(this.draggedColumnsData);
@@ -1330,6 +1333,11 @@ try {
       )
   }
   onChange(event:MatTabChangeEvent){
+
+    if (this.hasUnSavedChanges) {
+      const confirmSwitch = window.confirm('You have unsaved changes. Do you really want to switch tabs?');
+      if (confirmSwitch) {
+        this.hasUnSavedChanges = false;
     console.log('tabs',event);
     this.selectedTabIndex =  event.index;
     const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
@@ -1363,48 +1371,47 @@ try {
       this.retriveDataSheet_id = selectedSheetId;
       this.sheetRetrive(false);
     }
-
-    // const obj = {
-    //   "server_id": this.databaseId,
-    //   "queryset_id": this.qrySetId,
-    // } as any;
-    // if (this.fromFileId) {
-    //   delete obj.server_id;
-    //   obj.file_id = this.fileId;
-    // }
-    // this.workbechService.getSheetNames(obj).subscribe({
-    //   next: (responce: any) => {
-    //     this.sheetList = responce.data;
-    //     if (!this.sheetList.some(sheet => sheet.sheet_name === this.sheetName)) {
-    //       this.retriveDataSheet_id = '';
-    //     } else {
-    //       this.sheetList.forEach(sheet => {
-    //         if (sheet.sheet_name === this.sheetName) {
-    //           this.retriveDataSheet_id = sheet.id;
-    //         }
-    //       });
-    //     }
-    //     // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-    //     // inputElement.innerHTML = event.tab?.textLabel;
-    //     this.sheetTagName = event.tab?.textLabel;
-    //     console.log(this.sheetName)
-    //     console.log(this.retriveDataSheet_id);
-    //     this.draggedColumns = [];
-    //     this.draggedColumnsData = [];
-    //     this.draggedRows = [];
-    //     this.draggedRowsData = [];
-    //     this.displayedColumns = [];
-    //     this.getChartData();
-    //    if(this.retriveDataSheet_id){
-    //       this.sheetRetrive();
-    //    }
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //   }
-    // }
-    // )
     this.kpi = false;
+    return;
+  }else{
+      this.selectedTabIndex = this.SheetIndex;
+    }
+  }else{
+    console.log('tabs',event);
+    this.selectedTabIndex =  event.index;
+    const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+    const selectedSheetId = selectedTab.id; // Access the sheet_id
+  
+    this.draggedDrillDownColumns = [];
+    this.drillDownObject = [];
+    this.drillDownIndex = 0;
+    this.sheetName = '';
+    this.dateDrillDownSwitch = false;
+    delete this.originalData;
+    console.log(event)
+    if(event.index === -1){
+     this.retriveDataSheet_id = 1;
+    }
+    this.SheetIndex = event.index;
+    this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+    this.sheetTitle = this.sheetName;
+
+    this.sheetTagName = this.sheetName;
+    this.sheetTagTitle = this.sheetName;
+    this.draggedColumns = [];
+    this.draggedColumnsData = [];
+    this.draggedRows = [];
+    this.draggedRowsData = [];
+    this.displayedColumns = [];
+    this.retriveDataSheet_id = '';
+    this.getChartData();
+    this.columnsData();
+    if(selectedSheetId){
+      this.retriveDataSheet_id = selectedSheetId;
+      this.sheetRetrive(false);
+    }
+    this.kpi = false;
+  }
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -1937,7 +1944,7 @@ if(this.retriveDataSheet_id){
 }
 )
 }
-
+this.hasUnSavedChanges = false;
   }
 sheetTagTitle : any;
 sheetChartId : any;
@@ -2645,6 +2652,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   filterEditGet(){
     this.filterData = [];
@@ -2756,6 +2764,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
       }
     )
+    this.hasUnSavedChanges = true;
   }
   filterDelete(index:any,filterId:any){
   this.sortedData = [];
@@ -2770,6 +2779,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   openSuperScaledModal(modal: any,type:any) {
     if(type === undefined){
@@ -3409,10 +3419,30 @@ customizechangeChartPlugin() {
     };
   }
   openSelectDashboard(modal : any){
-    this.modalService.open(modal, {
-      centered: true,
-      windowClass: 'animate__animated animate__zoomIn',
-    });
+    if (this.hasUnSavedChanges) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Your work has not been saved, Do you want to continue?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "Yes", allow navigation
+          this.modalService.open(modal, {
+            centered: true,
+            windowClass: 'animate__animated animate__zoomIn',
+          });
+        }
+      });
+    } else {
+      this.modalService.open(modal, {
+        centered: true,
+        windowClass: 'animate__animated animate__zoomIn',
+      });
+    }
   }
   dashboardList : any[] = [];
   getDashboardsList() {
@@ -3432,6 +3462,7 @@ customizechangeChartPlugin() {
     })
   }
   async moveToDashboard(){
+    this.hasUnSavedChanges = false;
     if(this.selectedDashboardId > 0) {
       this.dashboardId = this.selectedDashboardId;
     }
@@ -3744,7 +3775,9 @@ customizechangeChartPlugin() {
       }
       canNavigate(): boolean {
         // This is handled in the functional guard
-        return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+       // return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+        return this.hasUnSavedChanges;
+
       }
 
       getSheetList(){
