@@ -214,7 +214,7 @@
                                                                         @for(column of table.columns;track column){
                                                                         <li>
                                                                             <a ngbDropdownItem class="dropdown-item"
-                                                                                (click)="condition.firstcolumn = column.column;condition.table1= table.alias;relation.table1 = table.alias">{{
+                                                                                (click)="condition.firstcolumn = column.column;condition.table1= table.alias;relation.table1 = table.alias;searchTermT1='';filterColumnsT1();">{{
                                                                                 column.column }}</a>
                                                                         </li>
                                                                         }
@@ -258,7 +258,7 @@
                                                                     </li>
                                                                     @for(column of table.columns;track column){
                                                                     <li><a class="dropdown-item" ngbDropdownItem
-                                                                            (click)="condition.secondcolumn= column.column;condition.table2 = table.alias;">{{
+                                                                            (click)="condition.secondcolumn= column.column;condition.table2 = table.alias;relation.searchTermT2='';filterColumnsT2(relation);">{{
                                                                             column.column }}</a></li>
                                                                     }
                                                                     }

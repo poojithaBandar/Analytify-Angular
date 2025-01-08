@@ -326,7 +326,6 @@ export class SheetsComponent {
   bottomLegend:any = '0%'
   rightLegend:any = null;
   sortType : any = 0;
-  hierarchyId:any;
 
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
@@ -1252,12 +1251,29 @@ try {
 
   sheetDuplicate(){
     this.sheetNumber = this.tabs.length+1;
-    this.tabs.push('Sheet ' +this.sheetNumber);
-    this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
-    this.selectedTabIndex = this.tabs.length - 1;
     this.sheetTagName = 'Sheet ' +this.sheetNumber;
     // this.setChartType();
-    this.sheetRetrive(true);
+    this.workbechService.sheetFiltersDuplicate(this.retriveDataSheet_id).subscribe(
+      {
+        next: (data: any) => {
+          this.tabs.push('Sheet ' +this.sheetNumber);
+          this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+          this.selectedTabIndex = this.tabs.length - 1;
+          this.sheetRetrive(true,data.filters_list);
+          
+        },
+        error: (error: any) => {
+          Swal.fire({
+            icon: 'warning',
+            text: error.error.message,
+            width: '300px',
+          })
+          console.log(error)
+        }
+      }
+    )
+
+    // this.sheetRetrive(true);
   }
 
   sheetNameChange(name:any,event:any){
@@ -1940,7 +1956,21 @@ if(this.retriveDataSheet_id){
   }
 sheetTagTitle : any;
 sheetChartId : any;
-sheetRetrive(isDuplicate : boolean){
+
+mergeFilters(filtersData: any[], filtersList: any[]): any[] {
+  return filtersData.map((filter) => {
+    const matchingFilter = filtersList.find(
+      (item) => item.col_name === filter.col_name
+    );
+    if (matchingFilter) {
+      // Replace filter_id with id from filters_list
+      return { ...filter, filter_id: matchingFilter.id };
+    }
+    return filter; // Return the original filter if no match is found
+  });
+}
+
+sheetRetrive(isDuplicate : boolean,duplicateFilterData?:any){
   this.getChartData();
   console.log(this.tabs);
   const obj={
@@ -1974,7 +2004,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.mulRowData = responce?.row_data;
         this.tablePaginationRows=responce?.row_data;
         this.tablePaginationColumn=responce?.col_data;
-        this.dimetionMeasure = responce?.filters_data;
+  if (isDuplicate) {
+    let filterData = responce?.filters_data;
+    this.dimetionMeasure = this.mergeFilters(filterData, duplicateFilterData);
+  } else {
+    this.dimetionMeasure = responce?.filters_data;
+  }
         this.createdBy = responce?.created_by;
         this.color1 = responce?.sheet_data?.results?.color1;
         this.color2 = responce?.sheet_data?.results?.color2;
@@ -1994,9 +2029,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
+        if(isDuplicate){
+          duplicateFilterData.forEach((filter: any)=>{
+            this.filterId.push(filter.id);
+          });
+        } else {
         responce?.filters_data.forEach((filter: any)=>{
           this.filterId.push(filter.filter_id);
-        })
+        });
+      }
         this.isEChatrts = this.sheetResponce?.isEChart;
         this.isApexCharts = this.sheetResponce?.isApexChart;
         this.dateDrillDownSwitch = this.sheetResponce?.isDrillDownData;
@@ -3041,7 +3082,7 @@ routeConfigure(){
   this.router.navigate(['/analytify/configure-page/configure'])
 }
 fetchChartData(chartData: any){
-  this.hierarchyId = chartData.database_id;
+  this.databaseId = chartData.hierarchy_id;
           this.qrySetId = chartData.queryset_id;
           this.draggedColumnsData = chartData.col;
           this.draggedRowsData = chartData.row;
