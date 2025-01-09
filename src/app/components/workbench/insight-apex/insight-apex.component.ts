@@ -203,9 +203,9 @@ export class InsightApexComponent {
     if(this.chartType == 'guage' && (changes['minValueGuage'] || changes['maxValueGuage'])){
       this.customMinMaxGuage();
     }
-    if(['funnel','bar'].includes(this.chartType) && changes['sortType'] && changes['sortType']?.currentValue !== 0){
-      this.sortSeries(this.sortType);
-    }
+    // if(['funnel','bar'].includes(this.chartType) && changes['sortType'] && changes['sortType']?.currentValue !== 0){
+    //   this.sortSeries(this.sortType);
+    // }
     if(this.isSheetSaveOrUpdate){
       let object = {
         chartOptions : this.chartOptions
@@ -3011,42 +3011,42 @@ export class InsightApexComponent {
       this.donutCharts.updateOptions(this.chartOptions.chart);
     }
   }
-  sort(sortType: any, numbers: any, labels: any) {
-    let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+  // sort(sortType: any, numbers: any, labels: any) {
+  //   let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
   
-    if (sortType === 'ascending') {
-      pairedData.sort((a: any, b: any) => a[0] - b[0]);
-    } else if (sortType === 'descending') {
-      pairedData.sort((a: any, b: any) => b[0] - a[0]);
-    } else if(sortType === 'none'){
-      pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
-    }
+  //   if (sortType === 'ascending') {
+  //     pairedData.sort((a: any, b: any) => a[0] - b[0]);
+  //   } else if (sortType === 'descending') {
+  //     pairedData.sort((a: any, b: any) => b[0] - a[0]);
+  //   } else if(sortType === 'none'){
+  //     pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
+  //   }
 
-    const sortedNumbers = pairedData.map((pair: any) => pair[0]);
-    const sortedLabels = pairedData.map((pair: any) => pair[1]);
+  //   const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+  //   const sortedLabels = pairedData.map((pair: any) => pair[1]);
   
-    return { sortedNumbers, sortedLabels };
-  }
-  sortSeries(sortType: any) {
-    if (this.chartType === 'funnel') {
-      const numbers = this.chartOptions.series[0].data;
-      const labels = this.chartOptions.xaxis.categories;
-      const sortedData = this.sort(sortType, numbers, labels);
+  //   return { sortedNumbers, sortedLabels };
+  // }
+  // sortSeries(sortType: any) {
+  //   if (this.chartType === 'funnel') {
+  //     const numbers = this.chartOptions.series[0].data;
+  //     const labels = this.chartOptions.xaxis.categories;
+  //     const sortedData = this.sort(sortType, numbers, labels);
 
-      this.chartOptions.series[0].data = sortedData.sortedNumbers;
-      this.chartOptions.xaxis.categories = sortedData.sortedLabels;
-      this.funnelCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
-    } 
-    else if (this.chartType === 'bar') {
-      const numbers = this.chartOptions.series[0].data;
-      const labels = this.chartOptions.xaxis.categories;
-      const sortedData = this.sort(sortType, numbers, labels);
+  //     this.chartOptions.series[0].data = sortedData.sortedNumbers;
+  //     this.chartOptions.xaxis.categories = sortedData.sortedLabels;
+  //     this.funnelCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
+  //   } 
+  //   else if (this.chartType === 'bar') {
+  //     const numbers = this.chartOptions.series[0].data;
+  //     const labels = this.chartOptions.xaxis.categories;
+  //     const sortedData = this.sort(sortType, numbers, labels);
 
-      this.chartOptions.series[0].data = sortedData.sortedNumbers;
-      this.chartOptions.xaxis.categories = sortedData.sortedLabels;
-      this.barCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
-    }
-  }
+  //     this.chartOptions.series[0].data = sortedData.sortedNumbers;
+  //     this.chartOptions.xaxis.categories = sortedData.sortedLabels;
+  //     this.barCharts?.updateOptions({ series: this.chartOptions.series, xaxis: this.chartOptions.xaxis });
+  //   }
+  // }
 }
 // }
 

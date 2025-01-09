@@ -1343,6 +1343,7 @@
                       [yaxis]="item.chartOptions.yaxis!"
                       [legend]="item.chartOptions.legend!"
                       [fill]="item.chartOptions.fill!"
+                      [grid]="item.chartOptions.grid!"
                       [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"
                     ></apx-chart>
                   </div>
@@ -1365,6 +1366,7 @@
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!"
                     [colors]="item.chartOptions.colors!"
+                    [grid]="item.chartOptions.grid!"
                     (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 3">
@@ -1378,6 +1380,7 @@
                     [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [colors]="item.chartOptions.colors!"
+                    [grid]="item.chartOptions.grid!"
                     [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
@@ -1485,7 +1488,7 @@
                       </thead>
                       <tbody>
                            <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
-                    <tr *ngFor="let row of (item.tableData?.rows || [] | paginate: {itemsPerPage:tableItemsPerPage, currentPage:tablePage,totalItems:tableTotalItems});let i = index" 
+                    <tr *ngFor="let row of (item?.tableData?.rows || [] | paginate: {itemsPerPage:item?.tableData?.tableItemsPerPage, currentPage:item?.tableData?.tablePage,totalItems:item?.tableData?.tableTotalItems ,id: item.sheetId + 'page'});let i = index" 
                     [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
                     [ngStyle]="{ 'background-color': (i % 2 === 0 ? item?.tableData?.color1 : item?.tableData?.color2), 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,
                     'font-style': item['customizeOptions']?.tableDataFontStyle, 'text-decoration': item['customizeOptions']?.tableDataFontDecoration }">
@@ -1499,9 +1502,9 @@
                   
                       </tbody>
                   </table>
-                  <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,(tablePage = $event)) : pageChangeTableDisplay(item,(tablePage = $event))"></pagination-controls>
+                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event))"></pagination-controls>
                   <div  style="float: right;font-size: 15px; margin-top: -41px;">
-                    <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,tablePage) : pageChangeTableDisplay(item,tablePage)" (mousedown)="stopDragging($event)"class="form-control cursor">
+                    <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage)" (mousedown)="stopDragging($event)"class="form-control cursor">
                           <option  value="10"> 10</option>
                           <option  value="50"> 50</option>
                           <option  value="100"> 100</option>

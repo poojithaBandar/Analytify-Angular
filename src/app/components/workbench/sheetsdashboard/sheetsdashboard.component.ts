@@ -246,15 +246,15 @@ export class SheetsdashboardComponent {
     
   }
   options!: GridsterConfig;
-  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
+  nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any ,tableItemsPerPage : any, tableTotalItems : any }
 }> = [];
-  dashboard!: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}
+  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}
   }>;
-  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
+  dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
 }> = [];
-  dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
+  dashboardNew!: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
   }>;
-  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any }
+  testData!: Array<GridsterItem & { data?: any, chartType?: any,  chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
 }>;
   pushNewSheet =[] as any;
   sheetData = [] as any;
@@ -1677,16 +1677,19 @@ export class SheetsdashboardComponent {
         return undefined;        
     }
   }
-getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any } {
+getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1: any, color2: any ,tableItemsPerPage : any,tableTotalItems : any, tablePage : number } {
     // Example implementation for table data extraction
-    this.tableItemsPerPage=tableData.results.items_per_page
-    this.tableTotalItems = tableData.results.total_items
+    // this.tableItemsPerPage=tableData.results.items_per_page
+    // this.tableTotalItems = tableData.results.total_items
     return {
       headers: tableData.results.tableColumns,
       rows: tableData.results.tableData,
       banding: tableData.results.banding,
       color1: tableData.results.color1,
       color2: tableData.results.color2,
+      tableItemsPerPage : tableData.results.items_per_page,
+      tableTotalItems : tableData.results.total_items,
+      tablePage : 1
     };
   }
 
@@ -4587,6 +4590,7 @@ tableSearchDashboard(item:any){
   this.pageChangeTableDisplay(item,1);
 }
 pageChangeTableDisplay(item:any,page:any){
+  item.tableData.tablePage = page;
   const obj={
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
@@ -4618,6 +4622,7 @@ tableSearchDashboardPublic(item:any){
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
+  item.tableData.tablePage = page;
   const obj={
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
