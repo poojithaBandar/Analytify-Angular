@@ -1343,6 +1343,7 @@
                       [yaxis]="item.chartOptions.yaxis!"
                       [legend]="item.chartOptions.legend!"
                       [fill]="item.chartOptions.fill!"
+                      [grid]="item.chartOptions.grid!"
                       [colors]="item.chartOptions.colors!" (chartInit)="onChartInit($event, item)"
                     ></apx-chart>
                   </div>
@@ -1365,6 +1366,7 @@
                     [legend]="item.chartOptions.legend!"
                     [fill]="item.chartOptions.fill!"
                     [colors]="item.chartOptions.colors!"
+                    [grid]="item.chartOptions.grid!"
                     (chartInit)="onChartInit($event, item)"></apx-chart>
                   </div>
                   <div *ngIf="item.chartOptions && item['chartId'] === 3">
@@ -1378,6 +1380,7 @@
                     [yaxis]="item.chartOptions.yaxis!"
                     [legend]="item.chartOptions.legend!"
                     [colors]="item.chartOptions.colors!"
+                    [grid]="item.chartOptions.grid!"
                     [fill]="item.chartOptions.fill!" (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
