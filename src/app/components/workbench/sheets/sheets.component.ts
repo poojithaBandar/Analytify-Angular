@@ -630,7 +630,8 @@ try {
           "is_date": this.dateDrillDownSwitch,
           "drill_down": this.drillDownObject,
           "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
-          "parent_user":this.createdBy
+          "parent_user":this.createdBy,
+          "order_column":this.selectedSortColumnData
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
@@ -652,7 +653,8 @@ try {
                 this.chartsOptionsSet();
               }
             }
-           
+            this.getDimensionAndMeasures();
+            this.changeSelectedColumn();
             if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2)) {
               if(!this.table){
                 this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
@@ -700,6 +702,7 @@ try {
               this.calendar = false;
               this.map = false;
               // this.sidebysideBar();
+              this.resetCustomizations();
               this.chartType = 'sidebyside';
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
               this.chartType = 'sidebyside'
@@ -948,6 +951,16 @@ try {
       storeColumnData = [] as any;
       storeRowData = [] as any;
       columndrop(event: CdkDragDrop<string[]>){
+        // if (event.previousContainer === event.container) {
+        //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        // } else {
+        //   transferArrayItem(
+        //     event.previousContainer.data,
+        //     event.container.data,
+        //     event.previousIndex,
+        //     event.currentIndex,
+        //   );
+        // }
         this.sortedData = [];
         console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -994,11 +1007,36 @@ try {
         this.dataExtraction();
       }
     }
-    dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
-    integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
-    boolList = ['bool', 'boolean'];
-    stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
+    //dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
+    // integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
+    // boolList = ['bool', 'boolean'];
+    //stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
+    
+  integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double', 'int64', 'int32', 'float64', 'float32', 'nullable(int64)', 'nullable(int32)', 'nullable(uint8)',
+    'nullable(float(64))', 'int8', 'int16', 'int32', 'int64', 'float32', 'float16', 'float64', 'decimal(38,10)', 'decimal(12,2)', 'uuid', 'nullable(int8)', 'nullable(int16)', 'nullable(int32)', 'nullable(int64)', 'nullable(float32)', 'nullable(float16)', 'nullable(float64)', 'nullable(decimal(38,10)', 'nullable(decimal(12,2)']
+  stringList = ['varchar', 'bp char', 'text', 'varchar2', 'NVchar2', 'long', 'char', 'Nchar', 'character varying', 'string', 'str', 'nullable(varchar)', 'nullable(bp char)', 'nullable(text)',
+    'nullable(varchar2)', 'nullable(NVchar2)',
+    'nullable(long)', 'nullable(char)', 'nullable(Nchar)',
+    'nullable(character varying)', 'nullable(string)', 'string', 'nullable(string)', 'array(string)', 'nullable(array(string))']
+  boolList = ['bool', 'boolean', 'nullable(bool)', 'nullable(boolean)', 'uint8']
+  dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz', 'nullable(date)', 'nullable(time)', 'nullable(datetime)',
+    'nullable(timestamp)',
+    'nullable(timestamp with time zone)',
+    'nullable(timestamp without time zone)',
+    'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)',
+    'nullable(datetime)', 'datetime64', 'datetime32', 'date32', 'nullable(date32)', 'nullable(datetime64)', 'nullable(datetime32)', 'date', 'datetime', 'time', 'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 'nullable(date32)']
+
     rowdrop(event: CdkDragDrop<string[]>){
+      // if (event.previousContainer === event.container) {
+      //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      // } else {
+      //   transferArrayItem(
+      //     event.previousContainer.data,
+      //     event.container.data,
+      //     event.previousIndex,
+      //     event.currentIndex,
+      //   );
+      // }
       this.sortedData = [];
       console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -1117,6 +1155,16 @@ try {
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
     this.dateDrillDownSwitch = false;
+    this.getDimensionAndMeasures();
+    if (this.selectedSortColumnData) {
+      let sortcolumn = JSON.parse(JSON.stringify(this.selectedSortColumnData));
+      sortcolumn?.splice(4, 1);
+      if (!this.columnsDataForSort.some(column => JSON.stringify(column) === JSON.stringify(sortcolumn))) {
+        this.selectedSortColumnData = null;
+        this.sortColumn = 'select';
+        this.sortType = 0;
+      }
+    }
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
@@ -1134,7 +1182,17 @@ try {
   //        this.draggedRowsData.splice(index, 1);
   //      }
   //    } );
-  //  });   
+  //  });  
+  this.getDimensionAndMeasures(); 
+  if (this.selectedSortColumnData) {
+    let sortcolumn = JSON.parse(JSON.stringify(this.selectedSortColumnData));
+    sortcolumn?.splice(4, 1);
+    if (!this.columnsDataForSort.some(column => JSON.stringify(column) === JSON.stringify(sortcolumn))) {
+      this.selectedSortColumnData = null;
+      this.sortColumn = 'select';
+      this.sortType = 0;
+    }
+  }
    this.dataExtraction();
   }
   rightArrow(){
@@ -1752,7 +1810,8 @@ sheetSave(){
     bottomLegend:this.bottomLegend,
     legendOrient:this.legendOrient,
     leftLegend:this.leftLegend,
-    topLegend:this.topLegend
+    topLegend:this.topLegend,
+    sortColumn:this.sortColumn
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2522,6 +2581,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = true;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+       this.getDimensionAndMeasures();
+       this.changeSelectedColumn();
         // setTimeout(()=>{
         //   // this.updateNumberFormat();
         // }, 1000);
@@ -3289,6 +3350,7 @@ customizechangeChartPlugin() {
     this.legendOrient = data.legendOrient === '' ? null : data.legendOrient
     this.bottomLegend = data.bottomLegend === '' ? null : data.bottomLegend
     this.rightLegend = data.rightLegend === '' ? null : data.rightLegend
+    this.sortColumn = data.sortColumn ?? 'select';
   }
 
   resetCustomizations(){
@@ -3374,7 +3436,7 @@ customizechangeChartPlugin() {
     this.legendOrient = 'horizontal'
     this.bottomLegend = '0%'
     this.rightLegend = null
-    
+    this.sortColumn = 'select';
   }
 
   sendPrompt() {
@@ -4608,5 +4670,101 @@ customizechangeChartPlugin() {
       this.chartOptionsSet = event.chartOptions;
       this.sheetSave();
       this.isSheetSaveOrUpdate = false;
+    }
+    clearSheetConfirmation(){
+      Swal.fire({
+        title: "Are you sure you want to clear the sheet?",
+        text: "Except for the filters, the sheet will be cleared.",
+        position: "center",
+        icon: "warning",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.clearSheet();
+        }
+      })
+    }
+    clearSheet(){
+      this.draggedColumns = [];
+      this.draggedColumnsData = [];
+      this.draggedRows = [];
+      this.draggedRowsData = [];
+      this.draggedDrillDownColumns = [];
+      this.tablePaginationCustomQuery = '';
+      this.chartsColumnData = [];
+      this.chartsRowData = [];
+      this.dualAxisColumnData = [];
+      this.dualAxisRowData = [];
+      this.tableColumnsDisplay = [];
+      this.tableDataDisplay = [];
+      this.KPINumber = '';
+      this.resetCustomizations();
+      this.table = true;
+      this.bar = false;
+      this.area = false;
+      this.line = false;
+      this.pie = false;
+      this.sidebyside = false;
+      this.stocked = false;
+      this.barLine = false;
+      this.horizentalStocked = false;
+      this.grouped = false;
+      this.multiLine = false;
+      this.donut = false;
+      this.chartId = 1;
+      this.radar = false;
+      this.kpi = false;
+      this.heatMap = false;
+      this.guage = false;
+      this.funnel = false;
+      this.calendar = false;
+      this.map = false;
+    }
+    sortColumn : any = 'select';
+    columnNamesForSort : any [] = [];
+    columnsDataForSort : any [] = [];
+    selectedSortColumnData : any[] | null = null;
+    selectedColumnIndex : number = -1;
+    getDimensionAndMeasures(){
+      this.columnNamesForSort = [];
+      this.columnsDataForSort = [];
+      this.draggedColumns.forEach((column:any, index: any)=>{
+        if (column && typeof column === 'object') {
+          this.columnNamesForSort.push({ ...column });
+        } 
+        this.columnsDataForSort.push(this.draggedColumnsData[index]);
+      });
+      this.draggedRows.forEach((row:any, index: any)=>{
+        if (row && typeof row === 'object') {
+          this.columnNamesForSort.push({ ...row });
+        } 
+        this.columnsDataForSort.push(this.draggedRowsData[index]);
+      });
+      console.log('columnsdisplay',this.columnNamesForSort)
+      console.log('columnforpayload',this.columnsDataForSort)
+    }
+    changeSelectedColumn(){
+      console.log(this.sortColumn);
+      this.columnNamesForSort.forEach((column:any,index:any)=>{
+        if((this.sortColumn.alias && this.sortColumn.alias === column.alias) || (this.sortColumn.field_name && this.sortColumn.field_name === column.field_name) || (this.sortColumn.type && this.sortColumn.type === column.type && this.sortColumn.column === column.column) || (this.sortColumn.column && this.sortColumn.column === column.column)){
+          this.sortColumn = column;
+          this.selectedColumnIndex = index;
+        }
+      });
+    }
+    sortColumns(){
+      if(this.sortType === 'none' || this.sortType === 0){
+        this.selectedSortColumnData = null;
+      } else{
+        if (this.selectedColumnIndex != -1) {
+          let column = JSON.parse(JSON.stringify(this.columnsDataForSort[this.selectedColumnIndex]));
+          column[4] = this.sortType;
+          this.selectedSortColumnData = column;
+        }
+      }
+      this.dataExtraction();
     }
 }
