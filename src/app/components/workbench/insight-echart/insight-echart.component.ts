@@ -1912,9 +1912,9 @@ chartInitialize(){
     if(changes['donutSize']){
       this.donutSizeChange();
     }
-    if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
-      this.sortSeries(this.sortType);
-    }
+    // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
+    //   this.sortSeries(this.sortType);
+    // }
     if(this.isSheetSaveOrUpdate){
       let object = {
         chartOptions : this.chartOptions
@@ -3232,41 +3232,40 @@ updateSeries(){
 }
 
 }
-sort(sortType: any, numbers: any, labels: any) {
-  let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+// sort(sortType: any, numbers: any, labels: any) {
+//   let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
 
-  if (sortType === 'ascending') {
-    pairedData.sort((a: any, b: any) => a[0] - b[0]);
-  } else if (sortType === 'descending') {
-    pairedData.sort((a: any, b: any) => b[0] - a[0]);
-  } else if(sortType === 'none'){
-    pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
-  }
+//   if (sortType === 'ascending') {
+//     pairedData.sort((a: any, b: any) => a[0] - b[0]);
+//   } else if (sortType === 'descending') {
+//     pairedData.sort((a: any, b: any) => b[0] - a[0]);
+//   } else if(sortType === 'none'){
+//     pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
+//   }
 
-  const sortedNumbers = pairedData.map((pair: any) => pair[0]);
-  const sortedLabels = pairedData.map((pair: any) => pair[1]);
+//   const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+//   const sortedLabels = pairedData.map((pair: any) => pair[1]);
+//   return { sortedNumbers, sortedLabels };
+// }
+// sortSeries(sortType: any) {
+//  if (this.chartType === 'bar') {
+//   const numbers = this.chartOptions.series[0].data;
+//   const labels = this.chartOptions.xAxis.data;
+//   const sortedData = this.sort(sortType, numbers, labels);
+//   let obj={
+//     series:[{
+//       data:sortedData.sortedNumbers
+//     }],
+//     xAxis:{
+//       data:sortedData.sortedLabels
+//     }
+//   }
+//   this.chartInstance.setOption(obj);
+//   // this.chartOptions.series[0].data = sortedData.sortedNumbers;
+//   // this.chartOptions.xAxis.data = sortedData.sortedLabels;
 
-  return { sortedNumbers, sortedLabels };
-}
-sortSeries(sortType: any) {
- if (this.chartType === 'bar') {
-  const numbers = this.chartOptions.series[0].data;
-  const labels = this.chartOptions.xAxis.data;
-  const sortedData = this.sort(sortType, numbers, labels);
-  let obj={
-    series:[{
-      data:sortedData.sortedNumbers
-    }],
-    xAxis:{
-      data:sortedData.sortedLabels
-    }
-  }
-  this.chartInstance.setOption(obj);
-  // this.chartOptions.series[0].data = sortedData.sortedNumbers;
-  // this.chartOptions.xAxis.data = sortedData.sortedLabels;
-
-  }
-}
+//   }
+// }
   onChartClick(event: any) {
     if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
       console.log('X-axis value:', event.name);
