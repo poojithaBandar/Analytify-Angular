@@ -1311,6 +1311,7 @@ try {
     this.sheetNumber = this.tabs.length+1;
     this.sheetTagName = 'Sheet ' +this.sheetNumber;
     // this.setChartType();
+    if(this.filterId?.length > 0){
     this.workbechService.sheetFiltersDuplicate(this.retriveDataSheet_id).subscribe(
       {
         next: (data: any) => {
@@ -1330,8 +1331,12 @@ try {
         }
       }
     )
-
-    // this.sheetRetrive(true);
+    } else {
+      this.tabs.push('Sheet ' +this.sheetNumber);
+      this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+      this.selectedTabIndex = this.tabs.length - 1;
+      this.sheetRetrive(true);
+    }
   }
 
   sheetNameChange(name:any,event:any){
@@ -2064,7 +2069,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.mulRowData = responce?.row_data;
         this.tablePaginationRows=responce?.row_data;
         this.tablePaginationColumn=responce?.col_data;
-  if (isDuplicate) {
+  if (isDuplicate && duplicateFilterData) {
     let filterData = responce?.filters_data;
     this.dimetionMeasure = this.mergeFilters(filterData, duplicateFilterData);
   } else {
@@ -2089,7 +2094,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
-        if(isDuplicate){
+        if(isDuplicate && duplicateFilterData){
           duplicateFilterData.forEach((filter: any)=>{
             this.filterId.push(filter.id);
           });
