@@ -317,6 +317,7 @@ export class DatabaseComponent {
           this.itemCounters = data.dragged_data.json_data.dragged_array_indexing;
           this.joinTypes = data.dragged_data.join_type;
           this.saveQueryName= data.dragged_data.queryset_name;
+          this.checkQerynameChange = data.dragged_data.queryset_name;
           this.datasourceQuerysetId = data.dragged_data.dastasource_queryset_id;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
@@ -1594,7 +1595,6 @@ markDirty(){
 checkNameChanged(){
   if(this.saveQueryCheck){
     if(this.checkQerynameChange !== this.saveQueryName){
-    
     this.titleMarkDirty = true;
     }
   }
