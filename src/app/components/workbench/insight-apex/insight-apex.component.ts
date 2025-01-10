@@ -395,7 +395,7 @@ export class InsightApexComponent {
     });
   }
   validateSeriesData(series: any[]): boolean {
-    if(['pie', 'donut'].includes(this.chartType)) {
+    if(['pie', 'donut', 'guage'].includes(this.chartType)) {
       return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
     } else {
       return series?.every((set) =>
@@ -1828,15 +1828,6 @@ export class InsightApexComponent {
                         <strong>Value:</strong> ${this.guageNumber}<br>
                         <strong>Percentage:</strong> ${series[0].toFixed(2)}%
                     </div>`;
-        }
-      },
-      fill: {
-        type: "gradient",
-        gradient: {
-          shade: "dark",
-          type: "horizontal",
-          gradientToColors: ["#87D4F9"],
-          stops: [0, 100]
         }
       },
       stroke: {
