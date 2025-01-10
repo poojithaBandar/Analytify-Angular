@@ -847,7 +847,7 @@ buildCustomJoin(){
   this.tableJoiningList =[];
   this.joinTypes.forEach((element : any,index : number) => {
     let object;
-    let remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias == this.draggedtables[index + 1].table);
+    let remainingTables = [this.draggedtables[index + 1]];
     if(this.relationOfTables[index] && this.relationOfTables[index].length){
     object = {
        join : element,
