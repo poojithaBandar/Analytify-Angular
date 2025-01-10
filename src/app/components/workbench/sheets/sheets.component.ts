@@ -708,6 +708,8 @@ try {
               this.chartType = 'sidebyside'
             }
             if(this.table){
+              this.page = 1;
+              this.pageNo = 1;
               this.tableDisplayPagination();
             }
           },

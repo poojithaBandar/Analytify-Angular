@@ -1161,10 +1161,10 @@
                                 @if(table && chartId){
                                 <table>
                                     <thead>
-                                      <tr [ngStyle]="{ 'font-family': headerFontFamily, 'font-size': headerFontSize, 
-                                      'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 'color': headerFontColor }">
+                                      <tr>
                                         @for(column of tableColumnsDisplay;track column){
-                                        <th [ngStyle]="{ 'text-align': headerFontAlignment, 'font-weight': headerFontWeight }">{{ column }}
+                                        <th [ngStyle]="{ 'font-family': headerFontFamily, 'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 
+                                        'color': headerFontColor, 'text-align': headerFontAlignment, 'font-weight': headerFontWeight, 'font-size': headerFontSize }">{{ column }}
                                             <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                   aria-haspopup="true" aria-expanded="false" class=""><i
@@ -1185,10 +1185,10 @@
                                                                 currentPage: page,
                                                                 totalItems: totalItems }) ; let i = index"
                                         [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2), 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
-                                        'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 'color': tableDataFontColor }">
+                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2) }">
                                         @for(column of tableColumnsDisplay;track column){
-                                        <td [ngStyle]="{ 'text-align': tableDataFontAlignment }">{{ row[column] }}</td>
+                                        <td [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-weight': tableDataFontWeight, 'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 
+                                        'color': tableDataFontColor, 'text-align': tableDataFontAlignment, 'font-size': tableDataFontSize }">{{ row[column] }}</td>
                                         }
                                     </tr>
                                     
@@ -2434,7 +2434,7 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(kpi || guage || calendar || map || radar || multiLine || barLine || (isApexCharts && (heatMap)))">
+                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(kpi || guage || calendar || map || radar || barLine || (isApexCharts && (heatMap)))">
                                                                 <div class="row">
                                                                   <div class="">
                                                                       <div class="font-color-card">

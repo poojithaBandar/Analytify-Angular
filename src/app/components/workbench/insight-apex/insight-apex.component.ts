@@ -395,7 +395,7 @@ export class InsightApexComponent {
     });
   }
   validateSeriesData(series: any[]): boolean {
-    if(['pie', 'donut'].includes(this.chartType)) {
+    if(['pie', 'donut', 'guage'].includes(this.chartType)) {
       return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
     } else {
       return series?.every((set) =>
@@ -1830,15 +1830,6 @@ export class InsightApexComponent {
                     </div>`;
         }
       },
-      fill: {
-        type: "gradient",
-        gradient: {
-          shade: "dark",
-          type: "horizontal",
-          gradientToColors: ["#87D4F9"],
-          stops: [0, 100]
-        }
-      },
       stroke: {
         lineCap: "round"
       },
@@ -2440,7 +2431,7 @@ export class InsightApexComponent {
   }
   setDataLabelsFontPosition(){
     let object;
-    if(this.areaCharts || this.lineCharts){
+    if(this.areaCharts || this.lineCharts || this.multiLineCharts){
       if(this.chartOptions?.dataLabels){
         this.chartOptions.dataLabels.offsetY = (this.dataLabelsFontPosition === 'top') ? -10 : ((this.dataLabelsFontPosition === 'center') ? 0 : 10);
       }
@@ -2481,6 +2472,9 @@ export class InsightApexComponent {
     } 
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.multiLineCharts) {
+      this.multiLineCharts.updateOptions(object);
     }
   }
   xLabelShowOrHide(){

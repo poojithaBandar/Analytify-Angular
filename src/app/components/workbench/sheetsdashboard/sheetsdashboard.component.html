@@ -1467,10 +1467,10 @@
                 <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
                   <table class="table border text-nowrap text-md-nowrap mb-0">
                       <thead>
-                        <tr [ngStyle]="{ 'font-family': item['customizeOptions']?.headerFontFamily, 'font-size': item['customizeOptions']?.headerFontSize, 
-                        'font-style': item['customizeOptions']?.headerFontStyle, 'text-decoration': item['customizeOptions']?.headerFontDecoration }">
+                        <tr>
                           @for(column of item.tableData?.headers;track column){
-                          <th [ngStyle]="{ 'text-align': item['customizeOptions']?.headerFontAlignment, 'font-weight': item['customizeOptions']?.headerFontWeight, 'color': item['customizeOptions']?.headerFontColor }">{{ column }}
+                          <th [ngStyle]="{ 'font-family': item['customizeOptions']?.headerFontFamily, 'font-size': item['customizeOptions']?.headerFontSize, 'text-align': item['customizeOptions']?.headerFontAlignment, 
+                          'font-weight': item['customizeOptions']?.headerFontWeight, 'color': item['customizeOptions']?.headerFontColor, 'font-style': item['customizeOptions']?.headerFontStyle, 'text-decoration': item['customizeOptions']?.headerFontDecoration }">{{ column }}
                             <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
                               <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                 aria-haspopup="true" aria-expanded="false" class=""><i
@@ -1490,12 +1490,12 @@
                            <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
                     <tr *ngFor="let row of (item?.tableData?.rows || [] | paginate: {itemsPerPage:item?.tableData?.tableItemsPerPage, currentPage:item?.tableData?.tablePage,totalItems:item?.tableData?.tableTotalItems ,id: item.sheetId + 'page'});let i = index" 
                     [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                    [ngStyle]="{ 'background-color': (i % 2 === 0 ? item?.tableData?.color1 : item?.tableData?.color2), 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,
-                    'font-style': item['customizeOptions']?.tableDataFontStyle, 'text-decoration': item['customizeOptions']?.tableDataFontDecoration }">
+                    [ngStyle]="{ 'background-color': (i % 2 === 0 ? item?.tableData?.color1 : item?.tableData?.color2) }">
                       <!-- @for(column of item.tableData?.headers;track column){
                       <td>{{ row[column] }}</td>
                       } -->
-                      <td *ngFor="let column of item.tableData?.headers" [ngStyle]="{ 'text-align': item['customizeOptions']?.tableDataFontAlignment, 'color': item['customizeOptions']?.tableDataFontColor, 'font-weight': item['customizeOptions']?.tableDataFontWeight }">
+                      <td *ngFor="let column of item.tableData?.headers" [ngStyle]="{ 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,'font-style': item['customizeOptions']?.tableDataFontStyle,
+                      'text-decoration': item['customizeOptions']?.tableDataFontDecoration, 'text-align': item['customizeOptions']?.tableDataFontAlignment, 'color': item['customizeOptions']?.tableDataFontColor, 'font-weight': item['customizeOptions']?.tableDataFontWeight }">
                         {{ row[column] }}
                       </td>
                     </tr>

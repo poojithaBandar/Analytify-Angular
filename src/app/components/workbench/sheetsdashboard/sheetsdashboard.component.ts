@@ -4622,7 +4622,11 @@ tableSearchDashboardPublic(item:any){
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
-  item.tableData.tablePage = page;
+  if(item?.tableData?.tablePage ){
+    item.tableData.tablePage = page;
+  }
+ 
+  
   const obj={
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
