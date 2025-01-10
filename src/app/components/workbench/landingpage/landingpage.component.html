@@ -563,6 +563,14 @@
                                         <img alt="product" src="./assets/images/icons/quickbooks-icon.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
+                                    <td *ngIf="database.server_type === 'CONNECTWISE'">
+                                        <img alt="product" src="./assets/images/icons/connectwise-icon.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'HALOPS'">
+                                        <img alt="product" src="./assets/images/icons/Halopsa-icon.png"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
                                     <!-- <td>{{database.server_type}}</td> -->
                                 </tr>
                             }
