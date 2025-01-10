@@ -274,6 +274,10 @@ export class SheetsComponent {
   isBold:boolean = false;
   isItalic:boolean = false;
   isUnderline:boolean = false;
+  isXlabelBold:boolean = false;
+  isYlabelBold:boolean = false;
+  isTableHeaderBold:boolean = false;
+  isTableDataBold:boolean = false;
 
   backgroundColorSwitch : boolean = false;
   chartColorSwitch : boolean = false;
@@ -1755,6 +1759,10 @@ sheetSave(){
     selectedColorScheme:this.selectedColorScheme,
     ylabelFontWeight : this.ylabelFontWeight,
     isBold : this.isBold,
+    isTableHeaderBold:this.isTableHeaderBold,
+    isTableDataBold:this.isTableDataBold,
+    isYlabelBold:this.isYlabelBold,
+    isXlabelBold:this.isXlabelBold,
     yLabelFontFamily : this.yLabelFontFamily,
     yLabelFontSize : this.yLabelFontSize,
     bandingSwitch : this.bandingSwitch,
@@ -1809,7 +1817,7 @@ sheetSave(){
     headerFontDecoration: this.headerFontDecoration,
     headerFontColor: this.headerFontColor,
     headerFontAlignment: this.headerFontAlignment,
-    dimernsionColor:this.dimensionColor,
+    dimensionColor:this.dimensionColor,
     measureColor:this.measureColor,
     dataLabelsColor:this.dataLabelsColor,
     sortType : this.sortType,
@@ -3292,6 +3300,10 @@ customizechangeChartPlugin() {
     this.selectedColorScheme = data.selectedColorScheme ?? ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
     this.ylabelFontWeight = data.ylabelFontWeight ?? 400;
     this.isBold = data.isBold ?? false;
+    this.isXlabelBold = data.isXlabelBold ?? false;
+    this.isYlabelBold = data.isYlabelBold ?? false;
+    this.isTableHeaderBold = data.isTableHeaderBold ?? false;
+    this.isTableDataBold = data.isTableDataBold ?? false;
     this.yLabelFontFamily = data.yLabelFontFamily ?? 'sans-serif';
     this.yLabelFontSize = data.yLabelFontSize ?? 12;
     this.bandingSwitch = data.bandingSwitch ?? false;
@@ -3378,6 +3390,10 @@ customizechangeChartPlugin() {
     this.selectedColorScheme = ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
     this.ylabelFontWeight = 400;
     this.isBold = false;
+    this.isTableHeaderBold = false;
+    this.isTableDataBold = false;
+    this.isXlabelBold = false;
+    this.isYlabelBold = false;
     this.yLabelFontFamily = 'sans-serif';
     this.yLabelFontSize = 12;
     this.bandingSwitch = false;

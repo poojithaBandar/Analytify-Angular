@@ -1811,7 +1811,7 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isBold = !isBold;headerFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
@@ -1944,7 +1944,7 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isBold = !isBold;tableDataFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
@@ -2116,7 +2116,7 @@
                                                                                                                 <option value="19">19px</option>
                                                                                                                 <option value="20">20px</option>
                                                                                                              </select>
-                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isXlabelBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isXlabelBold = !isXlabelBold;xlabelFontWeight = isXlabelBold ? 700 : 400 ;">
                                                                                                                 <p>B</p>
                                                                                                             </div>
                                                                                                             <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2259,7 +2259,7 @@
                                                                                                             <option value="19">19px</option>
                                                                                                             <option value="20">20px</option>
                                                                                                          </select>
-                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isYlabelBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isYlabelBold = !isYlabelBold;ylabelFontWeight = isYlabelBold ? 700 : 400 ;">
                                                                                                             <p>B</p>
                                                                                                         </div>
                                                                                                         <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
