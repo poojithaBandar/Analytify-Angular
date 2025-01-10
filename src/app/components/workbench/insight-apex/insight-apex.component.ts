@@ -2440,7 +2440,7 @@ export class InsightApexComponent {
   }
   setDataLabelsFontPosition(){
     let object;
-    if(this.areaCharts || this.lineCharts){
+    if(this.areaCharts || this.lineCharts || this.multiLineCharts){
       if(this.chartOptions?.dataLabels){
         this.chartOptions.dataLabels.offsetY = (this.dataLabelsFontPosition === 'top') ? -10 : ((this.dataLabelsFontPosition === 'center') ? 0 : 10);
       }
@@ -2481,6 +2481,9 @@ export class InsightApexComponent {
     } 
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.multiLineCharts) {
+      this.multiLineCharts.updateOptions(object);
     }
   }
   xLabelShowOrHide(){
