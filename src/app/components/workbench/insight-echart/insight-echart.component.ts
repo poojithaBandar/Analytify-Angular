@@ -1912,6 +1912,9 @@ chartInitialize(){
     if(changes['donutSize']){
       this.donutSizeChange();
     }
+    if(changes['isBold']){
+      this.setDatalabelsFontWeight();
+    }
     // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
     //   this.sortSeries(this.sortType);
     // }
@@ -1985,7 +1988,7 @@ chartInitialize(){
       }
     }
     this.chartInstance.setOption(obj);
-    this.chartOptions.xAxis[0].axisLabel.fontSize = this.xLabelFontSize;
+    this.chartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
   }
   }
   xlabelFontWeightSetOption(){
@@ -2331,7 +2334,7 @@ chartInitialize(){
          }]
        }
        this.chartInstance.setOption(obj);
-       this.chartOptions.series.label.fontSize = this.dataLabelsFontSize
+       this.chartOptions.series[0].label.fontSize = this.dataLabelsFontSize
       //  this.chartOptions = { ...this.chartOptions, ...obj };
      }
   }
@@ -2380,23 +2383,6 @@ chartInitialize(){
      }
   }
   dataLabelsFontPositionSetOptions(){
-    // if(this.chartType ==='barline'){
-    //   let obj ={
-    //    series: [
-    //      {
-    //        label: {
-    //         position: this.dataLabelsFontPosition, // Update for 'Bar Axis'
-    //        },
-    //      },
-    //      {
-    //       label: {
-    //         position: this.dataLabelsFontPosition, 
-    //        },
-    //      },
-    //    ],
-    //   }
-    //    this.chartInstance.setOption(obj)
-    //  }
       if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { position: any; }; }) => {
         if (dataItem.label) { // Ensure label exists before updating
@@ -2530,6 +2516,54 @@ chartInitialize(){
       this.chartOptions.series[1].label.position = this.dataLabelsLineFontPosition;
     }
   }
+  setDatalabelsFontWeight(){
+    if(this.chartType ==='barline'){
+      let obj ={
+       series: [
+         {
+           label: {
+            fontWeight: this.isBold, // Update for 'Bar Axis'
+           },
+         },
+         {
+          label: {
+            fontWeight: this.isBold,
+           },
+         },
+       ],
+      }
+       this.chartInstance.setOption(obj);
+       this.chartOptions.series[0].label.fontWeight = this.isBold;
+       this.chartOptions.series[1].label.fontWeight = this.isBold;
+      }
+     else if(this.chartType === 'radar'){
+      this.chartOptions.series[0].data.forEach((dataItem: { label: { fontWeight: any; }; }) => {
+        if (dataItem.label) { // Ensure label exists before updating
+            dataItem.label.fontWeight = this.isBold;
+        }
+    });
+       this.chartInstance.setOption(this.chartOptions,true)
+     }
+     else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
+      this.chartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
+        series.label.fontWeight = this.isBold; 
+    });
+    this.chartInstance.setOption(this.chartOptions,true)
+     }
+     else{
+       let obj ={
+         series :[
+          {
+           label :{
+            fontWeight: this.isBold
+           }
+         }]
+       }
+       this.chartInstance.setOption(obj);
+       this.chartOptions.series[0].label.fontWeight = this.isBold;
+      //  this.chartOptions = { ...this.chartOptions, ...obj };
+     }
+  }
   xLabelSwitchSetOptions(){
     if(this.chartType === 'barline'){
       let obj ={
@@ -2596,6 +2630,21 @@ chartInitialize(){
       }
       this.chartInstance.setOption(obj);
       this.chartOptions.xAxis[0].splitLine.show = this.xGridSwitch;
+    }
+    else if(this.chartType === 'line'){
+      let obj ={
+        xAxis :[{
+          splitLine :{
+            show: this.xGridSwitch
+          }
+        },
+      {
+    
+      }
+    ]
+      }
+      this.chartInstance.setOption(obj);
+      this.chartOptions.xAxis.splitLine.lineStyle.show = this.xGridSwitch;
     }
     else{
       let obj ={
@@ -2748,19 +2797,18 @@ chartInitialize(){
     }else if(this.chartType === 'hgrouped'){
       let obj ={
         xAxis :[{
-          axisLabel :{
             splitLine:{
               lineStyle:{
                 color: this.xGridColor
               }
             }
           
-          }
+
         },
     ]
       }
       this.chartInstance.setOption(obj);
-      this.chartOptions.xAxis[0].axisLabel.splitLine.lineStyle.color = this.xGridColor;
+      this.chartOptions.xAxis.splitLine.lineStyle.color = this.xGridColor;
     }
     else{
       let obj ={
