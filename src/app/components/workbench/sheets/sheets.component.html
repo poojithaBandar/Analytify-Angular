@@ -1262,7 +1262,7 @@
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
-                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [yGridColor]="yGridColor" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -2828,35 +2828,39 @@
                                                                     [format]="'hex'"></ngx-colors>
                                                                 </div>
 
-                                                                <div class="dropdown" *ngIf="pie||donut||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || calendar">
-                                                                    <!-- Dropdown Button -->
-                                                                    <button class="dropdown-button" >
-                                                                        <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
-                                                                          <div
-                                                                            *ngFor="let color of selectedColorScheme"
-                                                                            class="color-box"
-                                                                            [style.background]="color"
-                                                                          ></div>
-                                                                        </div>
-                                                                        <span *ngIf="selectedColorScheme.length === 0">Select Color Scheme</span>
-                                                                      </button>
-                                                                    <!-- Dropdown Content -->
-                                                                    <div class="dropdown-content">
+                                                                <div 
+                                                                class="dropdown" 
+                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || funnel || calendar">
+                                                                <!-- Dropdown Button -->
+                                                                <button class="dropdown-button" (click)="toggleDropdownColorScheme()">
+                                                                  <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
+                                                                    <div
+                                                                      *ngFor="let color of selectedColorScheme"
+                                                                      class="color-box"
+                                                                      [style.background]="color"
+                                                                    ></div>
+                                                                  </div>
+                                                                  <span *ngIf="selectedColorScheme.length === 0">Select Color Scheme</span>
+                                                                  <span class="arrow-down"></span>
+                                                                </button>
+                                                              
+                                                                <!-- Dropdown Content -->
+                                                                <div class="dropdown-content" [class.show]="isColorSchemeDropdownOpen">
+                                                                  <div
+                                                                    *ngFor="let scheme of colorSchemes"
+                                                                    class="dropdown-item"
+                                                                    (click)="selectColorScheme(scheme)">
+                                                                    <div class="color-row">
                                                                       <div
-                                                                        *ngFor="let scheme of colorSchemes"
-                                                                        class="dropdown-item"
-                                                                        (click)="selectColorScheme(scheme)"
-                                                                      >
-                                                                        <div class="color-row">
-                                                                          <div
-                                                                            *ngFor="let color of scheme"
-                                                                            class="color-box"
-                                                                            [style.background]="color"
-                                                                          ></div>
-                                                                        </div>
+                                                                        *ngFor="let color of scheme"
+                                                                        class="color-box"
+                                                                        [style.background]="color">
                                                                       </div>
                                                                     </div>
                                                                   </div>
+                                                                </div>
+                                                              </div>
+                                                              
                                                                   
                                                                   
 

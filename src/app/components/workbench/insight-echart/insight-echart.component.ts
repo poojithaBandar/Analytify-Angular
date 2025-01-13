@@ -477,10 +477,12 @@ sidebySide(){
       type: 'value',
      
       splitLine: {
+        show: this.yGridSwitch, // Always show the grid lines
         lineStyle: {
-          color: this.yGridColor
-        }, 
-        show: this.yGridSwitch
+          color: this.yGridColor, // Replace with a test color
+          width: 1, // Set a specific width
+          type: 'solid', // Solid, dashed, or dotted line
+        },
       },
       axisLine: {
         lineStyle: {
@@ -2522,31 +2524,31 @@ chartInitialize(){
        series: [
          {
            label: {
-            fontWeight: this.isBold, // Update for 'Bar Axis'
+            fontWeight: this.isBold ? 700 : 400, // Update for 'Bar Axis'
            },
          },
          {
           label: {
-            fontWeight: this.isBold,
+            fontWeight: this.isBold ? 700 : 400,
            },
          },
        ],
       }
        this.chartInstance.setOption(obj);
-       this.chartOptions.series[0].label.fontWeight = this.isBold;
-       this.chartOptions.series[1].label.fontWeight = this.isBold;
+       this.chartOptions.series[0].label.fontWeight = this.isBold ? 700 : 400;
+       this.chartOptions.series[1].label.fontWeight = this.isBold ? 700 : 400;
       }
      else if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { fontWeight: any; }; }) => {
         if (dataItem.label) { // Ensure label exists before updating
-            dataItem.label.fontWeight = this.isBold;
+            dataItem.label.fontWeight = this.isBold ? 700 : 400;
         }
     });
        this.chartInstance.setOption(this.chartOptions,true)
      }
      else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
       this.chartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
-        series.label.fontWeight = this.isBold; 
+        series.label.fontWeight = this.isBold ? 700 : 400; 
     });
     this.chartInstance.setOption(this.chartOptions,true)
      }
@@ -2555,12 +2557,12 @@ chartInitialize(){
          series :[
           {
            label :{
-            fontWeight: this.isBold
+            fontWeight: this.isBold ? 700 : 400
            }
          }]
        }
        this.chartInstance.setOption(obj);
-       this.chartOptions.series[0].label.fontWeight = this.isBold;
+       this.chartOptions.series[0].label.fontWeight = this.isBold ? 700 : 400;
       //  this.chartOptions = { ...this.chartOptions, ...obj };
      }
   }
@@ -2850,19 +2852,16 @@ chartInitialize(){
     }else if(this.chartType === 'hgrouped'){
       let obj ={
         yAxis :[{
-          axisLabel :{
             splitLine:{
               lineStyle:{
                 color: this.yGridColor
               }
             }
-          
-          }
-        },
+                  },
     ]
       }
       this.chartInstance.setOption(obj);
-      this.chartOptions.yAxis[0].axisLabel.splitLine.lineStyle.color = this.yGridColor;
+      this.chartOptions.yAxis[0].splitLine.lineStyle.color = this.yGridColor;
     }
     else{
       let obj ={
