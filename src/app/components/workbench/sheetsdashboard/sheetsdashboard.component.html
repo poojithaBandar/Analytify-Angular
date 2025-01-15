@@ -243,6 +243,34 @@
                                               </div>
                                              </div>
                                           </div>
+                                          <div class="card mb-0  br-0 p-0 mt-2"  style="box-shadow: none; border: none !important;">
+                                            <div class=" dropdown" ngbDropdown>
+                                              <a  href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
+                                                <button class="btn btn-primary w-100">
+                                                  <i class="fa fa-image me-2"></i>Add Image
+                                              </button>
+                                              </a>
+                                              <div class="dropdown-menu size-dropdown" ngbDropdownMenu>
+                                                  <h6 class="mb-0 bg-light text-center p-2" (click)="triggerFileUpload()">Upload Image</h6>
+                                                  <div class="form-group">
+                                                    <label class="form-label mt-0">Insert Image File:</label>
+                                                    <input
+                                                    type="file" class="form-control"
+                                                    id="imageUpload"
+                                                    accept="image/*"
+                                                    (change)="onImageSelected($event)"
+                                                  />
+                                                  </div>
+                                                  <div class="url">
+                                                    <label class="form-label">Name:</label>
+                                                    <input type="text" id="input" class="form-control border">
+                                                  </div>
+                                                  <div class=" mt-2 d-flex justify-content-end">
+                                                    <button class="btn btn-primary" [disabled]="!uploadedImage" (click)="uploadInJson()">Upload</button>
+                                                  </div>
+                                               </div>
+                                           </div>
+                                      </div>
                                           </div>
                                     </div>
                                   </div>
@@ -489,50 +517,6 @@
                                                               <button *ngIf="!isPublicUrl" class="btn btn-primary dropdown-toggle" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
                                                               <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
-                                                              <!-- <ul class="dropdown-menu filter-popover" aria-labelledby="applyfilters" ngbDropdownMenu>
-                                                                <div class="setting-text border-bottom text-center">
-                                                                  <h6>Add Filters</h6>
-                                                                </div>
-                                                                <div class="form-group p-1 mb-0">
-                                                                  <label class="form-label">Filter Name <span  class="text-red">*</span>
-                                                                  </label>
-                                                                  <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
-                                                                </div>
-                                                                <div class="form-group p-1">
-                                                      
-                                                                  <div ngbDropdown class="btn-group my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
-                                                                    <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" style="width: 237px;" class="dropdown-toggle btn btn-info-light">{{selectClmn ? selectClmn:'Select Column'}}</button>
-                                                                    <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width: 237px;max-height: 240px;overflow-y: scroll;">
-                                                                      @for(colData of columnFilterNames;track colData){
-                                                                        <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmn = colData.column_name;closeColumnsDropdown(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
-                                                                      }
-                                                                    </ul>
-                                                                </div>
-                                                                </div>
-                                                                  <h6>Apply to Selected worksheets</h6>
-                                                               
-                                                                <div class="form body border p-2">
-
-                                                                  <div class="form-check">
-
-                                                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
-                                                                    <label for="selectAll" class="form-check-label">Select All</label>
-                                                                    </div>
-                                                                  @for(rows of sheetsFilterNames;track rows;let i = $index){
-                                                                   
-
-                                                                  <div class="form-check">
-                                                                    <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
-                                                                    <label for="invalidCheck" class="form-check-label"> <h6>{{rows.label.name}}</h6> </label>
-                                                                  </div>
-                                                                }
-                                                                </div>
-                
-                                                                <div class="p-2">
-                                                                  <button type="button" [disabled]="!isAnyRowSelected()"  (click)="getSelectedData()" class="btn ripple btn-primary me-2">Save</button>
-                                                                  <button type="button" class="btn ripple btn-secondary " (click)="selectClmn = '';filterName='';closeMainDropdown(mainDropdown)"> Cancel </button>
-                                                              </div>
-                                                              </ul> -->
                                                               <div >
                                                                 <!-- @for(filterList of DahboardListFilters;track filterList){ -->
                                                                <div *ngFor="let filterList of DahboardListFilters" class="sub-category-card p-1 mt-2 border  rounded-3 mb-2">
@@ -790,14 +774,6 @@
                                      </div>
                                  </ng-template>
                          </li>
-                            <!-- <li [ngbNavItem]="3" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
-                              <a ngbNavLink class="dashboard-tab-padding">
-                                <div class="mobile-nav-icon">
-                                  <i class="fa fa-navicon"></i>
-                                </div>
-                              </a>
-                            </li> -->
-                          <!-- } -->
                         </ul>
                     </div>
                 </div>
@@ -1074,7 +1050,15 @@
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
-              <div class="card mb-0 grid-item-border" style="height: 100%;">
+              <div class="card mb-0 grid-item-border" style="height: 100%;"  [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
+              ? 'url(' + item['kpiData'].kpiImage + ')' 
+              : ''"
+            [style.background-size]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
+              ? 'cover' 
+              : ''"
+            [style.background-position]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
+              ? 'center' 
+              : ''" >
                 <div class="card-header d-flex justify-content-between p-1">
                   @if((item['chartId'] === 6|| item['chartId'] === 24 || item['chartId'] === 10 || item['chartId'] === 29) && item['drillDownHierarchy'] && item['drillDownHierarchy'].length > 0){
                     <!-- <div class="col-lg-3 col-md-3"> -->
@@ -1102,7 +1086,7 @@
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                              <app-insights-button [classesList]="'dropdown-item'"
+                              <app-insights-button *ngIf="item['type'] !== 'image'" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Goto Sheet'"
                                                               [previledgeIdsList]="[20,18]" [isBtn]="false"
                                                               (btnClickEvent)="viewSheet(item)" 
@@ -1112,11 +1096,35 @@
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="removeItem($event, item, false)" 
                                                               [isIcon]="false"></app-insights-button>
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
+                                                              [buttonName]="'Upload Background Image'"
+                                                              [previledgeId]="37" [isBtn]="false"
+                                                              (btnClickEvent)="uploadKpiImage(item)" 
+                                                              [isIcon]="false"></app-insights-button>
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
+                                                              [buttonName]="'Change Image'"
+                                                              [previledgeId]="37" [isBtn]="false"
+                                                              (btnClickEvent)="uploadKpiImage(item)" 
+                                                              [isIcon]="false"></app-insights-button>
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
+                                                              [buttonName]="'Remove Image'"
+                                                              [previledgeId]="37" [isBtn]="false"
+                                                              (btnClickEvent)="removeKpiImage(item)" 
+                                                              [isIcon]="false"></app-insights-button>
+                                                              <input 
+                                                              type="file" 
+                                                              #ImageUploadKPI 
+                                                              (change)="imageFileSelectEvent($event)" 
+                                                              accept="image/*" 
+                                                              style="display: none;" />
 
                             </div>
                         </div>
                       </div>
                 </div>
+                @if(item['type'] === 'image'){
+                  <img [src]="item['imageData']" />
+                }
                 @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1) ){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'auto'} : {}">
                     <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" (chartClick)="onEChartClick($event,item)" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
@@ -1455,12 +1463,16 @@
                   </div>
                 </div>
               }
-              <div *ngIf="['Table', 'KPI'].includes(item['chartType'])" class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'scroll-overflow': !isOverflowHidden }">
+              <div *ngIf="['Table', 'KPI'].includes(item['chartType'])" class="card-body p-1">
               @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
-                <div class="big-number-container">
+                <div class="big-number-container" >
                     @for(row of item['kpiData'].rows;track row){
                       <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                       }
+                      <i 
+                      class="fa fa-line-chart" 
+                      style="position: absolute; bottom: 0; right: 0; font-size: 1.5rem; color: #888;">
+                    </i>
                 </div>
               }
               <div *ngIf="item['chartType'] === 'Table'">

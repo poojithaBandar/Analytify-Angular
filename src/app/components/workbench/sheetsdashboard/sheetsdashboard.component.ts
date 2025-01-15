@@ -277,6 +277,8 @@ export class SheetsdashboardComponent {
   @ViewChildren(GridsterItemComponent) GridsterItemComponent!: QueryList<GridsterItemComponent>;
   @ViewChild('gridster') gridster!: ElementRef; // Adjust the type as needed
   @ViewChild('nestedDropdown', { static: true }) nestedDropdown: NgbDropdown | undefined;
+  @ViewChild('ImageUploadKPI') ImageUploadKPI!: ElementRef;
+  @ViewChild('imageUpload') imageUpload!: ElementRef<HTMLInputElement>;
 
 
   static itemChange(
@@ -673,7 +675,7 @@ export class SheetsdashboardComponent {
   sheetTagTitle : any={};
   dashboardTagTitle : any;
   getSavedDashboardData(){
-    const obj ={
+    const obj ={ 
       queryset_id:this.qrySetId,
       server_id:this.databaseId,
       dashboard_id:this.dashboardId
@@ -700,9 +702,20 @@ export class SheetsdashboardComponent {
         this.usersForUpdateDashboard = data.user_ids;
         this.rolesForUpdateDashboard = data.role_ids;
         let self = this;
+        let obj = {sheet_ids: this.sheetIdsDataSet};
+        if(!this.isPublicUrl){
+        this.fetchSheetsDataBasedOnSheetIds(obj);
+        }
+        if(!data.dashboard_tag_name){
+          this.dashboardTagName = data.dashboard_name;
+        }
+        else{
+          this.dashboardTagName = data.dashboard_tag_name;
+        }
+        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dashboard.forEach((sheet : any)=>{
-          console.log('Before sanitization:', sheet.data.sheetTagName);
-          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          console.log('Before sanitization:', sheet.data?.sheetTagName);
+          this.sheetTagTitle[sheet.data?.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
           if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
           sheet.chartOptions.chart.events = {
             markerClick: (event: any, chartContext: any, config: any) => {
@@ -784,43 +797,6 @@ export class SheetsdashboardComponent {
           const numberFormat = sheet?.numberFormat;
           const isEcharts = sheet?.isEChart;
           this.updateNumberFormat(sheet, numberFormat, chartId, isEcharts);
-          // if(![10,24,26,27].includes(chartId) && !sheet['isEChart'] && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix) && numberFormat){
-          //   if([2,3].includes(chartId)){
-          //     if(sheet.chartOptions?.xaxis?.labels && sheet.chartOptions?.dataLabels){
-          //       sheet.chartOptions.xaxis.labels.formatter = (val: number) => {
-          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          //       };
-          //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
-          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          //       };
-          //     }
-          //   }
-          //   else{
-          //     if(sheet.chartOptions?.yaxis?.labels && sheet.chartOptions?.dataLabels){
-          //       sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
-          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          //       };
-          //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
-          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          //       };
-          //     }
-          //     else if(sheet.chartOptions?.yaxis[0]?.labels && sheet.chartOptions?.dataLabels){
-          //       sheet.chartOptions.yaxis[0].labels.formatter = (val: number) => {
-          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          //       };
-          //       sheet.chartOptions.dataLabels.formatter = (val: number) => {
-          //         return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          //       };
-          //     }
-          //   }
-          // }
-          // if([26, 27].includes(chartId) && (numberFormat?.decimalPlaces || numberFormat?.displayUnits || numberFormat?.prefix || numberFormat?.suffix)){
-          //   if (sheet.chartOptions?.dataLabels) {
-          //     sheet.chartOptions.dataLabels.formatter = (val: number) => {
-          //       return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
-          //     };
-          //   }
-          // }
           if(chartId == 11){
             sheet.echartOptions.tooltip.formatter =  function (params: any) {
               const date = params.data[0];
@@ -830,23 +806,7 @@ export class SheetsdashboardComponent {
           }
         })
         console.log(this.sheetTagTitle);
-        if(!data.dashboard_tag_name){
-          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          // inputElement.innerHTML = data.dashboard_name;
-          this.dashboardTagName = data.dashboard_name;
-        }
-        else{
-          // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-          // inputElement.innerHTML = data.dashboard_tag_name;
-          // inputElement.style.paddingTop = '1.5%';
-          this.dashboardTagName = data.dashboard_tag_name;
-        }
-        this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         console.log(this.dashboard);
-        let obj = {sheet_ids: this.sheetIdsDataSet};
-        if(!this.isPublicUrl){
-        this.fetchSheetsDataBasedOnSheetIds(obj);
-        }
       },
       error:(error)=>{
         console.log(error)
@@ -921,7 +881,9 @@ export class SheetsdashboardComponent {
   // }
   // }
   async saveDashboard() {
-    this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+    this.sheetsIdArray = this.dashboard
+    .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
+    .map(item => item['sheetId']);
   
     if (this.dashboardName === '') {
       this.toasterService.info('Please add dashboard Title.', 'info', { positionClass: 'toast-top-center' });
@@ -968,10 +930,12 @@ export class SheetsdashboardComponent {
   
       } catch (error) {
         console.error(error);
+        const errorMessage = (error as { error?: { message?: string } })?.error?.message || 'An unexpected error occurred.';
+
         Swal.fire({
           icon: 'error',
           title: 'oops!',
-          text: 'An error occurred while saving the dashboard.',
+          text: errorMessage ,
           width: '400px',
         });
       }
@@ -980,44 +944,17 @@ export class SheetsdashboardComponent {
   
   setQuerySetIds() {
     this.qrySetId = [];
-    this.dashboard.forEach((sheet: any) =>{
-      this.qrySetId.push(sheet.qrySetId);
-    })
+    // this.dashboard.forEach((sheet: any) =>{
+    //   this.qrySetId.push(sheet.qrySetId);
+    // })
+    this.dashboard.forEach((sheet: any) => {
+      if (sheet['type'] !== 'image') { 
+        if (sheet.qrySetId) {
+          this.qrySetId.push(sheet.qrySetId);
+        }
+      }
+    });
   }
-  // takeScreenshot() {
-  //  this.startMethod();
-  //  this.loaderService.show();
-  //  setTimeout(() => {
-  // const element = document.getElementById('capture-element');
-  // if (element) {
-  //   // Select all gridster-items
-  //   // Hide scrollbars
-  //   htmlToImage.toPng(element)
-  //     .then((dataUrl) => {
-  //       this.screenshotSrc = dataUrl;
-  //       console.log('scrnsht',this.screenshotSrc);
-  //       // Convert base64 to Blob
-  //       const imageBlob = this.workbechService.base64ToBlob(dataUrl);
-  //       const imageBlob1 = this.workbechService.blobToFile(imageBlob)
-  //       // let fileObj:any;
-  //       // fileObj = this.workbechService.convertBase64ToFileObject(this.screenshotSrc);
-  //       // fileObj = this.workbechService.blobToFile(fileObj);
-
-  //        this.imageFile = imageBlob
-  //        this.imagename = imageBlob1
-  //        console.log('fileblob',this.imageFile);
-  //        this.loaderService.hide();
-  //     })
-  //     .catch((error) => {
-  //       console.error('oops, something went wrong!', error);
-  //     })
-  //     .finally(() => {
-  //       this.saveDashboardimage();
-  //     });
-  //     //console.log('converted-image',this.screenshotSrc)
-     
-  // }}, 1000);
-  // }
   takeScreenshot(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.startMethod();
@@ -1132,7 +1069,10 @@ export class SheetsdashboardComponent {
   }
   updateDashboard(){
     this.takeScreenshot();
-      this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
+    this.sheetsIdArray = this.dashboard
+    .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
+    .map(item => item['sheetId']);
+     // this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
     if(this.dashboardName===''){
       Swal.fire({
         icon: 'error',
@@ -2043,6 +1983,10 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       this.dashboardTest.splice(this.dashboardTest.indexOf(item), 1);
       this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
     } else {
+      if(item['type'] ==='image'){
+        let removeIndex = this.dashboard.findIndex((sheet:any) => item.id == sheet.id);
+        this.dashboard.splice(removeIndex, 1);
+      }else{
       let removeIndex = this.dashboard.findIndex((sheet:any) => item.sheetId == sheet.sheetId);
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
@@ -2060,6 +2004,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         this.databaseId.splice(popIndex, 1);
       // }
       }
+    }
     }
     this.setDashboardNewSheets(item.sheetId, false);
   }
@@ -2127,7 +2072,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   clearDashboard(){
     Swal.fire({
       title: 'Are you sure?',
-      text: "Filters on dashbard will be deleted .You won't be able to revert this!",
+      text: "Filters on dashboard will be deleted .You won't be able to revert this!",
       icon: 'warning',
       width: '300px',
       showCancelButton: true,
@@ -5225,6 +5170,106 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
     
   }
+
+
+	   
+	   // image upload inn sheets
+     uploadedImage: any;
+
+     triggerFileUpload() {
+       const fileInput = document.getElementById('imageUpload') as HTMLElement;
+       fileInput.click();
+     }
+     
+     // Handle image selection
+     onImageSelected(event: any) {
+       const file = event.target.files[0];
+       if (file) {
+         const reader = new FileReader();
+         reader.onload = (e: any) => {
+           this.uploadedImage = e.target.result; // Image data as Base64
+           console.log('Uploaded Image:', this.uploadedImage);
+         };
+         reader.readAsDataURL(file);
+       }
+     }
+     uploadInJson(){
+      if (this.uploadedImage) {
+        let element :any= {
+          id: uuidv4(), // Unique ID
+          x: 10,
+          y: 20,
+          rows: 2, // Adjust size
+          cols: 2, // Adjust size
+          type: 'image', // Identify it as an image
+          imageData: this.uploadedImage, // Store Base64 image data
+        };
+        this.dashboard.push(element);
+        console.log('Updated Dashboard:', this.dashboard);
+  
+        // Clear uploadedImage after adding to the dashboard
+        this.uploadedImage = null;
+        this.imageUpload.nativeElement.value = ''; // Clear the file input
+      }
+     }
+     kpiItem:any;
+     uploadedKpiImage:any;
+     uploadKpiImage(item:any){
+      this.ImageUploadKPI.nativeElement.click();
+      this.kpiItem=item;
+     }
+     imageFileSelectEvent(event:any){
+      const file = event.target.files[0];
+       if (file) {
+         const reader = new FileReader();
+         reader.onload = (e: any) => {
+           this.uploadedKpiImage = e.target.result; 
+           console.log('Uploaded Image:', this.uploadedKpiImage);
+           if(this.uploadedKpiImage){
+            this.updateKPIImage(this.kpiItem, this.uploadedKpiImage);
+            }
+         };
+         reader.readAsDataURL(file);
+       }
+     }
+     updateKPIImage(item:any,KpiImage:any){
+      const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
+      if (itemIndex !== -1) {
+        // const item1 = this.dashboard[itemIndex];
+        if (item['kpiData']) {
+          // Add the kpiImage key to kpiData
+          this.dashboard[itemIndex] = {
+            ...item,
+            kpiData: {
+              ...item.kpiData,
+              kpiImage: KpiImage,
+            },
+          };
+          console.log('addedKpiImage',this.dashboard)
+        } else {
+          console.error('kpiData is undefined for the item:', item);
+        }
+      } else {
+        console.error('Item not found in dashboard:', item);
+      } 
+     }
+     removeKpiImage(item: any): void {
+      const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
+      if (itemIndex !== -1) {
+        const updatedItem = {
+          ...this.dashboard[itemIndex],
+          kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+        };
+  
+        // Delete kpiImage key if it exists
+        delete updatedItem.kpiData.kpiImage;
+  
+        // Update the dashboard array
+        this.dashboard[itemIndex] = updatedItem;
+      } else {
+        console.error('Item not found in dashboard:', item);
+      }
+    }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
