@@ -183,7 +183,7 @@ export class SheetsdashboardComponent {
 
   sourceSheetId : any = 0;
   targetSheetIds : any[] = [];
-  drillThroughQuerySetId : any = 0;
+  drillThroughQuerySetId : any[] = [];
   dashboardActionsList : any[] = [];
   actionName = '';
   sourceSheetList: any[] = [];
@@ -192,6 +192,7 @@ export class SheetsdashboardComponent {
   editActions : boolean = false;
   actionId : any;
   drillThroughActionList : any[] =[];
+  drillThroughDatabaseName : any = '';
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -2529,6 +2530,13 @@ this.selectedOption = null;
 this.sheetsFilterNames =[];
 this.selectedColumnQuerySetId = null;
 }
+//Actions
+openSuperScaleForActions(modal : any){
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+}
 databaseNames =[] as any;
 selectedDatabase: string = '';
 unfilteredQuerySetData =[] as any;
@@ -2565,8 +2573,14 @@ onDatabaseChange(){
   this.dropdownOptions = [];
   this.sheetsFilterNames =[];
 
+  let selectedDatabaseObj;
     // Get the queryset data for the selected database
-    const selectedDatabaseObj = this.unfilteredQuerySetData[this.selectedDatabase];
+    if(this.selectedDatabase){
+      selectedDatabaseObj = this.unfilteredQuerySetData[this.selectedDatabase];
+    }
+    if(this.drillThroughDatabaseName){
+      selectedDatabaseObj = this.unfilteredQuerySetData[this.drillThroughDatabaseName];
+    }
     
     // Update the filtered queryset data based on selected database
     if (selectedDatabaseObj) {
@@ -4768,6 +4782,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
   }
   getSheetsForActions(){
+    this.sourceSheetList = [];
+    this.targetSheetList = [];
+    this.sourceSheetId = 0;
+    this.targetSheetIds = [];
+    this.isAllTargetSheetsSelected = false;
     const obj ={
       dashboard_id:this.dashboardId,
       queryset_id : this.drillThroughQuerySetId,
@@ -4814,7 +4833,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.isAllTargetSheetsSelected = isChecked;
   }
   disableActionSave(){
-    if(this.actionName && this.drillThroughQuerySetId && this.drillThroughQuerySetId != 0 && this.sourceSheetId && this.sourceSheetId != 0 && this.targetSheetIds.length>0){
+    if(this.actionName && this.drillThroughQuerySetId && this.sourceSheetId && this.sourceSheetId != 0 && this.targetSheetIds.length>0){
       return false;
     }
     else{
@@ -4827,14 +4846,15 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       queryset_id: this.drillThroughQuerySetId,
       dashboard_id: this.dashboardId,
       main_sheet_id: this.sourceSheetId,
-      target_sheet_ids: this.targetSheetIds
+      target_sheet_ids: this.targetSheetIds,
+      hierarchy_id: this.selectedDbIdForFilter
     }
     this.workbechService.saveDrillThroughAction(Obj).subscribe({
       next: (data) => {
         console.log(data);
         this.actionId = data.dashboard_drill_thorugh_id;
         this.actionName = '';
-        this.drillThroughQuerySetId = 0;
+        this.drillThroughQuerySetId = [];
         this.sourceSheetId = 0;
         this.isAllTargetSheetsSelected = false;
         this.targetSheetList.forEach((sheet:any)=>{
@@ -4884,6 +4904,17 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.actionId = data.action_id;
         this.actionName = data.action_name;
         this.drillThroughQuerySetId = data.query_id;
+        this.querySetNames = data.queryname
+        this.selectedDbIdForFilter = data.hierarchy_id;
+        Object.values(this.unfilteredQuerySetData).forEach((value: any) => {
+          if (Array.isArray(value)) {
+            value.forEach((db : any)=>{
+              if(this.selectedDbIdForFilter == db.hierarchy_id){
+                this.drillThroughDatabaseName = db.database_name;
+              }
+            })
+          }
+        });
         data.main_sheet_data.forEach((sheet:any)=>{
           let object = {
             id : sheet.sheet_id,
@@ -4905,6 +4936,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           }
         });
         this.updateSelectedSheets();
+        this.onDatabaseChange();
       },
       error: (error) => {
         console.log(error)
@@ -4946,14 +4978,15 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       queryset_id: this.drillThroughQuerySetId,
       dashboard_id: this.dashboardId,
       main_sheet_id: this.sourceSheetId,
-      target_sheet_ids: this.targetSheetIds
+      target_sheet_ids: this.targetSheetIds,
+      hierarchy_id: this.selectedDbIdForFilter
     }
     this.workbechService.updateDrillThroughAction(Obj).subscribe({
       next: (data) => {
         console.log(data);
         this.actionId = data.action_id;
         this.actionName = '';
-        this.drillThroughQuerySetId = 0;
+        this.drillThroughQuerySetId = [];
         this.sourceSheetId = 0;
         this.isAllTargetSheetsSelected = false;
         this.targetSheetList.forEach((sheet:any)=>{
@@ -4992,7 +5025,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   }
   clearActionForm(){
     this.actionName = '';
-    this.drillThroughQuerySetId = 0;
+    this.drillThroughQuerySetId = [];
     this.sourceSheetId = 0;
     this.isAllTargetSheetsSelected = false;
     this.targetSheetList.forEach((sheet: any) => {
@@ -5002,6 +5035,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.sourceSheetList = [];
     this.targetSheetList = [];
     this.actionId = '';
+    this.drillThroughDatabaseName = '';
   }
   setDrillThrough(selectedValue : any, item : any){
     let selectedXValue;
@@ -5032,22 +5066,39 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       next: (data) => {
         console.log(data);
         data.forEach((sheet:any)=>{
-          sheet.columns.forEach((col:any)=>{
+          if(sheet.columns.length > 0) {
+            sheet.columns.forEach((col:any)=>{
+              let colObject = {
+                name: col.column,
+                values: col.result
+              }
+              this.filteredColumnData.push(colObject);
+              console.log('filtercolumn', this.filteredColumnData);
+            });
+          } else {
             let colObject = {
-              name: col.column,
-              values: col.result
+              name: '',
+              values: []
             }
-            this.filteredColumnData.push(colObject);
-            console.log('filtercolumn', this.filteredColumnData);
-          });
-          sheet.rows.forEach((row:any)=>{
+            this.filteredColumnData.push(colObject)
+          }
+
+          if(sheet.rows.length > 0){
+            sheet.rows.forEach((row:any)=>{
+              let rowObject = {
+                name: row.column,
+                data: row.result
+              }
+              this.filteredRowData.push(rowObject);
+              console.log('filterowData', this.filteredRowData);
+            });
+          } else {
             let rowObject = {
-              name: row.column,
-              data: row.result
+              name: '',
+              data: []
             }
             this.filteredRowData.push(rowObject);
-            console.log('filterowData', this.filteredRowData);
-          });
+          }
           this.setDashboardSheetData(item,false,false, false,true,sheet.sheet_id);
         });
       },
