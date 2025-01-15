@@ -479,7 +479,10 @@ export class SheetsComponent {
       this.changeChartPlugin(value);
     });
   }
-
+  isColorSchemeDropdownOpen = false;
+  toggleDropdownColorScheme() {
+    this.isColorSchemeDropdownOpen = !this.isColorSchemeDropdownOpen;
+  }
   selectColorScheme(scheme: string[]) {
     this.selectedColorScheme = scheme;
     console.log('color pallete', this.selectedColorScheme)
