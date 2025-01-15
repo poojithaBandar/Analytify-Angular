@@ -278,6 +278,7 @@ export class SheetsdashboardComponent {
   @ViewChild('gridster') gridster!: ElementRef; // Adjust the type as needed
   @ViewChild('nestedDropdown', { static: true }) nestedDropdown: NgbDropdown | undefined;
   @ViewChild('ImageUploadKPI') ImageUploadKPI!: ElementRef;
+  @ViewChild('imageUpload') imageUpload!: ElementRef<HTMLInputElement>;
 
 
   static itemChange(
@@ -5182,10 +5183,9 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
          };
          reader.readAsDataURL(file);
        }
-
-
-
-       if (this.uploadedImage) {
+     }
+     uploadInJson(){
+      if (this.uploadedImage) {
         let element :any= {
           id: uuidv4(), // Unique ID
           x: 10,
@@ -5200,6 +5200,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   
         // Clear uploadedImage after adding to the dashboard
         this.uploadedImage = null;
+        this.imageUpload.nativeElement.value = ''; // Clear the file input
       }
      }
      kpiItem:any;
@@ -5215,12 +5216,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
          reader.onload = (e: any) => {
            this.uploadedKpiImage = e.target.result; 
            console.log('Uploaded Image:', this.uploadedKpiImage);
+           if(this.uploadedKpiImage){
+            this.updateKPIImage(this.kpiItem, this.uploadedKpiImage);
+            }
          };
          reader.readAsDataURL(file);
-         if(this.uploadedKpiImage){
-         this.updateKPIImage(this.kpiItem, this.uploadedKpiImage);
-         }
-
        }
      }
      updateKPIImage(item:any,KpiImage:any){

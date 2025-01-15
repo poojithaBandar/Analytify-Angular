@@ -2718,15 +2718,48 @@ chartInitialize(){
   }
   }
   dimensionsAlignmentSetOption() {
+    if(this.dimensionAlignment === 'right'){
     let obj ={
       xAxis :{
         axisLabel :{
-          align: this.dimensionAlignment
+          align: 'left'
+        }
+      }
+    }
+    this.chartInstance.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'left';
+  }else if(this.dimensionAlignment === 'left'){
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align: 'right'
+        }
+      }
+    }
+    this.chartInstance.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'right';
+  }else if(this.dimensionAlignment === 'right'){
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align: 'left'
+        }
+      }
+    }
+    this.chartInstance.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'left';
+  } else{
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align:this.dimensionAlignment
         }
       }
     }
     this.chartInstance.setOption(obj);
     this.chartOptions.xAxis.axisLabel.align = this.dimensionAlignment;
+  }
+    
   }
   xGridColorSetOptions(){
     if(this.chartType === 'barline'){

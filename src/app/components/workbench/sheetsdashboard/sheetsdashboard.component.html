@@ -243,6 +243,34 @@
                                               </div>
                                              </div>
                                           </div>
+                                          <div class="card mb-0  br-0 p-0 mt-2"  style="box-shadow: none; border: none !important;">
+                                            <div class=" dropdown" ngbDropdown>
+                                              <a  href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
+                                                <button class="btn btn-primary w-100">
+                                                  <i class="fa fa-image me-2"></i>Add Image
+                                              </button>
+                                              </a>
+                                              <div class="dropdown-menu size-dropdown" ngbDropdownMenu>
+                                                  <h6 class="mb-0 bg-light text-center p-2" (click)="triggerFileUpload()">Upload Image</h6>
+                                                  <div class="form-group">
+                                                    <label class="form-label mt-0">Insert Image File:</label>
+                                                    <input
+                                                    type="file" class="form-control"
+                                                    id="imageUpload"
+                                                    accept="image/*"
+                                                    (change)="onImageSelected($event)"
+                                                  />
+                                                  </div>
+                                                  <div class="url">
+                                                    <label class="form-label">Name:</label>
+                                                    <input type="text" id="input" class="form-control border">
+                                                  </div>
+                                                  <div class=" mt-2 d-flex justify-content-end">
+                                                    <button class="btn btn-primary" [disabled]="!uploadedImage" (click)="uploadInJson()">Upload</button>
+                                                  </div>
+                                               </div>
+                                           </div>
+                                      </div>
                                           </div>
                                     </div>
                                   </div>
@@ -746,25 +774,6 @@
                                      </div>
                                  </ng-template>
                          </li>
-                         <li *ngIf="!isPublicUrl" [ngbNavItem]="4">
-                          <a ngbNavLink class="dashboard-tab-padding">Insert</a>
-                          <ng-template ngbNavContent>
-                              <div class="tab-pane active" id="activetabs">
-                                <div class="panel-body tabs-menu-body p-0">
-                                  <div class="tab-content">
-                                    <button class="btn btn-primary" (click)="triggerFileUpload()">Upload Image</button>
-                                    <input
-                                      type="file"
-                                      id="imageUpload"
-                                      accept="image/*"
-                                      (change)="onImageSelected($event)"
-                                      style="display: none;"
-                                    />
-                                    </div>
-                              </div>
-                            </div>                      
-                          </ng-template>
-                      </li>
                         </ul>
                     </div>
                 </div>
