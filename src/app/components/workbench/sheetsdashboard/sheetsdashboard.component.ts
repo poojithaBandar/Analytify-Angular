@@ -5226,7 +5226,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
 	   
 	   // image upload inn sheets
      uploadedImage: any;
-
+     imageTitle:any;
      triggerFileUpload() {
        const fileInput = document.getElementById('imageUpload') as HTMLElement;
        fileInput.click();
@@ -5254,11 +5254,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           cols: 2, // Adjust size
           type: 'image', // Identify it as an image
           imageData: this.uploadedImage, // Store Base64 image data
+          imageTitle:this.imageTitle
         };
         this.dashboard.push(element);
         console.log('Updated Dashboard:', this.dashboard);
   
         // Clear uploadedImage after adding to the dashboard
+        this.imageTitle = '';
         this.uploadedImage = null;
         this.imageUpload.nativeElement.value = ''; // Clear the file input
       }

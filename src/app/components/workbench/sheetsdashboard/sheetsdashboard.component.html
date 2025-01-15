@@ -172,7 +172,7 @@
                                             <div class=" mb-0  mt-0 br-0 overflow-auto h-400" >
                                                 <div class="text-wrap">
                                                     <div class="dropdown-samples">
-                                                      <h6 class="dropdown-header sheets-title" style="display: flex; justify-content: space-between;line-height: 2;">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
+                                                      <h6 class="dropdown-header sheets-title bg-light border rounded-3 mb-1" style="display: flex; justify-content: space-between;line-height: 2;">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
                                                         [buttonName]="'Add'"
                                                         [previledgeId]="17" [isBtn]="true"
                                                         (btnClickEvent)="fetchSheetsList();isSheetsView = true;" [toolTip]="'Add Sheets'"
@@ -263,7 +263,7 @@
                                                   </div>
                                                   <div class="url">
                                                     <label class="form-label">Name:</label>
-                                                    <input type="text" id="input" class="form-control border">
+                                                    <input type="text" id="input" [(ngModel)]="imageTitle" class="form-control border">
                                                   </div>
                                                   <div class=" mt-2 d-flex justify-content-end">
                                                     <button class="btn btn-primary" [disabled]="!uploadedImage" (click)="uploadInJson()">Upload</button>
@@ -828,7 +828,7 @@
           <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 24px;"></i>
         </button>
       
-         <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;">
+         <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;z-index:2">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
@@ -1098,7 +1098,14 @@
                   @if(actionId && item['sheetId'] == sourceSheetId){
                     <button class="btn btn-primary " style="margin-right: 10px;" (click)="setDrillThrough('',item)"><i class="fa fa-undo "></i> </button>
                   }
+                  @if(item['type'] !== 'image'){
                   <div style="width: 100%;" [innerHtml]="sheetTagTitle[item.data?.title]?sheetTagTitle[item.data?.title]:item.data?.sheetTagName"></div>
+                  }
+                  @if(item['type'] === 'image'){
+                  <div style="width: 100%;">
+                    <h6>{{item['imageTitle']}}</h6>
+                  </div>
+                  }
                   <div *ngIf="item['chartType'] === 'Table'"  class="sheet-search">
                     <div class="">
                     </div>
