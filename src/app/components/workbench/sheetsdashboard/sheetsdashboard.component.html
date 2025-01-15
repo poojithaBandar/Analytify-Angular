@@ -1451,13 +1451,11 @@
                     <apx-chart
                     [series]="item.chartOptions.series!"
                     [chart]="item.chartOptions.chart!"
-                    [dataLabels]="item.chartOptions.dataLabels!"
                     [plotOptions]="item.chartOptions.plotOptions!"
-                    [xaxis]="item.chartOptions.xaxis!"
                     [colors]="item.chartOptions.colors!"
-                    [title]="item.chartOptions.title!"
-                    [legend]="item.chartOptions.legend!"
                     [labels]="item.chartOptions.labels!"
+                    [tooltip]="item.chartOptions.tooltip!"
+                    [stroke]="item.chartOptions.stroke!"
                     (chartInit)="onChartInit($event, item)"
                   ></apx-chart>
                   </div>
