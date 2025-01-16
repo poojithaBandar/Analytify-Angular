@@ -749,6 +749,64 @@ export class SheetsdashboardComponent {
                 sheet.drillDownObject.push(obj);
                 self.dataExtraction(sheet);
               }
+            },
+            mounted: function(chartContext:any, config:any) {
+              if (sheet.chartId == 28) {
+                let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+                const applyStyles = () => {
+                  const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+                  if (valueElement) {
+                    valueElement.style.fill = color;
+                    valueElement.style.setProperty('fill', color, 'important');
+                  }
+    
+                  const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+                  if (nameElement) {
+                    nameElement.style.fill = color;
+                    nameElement.style.setProperty('fill', color, 'important');
+                  }
+                };
+                // Initial styling
+                applyStyles();
+    
+                // Monitor DOM for changes
+                const observer = new MutationObserver(() => {
+                  applyStyles();
+                });
+                const chartContainer = document.querySelector('.apexcharts-inner');
+                if (chartContainer) {
+                  observer.observe(chartContainer, { childList: true, subtree: true });
+                }
+              }
+            },
+            updated: function(chartContext:any, config:any) {
+              if (sheet.chartId == 28) {
+                let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+                const applyStyles = () => {
+                  const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+                  if (valueElement) {
+                    valueElement.style.fill = color;
+                    valueElement.style.setProperty('fill', color, 'important');
+                  }
+    
+                  const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+                  if (nameElement) {
+                    nameElement.style.fill = color;
+                    nameElement.style.setProperty('fill', color, 'important');
+                  }
+                };
+                // Initial styling
+                applyStyles();
+    
+                // Monitor DOM for changes
+                const observer = new MutationObserver(() => {
+                  applyStyles();
+                });
+                const chartContainer = document.querySelector('.apexcharts-inner');
+                if (chartContainer) {
+                  observer.observe(chartContainer, { childList: true, subtree: true });
+                }
+              }
             }
           };
           } else if (sheet.chartId == 29) {
@@ -1760,6 +1818,64 @@ allowDrop(ev : any): void {
               let obj = { [nestedKey]: selectedXValue };
               element.drillDownObject.push(obj);
               self.dataExtraction(element);
+            }
+          },
+          mounted: function(chartContext:any, config:any) {
+            if (element.chartId == 28) {
+              let color = element?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+              const applyStyles = () => {
+                const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+                if (valueElement) {
+                  valueElement.style.fill = color;
+                  valueElement.style.setProperty('fill', color, 'important');
+                }
+  
+                const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+                if (nameElement) {
+                  nameElement.style.fill = color;
+                  nameElement.style.setProperty('fill', color, 'important');
+                }
+              };
+              // Initial styling
+              applyStyles();
+  
+              // Monitor DOM for changes
+              const observer = new MutationObserver(() => {
+                applyStyles();
+              });
+              const chartContainer = document.querySelector('.apexcharts-inner');
+              if (chartContainer) {
+                observer.observe(chartContainer, { childList: true, subtree: true });
+              }
+            }
+          },
+          updated: function(chartContext:any, config:any) {
+            if (element.chartId == 28) {
+              let color = element?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+              const applyStyles = () => {
+                const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+                if (valueElement) {
+                  valueElement.style.fill = color;
+                  valueElement.style.setProperty('fill', color, 'important');
+                }
+  
+                const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+                if (nameElement) {
+                  nameElement.style.fill = color;
+                  nameElement.style.setProperty('fill', color, 'important');
+                }
+              };
+              // Initial styling
+              applyStyles();
+  
+              // Monitor DOM for changes
+              const observer = new MutationObserver(() => {
+                applyStyles();
+              });
+              const chartContainer = document.querySelector('.apexcharts-inner');
+              if (chartContainer) {
+                observer.observe(chartContainer, { childList: true, subtree: true });
+              }
             }
           }
         };
@@ -4165,6 +4281,35 @@ kpiData?: KpiData;
                   let obj = { [nestedKey]: selectedXValue };
                   sheet.drillDownObject.push(obj);
                   self.publicDataExtraction(sheet);
+                }
+              },
+              mounted: function(chartContext:any, config:any) {
+                if (sheet.chartId == 28) {
+                  let color = sheet?.chartOptions?.plotOptions?.radialBar?.dataLabels?.name?.color;
+                  const applyStyles = () => {
+                    const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+                    if (valueElement) {
+                      valueElement.style.fill = color;
+                      valueElement.style.setProperty('fill', color, 'important');
+                    }
+      
+                    const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+                    if (nameElement) {
+                      nameElement.style.fill = color;
+                      nameElement.style.setProperty('fill', color, 'important');
+                    }
+                  };
+                  // Initial styling
+                  applyStyles();
+      
+                  // Monitor DOM for changes
+                  const observer = new MutationObserver(() => {
+                    applyStyles();
+                  });
+                  const chartContainer = document.querySelector('.apexcharts-inner');
+                  if (chartContainer) {
+                    observer.observe(chartContainer, { childList: true, subtree: true });
+                  }
                 }
               }
             };
