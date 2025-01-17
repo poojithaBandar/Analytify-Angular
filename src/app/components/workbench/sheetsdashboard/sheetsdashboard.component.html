@@ -457,7 +457,7 @@
                                           <label class="form-label">Column <span class="text-red">*</span>
                                           </label>
                                           <ng-select [items]="dropdownOptions" bindLabel="value"  bindValue="id" [(ngModel)]="selectedOption" [groupBy]="'group'"
-                                            [searchable]="true" [searchFn]="customSearch.bind(this)" (change)="onOptionSelected(selectedOption)"
+                                            [searchable]="true" [searchFn]="customSearch.bind(this)" (change)="onOptionSelected($event)"
                                             placeholder="Select column" [clearable]="false">
                                           
                                             <!-- Template for displaying group header -->
