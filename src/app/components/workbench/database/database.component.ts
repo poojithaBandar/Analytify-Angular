@@ -891,6 +891,7 @@ joiningTablesFromDelete(){
         if(this.qurtySetId === 0){
           localStorage.setItem('QuerySetId','0');
           this.datasourceQuerysetId = null;
+          this.saveQueryName = '';
         }
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)

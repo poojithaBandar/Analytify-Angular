@@ -484,7 +484,7 @@ export class SheetsComponent {
     this.isColorSchemeDropdownOpen = !this.isColorSchemeDropdownOpen;
   }
   selectColorScheme(scheme: string[]) {
-    this.selectedColorScheme = scheme;
+    this.selectedColorScheme = scheme.slice(0, 9);
     console.log('color pallete', this.selectedColorScheme)
   }
   getGradient(colors: string[]): string {
