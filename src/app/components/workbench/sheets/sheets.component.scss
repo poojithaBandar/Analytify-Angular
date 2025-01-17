@@ -466,8 +466,8 @@ button.viewQueryImg {
   height: 512px;
 }
 .sheet-table-h{
-  height: 487px;
-   overflow-y: auto;
+  height: 479px;
+  overflow-y: auto;
 }
 .panel-body-h{
   height: 624px;
@@ -696,6 +696,9 @@ p {
 label {
   font-size: 12px;
 }
+.body.table-responsive{
+  max-height: 310px !important;
+}
 }
 
 @media ( 1280px <= width <= 1570px) {
@@ -818,6 +821,9 @@ th, td {
   }
   label {
     font-size: 12px;
+  }
+  .body.table-responsive{
+    max-height: 310px !important;
   }
 }
 

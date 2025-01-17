@@ -5183,6 +5183,9 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     });
   }
   clearActionForm(){
+    if(this.actionId && this.actionId != 0){
+      this.setDrillThrough('',[]);
+    }
     this.actionName = '';
     this.drillThroughQuerySetId = [];
     this.sourceSheetId = 0;
