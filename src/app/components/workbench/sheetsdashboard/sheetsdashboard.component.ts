@@ -940,7 +940,7 @@ export class SheetsdashboardComponent {
   // }
   // }
   async saveDashboard() {
-    this.canNavigateToAnotherPage = true;
+    this.canNavigateToAnotherPage = false;
     this.sheetsIdArray = this.dashboard
     .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
     .map(item => item['sheetId']);
@@ -1128,7 +1128,7 @@ export class SheetsdashboardComponent {
    
   }
   updateDashboard(){
-    this.canNavigateToAnotherPage = true;
+    this.canNavigateToAnotherPage = false;
     this.takeScreenshot();
     this.sheetsIdArray = this.dashboard
     .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
@@ -2802,7 +2802,10 @@ buildDropdownOptions(tables:any) {
   });
   // this.selectedOption = this.dropdownOptions.find(option => option.selectedQueryId === this. selectedColumnQuerySetId) || null;
   if(this.editFilters){
-  const preSelectedOption = this.dropdownOptions.find(option => option.selectedQueryId === this. selectedColumnQuerySetId);
+  // const preSelectedOption = this.dropdownOptions.find(option => option.selectedQueryId === this. selectedColumnQuerySetId);
+  const preSelectedOption = this.dropdownOptions.find(
+    option => option.selectedQueryId === this.selectedColumnQuerySetId && option.value === this.selectClmn
+  );
   this.selectedOption = preSelectedOption ? preSelectedOption.id : null; 
    console.log('Selected option:', preSelectedOption);
   }
