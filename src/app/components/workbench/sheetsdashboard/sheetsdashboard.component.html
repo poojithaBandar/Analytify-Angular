@@ -456,7 +456,7 @@
                                           </div> -->
                                           <label class="form-label">Column <span class="text-red">*</span>
                                           </label>
-                                          <ng-select [items]="dropdownOptions" bindLabel="value" [(ngModel)]="selectedOption" [groupBy]="'group'"
+                                          <ng-select [items]="dropdownOptions" bindLabel="value"  bindValue="id" [(ngModel)]="selectedOption" [groupBy]="'group'"
                                             [searchable]="true" [searchFn]="customSearch.bind(this)" (change)="onOptionSelected(selectedOption)"
                                             placeholder="Select column" [clearable]="false">
                                           

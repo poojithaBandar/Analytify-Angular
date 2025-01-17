@@ -940,6 +940,7 @@ export class SheetsdashboardComponent {
   // }
   // }
   async saveDashboard() {
+    this.canNavigateToAnotherPage = true;
     this.sheetsIdArray = this.dashboard
     .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
     .map(item => item['sheetId']);
@@ -1127,6 +1128,7 @@ export class SheetsdashboardComponent {
    
   }
   updateDashboard(){
+    this.canNavigateToAnotherPage = true;
     this.takeScreenshot();
     this.sheetsIdArray = this.dashboard
     .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
@@ -1708,6 +1710,7 @@ allowDrop(ev : any): void {
   ev.preventDefault();
 }
   drop(event: any) {
+    this.canNavigateToAnotherPage = true;
     if(this.colArray.length >0 && this.rowArray.length>0){
       this.colArray = [];
       this.rowArray = [];
@@ -2199,6 +2202,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     }).then((result)=>{
       if(result.isConfirmed){
        this.resetDashboard();
+       this.canNavigateToAnotherPage = true;
       }})
   }
 
@@ -2670,12 +2674,6 @@ getQuerySetForFilter(){
     },
     error:(error)=>{
       console.log(error)
-      // Swal.fire({
-      //   icon: 'error',
-      //   title: 'oops!',
-      //   text: error.error.message,
-      //   width: '400px',
-      // })
       this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
 
     }
@@ -2792,6 +2790,7 @@ buildDropdownOptions(tables:any) {
     const columns = tables[tableName]; 
 
     const tableOptions = columns.map((column: any) => ({
+      id: `${tableName}_${column.query_id}_${column.column_name}`, // Unique identifier for selection   
       group: tableName,  
       value: column.column_name, 
       column_dtype: column.column_dtype,
@@ -2801,8 +2800,14 @@ buildDropdownOptions(tables:any) {
     }));
     this.dropdownOptions = [...this.dropdownOptions, ...tableOptions];
   });
+  // this.selectedOption = this.dropdownOptions.find(option => option.selectedQueryId === this. selectedColumnQuerySetId) || null;
+  if(this.editFilters){
+  const preSelectedOption = this.dropdownOptions.find(option => option.selectedQueryId === this. selectedColumnQuerySetId);
+  this.selectedOption = preSelectedOption ? preSelectedOption.id : null; 
+   console.log('Selected option:', preSelectedOption);
+  }
   console.log(this.dropdownOptions);
-
+ 
 }
 onOptionSelected(selectedItem: any) {
   if (selectedItem) {
@@ -3215,8 +3220,8 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             item1.drillDownIndex = 0;
             item1.drillDownObject = [];
           }
-          item1.echartOptions.xAxis.data = this.filteredColumnData[0].values;
-        item1.echartOptions.series[0].data = this.filteredRowData[0].data;
+          item1.echartOptions.xAxis.data = this.filteredColumnData[0]?.values;
+        item1.echartOptions.series[0].data = this.filteredRowData[0]?.data;
         item1.echartOptions = {
           ...item1.echartOptions,
 
@@ -3229,7 +3234,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           item1.drillDownIndex = 0;
           item1.drillDownObject = [];
         }
-      item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values.map((category : any)  => category === null ? 'null' : category);
+      item1.chartOptions.xaxis.categories = this.filteredColumnData[0]?.values.map((category : any)  => category === null ? 'null' : category);
       item1.chartOptions.series = this.filteredRowData;
       }
     }
@@ -3793,19 +3798,12 @@ deleteDashboardFilter(id:any){
             this.setDashboardSheetData(item, true, false, false, false, '');
           });
           this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
-
           this.getFilteredData();
           // this.colData= data.col_data?.map((name: any) => ({ label: name, selected: false }))
 
         },
         error:(error)=>{
           console.log(error)
-          // Swal.fire({
-          //   icon: 'error',
-          //   title: 'oops!',
-          //   text: error.error.message,
-          //   width: '400px',
-          // })
           this.toasterService.error(error.error.message,'error',{ positionClass: 'toast-top-center'})
 
         }
@@ -3814,6 +3812,15 @@ deleteDashboardFilter(id:any){
     this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
 
   }
+  this.editFilters = false;
+  this.filterName = '';
+  this.selectedDatabase='';
+  this.dropdownOptions = [];
+  this.querySetNames = [];
+  this.selectedQuerySetId = 0;
+  this.selectedOption = null;
+  this.sheetsFilterNames =[];
+  this.selectedColumnQuerySetId = null;
   },
     error:(error)=>{
       console.log(error)
@@ -3861,6 +3868,7 @@ editFiltersData(id:any){
       this.querySetNames=data.unselected_query;
       this.dbIdforEditFilter = data.hierarchy_id;
       this.selectedColumnQuerySetId= data.selected_query;
+      // this.selectedOption = data.selected_query;
       this.databaseNameForEditFilter = data.database_name;
       this.selectedQuerySetId = data.selected_query_id.map(
         (item: { queryset_id: any; }) => item.queryset_id
@@ -3953,6 +3961,7 @@ const obj ={
       this.modalService.dismissAll('close');
       this.getDashboardFilterredList();
       this.toasterService.success('Filter Updated Successfully','success',{ positionClass: 'toast-top-right'});
+      this.selectedOption = null;
     },
     error:(error)=>{
       console.log(error)
@@ -4217,6 +4226,9 @@ kpiData?: KpiData;
     const parser = new DOMParser();
     const doc = parser.parseFromString(this.dashboardTagName, 'text/html');
     this.dashboardName = doc.body.textContent+'';
+    if(this.dashboardName !== name){
+      this.canNavigateToAnotherPage = true;
+    }
   }
   sheetsRoute(){
     this.router.navigate(['/analytify/sheets']);  
@@ -4694,7 +4706,9 @@ tableSearchDashboard(item:any){
   this.pageChangeTableDisplay(item,1);
 }
 pageChangeTableDisplay(item:any,page:any){
+  if(item.tableData){
   item.tableData.tablePage = page;
+  }
   const obj={
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
@@ -5468,6 +5482,34 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         console.error('Item not found in dashboard:', item);
       }
     }
+
+    canNavigate(): boolean {
+      return this.canNavigateToAnotherPage;
+    }
+    canNavigateToAnotherPage = false;
+    dashboardNotSaveAlert(): Promise<boolean> {
+      this.loaderService.hide();
+      return Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Your work has not been saved, Do you want to continue?",
+        showConfirmButton: true,
+        showCancelButton: true, // Add a "No" button
+        confirmButtonText: 'Yes', // Text for "Yes" button
+        cancelButtonText: 'No',   // Text for "No" button
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "Yes", allow navigation
+          this.loaderService.show();
+          return true;
+        } else {
+          // User clicked "No", prevent navigation
+          this.loaderService.hide();
+          return false;
+        }
+      });
+    }
+
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
