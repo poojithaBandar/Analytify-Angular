@@ -79,6 +79,12 @@ export class WorkbenchService {
     return this.http.get<any>(`${environment.apiUrl}/get_file/`+id+'/'+this.accessToken);
   }
 
+  buildSampleDashbaord(id : number){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/connectwise_dashboard/`+id+'/'+this.accessToken);
+  }
+
   //Quickbooks
   connectQuickBooks(){
     const currentUser = localStorage.getItem( 'currentUser' );

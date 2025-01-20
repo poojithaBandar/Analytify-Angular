@@ -393,7 +393,35 @@ export class WorkbenchComponent implements OnInit{
               this.modalService.dismissAll();
               this.openConnectWiseForm = false;
               const encodedId = btoa(this.databaseId.toString());
-              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              Swal.fire({
+                position: "center",
+                icon: "question",
+                title: "Would like to view any sample dashboard?",
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.buildSampleDashboard();
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
+              });
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
+    }
+
+    buildSampleDashboard(){
+      this.workbechService.buildSampleDashbaord(this.databaseId).subscribe({next: (responce) => {
+        console.log(responce)
+            if(responce){
             }
           },
           error: (error) => {
