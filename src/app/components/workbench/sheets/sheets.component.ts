@@ -131,6 +131,7 @@ export class SheetsComponent {
   isMeasureEdit : boolean = false;
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
+  suppressTabChangeEvent : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -1222,6 +1223,7 @@ try {
   // }
   tabs : any [] = [];
   selected = new FormControl(0);
+
   addSheet(isDuplicate : boolean) {
     if (this.active !== 3){
       this.active = 1;
@@ -1333,85 +1335,101 @@ try {
       )
   }
   onChange(event:MatTabChangeEvent){
+    
+    if (!this.suppressTabChangeEvent) {
+      this.selectedTabIndex = event.index;
+      if (this.hasUnSavedChanges) {
+        // this.selectedTabIndex =  event.index;
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to switch?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.hasUnSavedChanges = false;
+            console.log('tabs', event);
+            this.selectedTabIndex = event.index;
+            const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+            const selectedSheetId = selectedTab.id; // Access the sheet_id
 
-    if (this.hasUnSavedChanges) {
-      const confirmSwitch = window.confirm('You have unsaved changes. Do you really want to switch tabs?');
-      if (confirmSwitch) {
-        this.hasUnSavedChanges = false;
-    console.log('tabs',event);
-    this.selectedTabIndex =  event.index;
-    const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
-    const selectedSheetId = selectedTab.id; // Access the sheet_id
-  
-    this.draggedDrillDownColumns = [];
-    this.drillDownObject = [];
-    this.drillDownIndex = 0;
-    this.sheetName = '';
-    this.dateDrillDownSwitch = false;
-    delete this.originalData;
-    console.log(event)
-    if(event.index === -1){
-     this.retriveDataSheet_id = 1;
-    }
-    this.SheetIndex = event.index;
-    this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
-    this.sheetTitle = this.sheetName;
+            this.draggedDrillDownColumns = [];
+            this.drillDownObject = [];
+            this.drillDownIndex = 0;
+            this.sheetName = '';
+            this.dateDrillDownSwitch = false;
+            delete this.originalData;
+            console.log(event)
+            if (event.index === -1) {
+              this.retriveDataSheet_id = 1;
+            }
+            this.SheetIndex = event.index;
+            this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+            this.sheetTitle = this.sheetName;
 
-    this.sheetTagName = this.sheetName;
-    this.sheetTagTitle = this.sheetName;
-    this.draggedColumns = [];
-    this.draggedColumnsData = [];
-    this.draggedRows = [];
-    this.draggedRowsData = [];
-    this.displayedColumns = [];
-    this.retriveDataSheet_id = '';
-    this.getChartData();
-    this.columnsData();
-    if(selectedSheetId){
-      this.retriveDataSheet_id = selectedSheetId;
-      this.sheetRetrive(false);
-    }
-    this.kpi = false;
-    return;
-  }else{
-      this.selectedTabIndex = this.SheetIndex;
-    }
-  }else{
-    console.log('tabs',event);
-    this.selectedTabIndex =  event.index;
-    const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
-    const selectedSheetId = selectedTab.id; // Access the sheet_id
-  
-    this.draggedDrillDownColumns = [];
-    this.drillDownObject = [];
-    this.drillDownIndex = 0;
-    this.sheetName = '';
-    this.dateDrillDownSwitch = false;
-    delete this.originalData;
-    console.log(event)
-    if(event.index === -1){
-     this.retriveDataSheet_id = 1;
-    }
-    this.SheetIndex = event.index;
-    this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
-    this.sheetTitle = this.sheetName;
+            this.sheetTagName = this.sheetName;
+            this.sheetTagTitle = this.sheetName;
+            this.draggedColumns = [];
+            this.draggedColumnsData = [];
+            this.draggedRows = [];
+            this.draggedRowsData = [];
+            this.displayedColumns = [];
+            this.retriveDataSheet_id = '';
+            this.getChartData();
+            this.columnsData();
+            if (selectedSheetId) {
+              this.retriveDataSheet_id = selectedSheetId;
+              this.sheetRetrive(false);
+            }
+            this.kpi = false;
+            return;
+          } else {
+            this.selectedTabIndex = this.SheetIndex;
+            this.suppressTabChangeEvent = true;
+          }
+        });
+      } else {
+        console.log('tabs', event);
+        this.selectedTabIndex = event.index;
+        const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+        const selectedSheetId = selectedTab.id; // Access the sheet_id
 
-    this.sheetTagName = this.sheetName;
-    this.sheetTagTitle = this.sheetName;
-    this.draggedColumns = [];
-    this.draggedColumnsData = [];
-    this.draggedRows = [];
-    this.draggedRowsData = [];
-    this.displayedColumns = [];
-    this.retriveDataSheet_id = '';
-    this.getChartData();
-    this.columnsData();
-    if(selectedSheetId){
-      this.retriveDataSheet_id = selectedSheetId;
-      this.sheetRetrive(false);
+        this.draggedDrillDownColumns = [];
+        this.drillDownObject = [];
+        this.drillDownIndex = 0;
+        this.sheetName = '';
+        this.dateDrillDownSwitch = false;
+        delete this.originalData;
+        console.log(event)
+        if (event.index === -1) {
+          this.retriveDataSheet_id = 1;
+        }
+        this.SheetIndex = event.index;
+        this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+        this.sheetTitle = this.sheetName;
+
+        this.sheetTagName = this.sheetName;
+        this.sheetTagTitle = this.sheetName;
+        this.draggedColumns = [];
+        this.draggedColumnsData = [];
+        this.draggedRows = [];
+        this.draggedRowsData = [];
+        this.displayedColumns = [];
+        this.retriveDataSheet_id = '';
+        this.getChartData();
+        this.columnsData();
+        if (selectedSheetId) {
+          this.retriveDataSheet_id = selectedSheetId;
+          this.sheetRetrive(false);
+        }
+        this.kpi = false;
+      }
+    } else {
+      this.suppressTabChangeEvent = false;
     }
-    this.kpi = false;
-  }
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
