@@ -1138,6 +1138,11 @@
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="uploadKpiImage(item)" 
                                                               [isIcon]="false"></app-insights-button>
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25" [classesList]="'dropdown-item'"
+                                                              [buttonName]="'Add Icon'"
+                                                              [previledgeId]="37" [isBtn]="false"
+                                                              (btnClickEvent)="addIcon(iconModal)" 
+                                                              [isIcon]="false"></app-insights-button>
                                                               <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Change Image'"
                                                               [previledgeId]="37" [isBtn]="false"
@@ -1504,8 +1509,7 @@
                     @for(row of item['kpiData'].rows;track row){
                       <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                       }
-                      <i 
-                      class="fa fa-line-chart" 
+                      <i class="fa fa-arrow-trend-up" 
                       style="position: absolute; bottom: 0; right: 0; font-size: 1.5rem; color: #888;">
                     </i>
                 </div>
@@ -1583,6 +1587,34 @@
 </div>
 </div>
   }
+
+
+
+
+  <ng-template #iconModal let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title">Select Icon</h6>
+      <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="text-wrap">
+        <div class="row">
+          <div class="col-3" *ngFor="let icon of iconList">
+            <div
+              class="icon-container text-center p-2"
+              (click)="selectIcon(icon)"
+              style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;"
+            >
+              <i [class]="icon.class" style="font-size: 24px;"></i>
+              <p class="mt-2" style="font-size: 12px;">{{ icon.name }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </ng-template>
 
 
 
