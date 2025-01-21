@@ -3696,11 +3696,12 @@ customizechangeChartPlugin() {
   toggleLocationSwitch() {
     this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
     if (this.locationDrillDownSwitch) {
-      this.draggedDrillDownColumns = this.locationHeirarchyList.filter((hierarchy) =>
-        this.tableColumnsData
-          .flatMap((columns: any) => columns?.dimensions || [])
-          .some((column: any) => column?.column?.toLowerCase() === hierarchy)
-      );
+      this.draggedDrillDownColumns = this.tableColumnsData
+  .flatMap((columns: any) => columns?.dimensions || [])
+  .filter((dimension: any) => 
+    this.locationHeirarchyList.includes(dimension?.column?.toLowerCase()) 
+  )
+  .map((dimension: any) => dimension?.column);
       this.drillDownIndex = 0;
     } else {
       this.drillDownIndex = 0;
