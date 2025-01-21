@@ -331,6 +331,10 @@ export class SheetsComponent {
   rightLegend:any = null;
   sortType : any = 0;
 
+  locationDrillDownSwitch: boolean = false;
+  locationHeirarchyList: string[] = ['country', 'state', 'city'];
+  isLocationFeild: boolean = false;
+
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
     ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -622,6 +626,9 @@ try {
         if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
           draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
           draggedColumnsObj[0][2] = 'year'
+        } else if(this.locationDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0){
+          draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
+          draggedColumnsObj[0][0] = this.draggedDrillDownColumns[0];
         } else {
           draggedColumnsObj = this.draggedColumnsData
         }
@@ -718,6 +725,9 @@ try {
               this.page = 1;
               this.pageNo = 1;
               this.tableDisplayPagination();
+            }
+            if(this.draggedColumns.length === 1){
+              this.isLocationFeild = this.locationHeirarchyList.some(item => item === this.draggedColumns[0]?.column?.toLowerCase());
             }
           },
           error: (error) => {
@@ -1164,6 +1174,7 @@ try {
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
     this.getDimensionAndMeasures();
     if (this.selectedSortColumnData) {
       let sortcolumn = JSON.parse(JSON.stringify(this.selectedSortColumnData));
@@ -1184,6 +1195,7 @@ try {
       this.draggedDrillDownColumns = [];
     }
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
   //   (this.draggedRowsData as any[]).forEach((data,index)=>{
   //    (data as any[]).forEach((aa)=>{ 
   //      if(column === aa){
@@ -1428,6 +1440,7 @@ try {
     this.drillDownIndex = 0;
     this.sheetName = '';
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
     delete this.originalData;
     console.log(event)
     if(event.index === -1){
@@ -1829,13 +1842,17 @@ sheetSave(){
     legendOrient:this.legendOrient,
     leftLegend:this.leftLegend,
     topLegend:this.topLegend,
-    sortColumn:this.sortColumn
+    sortColumn:this.sortColumn,
+    locationDrillDownSwitch:this.locationDrillDownSwitch
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
   if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
     draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
     draggedColumnsObj[0][2] = 'year'
+  } else if(this.locationDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0){
+    draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
+    draggedColumnsObj[0][0] = this.draggedDrillDownColumns[0];
   } else {
     draggedColumnsObj = this.draggedColumnsData
   }
@@ -2119,6 +2136,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.isEChatrts = this.sheetResponce?.isEChart;
         this.isApexCharts = this.sheetResponce?.isApexChart;
         this.dateDrillDownSwitch = this.sheetResponce?.isDrillDownData;
+        this.isLocationFeild = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
         this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
@@ -3373,6 +3391,7 @@ customizechangeChartPlugin() {
     this.bottomLegend = data.bottomLegend === '' ? null : data.bottomLegend
     this.rightLegend = data.rightLegend === '' ? null : data.rightLegend
     this.sortColumn = data.sortColumn ?? 'select';
+    this.locationDrillDownSwitch = data.locationDrillDownSwitch ?? false;
   }
 
   resetCustomizations(){
@@ -3463,6 +3482,7 @@ customizechangeChartPlugin() {
     this.bottomLegend = '0%'
     this.rightLegend = null
     this.sortColumn = 'select';
+    this.locationDrillDownSwitch = false;
   }
 
   sendPrompt() {
@@ -3672,6 +3692,24 @@ customizechangeChartPlugin() {
              
             this.dataExtraction();
          }
+
+  toggleLocationSwitch() {
+    this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
+    if (this.locationDrillDownSwitch) {
+      this.draggedDrillDownColumns = this.locationHeirarchyList.filter((hierarchy) =>
+        this.tableColumnsData
+          .flatMap((columns: any) => columns?.dimensions || [])
+          .some((column: any) => column?.column?.toLowerCase() === hierarchy)
+      );
+      this.drillDownIndex = 0;
+    } else {
+      this.drillDownIndex = 0;
+      this.draggedDrillDownColumns = [];
+      this.drillDownObject = [];
+    }
+
+    this.dataExtraction();
+  }
         
           callDrillDown(){
             this.dataExtraction();

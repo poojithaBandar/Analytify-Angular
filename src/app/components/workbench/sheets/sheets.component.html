@@ -3115,7 +3115,7 @@
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                    
-                                                    <div *ngIf="(((pie && chartId) || donut || bar))  && draggedColumns && draggedColumns.length == 1 && dateList.includes(draggedColumns[0]['data_type'])" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3142,7 +3142,7 @@
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="dateList.includes(draggedColumns[0]['data_type'])" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p >Date Field </p>
                                                                     </div>
@@ -3150,6 +3150,17 @@
                                                                         <span></span>
                                                                     </div>
                                                                     <div *ngIf="!dateDrillDownSwitch" class="toggle toggle-sm off mb-0" (click)="toggleDateSwitch()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div *ngIf="isLocationFeild" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Location Field </p>
+                                                                    </div>
+                                                                    <div *ngIf="locationDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleLocationSwitch()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!locationDrillDownSwitch" class="toggle toggle-sm off mb-0" (click)="toggleLocationSwitch()">
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
