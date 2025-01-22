@@ -49,6 +49,8 @@ import { SharedService } from '../../../shared/services/shared.service';
 // import { series } from '../../charts/apexcharts/data';
 import { tap } from 'rxjs/operators'; 
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
+import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
+import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 
 interface TableRow {
   [key: string]: any;
@@ -96,7 +98,8 @@ interface KpiData {
   ],
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
-    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent, NgxPaginationModule,NgSelectModule, InsightEchartComponent],
+    CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -280,31 +283,31 @@ export class SheetsdashboardComponent {
   @ViewChild('nestedDropdown', { static: true }) nestedDropdown: NgbDropdown | undefined;
   @ViewChild('ImageUploadKPI') ImageUploadKPI!: ElementRef;
   @ViewChild('imageUpload') imageUpload!: ElementRef<HTMLInputElement>;
-  iconList = [
-    { class: 'fa-solid fa-arrow-trend-up', name: 'Trend Up' },
-    { class: 'fa-solid fa-arrow-trend-down', name: 'Trend Down' },
-    { class: 'fa-solid fa-house', name: 'Home' },
-    { class: 'fa-solid fa-magnifying-glass', name: 'Magnifying Glass' },
-    { class: 'fa-solid fa-user', name: 'User' },
-    { class: 'fa-brands fa-facebook', name: 'Facebook' },
-    { class: 'fa-solid fa-check', name: 'Check' },
-    { class: 'fa-solid fa-download', name: 'Download' },
-    { class: 'fa-brands fa-twitter', name: 'Twitter' },
-    { class: 'fa-brands fa-instagram', name: 'Instagram' },
-    { class: 'fa-solid fa-envelope', name: 'Envelope' },
-    { class: 'fa-brands fa-linkedin', name: 'LinkedIn' },
-    { class: 'fa-solid fa-arrow-up', name: 'Up Arrow' },
-    { class: 'fa-solid fa-file', name: 'File' },
-    { class: 'fa-solid fa-calendar-days', name: 'Calendar Days' },
-    { class: 'fa-solid fa-circle-down', name: 'Circle Down' },
-    { class: 'fa-solid fa-address-book', name: 'Address Book' },
-    { class: 'fa-solid fa-handshake', name: 'Hand Shake' },
-    { class: 'fa-solid fa-layer-group', name: 'Layer Group' },
-    { class: 'fa-solid fa-users', name: 'Users' },
-    { class: 'fa-solid fa-link', name: 'Link' },
-    { class: 'fa-solid fa-sack-dollar', name: 'Sack Dollar' }
-  ];
-
+  // iconList = [
+  //   { class: 'fa-solid fa-arrow-trend-up', name: 'Trend Up' },
+  //   { class: 'fa-solid fa-arrow-trend-down', name: 'Trend Down' },
+  //   { class: 'fa-solid fa-house', name: 'Home' },
+  //   { class: 'fa-solid fa-magnifying-glass', name: 'Magnifying Glass' },
+  //   { class: 'fa-solid fa-user', name: 'User' },
+  //   { class: 'fa-brands fa-facebook', name: 'Facebook' },
+  //   { class: 'fa-solid fa-check', name: 'Check' },
+  //   { class: 'fa-solid fa-download', name: 'Download' },
+  //   { class: 'fa-brands fa-twitter', name: 'Twitter' },
+  //   { class: 'fa-brands fa-instagram', name: 'Instagram' },
+  //   { class: 'fa-solid fa-envelope', name: 'Envelope' },
+  //   { class: 'fa-brands fa-linkedin', name: 'LinkedIn' },
+  //   { class: 'fa-solid fa-arrow-up', name: 'Up Arrow' },
+  //   { class: 'fa-solid fa-file', name: 'File' },
+  //   { class: 'fa-solid fa-calendar-days', name: 'Calendar Days' },
+  //   { class: 'fa-solid fa-circle-down', name: 'Circle Down' },
+  //   { class: 'fa-solid fa-address-book', name: 'Address Book' },
+  //   { class: 'fa-solid fa-handshake', name: 'Hand Shake' },
+  //   { class: 'fa-solid fa-layer-group', name: 'Layer Group' },
+  //   { class: 'fa-solid fa-users', name: 'Users' },
+  //   { class: 'fa-solid fa-link', name: 'Link' },
+  //   { class: 'fa-solid fa-sack-dollar', name: 'Sack Dollar' }
+  // ];
+  iconList: any[] = []
   static itemChange(
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface
@@ -372,8 +375,25 @@ export class SheetsdashboardComponent {
       ]
     }
   }
+  private mapStyleToClass(style: string): string {
+    switch (style) {
+      case 'solid':
+        return 'fas';
+      case 'regular':
+        return 'far';
+      case 'brands':
+        return 'fab';
+      default:
+        return ''; // Handle unsupported styles
+    }
+  }
   ngOnInit() {  
     let displayGrid = DisplayGrid.Always;
+    this.iconList = Object.entries(iconsData).map(([key, value]: [string, any]) => ({
+      name: key,
+      styles: value.styles.map((style: string) => this.mapStyleToClass(style)), // Map styles to class prefixes
+      label: value.label, 
+    }));
     if(this.isPublicUrl){
       displayGrid = DisplayGrid.None;
     }
@@ -5544,12 +5564,18 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       });
     }
     selectedIcon: string | null = null;
-
-    selectIcon(icon: { class: string; name: string }) {
-      this.selectedIcon = icon.class;
+    searchText: string = ''; // Search input value
+    selectIcon(icon: any) {
       console.log('Selected Icon:', icon);
-      // Close the modal or perform other actions here
     }
+    getIconClass(icon: any): string {
+      return `${icon.styles[0]} fa-${icon.name}`; // Use the first available style
+    }
+    // selectIcon(icon: { class: string; name: string }) {
+    //   this.selectedIcon = icon.class;
+    //   console.log('Selected Icon:', icon);
+    //   // Close the modal or perform other actions here
+    // }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

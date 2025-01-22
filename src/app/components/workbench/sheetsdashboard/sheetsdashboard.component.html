@@ -84,7 +84,7 @@
                                                             aria-controls="collapseOne" style="justify-content: space-between;"
                                                             >
                                                             <div>
-                                                           <input class="form-check-input me-2 mt-0" name="checkbox1" (click)="checkAllChilds(panel)" [(ngModel)]="panel.is_selected"
+                                                           <input class="form-check-input me-2 mt-0 border" name="checkbox1" (click)="checkAllChilds(panel)" [(ngModel)]="panel.is_selected"
                                                             type="checkbox" value="" id="checkbox1" >
                                                             {{ panel.queryset_name }}
                                                             </div>
@@ -822,13 +822,13 @@
     </div>
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
-      <div class="" style="display: flex; align-items: center;">
-        <button type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="btn btn-icon btn-primary-light me-2 rounded-5">
-          <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 24px;"></i>
-          <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 24px;"></i>
-        </button>
-      
-         <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0;z-index:2">
+      <div type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="card mb-0 hide-show-btn btn-primary">
+        <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 24px;"></i>
+        <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 24px;"></i>
+      </div>
+      <div class="" style="display: flex; align-items: center; position: relative; top: -35px;">
+        
+         <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0; z-index: 2;">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
@@ -879,15 +879,16 @@
                             <a href=""><i class="fa fa-share p-2"></i></a>
                             <a href=""><i class="fa fa-list p-2"></i></a>
                     </div> -->
-                </div>
+                
             </div>
         </div> 
+       </div>
       </div> 
         <!-- <input class="col-lg-3 col-md-3 form-control" type="text"  placeholder="Title" [(ngModel)]="gridItemSize"  (change)="changeGridItemSize()" aria-label="Sheet" > -->
 
     
        <!-- <div style="margin: auto 0;overflow: scroll;" [style.height.px]="heightGrid" [style.width.px]="widthGrid" > -->
-        <div style="margin: auto 0;height: 100%;" >
+        <div style="margin: auto 0;height: 100%; position:relative; top:-44px" >
          
         <div class="d-flex align-items-center justify-content-start  mt-3" [ngClass]="{ 'mt-3': !isPublicUrl }" >
             <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
@@ -1159,7 +1160,6 @@
                                                               (change)="imageFileSelectEvent($event)" 
                                                               accept="image/*" 
                                                               style="display: none;" />
-
                             </div>
                         </div>
                       </div>
@@ -1591,27 +1591,78 @@
 
 
 
-  <ng-template #iconModal let-modal>
+  <ng-template #iconModal let-modal style="height: 40vh; overflow-y: auto;">
     <div class="modal-header">
       <h6 class="modal-title">Select Icon</h6>
       <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
       </button>
+      <h6>Select Icon</h6>
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        class="form-control"
+        placeholder="Search icons..."
+      />
     </div>
-    <div class="modal-body">
+    <div class="modal-body"  style="max-height: calc(100% - 60px); overflow-y: auto;">
       <div class="text-wrap">
         <div class="row">
-          <div class="col-3" *ngFor="let icon of iconList">
-            <div
+          <div
+          class="col-3"
+          *ngFor="let icon of iconList | filterIcons: searchText"
+          (click)="selectIcon(icon)"
+        >            <div
               class="icon-container text-center p-2"
-              (click)="selectIcon(icon)"
+             
               style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;"
             >
-              <i [class]="icon.class" style="font-size: 24px;"></i>
-              <p class="mt-2" style="font-size: 12px;">{{ icon.name }}</p>
+            <i [class]="getIconClass(icon)" style="font-size: 24px;"></i>
+            <p class="mt-2" style="font-size: 12px;">{{ icon.name }}</p>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="position-card p-4 border">
+      <div class="row">
+        <div class="col-5 d-flex align-items-center justify-content-between">
+          <p class="mb-0">Position: </p>
+          <div class="form-group mb-1">
+            <select class="form-select form-select select2">
+                <option value="2" ng-reflect-value="2">Top Left</option>
+                <option value="3" ng-reflect-value="3">Top Right</option>
+                <option value="3" ng-reflect-value="3">Bottom Left</option>
+                <option value="3" ng-reflect-value="3">Bottom Right</option>
+            </select>
+         </div>
+        </div>
+        <div class="col-4 d-flex align-items-center">
+          <p class="mb-0">Font-size: </p>
+          <div class="form-group mb-1">
+            <select class="form-select form-select select2">
+              <option value="14" ng-reflect-value="2">14</option>
+              <option value="16" ng-reflect-value="3">16</option>
+              <option value="18" ng-reflect-value="3">18</option>
+              <option value="22" ng-reflect-value="3">22</option>
+              <option value="24" ng-reflect-value="3">24</option>
+              <option value="28" ng-reflect-value="3">28</option>
+              <option value="30" ng-reflect-value="3">30</option>
+              <option value="32" ng-reflect-value="3">32</option>
+              <option value="36" ng-reflect-value="3">36</option>
+          </select>
+         </div>
+        </div>
+        <div class="col-3 d-flex align-items-center ">
+          <p class="mb-0">Color picker: </p>
+          <div class="form-group mb-1">
+            <input type="color" id="favcolor" name="favcolor" value="#ff0000" class="mt-1">
+           </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer p-2">
+      <button class="btn btn-primary">Apply</button>
     </div>
     
   </ng-template>
