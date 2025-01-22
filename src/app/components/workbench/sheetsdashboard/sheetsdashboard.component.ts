@@ -394,6 +394,8 @@ export class SheetsdashboardComponent {
       styles: value.styles.map((style: string) => this.mapStyleToClass(style)), // Map styles to class prefixes
       label: value.label, 
     }));
+    this.updateFilteredIcons(); // Update the initial filtered icons
+
     if(this.isPublicUrl){
       displayGrid = DisplayGrid.None;
     }
@@ -5571,6 +5573,27 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     getIconClass(icon: any): string {
       return `${icon.styles[0]} fa-${icon.name}`; // Use the first available style
     }
+    priorityIcons: string[] = ['home', 'user', 'camera', 'heart']; // List of prioritized icon names
+  filteredIcons: any[] = [];
+  showAll: boolean = false; // Toggle for showing all icons
+
+  updateFilteredIcons(): void {
+    const searchFilter = this.iconList.filter(
+      (icon) =>
+        !this.searchText ||
+        icon.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        icon.label.toLowerCase().includes(this.searchText.toLowerCase())
+    );
+
+    this.filteredIcons = this.showAll
+      ? searchFilter // Show all icons if toggled
+      : searchFilter.filter((icon) => this.priorityIcons.includes(icon.name)); // Show priority icons only
+  }
+  toggleShowAll(): void {
+    this.showAll = !this.showAll;
+    this.updateFilteredIcons();
+  }
+
     // selectIcon(icon: { class: string; name: string }) {
     //   this.selectedIcon = icon.class;
     //   console.log('Selected Icon:', icon);

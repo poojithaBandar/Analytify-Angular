@@ -1598,28 +1598,36 @@
       </button>
       <h6>Select Icon</h6>
       <input
-        type="text"
-        [(ngModel)]="searchText"
-        class="form-control"
-        placeholder="Search icons..."
-      />
+      type="text"
+      [(ngModel)]="searchText"
+      class="form-control"
+      placeholder="Search icons..."
+      (ngModelChange)="updateFilteredIcons()"
+    />
     </div>
     <div class="modal-body"  style="max-height: calc(100% - 60px); overflow-y: auto;">
       <div class="text-wrap">
         <div class="row">
           <div
-          class="col-3"
-          *ngFor="let icon of iconList | filterIcons: searchText"
-          (click)="selectIcon(icon)"
-        >            <div
-              class="icon-container text-center p-2"
-             
-              style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;"
-            >
-            <i [class]="getIconClass(icon)" style="font-size: 24px;"></i>
-            <p class="mt-2" style="font-size: 12px;">{{ icon.name }}</p>
-            </div>
-          </div>
+        class="col-3"
+        *ngFor="let icon of filteredIcons"
+        (click)="selectIcon(icon)"
+      >
+        <div
+          class="icon-container text-center p-2"
+          style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;"
+        >
+          <i [class]="icon.styles[0] + ' fa-' + icon.name" style="font-size: 24px;"></i>
+          <p class="mt-2" style="font-size: 12px;">{{ icon.label }}</p>
+        </div>
+      </div>
+        </div>
+        <div class="text-center mt-3" *ngIf="!showAll && searchText === ''">
+          <button class="btn btn-primary" (click)="toggleShowAll()">View More</button>
+        </div>
+        <!-- Show "View Less" button if showing all icons -->
+        <div class="text-center mt-3" *ngIf="showAll && searchText === ''">
+          <button class="btn btn-secondary" (click)="toggleShowAll()">View Less</button>
         </div>
       </div>
     </div>
