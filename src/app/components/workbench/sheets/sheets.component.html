@@ -3144,7 +3144,7 @@
                                                             <ng-template>
                                                                 <div *ngIf="dateList.includes(draggedColumns[0]['data_type'])" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
-                                                                        <p >Date Field </p>
+                                                                        <p >Drill Field </p>
                                                                     </div>
                                                                     <div *ngIf="dateDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleDateSwitch()">
                                                                         <span></span>
@@ -3155,30 +3155,16 @@
                                                                 </div>
                                                                 <div *ngIf="isLocationFeild" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
-                                                                        <p >Location Field </p>
+                                                                        <p >Drill Field </p>
                                                                     </div>
-                                                                    <div *ngIf="locationDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleLocationSwitch()">
+                                                                    <div *ngIf="locationDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleLocationSwitch(true)">
                                                                         <span></span>
                                                                     </div>
-                                                                    <div *ngIf="!locationDrillDownSwitch" class="toggle toggle-sm off mb-0" (click)="toggleLocationSwitch()">
+                                                                    <div *ngIf="!locationDrillDownSwitch" class="toggle toggle-sm off mb-0" (click)="toggleLocationSwitch(true)">
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
-                                                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
-                                                                style="position: relative;min-height: 33px; padding: 2px;" 
-                                                                #drilldownList="cdkDropList" 
-                                                                [cdkDropListData]="draggedDrillDownColumns" 
-                                                                (cdkDropListDropped)="drillDownColumndrop($event)">
-                                                                    @for(columns of draggedDrillDownColumns;track columns;let index = $index){
-                                                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
-                                                                       
-                                                                        {{ columns.column }}
-                                                                     <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
-                                
-                                                                        
-                                                                    </div>
-                                                                    }
-                                                                </div>                                                            
+                                                                                                                
                                                             </ng-template>
                                                           </div>
                                                         </div>

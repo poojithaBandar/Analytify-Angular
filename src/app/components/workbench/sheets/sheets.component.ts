@@ -332,6 +332,7 @@ export class SheetsComponent {
   sortType : any = 0;
 
   locationDrillDownSwitch: boolean = false;
+  locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
 
@@ -626,9 +627,6 @@ try {
         if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
           draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
           draggedColumnsObj[0][2] = 'year'
-        } else if(this.locationDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0){
-          draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
-          draggedColumnsObj[0][0] = this.draggedDrillDownColumns[0];
         } else {
           draggedColumnsObj = this.draggedColumnsData
         }
@@ -725,9 +723,6 @@ try {
               this.page = 1;
               this.pageNo = 1;
               this.tableDisplayPagination();
-            }
-            if(this.draggedColumns.length === 1){
-              this.isLocationFeild = this.locationHeirarchyList.some(item => item === this.draggedColumns[0]?.column?.toLowerCase());
             }
           },
           error: (error) => {
@@ -1019,7 +1014,20 @@ try {
       // });
       console.log(this.draggedColumnsData);
       this.draggedDrillDownColumns = [];
-
+      if(this.draggedColumns.length === 1){
+        const startIndex = this.locationHeirarchyFieldList.findIndex(
+          (location) => location.toLowerCase() === this.draggedColumns[0]?.column?.toLowerCase()
+        );
+        if(startIndex >= 0){
+          this.isLocationFeild = true;
+          this.locationHeirarchyList = this.locationHeirarchyFieldList.splice(startIndex);
+          this.locationHeirarchyFieldList = ['country', 'state', 'city'];
+        } else {
+          this.isLocationFeild = false;
+        }
+      } else {
+        this.drillDownObject = [];
+      }
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
@@ -1171,6 +1179,9 @@ try {
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
       this.draggedDrillDownColumns = [];
     }
+    if(this.drillDownObject && this.drillDownObject.length > 0) {
+      this.drillDownObject = [];
+    }
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
     this.dateDrillDownSwitch = false;
@@ -1184,6 +1195,20 @@ try {
         this.sortColumn = 'select';
         this.sortType = 0;
       }
+    }
+    if(this.draggedColumns.length === 1){
+      const startIndex = this.locationHeirarchyFieldList.findIndex(
+        (location) => location.toLowerCase() === this.draggedColumns[0]?.column?.toLowerCase()
+      );
+      if(startIndex >= 0){
+        this.isLocationFeild = true;
+        this.locationHeirarchyList = this.locationHeirarchyFieldList.splice(startIndex);
+        this.locationHeirarchyFieldList = ['country', 'state', 'city'];
+        this.toggleLocationSwitch(false);
+      } else {
+        this.isLocationFeild = false;
+      }
+      
     }
    this.dataExtraction();
   }
@@ -3693,14 +3718,18 @@ customizechangeChartPlugin() {
             this.dataExtraction();
          }
 
-  toggleLocationSwitch() {
+  toggleLocationSwitch(onColumnRemove : boolean) {
+    if(onColumnRemove) {
     this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
+    }
     if (this.locationDrillDownSwitch) {
-      this.draggedDrillDownColumns = this.tableColumnsData
-  .flatMap((columns: any) => columns?.dimensions || [])
-  .filter((dimension: any) => 
-    this.locationHeirarchyList.includes(dimension?.column?.toLowerCase()) 
+      this.draggedDrillDownColumns = this.locationHeirarchyList
+  .map((hierarchy) =>
+    this.tableColumnsData
+      .flatMap((columns: any) => columns?.dimensions || []) // Flatten dimensions
+      .find((dimension: any) => dimension?.column?.toLowerCase() === hierarchy) // Match the hierarchy
   )
+  .filter((dimension: any) => dimension) // Remove undefined results for unmatched items
   .map((dimension: any) => dimension?.column);
       this.drillDownIndex = 0;
     } else {
