@@ -2104,9 +2104,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
   viewSheet(sheetdata: any) {
     if (this.dashboardId) {
       this.sheetsIdArray = this.dashboard.map(item => item['sheetId']);
-      if (this.sheetsIdArray && this.dashboardsheetsIdArray && !this.arraysHaveSameData(this.sheetsIdArray , this.dashboardsheetsIdArray)) {
-        this.toasterService.info('Please Update the dashboard.', 'info', { positionClass: 'toast-top-center' })
-      } else {
+      // if (this.sheetsIdArray && this.dashboardsheetsIdArray && !this.arraysHaveSameData(this.sheetsIdArray , this.dashboardsheetsIdArray)) {
+      //   this.toasterService.info('Please Update the dashboard.', 'info', { positionClass: 'toast-top-center' })
+      // } else {
         let sheetId = sheetdata.sheetId;
         // if (sheetdata.fileId) {
         //   this.fileId = sheetdata.fileId;
@@ -2126,7 +2126,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
           const encodedDashboardId = btoa(this.dashboardId.toString());
 
           this.router.navigate(['/analytify/sheetsdashboard/sheets/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
-        }
+        // }
       // }
     } else {
       this.toasterService.info('Please save the dashboard.', 'info', { positionClass: 'toast-top-center' })
@@ -2170,6 +2170,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       // }
       }
     }
+    this.canNavigateToAnotherPage = true;
     }
     this.setDashboardNewSheets(item.sheetId, false);
   }
@@ -2677,11 +2678,12 @@ donutChartOptions(xaxis:any,yaxis:any,savedOptions:any, isEchart : boolean){
 heatMapChartOptions(savedOptions:any){
   return savedOptions;
 }
-addIcon(iconModal:any){
+addIcon(iconModal:any,item:any){
   this.modalService.open(iconModal, {
     centered: true,
     windowClass: 'animate__animated animate__zoomIn',
   });
+  this.KpiIconItem = item;
 }
 
 //filters
@@ -5473,7 +5475,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         };
         this.dashboard.push(element);
         console.log('Updated Dashboard:', this.dashboard);
-  
+        this.canNavigateToAnotherPage = true;
         // Clear uploadedImage after adding to the dashboard
         this.imageTitle = '';
         this.uploadedImage = null;
@@ -5513,7 +5515,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               kpiImage: KpiImage,
             },
           };
-          console.log('addedKpiImage',this.dashboard)
+          console.log('addedKpiImage',this.dashboard);
+          this.canNavigateToAnotherPage = true;
         } else {
           console.error('kpiData is undefined for the item:', item);
         }
@@ -5534,6 +5537,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
   
         // Update the dashboard array
         this.dashboard[itemIndex] = updatedItem;
+        this.canNavigateToAnotherPage = true;
       } else {
         console.error('Item not found in dashboard:', item);
       }
@@ -5567,13 +5571,90 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
     selectedIcon: string | null = null;
     searchText: string = ''; // Search input value
+    KpiIconItem:any;
+    selectedIconFontSize: string = '24px'; // Default size
+    selectedIconColor: string = '#888'; // Default color
+    selectedIconPosition: string = 'bottom-right';
     selectIcon(icon: any) {
       console.log('Selected Icon:', icon);
+      this.selectedIcon = `${icon.styles[0]} fa-${icon.name}`;
+
+    
+    }
+    changeSize(event:any): void {
+      const size = event.target.value;
+      this.selectedIconFontSize = `${size}px`;
+      console.log('kpiSize',this.selectedIconFontSize)
+    }
+  
+    // Handle changes to color
+    changeColor(event:any): void {
+      const color = event.target.value;
+      this.selectedIconColor = color;
+      console.log('kpiColor',this.selectedIconColor)
+    }
+  
+    // Handle position selection
+    changePosition(event:any): void {
+      const position = event.target.value;
+      this.selectedIconPosition = position;
+      console.log('kpiPosition',this.selectedIconPosition)
+    }
+    applyIconInKpi(){
+      const itemIndex = this.dashboard.findIndex((d) => d['id'] === this.KpiIconItem.id);
+      if (itemIndex !== -1) {
+        // const item1 = this.dashboard[itemIndex];
+        if (this.KpiIconItem['kpiData']) {
+          // Add the kpiImage key to kpiData
+          this.dashboard[itemIndex] = {
+            ...this.KpiIconItem,
+            kpiData: {
+              ...this.KpiIconItem.kpiData,
+              kpiIcon: this.selectedIcon,
+              kpiIconSize: this.selectedIconFontSize,
+              kpiIconColor:this.selectedIconColor,
+              kpiIconPosition:this.selectedIconPosition
+            },
+          };
+          console.log('addedKpiIcon',this.dashboard);
+          this.canNavigateToAnotherPage = true;
+        } else {
+          console.error('kpiData is undefined for the item:', this.KpiIconItem);
+        }
+      } else {
+        console.error('Item not found in dashboard:', this.KpiIconItem);
+      } 
+    }
+
+    getIconPositionStyles(position: string) {
+      let styles = {};
+    
+      // Check the position value and apply corresponding styles
+      switch (position) {
+        case 'top-left':
+          styles = { top: '0', left: '0' };
+          break;
+        case 'top-right':
+          styles = { top: '0', right: '0' };
+          break;
+        case 'bottom-left':
+          styles = { bottom: '0', left: '0' };
+          break;
+        case 'bottom-right':
+          styles = { bottom: '0', right: '0' };
+          break;
+        default:
+          styles = { bottom: '0', right: '0' }; // Default fallback position
+          break;
+      }
+    
+      return styles;
     }
     getIconClass(icon: any): string {
       return `${icon.styles[0]} fa-${icon.name}`; // Use the first available style
     }
-    priorityIcons: string[] = ['home', 'user', 'camera', 'heart']; // List of prioritized icon names
+    priorityIcons: string[] = ['arrow-trend-up','arrow-trend-down','house','magnifying-glass','user','facebook','check','download','twitter','instagram','envelope','linkedin','arrow-up','file','calendar-days','circle-down','address-book','handshake','layer-group','users','link','sack-dollar'
+    ];; // List of prioritized icon names
   filteredIcons: any[] = [];
   showAll: boolean = false; // Toggle for showing all icons
 
@@ -5593,6 +5674,40 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     this.showAll = !this.showAll;
     this.updateFilteredIcons();
   }
+  editKpiIcon(iconModal:any,item:any){
+    this.modalService.open(iconModal, {
+      centered: true,
+      windowClass: 'animate__animated animate__zoomIn',
+    });
+    console.log('editKpi',item);
+    const kpiData = item.kpiData
+    this.selectedIconColor = kpiData.kpiIconColor ?? '#888'
+    this.selectedIconFontSize = kpiData.kpiIconSize ?? '24px'
+    this.selectedIconPosition = kpiData.kpiIconPosition ?? 'bottom-right'
+    this.selectedIcon = kpiData.kpiIcon ?? null
+ 
+  }
+  removeKpiIcon(item: any): void {
+    const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
+    if (itemIndex !== -1) {
+      const updatedItem = {
+        ...this.dashboard[itemIndex],
+        kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+      };
+
+      // Delete kpiIcon key if it exists
+      delete updatedItem.kpiData.kpiIcon;
+      delete updatedItem.kpiData.kpiIconPosition;
+      delete updatedItem.kpiData.kpiIconColor;
+      delete updatedItem.kpiData.kpiIconSize;
+      // Update the dashboard array
+      this.dashboard[itemIndex] = updatedItem;
+      this.canNavigateToAnotherPage = true;
+    } else {
+      console.error('Item not found in dashboard:', item);
+    }
+  }
+
 
     // selectIcon(icon: { class: string; name: string }) {
     //   this.selectedIcon = icon.class;

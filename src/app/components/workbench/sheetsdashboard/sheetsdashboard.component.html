@@ -1142,7 +1142,17 @@
                                                               <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Add Icon'"
                                                               [previledgeId]="37" [isBtn]="false"
-                                                              (btnClickEvent)="addIcon(iconModal)" 
+                                                              (btnClickEvent)="addIcon(iconModal,item)" 
+                                                              [isIcon]="false"></app-insights-button>
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiData'].kpiIcon" [classesList]="'dropdown-item'"
+                                                              [buttonName]="'Change Icon'"
+                                                              [previledgeId]="37" [isBtn]="false"
+                                                              (btnClickEvent)="editKpiIcon(iconModal,item)" 
+                                                              [isIcon]="false"></app-insights-button>
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiData'].kpiIcon" [classesList]="'dropdown-item'"
+                                                              [buttonName]="'Remove Icon'"
+                                                              [previledgeId]="37" [isBtn]="false"
+                                                              (btnClickEvent)="removeKpiIcon(item)" 
                                                               [isIcon]="false"></app-insights-button>
                                                               <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Change Image'"
@@ -1509,9 +1519,9 @@
                     @for(row of item['kpiData'].rows;track row){
                       <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                       }
-                      <i class="fa fa-arrow-trend-up" 
-                      style="position: absolute; bottom: 0; right: 0; font-size: 1.5rem; color: #888;">
-                    </i>
+                      <i [class]="item['kpiData'].kpiIcon" [style.font-size]="item['kpiData'].kpiIconSize"
+                      [style.color]="item['kpiData'].kpiIconColor"
+                      [ngStyle]="getIconPositionStyles(item['kpiData'].kpiIconPosition)" style="position: absolute;"></i>
                 </div>
               }
               <div *ngIf="item['chartType'] === 'Table'">
@@ -1591,86 +1601,81 @@
 
 
 
-  <ng-template #iconModal let-modal style="height: 40vh; overflow-y: auto;">
+  <ng-template #iconModal let-modal>
     <div class="modal-header">
       <h6 class="modal-title">Select Icon</h6>
       <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
       </button>
-      <h6>Select Icon</h6>
-      <input
-      type="text"
-      [(ngModel)]="searchText"
-      class="form-control"
-      placeholder="Search icons..."
-      (ngModelChange)="updateFilteredIcons()"
-    />
     </div>
-    <div class="modal-body"  style="max-height: calc(100% - 60px); overflow-y: auto;">
-      <div class="text-wrap">
-        <div class="row">
-          <div
-        class="col-3"
-        *ngFor="let icon of filteredIcons"
-        (click)="selectIcon(icon)"
-      >
-        <div
-          class="icon-container text-center p-2"
-          style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;"
-        >
-          <i [class]="icon.styles[0] + ' fa-' + icon.name" style="font-size: 24px;"></i>
-          <p class="mt-2" style="font-size: 12px;">{{ icon.label }}</p>
-        </div>
+    <div class="card mb-0">
+      <div class="input-group mb-2">
+        <input type="text" placeholder="Search Icon..."   [(ngModel)]="searchText" (ngModelChange)="updateFilteredIcons()" class="form-control border ng-pristine ng-valid ng-touched">
+        <button type="button" aria-label="button" (click)="updateFilteredIcons()" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+            <i aria-hidden="true" class="fe fe-search"></i>
+        </button>
       </div>
-        </div>
-        <div class="text-center mt-3" *ngIf="!showAll && searchText === ''">
-          <button class="btn btn-primary" (click)="toggleShowAll()">View More</button>
+      <div class="view-more-less">
+        <div class="text-end " *ngIf="!showAll && searchText === ''">
+          <a class="border-bottom cursor-pointer" (click)="toggleShowAll()">View More <i class="fa fa-angle-double-down"></i></a>
         </div>
         <!-- Show "View Less" button if showing all icons -->
-        <div class="text-center mt-3" *ngIf="showAll && searchText === ''">
-          <button class="btn btn-secondary" (click)="toggleShowAll()">View Less</button>
+        <div class="text-end " *ngIf="showAll && searchText === ''">
+          <a class=" border-bottom cursor-pointer" (click)="toggleShowAll()">View Less  <i class="fa fa-angle-double-up"></i></a>
         </div>
       </div>
     </div>
-    <div class="position-card p-4 border">
+
+
+    <div class="modal-body"  style="height:360px; overflow-y: auto;">
+      <div class="text-wrap">
+        <div class="row">
+          <div class="col-3" *ngFor="let icon of filteredIcons" (click)="selectIcon(icon)" [ngClass]="{'selected-icon': selectedIcon === (icon.styles[0] + ' fa-' + icon.name)}"
+          ngbTooltip="{{ icon.label }}" ngbTooltip="{{ icon.label }}">
+            <div class="icon-container text-center p-2 mb-1 rounded-3" style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;">
+              <i [class]="icon.styles[0] + ' fa-' + icon.name" style="font-size: 18px;"></i>
+              <!-- <p class="mt-2" style="font-size: 12px;">{{ icon.label }}</p> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="position-card p-4 border bg-light">
+      <div class="card mb-0 border px-4 cursor-pointer bg-light" style="width: fit-content; position: absolute; bottom: 149px; left: 0px; border-radius: 5px 5px 0px 0px; box-shadow: none !important;">
+        <p class="mb-0 border-bottom">Customize</p>
+      </div>
       <div class="row">
-        <div class="col-5 d-flex align-items-center justify-content-between">
+        <div class="col-5">
           <p class="mb-0">Position: </p>
           <div class="form-group mb-1">
-            <select class="form-select form-select select2">
-                <option value="2" ng-reflect-value="2">Top Left</option>
-                <option value="3" ng-reflect-value="3">Top Right</option>
-                <option value="3" ng-reflect-value="3">Bottom Left</option>
-                <option value="3" ng-reflect-value="3">Bottom Right</option>
+            <select class="form-select form-select select2" [(ngModel)]="selectedIconPosition" (change)="changePosition($event)">
+              <option value="top-left">Top Left</option>
+              <option value="top-right">Top Right</option>
+              <option value="bottom-left">Bottom Left</option>
+              <option value="bottom-right">Bottom Right</option>
             </select>
          </div>
         </div>
-        <div class="col-4 d-flex align-items-center">
+        <div class="col-4">
           <p class="mb-0">Font-size: </p>
           <div class="form-group mb-1">
-            <select class="form-select form-select select2">
-              <option value="14" ng-reflect-value="2">14</option>
-              <option value="16" ng-reflect-value="3">16</option>
-              <option value="18" ng-reflect-value="3">18</option>
-              <option value="22" ng-reflect-value="3">22</option>
-              <option value="24" ng-reflect-value="3">24</option>
-              <option value="28" ng-reflect-value="3">28</option>
-              <option value="30" ng-reflect-value="3">30</option>
-              <option value="32" ng-reflect-value="3">32</option>
-              <option value="36" ng-reflect-value="3">36</option>
-          </select>
+            <select class="form-select" [(ngModel)]="selectedIconFontSize" (change)="changeSize($event)">
+              <option *ngFor="let size of [14, 16, 18, 22, 24, 28, 30, 32, 36]" [value]="size">{{ size }}</option>
+            </select>
          </div>
         </div>
-        <div class="col-3 d-flex align-items-center ">
+        <div class="col-3">
           <p class="mb-0">Color picker: </p>
           <div class="form-group mb-1">
-            <input type="color" id="favcolor" name="favcolor" value="#ff0000" class="mt-1">
+            <input type="color"  [(ngModel)]="selectedIconColor"
+            (change)="changeColor($event)" id="favcolor" name="favcolor" class="mt-1">
            </div>
         </div>
       </div>
     </div>
     
     <div class="modal-footer p-2">
-      <button class="btn btn-primary">Apply</button>
+      <button type="button" class="btn ripple btn-secondary"> Cancel </button>
+      <button (click)="applyIconInKpi()" class="btn btn-primary">Apply</button>
     </div>
     
   </ng-template>
