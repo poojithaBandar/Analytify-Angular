@@ -802,7 +802,7 @@
                     <div class="card-body title-padding">
                         <div class="row align-items-center">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12 maind-flex" >
-                            <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-1" >
+                            <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
                                 <div class="title-container border rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
                                     <span class="card mb-0" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? {'padding-top': '1.5%', 'padding-left': '15px'} : {'padding': '1.5%'}" style="padding-left: 15px;cursor: text;"></span>
@@ -824,7 +824,7 @@
                                 </div> -->
                             </div>
 
-                            <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-1" style="display: flex;justify-content: space-evenly;">
+                            <div class="col-lg-3 col-md-3 col-sm-3 p-1" style="display: flex;justify-content: space-around;">
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
                                     <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
                                     <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
@@ -1156,15 +1156,15 @@
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
                           
-                            <div class="body table-responsive" style="max-height:385px;padding: 0px;">
+                            <div class="body table-responsive" style="max-height:350px;padding: 0px;">
                                 
                                 @if(table && chartId){
                                 <table>
                                     <thead>
-                                      <tr [ngStyle]="{ 'font-family': headerFontFamily, 'font-size': headerFontSize, 
-                                      'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 'color': headerFontColor }">
+                                      <tr>
                                         @for(column of tableColumnsDisplay;track column){
-                                        <th [ngStyle]="{ 'text-align': headerFontAlignment, 'font-weight': headerFontWeight }">{{ column }}
+                                        <th [ngStyle]="{ 'font-family': headerFontFamily, 'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 
+                                        'color': headerFontColor, 'text-align': headerFontAlignment, 'font-weight': headerFontWeight, 'font-size': headerFontSize }">{{ column }}
                                             <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                   aria-haspopup="true" aria-expanded="false" class=""><i
@@ -1185,10 +1185,10 @@
                                                                 currentPage: page,
                                                                 totalItems: totalItems }) ; let i = index"
                                         [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2), 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
-                                        'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 'color': tableDataFontColor }">
+                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2) }">
                                         @for(column of tableColumnsDisplay;track column){
-                                        <td [ngStyle]="{ 'text-align': tableDataFontAlignment }">{{ row[column] }}</td>
+                                        <td [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-weight': tableDataFontWeight, 'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 
+                                        'color': tableDataFontColor, 'text-align': tableDataFontAlignment, 'font-size': tableDataFontSize }">{{ row[column] }}</td>
                                         }
                                     </tr>
                                     
@@ -1262,7 +1262,7 @@
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
-                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [yGridColor]="yGridColor" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -1438,7 +1438,7 @@
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -1811,7 +1811,7 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isBold = !isBold;headerFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
@@ -1944,7 +1944,7 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isBold = !isBold;tableDataFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
@@ -2058,7 +2058,7 @@
                                                               aria-expanded="true"
                                                               aria-controls="collapse"
                                                               >
-                                                              Dimension
+                                                              Dimensions
                                                             </button>
                                                             
                                                           </h6>
@@ -2116,7 +2116,7 @@
                                                                                                                 <option value="19">19px</option>
                                                                                                                 <option value="20">20px</option>
                                                                                                              </select>
-                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isXlabelBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isXlabelBold = !isXlabelBold;xlabelFontWeight = isXlabelBold ? 700 : 400 ;">
                                                                                                                 <p>B</p>
                                                                                                             </div>
                                                                                                             <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2259,7 +2259,7 @@
                                                                                                             <option value="19">19px</option>
                                                                                                             <option value="20">20px</option>
                                                                                                          </select>
-                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isYlabelBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isYlabelBold = !isYlabelBold;ylabelFontWeight = isYlabelBold ? 700 : 400 ;">
                                                                                                             <p>B</p>
                                                                                                         </div>
                                                                                                         <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2434,7 +2434,7 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(kpi || guage || calendar || map || radar || multiLine || barLine || (isApexCharts && (heatMap)))">
+                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(kpi || guage || calendar || map || radar || barLine || (isApexCharts && (heatMap)))">
                                                                 <div class="row">
                                                                   <div class="">
                                                                       <div class="font-color-card">
@@ -2828,35 +2828,39 @@
                                                                     [format]="'hex'"></ngx-colors>
                                                                 </div>
 
-                                                                <div class="dropdown" *ngIf="pie||donut||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || calendar">
-                                                                    <!-- Dropdown Button -->
-                                                                    <button class="dropdown-button" >
-                                                                        <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
-                                                                          <div
-                                                                            *ngFor="let color of selectedColorScheme"
-                                                                            class="color-box"
-                                                                            [style.background]="color"
-                                                                          ></div>
-                                                                        </div>
-                                                                        <span *ngIf="selectedColorScheme.length === 0">Select Color Scheme</span>
-                                                                      </button>
-                                                                    <!-- Dropdown Content -->
-                                                                    <div class="dropdown-content">
+                                                                <div 
+                                                                class="dropdown" 
+                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || funnel || calendar">
+                                                                <!-- Dropdown Button -->
+                                                                <button class="dropdown-button" (click)="toggleDropdownColorScheme()">
+                                                                  <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
+                                                                    <div
+                                                                      *ngFor="let color of selectedColorScheme.slice(0, 9)"
+                                                                      class="color-box"
+                                                                      [style.background]="color"
+                                                                    ></div>
+                                                                  </div>
+                                                                  <span *ngIf="selectedColorScheme.length === 0">Select Color Scheme</span>
+                                                                  <span class="arrow-down"></span>
+                                                                </button>
+                                                              
+                                                                <!-- Dropdown Content -->
+                                                                <div class="dropdown-content" [class.show]="isColorSchemeDropdownOpen">
+                                                                  <div
+                                                                    *ngFor="let scheme of colorSchemes"
+                                                                    class="dropdown-item"
+                                                                    (click)="selectColorScheme(scheme)">
+                                                                    <div class="color-row">
                                                                       <div
-                                                                        *ngFor="let scheme of colorSchemes"
-                                                                        class="dropdown-item"
-                                                                        (click)="selectColorScheme(scheme)"
-                                                                      >
-                                                                        <div class="color-row">
-                                                                          <div
-                                                                            *ngFor="let color of scheme"
-                                                                            class="color-box"
-                                                                            [style.background]="color"
-                                                                          ></div>
-                                                                        </div>
+                                                                        *ngFor="let color of scheme"
+                                                                        class="color-box"
+                                                                        [style.background]="color">
                                                                       </div>
                                                                     </div>
                                                                   </div>
+                                                                </div>
+                                                              </div>
+                                                              
                                                                   
                                                                   
 
@@ -3111,7 +3115,7 @@
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                    
-                                                    <div *ngIf="(((pie && chartId) || donut || bar))  && draggedColumns && draggedColumns.length == 1 && dateList.includes(draggedColumns[0]['data_type'])" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3138,9 +3142,9 @@
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="dateList.includes(draggedColumns[0]['data_type'])" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
-                                                                        <p >Date Field </p>
+                                                                        <p >Drill Field </p>
                                                                     </div>
                                                                     <div *ngIf="dateDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleDateSwitch()">
                                                                         <span></span>
@@ -3149,21 +3153,18 @@
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
-                                                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
-                                                                style="position: relative;min-height: 33px; padding: 2px;" 
-                                                                #drilldownList="cdkDropList" 
-                                                                [cdkDropListData]="draggedDrillDownColumns" 
-                                                                (cdkDropListDropped)="drillDownColumndrop($event)">
-                                                                    @for(columns of draggedDrillDownColumns;track columns;let index = $index){
-                                                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
-                                                                       
-                                                                        {{ columns.column }}
-                                                                     <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
-                                
-                                                                        
+                                                                <div *ngIf="isLocationFeild" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Drill Field </p>
                                                                     </div>
-                                                                    }
-                                                                </div>                                                            
+                                                                    <div *ngIf="locationDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleLocationSwitch(true)">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!locationDrillDownSwitch" class="toggle toggle-sm off mb-0" (click)="toggleLocationSwitch(true)">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                                                                
                                                             </ng-template>
                                                           </div>
                                                         </div>

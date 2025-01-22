@@ -2,6 +2,7 @@ import { CanDeactivateFn } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SheetsComponent } from './components/workbench/sheets/sheets.component';
 import { DatabaseComponent } from './components/workbench/database/database.component';
+import { SheetsdashboardComponent } from './components/workbench/sheetsdashboard/sheetsdashboard.component';
 
 export interface CanComponentDeactivate {
   canDeactivate: () => boolean | Observable<boolean>;
@@ -9,6 +10,8 @@ export interface CanComponentDeactivate {
   canNavigate: () => boolean | Observable<boolean>;
   dataNotSaveAlert: () => Promise<boolean>;
   sheetNotSaveAlert: () => Promise<boolean>;
+  dashboardNotSaveAlert: () => Promise<boolean>;
+
 }
 
 export const canDeactivateGuard: CanDeactivateFn<CanComponentDeactivate> = (component) => {
@@ -23,6 +26,12 @@ export const canDeactivateGuard: CanDeactivateFn<CanComponentDeactivate> = (comp
   } else if(component instanceof SheetsComponent){
     if(component.canNavigate()){
       return component.sheetNotSaveAlert().then((result) => {
+        return result;
+      });
+    }
+  } else if(component instanceof SheetsdashboardComponent){
+    if(component.canNavigate()){
+      return component.dashboardNotSaveAlert().then((result) => {
         return result;
       });
     }

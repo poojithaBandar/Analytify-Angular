@@ -294,6 +294,12 @@ button.BtnNewStyle {
 .table thead th{
   color: #333335;
 }
+th, td {
+  border: 1px solid #ddd;
+}
+th {
+  background-color: #f4f4f4;
+}
 .big-number-container {
   text-align: center;
   margin-top: 20px;
@@ -375,6 +381,14 @@ p {
   padding-inline-start: 1.5em;
   margin-block-end: 0.125rem;
 }
+
+.drillThroughDatabseDisabled {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
 .dashboard-title-card{
@@ -431,6 +445,9 @@ gridster-item {
   padding: 8px 6px;
   box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
 }
+th, td {
+  border: 1px solid #ddd;
+}
 }
 
 // for Tab Resolution //
@@ -461,6 +478,9 @@ div#sticky-sidebar {
 }
 #capture-element {
   width: 100% !important;
+}
+th, td {
+  border: 1px solid #ddd;
 }
 }
 
@@ -503,6 +523,9 @@ div#sticky-sidebar {
   }
   .table thead th {
     font-size: 13px;
+  }
+  th, td {
+    border: 1px solid #ddd;
   }
   button.btn {
     font-size: 11px !important;
@@ -560,6 +583,9 @@ div#sticky-sidebar {
   }
   .table thead th {
     font-size: 13px;
+  }
+  th, td {
+    border: 1px solid #ddd;
   }
   button.btn {
     font-size: 11px !important;

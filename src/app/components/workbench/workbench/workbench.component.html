@@ -349,6 +349,12 @@
                       <td *ngIf="database.server_type === 'SALESFORCE'">
                         <img alt="product" src="./assets/images/icons/salesforce-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'CONNECTWISE'">
+                        <img alt="product" src="./assets/images/icons/connectwise-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
+                      <td *ngIf="database.server_type === 'HALOPS'">
+                        <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
 
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
@@ -356,7 +362,7 @@
                             <td>
                               <div class="hstack gap-2 fs-1">
                                 <button
-                                  [disabled]="(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE')"
+                                  [disabled]="(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')"
                                   aria-label="anchor" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
@@ -404,6 +410,10 @@
                                           <img src="./assets/images/icons/salesforce-icon.jpg" alt="" class="rounded-circle"></span>
                                           <span *ngIf="database.server_type === 'QUICKBOOKS'" class="avatar avatar rounded-circle">
                                             <img src="./assets/images/icons/quickbooks-icon.jpg" alt="" class="rounded-circle"></span>
+                                            <span *ngIf="database.server_type === 'CONNECTWISE'" class="avatar avatar rounded-circle">
+                                              <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
+                                              <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
+                                                <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
@@ -420,7 +430,7 @@
                                   class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                           </a>
                           <div class="dropdown-menu" ngbDropdownMenu>
-                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
+                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                             
@@ -1488,6 +1498,14 @@
                     <h6 style="display: flex;margin-bottom: 17px;" >Integrations</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectxAmplify()">
+                          <img src="https://media.licdn.com/dms/image/v2/C510BAQF5JiTv2uiWsQ/company-logo_200_200/company-logo_200_200/0/1630585990556/xamplify_logo?e=2147483647&v=beta&t=lvDimx47zMGKu8vT4wXji2MpjoXmnaLJFaUX12bd_8U"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
+                          <span style=" width: 8rem;">xAmplify</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
                         <div class="imgcard p-4" (click)="connectQuickBooks()">
                           <img src="https://cdn.worldvectorlogo.com/logos/quickbooks-2.svg"alt="Image" class="card-img">
                         </div>
@@ -1517,6 +1535,14 @@
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                           <span style=" width: 8rem;">HaloPSA</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectJira()">
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Jira_Logo.svg/120px-Jira_Logo.svg.png?20230123125334"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
+                          <span style=" width: 8rem;">Jira</span>
                         </div>
                       </div>        
                     </div>

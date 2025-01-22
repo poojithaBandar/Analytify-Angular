@@ -785,6 +785,39 @@ export class WorkbenchComponent implements OnInit{
         }}) 
       }
 
+      connectxAmplify() {
+        Swal.fire({
+            title: 'This will redirect to xAmplify SignIn page',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the specified URL
+                window.location.href = 'https://xamplify.io/';
+                // Optionally, if there's a loader or some other indication, show it here:
+                // this.loaderService.show();
+            }
+        });
+    }
+    connectJira() {
+      Swal.fire({
+          title: 'This will redirect to Jira SignIn page',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ok'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // Redirect to the specified URL
+              window.location.href = 'https://id.atlassian.com/login';
+              // Optionally, if there's a loader or some other indication, show it here:
+              // this.loaderService.show();
+          }
+      });
+  }
+
     deleteDbConnection(id:any){
       // const obj ={
       //   database_id:dbId

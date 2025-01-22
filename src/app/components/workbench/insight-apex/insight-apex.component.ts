@@ -395,7 +395,7 @@ export class InsightApexComponent {
     });
   }
   validateSeriesData(series: any[]): boolean {
-    if(['pie', 'donut'].includes(this.chartType)) {
+    if(['pie', 'donut', 'guage'].includes(this.chartType)) {
       return series?.every((value: any) => typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value))) || value === null);
     } else {
       return series?.every((set) =>
@@ -1257,7 +1257,7 @@ export class InsightApexComponent {
         categories: categories,
         labels: {
           show: this.xLabelSwitch,
-          offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),
+          offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'right' ? -10 : 10)),
           style: {
             colors: [],
             fontSize: this.xLabelFontSize,
@@ -1330,7 +1330,7 @@ export class InsightApexComponent {
         bar: {
           horizontal: true,
           dataLabels: {
-            position: "top"
+            position: this.dataLabelsFontPosition
           }
         }
       },
@@ -1354,7 +1354,7 @@ export class InsightApexComponent {
         categories: categories,
         labels: {
           show: this.xLabelSwitch,
-          offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10)),
+          offsetX: (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'right' ? -10 : 10)),
           style: {
             colors: [],
             fontSize: this.xLabelFontSize,
@@ -1775,6 +1775,7 @@ export class InsightApexComponent {
     // this.maxValueGuage = this.maxValueGuage ? this.maxValueGuage:this.KPINumber*2
     //  const valueToDivide = this.maxValueGuage-this.minValueGuage
     // Initialize the chart options
+    const self = this;
     this.chartOptions = {
       series: [((this.guageNumber / this.valueToDivide) * 100)], // Correct percentage calculation
       chart: {
@@ -1784,6 +1785,34 @@ export class InsightApexComponent {
         toolbar: {
           show: true
         },
+        events: {
+          mounted: function(chartContext:any, config:any) {
+            const applyStyles = () => {
+              const valueElement = document.querySelector('.apexcharts-datalabel-value') as HTMLElement;
+              if (valueElement) {
+                valueElement.style.fill = self.dataLabelsColor;
+                valueElement.style.setProperty('fill', self.dataLabelsColor, 'important');
+              }
+
+              const nameElement = document.querySelector('.apexcharts-datalabel-label') as HTMLElement;
+              if (nameElement) {
+                nameElement.style.fill = self.dataLabelsColor;
+                nameElement.style.setProperty('fill', self.dataLabelsColor, 'important');
+              }
+            };
+            // Initial styling
+            applyStyles();
+
+            // Monitor DOM for changes
+            const observer = new MutationObserver(() => {
+              applyStyles();
+            });
+            const chartContainer = document.querySelector('.apexcharts-inner');
+            if (chartContainer) {
+              observer.observe(chartContainer, { childList: true, subtree: true });
+            }
+          }
+        }
       },
       colors: [this.color],
 
@@ -1823,21 +1852,12 @@ export class InsightApexComponent {
       tooltip: {
         enabled: true,
         shared: false, // Set to false for individual tooltips
-        custom: ({ series }: { series: number[] }) => {
-          return `<div style="padding: 10px;">
-                        <strong>Value:</strong> ${this.guageNumber}<br>
-                        <strong>Percentage:</strong> ${series[0].toFixed(2)}%
-                    </div>`;
-        }
-      },
-      fill: {
-        type: "gradient",
-        gradient: {
-          shade: "dark",
-          type: "horizontal",
-          gradientToColors: ["#87D4F9"],
-          stops: [0, 100]
-        }
+        // custom: ({ series }: { series: number[] }) => {
+        //   return `<div style="padding: 10px;">
+        //                 <strong>Value:</strong> ${this.guageNumber}<br>
+        //                 <strong>Percentage:</strong> ${series[0].toFixed(2)}%
+        //             </div>`;
+        // }
       },
       stroke: {
         lineCap: "round"
@@ -1958,7 +1978,7 @@ export class InsightApexComponent {
   }
   }
   dimensionsAlignmentChange(){
-    if(this.chartOptions?.xaxis?.labels){
+    if(this.chartOptions?.xaxis?.labels && (this.barCharts || this.areaCharts || this.lineCharts || this.sideBySideCharts || this.stockedCharts || this.barLineCharts || this.horizontalStockedCharts || this.groupedCharts || this.multiLineCharts || this.heatmapCharts)){
       this.chartOptions.xaxis.labels.offsetX = (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'left' ? -10 : 10));
     
     let object = { xaxis:  this.chartOptions.xaxis };
@@ -1981,9 +2001,13 @@ export class InsightApexComponent {
       this.barLineCharts.updateOptions(object);
     }
     else if (this.horizontalStockedCharts) {
+      this.chartOptions.xaxis.labels.offsetX = (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'right' ? -10 : 10));
+      object = { xaxis:  this.chartOptions.xaxis };
       this.horizontalStockedCharts.updateOptions(object);
     }
     else if (this.groupedCharts) {
+      this.chartOptions.xaxis.labels.offsetX = (this.dimensionAlignment === 'center' ? 0 : (this.dimensionAlignment === 'right' ? -10 : 10));
+      object = { xaxis:  this.chartOptions.xaxis };
       this.groupedCharts.updateOptions(object);
     }
     else if (this.multiLineCharts) {
@@ -2440,7 +2464,7 @@ export class InsightApexComponent {
   }
   setDataLabelsFontPosition(){
     let object;
-    if(this.areaCharts || this.lineCharts){
+    if(this.areaCharts || this.lineCharts || this.multiLineCharts){
       if(this.chartOptions?.dataLabels){
         this.chartOptions.dataLabels.offsetY = (this.dataLabelsFontPosition === 'top') ? -10 : ((this.dataLabelsFontPosition === 'center') ? 0 : 10);
       }
@@ -2481,6 +2505,9 @@ export class InsightApexComponent {
     } 
     else if(this.funnelCharts) {
       this.funnelCharts.updateOptions(object);
+    }
+    else if(this.multiLineCharts) {
+      this.multiLineCharts.updateOptions(object);
     }
   }
   xLabelShowOrHide(){
