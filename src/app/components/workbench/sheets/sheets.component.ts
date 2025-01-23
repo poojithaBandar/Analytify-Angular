@@ -44,7 +44,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatT
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { lastValueFrom, timer } from 'rxjs';
+import { lastValueFrom, Subscription, timer } from 'rxjs';
 import { evaluate, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
@@ -330,6 +330,11 @@ export class SheetsComponent {
   bottomLegend:any = '0%'
   rightLegend:any = null;
   sortType : any = 0;
+
+  locationDrillDownSwitch: boolean = false;
+  locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
+  locationHeirarchyList: string[] = ['country', 'state', 'city'];
+  isLocationFeild: boolean = false;
 
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
@@ -1009,7 +1014,20 @@ try {
       // });
       console.log(this.draggedColumnsData);
       this.draggedDrillDownColumns = [];
-
+      if(this.draggedColumns.length === 1){
+        const startIndex = this.locationHeirarchyFieldList.findIndex(
+          (location) => location.toLowerCase() === this.draggedColumns[0]?.column?.toLowerCase()
+        );
+        if(startIndex >= 0){
+          this.isLocationFeild = true;
+          this.locationHeirarchyList = this.locationHeirarchyFieldList.splice(startIndex);
+          this.locationHeirarchyFieldList = ['country', 'state', 'city'];
+        } else {
+          this.isLocationFeild = false;
+        }
+      } else {
+        this.drillDownObject = [];
+      }
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
@@ -1161,9 +1179,13 @@ try {
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
       this.draggedDrillDownColumns = [];
     }
+    if(this.drillDownObject && this.drillDownObject.length > 0) {
+      this.drillDownObject = [];
+    }
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
     this.getDimensionAndMeasures();
     if (this.selectedSortColumnData) {
       let sortcolumn = JSON.parse(JSON.stringify(this.selectedSortColumnData));
@@ -1173,6 +1195,20 @@ try {
         this.sortColumn = 'select';
         this.sortType = 0;
       }
+    }
+    if(this.draggedColumns.length === 1){
+      const startIndex = this.locationHeirarchyFieldList.findIndex(
+        (location) => location.toLowerCase() === this.draggedColumns[0]?.column?.toLowerCase()
+      );
+      if(startIndex >= 0){
+        this.isLocationFeild = true;
+        this.locationHeirarchyList = this.locationHeirarchyFieldList.splice(startIndex);
+        this.locationHeirarchyFieldList = ['country', 'state', 'city'];
+        this.toggleLocationSwitch(false);
+      } else {
+        this.isLocationFeild = false;
+      }
+      
     }
    this.dataExtraction();
   }
@@ -1184,6 +1220,7 @@ try {
       this.draggedDrillDownColumns = [];
     }
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
   //   (this.draggedRowsData as any[]).forEach((data,index)=>{
   //    (data as any[]).forEach((aa)=>{ 
   //      if(column === aa){
@@ -1428,6 +1465,7 @@ try {
     this.drillDownIndex = 0;
     this.sheetName = '';
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
     delete this.originalData;
     console.log(event)
     if(event.index === -1){
@@ -1829,13 +1867,18 @@ sheetSave(){
     legendOrient:this.legendOrient,
     leftLegend:this.leftLegend,
     topLegend:this.topLegend,
-    sortColumn:this.sortColumn
+    sortColumn:this.sortColumn,
+    locationDrillDownSwitch:this.locationDrillDownSwitch,
+    isLocationField : this.isLocationFeild
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
   if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
     draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
     draggedColumnsObj[0][2] = 'year'
+  } else if(this.locationDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0){
+    draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
+    draggedColumnsObj[0][0] = this.draggedDrillDownColumns[0];
   } else {
     draggedColumnsObj = this.draggedColumnsData
   }
@@ -2119,6 +2162,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.isEChatrts = this.sheetResponce?.isEChart;
         this.isApexCharts = this.sheetResponce?.isApexChart;
         this.dateDrillDownSwitch = this.sheetResponce?.isDrillDownData;
+        this.locationDrillDownSwitch = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
+        this.isLocationFeild = this.sheetResponce?.customizeOptions?.isLocationField;
         this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
@@ -3373,6 +3418,7 @@ customizechangeChartPlugin() {
     this.bottomLegend = data.bottomLegend === '' ? null : data.bottomLegend
     this.rightLegend = data.rightLegend === '' ? null : data.rightLegend
     this.sortColumn = data.sortColumn ?? 'select';
+    this.locationDrillDownSwitch = data.locationDrillDownSwitch ?? false;
   }
 
   resetCustomizations(){
@@ -3463,6 +3509,7 @@ customizechangeChartPlugin() {
     this.bottomLegend = '0%'
     this.rightLegend = null
     this.sortColumn = 'select';
+    this.locationDrillDownSwitch = false;
   }
 
   sendPrompt() {
@@ -3672,6 +3719,29 @@ customizechangeChartPlugin() {
              
             this.dataExtraction();
          }
+
+  toggleLocationSwitch(onColumnRemove : boolean) {
+    if(onColumnRemove) {
+    this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
+    }
+    if (this.locationDrillDownSwitch) {
+      this.draggedDrillDownColumns = this.locationHeirarchyList
+  .map((hierarchy) =>
+    this.tableColumnsData
+      .flatMap((columns: any) => columns?.dimensions || []) // Flatten dimensions
+      .find((dimension: any) => dimension?.column?.toLowerCase() === hierarchy) // Match the hierarchy
+  )
+  .filter((dimension: any) => dimension) // Remove undefined results for unmatched items
+  .map((dimension: any) => dimension?.column);
+      this.drillDownIndex = 0;
+    } else {
+      this.drillDownIndex = 0;
+      this.draggedDrillDownColumns = [];
+      this.drillDownObject = [];
+    }
+
+    this.dataExtraction();
+  }
         
           callDrillDown(){
             this.dataExtraction();
