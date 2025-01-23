@@ -940,8 +940,10 @@ export class WorkbenchComponent implements OnInit{
     //         ?.setAttribute('data-toggled', 'icon-overlay-close');    
     // }
     this.loaderService.hide();
-    if(this.viewDatasourceList){
-   this.getDbConnectionList();
+    if (this.viewDatasourceList) {
+      if (this.databaseconnectionsList) {
+        this.getDbConnectionList();
+      }
     }
     this.errorCheck();
   }
