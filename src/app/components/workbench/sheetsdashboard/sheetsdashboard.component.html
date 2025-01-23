@@ -157,7 +157,7 @@
               <div class="panel panel-primary p-0">
                 <div class="tab-menu-heading tab-menu-heading-boxed">
                     <div class="tabs-menu1">
-                        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs " >
+                        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs " style="justify-content: space-around;" >
 
                             <li *ngIf="!isPublicUrl" [ngbNavItem]="1">
                                 <a ngbNavLink class="dashboard-tab-padding">Dashboard</a>
@@ -250,8 +250,8 @@
                                                   <i class="fa fa-image me-2"></i>Add Image
                                               </button>
                                               </a>
-                                              <div class="dropdown-menu size-dropdown" ngbDropdownMenu>
-                                                  <h6 class="mb-0 bg-light text-center p-2" (click)="triggerFileUpload()">Upload Image</h6>
+                                              <div class="dropdown-menu size-dropdown upload-image-position" ngbDropdownMenu>
+                                                  <p class="mb-0 bg-light text-center p-2" (click)="triggerFileUpload()">Upload Image</p>
                                                   <div class="form-group">
                                                     <label class="form-label mt-0">Insert Image File:</label>
                                                     <input
@@ -823,10 +823,10 @@
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
       <div type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="card mb-0 hide-show-btn btn-primary">
-        <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 24px;"></i>
-        <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 24px;"></i>
+        <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 18px;"></i>
+        <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 18px;"></i>
       </div>
-      <div class="" style="display: flex; align-items: center; position: relative; top: -35px;">
+      <div class="" style="display: flex; align-items: center; position: relative; top: -27px;">
         
          <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0; z-index: 2;">
             <div class="card-body p-1">
@@ -888,7 +888,7 @@
 
     
        <!-- <div style="margin: auto 0;overflow: scroll;" [style.height.px]="heightGrid" [style.width.px]="widthGrid" > -->
-        <div style="margin: auto 0;height: 100%; position:relative; top:-44px" >
+        <div style="margin: auto 0;height: 100%; position:relative; top:-35px" >
          
         <div class="d-flex align-items-center justify-content-start  mt-3" [ngClass]="{ 'mt-3': !isPublicUrl }" >
             <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
@@ -1081,7 +1081,7 @@
         [cdkDropListData]="dashboard" style="margin: 0px;"
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
-              <div class="card mb-0 grid-item-border" style="height: 100%;"  [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
+              <div class="card mb-0 grid-item-border card-panel" style="height: 100%;"  [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
               ? 'url(' + item['kpiData'].kpiImage + ')' 
               : ''"
             [style.background-size]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
@@ -1123,7 +1123,7 @@
                                 aria-haspopup="true" aria-expanded="false" class=""><i
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
-                            <div class="dropdown-menu" ngbDropdownMenu>
+                            <div class="dropdown-menu DropdownObOverflow" ngbDropdownMenu>
                               <app-insights-button *ngIf="item['type'] !== 'image'" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Goto Sheet'"
                                                               [previledgeIdsList]="[20,18]" [isBtn]="false"
@@ -1139,13 +1139,13 @@
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="uploadKpiImage(item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiData'].kpiIcon" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Add Icon'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="addIcon(iconModal,item)" 
                                                               [isIcon]="false"></app-insights-button>
                                                               <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiData'].kpiIcon" [classesList]="'dropdown-item'"
-                                                              [buttonName]="'Change Icon'"
+                                                              [buttonName]="'Edit Icon'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="editKpiIcon(iconModal,item)" 
                                                               [isIcon]="false"></app-insights-button>
@@ -1519,7 +1519,7 @@
                     @for(row of item['kpiData'].rows;track row){
                       <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                       }
-                      <i [class]="item['kpiData'].kpiIcon" [style.font-size]="item['kpiData'].kpiIconSize"
+                      <i [class]="item['kpiData'].kpiIcon" [style.font-size]="item['kpiData'].kpiIconSize + 'px'"
                       [style.color]="item['kpiData'].kpiIconColor"
                       [ngStyle]="getIconPositionStyles(item['kpiData'].kpiIconPosition)" style="position: absolute;"></i>
                 </div>
@@ -1604,7 +1604,7 @@
   <ng-template #iconModal let-modal>
     <div class="modal-header">
       <h6 class="modal-title">Select Icon</h6>
-      <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click')">
+      <button type="button"class="btn-close"aria-label="Close"(click)="modal.dismiss('Cross click');deselectIconChanges()">
       </button>
     </div>
     <div class="card mb-0">
@@ -1639,32 +1639,39 @@
         </div>
       </div>
     </div>
-    <div class="position-card p-4 border bg-light">
-      <div class="card mb-0 border px-4 cursor-pointer bg-light" style="width: fit-content; position: absolute; bottom: 149px; left: 0px; border-radius: 5px 5px 0px 0px; box-shadow: none !important;">
-        <p class="mb-0 border-bottom">Customize</p>
+    <div class="card mb-0 border px-4 cursor-pointer bg-light" (click)="toggleCustomize()" style="width: fit-content; border-radius: 5px 5px 0px 0px; box-shadow: none !important;">
+        <p class="mb-0 border-bottom">Customize <i class="fa" [class.fa-angle-double-down]="!isCustomizeVisible" [class.fa-angle-double-up]="isCustomizeVisible"></i>
+        </p>
       </div>
-      <div class="row">
+    <div *ngIf="!isCustomizeVisible" class="position-card p-4 border bg-light">
+      
+      <div  class="row">
         <div class="col-5">
-          <p class="mb-0">Position: </p>
+          <p class="mb-0">Position </p>
           <div class="form-group mb-1">
             <select class="form-select form-select select2" [(ngModel)]="selectedIconPosition" (change)="changePosition($event)">
               <option value="top-left">Top Left</option>
+              <option value="top-middle">Top Middle</option>
               <option value="top-right">Top Right</option>
+              <option value="left-middle">Left Middle</option>
+              <option value="center">Center</option>
+              <option value="right-middle">Right Middle</option>
               <option value="bottom-left">Bottom Left</option>
+              <option value="bottom-middle">Bottom Middle</option>
               <option value="bottom-right">Bottom Right</option>
             </select>
          </div>
         </div>
         <div class="col-4">
-          <p class="mb-0">Font-size: </p>
+          <p class="mb-0">Size </p>
           <div class="form-group mb-1">
             <select class="form-select" [(ngModel)]="selectedIconFontSize" (change)="changeSize($event)">
-              <option *ngFor="let size of [14, 16, 18, 22, 24, 28, 30, 32, 36]" [value]="size">{{ size }}</option>
+              <option *ngFor="let size of [14, 16, 18, 22, 24, 28, 30, 32, 36]" [value]="size">{{ size }} 'px'</option>
             </select>
          </div>
         </div>
         <div class="col-3">
-          <p class="mb-0">Color picker: </p>
+          <p class="mb-0">Color picker </p>
           <div class="form-group mb-1">
             <input type="color"  [(ngModel)]="selectedIconColor"
             (change)="changeColor($event)" id="favcolor" name="favcolor" class="mt-1">
@@ -1674,7 +1681,7 @@
     </div>
     
     <div class="modal-footer p-2">
-      <button type="button" class="btn ripple btn-secondary"> Cancel </button>
+      <button type="button" (click)="modal.dismiss('Cross click');deselectIconChanges()" class="btn ripple btn-secondary"> Cancel </button>
       <button (click)="applyIconInKpi()" class="btn btn-primary">Apply</button>
     </div>
     

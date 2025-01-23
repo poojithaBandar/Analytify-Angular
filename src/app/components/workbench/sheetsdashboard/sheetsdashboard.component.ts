@@ -5572,7 +5572,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     selectedIcon: string | null = null;
     searchText: string = ''; // Search input value
     KpiIconItem:any;
-    selectedIconFontSize: string = '24px'; // Default size
+    selectedIconFontSize: string = '24'; // Default size
     selectedIconColor: string = '#888'; // Default color
     selectedIconPosition: string = 'bottom-right';
     selectIcon(icon: any) {
@@ -5583,7 +5583,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
     changeSize(event:any): void {
       const size = event.target.value;
-      this.selectedIconFontSize = `${size}px`;
+      this.selectedIconFontSize = `${size}`;
       console.log('kpiSize',this.selectedIconFontSize)
     }
   
@@ -5616,6 +5616,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               kpiIconPosition:this.selectedIconPosition
             },
           };
+          this.modalService.dismissAll();
           console.log('addedKpiIcon',this.dashboard);
           this.canNavigateToAnotherPage = true;
         } else {
@@ -5628,21 +5629,27 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
 
     getIconPositionStyles(position: string) {
       let styles = {};
-    
+      const offset = '10px'; // Distance from the edges
       // Check the position value and apply corresponding styles
       switch (position) {
-        case 'top-left':
-          styles = { top: '0', left: '0' };
-          break;
-        case 'top-right':
-          styles = { top: '0', right: '0' };
-          break;
-        case 'bottom-left':
-          styles = { bottom: '0', left: '0' };
-          break;
-        case 'bottom-right':
-          styles = { bottom: '0', right: '0' };
-          break;
+          case 'top-left':
+            return { top: offset, left: offset, transform: 'none' };
+          case 'top-middle':
+            return { top: offset, left: '50%', transform: 'translateX(-50%)' };
+          case 'top-right':
+            return { top: offset, right: offset, transform: 'none' };
+          case 'left-middle':
+            return { top: '50%', left: offset, transform: 'translateY(-50%)' };
+          case 'center':
+            return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+          case 'right-middle':
+            return { top: '50%', right: offset, transform: 'translateY(-50%)' };
+          case 'bottom-left':
+            return { bottom: offset, left: offset, transform: 'none' };
+          case 'bottom-middle':
+            return { bottom: offset, left: '50%', transform: 'translateX(-50%)' };
+          case 'bottom-right':
+            return { bottom: offset, right: offset, transform: 'none' };
         default:
           styles = { bottom: '0', right: '0' }; // Default fallback position
           break;
@@ -5679,10 +5686,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       centered: true,
       windowClass: 'animate__animated animate__zoomIn',
     });
+    this.KpiIconItem = item;
     console.log('editKpi',item);
     const kpiData = item.kpiData
     this.selectedIconColor = kpiData.kpiIconColor ?? '#888'
-    this.selectedIconFontSize = kpiData.kpiIconSize ?? '24px'
+    this.selectedIconFontSize = kpiData.kpiIconSize ?? '24'
     this.selectedIconPosition = kpiData.kpiIconPosition ?? 'bottom-right'
     this.selectedIcon = kpiData.kpiIcon ?? null
  
@@ -5703,12 +5711,21 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       // Update the dashboard array
       this.dashboard[itemIndex] = updatedItem;
       this.canNavigateToAnotherPage = true;
+      this.deselectIconChanges()
     } else {
       console.error('Item not found in dashboard:', item);
     }
   }
-
-
+  deselectIconChanges(){
+    this.selectedIcon = null;
+      this.selectedIconColor = '#888';
+      this.selectedIconFontSize = '24';
+      this.selectedIconPosition = 'bottom-right';
+  }
+  isCustomizeVisible: boolean = true; // Controls visibility
+  toggleCustomize(): void {
+    this.isCustomizeVisible = !this.isCustomizeVisible;
+  }
     // selectIcon(icon: { class: string; name: string }) {
     //   this.selectedIcon = icon.class;
     //   console.log('Selected Icon:', icon);
