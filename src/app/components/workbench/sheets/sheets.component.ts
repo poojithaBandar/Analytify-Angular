@@ -44,7 +44,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatT
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { lastValueFrom, timer } from 'rxjs';
+import { lastValueFrom, Subscription, timer } from 'rxjs';
 import { evaluate, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
@@ -1868,7 +1868,8 @@ sheetSave(){
     leftLegend:this.leftLegend,
     topLegend:this.topLegend,
     sortColumn:this.sortColumn,
-    locationDrillDownSwitch:this.locationDrillDownSwitch
+    locationDrillDownSwitch:this.locationDrillDownSwitch,
+    isLocationField : this.isLocationFeild
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -2161,7 +2162,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.isEChatrts = this.sheetResponce?.isEChart;
         this.isApexCharts = this.sheetResponce?.isApexChart;
         this.dateDrillDownSwitch = this.sheetResponce?.isDrillDownData;
-        this.isLocationFeild = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
+        this.locationDrillDownSwitch = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
+        this.isLocationFeild = this.sheetResponce?.customizeOptions?.isLocationField;
         this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
