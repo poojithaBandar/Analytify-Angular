@@ -363,7 +363,7 @@
                               <div class="hstack gap-2 fs-1">
                                 <button
                                   [disabled]="(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')"
-                                  aria-label="anchor" (click)="editDbDetails(database.database_id);editDbConnectionModal(EditDbCon);"
+                                  aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
                                 <a aria-label="anchor" (click)="deleteDbConnection(database.hierarchy_id)"
