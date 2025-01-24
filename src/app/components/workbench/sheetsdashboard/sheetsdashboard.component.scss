@@ -455,7 +455,10 @@ p {
   color: transparent;
   -webkit-text-stroke: 1px var(--primary-color);
 }
-
+.icon-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px black;
+}
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
 .dashboard-title-card{
