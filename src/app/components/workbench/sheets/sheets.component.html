@@ -331,7 +331,7 @@
                                 <li class="example-box" ngbTooltip="{{dimensions.column}}"
                                 (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" >
                                 <span *ngIf="!dateList.includes(dimensions.data_type) && !boolList.includes(dimensions.data_type)" class="abc-txt">abc</span>
-                                <span *ngIf="dateList.includes(dimensions.data_type)" class="date-dtype"><i class="fa fa-clock-o"></i></span>
+                                <span *ngIf="dateList.includes(dimensions.data_type)" class="date-dtype"><i class="fa fa-clock"></i></span>
                                 <span *ngIf="boolList.includes(dimensions.data_type)" class="date-dtype" style="font-family: 'Times New Roman', Times, serif; font-style: italic;">T|F</span>
                                 {{ dimensions.column?.substr(0,15) }}{{ dimensions.column.length > 15 ? '...' : '' }}
                                 </li>
@@ -1440,7 +1440,7 @@
                                     <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
                                         class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" style="padding: 14px;">
-                                        <i class="fa fa-plus-square-o"></i>
+                                        <i class="fa fa-plus-square"></i>
                                     </button>
                                 </li>
                             </div>
