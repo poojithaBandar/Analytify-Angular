@@ -2805,6 +2805,10 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterDataArray = [];
         this.filterDateRange = [];
         this.formatExtractType = '';
+        this.selectedTopColumn = 'select';
+        this.topAggregate = 'sum';
+        this.topLimit = 5;
+        this.topType = 'desc';
       },
       error: (error) => {
         console.log(error);
@@ -2828,17 +2832,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
         this.formatExtractType = this.extractTypesForTab.includes(responce?.format_type) ? responce?.format_type : '';
-        this.topType = responce?.top_bottom[3];
-        this.topLimit = responce?.top_bottom[2];
-        this.selectedTopColumn = responce?.top_bottom[0];
-        this.topAggregate = responce?.top_bottom[1];
+        if(responce?.top_bottom){
+          this.topType = responce?.top_bottom[3];
+          this.topLimit = responce?.top_bottom[2];
+          this.selectedTopColumn = responce?.top_bottom[0];
+          this.topAggregate = responce?.top_bottom[1];
+        }
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
         else if(responce?.format_type === 'year/month/day'){
           this.activeTabId = 2;
         }
-        else if(responce?.top_bottom.length>0){
+        else if(responce?.top_bottom && responce?.top_bottom.length>0){
           this.activeTabId = 4;
         }
         else {
@@ -2914,8 +2920,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "data_type":this.filterType,
       "is_exclude":this.isExclude,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
-      "is_calculated": this.filterType == 'calculated' ? true : false
-
+      "is_calculated": this.filterType == 'calculated' ? true : false,
+      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -2923,6 +2929,10 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.filterDataArray = [];
           this.filterDateRange = [];
           this.isAllSelected = false;
+          this.selectedTopColumn = 'select';
+          this.topAggregate = 'sum';
+          this.topLimit = 5;
+          this.topType = 'desc';
         },
         error: (error) => {
           console.log(error);
@@ -2982,20 +2992,24 @@ filterAdded : boolean = false;
 isTopFilter : boolean = true;
 editFilterCheck(data:any){
   if(this.dimetionMeasure.length>0){
-    this.dimetionMeasure.forEach((column:any)=>{
-      if(column.col_name === data){
-        this.filterAdded = true;
-      }
-      else{
-        this.filterAdded = false;
-      }
-      if(!column.top_bottom){
-        this.isTopFilter = true;
-      }
-      else{
-        this.isTopFilter = false;
-      }
-    })
+    this.filterAdded = this.dimetionMeasure.some((column: any) => column.col_name === data);
+    // this.dimetionMeasure.some((column:any)=>{
+    //   if(column.col_name === data){
+    //     this.filterAdded = true;
+    //   }
+    //   else{
+    //     this.filterAdded = false;
+    //   }
+    // })
+    this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+    // this.dimetionMeasure.forEach((column:any)=>{
+    //   if(!column.top_bottom){
+    //     this.isTopFilter = true;
+    //   }
+    //   else{
+    //     this.isTopFilter = false;
+    //   }
+    // })
   }
   else{
     this.filterAdded = false;
