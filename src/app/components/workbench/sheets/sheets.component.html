@@ -282,7 +282,7 @@
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
                                                             <button class="btn btn-primary mt-0"
-                                                                (click)="isEditCalculatedField = false;level1.close();level2.close()">Close </button>
+                                                                (click)="isEditCalculatedField = false;level1.close();level2.close();calculationfieldid.hidden = true">Close </button>
                                                         </div>
                                                 </div>
                                             </div>
