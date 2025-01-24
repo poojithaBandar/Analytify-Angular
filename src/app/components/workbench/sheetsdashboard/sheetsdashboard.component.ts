@@ -3163,6 +3163,7 @@ getFilteredData(){
       // console.log(this.tablePreviewColumn);
       // console.log(this.tablePreviewRow);
       // localStorage.removeItem('filterid')
+      this.sheetFilters = data;
       data.forEach((item: any) => {
         this.filteredRowData = [];
         this.filteredColumnData = [];
@@ -4493,6 +4494,7 @@ kpiData?: KpiData;
         // console.log(this.tablePreviewColumn);
         // console.log(this.tablePreviewRow);
         // localStorage.removeItem('filterid')
+        this.sheetFilters = data;
         data.forEach((item: any) => {
           this.tablePreviewColumn.push(item.columns);
       this.tablePreviewRow.push(item.rows);
@@ -5731,6 +5733,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     //   console.log('Selected Icon:', icon);
     //   // Close the modal or perform other actions here
     // }
+    sheetFilters : any[] = [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

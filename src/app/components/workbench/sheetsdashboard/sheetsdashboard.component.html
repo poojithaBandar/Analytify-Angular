@@ -1117,6 +1117,11 @@
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>
+                   @for (filter of sheetFilters; track filter.sheet_id) {
+                    @if((filter?.is_filter_applied) && item['sheetId'] == filter.sheet_id){
+                      <i class="far fa-filter text-primary filter-icon-count" ngbTooltip="{{filter?.filter_count}} Filters Applied"></i>
+                    }
+                  }
                     <div *ngIf="!isPublicUrl" class="dashboard-option">
                         <div class=" p-1" ngbDropdown>
                             <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
