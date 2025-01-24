@@ -5733,7 +5733,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     //   console.log('Selected Icon:', icon);
     //   // Close the modal or perform other actions here
     // }
-    sheetFilters : any[] = [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
+    sheetFilters : any[] = [];
+    // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

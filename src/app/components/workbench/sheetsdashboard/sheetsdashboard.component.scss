@@ -452,6 +452,8 @@ p {
 
 .filter-icon-count {
   font-size: 24px;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--primary-color);
 }
 
  // for Mobile Resolution //
