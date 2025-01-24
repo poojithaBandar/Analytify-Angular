@@ -28,7 +28,7 @@
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                                <div class=" p-1" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
+                                <div class="" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
                                 <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
                                 <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
                                     <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
@@ -38,76 +38,85 @@
                                       
                                         (cdkDropListDropped)="calculatedFieldsDrop($event)">
                                             
-                                            <div style="max-height: 382px; overflow: auto; padding: 10px;">
+                                            <div style="max-height: 420px; overflow: auto;">
+                                                <div class="col-lg-12 col-md-12 p-0 m-0">
+                                                    <div class="d-flex">
+                                                        <div class="col-6 p-0">
+                                                            <input type="text" placeholder="Calculated Field Name" [(ngModel)]="calculatedFieldName"
+                                                            class="mb-1 form-control checkbox-color">
+                                                        </div>
+                                                        <div class="col-6 p-0">
+                                                            <div class="input-group mb-1">
+                                                                <div class="col-lg-6 col-md-6 p-0">
+                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
+                                                                        (change)="calculatedFieldData()">
+                                                                        <option value="number">Number</option>
+                                                                        <option value="string">String</option>
+                                                                        <option value="arithematic">Arithmetic operation</option>
+                                                                        <option value="date">Date</option>
+                                                                        <option value="logical">Logical</option>
+                                                                        <option value="aggregation">Aggregate</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
+                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
+                                                                        (change)="nestedCalculatedFieldFunction()">
+                                                                        <option [disabled]="true" value="">select function</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
+                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
+                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
+                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-lg-12 col-md-12 p-0 m-0">
                                                         <div class="form-group p-0 mb-0">
-                                                            <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label>
+                                                            <!-- <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label> -->
                                                             <div class="d-flex">
                                                                 <div class="col-6 p-0">
-                                                                    <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName"
-                                                                    class="mb-2 form-control checkbox-color">
-                                                                    <div class="input-group mb-2">
-                                                                        <div class="col-lg-6 col-md-6 p-0">
-                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
-                                                                                (change)="calculatedFieldData()">
-                                                                                <option value="number">Number</option>
-                                                                                <option value="string">String</option>
-                                                                                <option value="arithematic">Arithmetic operation</option>
-                                                                                <option value="date">Date</option>
-                                                                                <option value="logical">Logical</option>
-                                                                                <option value="aggregation">Aggregate</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
-                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
-                                                                                (change)="nestedCalculatedFieldFunction()">
-                                                                                <option [disabled]="true" value="">select function</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
-
-                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
-                                                    
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
-                                                    
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
-                                                    
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
                                                                     <textarea [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
                                                                         *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic'"
-                                                                        class="query-text mb-2 px-3" [(ngModel)]="calculatedFieldLogic"
+                                                                        class="query-text mb-1 px-3" [(ngModel)]="calculatedFieldLogic"
                                                                         placeholder="Drop Column or Enter Logic"></textarea>
-                                                                    <div *ngIf="validationMessage" class="alert"
-                                                                        [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
-                                                                        {{ validationMessage }}
-                                                                    </div>
+                                                                    
                                                                 </div>
-                                                                <div class="col-6 p-0" style="margin-left: 8px;">
-                                                                        <p class="mb-0  p-2 bg-light mb-3 border rounded-2 description-text" >
+                                                                <div #calculationfieldid [hidden]="false" class="col-6 p-0 d-flex">
+                                                                    <div class="calculated-hide-card bg-light mb-1 border rounded-2 d-flex" style="width:inherit;">
+                                                                        <div class="calculated-hide-icon d-flex align-items-center">
+                                                                            <i class="fa fa-angle-right"></i>
+                                                                        </div>
+                                                                        <div class="mb-0 p-2 description-text">
                                                                             @if(nestedCalculatedFieldData == 'abs'){
                                                                                 <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the absolute value.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> ABS("tablename"."column_name")</span><br><br>
@@ -228,7 +237,7 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATE_PART('year', "tablename"."column_name")/DATE_PART('month', "tablename"."column_name")/DATE_PART('date', "tablename"."column_name")
                                                                                     </span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  DATE_PART('year', current_timestamp)/DATE_PART('month', current_timestamp)/DATE_PART('date', current_timestamp)
-                                                                                 </span>
+                                                                                </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'now'){
                                                                                 <span > <p class="fw-600 mb-0">Current_timestamp :<br> </p> Returns the current date and time.</span> <br><br>
@@ -250,11 +259,23 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" + "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example : 2 + 2 = 4<br> </p>   </span>
                                                                             }
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                    <!-- <div class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1">
+                                                                        <i class="fa fa-angle-left"></i>
+                                                                    </div> -->
+                                                                </div>
+                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1" style="position: absolute; right: 0px; height: -webkit-fill-available;">
+                                                                    <i class="fa fa-angle-left"></i>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                            
-                                                        <div class="mt-0 d-flex gap-2">
+                                                        <div *ngIf="validationMessage" class="alert"
+                                                                        [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
+                                                                        {{ validationMessage }}
+                                                                    </div>
+                                                        <div class="mt-0 d-flex gap-2" style="float: right;">
                                                             <button
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
@@ -1418,27 +1439,27 @@
                                 <li role="presentation" class="nav-item">
                                     <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
-                                        class="nav-link BtnNewStyle" (click)="addSheet(false)" style="padding: 14px;">
+                                        class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" style="padding: 14px;">
                                         <i class="fa fa-plus-square-o"></i>
                                     </button>
                                 </li>
                             </div>
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="removeTab()" style="padding: 14px;">
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" ngbtooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="sheetDuplicate()" style="padding: 14px;">
                                     <i class="fa fa-copy"></i>
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" style="display: flex;justify-content: center;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" >Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -1466,7 +1487,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle px-2">view Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle  sheet-bottom-icon px-2">view Dashboard</button></div>        
                     </div>
                 </div>
 
@@ -1482,7 +1503,7 @@
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane active" id="activetabs">
                                             <div class="border rounded-3 mb-1 filter-card-height" >
-                                                <div class="card-header  bg-light justify-content-start align-items-center">
+                                                <div class="card-header  bg-light justify-content-start align-items-center p-2">
                                                     <div class="card-title fs-12">Filters </div>
                                                 </div>
                                                 <div class="card-body p-1">
@@ -1676,7 +1697,7 @@
                                                   </ng-template>
                                             </div>
                                             <div class="border mb-1 rounded-3 charts-card-height">
-                                                <div class="card-header  bg-light justify-content-between align-items-center">
+                                                <div class="card-header  bg-light justify-content-between align-items-center p-2">
                                                     <div class="card-title fs-12">Charts</div>
                                                 </div>
                                                 <div class="card-body" style=" padding: 2px 12px;">
