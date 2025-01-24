@@ -251,7 +251,7 @@
                                               </button>
                                               </a>
                                               <div class="dropdown-menu size-dropdown upload-image-position" ngbDropdownMenu>
-                                                  <p class="mb-0 bg-light text-center p-2" (click)="triggerFileUpload()">Upload Image</p>
+                                                  <!-- <p class="mb-0 bg-light text-center p-2">Upload Image</p> -->
                                                   <div class="form-group">
                                                     <label class="form-label mt-0">Insert Image File:</label>
                                                     <input
@@ -1629,9 +1629,9 @@
     <div class="modal-body"  style="height:360px; overflow-y: auto;">
       <div class="text-wrap">
         <div class="row">
-          <div class="col-3" *ngFor="let icon of filteredIcons" (click)="selectIcon(icon)" [ngClass]="{'selected-icon': selectedIcon === (icon.styles[0] + ' fa-' + icon.name)}"
-          ngbTooltip="{{ icon.label }}" ngbTooltip="{{ icon.label }}">
-            <div class="icon-container text-center p-2 mb-1 rounded-3" style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;">
+          <div class="col-3" *ngFor="let icon of filteredIcons" (click)="selectIcon(icon)" 
+          ngbTooltip="{{ icon.label }}" placement="top" container="body">
+            <div class="icon-container text-center p-2 mb-1 rounded-3" [ngClass]="{'selected-icon': selectedIcon === (icon.styles[0] + ' fa-' + icon.name)}" style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;">
               <i [class]="icon.styles[0] + ' fa-' + icon.name" style="font-size: 18px;"></i>
               <!-- <p class="mt-2" style="font-size: 12px;">{{ icon.label }}</p> -->
             </div>

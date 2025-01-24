@@ -5453,12 +5453,18 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      onImageSelected(event: any) {
        const file = event.target.files[0];
        if (file) {
+        if (!file.type.startsWith('image/')) {
+         this.toasterService.error('Not a supported file format. Please select an image file.','info',{ positionClass: 'toast-top-center'})
+          event.target.value = ''; // Reset file input
+          return;
+        }else{
          const reader = new FileReader();
          reader.onload = (e: any) => {
            this.uploadedImage = e.target.result; // Image data as Base64
            console.log('Uploaded Image:', this.uploadedImage);
          };
          reader.readAsDataURL(file);
+        }
        }
      }
      uploadInJson(){
@@ -5491,6 +5497,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      imageFileSelectEvent(event:any){
       const file = event.target.files[0];
        if (file) {
+        if (!file.type.startsWith('image/')) {
+          this.toasterService.error('Not a supported file format. Please select an image file.','info',{ positionClass: 'toast-top-center'})
+          event.target.value = ''; // Reset file input
+          return;
+        }else{
          const reader = new FileReader();
          reader.onload = (e: any) => {
            this.uploadedKpiImage = e.target.result; 
@@ -5500,6 +5511,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
          };
          reader.readAsDataURL(file);
+        }
        }
      }
      updateKPIImage(item:any,KpiImage:any){
