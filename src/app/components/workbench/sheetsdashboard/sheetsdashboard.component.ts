@@ -2689,7 +2689,7 @@ addIcon(iconModal:any,item:any){
 //filters
 openSuperScaled(modal: any) {
   this.modalService.open(modal, {
-    centered: true,
+    centered: true,size:'lg',
     windowClass: 'animate__animated animate__zoomIn',
   });
 this.editFilters = false;
@@ -2705,7 +2705,7 @@ this.selectedColumnQuerySetId = null;
 //Actions
 openSuperScaleForActions(modal : any){
   this.modalService.open(modal, {
-    centered: true,
+    centered: true,size:'lg',
     windowClass: 'animate__animated animate__zoomIn',
   });
 }

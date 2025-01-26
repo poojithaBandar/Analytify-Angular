@@ -497,13 +497,13 @@
                                                 ngbtooltip="fa fa-chevron-left" style="border: none;"
                                                 class="fa fa-chevron-right chevron-right-icon p-2 ">
                                                 <button class="TextTransform">
-                                                    <h6>Table Custom Join</h6>
+                                                    <p class="mb-0">Table Custom Join</p>
                                                 </button>
                                             </i>
                                             }
                                             }
                                             <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
-                                            <p *ngIf="qurtySetId != 0" class="border mb-0 bg-light"
+                                            <p *ngIf="qurtySetId != 0" class="border p-1 rounded-2 mb-0 bg-light"
                                                 style="line-height: 2;">Showing {{showingRows}} rows of {{totalRows}}
                                             </p>
                                         </div>
@@ -559,7 +559,7 @@
                                         </div>
                                         }
                                     </div>
-                                    <div class="modal-footer border-0">
+                                    <div class="modal-footer border-0 p-1 mb-2 me-2">
                                         @if(qryTime){
                                         <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span
                                                 class="time">{{qryTime}}s</span> Rows effected:{{qryRows}}</span>

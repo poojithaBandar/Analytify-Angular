@@ -18,7 +18,7 @@
 
 
           <div class="input-group">
-            <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="pageNo = 1;loadSelectedSheetList('fromSelect');getValuesForSheetRoute($event);"  class="form-select form-select select2 fs-14 form-control border-end-0" >
+            <select [(ngModel)]="selectedSheetList" style="margin-right: 15px;"  (change)="pageNo = 1;loadSelectedSheetList('fromSelect');getValuesForSheetRoute($event);"  class="form-select form-select select2 fs-14 form-control border-end" >
               <option value="0">All</option>
               @for(sheetlist of sheetsList;track sheetlist.id){
                 <option value="{{sheetlist.id}}" [attr.data-dbid]="sheetlist.hierarchy_id" [attr.data-field]="sheetlist.datasource_queryset_id">{{sheetlist.queryset_name}}</option>
