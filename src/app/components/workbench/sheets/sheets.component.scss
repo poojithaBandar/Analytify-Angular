@@ -206,7 +206,7 @@ span.abc-txt {
  }
  .charts-card-height{
   overflow-y: auto; 
-  height: 437px;
+  height: 432px;
  }
  .marks-card-height{
   height: 203px; 
@@ -466,11 +466,11 @@ button.viewQueryImg {
   height: 512px;
 }
 .sheet-table-h{
-  height: 479px;
+  height: 475px;
   overflow-y: auto;
 }
 .panel-body-h{
-  height: 624px;
+  height: 617px;
 }
 .chart-icon.active {
   border-color:#00a2a5 !important; /* Change to the color you prefer for the active state */
@@ -578,6 +578,9 @@ padding: 5px 4px 5px 3px;
   border-color: #898989 !important;
   box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.1019607843);
 }
+.sheet-bottom-icon {
+  height: 48px;
+}
 
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
@@ -605,17 +608,17 @@ app-insights-button {
   font-size: 12px;
 }
 .sheet-table-h{
-  height: 415px;
+  height: 408px;
   overflow-y: auto;
 }
 .show-chart-card {
-  height: 400px;
+  height: 408px;
 }
 .show-chart-card-no-heirarchy{
-  height: 435px;
+  height: 440px;
 }
 .panel-body-h {
-  height: 544px;
+  height: 538px;
 }
 .charts-card-height {
   overflow-y: auto;
@@ -642,7 +645,7 @@ app-insights-button {
   font-size: 12px;
 }
 .title-padding {
-  padding: 5px 4px 5px 3px;
+  padding: 5px 4px 5px 0px;
 }
 th, td {
   border: 1px solid #ddd;
@@ -731,14 +734,14 @@ label {
     font-size: 12px;
   }
   .sheet-table-h {
-    height: 350px;
+    height: 346px;
     overflow-y: auto;
 }
 .show-chart-card {
-  height: 338px;
+  height: 350px;
 }
 .show-chart-card-no-heirarchy{
-  height: 375px;
+  height: 380px;
 }
 .filter-card-height {
   height: 130px;
@@ -753,7 +756,7 @@ label {
   overflow-y: auto;
 }
 .panel-body-h {
-  height: 480px;
+  height: 475px;
 }
 .column-text {
   font-size: 12px;
@@ -768,7 +771,7 @@ label {
   font-size: 11px;
 }
 .title-padding {
-  padding: 4px 32px 4px 17px;
+  padding: 4px 0px 4px 0px;
 }
 th, td {
   border: 1px solid #ddd;
@@ -823,7 +826,7 @@ th, td {
     font-size: 12px;
   }
   .body.table-responsive{
-    max-height: 310px !important;
+    max-height: 270px !important;
   }
 }
 
@@ -1128,10 +1131,10 @@ th, td {
 }
 
 .query-text {
-  width: 100%;
-  height: 110px;
-  min-height: 110px;
-  max-height: 110px;
+  // width: 100%;
+  height: 250px;
+  // min-height: 110px;
+  // max-height: 110px;
   overflow-y: auto;
   outline: none;
   border: 1px solid #edebeb;
@@ -1139,9 +1142,9 @@ th, td {
 }
 .description-text{
   overflow-y: auto; 
-  height: 195px; 
-  min-height: 195px;  
-  max-height: 95px;
+  height: 250px; 
+  // min-height: 195px;  
+  // max-height: 95px;
 }
 .example-box-bg{
   padding: 3px 13px;
