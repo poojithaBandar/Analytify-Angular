@@ -3240,7 +3240,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
   this.dashboard.forEach((item1:any) => {
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
       if(item.chart_id == '1'){//table
-        if(!item1.originalData){
+        if(!item1.originalData && !this.isLiveReloadData){
           item1['originalData'] = _.cloneDeep({tableData: item1.tableData});
         }
         this.tablePreviewColumn = item.columns;
@@ -3269,7 +3269,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3283,7 +3283,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
         };
         } else {
-        if(!item1.originalData){
+        if(!item1.originalData && !this.isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
         }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3295,7 +3295,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
     }
       if((item.chart_id == '25' || item.chartId == '25' && (isFilter || isDrillDown)) || (item1.chartId == '25' && isDrillThrough)){//KPI
-        if(!item1.originalData ){
+        if(!item1.originalData && !this.isLiveReloadData){
           item1['originalData'] = _.cloneDeep(item1['kpiData']);
         }
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
@@ -3304,7 +3304,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       if((item.chart_id == '24' || item.chartId == '24' && (isFilter || isDrillDown)) || (item1.chartId == '24' && isDrillThrough)){//pie
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3320,7 +3320,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3333,7 +3333,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '10'|| item.chartId == '10' && (isFilter || isDrillDown)) || (item1.chartId == '10' && isDrillThrough)){//donut
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3349,7 +3349,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3362,7 +3362,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '13'|| item.chartId == '13' && (isFilter || isDrillDown)) || (item1.chartId == '13' && isDrillThrough)){//line
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3376,7 +3376,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
@@ -3385,7 +3385,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       if((item.chart_id == '17'|| item.chartId == '17' && (isFilter || isDrillDown)) || (item1.chartId == '17' && isDrillThrough)){//area
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3399,7 +3399,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.labels = this.filteredColumnData[0].values;
@@ -3410,7 +3410,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3423,7 +3423,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         };
         } else {
        
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3434,7 +3434,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3447,7 +3447,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3458,7 +3458,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3471,7 +3471,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3482,7 +3482,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           item1.echartOptions.xAxis[0].data = categories;
@@ -3492,7 +3492,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.labels = categories;
@@ -3505,7 +3505,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
             this.filteredRowData.forEach((bar : any)=>{
@@ -3517,7 +3517,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             ...item1.echartOptions,
           };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3528,7 +3528,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3541,7 +3541,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3552,7 +3552,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '28' && (isFilter || isDrillDown)) || (item1.chartId == '28' && isDrillThrough)){//guage
-        if(!item1.originalData){
+        if(!item1.originalData && !this.isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
         let seriesval =[Math.round(( this.filteredRowData[0]?.data[0]/ (item1.chartOptions.plotOptions.radialBar.max-item1.chartOptions.plotOptions.radialBar.min))*100)]
@@ -3572,7 +3572,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           value: obj.data   
         }));
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
         item1.echartOptions.radar.indicator = radarArray;
@@ -3585,7 +3585,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '29' && (isFilter || isDrillDown)) || (item1.chartId == '29' && isDrillThrough)){//world MAP
-        if(!item1.originalData){
+        if(!item1.originalData && !this.isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
         let minData = 0;
@@ -3641,7 +3641,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       if((item.chart_id == '27' && (isFilter || isDrillDown)) || (item1.chartId == '27' && isDrillThrough)){//funnel
         if(item1.isEChart){
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
             const combinedArray: any[] = [];
@@ -3662,7 +3662,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         } else {
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData){
+        if(!item1.originalData && !this.isLiveReloadData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         if(isDrillThrough){
@@ -3685,7 +3685,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           item1.echartOptions.xAxis.data = _.cloneDeep(categories);
@@ -3702,7 +3702,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             ...item1.echartOptions,     
           };
          }
-        else{ if(!item1.originalData){
+        else{ if(!item1.originalData && !this.isLiveReloadData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = categories;
@@ -3711,7 +3711,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '11' && (isFilter || isDrillDown)) || (item1.chartId == '11' && isDrillThrough)){//calendar
         if(item1.isEChart){
-          if(!item1.originalData){
+          if(!item1.originalData && !this.isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           let calendarData : any[]= [];
@@ -3780,6 +3780,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       console.log('filtered dashboard-data',item1)
     }
 })
+if(this.isLiveReloadData){
+  this.updateDashboard();
+  this.isLiveReloadData = false;
+}
 }
 
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
@@ -5735,6 +5739,55 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     // }
     sheetFilters : any[] = [];
     // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
+    isLiveReloadData : boolean = false
+    refreshDashboard(){
+      this.isLiveReloadData = true
+      let object ={
+        "dashboard_id": this.dashboardId
+      }
+      this.workbechService.refreshDashboardData(object).subscribe({
+        next:(data)=>{
+          console.log(data);
+          data.forEach((item: any) => {
+          this.filteredRowData = [];
+          this.filteredColumnData = [];
+          this.tablePreviewColumn.push(item.columns);
+          this.tablePreviewRow.push(item.rows);
+          item.columns.forEach((res:any) => {      
+            let obj1={
+              name:res.column,
+              values: res.result
+            }
+            this.filteredColumnData.push(obj1);
+            console.log('filtercolumn',this.filteredColumnData)
+          });
+          item.rows.forEach((res:any) => {
+            let obj={
+              name: res.column,
+              data: res.result
+            }
+            this.filteredRowData.push(obj);
+            console.log('filterowData',this.filteredRowData)
+          });
+          if(item.chart_id === 1){
+            this.pageChangeTableDisplay(item,1)
+            this.tablePage=1
+          }else{
+          this.setDashboardSheetData(item, true , true, false, false, '');
+          }
+        });
+          },
+        error:(error)=>{
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      });
+    }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;
