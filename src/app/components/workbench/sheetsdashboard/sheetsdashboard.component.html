@@ -1569,9 +1569,9 @@
                   
                       </tbody>
                   </table>
-                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false)"></pagination-controls>
+                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,0)"></pagination-controls>
                   <div  style="float: right;font-size: 15px; margin-top: -41px;">
-                    <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false)" (mousedown)="stopDragging($event)"class="form-control cursor">
+                    <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,0)" (mousedown)="stopDragging($event)"class="form-control cursor">
                           <option  value="10"> 10</option>
                           <option  value="50"> 50</option>
                           <option  value="100"> 100</option>
