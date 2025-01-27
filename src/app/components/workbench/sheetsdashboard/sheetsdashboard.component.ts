@@ -5746,9 +5746,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       let object ={
         "dashboard_id": this.dashboardId
       }
-      // this.workbechService.refreshDashboardData(object).subscribe({
-      //   next:(data)=>{
-      let data = [{"sheet_id":11035,"Sheetqueryset_id":11035,"columns":[{"column":"awb_code","result":["","81273308001","AIR0330540","AIR0337133","X45157471"]}],"rows":[{"column":"Total Orders","result":[33,1,1,1,1]}],"queryset_id":1832,"chart_id":10,"databaseId":826},{"sheet_id":11034,"Sheetqueryset_id":11034,"columns":[{"column":"user_id","result":[6,7,58,124]}],"rows":[{"column":"Total Amount","result":[395433.2,243538.45999999996,3633.0800000000004,54161.4]}],"queryset_id":1832,"chart_id":6,"databaseId":826}]
+      this.workbechService.refreshDashboardData(object).subscribe({
+        next:(data)=>{
           console.log(data);
           data.forEach((item: any,index:any) => {
           this.filteredRowData = [];
@@ -5778,17 +5777,17 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           this.setDashboardSheetData(item, true , true, false, false, '',true,index);
           }
         });
-      //     },
-      //   error:(error)=>{
-      //     console.log(error)
-      //     Swal.fire({
-      //       icon: 'error',
-      //       title: 'oops!',
-      //       text: error.error.message,
-      //       width: '400px',
-      //     })
-      //   }
-      // });
+          },
+        error:(error)=>{
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      });
     }
 }
 // export interface CustomGridsterItem extends GridsterItem {
