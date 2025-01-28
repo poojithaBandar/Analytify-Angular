@@ -313,7 +313,7 @@ th, td {
 .selected-icon {
   border: 2px solid #007bff; /* Blue border when selected */
   background-color: #f0f8ff; /* Light blue background when selected */
-  box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5); /* Optional box-shadow effect */
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5); /* Optional box-shadow effect */
 }
 
 .icon-container:hover {
@@ -329,6 +329,8 @@ th, td {
   border: 1px solid #ddd;
   border-radius: 5px;
   cursor: pointer;
+  transition: border 0.2s ease, box-shadow 0.2s ease; /* Smooth transition */
+
 }
 
 .icon-container:hover {
@@ -445,9 +447,10 @@ p {
   // right: 0px !important;
   // top: 40px !important;
   inset: 53px 0 auto auto !important;
-  height: auto !important;
+  height: 80px !important;
   border: 1px solid var(--default-border);
   background-color: var(--custom-white);
+  overflow: auto;
 }
 
 .filter-icon-count {
@@ -598,7 +601,10 @@ th, td {
     border: 1px solid #ddd;
   }
   button.btn {
-    font-size: 11px !important;
+    font-size: 10px !important;
+  }
+  .form-check-label {
+    font-size: 12px;
   }
   .dropdown-item{
     padding: 0.3rem 0.6rem !important;
@@ -673,7 +679,10 @@ th, td {
     border: 1px solid #ddd;
   }
   button.btn {
-    font-size: 11px !important;
+    font-size: 9px !important;
+  }
+  .form-check-label {
+    font-size: 12px;
   }
   .dropdown-item{
     padding: 0.3rem 0.6rem !important;

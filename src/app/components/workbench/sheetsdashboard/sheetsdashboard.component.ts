@@ -1172,9 +1172,11 @@ export class SheetsdashboardComponent {
      })
    
   }
-  updateDashboard(){
+  updateDashboard(isLiveReloadData : boolean){
     this.canNavigateToAnotherPage = false;
-    this.takeScreenshot();
+    if(!isLiveReloadData){
+      this.takeScreenshot();
+    }
     this.sheetsIdArray = this.dashboard
     .filter(item => item['type'] !== 'image') // Filter out items with type 'image'
     .map(item => item['sheetId']);
@@ -1240,7 +1242,9 @@ export class SheetsdashboardComponent {
         // })
         this.dashboardsheetsIdArray = this.sheetsIdArray;
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
-        this.saveDashboardimageUpdate();
+        if(!isLiveReloadData){
+          this.saveDashboardimageUpdate();
+        }
         this.endMethod(); 
       },
       error:(error)=>{
@@ -2689,7 +2693,7 @@ addIcon(iconModal:any,item:any){
 //filters
 openSuperScaled(modal: any) {
   this.modalService.open(modal, {
-    centered: true,
+    centered: true,size:'lg',
     windowClass: 'animate__animated animate__zoomIn',
   });
 this.editFilters = false;
@@ -2705,7 +2709,7 @@ this.selectedColumnQuerySetId = null;
 //Actions
 openSuperScaleForActions(modal : any){
   this.modalService.open(modal, {
-    centered: true,
+    centered: true,size:'lg',
     windowClass: 'animate__animated animate__zoomIn',
   });
 }
@@ -3186,11 +3190,11 @@ getFilteredData(){
         console.log('filterowData',this.filteredRowData)
       });
       if(item.chart_id === 1){
-        this.pageChangeTableDisplay(item,1)
+        this.pageChangeTableDisplay(item,1,false,0)
         // this.tablePageNo =1;
         this.tablePage=1
       }else{
-      this.setDashboardSheetData(item, true , true, false, false, '');
+      this.setDashboardSheetData(item, true , true, false, false, '', false,0);
       }
     });
       },
@@ -3236,11 +3240,11 @@ clearAllFilters(): void {
 }
 
 
-setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any){
+setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,liveSheetIndex:any){
   this.dashboard.forEach((item1:any) => {
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
       if(item.chart_id == '1'){//table
-        if(!item1.originalData){
+        if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({tableData: item1.tableData});
         }
         this.tablePreviewColumn = item.columns;
@@ -3269,7 +3273,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3283,7 +3287,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
         };
         } else {
-        if(!item1.originalData){
+        if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
         }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3295,7 +3299,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
     }
       if((item.chart_id == '25' || item.chartId == '25' && (isFilter || isDrillDown)) || (item1.chartId == '25' && isDrillThrough)){//KPI
-        if(!item1.originalData ){
+        if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep(item1['kpiData']);
         }
         let obj = {column : item.rows[0].column , result_data : item.rows[0].result}
@@ -3304,7 +3308,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       if((item.chart_id == '24' || item.chartId == '24' && (isFilter || isDrillDown)) || (item1.chartId == '24' && isDrillThrough)){//pie
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3320,7 +3324,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3333,7 +3337,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '10'|| item.chartId == '10' && (isFilter || isDrillDown)) || (item1.chartId == '10' && isDrillThrough)){//donut
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3349,7 +3353,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3362,7 +3366,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '13'|| item.chartId == '13' && (isFilter || isDrillDown)) || (item1.chartId == '13' && isDrillThrough)){//line
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3376,7 +3380,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = this.filteredColumnData[0].values;
@@ -3385,7 +3389,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       if((item.chart_id == '17'|| item.chartId == '17' && (isFilter || isDrillDown)) || (item1.chartId == '17' && isDrillThrough)){//area
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           if(onApplyFilterClick && ((item1.drillDownHierarchy && item1.drillDownHierarchy.length > 0) || item1.drillDownIndex)){
@@ -3399,7 +3403,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.labels = this.filteredColumnData[0].values;
@@ -3410,7 +3414,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3423,7 +3427,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         };
         } else {
        
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3434,7 +3438,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3447,7 +3451,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3458,7 +3462,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3471,7 +3475,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3482,7 +3486,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           item1.echartOptions.xAxis[0].data = categories;
@@ -3492,7 +3496,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.labels = categories;
@@ -3505,7 +3509,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
             this.filteredRowData.forEach((bar : any)=>{
@@ -3517,7 +3521,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             ...item1.echartOptions,
           };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3528,7 +3532,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           this.filteredRowData.forEach((bar : any)=>{
@@ -3541,7 +3545,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           ...item1.echartOptions,
         };
         } else {
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.chartOptions});
           }
         item1.chartOptions.xaxis.categories = categories;
@@ -3552,7 +3556,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '28' && (isFilter || isDrillDown)) || (item1.chartId == '28' && isDrillThrough)){//guage
-        if(!item1.originalData){
+        if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
         let seriesval =[Math.round(( this.filteredRowData[0]?.data[0]/ (item1.chartOptions.plotOptions.radialBar.max-item1.chartOptions.plotOptions.radialBar.min))*100)]
@@ -3572,7 +3576,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           value: obj.data   
         }));
         if(item1.isEChart){ 
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
         item1.echartOptions.radar.indicator = radarArray;
@@ -3585,7 +3589,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       }
       }
       if((item.chart_id == '29' && (isFilter || isDrillDown)) || (item1.chartId == '29' && isDrillThrough)){//world MAP
-        if(!item1.originalData){
+        if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
         }
         let minData = 0;
@@ -3641,7 +3645,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       if((item.chart_id == '27' && (isFilter || isDrillDown)) || (item1.chartId == '27' && isDrillThrough)){//funnel
         if(item1.isEChart){
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
             const combinedArray: any[] = [];
@@ -3662,7 +3666,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         } else {
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
-        if(!item1.originalData){
+        if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         if(isDrillThrough){
@@ -3685,7 +3689,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         const dimensions: Dimension[] = this.filteredColumnData
         const categories = this.flattenDimensions(dimensions)
         if(item1.isEChart){
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           item1.echartOptions.xAxis.data = _.cloneDeep(categories);
@@ -3702,7 +3706,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             ...item1.echartOptions,     
           };
          }
-        else{ if(!item1.originalData){
+        else{ if(!item1.originalData && !isLiveReloadData){
           item1['originalData'] = {categories: item1.chartOptions.xaxis.categories , data:item1.chartOptions.series };
         }
         item1.chartOptions.xaxis.categories = categories;
@@ -3711,7 +3715,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
       if((item.chart_id == '11' && (isFilter || isDrillDown)) || (item1.chartId == '11' && isDrillThrough)){//calendar
         if(item1.isEChart){
-          if(!item1.originalData){
+          if(!item1.originalData && !isLiveReloadData){
             item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
           }
           let calendarData : any[]= [];
@@ -3780,6 +3784,9 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       console.log('filtered dashboard-data',item1)
     }
 })
+if(isLiveReloadData && liveSheetIndex == this.dashboard.length-1){
+  this.updateDashboard(isLiveReloadData);
+}
 }
 
 formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : number,KPIPrefix: string,KPISuffix: string  ) {
@@ -3851,7 +3858,7 @@ deleteDashboardFilter(id:any){
               this.filteredRowData.push(obj);
               console.log('filterowData',this.filteredRowData)
             });
-            this.setDashboardSheetData(item, true, false, false, false, '');
+            this.setDashboardSheetData(item, true, false, false, false, '', false,0);
           });
           this.toasterService.success('Filter Deleted Succesfully','success',{ positionClass: 'toast-top-center'})
           this.getFilteredData();
@@ -4518,7 +4525,7 @@ kpiData?: KpiData;
         if(item.chart_id === 1){
           this.pageChangeTableDisplayPublic(item,1)
         }else{
-        this.setDashboardSheetData(item, true , true, false, false, '');
+        this.setDashboardSheetData(item, true , true, false, false, '', false,0);
         }
       });
         },
@@ -4617,7 +4624,7 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '');
+      this.setDashboardSheetData(item, false, false, true, false, '', false,0);
       if(item.chartId == '29'){
         if (item.drillDownIndex != 0) {
           this.chartType = 'bar';
@@ -4688,7 +4695,7 @@ kpiData?: KpiData;
         }
         console.log('filterowData',this.filteredRowData)
       });
-      this.setDashboardSheetData(item, false, false, true, false, '');
+      this.setDashboardSheetData(item, false, false, true, false, '', false,0);
       if(item.chartId == '29'){
         if (item.drillDownIndex != 0) {
           this.chartType = 'bar';
@@ -4760,9 +4767,9 @@ kpiData?: KpiData;
 //tablePagination
 tableSearchDashboard(item:any){
   this.tablePageNo=1;
-  this.pageChangeTableDisplay(item,1);
+  this.pageChangeTableDisplay(item,1,false,0);
 }
-pageChangeTableDisplay(item:any,page:any){
+pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetIndex:any){
   if(item.tableData){
   item.tableData.tablePage = page;
   }
@@ -4786,7 +4793,7 @@ pageChangeTableDisplay(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, true , false, false, false, '');
+      this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,liveSheetIndex);
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -4822,7 +4829,7 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, false , false, false, false, '');
+      this.setDashboardSheetData(data.data, false , false, false, false, '', false,0);
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5318,7 +5325,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
             this.filteredRowData.push(rowObject);
           }
-          this.setDashboardSheetData(item,false,false, false,true,sheet.sheet_id);
+          this.setDashboardSheetData(item,false,false, false,true,sheet.sheet_id, false,0);
         });
       },
       error: (error) => {
@@ -5375,7 +5382,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.filteredRowData.push(rowObject);
             console.log('filterowData', this.filteredRowData);
           });
-          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id);
+          this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,0);
         });
       },
       error: (error) => {
@@ -5455,12 +5462,18 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      onImageSelected(event: any) {
        const file = event.target.files[0];
        if (file) {
+        if (!file.type.startsWith('image/')) {
+         this.toasterService.error('Not a supported file format. Please select an image file.','info',{ positionClass: 'toast-top-center'})
+          event.target.value = ''; // Reset file input
+          return;
+        }else{
          const reader = new FileReader();
          reader.onload = (e: any) => {
            this.uploadedImage = e.target.result; // Image data as Base64
            console.log('Uploaded Image:', this.uploadedImage);
          };
          reader.readAsDataURL(file);
+        }
        }
      }
      uploadInJson(){
@@ -5493,6 +5506,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      imageFileSelectEvent(event:any){
       const file = event.target.files[0];
        if (file) {
+        if (!file.type.startsWith('image/')) {
+          this.toasterService.error('Not a supported file format. Please select an image file.','info',{ positionClass: 'toast-top-center'})
+          event.target.value = ''; // Reset file input
+          return;
+        }else{
          const reader = new FileReader();
          reader.onload = (e: any) => {
            this.uploadedKpiImage = e.target.result; 
@@ -5502,6 +5520,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
          };
          reader.readAsDataURL(file);
+        }
        }
      }
      updateKPIImage(item:any,KpiImage:any){
@@ -5735,6 +5754,53 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     // }
     sheetFilters : any[] = [];
     // [{sheet_id:10924,is_filter_applied:true,filter_count:3}];
+    refreshDashboard(){
+      let object ={
+        "dashboard_id": this.dashboardId
+      }
+      this.workbechService.refreshDashboardData(object).subscribe({
+        next:(data)=>{
+          console.log(data);
+          data.forEach((item: any,index:any) => {
+          this.filteredRowData = [];
+          this.filteredColumnData = [];
+          this.tablePreviewColumn.push(item.columns);
+          this.tablePreviewRow.push(item.rows);
+          item.columns.forEach((res:any) => {      
+            let obj1={
+              name:res.column,
+              values: res.result
+            }
+            this.filteredColumnData.push(obj1);
+            console.log('filtercolumn',this.filteredColumnData)
+          });
+          item.rows.forEach((res:any) => {
+            let obj={
+              name: res.column,
+              data: res.result
+            }
+            this.filteredRowData.push(obj);
+            console.log('filterowData',this.filteredRowData)
+          });
+          if(item.chart_id === 1){
+            this.pageChangeTableDisplay(item,1,true,index)
+            this.tablePage=1
+          }else{
+          this.setDashboardSheetData(item, true , true, false, false, '',true,index);
+          }
+        });
+          },
+        error:(error)=>{
+          console.log(error)
+          Swal.fire({
+            icon: 'error',
+            title: 'oops!',
+            text: error.error.message,
+            width: '400px',
+          })
+        }
+      });
+    }
 }
 // export interface CustomGridsterItem extends GridsterItem {
 //   title: string;

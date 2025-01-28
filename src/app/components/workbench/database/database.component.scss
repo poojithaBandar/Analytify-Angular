@@ -223,13 +223,12 @@ margin:  auto 0;
 button.TextTransform {
   top: 181px;
   position: absolute;
-  transform: translate(0%, 0%) rotate(
-270deg
-);
+  transform: translate(0%, 0%) rotate(270deg);
   left: -120px;
-  padding: 10px 84px;
+  padding: 17px 70px;
   border: none;
   border-bottom: 1px solid #9b9999;
+  border-radius: 5px 0px 0px 0px;
 }
 .drpdwnhgt{
   height: 220px;

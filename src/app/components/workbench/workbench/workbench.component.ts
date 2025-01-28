@@ -49,6 +49,7 @@ export class WorkbenchComponent implements OnInit{
   openMySqlForm = false;
   openConnectWiseForm = false;
   openHaloPSAForm = false;
+  openShopifyForm =false;
   openOracleForm = false;
   openMicrosoftSqlServerForm = false;
   openSnowflakeServerForm = false;
@@ -117,7 +118,8 @@ export class WorkbenchComponent implements OnInit{
     publicKey = '';
     privateKey = '';
     path='';
-
+    shopifyToken = '';
+    shopifyName = '';
   emptyVariables(){
     this.postGrePortName = '';
     this.postGreDatabaseName = '';
@@ -227,7 +229,29 @@ export class WorkbenchComponent implements OnInit{
       )
 
     }
+    shopifyConnectionUpdate(){
+      const obj = {
+        "api_token": this.shopifyToken,
+        "shop_name": this.shopifyName,
+        "display_name": this.displayName,
+      }
 
+      this.workbechService.haloPSAConnectionUpdate(obj).subscribe({next: (responce) => {
+            console.log(responce);
+            this.modalService.dismissAll('close');
+            if(responce){
+              this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
+            }
+            this.getDbConnectionList();
+          },
+          error: (error) => {
+            console.log(error);
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+          }
+        }
+      )
+
+    }
     DatabaseUpdate(){
       const obj={
           // "database_type":"postgresql",
@@ -318,7 +342,11 @@ export class WorkbenchComponent implements OnInit{
       this.viewNewDbs = false;
       this.emptyVariables();
     }
-
+    connectShopify(){
+      this.openShopifyForm = true;
+      this.databaseconnectionsList= false;
+      this.viewNewDbs = false;
+    }
     companyIdError(){
       if(this.companyId){
         this.companyIDError = false;
@@ -375,6 +403,44 @@ export class WorkbenchComponent implements OnInit{
       }else{
         this.clientIDError = true;
       }
+    }
+    shopifyapiTokenError(){
+      if(this.shopifyToken){
+        this.shopifyApiTokenError = false;
+      }else{
+        this.shopifyApiTokenError = true;
+      }
+    }
+    shopfyNameError(){
+      if(this.shopifyName){
+        this.shopifyNameError = false;
+      }else{
+        this.shopifyNameError = true;
+      }
+    }
+    shopifySignIn(){
+      const obj={
+        "api_token":this.shopifyToken,
+        "shop_name": this.shopifyName,
+        "display_name": this.displayName
+    }
+      this.workbechService.shopifyConnection(obj).subscribe({next: (data) => {
+        console.log(data)
+            if(data){
+              this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+              this.databaseId=data?.hierarchy_id;
+              this.modalService.dismissAll();
+              this.openShopifyForm = false;
+              const encodedId = btoa(this.databaseId.toString());
+              this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+            }
+          },
+          error: (error) => {
+            this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+            console.log(error);
+          }
+        }
+      )
     }
     connectWiseSignIn(){
       const obj={
@@ -904,7 +970,12 @@ export class WorkbenchComponent implements OnInit{
       this.clientIdPSA = editData.client_id;
       this.clientSecret = editData.client_secret;
       this.displayName = editData.display_name;
-    } else {
+    }else if(this.databaseType == "shopify"){
+      this.displayName = editData.display_name;
+      this.shopifyName = editData.shop_name;
+      this.shopifyToken = editData.api_token;
+    }
+     else {
       this.postGreServerName = editData.hostname;
       this.postGrePortName = editData.port;
       this.postGreUserName = editData.username;
@@ -1016,7 +1087,7 @@ export class WorkbenchComponent implements OnInit{
   this.sqlLiteForm = false;
   this.openConnectWiseForm = false;
   this.openHaloPSAForm = false;
-
+  this.openShopifyForm = false;
   this.postGreServerName = '';
   this.postGrePortName = '';
   this.postGreDatabaseName = '';
@@ -1049,6 +1120,10 @@ export class WorkbenchComponent implements OnInit{
   publicKeyError:boolean = false;
   companyIDError:boolean = false;
   disableConnectBtn = true;
+
+  shopifyApiTokenError:boolean = false;
+  shopifyNameError:boolean = false;
+
   serverConditionError(){
     if(this.postGreServerName){
       this.serverError = false;
