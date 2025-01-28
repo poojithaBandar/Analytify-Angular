@@ -2159,6 +2159,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.filterId.push(filter.filter_id);
         });
       }
+      this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         this.isEChatrts = this.sheetResponce?.isEChart;
         this.isApexCharts = this.sheetResponce?.isApexChart;
         this.dateDrillDownSwitch = this.sheetResponce?.isDrillDownData;
@@ -2809,6 +2810,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.topAggregate = 'sum';
         this.topLimit = 5;
         this.topType = 'desc';
+        this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
       },
       error: (error) => {
         console.log(error);
@@ -2933,6 +2935,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.topAggregate = 'sum';
           this.topLimit = 5;
           this.topType = 'desc';
+          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         },
         error: (error) => {
           console.log(error);
@@ -2947,6 +2950,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
          this.dataExtraction();
+         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
       },
       error: (error) => {
         console.log(error);
@@ -2993,23 +2997,7 @@ isTopFilter : boolean = true;
 editFilterCheck(data:any){
   if(this.dimetionMeasure.length>0){
     this.filterAdded = this.dimetionMeasure.some((column: any) => column.col_name === data);
-    // this.dimetionMeasure.some((column:any)=>{
-    //   if(column.col_name === data){
-    //     this.filterAdded = true;
-    //   }
-    //   else{
-    //     this.filterAdded = false;
-    //   }
-    // })
     this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
-    // this.dimetionMeasure.forEach((column:any)=>{
-    //   if(!column.top_bottom){
-    //     this.isTopFilter = true;
-    //   }
-    //   else{
-    //     this.isTopFilter = false;
-    //   }
-    // })
   }
   else{
     this.filterAdded = false;
@@ -4827,6 +4815,8 @@ customizechangeChartPlugin() {
       this.tableColumnsDisplay = [];
       this.tableDataDisplay = [];
       this.KPINumber = '';
+      this.drillDownObject = [];
+      this.dateDrillDownSwitch = false;
       this.resetCustomizations();
       this.table = true;
       this.bar = false;

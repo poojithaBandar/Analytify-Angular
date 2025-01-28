@@ -83,6 +83,7 @@ export class InsightEchartComponent {
   @Input() bottomLegend:any;
   @Input() legendOrient:any;
   @Input() leftLegend:any;
+  @Input() isDistributed : any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
 
@@ -300,7 +301,7 @@ funnelchart(){
     });
   });
   this.chartOptions = {
-    color:this.selectedColorScheme,
+    color: this.isDistributed ? this.selectedColorScheme : this.color,
     tooltip: {
       trigger: 'item',
     },
@@ -1878,7 +1879,7 @@ chartInitialize(){
         this.dataLabelsSetOptions();
       }
     }
-    if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme']){
+    if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme'] || changes['isDistributed']){
       if(this.chartInstance){
         this.colorSetOptions();
       }
@@ -2739,7 +2740,13 @@ chartInitialize(){
       this.chartInstance.setOption(obj);
       this.chartOptions.series[0].itemStyle.color = this.barColor;
       this.chartOptions.series[1].lineStyle.color = this.lineColor;
-    } else if(this.chartType === 'funnel' || this.chartType === 'stocked'
+    } else if(this.chartType === 'funnel'){
+      let obj ={
+        color:this.isDistributed ? this.selectedColorScheme : this.color
+       }
+       this.chartInstance.setOption(obj);
+       this.chartOptions.color = this.isDistributed ? this.selectedColorScheme : this.color;
+    } else if(this.chartType === 'stocked'
        || this.chartType === 'sidebyside' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' ||  
        this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' || 
        this.chartType === 'calendar'){

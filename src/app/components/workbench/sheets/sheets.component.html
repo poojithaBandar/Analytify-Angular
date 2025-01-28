@@ -1407,7 +1407,7 @@
             @else if(funnel && chartId){         
                 <div class="card-body">
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                    [color]="color" [backgroundColor]="backgroundColor" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme"
+                    [color]="color" [backgroundColor]="backgroundColor" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme" [isDistributed]="isDistributed"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
@@ -3065,7 +3065,7 @@
 
                                                                 <div 
                                                                 class="dropdown" 
-                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || funnel || calendar">
+                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || calendar || (funnel && isDistributed)">
                                                                 <!-- Dropdown Button -->
                                                                 <button class="dropdown-button" (click)="toggleDropdownColorScheme()">
                                                                   <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
@@ -3219,14 +3219,32 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                      
-     
+                                                                <div *ngIf="funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label>Distribution</label>
+                                                                    <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!isDistributed" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('distributed')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label>color</label>
+                                                                    <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetChartColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!funnelColorSwitch" class="toggle toggle-sm off mb-0" (click)="funnelColorSwitch = !funnelColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
+                                                                    </ngx-colors>
+                                                                </div>
                                                             </ng-template>
                                                           </div>
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
