@@ -485,6 +485,10 @@
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                                                 <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                             </div>
+                                                            <div class="form-check">
+                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                            </div>
                                                             <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
                                                             <!-- @for(data of filterData;track data){ -->
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -600,34 +604,102 @@
                                     </div>
                                 </div>
                             }@else{
-                                <div style="display: flex;">
-                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                    <label for="defaultCheck1" class="form-check-label"> Select All </label>
-                                </div>
-                                <div *ngFor="let data of filterData | test: filterSearch : 'label'">
-                                <!-- @for(data of filterData;track data){ -->
-                                    @if(data? data : (boolList.includes(filterType)? true: '')){
-                                        <div class="form-check">
-                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected"  [(ngModel)]="data.selected" class="form-check-input"
-                                                (click)="filterCheck($event,data.label)">
-                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                <div class="card panel panel-primary">
+                                    <div class="tab-menu-heading tab-menu-heading-boxed">
+                                        <div class="tabs-menu-boxed">
+                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                <li [ngbNavItem]="1">
+                                                    <a ngbNavLink class="p-3">General</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane active" id="activetabs">
+                                                            <div style="display: flex;">
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                            </div>
+                                                            <div *ngFor="let data of filterData | test: filterSearch : 'label'">
+                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" [(ngModel)]="data.selected"
+                                                                        class="form-check-input" (click)="filterCheck($event,data.label)">
+                                                                    <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
+                                                    <li [ngbNavItem]="4" *ngIf="isTopFilter">
+                                                        <a ngbNavLink class="p-3">Top</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane active" id="activetabs">
+                                                                <div class="filter-options">
+                                                                    <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                    <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                                </div>
+                                                                <div style="margin-left: 5%;">
+                                                                    <div class="field-options">
+                                                                        <select [(ngModel)]="topType">
+                                                                          <option value="desc">Top</option>
+                                                                          <option value="asc">Bottom</option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topLimit">
+                                                                            <option value="5">5</option>
+                                                                            <option value="10">10</option>
+                                                                            <option value="20">20</option>
+                                                                            <option value="30">30</option>
+                                                                            <option value="40">40</option>
+                                                                            <option value="50">50</option>
+                                                                            <option value="100">100</option>
+                                                                            <option value="500">500</option>
+                                                                            <option value="1000">1000</option>
+                                                                            <option value="2000">2000</option>
+                                                                            <option value="3000">3000</option>
+                                                                            <option value="4000">4000</option>
+                                                                            <option value="5000">5000</option>
+                                                                          </select>
+                                                                        <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                    </div>
+                                                                    <div class="field-options">
+                                                                        <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                            <option value="select" selected disabled> select </option>
+                                                                            <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                            <option value="sum">Sum</option>
+                                                                            <option value="avg">Avg</option>
+                                                                            <option value="min">Min</option>
+                                                                            <option value="max">Max</option>
+                                                                            <option value="count">Count</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </li>
+                                                }
+                                            </ul>
+                                            <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                                <div class="tab-content">
+                                                    <div [ngbNavOutlet]="nav"></div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    }
                                     </div>
-                                <!-- } -->
+                                </div>
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="activeTabId !== 3">
+                            <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -768,24 +840,94 @@
                                     </div>
                                 </div>
                             }@else{
-                                <div style="display: flex;">
-                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                    <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                    <label for="defaultCheck1" class="form-check-label"> Select All </label>
-                                </div>
-                                <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
-                                <!-- @for(data of filterData;track data){ -->
-                                    @if(data? data : (boolList.includes(filterType)? true: '')){
-                                        <div class="form-check">
-                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
-                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                <div class="card panel panel-primary">
+                                    <div class="tab-menu-heading tab-menu-heading-boxed">
+                                        <div class="tabs-menu-boxed">
+                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                <li [ngbNavItem]="1" [class.disabled]="activeTabId !== 1">
+                                                    <a ngbNavLink class="p-3">General</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane active" id="activetabs">
+                                                            <div style="display: flex;">
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                            </div>
+                                                            <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                            <!-- @for(data of filterData;track data){ -->
+                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                                                    </div>
+                                                                }
+                                                                </div>
+                                                            <!-- } -->
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
+                                                    <li [ngbNavItem]="4" [class.disabled]="activeTabId !== 4">
+                                                        <a ngbNavLink class="p-3">Top</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane active" id="activetabs">
+                                                                <div class="filter-options">
+                                                                    <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                    <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                                </div>
+                                                                <div style="margin-left: 5%;">
+                                                                    <div class="field-options">
+                                                                        <select [(ngModel)]="topType">
+                                                                          <option value="desc">Top</option>
+                                                                          <option value="asc">Bottom</option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topLimit">
+                                                                            <option value="5">5</option>
+                                                                            <option value="10">10</option>
+                                                                            <option value="20">20</option>
+                                                                            <option value="30">30</option>
+                                                                            <option value="40">40</option>
+                                                                            <option value="50">50</option>
+                                                                            <option value="100">100</option>
+                                                                            <option value="500">500</option>
+                                                                            <option value="1000">1000</option>
+                                                                            <option value="2000">2000</option>
+                                                                            <option value="3000">3000</option>
+                                                                            <option value="4000">4000</option>
+                                                                            <option value="5000">5000</option>
+                                                                          </select>
+                                                                        <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                    </div>
+                                                                    <div class="field-options">
+                                                                        <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                            <option value="select" selected disabled> select </option>
+                                                                            <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                            <option value="sum">Sum</option>
+                                                                            <option value="avg">Avg</option>
+                                                                            <option value="min">Min</option>
+                                                                            <option value="max">Max</option>
+                                                                            <option value="count">Count</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </li>
+                                                }
+                                            </ul>
+                                            <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                                <div class="tab-content">
+                                                    <div [ngbNavOutlet]="nav"></div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    }
                                     </div>
-                                <!-- } -->
+                                </div>
                             }
 
                             <!-- <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
@@ -798,12 +940,12 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="activeTabId !== 3">
+                            <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0)" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -1265,7 +1407,7 @@
             @else if(funnel && chartId){         
                 <div class="card-body">
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                    [color]="color" [backgroundColor]="backgroundColor" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme"
+                    [color]="color" [backgroundColor]="backgroundColor" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme" [isDistributed]="isDistributed"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
@@ -1656,24 +1798,94 @@
                                                                 </div>
                                                             </div>
                                                         }@else{
-                                                            <div style="display: flex;">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"  aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2"  type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                                            </div>
-                                                            <div class="form-check">
-                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
-                                                            </div>
-                                                            <!-- @for(data of filterData;track data | filter: editFilterSearch){ -->
-                                                                <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
-                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
-                                                                    <div class="form-check">
-                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
-                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                                            <div class="card panel panel-primary">
+                                                                <div class="tab-menu-heading tab-menu-heading-boxed">
+                                                                    <div class="tabs-menu-boxed">
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                                            <li [ngbNavItem]="1" [class.disabled]="activeTabId !== 1">
+                                                                                <a ngbNavLink class="p-3">General</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane active" id="activetabs">
+                                                                                        <div style="display: flex;">
+                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                                            <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                                            <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                                                        </div>
+                                                                                        <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                                                        <!-- @for(data of filterData;track data){ -->
+                                                                                            @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                                                <div class="form-check">
+                                                                                                    <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                                                    <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                                                                                </div>
+                                                                                            }
+                                                                                            </div>
+                                                                                        <!-- } -->
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
+                                                                                <li [ngbNavItem]="4" [class.disabled]="activeTabId !== 4">
+                                                                                    <a ngbNavLink class="p-3">Top</a>
+                                                                                    <ng-template ngbNavContent>
+                                                                                        <div class="tab-pane active" id="activetabs">
+                                                                                            <div class="filter-options">
+                                                                                                <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                                                <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                                                            </div>
+                                                                                            <div style="margin-left: 5%;">
+                                                                                                <div class="field-options">
+                                                                                                    <select [(ngModel)]="topType">
+                                                                                                      <option value="desc">Top</option>
+                                                                                                      <option value="asc">Bottom</option>
+                                                                                                    </select>
+                                                                                                    <select [(ngModel)] = "topLimit">
+                                                                                                        <option value="5">5</option>
+                                                                                                        <option value="10">10</option>
+                                                                                                        <option value="20">20</option>
+                                                                                                        <option value="30">30</option>
+                                                                                                        <option value="40">40</option>
+                                                                                                        <option value="50">50</option>
+                                                                                                        <option value="100">100</option>
+                                                                                                        <option value="500">500</option>
+                                                                                                        <option value="1000">1000</option>
+                                                                                                        <option value="2000">2000</option>
+                                                                                                        <option value="3000">3000</option>
+                                                                                                        <option value="4000">4000</option>
+                                                                                                        <option value="5000">5000</option>
+                                                                                                      </select>
+                                                                                                    <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                                                </div>
+                                                                                                <div class="field-options">
+                                                                                                    <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                                                        <option value="select" selected disabled> select </option>
+                                                                                                        <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                                                    </select>
+                                                                                                    <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                                                        <option value="sum">Sum</option>
+                                                                                                        <option value="avg">Avg</option>
+                                                                                                        <option value="min">Min</option>
+                                                                                                        <option value="max">Max</option>
+                                                                                                        <option value="count">Count</option>
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </ng-template>
+                                                                                </li>
+                                                                            }
+                                                                        </ul>
+                                                                        <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                                                            <div class="tab-content">
+                                                                                <div [ngbNavOutlet]="nav"></div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                }
                                                                 </div>
-                                                            <!-- } -->
+                                                            </div>
                                                         }
 
                                                         <!-- @for(data of filterData;track data){
@@ -1684,12 +1896,12 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0" *ngIf="activeTabId !== 3">
+                                                        <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
@@ -2853,7 +3065,7 @@
 
                                                                 <div 
                                                                 class="dropdown" 
-                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || funnel || calendar">
+                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || calendar || (funnel && isDistributed)">
                                                                 <!-- Dropdown Button -->
                                                                 <button class="dropdown-button" (click)="toggleDropdownColorScheme()">
                                                                   <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
@@ -3007,14 +3219,32 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                      
-     
+                                                                <div *ngIf="funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label>Distribution</label>
+                                                                    <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!isDistributed" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('distributed')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label>color</label>
+                                                                    <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetChartColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!funnelColorSwitch" class="toggle toggle-sm off mb-0" (click)="funnelColorSwitch = !funnelColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
+                                                                    </ngx-colors>
+                                                                </div>
                                                             </ng-template>
                                                           </div>
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
