@@ -251,18 +251,25 @@
                                               </button>
                                               </a>
                                               <div class="dropdown-menu size-dropdown upload-image-position" ngbDropdownMenu>
-                                                  <!-- <p class="mb-0 bg-light text-center p-2">Upload Image</p> -->
-                                                  <div class="form-group">
-                                                    <label class="form-label mt-0">Insert Image File:</label>
-                                                    <input
+                                                  <p class="mb-0 bg-light text-center p-2">Upload Image</p>
+                                                  <div class="form-group d-flex align-items-center flex-wrap mb-0 mt-2">
+                                                    <label class="form-label mt-0 me-2">Insert Image File:</label>
+                                                    <!-- <input
                                                     type="file" class="form-control"
                                                     id="imageUpload"
                                                     accept="image/*"
                                                     (change)="onImageSelected($event)"
-                                                  />
+                                                  />  -->
+                                                 
+                                                        <div class="btn btn-primary custom-file-input cursor-pointer">
+                                                            Choose
+                                                            <input type="file" id="fileUpload" class="cursor-pointer">
+                                                        </div>
                                                   </div>
+                                                  <input type="text" id="input" placeholder="Image.jpg" class="form-control border mt-1">
+
                                                   <div class="url">
-                                                    <label class="form-label">Name:</label>
+                                                    <label class="form-label mt-1">Name:</label>
                                                     <input type="text" id="input" [(ngModel)]="imageTitle" class="form-control border">
                                                   </div>
                                                   <div class=" mt-2 d-flex justify-content-end">
