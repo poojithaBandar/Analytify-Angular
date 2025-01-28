@@ -209,6 +209,29 @@
                     (input)="siteUrlPSAError()">
                    </div>
               </form>
+            }
+            @else if(databaseType == 'shopify') {
+              <form>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': shopifyApiTokenError}" class="col-form-label">API Token <span
+                    class="text-danger ms-1">*</span></label>
+                <input [ngClass]="{'error-input': shopifyApiTokenError}" type="text" class="form-control"
+                  [(ngModel)]="shopifyToken" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+                  placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="shopifyapiTokenError()">
+              </div>
+                <div class="mb-2">
+                  <label [ngClass]="{'error-label': shopifyNameError}" for="recipient-name" class="col-form-label">Shop Name<span class="text-danger ms-1">*</span></label>
+                  <input [ngClass]="{'error-input': shopifyNameError}" type="text" class="form-control"
+                    [(ngModel)]="shopifyName" [ngModelOptions]="{standalone: true}"
+                    placeholder="shop name"
+                    (input)="shopfyNameError()"> 
+                  </div>
+
+                    <div class="mb-2">
+                      <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                            <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameIntegrationConditionError()">
+                        </div>
+              </form>
             } @else {
             <form>
               <div class="mb-2">
@@ -252,6 +275,9 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="haloPSAUpdate()" [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName )">Update</button>
       
+            } @else if(databaseType == 'shopify') {
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+              <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
             } @else {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
@@ -355,7 +381,9 @@
                       <td *ngIf="database.server_type === 'HALOPS'">
                         <img alt="product" src="./assets/images/icons/Halopsa-icon.png" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
-
+                      <td *ngIf="database.server_type === 'SHOPIFY'">
+                        <img alt="product" src="./assets/images/icons/shopify-large-1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
                             <td>{{database.updated_at}}</td>
@@ -414,6 +442,8 @@
                                               <img src="./assets/images/icons/connectwise-icon.png" alt="" class="rounded-circle"></span>
                                               <span *ngIf="database.server_type === 'HALOPS'" class="avatar avatar rounded-circle">
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
+                                                <span *ngIf="database.server_type === 'SHOPIFY'" class="avatar avatar rounded-circle">
+                                                  <img src="./assets/images/icons/shopify-large-1.jpg" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
@@ -787,6 +817,83 @@
                           The specific URL (https://halopsa.com) for your HaloPSA instance that allows your application to
                           interact with its API and
                           manage operations.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+            @if(openShopifyForm){
+          <div class="main-container container-fluid" style="padding-left: 15px; padding-right: 15px;">
+            <div class="row">
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Connect To Shopify</h4>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': shopifyApiTokenError}" class="col-form-label">API Token <span
+                            class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': shopifyApiTokenError}" type="text" class="form-control"
+                          [(ngModel)]="shopifyToken" [ngModelOptions]="{standalone: true}" autocomplete="new-myname"
+                          placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="shopifyapiTokenError()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': shopifyNameError}" for="recipient-name" class="col-form-label">Shop Name<span class="text-danger ms-1">*</span></label>
+                        <input [ngClass]="{'error-input': shopifyNameError}" type="text" class="form-control"
+                          [(ngModel)]="shopifyName" [ngModelOptions]="{standalone: true}"
+                          placeholder="shop name"
+                          (input)="shopfyNameError()">
+                      </div>
+                      <div class="form-group">
+                        <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">Display Name <span class="text-danger ms-1" >*</span></label>
+                        <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. Analytify" (input)="displayNameIntegrationConditionError()">
+                      </div>
+                    
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="shopifySignIn()"
+                          [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName ) ">Connect</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-xl-6 p-1 mb-0">
+                <div class="card user-card border">
+                  <div class="user-image" style="height: 150px;">
+                    <span class="avatar w-20 h-20 rounded-circle mb-2" style="outline: none;">
+                      <img src="./assets/images/Db_server_images/shopify.png" alt="" class="rounded-circle bg-white"
+                        style="border: 3px solid #078f8c;">
+                    </span>
+                  </div>
+                  <div class="card-body" style="padding-top: 70px; height: 54vh;">
+                    <ul class="">
+                      <li> <span class="mt-1">Shopify is a leading e-commerce platform that empowers businesses to create, manage, and scale online stores with ease.
+                         It offers a wide range of tools to customize your store, manage products and inventory, process orders, and connect with customers.
+                        </span></li>
+                        <li><h6 class=" mt-3"><strong>Features</strong></h6></li>
+                        <li><span class="mb-0"><strong>Easy Setup & Customizable Themes:</strong> Build and personalize your online store effortlessly.</span></li>
+                        <li><span class="mb-0"><strong>Product & Order Management:</strong> Sync and track products, inventory, and orders in real-time.</span></li>
+                        <li><span class="mb-0"><strong>Mobile-Optimized & Multi-Channel Selling:</strong> Reach customers across devices and marketplaces.</span></li>
+                        <li><span class="mb-0"><strong>Built-In Analytics & Marketing Tools:</strong> Access performance insights and boost sales with SEO, discounts, and social media integration.</span></li>
+
+                      <li>
+                        <h6 class=" mt-3"><strong>Inputs to connect</strong></h6>
+                      </li>
+                      <li><span class="mb-0"><strong>API token:</strong> This unique identifier is used to represent your
+                          application during authentication and API interactions.
+                        </span></li>
+          
+                      <li><span class="mb-0"><strong>Client Secret:</strong>This token is a unique identifier for authenticating your Shopify store with our application.
+                         You can generate the API token from your Shopify Admin panel.</span></li>
+                      <li><span class="mb-0"><strong>Shop Name:</strong>
+                        Your Shop Name is the unique identifier for your Shopify store.</span></li>
+                        <li><span class="mb-0"><strong>Display Name:</strong>
+                          The Display Name is a user-friendly name for your store that will be shown on our platform.</span></li>
                     </ul>
                   </div>
                 </div>
@@ -1543,6 +1650,14 @@
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
                           <span style=" width: 8rem;">Jira</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectShopify()">
+                          <img src="/assets/images/Db_server_images/shopify-small-1.jpg"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600" style=" width: 6rem;">
+                          <span style=" width: 8rem;">Shopify</span>
                         </div>
                       </div>        
                     </div>
