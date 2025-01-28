@@ -263,11 +263,10 @@
                                                  
                                                         <div class="btn btn-primary custom-file-input cursor-pointer">
                                                             Choose
-                                                            <input type="file" id="fileUpload" class="cursor-pointer">
+                                                            <input type="file" id="imageUpload" accept="image/*" (change)="onImageSelected($event)" class="cursor-pointer">
                                                         </div>
                                                   </div>
-                                                  <input type="text" id="input" placeholder="Image.jpg" class="form-control border mt-1">
-
+                                                  <input type="text" id="input" [value]="fileName" placeholder="No image chosen" class="form-control border mt-1" readonly>
                                                   <div class="url">
                                                     <label class="form-label mt-1">Name:</label>
                                                     <input type="text" id="input" [(ngModel)]="imageTitle" class="form-control border">

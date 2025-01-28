@@ -5453,6 +5453,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
 	   // image upload inn sheets
      uploadedImage: any;
      imageTitle:any;
+     fileName: string = 'No file chosen';
      triggerFileUpload() {
        const fileInput = document.getElementById('imageUpload') as HTMLElement;
        fileInput.click();
@@ -5465,6 +5466,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         if (!file.type.startsWith('image/')) {
          this.toasterService.error('Not a supported file format. Please select an image file.','info',{ positionClass: 'toast-top-center'})
           event.target.value = ''; // Reset file input
+          this.fileName = 'No file chosen';
           return;
         }else{
          const reader = new FileReader();
@@ -5473,7 +5475,10 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
            console.log('Uploaded Image:', this.uploadedImage);
          };
          reader.readAsDataURL(file);
+         this.fileName = file.name; 
         }
+       }else{
+        this.fileName = 'No file chosen'; 
        }
      }
      uploadInJson(){
@@ -5491,10 +5496,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
         this.dashboard.push(element);
         console.log('Updated Dashboard:', this.dashboard);
         this.canNavigateToAnotherPage = true;
-        // Clear uploadedImage after adding to the dashboard
-        this.imageTitle = '';
-        this.uploadedImage = null;
-        this.imageUpload.nativeElement.value = ''; // Clear the file input
+        const fileInput = document.getElementById('imageUpload') as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = '';
+          this.imageTitle = '';
+          this.uploadedImage = null;
+          this.fileName = 'No file chosen'; 
+          this.imageUpload.nativeElement.value = '';
+      }
       }
      }
      kpiItem:any;
