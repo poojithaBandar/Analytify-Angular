@@ -252,8 +252,8 @@
                                               </a>
                                               <div class="dropdown-menu size-dropdown upload-image-position" ngbDropdownMenu>
                                                   <p class="mb-0 bg-light text-center p-2">Upload Image</p>
-                                                  <div class="form-group d-flex align-items-center flex-wrap mb-0 mt-2">
-                                                    <label class="form-label mt-0 me-2">Insert Image File:</label>
+                                                  <div class="form-group d-flex align-items-center flex-wrap justify-content-between mb-0 mt-3">
+                                                    <label class="form-label mt-1 me-2">Insert Image File:</label>
                                                     <!-- <input
                                                     type="file" class="form-control"
                                                     id="imageUpload"
@@ -266,9 +266,9 @@
                                                             <input type="file" id="imageUpload" accept="image/*" (change)="onImageSelected($event)" class="cursor-pointer">
                                                         </div>
                                                   </div>
-                                                  <input type="text" id="input" [value]="fileName" placeholder="No image chosen" class="form-control border mt-1" readonly>
+                                                  <input type="text" id="input" [value]="fileName" placeholder="No image chosen" class="form-control border mt-1" readonly style="background-color: transparent;">
                                                   <div class="url">
-                                                    <label class="form-label mt-1">Name:</label>
+                                                    <label class="form-label mt-3 mb-1">Name:</label>
                                                     <input type="text" id="input" [(ngModel)]="imageTitle" class="form-control border">
                                                   </div>
                                                   <div class=" mt-2 d-flex justify-content-end">
@@ -291,16 +291,16 @@
                               <div class="modal-body">
                                 <div class="text-wrap">
                                   <div class="row">
-                                  <div class="col-xl-6 col-lg-6 col-md-6 bg-light p-2 rounded-2"style="border-right: 1px solid #f3f6f9;">
+                                  <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2"style="border-right: 1px solid #f3f6f9;">
                                     <button *ngIf="editFilters" class="btn btn-primary dropdown-toggle mb-2" (click)="addfilterOnEdit()" type="button"  aria-expanded="false" style="width: 100%;">
                                       <i class="fa fa-plus"></i> Add Filter
                                     </button>
-                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" (click)="editFiltersData(filterList.dashboard_filter_id)" class="btn text-left mb-2">{{filterList.filter_name}}
+                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" (click)="editFiltersData(filterList.dashboard_filter_id)" class="btn text-left mb-2 bg-white">{{filterList.filter_name}}
                                       <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id);$event.stopPropagation()" style="color: red;"><i style="float: right;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
                                     </button>
 
                                     </div>
-                                  <div class="col-xl-6 col-lg-6 col-md-6 " >
+                                  <div class="col-xl-7 col-lg-7 col-md-7 " >
                                     <div *ngIf="!editFilters" class="card-content p-0">
                                         <div class=" mt-2 mb-2">
                                           <ul class="d filter-popover" aria-labelledby="applyfilters" >
@@ -351,7 +351,7 @@
                                                                                       </ng-select>
                                             </div>
                                     
-                                            <div class="form-group p-1">
+                                            <div class="form-group p-1 mb-0">
                                               <label class="form-label">Column <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
                                             <ng-select [items]="dropdownOptions"
@@ -376,24 +376,27 @@
                                             
                                             </ng-select>
                                             </div>
+                                            <div class="form-group p-1 mb-0">
                                               <label class="form-label">Apply to Selected worksheets <i class="icon icon-info ms-1"></i></label>
-                                           
-                                            <div class="form body border p-2 rounded-2" style="max-height: 200px; min-height: 35px;  overflow: auto;">
+                                              <div class="form body border p-2 rounded-2" style="max-height: 200px; min-height: 35px;  overflow: auto;">
 
-                                              <div *ngIf="sheetsFilterNames?.length > 0" class="form-check">
-
-                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
-                                                <label for="selectAll" class="form-check-label">Select All</label>
+                                                <div *ngIf="sheetsFilterNames?.length > 0" class="form-check">
+  
+                                                  <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleAllRows($event)" class="form-check-input">
+                                                  <label for="selectAll" class="form-check-label">Select All</label>
+                                                  </div>
+                                                @for(rows of sheetsFilterNames;track rows;let i = $index){
+                                                 
+  
+                                                <div class="form-check">
+                                                  <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
+                                                  <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows?.label?.name}}</p> </label>
                                                 </div>
-                                              @for(rows of sheetsFilterNames;track rows;let i = $index){
-                                               
-
-                                              <div class="form-check">
-                                                <input type="checkbox" [id]="'defaultCheck' + i"  name="rows{{i}}"[(ngModel)]="rows.selected" (change)="updateSelectedRows()" class="form-check-input"> 
-                                                <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows?.label?.name}}</p> </label>
+                                              }
                                               </div>
-                                            }
                                             </div>
+                                           
+                                           
 
                                             <div class="py-2 mt-3">
                                               <button type="button" [disabled]="!isAnyRowSelected() || !selectedOption || selectedQuerySetId === 0"  (click)="getSelectedData();columnSearch = ''" class="btn ripple btn-primary me-2">Save</button>
@@ -611,16 +614,16 @@
                               <div class="modal-body">
                                 <div class="text-wrap">
                                   <div class="row">
-                                  <div class="col-xl-6 col-lg-6 col-md-6 bg-light p-2 rounded-2"style="border-right: 1px solid #f3f6f9;">
+                                  <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2"style="border-right: 1px solid #f3f6f9;">
                                     <button *ngIf="editActions" class="btn btn-primary dropdown-toggle mb-2" (click)="editActions = false;clearActionForm();" type="button"  aria-expanded="false" style="width: 100%;">
                                       <i class="fa fa-plus"></i> Add Action
                                     </button>
-                                    <button *ngFor="let action of drillThroughActionList" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" [ngStyle]="{'background-color' : action.drill_id == actionId ? 'var(--primary-color)' : 'white', 'color' : action.drill_id == actionId ? 'white' : 'black'}" (click)="getEditActionPreview(action.drill_id)" class="btn btn-outline-primary text-left mb-2">{{action.action_name}}
+                                    <button *ngFor="let action of drillThroughActionList" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" [ngStyle]="{'background-color' : action.drill_id == actionId ? 'var(--primary-color)' : 'white', 'color' : action.drill_id == actionId ? 'white' : 'black'}" (click)="getEditActionPreview(action.drill_id)" class="btn text-left mb-2 bg-white">{{action.action_name}}
                                       <a (click)="deleteDashboardAction([action.drill_id]);$event.stopPropagation()" style="color: red;"><i style="float: right;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
                                     </button>
 
                                     </div>
-                                  <div class="col-xl-6 col-lg-6 col-md-6 " >
+                                  <div class="col-xl-7 col-lg-7 col-md-7 " >
                                     <div *ngIf="!editActions" class="card-content p-0">
                                         <div class=" mt-2 mb-2">
                                           <ul class="d filter-popover" aria-labelledby="applyActions" >
@@ -660,7 +663,7 @@
                                               </ng-select>
                                             </div>
                                     
-                                            <div class="form-group p-1">
+                                            <div class="form-group p-1 mb-0">
                                               <label class="form-label">Source Sheet <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
                                               <select [(ngModel)]="sourceSheetId" (change)="getTargetSheetsList()"  class="form-select form-select select2 " >
@@ -670,23 +673,23 @@
                                                 }
                                             </select>
                                             </div>
+                                            <div class="form-group p-1">
                                               <label class="form-label">Target Sheets <span class="text-red">*</span> <i class="icon icon-info ms-1"></i></label>
-                                           
-                                            <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2 rounded-2 " style="max-height: 200px; min-height: 35px; overflow: scroll;">
+                                              <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2 rounded-2 " style="max-height: 200px; min-height: 35px; overflow: scroll;">
 
-                                              <div *ngIf="(targetSheetList?.length ?? 0) > 0" class="form-check">
-                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllTargetSheetsSelected" (change)="toggleAllTargetSheets($event)"
-                                                  class="form-check-input">
-                                                <label for="selectAll" class="form-check-label">Select All</label>
+                                                <div *ngIf="(targetSheetList?.length ?? 0) > 0" class="form-check">
+                                                  <input type="checkbox" id="selectAll" [(ngModel)]="isAllTargetSheetsSelected" (change)="toggleAllTargetSheets($event)"
+                                                    class="form-check-input">
+                                                  <label for="selectAll" class="form-check-label">Select All</label>
+                                                </div>
+                                                @for(sheet of targetSheetList;track sheet;let i = $index){
+                                                <div class="form-check">
+                                                  <input type="checkbox" [id]="'defaultCheck' + i" [(ngModel)]="sheet.selected" (change)="updateSelectedSheets()" class="form-check-input"> 
+                                                  <label [for]="'defaultCheck' + i" class="form-check-label "> <p>{{sheet?.name}}</p> </label>
+                                                </div>
+                                                }
                                               </div>
-                                              @for(sheet of targetSheetList;track sheet;let i = $index){
-                                              <div class="form-check">
-                                                <input type="checkbox" [id]="'defaultCheck' + i" [(ngModel)]="sheet.selected" (change)="updateSelectedSheets()" class="form-check-input"> 
-                                                <label [for]="'defaultCheck' + i" class="form-check-label "> <p>{{sheet?.name}}</p> </label>
-                                              </div>
-                                              }
                                             </div>
-
                                             <div class="py-2 mt-3">
                                               <button type="button" [disabled]="disableActionSave()"  (click)="saveDrillThroughAction()" class="btn ripple btn-primary me-2">Save</button>
                                               <button type="button" class="btn ripple btn-secondary " (click)="clearActionForm();modal.dismiss('Cross click');editActions = false;"> Cancel </button>
@@ -1638,7 +1641,7 @@
     </div>
 
 
-    <div class="modal-body"  style="height:360px; overflow-y: auto;">
+    <div class="modal-body"  style="height:335px; overflow-y: auto;">
       <div class="text-wrap">
         <div class="row">
           <div class="col-3" *ngFor="let icon of filteredIcons" (click)="selectIcon(icon)" 
@@ -1660,7 +1663,7 @@
       <div  class="row">
         <div class="col-5">
           <p class="mb-0">Position </p>
-          <div class="form-group mb-1">
+          <!-- <div class="form-group mb-1">
             <select class="form-select form-select select2" [(ngModel)]="selectedIconPosition" (change)="changePosition($event)">
               <option value="top-left">Top Left</option>
               <option value="top-middle">Top Middle</option>
@@ -1672,7 +1675,65 @@
               <option value="bottom-middle">Bottom Middle</option>
               <option value="bottom-right">Bottom Right</option>
             </select>
-         </div>
+         </div> -->
+         <div class="card mb-0  br-0 p-0 "  style="box-shadow: none; border: none !important;">
+          <div class=" dropdown" ngbDropdown>
+            <a  href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
+              <button class="btn btn-outline-default w-100">
+                Select
+            </button>
+            </a>
+            <div class="dropdown-menu size-dropdown" ngbDropdownMenu style="min-width: 150px !important; padding: 10px 20px 10px 20px;">
+              <div class="row">
+                <div class="col-4 mb-1 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-top-left "></i>
+                  </button>
+                </div>
+                <div class="col-4 mb-1 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-top-center"></i>
+                  </button>
+                </div>
+                <div class="col-4 mb-1 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-top-right "></i>
+                  </button>
+                </div>
+                <div class="col-4 mb-1 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-center-left"></i>
+                  </button>
+                </div>
+                <div class="col-4 mb-1 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary ng-star-inserted">
+                    <i  class="fa fa-dollar"></i>
+                  </button>
+                </div>
+                <div class="col-4 mb-1 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-center-right"></i>
+                  </button>
+                </div>
+                <div class="col-4 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-bottom-left"></i>
+                  </button>
+                </div>
+                <div class="col-4 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-bottom-center"></i>
+                  </button>
+                </div>
+                <div class="col-4 text-center p-1">
+                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
+                    <i  class="fa fa-dollar dollar-bottom-right"></i>
+                  </button>
+                </div>
+              </div>               
+            </div>
+        </div>
+          </div>
         </div>
         <div class="col-4">
           <p class="mb-0">Size </p>
