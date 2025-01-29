@@ -1002,6 +1002,7 @@ pieChart(){
     ]
   };
   console.log('pieoptions',this.chartOptions)
+  return this.chartOptions;
 }
 donutChart(){
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
