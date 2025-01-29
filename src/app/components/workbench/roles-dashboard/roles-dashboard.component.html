@@ -172,13 +172,13 @@
   
     <div class="row" class="card" style="padding: 20px;">
       <div class="col-sm-12 col-lg-12 col-xl-12" style="padding: 0px;">
-          <div class="modal-header justify-conent-between rounded-0 p-2">
-            <h1 *ngIf="!updateRole" class="modal-title fs-5" id="inputModalLabel">Add Role</h1>
-            <h1 *ngIf="updateRole" class="modal-title fs-5" id="inputModalLabel">Update Role</h1>
+          <div class="modal-header justify-conent-between align-items-center rounded-0 p-2">
+            <h6 *ngIf="!updateRole" class="modal-title ms-1" id="inputModalLabel">Add Role</h6>
+            <h6 *ngIf="updateRole" class="modal-title ms-1" id="inputModalLabel">Update Role</h6>
 
             <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button> -->
             <div class="add-role-save-btn">
-              <button type="button" class="btn btn-primary" (click)="viewSavedRoles()" style="border-radius: 4px 4px 4px 4px;">
+              <button type="button" class="btn btn-primary border" (click)="viewSavedRoles()" style="border-radius: 4px 4px 4px 4px;">
                 View Saved Roles
               </button>
             </div>
@@ -250,7 +250,7 @@
                       </select>
                   <!-- </div> -->
                   <div (click)="removeAllSelected()" class="choose-all text-center border " style="cursor: pointer;">
-                    <h6> <i class="fa fa-chevron-circle-left mt-2" aria-hidden="true"> Remove All</i></h6>
+                    <h6> <i class="fa fa-chevron-circle-left mt-2 me-1" aria-hidden="true"></i>Remove All</h6>
                   </div>
                 </div>
               </div>
