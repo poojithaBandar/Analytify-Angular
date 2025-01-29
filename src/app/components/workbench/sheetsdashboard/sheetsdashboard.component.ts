@@ -5623,10 +5623,19 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       this.selectedIconColor = color;
       console.log('kpiColor',this.selectedIconColor)
     }
-  
+    positions = [
+      { value: 'top-left', iconClass: 'dollar-top-left' },
+      { value: 'top-middle', iconClass: 'dollar-top-center' },
+      { value: 'top-right', iconClass: 'dollar-top-right' },
+      { value: 'left-middle', iconClass: 'dollar-center-left' },
+      { value: 'center', iconClass: '' },
+      { value: 'right-middle', iconClass: 'dollar-center-right' },
+      { value: 'bottom-left', iconClass: 'dollar-bottom-left' },
+      { value: 'bottom-middle', iconClass: 'dollar-bottom-center' },
+      { value: 'bottom-right', iconClass: 'dollar-bottom-right' }
+    ];
     // Handle position selection
-    changePosition(event:any): void {
-      const position = event.target.value;
+    selectPosition(position: string): void {
       this.selectedIconPosition = position;
       console.log('kpiPosition',this.selectedIconPosition)
     }
@@ -5649,6 +5658,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           this.modalService.dismissAll();
           console.log('addedKpiIcon',this.dashboard);
           this.canNavigateToAnotherPage = true;
+          this.selectedIcon = null;
         } else {
           console.error('kpiData is undefined for the item:', this.KpiIconItem);
         }

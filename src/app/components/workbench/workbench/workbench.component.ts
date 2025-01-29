@@ -234,9 +234,10 @@ export class WorkbenchComponent implements OnInit{
         "api_token": this.shopifyToken,
         "shop_name": this.shopifyName,
         "display_name": this.displayName,
+        "hierarchy_id":this.databaseId
       }
 
-      this.workbechService.haloPSAConnectionUpdate(obj).subscribe({next: (responce) => {
+      this.workbechService.shopifyConnectionUpdate(obj).subscribe({next: (responce) => {
             console.log(responce);
             this.modalService.dismissAll('close');
             if(responce){

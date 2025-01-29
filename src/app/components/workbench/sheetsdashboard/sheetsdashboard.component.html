@@ -1676,70 +1676,36 @@
               <option value="bottom-right">Bottom Right</option>
             </select>
          </div> -->
-         <div class="card mb-0  br-0 p-0 "  style="box-shadow: none; border: none !important;">
-          <div class=" dropdown" ngbDropdown>
-            <a  href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
+         <div class="card mb-0 br-0 p-0" style="box-shadow: none; border: none !important;">
+          <div class="dropdown" ngbDropdown>
+            <a href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button" 
+               aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
               <button class="btn btn-outline-default w-100">
-                Select
-            </button>
+                {{ selectedIconPosition ? selectedIconPosition.replace('-', ' ') : 'Select' }}
+              </button>
             </a>
             <div class="dropdown-menu size-dropdown" ngbDropdownMenu style="min-width: 150px !important; padding: 10px 20px 10px 20px;">
               <div class="row">
-                <div class="col-4 mb-1 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-top-left "></i>
-                  </button>
-                </div>
-                <div class="col-4 mb-1 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-top-center"></i>
-                  </button>
-                </div>
-                <div class="col-4 mb-1 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-top-right "></i>
-                  </button>
-                </div>
-                <div class="col-4 mb-1 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-center-left"></i>
-                  </button>
-                </div>
-                <div class="col-4 mb-1 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary ng-star-inserted">
-                    <i  class="fa fa-dollar"></i>
-                  </button>
-                </div>
-                <div class="col-4 mb-1 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-center-right"></i>
-                  </button>
-                </div>
-                <div class="col-4 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-bottom-left"></i>
-                  </button>
-                </div>
-                <div class="col-4 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-bottom-center"></i>
-                  </button>
-                </div>
-                <div class="col-4 text-center p-1">
-                  <button type="button" class="btn btn-icon btn-outline-primary  ng-star-inserted">
-                    <i  class="fa fa-dollar dollar-bottom-right"></i>
+                <div class="col-4 mb-1 text-center p-1" *ngFor="let pos of positions">
+                  <button type="button" 
+                          class="btn btn-icon btn-outline-primary" 
+                          [ngClass]="{'selected-icon': selectedIconPosition === pos.value}" 
+                          (click)="selectPosition(pos.value)">
+                    <i class="fa fa-dollar" [ngClass]="pos.iconClass"></i>
                   </button>
                 </div>
               </div>               
             </div>
-        </div>
           </div>
+        </div>
+        
+        
         </div>
         <div class="col-4">
           <p class="mb-0">Size </p>
           <div class="form-group mb-1">
             <select class="form-select" [(ngModel)]="selectedIconFontSize" (change)="changeSize($event)">
-              <option *ngFor="let size of [14, 16, 18, 22, 24, 28, 30, 32, 36]" [value]="size">{{ size }} 'px'</option>
+              <option *ngFor="let size of [14, 16, 18, 22, 24, 28, 30, 32, 36]" [value]="size">{{ size }}</option>
             </select>
          </div>
         </div>
@@ -1755,7 +1721,7 @@
     
     <div class="modal-footer p-2">
       <button type="button" (click)="modal.dismiss('Cross click');deselectIconChanges()" class="btn ripple btn-secondary"> Cancel </button>
-      <button (click)="applyIconInKpi()" class="btn btn-primary">Apply</button>
+      <button (click)="applyIconInKpi()" [disabled]="!selectedIcon" class="btn btn-primary">Apply</button>
     </div>
     
   </ng-template>
