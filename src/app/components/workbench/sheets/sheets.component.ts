@@ -50,6 +50,7 @@ import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
+import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -78,7 +79,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -1323,6 +1324,7 @@ try {
   tabs : any [] = [];
   selected = new FormControl(0);
   addSheet(isDuplicate : boolean) {
+    this.columnsData();
     if (this.active !== 3){
       this.active = 1;
     }
@@ -1484,7 +1486,6 @@ try {
     this.displayedColumns = [];
     this.retriveDataSheet_id = '';
     this.getChartData();
-    this.columnsData();
     if(selectedSheetId){
       this.retriveDataSheet_id = selectedSheetId;
       this.sheetRetrive(false);
@@ -3218,6 +3219,10 @@ renameColumns(){
     this.numberPopup = !this.numberPopup;
   }
 
+  updateTableFormat(){
+
+  }
+
  getChartSuggestions() {
   
   const obj ={
@@ -3491,11 +3496,11 @@ customizechangeChartPlugin() {
     this.minValueGuage = 0;
     this.maxValueGuage = 100;
     this.donutDecimalPlaces = 0;
-    this.decimalPlaces = 0;
+    // this.decimalPlaces = 0;
     this.legendsAllignment = 'bottom';
-    this.displayUnits = 'none';
-    this.suffix = '';
-    this.prefix = '';
+    // this.displayUnits = 'none';
+    // this.suffix = '';
+    // this.prefix = '';
     this.dataLabelsFontFamily = 'sans-serif';
     this.dataLabelsFontSize = '12px';
     this.dataLabelsFontPosition = 'top';
