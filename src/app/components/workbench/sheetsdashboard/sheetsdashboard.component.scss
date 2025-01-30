@@ -476,6 +476,42 @@ p {
   height: 100%;
   cursor: pointer;
 }
+.dollar-top-left {
+  position: absolute;
+  left: 20px;
+  top: 22px;
+}
+.dollar-top-center {
+  position: absolute;
+  top: 23px;
+}
+.dollar-top-right {
+  position: absolute;
+  right: 21px;
+  top: 23px;
+}
+.dollar-center-left {
+  position: absolute;
+  left: 20px;
+}
+.dollar-center-right {
+  position: absolute;
+  right: 20px;
+}
+.dollar-bottom-left {
+  position: absolute;
+  bottom: 22px;
+  left: 20px;
+}
+.dollar-bottom-center {
+  position: absolute;
+  bottom: 22px;
+}
+.dollar-bottom-right {
+  position: absolute;
+  bottom: 22px;
+  right: 19px;
+}
  // for Mobile Resolution //
  @media only screen and ( max-width : 578px ) {
 .dashboard-title-card{

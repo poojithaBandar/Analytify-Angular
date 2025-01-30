@@ -178,6 +178,7 @@ export class InsightEchartComponent {
       },
       tooltip: {
         trigger: 'axis',
+        formatter:(params:any) => params[0].name + " : " +  this.formatNumber(params[0].data) 
       },
       axisPointer: {
         type: 'none'
@@ -774,6 +775,7 @@ areaChart(){
     },
     tooltip: {
       trigger: 'axis',
+      formatter:(params:any) => params[0].name + ' : ' + this.formatNumber(params[0].value) 
     },
     axisPointer: {
       type: 'none'
@@ -876,6 +878,7 @@ lineChart(){
     },
     tooltip: {
       trigger: 'axis',
+      formatter:(params:any) => params[0].name + ' : ' + this.formatNumber(params[0].value) 
     },
     axisPointer: {
       type: 'none'
@@ -969,7 +972,8 @@ pieChart(){
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter:(params:any) => params.name + ' : ' + this.formatNumber(params.value) 
     },
     legend: {
           bottom: this.bottomLegend, 
@@ -1014,7 +1018,7 @@ donutChart(){
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
     },
     legend: {
       bottom: this.bottomLegend, 
