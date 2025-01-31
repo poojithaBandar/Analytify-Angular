@@ -4328,7 +4328,7 @@ kpiData?: KpiData;
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
-          if((sheet && sheet.chartOptions && sheet.chartOptions.chart) || sheet.isDrillDownData) {
+          if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
             sheet.chartOptions.chart.events = {
               markerClick: (event: any, chartContext: any, config: any) => {
                 let selectedXValue;
