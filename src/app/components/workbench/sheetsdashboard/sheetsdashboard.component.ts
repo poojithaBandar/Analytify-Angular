@@ -5539,20 +5539,21 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
       if (itemIndex !== -1) {
         // const item1 = this.dashboard[itemIndex];
-        if (item['kpiData']) {
+        if (item['kpiImage']) {
           // Add the kpiImage key to kpiData
           this.dashboard[itemIndex] = {
             ...item,
-            kpiData: {
-              ...item.kpiData,
-              kpiImage: KpiImage,
-            },
+            kpiImage: KpiImage,
           };
-          console.log('addedKpiImage',this.dashboard);
-          this.canNavigateToAnotherPage = true;
+       
         } else {
-          console.error('kpiData is undefined for the item:', item);
+          this.dashboard[itemIndex] = {
+            ...item,
+            kpiImage: KpiImage,
+          };    
         }
+        console.log('addedKpiImage',this.dashboard);
+        this.canNavigateToAnotherPage = true;
       } else {
         console.error('Item not found in dashboard:', item);
       } 
@@ -5562,11 +5563,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       if (itemIndex !== -1) {
         const updatedItem = {
           ...this.dashboard[itemIndex],
-          kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+          kpiImage: { ...this.dashboard[itemIndex]['kpiImage'] },
         };
   
         // Delete kpiImage key if it exists
-        delete updatedItem.kpiData.kpiImage;
+        delete updatedItem.kpiImage;
   
         // Update the dashboard array
         this.dashboard[itemIndex] = updatedItem;

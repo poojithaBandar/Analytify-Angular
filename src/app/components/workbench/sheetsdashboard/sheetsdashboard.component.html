@@ -1092,7 +1092,7 @@
        (cdkDropListDropped)="drop($event)" #gridster>
             <gridster-item [item]="item" *ngFor="let item of dashboard"  >
               <div class="card mb-0 grid-item-border card-panel" style="height: 100%;"  [style.background-image]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
-              ? 'url(' + item['kpiData'].kpiImage + ')' 
+              ? 'url(' + item['kpiImage'] + ')' 
               : ''"
             [style.background-size]="(item['chartType'] === 'KPI' && item['chartId'] === 25) 
               ? 'cover' 
@@ -1149,7 +1149,7 @@
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="removeItem($event, item, false)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Upload Background Image'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="uploadKpiImage(item)" 
@@ -1169,12 +1169,12 @@
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="removeKpiIcon(item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiIconsArray']?.kpiImage" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Change Image'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="uploadKpiImage(item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiImage']" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Remove Image'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="removeKpiImage(item)" 
