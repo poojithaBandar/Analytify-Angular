@@ -5,6 +5,18 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class WorkbenchService {
+  private skipLoader = false; // Flag to control the loader
+  disableLoaderForNextRequest() {
+    this.skipLoader = true;
+  }
+
+  shouldSkipLoader(): boolean {
+    return this.skipLoader;
+  }
+
+  resetSkipLoader() {
+    this.skipLoader = false; // Reset after request
+  }
   getDrillDowndata(Obj: any) {
     throw new Error('Method not implemented.');
   }
