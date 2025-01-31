@@ -5487,12 +5487,12 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      uploadInJson(){
       if (this.uploadedImage) {
         let element :any= {
-          id: uuidv4(), // Unique ID
+          id: uuidv4(), 
           x: 10,
           y: 20,
-          rows: 2, // Adjust size
-          cols: 2, // Adjust size
-          type: 'image', // Identify it as an image
+          rows: 2,
+          cols: 2, 
+          type: 'image', 
           imageData: this.uploadedImage, // Store Base64 image data
           imageTitle:this.imageTitle
         };
@@ -5620,7 +5620,6 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       console.log('kpiSize',this.selectedIconFontSize)
     }
   
-    // Handle changes to color
     changeColor(event:any): void {
       const color = event.target.value;
       this.selectedIconColor = color;
@@ -5637,7 +5636,6 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       { value: 'bottom-middle', iconClass: 'dollar-bottom-center' },
       { value: 'bottom-right', iconClass: 'dollar-bottom-right' }
     ];
-    // Handle position selection
     selectPosition(position: string): void {
       this.selectedIconPosition = position;
       console.log('kpiPosition',this.selectedIconPosition)
@@ -5645,35 +5643,33 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     applyIconInKpi(){
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === this.KpiIconItem.id);
       if (itemIndex !== -1) {
-        // const item1 = this.dashboard[itemIndex];
-        if (this.KpiIconItem['kpiData']) {
-          // Add the kpiImage key to kpiData
-          this.dashboard[itemIndex] = {
-            ...this.KpiIconItem,
-            kpiData: {
-              ...this.KpiIconItem.kpiData,
-              kpiIcon: this.selectedIcon,
-              kpiIconSize: this.selectedIconFontSize,
-              kpiIconColor:this.selectedIconColor,
-              kpiIconPosition:this.selectedIconPosition
-            },
-          };
-          this.modalService.dismissAll();
-          console.log('addedKpiIcon',this.dashboard);
-          this.canNavigateToAnotherPage = true;
-          this.selectedIcon = null;
-        } else {
-          console.error('kpiData is undefined for the item:', this.KpiIconItem);
+        if (!this.KpiIconItem.kpiIconsArray) {
+          this.KpiIconItem.kpiIconsArray = {};
         }
+            const newIconObject = {
+          kpiIcon: this.selectedIcon,
+          kpiIconSize: this.selectedIconFontSize,
+          kpiIconColor: this.selectedIconColor,
+          kpiIconPosition: this.selectedIconPosition
+        };
+        this.KpiIconItem.kpiIconsArray = newIconObject;
+            this.dashboard[itemIndex] = { 
+          ...this.KpiIconItem 
+        };
+    
+        this.modalService.dismissAll();
+        console.log('Updated kpiIconsArray:', this.dashboard);
+        this.canNavigateToAnotherPage = true;
+        this.selectedIcon = null;
       } else {
         console.error('Item not found in dashboard:', this.KpiIconItem);
-      } 
+      }
+    
     }
 
     getIconPositionStyles(position: string) {
       let styles = {};
       const offset = '10px'; // Distance from the edges
-      // Check the position value and apply corresponding styles
       switch (position) {
           case 'top-left':
             return { top: offset, left: offset, transform: 'none' };
@@ -5694,19 +5690,19 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           case 'bottom-right':
             return { bottom: offset, right: offset, transform: 'none' };
         default:
-          styles = { bottom: '0', right: '0' }; // Default fallback position
+          styles = { bottom: '0', right: '0' }; 
           break;
       }
     
       return styles;
     }
     getIconClass(icon: any): string {
-      return `${icon.styles[0]} fa-${icon.name}`; // Use the first available style
+      return `${icon.styles[0]} fa-${icon.name}`; 
     }
     priorityIcons: string[] = ['arrow-trend-up','arrow-trend-down','house','magnifying-glass','user','facebook','check','download','twitter','instagram','envelope','linkedin','arrow-up','file','calendar-days','circle-down','address-book','handshake','layer-group','users','link','sack-dollar'
-    ];; // List of prioritized icon names
+    ];; 
   filteredIcons: any[] = [];
-  showAll: boolean = false; // Toggle for showing all icons
+  showAll: boolean = false; 
 
   updateFilteredIcons(): void {
     const searchFilter = this.iconList.filter(
@@ -5717,8 +5713,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     );
 
     this.filteredIcons = this.showAll
-      ? searchFilter // Show all icons if toggled
-      : searchFilter.filter((icon) => this.priorityIcons.includes(icon.name)); // Show priority icons only
+      ? searchFilter 
+      : searchFilter.filter((icon) => this.priorityIcons.includes(icon.name)); 
   }
   toggleShowAll(): void {
     this.showAll = !this.showAll;
@@ -5731,11 +5727,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     });
     this.KpiIconItem = item;
     console.log('editKpi',item);
-    const kpiData = item.kpiData
-    this.selectedIconColor = kpiData.kpiIconColor ?? '#888'
-    this.selectedIconFontSize = kpiData.kpiIconSize ?? '24'
-    this.selectedIconPosition = kpiData.kpiIconPosition ?? 'bottom-right'
-    this.selectedIcon = kpiData.kpiIcon ?? null
+    const kpiIconsArray = item.kpiIconsArray
+    this.selectedIconColor = kpiIconsArray.kpiIconColor ?? '#888'
+    this.selectedIconFontSize = kpiIconsArray.kpiIconSize ?? '24'
+    this.selectedIconPosition = kpiIconsArray.kpiIconPosition ?? 'bottom-right'
+    this.selectedIcon = kpiIconsArray.kpiIcon ?? null
  
   }
   removeKpiIcon(item: any): void {
@@ -5743,14 +5739,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     if (itemIndex !== -1) {
       const updatedItem = {
         ...this.dashboard[itemIndex],
-        kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+        kpiIconsArray: { ...this.dashboard[itemIndex]['kpiIconsArray'] },
       };
 
       // Delete kpiIcon key if it exists
-      delete updatedItem.kpiData.kpiIcon;
-      delete updatedItem.kpiData.kpiIconPosition;
-      delete updatedItem.kpiData.kpiIconColor;
-      delete updatedItem.kpiData.kpiIconSize;
+      delete updatedItem.kpiIconsArray.kpiIcon;
+      delete updatedItem.kpiIconsArray.kpiIconPosition;
+      delete updatedItem.kpiIconsArray.kpiIconColor;
+      delete updatedItem.kpiIconsArray.kpiIconSize;
       // Update the dashboard array
       this.dashboard[itemIndex] = updatedItem;
       this.canNavigateToAnotherPage = true;
