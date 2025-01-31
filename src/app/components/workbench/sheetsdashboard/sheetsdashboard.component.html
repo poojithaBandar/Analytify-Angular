@@ -1154,22 +1154,22 @@
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="uploadKpiImage(item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiData'].kpiIcon" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiIconsArray']?.kpiIcon" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Add Icon'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="addIcon(iconModal,item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiData'].kpiIcon" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Edit Icon'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="editKpiIcon(iconModal,item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiData'].kpiIcon" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25  && item['kpiIconsArray']?.kpiIcon" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Remove Icon'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="removeKpiIcon(item)" 
                                                               [isIcon]="false"></app-insights-button>
-                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiData'].kpiImage" [classesList]="'dropdown-item'"
+                                                              <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && item['kpiIconsArray']?.kpiImage" [classesList]="'dropdown-item'"
                                                               [buttonName]="'Change Image'"
                                                               [previledgeId]="37" [isBtn]="false"
                                                               (btnClickEvent)="uploadKpiImage(item)" 
@@ -1545,9 +1545,9 @@
                     @for(row of item['kpiData'].rows;track row){
                       <h1 *ngIf="row?.result_data" class="big-number" [style.font-size]="item['kpiData']?.fontSize+'rem'" [style.color]="item['kpiData']?.color">{{ item['kpiData']?.kpiNumber }}</h1>
                       }
-                      <i [class]="item['kpiData'].kpiIcon" [style.font-size]="item['kpiData'].kpiIconSize + 'px'"
-                      [style.color]="item['kpiData'].kpiIconColor"
-                      [ngStyle]="getIconPositionStyles(item['kpiData'].kpiIconPosition)" style="position: absolute;"></i>
+                      <i [class]="item['kpiIconsArray']?.kpiIcon" [style.font-size]="item['kpiIconsArray']?.kpiIconSize + 'px'"
+                      [style.color]="item['kpiIconsArray']?.kpiIconColor"
+                      [ngStyle]="getIconPositionStyles(item['kpiIconsArray']?.kpiIconPosition)" style="position: absolute;"></i>
                 </div>
               }
               <div *ngIf="item['chartType'] === 'Table'">
