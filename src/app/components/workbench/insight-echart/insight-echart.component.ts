@@ -83,6 +83,7 @@ export class InsightEchartComponent {
   @Input() bottomLegend:any;
   @Input() legendOrient:any;
   @Input() leftLegend:any;
+  @Input() isDistributed : any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
 
@@ -177,6 +178,7 @@ export class InsightEchartComponent {
       },
       tooltip: {
         trigger: 'axis',
+        formatter:(params:any) => params[0].name + " : " +  this.formatNumber(params[0].data) 
       },
       axisPointer: {
         type: 'none'
@@ -300,7 +302,7 @@ funnelchart(){
     });
   });
   this.chartOptions = {
-    color:this.selectedColorScheme,
+    color: this.isDistributed ? this.selectedColorScheme : this.color,
     tooltip: {
       trigger: 'item',
     },
@@ -477,10 +479,12 @@ sidebySide(){
       type: 'value',
      
       splitLine: {
+        show: this.yGridSwitch, // Always show the grid lines
         lineStyle: {
-          color: this.yGridColor
-        }, 
-        show: this.yGridSwitch
+          color: this.yGridColor, // Replace with a test color
+          width: 1, // Set a specific width
+          type: 'solid', // Solid, dashed, or dotted line
+        },
       },
       axisLine: {
         lineStyle: {
@@ -771,6 +775,7 @@ areaChart(){
     },
     tooltip: {
       trigger: 'axis',
+      formatter:(params:any) => params[0].name + ' : ' + this.formatNumber(params[0].value) 
     },
     axisPointer: {
       type: 'none'
@@ -873,6 +878,7 @@ lineChart(){
     },
     tooltip: {
       trigger: 'axis',
+      formatter:(params:any) => params[0].name + ' : ' + this.formatNumber(params[0].value) 
     },
     axisPointer: {
       type: 'none'
@@ -966,7 +972,8 @@ pieChart(){
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter:(params:any) => params.name + ' : ' + this.formatNumber(params.value) 
     },
     legend: {
           bottom: this.bottomLegend, 
@@ -1011,7 +1018,7 @@ donutChart(){
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
     },
     legend: {
       bottom: this.bottomLegend, 
@@ -1876,7 +1883,7 @@ chartInitialize(){
         this.dataLabelsSetOptions();
       }
     }
-    if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme']){
+    if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme'] || changes['isDistributed']){
       if(this.chartInstance){
         this.colorSetOptions();
       }
@@ -1912,9 +1919,12 @@ chartInitialize(){
     if(changes['donutSize']){
       this.donutSizeChange();
     }
-    if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
-      this.sortSeries(this.sortType);
+    if(changes['isBold']){
+      this.setDatalabelsFontWeight();
     }
+    // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
+    //   this.sortSeries(this.sortType);
+    // }
     if(this.isSheetSaveOrUpdate){
       let object = {
         chartOptions : this.chartOptions
@@ -1985,7 +1995,7 @@ chartInitialize(){
       }
     }
     this.chartInstance.setOption(obj);
-    this.chartOptions.xAxis[0].axisLabel.fontSize = this.xLabelFontSize;
+    this.chartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
   }
   }
   xlabelFontWeightSetOption(){
@@ -2331,7 +2341,7 @@ chartInitialize(){
          }]
        }
        this.chartInstance.setOption(obj);
-       this.chartOptions.series.label.fontSize = this.dataLabelsFontSize
+       this.chartOptions.series[0].label.fontSize = this.dataLabelsFontSize
       //  this.chartOptions = { ...this.chartOptions, ...obj };
      }
   }
@@ -2380,23 +2390,6 @@ chartInitialize(){
      }
   }
   dataLabelsFontPositionSetOptions(){
-    // if(this.chartType ==='barline'){
-    //   let obj ={
-    //    series: [
-    //      {
-    //        label: {
-    //         position: this.dataLabelsFontPosition, // Update for 'Bar Axis'
-    //        },
-    //      },
-    //      {
-    //       label: {
-    //         position: this.dataLabelsFontPosition, 
-    //        },
-    //      },
-    //    ],
-    //   }
-    //    this.chartInstance.setOption(obj)
-    //  }
       if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { position: any; }; }) => {
         if (dataItem.label) { // Ensure label exists before updating
@@ -2530,6 +2523,54 @@ chartInitialize(){
       this.chartOptions.series[1].label.position = this.dataLabelsLineFontPosition;
     }
   }
+  setDatalabelsFontWeight(){
+    if(this.chartType ==='barline'){
+      let obj ={
+       series: [
+         {
+           label: {
+            fontWeight: this.isBold ? 700 : 400, // Update for 'Bar Axis'
+           },
+         },
+         {
+          label: {
+            fontWeight: this.isBold ? 700 : 400,
+           },
+         },
+       ],
+      }
+       this.chartInstance.setOption(obj);
+       this.chartOptions.series[0].label.fontWeight = this.isBold ? 700 : 400;
+       this.chartOptions.series[1].label.fontWeight = this.isBold ? 700 : 400;
+      }
+     else if(this.chartType === 'radar'){
+      this.chartOptions.series[0].data.forEach((dataItem: { label: { fontWeight: any; }; }) => {
+        if (dataItem.label) { // Ensure label exists before updating
+            dataItem.label.fontWeight = this.isBold ? 700 : 400;
+        }
+    });
+       this.chartInstance.setOption(this.chartOptions,true)
+     }
+     else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
+      this.chartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
+        series.label.fontWeight = this.isBold ? 700 : 400; 
+    });
+    this.chartInstance.setOption(this.chartOptions,true)
+     }
+     else{
+       let obj ={
+         series :[
+          {
+           label :{
+            fontWeight: this.isBold ? 700 : 400
+           }
+         }]
+       }
+       this.chartInstance.setOption(obj);
+       this.chartOptions.series[0].label.fontWeight = this.isBold ? 700 : 400;
+      //  this.chartOptions = { ...this.chartOptions, ...obj };
+     }
+  }
   xLabelSwitchSetOptions(){
     if(this.chartType === 'barline'){
       let obj ={
@@ -2596,6 +2637,21 @@ chartInitialize(){
       }
       this.chartInstance.setOption(obj);
       this.chartOptions.xAxis[0].splitLine.show = this.xGridSwitch;
+    }
+    else if(this.chartType === 'line'){
+      let obj ={
+        xAxis :[{
+          splitLine :{
+            show: this.xGridSwitch
+          }
+        },
+      {
+    
+      }
+    ]
+      }
+      this.chartInstance.setOption(obj);
+      this.chartOptions.xAxis.splitLine.lineStyle.show = this.xGridSwitch;
     }
     else{
       let obj ={
@@ -2688,7 +2744,13 @@ chartInitialize(){
       this.chartInstance.setOption(obj);
       this.chartOptions.series[0].itemStyle.color = this.barColor;
       this.chartOptions.series[1].lineStyle.color = this.lineColor;
-    } else if(this.chartType === 'funnel' || this.chartType === 'stocked'
+    } else if(this.chartType === 'funnel'){
+      let obj ={
+        color:this.isDistributed ? this.selectedColorScheme : this.color
+       }
+       this.chartInstance.setOption(obj);
+       this.chartOptions.color = this.isDistributed ? this.selectedColorScheme : this.color;
+    } else if(this.chartType === 'stocked'
        || this.chartType === 'sidebyside' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' ||  
        this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' || 
        this.chartType === 'calendar'){
@@ -2718,15 +2780,48 @@ chartInitialize(){
   }
   }
   dimensionsAlignmentSetOption() {
+    if(this.dimensionAlignment === 'right'){
     let obj ={
       xAxis :{
         axisLabel :{
-          align: this.dimensionAlignment
+          align: 'left'
+        }
+      }
+    }
+    this.chartInstance.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'left';
+  }else if(this.dimensionAlignment === 'left'){
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align: 'right'
+        }
+      }
+    }
+    this.chartInstance.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'right';
+  }else if(this.dimensionAlignment === 'right'){
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align: 'left'
+        }
+      }
+    }
+    this.chartInstance.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'left';
+  } else{
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align:this.dimensionAlignment
         }
       }
     }
     this.chartInstance.setOption(obj);
     this.chartOptions.xAxis.axisLabel.align = this.dimensionAlignment;
+  }
+    
   }
   xGridColorSetOptions(){
     if(this.chartType === 'barline'){
@@ -2748,19 +2843,18 @@ chartInitialize(){
     }else if(this.chartType === 'hgrouped'){
       let obj ={
         xAxis :[{
-          axisLabel :{
             splitLine:{
               lineStyle:{
                 color: this.xGridColor
               }
             }
           
-          }
+
         },
     ]
       }
       this.chartInstance.setOption(obj);
-      this.chartOptions.xAxis[0].axisLabel.splitLine.lineStyle.color = this.xGridColor;
+      this.chartOptions.xAxis.splitLine.lineStyle.color = this.xGridColor;
     }
     else{
       let obj ={
@@ -2802,19 +2896,16 @@ chartInitialize(){
     }else if(this.chartType === 'hgrouped'){
       let obj ={
         yAxis :[{
-          axisLabel :{
             splitLine:{
               lineStyle:{
                 color: this.yGridColor
               }
             }
-          
-          }
-        },
+                  },
     ]
       }
       this.chartInstance.setOption(obj);
-      this.chartOptions.yAxis[0].axisLabel.splitLine.lineStyle.color = this.yGridColor;
+      this.chartOptions.yAxis[0].splitLine.lineStyle.color = this.yGridColor;
     }
     else{
       let obj ={
@@ -3232,41 +3323,40 @@ updateSeries(){
 }
 
 }
-sort(sortType: any, numbers: any, labels: any) {
-  let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+// sort(sortType: any, numbers: any, labels: any) {
+//   let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
 
-  if (sortType === 'ascending') {
-    pairedData.sort((a: any, b: any) => a[0] - b[0]);
-  } else if (sortType === 'descending') {
-    pairedData.sort((a: any, b: any) => b[0] - a[0]);
-  } else if(sortType === 'none'){
-    pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
-  }
+//   if (sortType === 'ascending') {
+//     pairedData.sort((a: any, b: any) => a[0] - b[0]);
+//   } else if (sortType === 'descending') {
+//     pairedData.sort((a: any, b: any) => b[0] - a[0]);
+//   } else if(sortType === 'none'){
+//     pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
+//   }
 
-  const sortedNumbers = pairedData.map((pair: any) => pair[0]);
-  const sortedLabels = pairedData.map((pair: any) => pair[1]);
+//   const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+//   const sortedLabels = pairedData.map((pair: any) => pair[1]);
+//   return { sortedNumbers, sortedLabels };
+// }
+// sortSeries(sortType: any) {
+//  if (this.chartType === 'bar') {
+//   const numbers = this.chartOptions.series[0].data;
+//   const labels = this.chartOptions.xAxis.data;
+//   const sortedData = this.sort(sortType, numbers, labels);
+//   let obj={
+//     series:[{
+//       data:sortedData.sortedNumbers
+//     }],
+//     xAxis:{
+//       data:sortedData.sortedLabels
+//     }
+//   }
+//   this.chartInstance.setOption(obj);
+//   // this.chartOptions.series[0].data = sortedData.sortedNumbers;
+//   // this.chartOptions.xAxis.data = sortedData.sortedLabels;
 
-  return { sortedNumbers, sortedLabels };
-}
-sortSeries(sortType: any) {
- if (this.chartType === 'bar') {
-  const numbers = this.chartOptions.series[0].data;
-  const labels = this.chartOptions.xAxis.data;
-  const sortedData = this.sort(sortType, numbers, labels);
-  let obj={
-    series:[{
-      data:sortedData.sortedNumbers
-    }],
-    xAxis:{
-      data:sortedData.sortedLabels
-    }
-  }
-  this.chartInstance.setOption(obj);
-  // this.chartOptions.series[0].data = sortedData.sortedNumbers;
-  // this.chartOptions.xAxis.data = sortedData.sortedLabels;
-
-  }
-}
+//   }
+// }
   onChartClick(event: any) {
     if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
       console.log('X-axis value:', event.name);

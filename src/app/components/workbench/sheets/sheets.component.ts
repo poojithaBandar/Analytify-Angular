@@ -44,12 +44,13 @@ import { MatTooltipModule } from '@angular/material/tooltip'; // Import the MatT
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import { COLOR_PALETTE } from '../../../shared/models/color-palette.model';
 import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
-import { lastValueFrom, timer } from 'rxjs';
+import { lastValueFrom, Subscription, timer } from 'rxjs';
 import { evaluate, parse } from 'mathjs';
 import { InsightApexComponent } from '../insight-apex/insight-apex.component';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
+import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
@@ -78,7 +79,7 @@ interface RangeSliderModel {
   ],
   imports: [SharedModule, NgxEchartsModule, NgSelectModule,NgbModule,FormsModule,ReactiveFormsModule,MatIconModule,NgxColorsModule,
     CdkDropListGroup, CdkDropList,CommonModule, CdkDrag,NgApexchartsModule,MatTabsModule,MatFormFieldModule,MatInputModule,CKEditorModule,
-    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent],
+    InsightsButtonComponent,NgxSliderModule,NgxPaginationModule,MatTooltipModule,InsightApexComponent,InsightEchartComponent,FormatMeasurePipe],
   templateUrl: './sheets.component.html',
   styleUrl: './sheets.component.scss'
 })
@@ -275,6 +276,10 @@ export class SheetsComponent {
   isBold:boolean = false;
   isItalic:boolean = false;
   isUnderline:boolean = false;
+  isXlabelBold:boolean = false;
+  isYlabelBold:boolean = false;
+  isTableHeaderBold:boolean = false;
+  isTableDataBold:boolean = false;
 
   backgroundColorSwitch : boolean = false;
   chartColorSwitch : boolean = false;
@@ -327,7 +332,11 @@ export class SheetsComponent {
   bottomLegend:any = '0%'
   rightLegend:any = null;
   sortType : any = 0;
-  hierarchyId:any;
+
+  locationDrillDownSwitch: boolean = false;
+  locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
+  locationHeirarchyList: string[] = ['country', 'state', 'city'];
+  isLocationFeild: boolean = false;
 
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
@@ -478,9 +487,12 @@ export class SheetsComponent {
       this.changeChartPlugin(value);
     });
   }
-
+  isColorSchemeDropdownOpen = false;
+  toggleDropdownColorScheme() {
+    this.isColorSchemeDropdownOpen = !this.isColorSchemeDropdownOpen;
+  }
   selectColorScheme(scheme: string[]) {
-    this.selectedColorScheme = scheme;
+    this.selectedColorScheme = scheme.slice(0, 9);
     console.log('color pallete', this.selectedColorScheme)
   }
   getGradient(colors: string[]): string {
@@ -633,7 +645,8 @@ try {
           "is_date": this.dateDrillDownSwitch,
           "drill_down": this.drillDownObject,
           "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
-          "parent_user":this.createdBy
+          "parent_user":this.createdBy,
+          "order_column":this.selectedSortColumnData
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
@@ -655,7 +668,8 @@ try {
                 this.chartsOptionsSet();
               }
             }
-           
+            this.getDimensionAndMeasures();
+            this.changeSelectedColumn();
             if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2)) {
               if(!this.table){
                 this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
@@ -703,11 +717,14 @@ try {
               this.calendar = false;
               this.map = false;
               // this.sidebysideBar();
+              this.resetCustomizations();
               this.chartType = 'sidebyside';
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
               this.chartType = 'sidebyside'
             }
             if(this.table){
+              this.page = 1;
+              this.pageNo = 1;
               this.tableDisplayPagination();
             }
           },
@@ -952,6 +969,16 @@ try {
       storeColumnData = [] as any;
       storeRowData = [] as any;
       columndrop(event: CdkDragDrop<string[]>){
+        // if (event.previousContainer === event.container) {
+        //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        // } else {
+        //   transferArrayItem(
+        //     event.previousContainer.data,
+        //     event.container.data,
+        //     event.previousIndex,
+        //     event.currentIndex,
+        //   );
+        // }
         this.sortedData = [];
         console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -991,18 +1018,56 @@ try {
       // });
       console.log(this.draggedColumnsData);
       this.draggedDrillDownColumns = [];
-
+      if(this.draggedColumns.length === 1){
+        const startIndex = this.locationHeirarchyFieldList.findIndex(
+          (location) => location.toLowerCase() === this.draggedColumns[0]?.column?.toLowerCase()
+        );
+        if(startIndex >= 0){
+          this.isLocationFeild = true;
+          this.locationHeirarchyList = this.locationHeirarchyFieldList.splice(startIndex);
+          this.locationHeirarchyFieldList = ['country', 'state', 'city'];
+        } else {
+          this.isLocationFeild = false;
+        }
+      } else {
+        this.drillDownObject = [];
+      }
       if (this.dateList.includes(element.data_type)) {
         this.dateFormat(element, event.currentIndex, 'year');
       } else {
         this.dataExtraction();
       }
     }
-    dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
-    integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
-    boolList = ['bool', 'boolean'];
-    stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
+    //dateList=['date','time','datetime','timestamp','timestamp with time zone','timestamp without time zone','timezone','time zone','timestamptz','nullable(date)', 'nullable(time)', 'nullable(datetime)','nullable(timestamp)','nullable(timestamp with time zone)', 'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)','datetime64','datetime32','date32'];
+    // integerList = ['numeric','int','float','number','double precision','smallint','integer','bigint','decimal','numeric','real','smallserial','serial','bigserial','binary_float','binary_double','int64','int32','float64','float32','nullable(int64)','nullable(int32)','nullable(uint8)','nullable(flaot(64))'];
+    // boolList = ['bool', 'boolean'];
+    //stringList = ['varchar','bp char','text','varchar2','NVchar2','long','char','Nchar','character varying','string','str','nullable(string)'];
+    
+  integerList = ['numeric', 'int', 'float', 'number', 'double precision', 'smallint', 'integer', 'bigint', 'decimal', 'numeric', 'real', 'smallserial', 'serial', 'bigserial', 'binary_float', 'binary_double', 'int64', 'int32', 'float64', 'float32', 'nullable(int64)', 'nullable(int32)', 'nullable(uint8)',
+    'nullable(float(64))', 'int8', 'int16', 'int32', 'int64', 'float32', 'float16', 'float64', 'decimal(38,10)', 'decimal(12,2)', 'uuid', 'nullable(int8)', 'nullable(int16)', 'nullable(int32)', 'nullable(int64)', 'nullable(float32)', 'nullable(float16)', 'nullable(float64)', 'nullable(decimal(38,10)', 'nullable(decimal(12,2)']
+  stringList = ['varchar', 'bp char', 'text', 'varchar2', 'NVchar2', 'long', 'char', 'Nchar', 'character varying', 'string', 'str', 'nullable(varchar)', 'nullable(bp char)', 'nullable(text)',
+    'nullable(varchar2)', 'nullable(NVchar2)',
+    'nullable(long)', 'nullable(char)', 'nullable(Nchar)',
+    'nullable(character varying)', 'nullable(string)', 'string', 'nullable(string)', 'array(string)', 'nullable(array(string))']
+  boolList = ['bool', 'boolean', 'nullable(bool)', 'nullable(boolean)', 'uint8']
+  dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 'timestamptz', 'nullable(date)', 'nullable(time)', 'nullable(datetime)',
+    'nullable(timestamp)',
+    'nullable(timestamp with time zone)',
+    'nullable(timestamp without time zone)',
+    'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)',
+    'nullable(datetime)', 'datetime64', 'datetime32', 'date32', 'nullable(date32)', 'nullable(datetime64)', 'nullable(datetime32)', 'date', 'datetime', 'time', 'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 'nullable(date32)']
+
     rowdrop(event: CdkDragDrop<string[]>){
+      // if (event.previousContainer === event.container) {
+      //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      // } else {
+      //   transferArrayItem(
+      //     event.previousContainer.data,
+      //     event.container.data,
+      //     event.previousIndex,
+      //     event.currentIndex,
+      //   );
+      // }
       this.sortedData = [];
       console.log(event)
     let item: any = event.previousContainer.data[event.previousIndex];
@@ -1118,9 +1183,37 @@ try {
     if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0) {
       this.draggedDrillDownColumns = [];
     }
+    if(this.drillDownObject && this.drillDownObject.length > 0) {
+      this.drillDownObject = [];
+    }
     this.draggedColumns.splice(index, 1);   
     this.draggedColumnsData.splice(index, 1);
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
+    this.getDimensionAndMeasures();
+    if (this.selectedSortColumnData) {
+      let sortcolumn = JSON.parse(JSON.stringify(this.selectedSortColumnData));
+      sortcolumn?.splice(4, 1);
+      if (!this.columnsDataForSort.some(column => JSON.stringify(column) === JSON.stringify(sortcolumn))) {
+        this.selectedSortColumnData = null;
+        this.sortColumn = 'select';
+        this.sortType = 0;
+      }
+    }
+    if(this.draggedColumns.length === 1){
+      const startIndex = this.locationHeirarchyFieldList.findIndex(
+        (location) => location.toLowerCase() === this.draggedColumns[0]?.column?.toLowerCase()
+      );
+      if(startIndex >= 0){
+        this.isLocationFeild = true;
+        this.locationHeirarchyList = this.locationHeirarchyFieldList.splice(startIndex);
+        this.locationHeirarchyFieldList = ['country', 'state', 'city'];
+        this.toggleLocationSwitch(false);
+      } else {
+        this.isLocationFeild = false;
+      }
+      
+    }
    this.dataExtraction();
   }
   dragStartedRow(index:any,column:any){
@@ -1131,6 +1224,7 @@ try {
       this.draggedDrillDownColumns = [];
     }
     this.dateDrillDownSwitch = false;
+    this.locationDrillDownSwitch = false;
   //   (this.draggedRowsData as any[]).forEach((data,index)=>{
   //    (data as any[]).forEach((aa)=>{ 
   //      if(column === aa){
@@ -1138,7 +1232,17 @@ try {
   //        this.draggedRowsData.splice(index, 1);
   //      }
   //    } );
-  //  });   
+  //  });  
+  this.getDimensionAndMeasures(); 
+  if (this.selectedSortColumnData) {
+    let sortcolumn = JSON.parse(JSON.stringify(this.selectedSortColumnData));
+    sortcolumn?.splice(4, 1);
+    if (!this.columnsDataForSort.some(column => JSON.stringify(column) === JSON.stringify(sortcolumn))) {
+      this.selectedSortColumnData = null;
+      this.sortColumn = 'select';
+      this.sortType = 0;
+    }
+  }
    this.dataExtraction();
   }
   rightArrow(){
@@ -1225,6 +1329,7 @@ try {
   selected = new FormControl(0);
 
   addSheet(isDuplicate : boolean) {
+    this.columnsData();
     if (this.active !== 3){
       this.active = 1;
     }
@@ -1257,12 +1362,34 @@ try {
 
   sheetDuplicate(){
     this.sheetNumber = this.tabs.length+1;
-    this.tabs.push('Sheet ' +this.sheetNumber);
-    this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
-    this.selectedTabIndex = this.tabs.length - 1;
     this.sheetTagName = 'Sheet ' +this.sheetNumber;
     // this.setChartType();
-    this.sheetRetrive(true);
+    if(this.filterId?.length > 0){
+    this.workbechService.sheetFiltersDuplicate(this.retriveDataSheet_id).subscribe(
+      {
+        next: (data: any) => {
+          this.tabs.push('Sheet ' +this.sheetNumber);
+          this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+          this.selectedTabIndex = this.tabs.length - 1;
+          this.sheetRetrive(true,data.filters_list);
+          
+        },
+        error: (error: any) => {
+          Swal.fire({
+            icon: 'warning',
+            text: error.error.message,
+            width: '300px',
+          })
+          console.log(error)
+        }
+      }
+    )
+    } else {
+      this.tabs.push('Sheet ' +this.sheetNumber);
+      this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+      this.selectedTabIndex = this.tabs.length - 1;
+      this.sheetRetrive(true);
+    }
   }
 
   sheetNameChange(name:any,event:any){
@@ -1335,7 +1462,6 @@ try {
       )
   }
   onChange(event:MatTabChangeEvent){
-    
     if (!this.suppressTabChangeEvent) {
       this.selectedTabIndex = event.index;
       if (this.hasUnSavedChanges) {
@@ -1699,6 +1825,10 @@ sheetSave(){
     selectedColorScheme:this.selectedColorScheme,
     ylabelFontWeight : this.ylabelFontWeight,
     isBold : this.isBold,
+    isTableHeaderBold:this.isTableHeaderBold,
+    isTableDataBold:this.isTableDataBold,
+    isYlabelBold:this.isYlabelBold,
+    isXlabelBold:this.isXlabelBold,
     yLabelFontFamily : this.yLabelFontFamily,
     yLabelFontSize : this.yLabelFontSize,
     bandingSwitch : this.bandingSwitch,
@@ -1753,7 +1883,7 @@ sheetSave(){
     headerFontDecoration: this.headerFontDecoration,
     headerFontColor: this.headerFontColor,
     headerFontAlignment: this.headerFontAlignment,
-    dimernsionColor:this.dimensionColor,
+    dimensionColor:this.dimensionColor,
     measureColor:this.measureColor,
     dataLabelsColor:this.dataLabelsColor,
     sortType : this.sortType,
@@ -1761,13 +1891,19 @@ sheetSave(){
     bottomLegend:this.bottomLegend,
     legendOrient:this.legendOrient,
     leftLegend:this.leftLegend,
-    topLegend:this.topLegend
+    topLegend:this.topLegend,
+    sortColumn:this.sortColumn,
+    locationDrillDownSwitch:this.locationDrillDownSwitch,
+    isLocationField : this.isLocationFeild
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
   if (this.dateDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0) {
     draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
     draggedColumnsObj[0][2] = 'year'
+  } else if(this.locationDrillDownSwitch && this.draggedColumnsData && this.draggedColumnsData.length > 0){
+    draggedColumnsObj = _.cloneDeep(this.draggedColumnsData);
+    draggedColumnsObj[0][0] = this.draggedDrillDownColumns[0];
   } else {
     draggedColumnsObj = this.draggedColumnsData
   }
@@ -1966,7 +2102,21 @@ this.hasUnSavedChanges = false;
   }
 sheetTagTitle : any;
 sheetChartId : any;
-sheetRetrive(isDuplicate : boolean){
+
+mergeFilters(filtersData: any[], filtersList: any[]): any[] {
+  return filtersData.map((filter) => {
+    const matchingFilter = filtersList.find(
+      (item) => item.col_name === filter.col_name
+    );
+    if (matchingFilter) {
+      // Replace filter_id with id from filters_list
+      return { ...filter, filter_id: matchingFilter.id };
+    }
+    return filter; // Return the original filter if no match is found
+  });
+}
+
+sheetRetrive(isDuplicate : boolean,duplicateFilterData?:any){
   this.getChartData();
   console.log(this.tabs);
   const obj={
@@ -2000,7 +2150,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.mulRowData = responce?.row_data;
         this.tablePaginationRows=responce?.row_data;
         this.tablePaginationColumn=responce?.col_data;
-        this.dimetionMeasure = responce?.filters_data;
+  if (isDuplicate && duplicateFilterData) {
+    let filterData = responce?.filters_data;
+    this.dimetionMeasure = this.mergeFilters(filterData, duplicateFilterData);
+  } else {
+    this.dimetionMeasure = responce?.filters_data;
+  }
         this.createdBy = responce?.created_by;
         this.color1 = responce?.sheet_data?.results?.color1;
         this.color2 = responce?.sheet_data?.results?.color2;
@@ -2020,12 +2175,21 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         // this.GridColor = responce.sheet_data.savedChartOptions.chart.background;
         // this.apexbBgColor = responce.sheet_data.savedChartOptions.grid.borderColor;
+        if(isDuplicate && duplicateFilterData){
+          duplicateFilterData.forEach((filter: any)=>{
+            this.filterId.push(filter.id);
+          });
+        } else {
         responce?.filters_data.forEach((filter: any)=>{
           this.filterId.push(filter.filter_id);
-        })
+        });
+      }
+      this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         this.isEChatrts = this.sheetResponce?.isEChart;
         this.isApexCharts = this.sheetResponce?.isApexChart;
         this.dateDrillDownSwitch = this.sheetResponce?.isDrillDownData;
+        this.locationDrillDownSwitch = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
+        this.isLocationFeild = this.sheetResponce?.customizeOptions?.isLocationField;
         this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
@@ -2506,6 +2670,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = true;
        }
        this.setCustomizeOptions(this.sheetResponce.customizeOptions);
+       this.getDimensionAndMeasures();
+       this.changeSelectedColumn();
         // setTimeout(()=>{
         //   // this.updateNumberFormat();
         // }, 1000);
@@ -2653,17 +2819,23 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "is_exclude":this.isExclude,
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
-    "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType
+    "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
+    "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
         this.filterId.push(responce.filter_id);
         this.filter_id=responce.filter_id
-        this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id});
+        this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
         this.dataExtraction();
         this.filterDataArray = [];
         this.filterDateRange = [];
         this.formatExtractType = '';
+        this.selectedTopColumn = 'select';
+        this.topAggregate = 'sum';
+        this.topLimit = 5;
+        this.topType = 'desc';
+        this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
       },
       error: (error) => {
         console.log(error);
@@ -2688,11 +2860,20 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterCalculatedFieldLogic = responce.field_logic;
         this.isExclude = responce.is_exclude;
         this.formatExtractType = this.extractTypesForTab.includes(responce?.format_type) ? responce?.format_type : '';
+        if(responce?.top_bottom){
+          this.topType = responce?.top_bottom[3];
+          this.topLimit = responce?.top_bottom[2];
+          this.selectedTopColumn = responce?.top_bottom[0];
+          this.topAggregate = responce?.top_bottom[1];
+        }
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
         else if(responce?.format_type === 'year/month/day'){
           this.activeTabId = 2;
+        }
+        else if(responce?.top_bottom && responce?.top_bottom.length>0){
+          this.activeTabId = 4;
         }
         else {
           this.activeTabId = 1;
@@ -2767,8 +2948,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "data_type":this.filterType,
       "is_exclude":this.isExclude,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
-      "is_calculated": this.filterType == 'calculated' ? true : false
-
+      "is_calculated": this.filterType == 'calculated' ? true : false,
+      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -2776,6 +2957,11 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.filterDataArray = [];
           this.filterDateRange = [];
           this.isAllSelected = false;
+          this.selectedTopColumn = 'select';
+          this.topAggregate = 'sum';
+          this.topLimit = 5;
+          this.topType = 'desc';
+          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         },
         error: (error) => {
           console.log(error);
@@ -2791,6 +2977,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
          this.dataExtraction();
+         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
       },
       error: (error) => {
         console.log(error);
@@ -2834,19 +3021,15 @@ openSuperScalededitFilter(modal: any,data:any) {
   this.filterEditGet();
 }
 filterAdded : boolean = false;
+isTopFilter : boolean = true;
 editFilterCheck(data:any){
   if(this.dimetionMeasure.length>0){
-    this.dimetionMeasure.forEach((column:any)=>{
-      if(column.col_name === data){
-        this.filterAdded = true;
-      }
-      else{
-        this.filterAdded = false;
-      }
-    })
+    this.filterAdded = this.dimetionMeasure.some((column: any) => column.col_name === data);
+    this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
   }
   else{
     this.filterAdded = false;
+    this.isTopFilter = true;
   }
 }
 gotoDashboard(){
@@ -3063,6 +3246,10 @@ renameColumns(){
     this.numberPopup = !this.numberPopup;
   }
 
+  updateTableFormat(){
+
+  }
+
  getChartSuggestions() {
   
   const obj ={
@@ -3119,7 +3306,7 @@ routeConfigure(){
   this.router.navigate(['/analytify/configure-page/configure'])
 }
 fetchChartData(chartData: any){
-  this.hierarchyId = chartData.database_id;
+  this.databaseId = chartData.hierarchy_id;
           this.qrySetId = chartData.queryset_id;
           this.draggedColumnsData = chartData.col;
           this.draggedRowsData = chartData.row;
@@ -3211,6 +3398,10 @@ customizechangeChartPlugin() {
     this.selectedColorScheme = data.selectedColorScheme ?? ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
     this.ylabelFontWeight = data.ylabelFontWeight ?? 400;
     this.isBold = data.isBold ?? false;
+    this.isXlabelBold = data.isXlabelBold ?? false;
+    this.isYlabelBold = data.isYlabelBold ?? false;
+    this.isTableHeaderBold = data.isTableHeaderBold ?? false;
+    this.isTableDataBold = data.isTableDataBold ?? false;
     this.yLabelFontFamily = data.yLabelFontFamily ?? 'sans-serif';
     this.yLabelFontSize = data.yLabelFontSize ?? 12;
     this.bandingSwitch = data.bandingSwitch ?? false;
@@ -3276,6 +3467,8 @@ customizechangeChartPlugin() {
     this.legendOrient = data.legendOrient === '' ? null : data.legendOrient
     this.bottomLegend = data.bottomLegend === '' ? null : data.bottomLegend
     this.rightLegend = data.rightLegend === '' ? null : data.rightLegend
+    this.sortColumn = data.sortColumn ?? 'select';
+    this.locationDrillDownSwitch = data.locationDrillDownSwitch ?? false;
   }
 
   resetCustomizations(){
@@ -3296,6 +3489,10 @@ customizechangeChartPlugin() {
     this.selectedColorScheme = ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
     this.ylabelFontWeight = 400;
     this.isBold = false;
+    this.isTableHeaderBold = false;
+    this.isTableDataBold = false;
+    this.isXlabelBold = false;
+    this.isYlabelBold = false;
     this.yLabelFontFamily = 'sans-serif';
     this.yLabelFontSize = 12;
     this.bandingSwitch = false;
@@ -3326,11 +3523,11 @@ customizechangeChartPlugin() {
     this.minValueGuage = 0;
     this.maxValueGuage = 100;
     this.donutDecimalPlaces = 0;
-    this.decimalPlaces = 0;
+    // this.decimalPlaces = 0;
     this.legendsAllignment = 'bottom';
-    this.displayUnits = 'none';
-    this.suffix = '';
-    this.prefix = '';
+    // this.displayUnits = 'none';
+    // this.suffix = '';
+    // this.prefix = '';
     this.dataLabelsFontFamily = 'sans-serif';
     this.dataLabelsFontSize = '12px';
     this.dataLabelsFontPosition = 'top';
@@ -3361,7 +3558,8 @@ customizechangeChartPlugin() {
     this.legendOrient = 'horizontal'
     this.bottomLegend = '0%'
     this.rightLegend = null
-    
+    this.sortColumn = 'select';
+    this.locationDrillDownSwitch = false;
   }
 
   sendPrompt() {
@@ -3592,6 +3790,29 @@ customizechangeChartPlugin() {
              
             this.dataExtraction();
          }
+
+  toggleLocationSwitch(onColumnRemove : boolean) {
+    if(onColumnRemove) {
+    this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
+    }
+    if (this.locationDrillDownSwitch) {
+      this.draggedDrillDownColumns = this.locationHeirarchyList
+  .map((hierarchy) =>
+    this.tableColumnsData
+      .flatMap((columns: any) => columns?.dimensions || []) // Flatten dimensions
+      .find((dimension: any) => dimension?.column?.toLowerCase() === hierarchy) // Match the hierarchy
+  )
+  .filter((dimension: any) => dimension) // Remove undefined results for unmatched items
+  .map((dimension: any) => dimension?.column);
+      this.drillDownIndex = 0;
+    } else {
+      this.drillDownIndex = 0;
+      this.draggedDrillDownColumns = [];
+      this.drillDownObject = [];
+    }
+
+    this.dataExtraction();
+  }
         
           callDrillDown(){
             this.dataExtraction();
@@ -4619,4 +4840,107 @@ customizechangeChartPlugin() {
       this.sheetSave();
       this.isSheetSaveOrUpdate = false;
     }
+    clearSheetConfirmation(){
+      Swal.fire({
+        title: "Are you sure you want to clear the sheet?",
+        text: "Except for the filters, the sheet will be cleared.",
+        position: "center",
+        icon: "warning",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.clearSheet();
+        }
+      })
+    }
+    clearSheet(){
+      this.draggedColumns = [];
+      this.draggedColumnsData = [];
+      this.draggedRows = [];
+      this.draggedRowsData = [];
+      this.draggedDrillDownColumns = [];
+      this.tablePaginationCustomQuery = '';
+      this.chartsColumnData = [];
+      this.chartsRowData = [];
+      this.dualAxisColumnData = [];
+      this.dualAxisRowData = [];
+      this.tableColumnsDisplay = [];
+      this.tableDataDisplay = [];
+      this.KPINumber = '';
+      this.drillDownObject = [];
+      this.dateDrillDownSwitch = false;
+      this.resetCustomizations();
+      this.table = true;
+      this.bar = false;
+      this.area = false;
+      this.line = false;
+      this.pie = false;
+      this.sidebyside = false;
+      this.stocked = false;
+      this.barLine = false;
+      this.horizentalStocked = false;
+      this.grouped = false;
+      this.multiLine = false;
+      this.donut = false;
+      this.chartId = 1;
+      this.radar = false;
+      this.kpi = false;
+      this.heatMap = false;
+      this.guage = false;
+      this.funnel = false;
+      this.calendar = false;
+      this.map = false;
+    }
+    sortColumn : any = 'select';
+    columnNamesForSort : any [] = [];
+    columnsDataForSort : any [] = [];
+    selectedSortColumnData : any[] | null = null;
+    selectedColumnIndex : number = -1;
+    getDimensionAndMeasures(){
+      this.columnNamesForSort = [];
+      this.columnsDataForSort = [];
+      this.draggedColumns.forEach((column:any, index: any)=>{
+        if (column && typeof column === 'object') {
+          this.columnNamesForSort.push({ ...column });
+        } 
+        this.columnsDataForSort.push(this.draggedColumnsData[index]);
+      });
+      this.draggedRows.forEach((row:any, index: any)=>{
+        if (row && typeof row === 'object') {
+          this.columnNamesForSort.push({ ...row });
+        } 
+        this.columnsDataForSort.push(this.draggedRowsData[index]);
+      });
+      console.log('columnsdisplay',this.columnNamesForSort)
+      console.log('columnforpayload',this.columnsDataForSort)
+    }
+    changeSelectedColumn(){
+      console.log(this.sortColumn);
+      this.columnNamesForSort.forEach((column:any,index:any)=>{
+        if((this.sortColumn.alias && this.sortColumn.alias === column.alias) || (this.sortColumn.field_name && this.sortColumn.field_name === column.field_name) || (this.sortColumn.type && this.sortColumn.type === column.type && this.sortColumn.column === column.column) || (this.sortColumn.column && this.sortColumn.column === column.column)){
+          this.sortColumn = column;
+          this.selectedColumnIndex = index;
+        }
+      });
+    }
+    sortColumns(){
+      if(this.sortType === 'none' || this.sortType === 0){
+        this.selectedSortColumnData = null;
+      } else{
+        if (this.selectedColumnIndex != -1) {
+          let column = JSON.parse(JSON.stringify(this.columnsDataForSort[this.selectedColumnIndex]));
+          column[4] = this.sortType;
+          this.selectedSortColumnData = column;
+        }
+      }
+      this.dataExtraction();
+    }
+
+    topType : string = 'desc';
+    topLimit : number = 5;
+    selectedTopColumn : any = 'select';
+    topAggregate : string = 'sum';
 }

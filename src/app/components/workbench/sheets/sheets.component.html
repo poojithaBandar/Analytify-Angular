@@ -1,9 +1,9 @@
 <div class="main-container container-fluid mt-5"> 
     <div class="row" style="position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;">
         <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
-            <div class="card mb-0" >
+            <div class="card mb-0 border rounded-3 p-1" >
                 <div class="card-body p-0 ">
-                    <div class="border mb-0 p-2 br-0 border-bottom">
+                    <div class=" mb-0 p-2 br-0 border-bottom">
                         <div class="d-flex align-items-center justify-content-between ">
                             <h6 class="mb-0">Connections</h6>
                             <app-insights-button *ngIf="qrySetId" [buttonName]="'Edit'" [classesList]="'add-txt text-info'" [previledgeId]="2" [isBtn]="false"
@@ -12,7 +12,7 @@
                             (btnClickEvent)="goToConnections()"></app-insights-button>
                         </div>
                         </div>
-                        <div class="border mb-0 p-2 br-0 border-bottom">
+                        <div class=" mb-0 p-2 br-0 ">
                             <h6 class="mb-0">Database</h6>
                             <p class=" mb-0" ngbTooltip="{{database_name}}">{{database_name}}</p> 
                         </div>
@@ -28,7 +28,7 @@
                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
-                                <div class=" p-1" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
+                                <div class="" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
                                 <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
                                 <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
                                     <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
@@ -38,76 +38,86 @@
                                       
                                         (cdkDropListDropped)="calculatedFieldsDrop($event)">
                                             
-                                            <div style="max-height: 382px; overflow: auto; padding: 10px;">
+                                            <div style="max-height: 420px; overflow: auto;">
+                                                <div class="col-lg-12 col-md-12 p-0 m-0">
+                                                    <div class="d-flex">
+                                                        <div class="col-6 p-0">
+                                                            <input type="text" placeholder="Calculated Field Name" [(ngModel)]="calculatedFieldName"
+                                                            class="mb-1 form-control checkbox-color">
+                                                        </div>
+                                                        <div class="col-6 p-0">
+                                                            <div class="input-group mb-1">
+                                                                <div class="col-lg-6 col-md-6 p-0">
+                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
+                                                                        (change)="calculatedFieldData()">
+                                                                        <option [disabled]="true" value="">select Type</option>
+                                                                        <option value="number">Number</option>
+                                                                        <option value="string">String</option>
+                                                                        <option value="arithematic">Arithmetic operation</option>
+                                                                        <option value="date">Date</option>
+                                                                        <option value="logical">Logical</option>
+                                                                        <option value="aggregation">Aggregate</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
+                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
+                                                                        (change)="nestedCalculatedFieldFunction()">
+                                                                        <option [disabled]="true" value="">select function</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
+
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
+                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
+                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
+                                            
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
+                                                                        <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-lg-12 col-md-12 p-0 m-0">
                                                         <div class="form-group p-0 mb-0">
-                                                            <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label>
+                                                            <!-- <label class="form-label mb-2">Calculated Field Name <span class="text-red">*</span></label> -->
                                                             <div class="d-flex">
                                                                 <div class="col-6 p-0">
-                                                                    <input type="text" placeholder="Enter Field Name" [(ngModel)]="calculatedFieldName"
-                                                                    class="mb-2 form-control checkbox-color">
-                                                                    <div class="input-group mb-2">
-                                                                        <div class="col-lg-6 col-md-6 p-0">
-                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="calculatedFieldFunction"
-                                                                                (change)="calculatedFieldData()">
-                                                                                <option value="number">Number</option>
-                                                                                <option value="string">String</option>
-                                                                                <option value="arithematic">Arithmetic operation</option>
-                                                                                <option value="date">Date</option>
-                                                                                <option value="logical">Logical</option>
-                                                                                <option value="aggregation">Aggregate</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div *ngIf="calculatedFieldFunction === 'logical' || calculatedFieldFunction === 'number' || calculatedFieldFunction === 'string' || calculatedFieldFunction === 'date' || calculatedFieldFunction === 'aggregation'" class="col-lg-6 col-md-6 p-0">
-                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="nestedCalculatedFieldData"
-                                                                                (change)="nestedCalculatedFieldFunction()">
-                                                                                <option [disabled]="true" value="">select function</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="abs">ABS</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="ceiling">CEILING</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="floor">FLOOR</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'number'" value="round">ROUND</option>
-
-                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="ifnull">IF NULL</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'logical'" value="case">CASE</option>
-                                                    
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="average">AVG</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="count">COUNT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="countd">COUNTD</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="max">MAX</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="min">MIN</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'aggregation'" value="sum">SUM</option>
-                                                    
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="left">LEFT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="right">RIGHT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="mid">MID</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="length">LENGTH</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="trim">TRIM</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="upper">UPPER</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="lower">LOWER</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="replace">REPLACE</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="split">SPLIT</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'string'" value="find">FIND</option>
-                                                    
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="dateadd">DATEADD</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datediff">DATEDIFF</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="datepart">DATEPART</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="now">NOW</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="today">TODAY</option>
-                                                                                <option *ngIf="calculatedFieldFunction === 'date'" value="parse">PARSE</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
                                                                     <textarea [readonly]="nestedCalculatedFieldData == 'now' || nestedCalculatedFieldData == 'today'"
-                                                                        *ngIf="((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic'"
-                                                                        class="query-text mb-2 px-3" [(ngModel)]="calculatedFieldLogic"
+                                                                       
+                                                                        class="query-text mb-1 px-3" [(ngModel)]="calculatedFieldLogic" [style.width]="calculationfieldid.hidden ? '195%' : '100%'"
                                                                         placeholder="Drop Column or Enter Logic"></textarea>
-                                                                    <div *ngIf="validationMessage" class="alert"
-                                                                        [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
-                                                                        {{ validationMessage }}
-                                                                    </div>
+                                                                    
                                                                 </div>
-                                                                <div class="col-6 p-0" style="margin-left: 8px;">
-                                                                        <p class="mb-0  p-2 bg-light mb-3 border rounded-2 description-text" >
+                                                                <div #calculationfieldid [hidden]="true" class="col-6 p-0 d-flex">
+                                                                    <div class="calculated-hide-card bg-light mb-1 border rounded-2 d-flex" style="width:inherit;">
+                                                                        <!-- <div class="calculated-hide-icon d-flex align-items-center">
+                                                                            <i class="fa fa-angle-right"></i>
+                                                                        </div> -->
+                                                                        <div class="mb-0 p-2 description-text">
                                                                             @if(nestedCalculatedFieldData == 'abs'){
                                                                                 <span > <p class="fw-600 mb-0">ABS(number) :<br> </p> Returns the absolute value.</span> <br><br>
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> ABS("tablename"."column_name")</span><br><br>
@@ -228,7 +238,7 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> DATE_PART('year', "tablename"."column_name")/DATE_PART('month', "tablename"."column_name")/DATE_PART('date', "tablename"."column_name")
                                                                                     </span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example :<br> </p>  DATE_PART('year', current_timestamp)/DATE_PART('month', current_timestamp)/DATE_PART('date', current_timestamp)
-                                                                                 </span>
+                                                                                </span>
                                                                             }
                                                                             @if(nestedCalculatedFieldData == 'now'){
                                                                                 <span > <p class="fw-600 mb-0">Current_timestamp :<br> </p> Returns the current date and time.</span> <br><br>
@@ -250,16 +260,29 @@
                                                                                 <span > <p class="fw-600 mb-0">Syntax :<br> </p> "tablename"."column_name" + "tablename"."column_name"</span><br><br>
                                                                                 <span > <p class="fw-600 mb-0">Example : 2 + 2 = 4<br> </p>   </span>
                                                                             }
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                    <!-- <div class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1">
+                                                                        <i class="fa fa-angle-left"></i>
+                                                                    </div> -->
+                                                                </div>
+                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1" style="position: absolute; right: 0px; height: -webkit-fill-available;">
+                                                                    <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left" style="cursor: pointer;"></i>
+                                                                    <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right" style="cursor: pointer;"></i>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                            
-                                                        <div class="mt-0 d-flex gap-2">
+                                                        <div *ngIf="validationMessage" class="alert"
+                                                                        [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
+                                                                        {{ validationMessage }}
+                                                                    </div>
+                                                        <div class="mt-0 d-flex gap-2" style="float: right;">
                                                             <button
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
                                                             <button class="btn btn-primary mt-0"
-                                                                (click)="isEditCalculatedField = false;level1.close();level2.close()">Close </button>
+                                                                (click)="isEditCalculatedField = false;level1.close();level2.close();calculationfieldid.hidden = true">Close </button>
                                                         </div>
                                                 </div>
                                             </div>
@@ -282,16 +305,16 @@
                     <div class="input-group">
                         <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="tableSearch"
                             (keyup.enter)="columnsData()" aria-describedby="button-addon2">
-                        <button class="btn btn-primary border me-2" (click)="columnsData()" type="button" id="button-addon2"
+                        <button class="btn btn-primary border" (click)="columnsData()" type="button" id="button-addon2"
                             style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                     </div>
-                    <div class="sheet-table-h">
+                    <div class="sheet-table-h mt-1">
                         @for(columns of tableColumnsData; track columns){
                             @if(!columns.calculated_fields){
                             <div  class="menu-item mb-1">
                                 
                             
-                            <div class="menu-title" class="example-box border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
+                            <div class="menu-title" class="example-box bg-light border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
                                 <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                     {{columns.table_alias}} </span>
 
@@ -310,7 +333,7 @@
                                 <li class="example-box" ngbTooltip="{{dimensions.column}}"
                                 (cdkDragStarted)="tableNameMethod(columns.schema,columns.table_name,columns.table_alias)" cdkDrag [cdkDragDisabled]="canDrop" >
                                 <span *ngIf="!dateList.includes(dimensions.data_type) && !boolList.includes(dimensions.data_type)" class="abc-txt">abc</span>
-                                <span *ngIf="dateList.includes(dimensions.data_type)" class="date-dtype"><i class="fa fa-clock-o"></i></span>
+                                <span *ngIf="dateList.includes(dimensions.data_type)" class="date-dtype"><i class="fa fa-clock"></i></span>
                                 <span *ngIf="boolList.includes(dimensions.data_type)" class="date-dtype" style="font-family: 'Times New Roman', Times, serif; font-style: italic;">T|F</span>
                                 {{ dimensions.column?.substr(0,15) }}{{ dimensions.column.length > 15 ? '...' : '' }}
                                 </li>
@@ -462,6 +485,10 @@
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                                                 <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                             </div>
+                                                            <div class="form-check">
+                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                            </div>
                                                             <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
                                                             <!-- @for(data of filterData;track data){ -->
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -577,34 +604,102 @@
                                     </div>
                                 </div>
                             }@else{
-                                <div style="display: flex;">
-                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                    <label for="defaultCheck1" class="form-check-label"> Select All </label>
-                                </div>
-                                <div *ngFor="let data of filterData | test: filterSearch : 'label'">
-                                <!-- @for(data of filterData;track data){ -->
-                                    @if(data? data : (boolList.includes(filterType)? true: '')){
-                                        <div class="form-check">
-                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected"  [(ngModel)]="data.selected" class="form-check-input"
-                                                (click)="filterCheck($event,data.label)">
-                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                <div class="card panel panel-primary">
+                                    <div class="tab-menu-heading tab-menu-heading-boxed">
+                                        <div class="tabs-menu-boxed">
+                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                <li [ngbNavItem]="1">
+                                                    <a ngbNavLink class="p-3">General</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane active" id="activetabs">
+                                                            <div style="display: flex;">
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                            </div>
+                                                            <div *ngFor="let data of filterData | test: filterSearch : 'label'">
+                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" [(ngModel)]="data.selected"
+                                                                        class="form-check-input" (click)="filterCheck($event,data.label)">
+                                                                    <label for="defaultCheck1" class="form-check-label"> {{data.label}} </label>
+                                                                </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
+                                                    <li [ngbNavItem]="4" *ngIf="isTopFilter">
+                                                        <a ngbNavLink class="p-3">Top</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane active" id="activetabs">
+                                                                <div class="filter-options">
+                                                                    <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                    <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                                </div>
+                                                                <div style="margin-left: 5%;">
+                                                                    <div class="field-options">
+                                                                        <select [(ngModel)]="topType">
+                                                                          <option value="desc">Top</option>
+                                                                          <option value="asc">Bottom</option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topLimit">
+                                                                            <option value="5">5</option>
+                                                                            <option value="10">10</option>
+                                                                            <option value="20">20</option>
+                                                                            <option value="30">30</option>
+                                                                            <option value="40">40</option>
+                                                                            <option value="50">50</option>
+                                                                            <option value="100">100</option>
+                                                                            <option value="500">500</option>
+                                                                            <option value="1000">1000</option>
+                                                                            <option value="2000">2000</option>
+                                                                            <option value="3000">3000</option>
+                                                                            <option value="4000">4000</option>
+                                                                            <option value="5000">5000</option>
+                                                                          </select>
+                                                                        <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                    </div>
+                                                                    <div class="field-options">
+                                                                        <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                            <option value="select" selected disabled> select </option>
+                                                                            <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                            <option value="sum">Sum</option>
+                                                                            <option value="avg">Avg</option>
+                                                                            <option value="min">Min</option>
+                                                                            <option value="max">Max</option>
+                                                                            <option value="count">Count</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </li>
+                                                }
+                                            </ul>
+                                            <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                                <div class="tab-content">
+                                                    <div [ngbNavOutlet]="nav"></div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    }
                                     </div>
-                                <!-- } -->
+                                </div>
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="activeTabId !== 3">
+                            <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -745,24 +840,94 @@
                                     </div>
                                 </div>
                             }@else{
-                                <div style="display: flex;">
-                                    <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                    <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                    <label for="defaultCheck1" class="form-check-label"> Select All </label>
-                                </div>
-                                <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
-                                <!-- @for(data of filterData;track data){ -->
-                                    @if(data? data : (boolList.includes(filterType)? true: '')){
-                                        <div class="form-check">
-                                            <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
-                                            <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                <div class="card panel panel-primary">
+                                    <div class="tab-menu-heading tab-menu-heading-boxed">
+                                        <div class="tabs-menu-boxed">
+                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                <li [ngbNavItem]="1" [class.disabled]="activeTabId !== 1">
+                                                    <a ngbNavLink class="p-3">General</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane active" id="activetabs">
+                                                            <div style="display: flex;">
+                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                            </div>
+                                                            <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                            <!-- @for(data of filterData;track data){ -->
+                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                                                    </div>
+                                                                }
+                                                                </div>
+                                                            <!-- } -->
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
+                                                    <li [ngbNavItem]="4" [class.disabled]="activeTabId !== 4">
+                                                        <a ngbNavLink class="p-3">Top</a>
+                                                        <ng-template ngbNavContent>
+                                                            <div class="tab-pane active" id="activetabs">
+                                                                <div class="filter-options">
+                                                                    <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                    <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                                </div>
+                                                                <div style="margin-left: 5%;">
+                                                                    <div class="field-options">
+                                                                        <select [(ngModel)]="topType">
+                                                                          <option value="desc">Top</option>
+                                                                          <option value="asc">Bottom</option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topLimit">
+                                                                            <option value="5">5</option>
+                                                                            <option value="10">10</option>
+                                                                            <option value="20">20</option>
+                                                                            <option value="30">30</option>
+                                                                            <option value="40">40</option>
+                                                                            <option value="50">50</option>
+                                                                            <option value="100">100</option>
+                                                                            <option value="500">500</option>
+                                                                            <option value="1000">1000</option>
+                                                                            <option value="2000">2000</option>
+                                                                            <option value="3000">3000</option>
+                                                                            <option value="4000">4000</option>
+                                                                            <option value="5000">5000</option>
+                                                                          </select>
+                                                                        <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                    </div>
+                                                                    <div class="field-options">
+                                                                        <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                            <option value="select" selected disabled> select </option>
+                                                                            <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                        </select>
+                                                                        <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                            <option value="sum">Sum</option>
+                                                                            <option value="avg">Avg</option>
+                                                                            <option value="min">Min</option>
+                                                                            <option value="max">Max</option>
+                                                                            <option value="count">Count</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </li>
+                                                }
+                                            </ul>
+                                            <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                                <div class="tab-content">
+                                                    <div [ngbNavOutlet]="nav"></div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    }
                                     </div>
-                                <!-- } -->
+                                </div>
                             }
 
                             <!-- <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
@@ -775,12 +940,12 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="activeTabId !== 3">
+                            <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0)" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -796,13 +961,13 @@
             </div>
         </div>
         <div class="col-xxl-8 col-xl-8 col-lg-7 col-md-7 p-1 mt-3">
-           <div class="card p-0 mb-1">
+           <div class="card p-0 mb-1 border">
            
-                <div class="card p-0 mb-1 bg-light">
+                <div class="card p-0 mb-1 bg-light" style="border: none !important;">
                     <div class="card-body title-padding">
                         <div class="row align-items-center">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12 maind-flex" >
-                            <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-1" >
+                            <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
                                 <div class="title-container border rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
                                     <span class="card mb-0" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? {'padding-top': '1.5%', 'padding-left': '15px'} : {'padding': '1.5%'}" style="padding-left: 15px;cursor: text;"></span>
@@ -824,7 +989,7 @@
                                 </div> -->
                             </div>
 
-                            <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-1" style="display: flex;justify-content: space-evenly;">
+                            <div class="col-lg-3 col-md-3 col-sm-3 p-1" style="display: flex;justify-content: space-around;">
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
                                     <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
                                     <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
@@ -839,6 +1004,7 @@
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
                                     </app-insights-button>
                                 </div>
+                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             </div>
                         </div>
                         </div>
@@ -849,12 +1015,12 @@
                     <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
-                                <label for="inputName" class="form-control mb-0 column-text">Columns</label>
+                                <label for="inputName" class="form-control mb-0 column-text border">Columns</label>
                             </div>
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" 
                                 style="position: relative;min-height: 33px; padding: 2px;" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
@@ -970,12 +1136,12 @@
                     <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                             <div class="card-area d-flex gap-2">
-                                <label for="inputName" class="form-control mb-0 row-text">Rows</label>
+                                <label for="inputName" class="form-control mb-0 row-text border">Rows</label>
                             </div> 
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
                            
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" style="
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" style="
                                 position: relative; min-height: 33px; padding: 2px;"
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
@@ -1085,11 +1251,11 @@
                     <div  [ngStyle]="{'display': ((bar || pie || donut || map) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center">
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                                                    <div class="card-area d-flex gap-2">
-                                                       <label for="inputName" class="form-control mb-0">Hierarchy</label>
+                                                       <label for="inputName" class="form-control mb-0 border">Hierarchy</label>
                                                    </div> 
                                                 </div>
                                             <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
-                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control" 
+                                                    <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" 
                                                     style="position: relative;min-height: 33px; padding: 2px;" 
                                                 #drilldownList="cdkDropList" 
                                                     [cdkDropListData]="draggedDrillDownColumns" 
@@ -1114,7 +1280,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0" [ngClass]="(bar || pie || donut) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
+            <div class="card mb-0 border" [ngClass]="(bar || pie || donut) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
                 @if(!(table || kpi)){
                     <div class="input-group">
                 <!-- <div class="col-lg-3 col-md-3 p-1">
@@ -1150,20 +1316,20 @@
                     </div>
                    </div>
                 }
-                 <div class="card-body p-1" style="display: flex; justify-content: center; align-items: center; overflow-y: auto;">
+                 <div class="card-body p-1 border-bottom" style="display: flex; justify-content: center; align-items: center; overflow-y: auto;">
                     <!-- @for(tab of tabs;track tab; let index = $index){ -->
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
                           
-                            <div class="body table-responsive" style="max-height:385px;padding: 0px;">
+                            <div class="body table-responsive" style="max-height:350px;padding: 0px;">
                                 
                                 @if(table && chartId){
                                 <table>
                                     <thead>
-                                      <tr [ngStyle]="{ 'font-family': headerFontFamily, 'font-size': headerFontSize, 
-                                      'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 'color': headerFontColor }">
+                                      <tr>
                                         @for(column of tableColumnsDisplay;track column){
-                                        <th [ngStyle]="{ 'text-align': headerFontAlignment, 'font-weight': headerFontWeight }">{{ column }}
+                                        <th [ngStyle]="{ 'font-family': headerFontFamily, 'font-style': headerFontStyle, 'text-decoration': headerFontDecoration, 
+                                        'color': headerFontColor, 'text-align': headerFontAlignment, 'font-weight': headerFontWeight, 'font-size': headerFontSize }">{{ column }}
                                             <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                   aria-haspopup="true" aria-expanded="false" class=""><i
@@ -1184,10 +1350,10 @@
                                                                 currentPage: page,
                                                                 totalItems: totalItems }) ; let i = index"
                                         [ngClass]="bandingSwitch ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2), 'font-family': tableDataFontFamily, 'font-size': tableDataFontSize, 'font-weight': tableDataFontWeight,
-                                        'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 'color': tableDataFontColor }">
+                                        [ngStyle]="{ 'background-color': (i % 2 === 0 ? color1 : color2) }">
                                         @for(column of tableColumnsDisplay;track column){
-                                        <td [ngStyle]="{ 'text-align': tableDataFontAlignment }">{{ row[column] }}</td>
+                                        <td [ngStyle]="{ 'font-family': tableDataFontFamily, 'font-weight': tableDataFontWeight, 'font-style': tableDataFontStyle, 'text-decoration': tableDataFontDecoration, 
+                                        'color': tableDataFontColor, 'text-align': tableDataFontAlignment, 'font-size': tableDataFontSize }">{{row[column] | formatMeasure : decimalPlaces : prefix : suffix : displayUnits }}</td>
                                         }
                                     </tr>
                                     
@@ -1241,7 +1407,7 @@
             @else if(funnel && chartId){         
                 <div class="card-body">
                     <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
-                    [color]="color" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme"
+                    [color]="color" [backgroundColor]="backgroundColor" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [selectedColorScheme]="selectedColorScheme" [isDistributed]="isDistributed"
                     [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                 </div>
                 }
@@ -1261,7 +1427,7 @@
                         <app-insight-echart [isZoom]="isZoom" [isBold]="isBold" [dataLabelsFontPosition]="dataLabelsFontPosition" [chartType]="chartType"  [dimensionAlignment] = "dimensionAlignment" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
                         [backgroundColor]="backgroundColor" [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                         [xLabelFontFamily]="xLabelFontFamily" [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [xlabelAlignment]="xlabelAlignment" [selectedColorScheme]="selectedColorScheme"
-                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
+                        [yLabelColor]="yLabelColor" [yLabelSwitch]="yLabelSwitch" [yGridSwitch]="yGridSwitch" [color]="color" [yGridColor]="yGridColor" [chartsRowData]="chartsRowData" [chartsColumnData]="chartsColumnData"
                         [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsFontSize]="dataLabelsFontSize"
                         [dataLabelsColor]="dataLabelsColor"  [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
@@ -1417,27 +1583,27 @@
                                 <li role="presentation" class="nav-item">
                                     <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
-                                        class="nav-link BtnNewStyle" (click)="addSheet(false)" style="padding: 14px;">
-                                        <i class="fa fa-plus-square-o"></i>
+                                        class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" style="padding: 14px;">
+                                        <i class="fa fa-plus-square"></i>
                                     </button>
                                 </li>
                             </div>
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="removeTab()" style="padding: 14px;">
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" ngbtooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
-                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle"
+                                    aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="sheetDuplicate()" style="padding: 14px;">
                                     <i class="fa fa-copy"></i>
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" style="display: flex;justify-content: center;height: 50px;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" style="width: max-content;">Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" style="display: flex;justify-content: center;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" >Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -1465,13 +1631,13 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle px-2">view Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle  sheet-bottom-icon px-2">view Dashboard</button></div>        
                     </div>
                 </div>
 
              </div>
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 mt-3 p-1">
-                <div class="card panel panel-primary">
+                <div class="card panel panel-primary border">
                     <div class="tab-menu-heading tab-menu-heading-boxed">
                         <div class="tabs-menu1">
                             <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" style="justify-content: space-between;">
@@ -1480,8 +1646,8 @@
                                     <a ngbNavLink class="p-1">Data</a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane active" id="activetabs">
-                                            <div class="border  mb-1 filter-card-height" >
-                                                <div class="card-header justify-content-start align-items-center">
+                                            <div class="border rounded-3 mb-1 filter-card-height" >
+                                                <div class="card-header  bg-light justify-content-start align-items-center p-2">
                                                     <div class="card-title fs-12">Filters </div>
                                                 </div>
                                                 <div class="card-body p-1">
@@ -1632,24 +1798,94 @@
                                                                 </div>
                                                             </div>
                                                         }@else{
-                                                            <div style="display: flex;">
-                                                                <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"  aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2"  type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                                                            </div>
-                                                            <div class="form-check">
-                                                                <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
-                                                                <label for="defaultCheck1" class="form-check-label"> Select All </label>
-                                                            </div>
-                                                            <!-- @for(data of filterData;track data | filter: editFilterSearch){ -->
-                                                                <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
-                                                                @if(data? data : (boolList.includes(filterType)? true: '')){
-                                                                    <div class="form-check">
-                                                                        <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
-                                                                        <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                                            <div class="card panel panel-primary">
+                                                                <div class="tab-menu-heading tab-menu-heading-boxed">
+                                                                    <div class="tabs-menu-boxed">
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                                            <li [ngbNavItem]="1" [class.disabled]="activeTabId !== 1">
+                                                                                <a ngbNavLink class="p-3">General</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane active" id="activetabs">
+                                                                                        <div style="display: flex;">
+                                                                                            <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
+                                                                                            <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
+                                                                                            <label for="defaultCheck1" class="form-check-label"> Select All </label>
+                                                                                        </div>
+                                                                                        <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                                                        <!-- @for(data of filterData;track data){ -->
+                                                                                            @if(data? data : (boolList.includes(filterType)? true: '')){
+                                                                                                <div class="form-check">
+                                                                                                    <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
+                                                                                                    <label for="defaultCheck1" class="form-check-label"> {{data.label}}</label>
+                                                                                                </div>
+                                                                                            }
+                                                                                            </div>
+                                                                                        <!-- } -->
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            @if( !(dateList.includes(filterType) || integerList.includes(filterType) || filterType == 'calculated') ){
+                                                                                <li [ngbNavItem]="4" [class.disabled]="activeTabId !== 4">
+                                                                                    <a ngbNavLink class="p-3">Top</a>
+                                                                                    <ng-template ngbNavContent>
+                                                                                        <div class="tab-pane active" id="activetabs">
+                                                                                            <div class="filter-options">
+                                                                                                <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
+                                                                                                <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
+                                                                                            </div>
+                                                                                            <div style="margin-left: 5%;">
+                                                                                                <div class="field-options">
+                                                                                                    <select [(ngModel)]="topType">
+                                                                                                      <option value="desc">Top</option>
+                                                                                                      <option value="asc">Bottom</option>
+                                                                                                    </select>
+                                                                                                    <select [(ngModel)] = "topLimit">
+                                                                                                        <option value="5">5</option>
+                                                                                                        <option value="10">10</option>
+                                                                                                        <option value="20">20</option>
+                                                                                                        <option value="30">30</option>
+                                                                                                        <option value="40">40</option>
+                                                                                                        <option value="50">50</option>
+                                                                                                        <option value="100">100</option>
+                                                                                                        <option value="500">500</option>
+                                                                                                        <option value="1000">1000</option>
+                                                                                                        <option value="2000">2000</option>
+                                                                                                        <option value="3000">3000</option>
+                                                                                                        <option value="4000">4000</option>
+                                                                                                        <option value="5000">5000</option>
+                                                                                                      </select>
+                                                                                                    <!-- <input type="number" value="10" /><span>by</span> -->
+                                                                                                </div>
+                                                                                                <div class="field-options">
+                                                                                                    <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                                                        <option value="select" selected disabled> select </option>
+                                                                                                        <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
+                                                                                                    </select>
+                                                                                                    <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                                                        <option value="sum">Sum</option>
+                                                                                                        <option value="avg">Avg</option>
+                                                                                                        <option value="min">Min</option>
+                                                                                                        <option value="max">Max</option>
+                                                                                                        <option value="count">Count</option>
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </ng-template>
+                                                                                </li>
+                                                                            }
+                                                                        </ul>
+                                                                        <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                                                            <div class="tab-content">
+                                                                                <div [ngbNavOutlet]="nav"></div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                }
                                                                 </div>
-                                                            <!-- } -->
+                                                            </div>
                                                         }
 
                                                         <!-- @for(data of filterData;track data){
@@ -1660,12 +1896,12 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0" *ngIf="activeTabId !== 3">
+                                                        <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0)" type="button"
+                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
@@ -1674,8 +1910,8 @@
                                                     </div>
                                                   </ng-template>
                                             </div>
-                                            <div class="border mb-1 charts-card-height">
-                                                <div class="card-header justify-content-between align-items-center">
+                                            <div class="border mb-1 rounded-3 charts-card-height">
+                                                <div class="card-header  bg-light justify-content-between align-items-center p-2">
                                                     <div class="card-title fs-12">Charts</div>
                                                 </div>
                                                 <div class="card-body" style=" padding: 2px 12px;">
@@ -1683,7 +1919,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
-                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light rounded-2" style="text-align: center;">Single Axis</div>
+                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light " style="text-align: center;">Single Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
                                                         </div>
@@ -1711,7 +1947,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
-                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light rounded-2" style="text-align: center;">Dual Axis</div>
+                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light " style="text-align: center;">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': sidebyside}"></a>
                                                         </div>
@@ -1810,7 +2046,7 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': headerFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isBold = !isBold;headerFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableHeaderBold = !isTableHeaderBold;headerFontWeight = isTableHeaderBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
@@ -1943,7 +2179,7 @@
                                                                                                                 </select>
                                                                                                                 <div class="bold-text"
                                                                                                                     [ngStyle]="{'background-color': tableDataFontWeight === 700 ? 'var(--primary-color)': '#fafcfc'}"
-                                                                                                                    (click)="isBold = !isBold;tableDataFontWeight = isBold ? 700 : 400 ">
+                                                                                                                    (click)="isTableDataBold = !isTableDataBold;tableDataFontWeight = isTableDataBold ? 700 : 400 ">
                                                                                                                     <p>B</p>
                                                                                                                 </div>
                                                                                                                 <div class="italic-text"
@@ -2057,7 +2293,7 @@
                                                               aria-expanded="true"
                                                               aria-controls="collapse"
                                                               >
-                                                              Dimension
+                                                              Dimensions
                                                             </button>
                                                             
                                                           </h6>
@@ -2115,7 +2351,7 @@
                                                                                                                 <option value="19">19px</option>
                                                                                                                 <option value="20">20px</option>
                                                                                                              </select>
-                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;xlabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                             <div class="bold-text" [ngStyle]="{'background-color': isXlabelBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isXlabelBold = !isXlabelBold;xlabelFontWeight = isXlabelBold ? 700 : 400 ;">
                                                                                                                 <p>B</p>
                                                                                                             </div>
                                                                                                             <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2258,7 +2494,7 @@
                                                                                                             <option value="19">19px</option>
                                                                                                             <option value="20">20px</option>
                                                                                                          </select>
-                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isBold = !isBold;ylabelFontWeight = isBold ? 700 : 400 ;">
+                                                                                                         <div class="bold-text" [ngStyle]="{'background-color': isYlabelBold ? 'var(--primary-color)': '#fafcfc'}" (click)="isYlabelBold = !isYlabelBold;ylabelFontWeight = isYlabelBold ? 700 : 400 ;">
                                                                                                             <p>B</p>
                                                                                                         </div>
                                                                                                         <div *ngIf="false" class="italic-text" [ngStyle]="{'background-color': isItalic ? 'var(--primary-color)': '#fafcfc'}" (click)="setDataLabelsFontStyle('I')">
@@ -2330,7 +2566,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2357,7 +2593,7 @@
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="sub-menu-item  p-2 mb-0" *ngIf="!kpi">
+                                                                <div class="sub-menu-item  p-2 mb-0" *ngIf="!kpi && !table">
                                                                   <div class="row">
                                                                     <div class="" >
                                                                         <div class="font-color-card">
@@ -2433,7 +2669,7 @@
                                                                   <span ngbTooltip=""></span>
                                                                 </div>
                                                               </div>
-                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(kpi || guage || calendar || map || radar || multiLine || barLine || (isApexCharts && (heatMap)))">
+                                                              <div class="sub-menu-item  p-2 mb-0" *ngIf="!(kpi || table || guage || calendar || map || radar || barLine || (isApexCharts && (heatMap)))">
                                                                 <div class="row">
                                                                   <div class="">
                                                                       <div class="font-color-card">
@@ -2611,7 +2847,7 @@
                                                                       
                                                                       <div class="buttons">
                                                                           <button class="btn btn-danger" (click)="numberPopupTrigger()">Close</button>
-                                                                          <!-- <button class="btn btn-primary" (click)="updateNumberFormat(); numberPopupTrigger()">Update</button> -->
+                                                                          <!-- <button class="btn btn-primary" (click)="updateTableFormat();">Update</button> -->
                                                                       </div>
                                                                     </div>
                                                                 }
@@ -2827,35 +3063,39 @@
                                                                     [format]="'hex'"></ngx-colors>
                                                                 </div>
 
-                                                                <div class="dropdown" *ngIf="pie||donut||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || calendar">
-                                                                    <!-- Dropdown Button -->
-                                                                    <button class="dropdown-button" >
-                                                                        <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
-                                                                          <div
-                                                                            *ngFor="let color of selectedColorScheme"
-                                                                            class="color-box"
-                                                                            [style.background]="color"
-                                                                          ></div>
-                                                                        </div>
-                                                                        <span *ngIf="selectedColorScheme.length === 0">Select Color Scheme</span>
-                                                                      </button>
-                                                                    <!-- Dropdown Content -->
-                                                                    <div class="dropdown-content">
+                                                                <div 
+                                                                class="dropdown" 
+                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || calendar || (funnel && isDistributed)">
+                                                                <!-- Dropdown Button -->
+                                                                <button class="dropdown-button" (click)="toggleDropdownColorScheme()">
+                                                                  <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
+                                                                    <div
+                                                                      *ngFor="let color of selectedColorScheme.slice(0, 9)"
+                                                                      class="color-box"
+                                                                      [style.background]="color"
+                                                                    ></div>
+                                                                  </div>
+                                                                  <span *ngIf="selectedColorScheme.length === 0">Select Color Scheme</span>
+                                                                  <span class="arrow-down"></span>
+                                                                </button>
+                                                              
+                                                                <!-- Dropdown Content -->
+                                                                <div class="dropdown-content" [class.show]="isColorSchemeDropdownOpen">
+                                                                  <div
+                                                                    *ngFor="let scheme of colorSchemes"
+                                                                    class="dropdown-item"
+                                                                    (click)="selectColorScheme(scheme)">
+                                                                    <div class="color-row">
                                                                       <div
-                                                                        *ngFor="let scheme of colorSchemes"
-                                                                        class="dropdown-item"
-                                                                        (click)="selectColorScheme(scheme)"
-                                                                      >
-                                                                        <div class="color-row">
-                                                                          <div
-                                                                            *ngFor="let color of scheme"
-                                                                            class="color-box"
-                                                                            [style.background]="color"
-                                                                          ></div>
-                                                                        </div>
+                                                                        *ngFor="let color of scheme"
+                                                                        class="color-box"
+                                                                        [style.background]="color">
                                                                       </div>
                                                                     </div>
                                                                   </div>
+                                                                </div>
+                                                              </div>
+                                                              
                                                                   
                                                                   
 
@@ -2979,8 +3219,81 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                      
-     
+                                                                <div *ngIf="funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label>Distribution</label>
+                                                                    <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!isDistributed" class="toggle toggle-sm off mb-0" (click)="toggleSwitch('distributed')">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label>color</label>
+                                                                    <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetChartColor()">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!funnelColorSwitch" class="toggle toggle-sm off mb-0" (click)="funnelColorSwitch = !funnelColorSwitch;">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
+                                                                    </ngx-colors>
+                                                                </div>
+                                                            </ng-template>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2">
+                                                        <h6 ngbAccordionHeader class="accordion-header" id="heading">
+                                                          <button
+                                                            ngbAccordionButton
+                                                            class="accordion-button p-3 fw-500 border"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse"
+                                                            >
+                                                            Sort
+                                                          </button>
+                                                          
+                                                        </h6>
+                                                        <div
+                                                          ngbAccordionCollapse
+                                                          id="collapse"
+                                                          class="accordion-collapse collapse" 
+                                                          aria-labelledby="heading"
+                                                          data-bs-parent="#accordionExample"
+                                                           >
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <ng-template>
+                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label for="columnName">Column</label>
+                                                                    <select id="columnName" [(ngModel)]="sortColumn" style="width: 50%;" (change)="sortType = 0; changeSelectedColumn();">
+                                                                        <option value="select" selected disabled>select</option>
+                                                                        <option *ngFor="let column of columnNamesForSort; let i = index" [ngValue]="column">
+                                                                            @if(column.alias){
+                                                                            {{ column.alias }}
+                                                                            } @else if(column.field_name){
+                                                                            {{ column.field_name }}
+                                                                            }
+                                                                            @else if(column.type){
+                                                                            {{ column.type }} ({{column.column}})
+                                                                            }@else{
+                                                                            {{ column.column }}
+                                                                            }</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div *ngIf="sortColumn != 'select'" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <label for="sorting">Sort by</label>
+                                                                    <select id="sorting" [(ngModel)]="sortType" style="width: 50%;" (change)="sortColumns()">
+                                                                        <option value="0" selected disabled>select</option>
+                                                                        <option value="none">Default</option>
+                                                                        <option value="asc">Ascending</option>
+                                                                        <option value="desc">Descending</option>
+                                                                    </select>
+                                                                </div>
                                                             </ng-template>
                                                           </div>
                                                         </div>
@@ -3055,7 +3368,7 @@
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                    
-                                                    <div *ngIf="(((pie && chartId) || donut || bar))  && draggedColumns && draggedColumns.length == 1 && dateList.includes(draggedColumns[0]['data_type'])" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3082,9 +3395,9 @@
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
                                                             <ng-template>
-                                                                <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="dateList.includes(draggedColumns[0]['data_type'])" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
-                                                                        <p >Date Field </p>
+                                                                        <p >Drill Field </p>
                                                                     </div>
                                                                     <div *ngIf="dateDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleDateSwitch()">
                                                                         <span></span>
@@ -3093,21 +3406,18 @@
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
-                                                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" 
-                                                                style="position: relative;min-height: 33px; padding: 2px;" 
-                                                                #drilldownList="cdkDropList" 
-                                                                [cdkDropListData]="draggedDrillDownColumns" 
-                                                                (cdkDropListDropped)="drillDownColumndrop($event)">
-                                                                    @for(columns of draggedDrillDownColumns;track columns;let index = $index){
-                                                                    <div class="example-box border-end" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
-                                                                       
-                                                                        {{ columns.column }}
-                                                                     <!--  <input type="text" class="form-control example-box border-end" [(ngModel)]="columns.column" value="" (click)="rename(index,columns.column,$event)" (keydown)="renameColumn(index,columns.column,$event)" >-->
-                                
-                                                                        
+                                                                <div *ngIf="isLocationFeild" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                    <div class=""> 
+                                                                        <p >Drill Field </p>
                                                                     </div>
-                                                                    }
-                                                                </div>                                                            
+                                                                    <div *ngIf="locationDrillDownSwitch" class="toggle toggle-sm on mb-0" (click)="toggleLocationSwitch(true)">
+                                                                        <span></span>
+                                                                    </div>
+                                                                    <div *ngIf="!locationDrillDownSwitch" class="toggle toggle-sm off mb-0" (click)="toggleLocationSwitch(true)">
+                                                                        <span></span>
+                                                                    </div>
+                                                                </div>
+                                                                                                                
                                                             </ng-template>
                                                           </div>
                                                         </div>
@@ -3121,7 +3431,7 @@
                                                             <input type="number" class="form-control fs-14" [(ngModel)]="maxValueGuage" id="maxValue"  />
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                    <!-- <div *ngIf="bar || funnel && isApexCharts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                         <label for="sorting">Sort by: </label>
                                                         <select id="sorting" [(ngModel)]="sortType">
                                                             <option value="0" selected disabled>select</option>
@@ -3129,15 +3439,15 @@
                                                             <option value="ascending">Ascending</option>
                                                             <option value="descending">Descending</option>
                                                         </select>
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </ng-template>
                                 </li>
 
                                 <li [ngbNavItem]="3">
-                                    <a ngbNavLink class="p-1" (click)="getChartSuggestions()">
-                                        <button class="copilot-button">
+                                    <a ngbNavLink class="p-1" (click)="getChartSuggestions()" >
+                                        <button class="copilot-button" matTooltip="Genie AIQ is an AI-powered query engine designed to generate insights from MetaData." matTooltipPosition="above">
                                             <img src="./assets/images/copilot.gif" alt="Copilot" class="copilot-icon border rounded-5" />
                                         </button>
                                     </a>

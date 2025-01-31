@@ -1,6 +1,6 @@
 <!-- <p>Add index</p> -->
 
-<div class="main-container container-fluid mt-5">
+<div class="main-container container-fluid mt-3">
   <!-- <div class="col-sm-12 col-lg-12 col-xl-12 card mb-3" style="padding: 0px;">
     <div class="card-body">
         <div class="form-group mb-0 mt-sm-0 mt-2">
@@ -15,8 +15,8 @@
     <div class="col-sm-12 col-lg-12 col-xl-12 card" style="padding: 0px;">
         <div class="card-body">
             <div class="row">
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    <div class="card" style="border: none !important;">
+                <div class="col-lg-3 col-md-3 col-sm-12 p-0 border">
+                    <div class="card mb-0" style="border: none !important;">
                           <div
                             ngbAccordion
                             [closeOthers]="true"
@@ -29,7 +29,7 @@
                                 [collapsed]="module.id !== userGuideData[0].module_id"
                                 class="accordion-item"
                                 >
-                                <h2 ngbAccordionHeader id="headingOne" class="accordion-header"  (click)="getQuestionaries(module.id)">
+                                <h2 ngbAccordionHeader id="headingOne" class="accordion-header"  (click)="getQuestionaries(module.id,true)">
                                   <button
                                     ngbAccordionButton
                                     class="accordion-button"
@@ -65,7 +65,7 @@
                       </div>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12" style="border-left: 1px solid #ebebeb;">
-                    <div class="card" *ngFor="let data of userGuideData">
+                    <div class="card mb-0" *ngFor="let data of userGuideData">
                         <div class="mail-info-header d-flex align-items-center flex-wrap">
                             <div class="flex-fill">
                                 <h6 class="mb-0">{{data.title}}</h6>

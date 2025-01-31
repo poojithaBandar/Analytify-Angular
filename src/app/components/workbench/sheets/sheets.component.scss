@@ -101,6 +101,7 @@ cursor: move;
 font-size: 14px;
 // border-radius: 8px;
 margin-right: 5px;
+border-radius: 5px 5px 0px 0px;
 }
 .example-box1 {
   padding: 3px 13px;
@@ -205,7 +206,7 @@ span.abc-txt {
  }
  .charts-card-height{
   overflow-y: auto; 
-  height: 437px;
+  height: 432px;
  }
  .marks-card-height{
   height: 203px; 
@@ -465,11 +466,11 @@ button.viewQueryImg {
   height: 512px;
 }
 .sheet-table-h{
-  height: 487px;
-   overflow-y: auto;
+  height: 475px;
+  overflow-y: auto;
 }
 .panel-body-h{
-  height: 624px;
+  height: 617px;
 }
 .chart-icon.active {
   border-color:#00a2a5 !important; /* Change to the color you prefer for the active state */
@@ -506,15 +507,6 @@ padding: 5px 4px 5px 3px;
   justify-content: space-between;
 }
 
-
-/* Dropdown Styles */
-// .dropdown {
-//   position: relative;
-//   display: inline-block;
-//   font-family: Arial, sans-serif;
-//   width: 250px;
-// }
-
 .dropdown-button {
   display: flex;
   align-items: center;
@@ -523,11 +515,13 @@ padding: 5px 4px 5px 3px;
   padding: 10px;
   background: #fff;
   cursor: pointer;
+  position: relative;
 }
 
 .selected-colors {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .color-box {
@@ -549,7 +543,7 @@ padding: 5px 4px 5px 3px;
   overflow-y: auto;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown-content.show {
   display: block;
 }
 
@@ -567,6 +561,48 @@ padding: 5px 4px 5px 3px;
 
 .dropdown-item:hover {
   background: #f0f0f0;
+}
+
+/* Down arrow icon */
+.arrow-down {
+  display: inline-block;
+  margin-left: 5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #000;
+}
+
+.form-check-input {
+  border-color: #898989 !important;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.1019607843);
+}
+
+.filter-options {
+  margin-bottom: 15px;
+}
+
+.filter-options label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.field-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.field-options select,
+.field-options input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+.sheet-bottom-icon {
+  height: 48px;
 }
 
 // for Mobile Resolution //
@@ -595,17 +631,17 @@ app-insights-button {
   font-size: 12px;
 }
 .sheet-table-h{
-  height: 415px;
+  height: 408px;
   overflow-y: auto;
 }
 .show-chart-card {
-  height: 400px;
+  height: 408px;
 }
 .show-chart-card-no-heirarchy{
-  height: 435px;
+  height: 440px;
 }
 .panel-body-h {
-  height: 544px;
+  height: 538px;
 }
 .charts-card-height {
   overflow-y: auto;
@@ -632,7 +668,7 @@ app-insights-button {
   font-size: 12px;
 }
 .title-padding {
-  padding: 5px 4px 5px 3px;
+  padding: 5px 4px 5px 0px;
 }
 th, td {
   border: 1px solid #ddd;
@@ -664,7 +700,31 @@ h6 {
 .mat-mdc-tab.mdc-tab__content {
   font-size: 11px !important;
 }
-
+.p-3 {
+  padding: 0.55rem !important;
+}
+.accordion-button {
+  font-size: 12px;
+}
+.fs-14 {
+  font-size: 12px !important;
+}
+button.btn {
+  font-size: 11px;
+}
+.dropdown-item{
+  padding: 0.5rem 0.5rem !important;
+  font-size: 12px;
+}
+p {
+  font-size: 12px;
+}
+label {
+  font-size: 12px;
+}
+.body.table-responsive{
+  max-height: 310px !important;
+}
 }
 
 @media ( 1280px <= width <= 1570px) {
@@ -697,14 +757,14 @@ h6 {
     font-size: 12px;
   }
   .sheet-table-h {
-    height: 350px;
+    height: 346px;
     overflow-y: auto;
 }
 .show-chart-card {
-  height: 338px;
+  height: 350px;
 }
 .show-chart-card-no-heirarchy{
-  height: 375px;
+  height: 380px;
 }
 .filter-card-height {
   height: 130px;
@@ -719,7 +779,7 @@ h6 {
   overflow-y: auto;
 }
 .panel-body-h {
-  height: 480px;
+  height: 475px;
 }
 .column-text {
   font-size: 12px;
@@ -734,7 +794,7 @@ h6 {
   font-size: 11px;
 }
 .title-padding {
-  padding: 4px 32px 4px 17px;
+  padding: 4px 0px 4px 0px;
 }
 th, td {
   border: 1px solid #ddd;
@@ -765,6 +825,31 @@ th, td {
   }
   .mat-mdc-tab .mdc-tab__content {
     font-size: 11px !important;
+  }
+  .p-3 {
+    padding: 0.45rem !important;
+  }
+  .accordion-button {
+    font-size: 11px;
+  }
+  .fs-14 {
+    font-size: 11px !important;
+  }
+  button.btn {
+    font-size: 11px;
+  }
+  .dropdown-item{
+    padding: 0.5rem 0.5rem !important;
+    font-size: 12px;
+  }
+  p {
+    font-size: 12px;
+  }
+  label {
+    font-size: 12px;
+  }
+  .body.table-responsive{
+    max-height: 270px !important;
   }
 }
 
@@ -1069,10 +1154,10 @@ th, td {
 }
 
 .query-text {
-  width: 100%;
-  height: 110px;
-  min-height: 110px;
-  max-height: 110px;
+  // width: 100%;
+  height: 250px;
+  // min-height: 110px;
+  // max-height: 110px;
   overflow-y: auto;
   outline: none;
   border: 1px solid #edebeb;
@@ -1080,9 +1165,9 @@ th, td {
 }
 .description-text{
   overflow-y: auto; 
-  height: 195px; 
-  min-height: 195px;  
-  max-height: 95px;
+  height: 250px; 
+  // min-height: 195px;  
+  // max-height: 95px;
 }
 .example-box-bg{
   padding: 3px 13px;
