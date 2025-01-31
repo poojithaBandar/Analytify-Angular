@@ -489,7 +489,7 @@
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
                                                                 <label for="defaultCheck1" class="form-check-label"> Select All </label>
                                                             </div>
-                                                            <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                            <div *ngFor="let data of filterData">
                                                             <!-- @for(data of filterData;track data){ -->
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                 <div class="form-check">
@@ -530,7 +530,7 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body p-0">
-                                                                <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                <ul *ngIf="!formatExtractType" class="mb-2">
                                                                   <li (click)="formatExtractType = 'year'; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Years</label>
@@ -556,7 +556,7 @@
                                                                     <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                   </li>
                                                                 </ul>
-                                                                <ul *ngIf="!formatExtractType">
+                                                                <!-- <ul *ngIf="!formatExtractType">
                                                                   <li (click)="formatExtractType = 'count'; filterDataGet()">
                                                                      <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Count</label>
@@ -573,14 +573,14 @@
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                    <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                   </li>
-                                                                </ul>
+                                                                </ul> -->
                                                                 @if(formatExtractType){
                                                                 <div style="display: flex;">
                                                                     <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button>
                                                                     <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                                                     <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
                                                                 </div>
-                                                                <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                                <div *ngFor="let data of filterData">
                                                                     @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                     <div class="form-check">
                                                                         <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input"
@@ -620,7 +620,7 @@
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
                                                                 <label for="defaultCheck1" class="form-check-label"> Select All </label>
                                                             </div>
-                                                            <div *ngFor="let data of filterData | test: filterSearch : 'label'">
+                                                            <div *ngFor="let data of filterData">
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                 <div class="form-check">
                                                                     <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" [(ngModel)]="data.selected"
@@ -648,19 +648,19 @@
                                                                           <option value="asc">Bottom</option>
                                                                         </select>
                                                                         <select [(ngModel)] = "topLimit">
-                                                                            <option value="5">5</option>
-                                                                            <option value="10">10</option>
-                                                                            <option value="20">20</option>
-                                                                            <option value="30">30</option>
-                                                                            <option value="40">40</option>
-                                                                            <option value="50">50</option>
-                                                                            <option value="100">100</option>
-                                                                            <option value="500">500</option>
-                                                                            <option value="1000">1000</option>
-                                                                            <option value="2000">2000</option>
-                                                                            <option value="3000">3000</option>
-                                                                            <option value="4000">4000</option>
-                                                                            <option value="5000">5000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 0" value="5">5</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 5" value="10">10</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 10" value="20">20</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 20" value="30">30</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 30" value="40">40</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 40" value="50">50</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 50" value="100">100</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 100" value="500">500</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 500" value="1000">1000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 1000" value="2000">2000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 2000"value="3000">3000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 3000" value="4000">4000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 4000" value="5000">5000</option>
                                                                           </select>
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
@@ -767,7 +767,7 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body p-0">
-                                                                <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                <ul *ngIf="!formatExtractType" class="mb-2">
                                                                   <li (click)="formatExtractType = 'year'; filterEditGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Years</label>
@@ -793,7 +793,7 @@
                                                                     <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                   </li>
                                                                 </ul>
-                                                                <ul *ngIf="!formatExtractType">
+                                                                <!-- <ul *ngIf="!formatExtractType">
                                                                   <li (click)="formatExtractType = 'count'; filterEditGet()">
                                                                      <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Count</label>
@@ -810,7 +810,7 @@
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                    <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                   </li>
-                                                                </ul>
+                                                                </ul> -->
                                                                 @if(formatExtractType){
                                                                     <div style="display: flex;">
                                                                         <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
@@ -856,7 +856,7 @@
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
                                                                 <label for="defaultCheck1" class="form-check-label"> Select All </label>
                                                             </div>
-                                                            <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                            <div *ngFor="let data of filterData">
                                                             <!-- @for(data of filterData;track data){ -->
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                     <div class="form-check">
@@ -885,19 +885,19 @@
                                                                           <option value="asc">Bottom</option>
                                                                         </select>
                                                                         <select [(ngModel)] = "topLimit">
-                                                                            <option value="5">5</option>
-                                                                            <option value="10">10</option>
-                                                                            <option value="20">20</option>
-                                                                            <option value="30">30</option>
-                                                                            <option value="40">40</option>
-                                                                            <option value="50">50</option>
-                                                                            <option value="100">100</option>
-                                                                            <option value="500">500</option>
-                                                                            <option value="1000">1000</option>
-                                                                            <option value="2000">2000</option>
-                                                                            <option value="3000">3000</option>
-                                                                            <option value="4000">4000</option>
-                                                                            <option value="5000">5000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 0" value="5">5</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 5" value="10">10</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 10" value="20">20</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 20" value="30">30</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 30" value="40">40</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 40" value="50">50</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 50" value="100">100</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 100" value="500">500</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 500" value="1000">1000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 1000" value="2000">2000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 2000"value="3000">3000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 3000" value="4000">4000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 4000" value="5000">5000</option>
                                                                           </select>
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
@@ -1176,7 +1176,7 @@
                                                     } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1" style="float: right; padding-top: 5px;"></i> </li>
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
-                                                    <div class="d-flex" style="align-items: center;">
+                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex" style="align-items: center;">
                                                     <li class="dropdown-item btn btn-primary-light" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
@@ -1280,7 +1280,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0 border" [ngClass]="(bar || pie || donut) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
+            <div class="card mb-0 border" [ngClass]="(bar || pie || donut || map) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
                 @if(!(table || kpi)){
                     <div class="input-group">
                 <!-- <div class="col-lg-3 col-md-3 p-1">
@@ -1298,7 +1298,7 @@
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
-                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span style="padding-top: 3px;">-></span>
+                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span style="padding-top: 3px;">--</span>
                                    }
                                     </div>
                                 }
@@ -1529,6 +1529,12 @@
                 @else if(map && chartId){
                     <div class="card-body">
                         <app-insight-echart  [isZoom]="isZoom" [isBold]="isBold"  [chartType]="chartType" [chartsColumnData]="chartsColumnData" [chartsRowData]="chartsRowData" [dualAxisRowData]="dualAxisRowData" [dualAxisColumnData]="dualAxisColumnData"
+                        [dataLabelsFontPosition]="dataLabelsFontPosition" [dimensionAlignment] = "dimensionAlignment" [backgroundColor]="backgroundColor" [xlabelAlignment]="xlabelAlignment"
+                        [xGridColor]="xGridColor" [xGridSwitch]="xGridSwitch" [xLabelColor]="xLabelColor" [xLabelSwitch]="xLabelSwitch" [xLabelFontFamily]="xLabelFontFamily"
+                        [xLabelFontSize]="xLabelFontSize" [xlabelFontWeight]="xlabelFontWeight" [yLabelColor]="yLabelColor" [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch"
+                        [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight" [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch"
+                        [color]="color" [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontSize]="dataLabelsFontSize" [dataLabelsFontFamily]="dataLabelsFontFamily"
+                        [dataLabelsColor]="dataLabelsColor" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [sortType]="sortType"
                         [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
                         (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
                     </div>
@@ -1725,7 +1731,7 @@
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane" id="linktabs">
                                                                                         <div class="card-body p-0">
-                                                                                            <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                                            <ul *ngIf="!formatExtractType" class="mb-2">
                                                                                               <li (click)="formatExtractType = 'year'; filterEditGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Years</label>
@@ -1751,7 +1757,7 @@
                                                                                                 <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                                               </li>
                                                                                             </ul>
-                                                                                            <ul *ngIf="!formatExtractType">
+                                                                                            <!-- <ul *ngIf="!formatExtractType">
                                                                                               <li (click)="formatExtractType = 'count'; filterEditGet()">
                                                                                                  <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Count</label>
@@ -1768,7 +1774,7 @@
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                                               </li>
-                                                                                            </ul>
+                                                                                            </ul> -->
                                                                                             @if(formatExtractType){
                                                                                                 <div style="display: flex;">
                                                                                                     <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
@@ -1814,7 +1820,7 @@
                                                                                             <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
                                                                                             <label for="defaultCheck1" class="form-check-label"> Select All </label>
                                                                                         </div>
-                                                                                        <div *ngFor="let data of filterData | test: editFilterSearch : 'label'">
+                                                                                        <div *ngFor="let data of filterData">
                                                                                         <!-- @for(data of filterData;track data){ -->
                                                                                             @if(data? data : (boolList.includes(filterType)? true: '')){
                                                                                                 <div class="form-check">
@@ -1843,19 +1849,19 @@
                                                                                                       <option value="asc">Bottom</option>
                                                                                                     </select>
                                                                                                     <select [(ngModel)] = "topLimit">
-                                                                                                        <option value="5">5</option>
-                                                                                                        <option value="10">10</option>
-                                                                                                        <option value="20">20</option>
-                                                                                                        <option value="30">30</option>
-                                                                                                        <option value="40">40</option>
-                                                                                                        <option value="50">50</option>
-                                                                                                        <option value="100">100</option>
-                                                                                                        <option value="500">500</option>
-                                                                                                        <option value="1000">1000</option>
-                                                                                                        <option value="2000">2000</option>
-                                                                                                        <option value="3000">3000</option>
-                                                                                                        <option value="4000">4000</option>
-                                                                                                        <option value="5000">5000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 0" value="5">5</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 5" value="10">10</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 10" value="20">20</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 20" value="30">30</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 30" value="40">40</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 40" value="50">50</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 50" value="100">100</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 100" value="500">500</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 500" value="1000">1000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 1000" value="2000">2000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 2000" value="3000">3000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 3000" value="4000">4000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 4000" value="5000">5000</option>
                                                                                                       </select>
                                                                                                     <!-- <input type="number" value="10" /><span>by</span> -->
                                                                                                 </div>
@@ -3368,7 +3374,7 @@
                                                         <!-- <ngx-slider [(ngModel)]="kpiFontSize" [options]="sliderOptions"></ngx-slider> -->
                                                     </div>
                                                    
-                                                    <div *ngIf="((pie && chartId) || donut || bar)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="((pie && chartId) || donut || bar || map)  && draggedColumns && draggedColumns.length == 1 && (dateList.includes(draggedColumns[0]['data_type']) || isLocationFeild)" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton

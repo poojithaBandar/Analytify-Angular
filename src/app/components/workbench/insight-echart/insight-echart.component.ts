@@ -1567,7 +1567,8 @@ mapChart(){
   let maxData: number = Math.max(...this.chartsRowData);
   let result:any[] = [];
 
-  // Loop through the countries (assuming both data sets align by index)
+  if(!(this.draggedDrillDownColumns>0 || this.drillDownIndex>0)){
+    // Loop through the countries (assuming both data sets align by index)
   this.dualAxisColumnData[0].values.forEach((country: string, index: number) => {
     // Create an object for each country
     const countryData: any = { name: country , value : this.chartsRowData[index]};
@@ -1581,6 +1582,8 @@ mapChart(){
 
     result.push(countryData);
   });
+  }
+
 if(this.chartsColumnData && this.chartsColumnData.length > 1){
 minData= Math.min(...this.chartsRowData);
 }
@@ -1588,47 +1591,164 @@ if(Number.isNaN(minData) || Number.isNaN(maxData)){
  minData = 0;
  maxData = 1;
 }
+let mapChartOptions = {
+  tooltip: {
+    formatter: (params: any) => {
+      const { name, data } = params;
+      if (data) {
+        const keys = Object.keys(data);
+  const values = Object.values(data);
+  let formattedString = '';
+  keys.forEach((key, index) => {
+    if(key)
+    formattedString += `${key}: ${values[index]}<br/>`;
+  });
+ 
+  return formattedString;
+       
+      } else {
+        return `${name}: No Data`;
+      }
+    },
+        trigger: 'item',
+        showDelay: 0,
+        transitionDuration: 0.2
+      },
+  visualMap: {
+    min: minData,
+    max: maxData,
+    text: ['High', 'Low'],
+    realtime: false,
+    calculable: true,
+    inRange: {
+     color: ['lightskyblue', 'yellow', 'orangered']
+    }
+  },
+  series: [{
+    type: 'map',
+    map: 'world',
+    roam: this.isZoom,  
+    data: result
+  }]
+ };
+let barChartOptions = {
+  backgroundColor: this.backgroundColor,
+  legend: {
+    orient: 'vertical',
+    left: 'left'
+  },
+  toolbox: {
+    feature: {
+      magicType: { show: true, type: ['line'] },
+      restore: { show: true },
+      saveAsImage: { show: true }
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+  },
+  axisPointer: {
+    type: 'none'
+  },
+  dataZoom: [
+    {
+      show: this.isZoom,
+      type: 'slider'
+    },
 
-this.chartOptions = {
- tooltip: {
-   formatter: (params: any) => {
-     const { name, data } = params;
-     if (data) {
-       const keys = Object.keys(data);
- const values = Object.values(data);
- let formattedString = '';
- keys.forEach((key, index) => {
-   if(key)
-   formattedString += `${key}: ${values[index]}<br/>`;
- });
+  ],
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '13%',
+    containLabel: true,
+  },
+  xAxis: {
+    type: 'category',
+    data: this.chartsColumnData,
+    nameLocation: this.xlabelAlignment,
+    splitLine: {
+      lineStyle: {
+        color: this.xGridColor
+      }, show: this.xGridSwitch
+    },
+    axisLine: {
+      lineStyle: {
+        color: this.xLabelColor,
+      },
+    },
+    axisLabel: {
+      show: this.xLabelSwitch,
+      fontFamily: this.xLabelFontFamily,
+      fontSize: this.xLabelFontSize,
+      fontWeight: this.xlabelFontWeight,
+      color: this.dimensionColor,
+      // align: this.xlabelAlignment,// Hide xAxis labels
+      interval: 0, // Show all labels
+      padding: [10, 0, 10, 0],
+      align: this.dimensionAlignment,
+      formatter: function(value:any) {
+        return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
+    }
+    }
+  },
+  toggleGridLines: true,
+  yAxis: {
+    type: 'value',
+    axisLine: {
+      lineStyle: {
+        color: this.yLabelColor
+      },
+      show: this.yGridSwitch
+    },
+    axisLabel: {
+      show: this.yLabelSwitch,
+      fontFamily: this.yLabelFontFamily,
+      fontSize: this.yLabelFontSize,
+      fontWeight: this.ylabelFontWeight,
+      color:this.measureColor,
+      rotate:0,
+      formatter: function(value:any) {
+        return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
+    }
+    // formatter:(params:any) => this.formatNumber(params.value) 
+    },
+    splitLine: {
+      lineStyle: {
+        color: this.yGridColor
+      },
+      show: this.yGridSwitch
+    }
+  },
+  // itemStyle: {borderWidth : '50px' },
+  series: [
+    {
+      itemStyle: {
+        borderRadius: 5
+      },
+      label: { show: true,
+        position: this.dataLabelsFontPosition,
+        align:'center',
+        fontFamily:this.dataLabelsFontFamily,
+        fontSize:this.dataLabelsFontSize,
+        fontWeight:this.isBold ? 700 : 400,
+        color: this.dataLabelsColor,
+        formatter:(params:any) => this.formatNumber(params.value) 
+       },
+      type: 'bar',
+      barWidth: '80%',
+      data: this.chartsRowData
+      // data: this.chartsRowData.map((value: any, index: number) => ({
+      //   value,
+      //   itemStyle: { borderWidth: '50px' }
+      // })),
+    },
+  ],
+  color: this.color
 
- return formattedString;
-      
-     } else {
-       return `${name}: No Data`;
-     }
-   },
-       trigger: 'item',
-       showDelay: 0,
-       transitionDuration: 0.2
-     },
- visualMap: {
-   min: minData,
-   max: maxData,
-   text: ['High', 'Low'],
-   realtime: false,
-   calculable: true,
-   inRange: {
-    color: ['lightskyblue', 'yellow', 'orangered']
-   }
- },
- series: [{
-   type: 'map',
-   map: 'world',
-   roam: this.isZoom,  
-   data: result
- }]
 };
+this.chartOptions = this.draggedDrillDownColumns.length > 0 ? (this.drillDownIndex > 0 ? barChartOptions : mapChartOptions) : mapChartOptions
+console.log(this.chartOptions);
  }
 formatNumber(value: number): string {
   let formattedNumber = value+'';
