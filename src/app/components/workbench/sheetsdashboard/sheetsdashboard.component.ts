@@ -1597,7 +1597,10 @@ export class SheetsdashboardComponent {
       return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
     }
     if(sheet.chart_id === 29){
-      return sheet.sheet_data.savedChartOptions;
+      let xaxis = sheet.sheet_data?.results?.mapChartXaxis;
+      let yaxis = sheet.sheet_data?.results?.mapChartYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      // return this.mapChartOptions(xaxis,yaxis,savedOptions) 
     }
     if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
@@ -2528,11 +2531,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 /////chartOptions
 barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
   if (isEchart) {
-    savedOptions.series.data = yaxis;
+    savedOptions.series[0].data = yaxis;
     savedOptions.xAxis.data = xaxis;
     return savedOptions;
   } else {
-    savedOptions.series.data = yaxis;
+    savedOptions.series[0].data = yaxis;
     savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
     return savedOptions;
   }
@@ -4696,14 +4699,14 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0);
-      if(item.chartId == '29'){
-        if (item.drillDownIndex != 0) {
-          this.chartType = 'bar';
-        }
-        else {
-          this.chartType = 'map';
-        }
-      }
+      // if(item.chartId == '29'){
+      //   if (item.drillDownIndex != 0) {
+      //     this.chartType = 'bar';
+      //   }
+      //   else {
+      //     this.chartType = 'map';
+      //   }
+      // }
         },
       error:(error)=>{
         console.log(error)

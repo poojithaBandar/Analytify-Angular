@@ -631,6 +631,10 @@ try {
         } else {
           draggedColumnsObj = this.draggedColumnsData
         }
+        if(!this.isTopFilter){
+          this.sortColumn = 'select';
+          this.sortType = 0;
+        }
         const obj = {
           "hierarchy_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -644,7 +648,7 @@ try {
           "drill_down": this.drillDownObject,
           "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
           "parent_user":this.createdBy,
-          "order_column":this.selectedSortColumnData
+          "order_column":(!this.isTopFilter) ? null : this.selectedSortColumnData
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
@@ -1781,6 +1785,22 @@ sheetSave(){
     kpiColor = this.kpiColor;
     kpiFontSize = this.kpiFontSize;
   }
+  if(this.map && this.chartId == 29){
+    if(this.originalData){
+      if(this.draggedDrillDownColumns.length > 0){
+        this.originalData.categories.forEach((column:any,index:any)=>{
+          tablePreviewCol[index].column = column.name;
+          tablePreviewCol[index].result_data = column.values;
+        });
+        this.originalData.data.forEach((column:any,index:any)=>{
+          tablePreviewRow[index].column = column.name;
+          tablePreviewRow[index].result_data = column.data;
+        });
+        this.drillDownIndex = 0;
+      }
+      delete this.originalData;
+    }
+  }
   savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
     isZoom : this.isZoom,
@@ -2803,6 +2823,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterId.push(responce.filter_id);
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
+        this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         this.dataExtraction();
         this.filterDataArray = [];
         this.filterDateRange = [];
@@ -2928,6 +2949,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
+          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
           this.dataExtraction();
           this.filterDataArray = [];
           this.filterDateRange = [];
@@ -2936,7 +2958,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.topAggregate = 'sum';
           this.topLimit = 5;
           this.topType = 'desc';
-          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         },
         error: (error) => {
           console.log(error);
@@ -2950,8 +2971,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.dimetionMeasure.splice(index, 1);
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
-         this.dataExtraction();
          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+         this.dataExtraction();
       },
       error: (error) => {
         console.log(error);
@@ -3771,13 +3792,13 @@ customizechangeChartPlugin() {
           }
         
           goDrillDownBack(){
-            if(this.isMapChartDrillDown && this.drillDownIndex === 1){
-              this.map = true;
-              this.bar = false;
-              this.chartId = 29;
-              this.chartType = 'map';
-              this.isMapChartDrillDown = false;
-            }
+            // if(this.isMapChartDrillDown && this.drillDownIndex === 1){
+            //   this.map = true;
+            //   this.bar = false;
+            //   this.chartId = 29;
+            //   this.chartType = 'map';
+            //   this.isMapChartDrillDown = false;
+            // }
             if(this.drillDownIndex > 0) {
               this.drillDownIndex--;
               this.drillDownObject.pop();
@@ -3832,6 +3853,11 @@ customizechangeChartPlugin() {
         else if(this.donut){//pie
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+          }
+        }
+        if(this.map){//map
+          if(!this.originalData){
+            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData }
           }
         }
       }     
@@ -4771,15 +4797,15 @@ customizechangeChartPlugin() {
       this.drillDownIndex = event.drillDownIndex;
       this.draggedDrillDownColumns = event.draggedDrillDownColumns;
       this.drillDownObject = event.drillDownObject;
-      if (this.map) {
-        if (this.drillDownIndex != 0) {
-          this.map = false;
-          this.bar = true;
-          this.chartId = 6;
-          this.chartType = 'bar';
-          this.isMapChartDrillDown = true;
-        }
-      }
+      // if (this.map) {
+      //   if (this.drillDownIndex != 0) {
+      //     this.map = false;
+      //     this.bar = true;
+      //     this.chartId = 6;
+      //     this.chartType = 'bar';
+      //     this.isMapChartDrillDown = true;
+      //   }
+      // }
       this.setOriginalData();
       this.dataExtraction();
     }
