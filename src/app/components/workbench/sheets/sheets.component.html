@@ -530,7 +530,7 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body p-0">
-                                                                <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                <ul *ngIf="!formatExtractType" class="mb-2">
                                                                   <li (click)="formatExtractType = 'year'; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Years</label>
@@ -556,7 +556,7 @@
                                                                     <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                   </li>
                                                                 </ul>
-                                                                <ul *ngIf="!formatExtractType">
+                                                                <!-- <ul *ngIf="!formatExtractType">
                                                                   <li (click)="formatExtractType = 'count'; filterDataGet()">
                                                                      <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Count</label>
@@ -573,7 +573,7 @@
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                    <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                   </li>
-                                                                </ul>
+                                                                </ul> -->
                                                                 @if(formatExtractType){
                                                                 <div style="display: flex;">
                                                                     <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button>
@@ -648,19 +648,19 @@
                                                                           <option value="asc">Bottom</option>
                                                                         </select>
                                                                         <select [(ngModel)] = "topLimit">
-                                                                            <option value="5">5</option>
-                                                                            <option value="10">10</option>
-                                                                            <option value="20">20</option>
-                                                                            <option value="30">30</option>
-                                                                            <option value="40">40</option>
-                                                                            <option value="50">50</option>
-                                                                            <option value="100">100</option>
-                                                                            <option value="500">500</option>
-                                                                            <option value="1000">1000</option>
-                                                                            <option value="2000">2000</option>
-                                                                            <option value="3000">3000</option>
-                                                                            <option value="4000">4000</option>
-                                                                            <option value="5000">5000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 0" value="5">5</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 5" value="10">10</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 10" value="20">20</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 20" value="30">30</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 30" value="40">40</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 40" value="50">50</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 50" value="100">100</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 100" value="500">500</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 500" value="1000">1000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 1000" value="2000">2000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 2000"value="3000">3000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 3000" value="4000">4000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 4000" value="5000">5000</option>
                                                                           </select>
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
@@ -767,7 +767,7 @@
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body p-0">
-                                                                <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                <ul *ngIf="!formatExtractType" class="mb-2">
                                                                   <li (click)="formatExtractType = 'year'; filterEditGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Years</label>
@@ -793,7 +793,7 @@
                                                                     <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                   </li>
                                                                 </ul>
-                                                                <ul *ngIf="!formatExtractType">
+                                                                <!-- <ul *ngIf="!formatExtractType">
                                                                   <li (click)="formatExtractType = 'count'; filterEditGet()">
                                                                      <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Count</label>
@@ -810,7 +810,7 @@
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                    <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                   </li>
-                                                                </ul>
+                                                                </ul> -->
                                                                 @if(formatExtractType){
                                                                     <div style="display: flex;">
                                                                         <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
@@ -885,19 +885,19 @@
                                                                           <option value="asc">Bottom</option>
                                                                         </select>
                                                                         <select [(ngModel)] = "topLimit">
-                                                                            <option value="5">5</option>
-                                                                            <option value="10">10</option>
-                                                                            <option value="20">20</option>
-                                                                            <option value="30">30</option>
-                                                                            <option value="40">40</option>
-                                                                            <option value="50">50</option>
-                                                                            <option value="100">100</option>
-                                                                            <option value="500">500</option>
-                                                                            <option value="1000">1000</option>
-                                                                            <option value="2000">2000</option>
-                                                                            <option value="3000">3000</option>
-                                                                            <option value="4000">4000</option>
-                                                                            <option value="5000">5000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 0" value="5">5</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 5" value="10">10</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 10" value="20">20</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 20" value="30">30</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 30" value="40">40</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 40" value="50">50</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 50" value="100">100</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 100" value="500">500</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 500" value="1000">1000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 1000" value="2000">2000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 2000"value="3000">3000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 3000" value="4000">4000</option>
+                                                                            <option *ngIf="tablePreviewColumn[0].result_data.length > 4000" value="5000">5000</option>
                                                                           </select>
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
@@ -1731,7 +1731,7 @@
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane" id="linktabs">
                                                                                         <div class="card-body p-0">
-                                                                                            <ul *ngIf="!formatExtractType" class="border-bottom mb-2">
+                                                                                            <ul *ngIf="!formatExtractType" class="mb-2">
                                                                                               <li (click)="formatExtractType = 'year'; filterEditGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Years</label>
@@ -1757,7 +1757,7 @@
                                                                                                 <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                                               </li>
                                                                                             </ul>
-                                                                                            <ul *ngIf="!formatExtractType">
+                                                                                            <!-- <ul *ngIf="!formatExtractType">
                                                                                               <li (click)="formatExtractType = 'count'; filterEditGet()">
                                                                                                  <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Count</label>
@@ -1774,7 +1774,7 @@
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                                               </li>
-                                                                                            </ul>
+                                                                                            </ul> -->
                                                                                             @if(formatExtractType){
                                                                                                 <div style="display: flex;">
                                                                                                     <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
@@ -1849,19 +1849,19 @@
                                                                                                       <option value="asc">Bottom</option>
                                                                                                     </select>
                                                                                                     <select [(ngModel)] = "topLimit">
-                                                                                                        <option value="5">5</option>
-                                                                                                        <option value="10">10</option>
-                                                                                                        <option value="20">20</option>
-                                                                                                        <option value="30">30</option>
-                                                                                                        <option value="40">40</option>
-                                                                                                        <option value="50">50</option>
-                                                                                                        <option value="100">100</option>
-                                                                                                        <option value="500">500</option>
-                                                                                                        <option value="1000">1000</option>
-                                                                                                        <option value="2000">2000</option>
-                                                                                                        <option value="3000">3000</option>
-                                                                                                        <option value="4000">4000</option>
-                                                                                                        <option value="5000">5000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 0" value="5">5</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 5" value="10">10</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 10" value="20">20</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 20" value="30">30</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 30" value="40">40</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 40" value="50">50</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 50" value="100">100</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 100" value="500">500</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 500" value="1000">1000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 1000" value="2000">2000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 2000" value="3000">3000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 3000" value="4000">4000</option>
+                                                                                                        <option *ngIf="tablePreviewColumn[0].result_data.length > 4000" value="5000">5000</option>
                                                                                                       </select>
                                                                                                     <!-- <input type="number" value="10" /><span>by</span> -->
                                                                                                 </div>
