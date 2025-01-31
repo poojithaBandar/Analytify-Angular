@@ -3743,6 +3743,8 @@ customizechangeChartPlugin() {
       this.drillDownIndex = 0;
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
+      this.dateDrillDownSwitch = false;
+      this.locationDrillDownSwitch = false;
     } else if (index <= this.drillDownIndex) {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
