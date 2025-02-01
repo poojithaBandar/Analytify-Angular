@@ -1,5 +1,5 @@
 <div class="main-container container-fluid mt-5"> 
-    <div class="row" style="position: fixed; width: -webkit-fill-available; padding-right: 25px; padding-left: 9px;">
+    <div class="row sheets-page-fixed">
         <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
             <div class="card mb-0 border rounded-3 p-1" >
                 <div class="card-body p-0 ">
@@ -32,13 +32,13 @@
                                 <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
                                 <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
                                     <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
-                                        <div cdkDropList cdkDropListOrientation="horizontal" class="form-control" 
-                                        style="position: relative;min-height: 100px; padding: 2px;" 
+                                        <div cdkDropList cdkDropListOrientation="horizontal" class="form-control calculated-parent-card" 
+                                         
                                     #calculatedfields="cdkDropList" 
                                       
                                         (cdkDropListDropped)="calculatedFieldsDrop($event)">
                                             
-                                            <div style="max-height: 420px; overflow: auto;">
+                                            <div class="calculated-child-card">
                                                 <div class="col-lg-12 col-md-12 p-0 m-0">
                                                     <div class="d-flex">
                                                         <div class="col-6 p-0">
@@ -113,7 +113,7 @@
                                                                     
                                                                 </div>
                                                                 <div #calculationfieldid [hidden]="true" class="col-6 p-0 d-flex">
-                                                                    <div class="calculated-hide-card bg-light mb-1 border rounded-2 d-flex" style="width:inherit;">
+                                                                    <div class="calculated-hide-card bg-light mb-1 border rounded-2 d-flex">
                                                                         <!-- <div class="calculated-hide-icon d-flex align-items-center">
                                                                             <i class="fa fa-angle-right"></i>
                                                                         </div> -->
@@ -268,8 +268,8 @@
                                                                     </div> -->
                                                                 </div>
                                                                 <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1" style="position: absolute; right: 0px; height: -webkit-fill-available;">
-                                                                    <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left" style="cursor: pointer;"></i>
-                                                                    <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right" style="cursor: pointer;"></i>
+                                                                    <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left cursor-pointer"></i>
+                                                                    <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right cursor-pointer"></i>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -277,7 +277,7 @@
                                                                         [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
                                                                         {{ validationMessage }}
                                                                     </div>
-                                                        <div class="mt-0 d-flex gap-2" style="float: right;">
+                                                        <div class="mt-0 d-flex gap-2 calculated-footer-btn">
                                                             <button
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
@@ -305,8 +305,8 @@
                     <div class="input-group">
                         <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="tableSearch"
                             (keyup.enter)="columnsData()" aria-describedby="button-addon2">
-                        <button class="btn btn-primary border" (click)="columnsData()" type="button" id="button-addon2"
-                            style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                        <button class="btn btn-primary border search-icon-border-radius" (click)="columnsData()" type="button" id="button-addon2"
+                            ><i class="fe fe-search "></i></button>
                     </div>
                     <div class="sheet-table-h mt-1">
                         @for(columns of tableColumnsData; track columns){
@@ -314,7 +314,7 @@
                             <div  class="menu-item mb-1">
                                 
                             
-                            <div class="menu-title" class="example-box bg-light border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
+                            <div class="menu-title" class="example-box bg-light border w-100 menu-title-font-weight"  (click)="toggleSubMenu(columns)">
                                 <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                     {{columns.table_alias}} </span>
 
@@ -438,7 +438,7 @@
                           </button>
                         </div>
                        <!-- <div class="modal-body p-0">
-                              <div class="table-responsive" style="max-height: 400px;">
+                              <div class="table-responsive" >
                                 <table class="table table-bordered text-nowrap mb-0 custom-table" >
                                     <tbody>
                                        <tr>
@@ -455,7 +455,7 @@
                                         @if(data?data:''){
                                          <tr class="border-bottom user-list" >
                                            
-                                            <td style="width: 46px;">
+                                            <td >
                                                 <div class="form-check">
                                                     <input type="checkbox" name="checkbox" id="defaultCheck1" [checked]="data.selected" class="form-check-input" (click)="filterCheck($event,data)">    
                                                 </div>
@@ -471,7 +471,7 @@
                             </div>
                 
                         </div>-->
-                        <div class="modal-body" style="height: 500px; overflow: auto;">
+                        <div class="modal-body sheet-filter-modal">
                             @if(dateList.includes(filterType)){
                                 <div class="card panel panel-primary">
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
@@ -481,9 +481,9 @@
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
-                                                            <div style="display: flex;">
+                                                            <div class="d-flex">
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
@@ -575,10 +575,10 @@
                                                                   </li>
                                                                 </ul> -->
                                                                 @if(formatExtractType){
-                                                                <div style="display: flex;">
+                                                                <div class="d-flex" >
                                                                     <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button>
                                                                     <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                    <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                    <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                 </div>
                                                                 <div *ngFor="let data of filterData">
                                                                     @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -612,9 +612,9 @@
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
-                                                            <div style="display: flex;">
+                                                            <div class="d-flex">
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
@@ -641,7 +641,7 @@
                                                                     <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
                                                                     <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
                                                                 </div>
-                                                                <div style="margin-left: 5%;">
+                                                                <div class="ms-4">
                                                                     <div class="field-options">
                                                                         <select [(ngModel)]="topType">
                                                                           <option value="desc">Top</option>
@@ -664,12 +664,12 @@
                                                                           </select>
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
-                                                                    <div class="field-options">
-                                                                        <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                    <div class="field-options ">
+                                                                        <select class="field-options-width"  [(ngModel)]="selectedTopColumn">
                                                                             <option value="select" selected disabled> select </option>
                                                                             <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                         </select>
-                                                                        <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                        <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
                                                                             <option value="sum">Sum</option>
                                                                             <option value="avg">Avg</option>
                                                                             <option value="min">Min</option>
@@ -714,7 +714,7 @@
                           <button type="button"class="btn-close"aria-label="Close"(click)="isAllSelected = false;modal.dismiss('Cross click')">
                           </button>
                         </div>
-                        <div class="modal-body"  style="height: 500px; overflow: auto;">
+                        <div class="modal-body edit-filter-modal">
 
                             @if(dateList.includes(filterType)){
                                 <div class="card panel panel-primary">
@@ -725,9 +725,9 @@
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
-                                                            <div style="display: flex;">
+                                                            <div class="d-flex">
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             @for(data of filterData;track data){
                                                                 @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -812,10 +812,10 @@
                                                                   </li>
                                                                 </ul> -->
                                                                 @if(formatExtractType){
-                                                                    <div style="display: flex;">
+                                                                    <div class="d-flex">
                                                                         <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
                                                                         <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                        <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                        <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                     </div>
                                                                     @for(data of filterData;track data){
                                                                         @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -848,9 +848,9 @@
                                                     <a ngbNavLink class="p-3">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
-                                                            <div style="display: flex;">
+                                                            <div class="d-flex">
                                                                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                             </div>
                                                             <div class="form-check">
                                                                 <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
@@ -878,7 +878,7 @@
                                                                     <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
                                                                     <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
                                                                 </div>
-                                                                <div style="margin-left: 5%;">
+                                                                <div class="ms-4">
                                                                     <div class="field-options">
                                                                         <select [(ngModel)]="topType">
                                                                           <option value="desc">Top</option>
@@ -902,11 +902,11 @@
                                                                         <!-- <input type="number" value="10" /><span>by</span> -->
                                                                     </div>
                                                                     <div class="field-options">
-                                                                        <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                        <select class="field-options-width" [(ngModel)]="selectedTopColumn">
                                                                             <option value="select" selected disabled> select </option>
                                                                             <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                         </select>
-                                                                        <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                        <select class="topAggregate-width" [(ngModel)] = "topAggregate">
                                                                             <option value="sum">Sum</option>
                                                                             <option value="avg">Avg</option>
                                                                             <option value="min">Min</option>
@@ -931,7 +931,7 @@
                             }
 
                             <!-- <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
-                            <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                            <button class="btn btn-primary border me-2" (click)="searchFilterList()" type="button" id="button-addon2" ><i class="fe fe-search "></i></button>
                             @for(data of filterData;track data){
                             <div class="form-check">
                                 <input type="checkbox" name="checkbox" id="defaultCheck1" [(ngModel)]="data.selected" class="form-check-input" (click)="filterCheck($event,data.label)">    
@@ -989,7 +989,7 @@
                                 </div> -->
                             </div>
 
-                            <div class="col-lg-3 col-md-3 col-sm-3 p-1" style="display: flex;justify-content: space-around;">
+                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex justify-content-between" >
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
                                     <!-- <button  class="btn btn-primary w-100" (click)="sheetSave()">Save </button>
                                     <button class="btn btn-primary w-100" (click)="sheetSave()">update </button> -->
@@ -1011,7 +1011,7 @@
                     </div>
                 </div>
         
-                <div class="card-body" style="padding: 2px 16px;" (click)="editor =false">
+                <div class="card-body column-card" (click)="editor =false">
                     <div class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
@@ -1020,8 +1020,7 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" 
-                                style="position: relative;min-height: 33px; padding: 2px;" 
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border column-drag-items" 
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)"
@@ -1088,7 +1087,7 @@
                                                 </button>
                                             </div>
                                         
-                                            <div class="modal-body" style="height: 500px; overflow: auto;">
+                                            <div class="modal-body sheet-filter-modal">
                                                 <div class="card-body p-0">
                                                     <div class="column-card">
                                                         <p class="fw-semibold mb-1 ">Row : {{columns.column}}</p>
@@ -1141,14 +1140,13 @@
                         </div>
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0">
                            
-                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border" style="
-                                position: relative; min-height: 33px; padding: 2px;"
+                                <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border column-drag-items" 
                                 #rowList="cdkDropList" 
                                 [cdkDropListData]="draggedRows" 
                                 (cdkDropListDropped)="rowdrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(rows of draggedRows;track rows;let index = $index){
-                                    <div class="example-box1  example-box1-bg" style="cursor: pointer;" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
+                                    <div class="example-box1  example-box1-bg cursor-pointer" (cdkDragStarted)="dragStartedRow(index,rows.column)"  cdkDrag>
                                         @if(rows.alias){
                                             {{ rows.alias }}
                                         } @else if(rows.field_name){
@@ -1173,24 +1171,24 @@
                                                     }
                                                     @else{   
                                                          {{ rows.column }}
-                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1" style="float: right; padding-top: 5px;"></i> </li>
+                                                    } <i (click)="isMeasureEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
-                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex" style="align-items: center;">
-                                                    <li class="dropdown-item btn btn-primary-light" ngbDropdownItem style="display: inline-block;text-align: center !important;">Aggregation</li>
+                                                    <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
+                                                    <li class="dropdown-item btn btn-primary-light Aggregation-text" ngbDropdownItem >Aggregation</li>
                                                     <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')" style="padding: 15px !important;">Sum</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'avg' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')" style="padding: 15px !important;">Avg</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')" style="padding: 15px !important;">Min</a></li>
-                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')" style="padding: 15px !important;">Max</a></li>
-                                                        <li><a [ngClass]="rows.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')" style="padding: 15px !important;">Count</a></li>
-                                                        <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')" style="padding: 15px !important;">Count (Distinct)</a></li>
-                                                        <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" style="padding: 15px !important;">None</a></li>  
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'avg' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'avg')">Avg</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'min')">Min</a></li>
+                                                        <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'max')">Max</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count')">Count</a></li>
+                                                        <li><a [ngClass]="rows.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'count_distinct')">Count (Distinct)</a></li>
+                                                        <li><a [ngClass]="rows.type === '' ? 'aggregation-select' : ''"class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'')" >None</a></li>  
                                                     </ul>
                                                 </div>
-                                                <li> <a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
+                                                <li> <a class="btn btn-secondary-light mx-0 w-100" (click)="dragStartedRow(index,rows.column)"> Remove</a> </li>
                                             </ul>
                                         </div>
                                         
@@ -1311,17 +1309,17 @@
                     </div>
                     <div *ngIf="table &&(draggedRows.length > 0 || draggedColumns.length > 0 )" class="input-group mt-1 p-1 sheet-table-search">
                         <input type="text" placeholder="Search" aria-describedby="button-addon2" [(ngModel)]="tableChartSearch" (keyup.enter)="tableDisplayPaginationSearch()" class="form-control border-end-0 ">
-                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="tableDisplayPaginationSearch()" style="border-radius: 0px 4px 4px 0px;">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="tableDisplayPaginationSearch()" >
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>
                 }
-                 <div class="card-body p-1 border-bottom" style="display: flex; justify-content: center; align-items: center; overflow-y: auto;">
+                 <div class="card-body p-1 border-bottom parent-table-card" >
                     <!-- @for(tab of tabs;track tab; let index = $index){ -->
                        
                         <!-- @if((tab.sheet_name || tab) === sheetName){ -->
                           
-                            <div class="body table-responsive" style="max-height:350px;padding: 0px;">
+                            <div class="body table-responsive sheet-table-responsive">
                                 
                                 @if(table && chartId){
                                 <table>
@@ -1562,7 +1560,7 @@
         <!-- } -->
         <!-- }-->
                  </div>
-                    <div class="card-footer d-flex p-2" style="overflow-x: auto; overflow-y: hidden;">
+                    <div class="card-footer d-flex p-2 sheets-footer-card">
                         <mat-tab-group [selectedIndex]="selectedTabIndex"
                         (selectedIndexChange)="selected.setValue($event)"
                         (selectedTabChange)="onChange($event);" 
@@ -1589,7 +1587,7 @@
                                 <li role="presentation" class="nav-item">
                                     <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
-                                        class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" style="padding: 14px;">
+                                        class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" >
                                         <i class="fa fa-plus-square"></i>
                                     </button>
                                 </li>
@@ -1597,19 +1595,19 @@
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
-                                    (click)="removeTab()" style="padding: 14px;">
+                                    (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
                             <li role="presentation" class="nav-item">
                                 <button type="button" ngbnavlink="" ngbtooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
-                                    (click)="sheetDuplicate()" style="padding: 14px;">
+                                    (click)="sheetDuplicate()" >
                                     <i class="fa fa-copy"></i>
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" style="display: flex;justify-content: center;"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2" >Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" class="movetodashboard-text-btn"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2 " >Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -1637,7 +1635,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div *ngIf="sheetsDashboard" style="display: flex;justify-content: center;"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle  sheet-bottom-icon px-2">view Dashboard</button></div>        
+                        <div *ngIf="sheetsDashboard"  class="movetodashboard-text-btn"><button (click)="moveToDashboard()" class="nav-link BtnNewStyle  sheet-bottom-icon px-2">view Dashboard</button></div>        
                     </div>
                 </div>
 
@@ -1646,7 +1644,7 @@
                 <div class="card panel panel-primary border">
                     <div class="tab-menu-heading tab-menu-heading-boxed">
                         <div class="tabs-menu1">
-                            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14" style="justify-content: space-between;">
+                            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14 justify-content-between">
 
                                 <li [ngbNavItem]="1">
                                     <a ngbNavLink class="p-1">Data</a>
@@ -1658,7 +1656,7 @@
                                                 </div>
                                                 <div class="card-body p-1">
                                                     @for(dimen of dimetionMeasure;track dimen;let index = $index){
-                                                    <div class="example-box justify-content-start border-bottom" style="cursor: pointer;"> 
+                                                    <div class="example-box justify-content-start border-bottom cursor-pointer"> 
                                                        {{dimen.col_name}}
                                                        <div class="filter-icons">
                                                         <i class="fe fe-edit fs-12 text-body-secondary ms-2" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
@@ -1689,9 +1687,9 @@
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane active" id="activetabs">
-                                                                                        <div style="display: flex;">
+                                                                                        <div class="d-flex">
                                                                                             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                                            <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                            <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                                         </div>
                                                                                         @for(data of filterData;track data){
                                                                                             @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -1776,10 +1774,10 @@
                                                                                               </li>
                                                                                             </ul> -->
                                                                                             @if(formatExtractType){
-                                                                                                <div style="display: flex;">
+                                                                                                <div class="d-flex">
                                                                                                     <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
                                                                                                     <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                                                    <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                                    <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                                                 </div>
                                                                                                 @for(data of filterData;track data){
                                                                                                     @if(data? data : (boolList.includes(filterType)? true: '')){
@@ -1812,9 +1810,9 @@
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
                                                                                     <div class="tab-pane active" id="activetabs">
-                                                                                        <div style="display: flex;">
+                                                                                        <div class="d-flex">
                                                                                             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
-                                                                                            <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                                                            <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                                         </div>
                                                                                         <div class="form-check">
                                                                                             <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" (change)="toggleEditAllRows($event)" class="form-check-input">
@@ -1866,11 +1864,11 @@
                                                                                                     <!-- <input type="number" value="10" /><span>by</span> -->
                                                                                                 </div>
                                                                                                 <div class="field-options">
-                                                                                                    <select style="width: 45%;" [(ngModel)]="selectedTopColumn">
+                                                                                                    <select class="field-options-width" [(ngModel)]="selectedTopColumn">
                                                                                                         <option value="select" selected disabled> select </option>
                                                                                                         <option *ngFor="let measure of draggedRows" [value]="measure?.column"> {{measure?.column}} </option>
                                                                                                     </select>
-                                                                                                    <select [(ngModel)] = "topAggregate" style="width: 45%;">
+                                                                                                    <select class="topAggregate-width" [(ngModel)] = "topAggregate" >
                                                                                                         <option value="sum">Sum</option>
                                                                                                         <option value="avg">Avg</option>
                                                                                                         <option value="min">Min</option>
@@ -1925,7 +1923,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
                                                         </div>
-                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light " style="text-align: center;">Single Axis</div>
+                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light text-center" >Single Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6)"><img src="./assets/images/charts/Bar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': bar}"></a>
                                                         </div>
@@ -1953,7 +1951,7 @@
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
                                                         </div>
-                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light " style="text-align: center;">Dual Axis</div>
+                                                        <div class="card-title fs-12 mt-2 mb-1 border bg-light text-center ">Dual Axis</div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);" triggers="hover" ngbTooltip="Side-Bar" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,7)"><img src="./assets/images/charts/bar-bar.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': sidebyside}"></a>
                                                         </div>
