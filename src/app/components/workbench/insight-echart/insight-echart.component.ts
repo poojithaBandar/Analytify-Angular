@@ -1454,10 +1454,11 @@ calendarChart() {
 
   // Populate calendarData and collect years
   this.chartsColumnData.forEach((data: any, index: any) => {
-      let arr = [data, this.chartsRowData[index]];
+      let formattedDate = data.split(" ")[0];
+      let arr = [formattedDate, this.chartsRowData[index]];
       calendarData.push(arr);
 
-      const year = new Date(data).getFullYear();
+      const year = new Date(formattedDate).getFullYear();
       years.add(year);
   });
 
