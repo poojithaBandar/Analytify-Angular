@@ -2724,6 +2724,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
     const obj={
       "hierarchy_id" :this.databaseId,
       "query_set_id":this.qrySetId,
@@ -2798,9 +2801,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     }
    console.log(this.filterDataArray)
   }
+  totalDataLength : any;
   filterDataPut(){
     // this.dimetionMeasure = [];
     this.sortedData = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
     const obj={
     //"filter_id": this.filter_id,
     "hierarchy_id": this.databaseId,

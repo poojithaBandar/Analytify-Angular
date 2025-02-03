@@ -294,12 +294,11 @@
 
                                 <div class="">
                                     <div class="card mb-0 border joining-T-H br-0" >
-                                        <div class="card-header bg-light d-flex align-items-center justify-content-between"
-                                            style="padding: 21px;">
+                                        <div class="card-header bg-light d-flex align-items-center justify-content-between p-4">
                                             <h6 class="m-0">Table Custom Join</h6>
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()"
-                                                ngbtooltip="fa fa-chevron-left" style="border: none;"
-                                                class="fa fa-chevron-left chevron-left-icon "></i>
+                                                ngbtooltip="fa fa-chevron-left"
+                                                class="fa fa-chevron-left chevron-left-icon border-0"></i>
                                         </div>
 
                                         <div class="card-body">
@@ -433,7 +432,7 @@
                                      
                                      </ng-select> -->
                                             </div>
-                                            <div class="modal-footer" style="border-block-start:none">
+                                            <div class="modal-footer border-0">
                                                 <button class="btn btn-secondary" (click)="clearJoinCondns()"
                                                     aria-expanded="false">
                                                     clear
@@ -447,17 +446,17 @@
 
 
 
-                                            <!-- <div style="margin-top: -18px;">
+                                            <!-- <div >
                                                 @if(relationOfTables.length){
                                                     <div class="card-header">
                                                         <h3 class="card-title">Joinings:</h3>
                                                        
                                                     </div>                                   
-                                                    <ul class="tags" style="max-height: 115px;overflow: scroll;">
+                                                    <ul class="tags" >
                                                         @for(relation of displayJoiningCndnsList;track relation;let i = $index){
                                                         <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
-                                                            <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle" style="opacity: 0.5;"></i>
-                                                                <i class="fa fa-circle" style="opacity: 0.5; margin-left: -10px;"></i></span>
+                                                            <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle"></i>
+                                                                <i class="fa fa-circle" ></i></span>
                                                                 {{relation}}
                                                             <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
                                                         </li>
@@ -483,9 +482,8 @@
                                 [ngClass]="draggedtables?.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
                                 <div class="card mb-0 border joining-T-H"  [ngClass]="isOpen ? 'right-card':''"
                                     [class.expanded]="!isOpen">
-                                    <div class="card-header bg-light d-flex align-items-center"
-                                        style="display: flex; justify-content: space-between;">
-                                        <div class="d-flex">
+                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
                                             @if(draggedtables?.length > 1){
                                             @if(!isOpen){
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()"
@@ -497,9 +495,8 @@
                                             </i>
                                             }
                                             }
-                                            <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
-                                            <p *ngIf="qurtySetId != 0" class="border p-1 rounded-2 mb-0 bg-light"
-                                                style="line-height: 2;">Showing {{showingRows}} rows of {{totalRows}}
+                                            <h6 class="mb-0 me-2">Result Preview</h6>
+                                            <p *ngIf="qurtySetId != 0" class="border p-1 rounded-2 mb-0 bg-light">Showing {{showingRows}} rows of {{totalRows}}
                                             </p>
                                         </div>
                                         <div class="result-rows d-flex justify-content-end">
@@ -509,7 +506,6 @@
                                                     <i class="fa fa-download"></i>
                                                 </button>
                                             <input type="number" [(ngModel)]="rowLimit" id="input-text"
-                                                style="border-radius: 4px 0px 0px 4px;"
                                                 (keydown.enter)="getJoiningTableData()" placeholder="rows"
                                                 class="form-control w-30">
                                             <a [class.disabled]="!rowLimit || rowLimit <= 0"
@@ -588,7 +584,7 @@
                 <h6 class="mb-0">Database</h6>
                 <p class="mb-0">{{databaseName}}</p>
             </div>
-            <div class="card mb-0 mt-1 br-0" style="height: 504px;overflow-y: auto;">
+            <div class="card mb-0 mt-1 br-0 customSql-dropdown-menu-h">
                 <div class="sidebar">
                     @for(menu of schematableList;track menu){
                     <div class="menu-item">
@@ -624,7 +620,7 @@
         </div>
         <div class="col-xl-10 col-md-12 p-1">
             <div class="card-body p-0 ">
-                <div class="card mb-0 border" style="height: 250px;">
+                <div class="card mb-0 border customSql-tile-parent-h">
                     <div class="card-header bg-light d-flex align-items-center justify-content-between">
                         <div class="flex-grow-1">
                             <input type="text" (change)="markDirty()" placeholder="Title" [(ngModel)]="saveQueryName"
@@ -644,8 +640,7 @@
                     </div>
                     <div class="card-body p-2">
                         <!-- <h6 class="fs-12 mt-2 mb-0 drag-txt">Enter your query here</h6> -->
-                        <textarea class="query-text" [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here"
-                            style="outline: none;border: none;width: 100%;"></textarea>
+                        <textarea class="query-text query-text-h" [(ngModel)]="sqlQuery" placeholder="Enter your SQL query here"></textarea>
 
                     </div>
                     <div class="modal-footer p-1 me-4 border-0">
@@ -661,11 +656,11 @@
                     </div>
                 </div>
                 <div class="col-xl-12 col-md-12 p-0 mt-1">
-                    <div class="card mb-0 border" style="height: 349px;">
+                    <div class="card mb-0 border customsql-result-preview-h" >
                         <div class="card-header bg-light d-flex align-items-center justify-content-between">
-                            <div class="d-flex">
-                                <h6 class="mb-0 me-2" style="line-height: 2;">Result Preview</h6>
-                                <p *ngIf="custmQryTime" class="border mb-0 bg-light" style="line-height: 2;">Showing
+                            <div class="d-flex align-items-center">
+                                <h6 class="mb-0 me-2">Result Preview</h6>
+                                <p *ngIf="custmQryTime" class="border mb-0 bg-light">Showing
                                     {{showingRowsCustomQuery}} rows of {{totalRowsCustomQuery}}</p>
                             </div>
                             <div class="result-rows d-flex justify-content-end">
@@ -678,7 +673,7 @@
                                         <i class="fa fa-download"></i>
                                     </button>
                                 <input type="number" [(ngModel)]="rowLimit" id="input-text"
-                                    style="border-radius: 4px 0px 0px 4px;" (keydown.enter)="executeQuery()"
+                                    (keydown.enter)="executeQuery()"
                                     placeholder="rows" class="form-control w-30">
                                 <a (click)="executeQuery()"><i
                                         class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
@@ -694,7 +689,7 @@
                                 style="overflow-y: auto;height: 233px;">
                                 <table
                                     class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0">
-                                    <thead style="position: sticky;top: -1px; background-color: var(--primary-color);">
+                                    <thead class="Result-preview-table-sticky">
                                         <tr>
                                             @for(data of cutmquryTable.column_data;track data){
                                             <th>{{data}}</th>
@@ -718,7 +713,7 @@
                         </div>
                         <div class="modal-footer border-0">
                             @if(custmQryTime){
-                            <span style="margin-left: 36px;"> <i class="fa fa-table"></i> fetched in <span
+                            <span class="fetched-card"> <i class="fa fa-table"></i> fetched in <span
                                     class="time">{{custmQryTime}} </span>,Rows effected:{{custmQryRows}}</span>
                             }
                             <!-- @if(qurtySetId && qurtySetId){
@@ -746,8 +741,8 @@
             <div class="input-group">
                 <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="columnSearch"
                     (keyup.enter)="callColumnWithTable()" aria-describedby="button-addon2">
-                <button class="btn btn-primary border me-2" (click)="callColumnWithTable()" type="button"
-                    id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="callColumnWithTable()" type="button"
+                    id="button-addon2" ><i class="fe fe-search "></i></button>
             </div>
             <div class="table-responsive" style="max-height: 210px;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table">
@@ -755,8 +750,8 @@
                     <tbody>
                         @for(column of columnWithTablesData;track column){
                         <tr class="border-bottom user-list">
-                            <td (click)="selectedColumnGetRows(column.column,column.data_type)"
-                                style="cursor: pointer;">{{ column.column }} ({{column.data_type}}) </td>
+                            <td class="cursor-pointer" (click)="selectedColumnGetRows(column.column,column.data_type)"
+                               >{{ column.column }} ({{column.data_type}}) </td>
                         </tr>
                         }
                     </tbody>
@@ -788,8 +783,8 @@
                 <input type="text" class="form-control border-end-0 " placeholder="Search"
                     [(ngModel)]="columnDataSearch" (keyup.enter)="seachColumnDataFilter()"
                     aria-describedby="button-addon2">
-                <button class="btn btn-primary border me-2" (click)="seachColumnDataFilter()" type="button"
-                    id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="seachColumnDataFilter()" type="button"
+                    id="button-addon2"><i class="fe fe-search "></i></button>
             </div>
             <div class="table-responsive" style="max-height: 210px;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table">
@@ -900,8 +895,8 @@
                 <input type="text" class="form-control border-end-0 " placeholder="Search"
                     [(ngModel)]="columnDataSearch" (keyup.enter)="seachColumnDataFilterEdit()"
                     aria-describedby="button-addon2">
-                <button class="btn btn-primary border me-2" (click)="seachColumnDataFilterEdit()" type="button"
-                    id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="seachColumnDataFilterEdit()" type="button"
+                    id="button-addon2"><i class="fe fe-search "></i></button>
             </div>
             <div class="table-responsive" style="max-height: 210px;">
                 <table class="table table-bordered text-nowrap mb-0 custom-table">
