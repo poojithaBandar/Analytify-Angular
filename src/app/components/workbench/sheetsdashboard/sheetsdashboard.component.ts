@@ -1600,6 +1600,7 @@ export class SheetsdashboardComponent {
       let xaxis = sheet.sheet_data?.results?.mapChartXaxis;
       let yaxis = sheet.sheet_data?.results?.mapChartYaxis;
       let savedOptions = sheet.sheet_data.savedChartOptions;
+      return sheet.sheet_data.savedChartOptions;
       // return this.mapChartOptions(xaxis,yaxis,savedOptions) 
     }
     if(sheet.chart_id === 17){

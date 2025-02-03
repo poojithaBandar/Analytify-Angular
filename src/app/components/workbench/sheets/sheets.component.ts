@@ -672,7 +672,7 @@ try {
             }
             this.getDimensionAndMeasures();
             this.changeSelectedColumn();
-            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2)) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
               if(!this.table){
                 this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
               }
@@ -697,7 +697,7 @@ try {
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if(((this.pie || this.bar || this.area || this.line || this.donut) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
+            } else if(((this.pie || this.bar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
               this.bar = false;
               this.area = false;
