@@ -4811,8 +4811,6 @@ pageChangeTableDisplayPublic(item:any,page:any){
   if(item?.tableData?.tablePage ){
     item.tableData.tablePage = page;
   }
- 
-  
   const obj={
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,

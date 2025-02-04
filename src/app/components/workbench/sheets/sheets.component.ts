@@ -2464,7 +2464,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 12){
         this.chartType = 'radar';
-        this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.bar = false;
         this.table = false;
           this.pie = false;
