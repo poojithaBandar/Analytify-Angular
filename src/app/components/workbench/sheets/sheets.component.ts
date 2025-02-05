@@ -1119,6 +1119,9 @@ try {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
+      this.selectedSortColumnData[2] = type;
+    }
       this.measureValues = [];
       if(type){
         this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
@@ -2872,7 +2875,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.format_type === 'year/month/day'){
+        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day'){
           this.activeTabId = 2;
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
@@ -3692,6 +3695,9 @@ customizechangeChartPlugin() {
     });
   }
   dateFormat(column:any, index:any, format:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
+      this.selectedSortColumnData[2] = format;
+    }
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format,""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
@@ -3707,6 +3713,9 @@ customizechangeChartPlugin() {
      this.dataExtraction();
   }
   dateAggregation(column:any, index:any, type:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
+      this.selectedSortColumnData[2] = type;
+    }
     if (type === '') {
       this.draggedColumnsData[index] = [column.column, column.data_type, type, ''];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };

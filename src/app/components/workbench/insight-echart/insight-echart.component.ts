@@ -1466,15 +1466,16 @@ calendarChart() {
   let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
 
   // Define the height for each calendar
-  const calendarHeight = 100;  // Adjust height for better visibility
-  const yearGap = 20;  // Reduced gap between years
+  const calendarHeight = 120;  // Adjust height for better visibility
+  const yearGap = 30;  // Reduced gap between years
   const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+  this.height = (totalHeight+25)+'px';
 
   // Create multiple calendar instances, one for each year
   let calendars = yearArray.map((year: any, idx: any) => ({
-      top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+      top: idx === 0 ? 25 : ((calendarHeight + yearGap) * idx) + 25,
       range: year.toString(),
-      cellSize: ['auto', 10],
+      cellSize: ['auto', 12],
       splitLine: {
           show: true,
           lineStyle: {
@@ -1483,7 +1484,10 @@ calendarChart() {
           }
       },
       yearLabel: {
-          margin: 20
+        show: true,
+        margin: 25,
+        fontSize: 14,
+        fontWeight: 'bold'
       }
   }));
 
@@ -1501,12 +1505,19 @@ calendarChart() {
   let dataZoomConfig = [
     {
         type: 'slider',
+        show: true,
         yAxisIndex: 0,
         start: 0,  // Starting position of the scroll
-        end: 100,  // The scroll window size (adjustable)
+        end: 50,  // The scroll window size (adjustable)
         orient: 'vertical',  // Allow vertical scrolling
         zoomLock: false,  // Disable zoom lock for flexibility
-    }
+    },
+    {
+      type: 'inside',
+      yAxisIndex: 0,
+      start: 0,
+      end: 50
+  }
 ];
 
 this.chartOptions = {
@@ -1529,11 +1540,7 @@ this.chartOptions = {
   },
   calendar: calendars,
   series: series,  // Assign filtered data series to the chart
-  grid: {
-      height: totalHeight,
-      containLabel: true
-  },
-  dataZoom: this.isZoom 
+  dataZoom: dataZoomConfig
 };
 
   console.log(this.chartOptions,'calender');

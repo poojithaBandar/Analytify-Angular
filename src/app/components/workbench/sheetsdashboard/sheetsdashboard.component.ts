@@ -197,6 +197,8 @@ export class SheetsdashboardComponent {
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
 
+  calendarTotalHeight : string = '400px';
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
@@ -906,7 +908,8 @@ export class SheetsdashboardComponent {
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
-            }
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
         })
         console.log(this.sheetTagTitle);
@@ -2034,7 +2037,8 @@ allowDrop(ev : any): void {
           const date = params.data[0];
           const value = params.data[1];
           return `Date: ${date}<br/>Value: ${value}`;
-        }
+        };
+        this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
       }
     });
      console.log('draggedDashboard',this.dashboard)
@@ -3274,6 +3278,12 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           });
           item1.tableData.rows.push(row);
       }
+      if(item1?.tableData?.tableTotalItems){
+        item1.tableData.tableTotalItems = this.tableTotalItems;
+      }
+      if(item?.tableData?.tableItemsPerPage){
+        item.tableData.tableItemsPerPage = this.tableItemsPerPage;
+      }
     }
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
@@ -4444,7 +4454,8 @@ kpiData?: KpiData;
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
-            }
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
         })
         console.log(this.sheetTagTitle);

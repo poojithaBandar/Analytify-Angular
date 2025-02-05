@@ -1193,8 +1193,8 @@
                   <img [src]="item['imageData']" />
                 }
                 @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1) ){
-                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': '80vh', 'overflow-y': 'auto'} : {}">
-                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" (chartClick)="onEChartClick($event,item)" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': '100%'} : {}"></div>
+                  <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
+                    <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" (chartClick)="onEChartClick($event,item)" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : {}"></div>
                     </div>
                 
               } @else if(item['isEChart'] && item['chartId']=== 29){
