@@ -23,33 +23,33 @@
 
   @if(isSheetsView){
     <div class="main-container container-fluid">
-      <div class="row" class="card " style="padding-top: 15px;">
+      <div class="row" class="card card-padding-top">
         <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
-          <div class="d-flex justify-content-between px-5">
+          <div class="d-flex justify-content-between p-2">
             <div class="connect-txt"><h1 class="page-title">Sheets</h1> 
             </div>
             <div class="new-data-btn d-flex text-align-center">  
               <div class="input-group">
                 <input type="text" class="form-control border-end-0 " [(ngModel)]="searchSheets" (keydown.enter)="fetchSheetsListSearch()" placeholder="Search" >
-                <button class="btn btn-primary border me-2 " (click)="fetchSheetsListSearch()"  type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
-                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2" style="border-radius: 4px 4px 4px 4px;">Move To Dashboard</button>
-                <button *ngIf="panelscheckbox?.length<1" type="button" class="btn ripple btn-primary me-2" (click)="sheetsRoute()" style="border-radius: 4px 4px 4px 4px;"><i class="fa fa-plus"></i> New Sheet</button>
-                <button type="button" class="btn ripple btn-primary me-2" (click)="isSheetsView = false" style="border-radius: 4px 4px 4px 4px;">Close</button>
+                <button class="btn btn-primary border me-2  search-icon-border-radius" (click)="fetchSheetsListSearch()"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
+                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
+                <button *ngIf="panelscheckbox?.length<1" type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="sheetsRoute()" ><i class="fa fa-plus"></i> New Sheet</button>
+                <button type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="isSheetsView = false" >Close</button>
 
               </div>
             </div>
             </div>
           @if(panelscheckbox?.length>0){
-            <div class="card-body">
-              <div class="table-responsive border" style="height: 26rem;">
+            <div class="card-body p-2">
+              <div class="table-responsive border table-responsive-height">
                 <table class="table  text-nowrap text-md-nowrap mb-0">
-                  <thead class="table-primary bg-primary" style="position: sticky;top: -1px; z-index: 5;">
+                  <thead class="table-primary bg-primary table-primary-position">
                                      <tr>
-                                         <th style="color: #fff">Title</th>
-                                         <th style="color: #fff">Database Name</th>
-                                         <th style="color: #fff">Created By</th>
-                                         <th style="color: #fff">Created On</th>
-                                         <th style="color: #fff">Last Modified</th>
+                                         <th>Title</th>
+                                         <th>Database Name</th>
+                                         <th>Created By</th>
+                                         <th>Created On</th>
+                                         <th>Last Modified</th>
                                      </tr>
                                  </thead>
                                    <tbody>
@@ -127,8 +127,8 @@
                          
                 </div>
                 <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetUserSheetsList((page = $event))"></pagination-controls>
-                <div  style="float: right;font-size: 15px; margin-top: -41px;">
-                  <select  [(ngModel)]="itemsPerPage" (ngModelChange)="fetchSheetsList()" class="form-control" style="cursor: pointer;">
+                <div class="pagination-count">
+                  <select  [(ngModel)]="itemsPerPage" (ngModelChange)="fetchSheetsList()" class="form-control cursor-pointer">
                    <option  value="10"> 10</option>
                    <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
                    <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
@@ -136,7 +136,7 @@
                 </div>
             </div>
           } @else{
-            <div style="font-size: medium; margin-left: 1.5%;">There is no sheets, Please Create One!</div>
+            <div class="no-sheets-text">There is no sheets, Please Create One!</div>
           }
         </div>
       </div>
@@ -157,7 +157,7 @@
               <div class="panel panel-primary p-0">
                 <div class="tab-menu-heading tab-menu-heading-boxed">
                     <div class="tabs-menu1">
-                        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs " style="justify-content: space-around;" >
+                        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs dashboard-tabs-space">
 
                             <li *ngIf="!isPublicUrl" [ngbNavItem]="1">
                                 <a ngbNavLink class="dashboard-tab-padding">Dashboard</a>
@@ -165,14 +165,14 @@
                                     <div class="tab-pane active" id="activetabs">
                                       <div class="panel-body tabs-menu-body p-0">
                                         <div class="tab-content">
-                                            <!-- <div class="card mb-0 p-4 br-0" style="box-shadow: none;">
+                                            <!-- <div class="card mb-0 p-4 br-0">
                                                 <h6 class="mb-0">Database</h6>
                                                 <p class="mb-0">{{databaseName}}</p>
                                             </div> -->
                                             <div class=" mb-0  mt-0 br-0 overflow-auto h-400" >
                                                 <div class="text-wrap">
                                                     <div class="dropdown-samples">
-                                                      <h6 class="dropdown-header sheets-title bg-light border rounded-3 mb-1" style="display: flex; justify-content: space-between;line-height: 2;">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
+                                                      <h6 class="dropdown-header sheets-title bg-light border rounded-3 mb-1 dashboard-sheet-text">Sheets<app-insights-button *ngIf="!isPublicUrl" [classesList]="'btn btn-outline-primary mt-0'"
                                                         [buttonName]="'Add'"
                                                         [previledgeId]="17" [isBtn]="true"
                                                         (btnClickEvent)="fetchSheetsList();isSheetsView = true;" [toolTip]="'Add Sheets'"
@@ -185,7 +185,7 @@
                                                         (cdkDropListDropped)="drop($event)">
                                                            
                                                             <li *ngFor="let item of dashboardNew" ><a draggable="true" [ngClass]="{ 'sheet-bold': item['selectedSheet']}"
-                                                           class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip" ngbTooltip="{{item.data.title}}" (click)="viewSheet(item)" class="fa fa-plus-square icon-outline"></i> {{item.data.title | slice:0:15}}<i data-bs-toggle="tooltip"  ngbTooltip="clear" style="float: right;" (click)="clearSheet($event,item)" class="fa fa-close"></i></a></li>
+                                                           class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip" ngbTooltip="{{item.data.title}}" (click)="viewSheet(item)" class="fa fa-plus-square icon-outline"></i> {{item.data.title | slice:0:15}}<i data-bs-toggle="tooltip"  ngbTooltip="clear"  (click)="clearSheet($event,item)" class="fa fa-close float-right mt-1"></i></a></li>
 
                                                             
                                                         </ul>
@@ -203,7 +203,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card mb-0  br-0 "  style="box-shadow: none;">
+                                            <div class="card mb-0  br-0 size-card-dashboard">
                                               <h6 class="mb-0 size-text">Size</h6>
                                              <div class="custom-size-card d-flex justify-conent-between">
                                                 <p class="mb-0 custom-size-txt">Custom size ({{widthGrid}} * {{heightGrid}})</p>
@@ -243,7 +243,7 @@
                                               </div>
                                              </div>
                                           </div>
-                                          <div class="card mb-0  br-0 p-0 mt-2"  style="box-shadow: none; border: none !important;">
+                                          <div class=" mb-0  br-0 p-0 mt-2 ">
                                             <div class=" dropdown" ngbDropdown>
                                               <a  href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
                                                 <button class="btn btn-primary w-100">
@@ -266,7 +266,7 @@
                                                             <input type="file" id="imageUpload" accept="image/*" (change)="onImageSelected($event)" class="cursor-pointer">
                                                         </div>
                                                   </div>
-                                                  <input type="text" id="input" [value]="fileName" placeholder="No image chosen" class="form-control border mt-1" readonly style="background-color: transparent;">
+                                                  <input type="text" id="input" [value]="fileName" placeholder="No image chosen" class="form-control border mt-1 bg-white-transparent" readonly>
                                                   <div class="url">
                                                     <label class="form-label mt-3 mb-1">Name:</label>
                                                     <input type="text" id="input" [(ngModel)]="imageTitle" class="form-control border">
@@ -291,12 +291,12 @@
                               <div class="modal-body">
                                 <div class="text-wrap">
                                   <div class="row">
-                                  <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2"style="border-right: 1px solid #f3f6f9;">
+                                  <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2 border">
                                     <button *ngIf="editFilters" class="btn btn-primary dropdown-toggle mb-2" (click)="addfilterOnEdit()" type="button"  aria-expanded="false" style="width: 100%;">
                                       <i class="fa fa-plus"></i> Add Filter
                                     </button>
-                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" (click)="editFiltersData(filterList.dashboard_filter_id)" class="btn text-left mb-2 bg-white">{{filterList.filter_name}}
-                                      <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id);$event.stopPropagation()" style="color: red;"><i style="float: right;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
+                                    <button *ngFor="let filterList of DahboardListFilters" type="button"  (click)="editFiltersData(filterList.dashboard_filter_id)" class="btn text-left mb-2 bg-white border w-100 cursor-pointer d-flex justify-content-between align-items-center">{{filterList.filter_name}}
+                                      <a (click)="deleteDashboardFilter(filterList.dashboard_filter_id);$event.stopPropagation()" ><i class="ri-delete-bin-7-line btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light"></i></a>
                                     </button>
 
                                     </div>
@@ -310,13 +310,13 @@
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Filter Name <span  class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
-                                              <input type="text" placeholder="Enter Filter Name" [(ngModel)]="filterName" class="form-control checkbox-color">
+                                              <input type="text" placeholder="Enter Filter Name" [(ngModel)]="filterName" class="form-control border">
                                             </div>
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Database Name<span class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
                                               <select id="databaseSelect" [(ngModel)]="selectedDatabase"  (change)="onDatabaseChange()" class="form-select form-select select2 "  >
-                                              <option value="" disabled selected style="color: #999999 !important;">Select Database name</option>
+                                              <option value="" disabled selected>Select Database name</option>
                                                 <option *ngFor="let database of databaseNames" [value]="database">{{ database }}</option>
                                               </select>
                                             </div>
@@ -324,7 +324,7 @@
                                               <label class="form-label">Query Set Name <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
                                               <!-- <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"   class="form-select form-select select2 " >
-                                                                                            <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
+                                                                                            <option value="0" disabled selected >Select Queryset name</option>
                                                                                             @for(querySet of querySetNames;track querySet.queryset_id){
                                                                                               <option [ngbTooltip]="querySet.queryset_name"
                                                                                               [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
@@ -378,7 +378,7 @@
                                             </div>
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Apply to Selected worksheets <i class="icon icon-info ms-1"></i></label>
-                                              <div class="form body border p-2 rounded-2" style="max-height: 200px; min-height: 35px;  overflow: auto;">
+                                              <div class="form body border p-2 rounded-2 Selected-worksheets-h">
 
                                                 <div *ngIf="sheetsFilterNames?.length > 0" class="form-check">
   
@@ -416,7 +416,7 @@
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Filter Name <span  class="text-red">*</span>
                                             </label>
-                                            <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control checkbox-color">
+                                            <input type="text" placeholder="" [(ngModel)]="filterName" class="form-control border">
                                           </div>
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Database Name<span class="text-red">*</span>
@@ -433,7 +433,7 @@
                                   
                                           </select> -->
                                           <!-- <p>{{querysetNameEdit}}</p> -->
-                                          <!-- <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button> -->
+                                          <!-- <button class="btn " >{{querysetNameEdit}}</button> -->
 
                                           <ng-select
                                           [(ngModel)]="selectedQuerySetId"
@@ -457,7 +457,7 @@
                                 
                                             <!-- <div ngbDropdown class="my-2 dropdown" #nestedDropdown="ngbDropdown" [autoClose]="'outside'">
                                               <button type="button" ngbDropdownToggle id="dropdownColumns" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-info-light filterColumnbtn">{{selectClmnEdit}} <i class="fa fa-angle-down"></i></button>
-                                              <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" style="background-color: #ffffff;width:100%;max-height: 240px;overflow-y: auto;padding:6px">
+                                              <ul ngbDropdownMenu aria-labelledby="dropdownColumns" class="dropdown-menu" >
                                                 @for(colData of columnFilterNamesEdit;track colData){
                                                   <li><a class="dropdown-item" ngbDropdownItem (click)="selectClmnEdit = colData.column_name;closeColumnsDropdownEdit(colData.column_name,colData.column_dtype,nestedDropdown)">{{colData.column_name}}</a></li>
                                                 }
@@ -483,7 +483,7 @@
                                           </div>
                                             <label class="form-label">Apply to Selected worksheets</label>
                                          
-                                          <div class="form body border p-2" style="max-height: 200px;  overflow: auto;">
+                                          <div class="form body border p-2 Selected-worksheets-h">
 
                                             <div class="form-check">
 
@@ -532,17 +532,17 @@
                                                                 <p class="p-1 mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
-                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text" style="color: #aeb1b6;">{{ getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
                                                                   <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button>
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;max-height: 240px;overflow-y: auto;">
                                                                     <div class="scrollable-content" style="max-height: calc(100% - 50px); overflow-y: auto;"> <!-- Adjust the height to account for buttons -->
                                                                     <div class="input-group">
                                                                       <input type="text" [(ngModel)]="filterList.searchText" class="form-control border-end-0" placeholder="Search" aria-describedby="button-addon2">
-                                                                      <button class="btn btn-primary border me-2" type="button" id="button-addon2" style="border-radius: 0px 4px 4px 0px;">
+                                                                      <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" id="button-addon2" >
                                                                         <i class="fe fe-search"></i>
                                                                       </button>
-                                                                      <button (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id, filterList)" class="btn btn-primary " style="padding: 4px;">
+                                                                      <button (click)="clearSelectedData(nestedDropdown1,filterList.colData,filterList.dashboard_filter_id, filterList)" class="btn btn-primary p-1 ">
                                                                         <img src="./assets/images/icons/filter-clear.png" alt="logo" class="w-5 h-5">
                                                                       </button>
                                                                     </div>
@@ -559,7 +559,7 @@
                                                                       </div>
                                                                   <!-- } -->
                                                                 </div>
-                                                                  <div class="card mb-0 fixed-buttons p-2" style="display: flex; justify-content: space-between; flex-direction: row; align-items: center;">
+                                                                  <div class="card mb-0 fixed-buttons p-2 Exclude-check ">
                                                                     <div class="">
                                                                       <input type="checkbox" id="exclude" (click)="excludeFilterIdList(filterList,$event);" [(ngModel)]="filterList.isExclude" class="form-check-input">
                                                                       <label for="exclude" class="form-check-label">Exclude</label>
@@ -584,11 +584,11 @@
                                                                 </div> -->
                                                               </div>
                                                             <!-- } -->
-                                                              <div  style="margin-right: 5px; margin-left: 5px;"  *ngIf="DahboardListFilters .length > 0; else noData"> 
+                                                              <div class="clear-filter-btn"  *ngIf="DahboardListFilters .length > 0; else noData"> 
                                                                 <button class="btn ripple btn-danger"
                                                                   (click)="clearAllFilters()">Clear filters</button>
                                                               
-                                                                <button *ngIf="DahboardListFilters .length > 0; else noData" style="float: right;" class="btn ripple btn-primary"
+                                                                <button *ngIf="DahboardListFilters .length > 0; else noData"  class="btn ripple btn-primary float-right"
                                                                   (click)="isPublicUrl ? getFilteredDataPublic() : getFilteredData()">Apply filters</button>
                                                               </div>
                                                             <ng-template #noData>
@@ -614,12 +614,12 @@
                               <div class="modal-body">
                                 <div class="text-wrap">
                                   <div class="row">
-                                  <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2"style="border-right: 1px solid #f3f6f9;">
+                                  <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2 border">
                                     <button *ngIf="editActions" class="btn btn-primary dropdown-toggle mb-2" (click)="editActions = false;clearActionForm();" type="button"  aria-expanded="false" style="width: 100%;">
                                       <i class="fa fa-plus"></i> Add Action
                                     </button>
-                                    <button *ngFor="let action of drillThroughActionList" type="button"  style="border: 1px solid #edebeb;width: 100%;cursor: pointer;" [ngStyle]="{'background-color' : action.drill_id == actionId ? 'var(--primary-color)' : 'white', 'color' : action.drill_id == actionId ? 'white' : 'black'}" (click)="getEditActionPreview(action.drill_id)" class="btn text-left mb-2 bg-white">{{action.action_name}}
-                                      <a (click)="deleteDashboardAction([action.drill_id]);$event.stopPropagation()" style="color: red;"><i style="float: right;font-size: 16px;" class="ri-delete-bin-7-line"></i></a>
+                                    <button *ngFor="let action of drillThroughActionList" type="button"  [ngStyle]="{'background-color' : action.drill_id == actionId ? 'var(--primary-color)' : 'white', 'color' : action.drill_id == actionId ? 'white' : 'black'}" (click)="getEditActionPreview(action.drill_id)" class="btn text-left mb-2 bg-white border w-100 cursor-pointer d-flex justify-content-between align-items-center">{{action.action_name}}
+                                      <a (click)="deleteDashboardAction([action.drill_id]);$event.stopPropagation()"><i class="ri-delete-bin-7-line btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light"></i></a>
                                     </button>
 
                                     </div>
@@ -633,13 +633,13 @@
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Action Name <span  class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
-                                              <input type="text" placeholder="Enter Action Name" [(ngModel)]="actionName" class="form-control checkbox-color">
+                                              <input type="text" placeholder="Enter Action Name" [(ngModel)]="actionName" class="form-control border">
                                             </div>
                                             <div class="form-group p-1 mb-0">
                                               <label class="form-label">Database Name<span class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
                                               <select id="databaseSelect" [(ngModel)]="drillThroughDatabaseName"  (change)="onDatabaseChange()" class="form-select form-select select2 "  >
-                                              <option value="" disabled selected style="color: #999999 !important;">Select Database name</option>
+                                              <option value="" disabled selected >Select Database name</option>
                                                 <option *ngFor="let database of databaseNames" [value]="database">{{ database }}</option>
                                               </select>
                                             </div>
@@ -647,7 +647,7 @@
                                               <label class="form-label">Query Set Name <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
                                               <!-- <select [(ngModel)]="drillThroughQuerySetId" (change)="getSheetsForActions()"  class="form-select form-select select2 " >
-                                                <option value="0" disabled selected style="color: #999999 !important;">Select Queryset name</option>
+                                                <option value="0" disabled selected >Select Queryset name</option>
                                                 @for(querySet of querySetNames;track querySet.queryset_id){
                                                   <option [ngbTooltip]="querySet.queryset_name"
                                                   [attr.title]="querySet.database_name ? 'Database Name: ' + querySet.database_name : 'Database Name: Not Available'" value="{{querySet.queryset_id}}">{{querySet.queryset_name}}</option>
@@ -667,7 +667,7 @@
                                               <label class="form-label">Source Sheet <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
                                               </label>
                                               <select [(ngModel)]="sourceSheetId" (change)="getTargetSheetsList()"  class="form-select form-select select2 " >
-                                                <option value="0" disabled selected style="color: #999999 !important;">Select Source Sheet</option>
+                                                <option value="0" disabled selected>Select Source Sheet</option>
                                                 @for(sheet of sourceSheetList;track sheet.id){
                                                   <option [ngbTooltip]="sheet.name" [value]="sheet.id">{{sheet.name}}</option>
                                                 }
@@ -675,7 +675,7 @@
                                             </div>
                                             <div class="form-group p-1">
                                               <label class="form-label">Target Sheets <span class="text-red">*</span> <i class="icon icon-info ms-1"></i></label>
-                                              <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2 rounded-2 " style="max-height: 200px; min-height: 35px; overflow: scroll;">
+                                              <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2 rounded-2 Target-sheets-h">
 
                                                 <div *ngIf="(targetSheetList?.length ?? 0) > 0" class="form-check">
                                                   <input type="checkbox" id="selectAll" [(ngModel)]="isAllTargetSheetsSelected" (change)="toggleAllTargetSheets($event)"
@@ -708,13 +708,13 @@
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Action Name <span  class="text-red">*</span>
                                             </label>
-                                            <input type="text" placeholder="" [(ngModel)]="actionName" class="form-control checkbox-color">
+                                            <input type="text" placeholder="" [(ngModel)]="actionName" class="form-control border">
                                           </div>
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Database Name<span class="text-red">*</span>
                                             </label>
                                             <select disabled id="databaseSelect" [(ngModel)]="drillThroughDatabaseName" (change)="onDatabaseChange()" class="form-select form-select select2 drillThroughDatabseDisabled"  >
-                                              <option value="" disabled selected style="color: #999999 !important;">Select Database name</option>
+                                              <option value="" disabled selected >Select Database name</option>
                                               <option *ngFor="let database of databaseNames" [value]="database">{{ database }}</option>
                                             </select>
                                           </div>
@@ -736,14 +736,14 @@
                                               </ng-option>
                                             </ng-select>
                                           <!-- <p>{{querysetNameEdit}}</p> -->
-                                          <!-- <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{querysetNameEdit}}</button> -->
+                                          <!-- <button class="btn ">{{querysetNameEdit}}</button> -->
                                           </div>
 
                                           <div class="form-group p-1">
                                             <label class="form-label">Source Sheet <span class="text-red">*</span>
                                             </label>
                                             <select [(ngModel)]="sourceSheetId" (change)="getTargetSheetsList()"  class="form-select form-select select2 " >
-                                              <option value="0" disabled selected style="color: #999999 !important;">Select Source Sheet</option>
+                                              <option value="0" disabled selected >Select Source Sheet</option>
                                               @for(sheet of sourceSheetList;track sheet.id){
                                                 <option [ngbTooltip]="sheet.name" [value]="sheet.id">{{sheet.name}}</option>
                                               }
@@ -751,7 +751,7 @@
                                           </div>
                                             <label class="form-label">Target Sheets <span class="text-red">*</span></label>
                                          
-                                          <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2" style="max-height: 200px;  overflow: scroll;">
+                                          <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2 Target-sheets-h">
 
                                             <div *ngIf="(targetSheetList?.length ?? 0) > 0" class="form-check">
                                               <input type="checkbox" id="selectAll" [(ngModel)]="isAllTargetSheetsSelected" (change)="toggleAllTargetSheets($event)"
@@ -832,12 +832,12 @@
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
       <div type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="card mb-0 hide-show-btn btn-primary">
-        <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left" style="font-size: 18px;"></i>
-        <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right" style="font-size: 18px;"></i>
+        <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left fs-18"></i>
+        <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right fs-18"></i>
       </div>
-      <div class="" style="display: flex; align-items: center; position: relative; top: -27px;">
+      <div class="dashboard-edit-title-card">
         
-         <div *ngIf="!isPublicUrl" class="card mb-1" style="position: sticky;top: 0; z-index: 2;">
+         <div *ngIf="!isPublicUrl" class="card mb-1 public-url-position">
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
@@ -861,7 +861,7 @@
 
                         <div class="min-w-fit-content ms-1">              
                         <span *ngIf="!isPublicUrl" class="title-editor ms-1" (click)="toggleEditor()">
-                          <button  class="btn btn-primary me-1" style="margin-top: 0px !important;"><i class="fa fa-pencil"></i></button>
+                          <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
                             <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button>
                             <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard(false);editor =false">Update </button>
@@ -898,7 +898,7 @@
 
     
        <!-- <div style="margin: auto 0;overflow: scroll;" [style.height.px]="heightGrid" [style.width.px]="widthGrid" > -->
-        <div style="margin: auto 0;height: 100%; position:relative; top:-35px" >
+        <div class="cdkdrag-parent-card">
          
         <div class="d-flex align-items-center justify-content-start  mt-3" [ngClass]="{ 'mt-3': !isPublicUrl }" >
             <!-- <a mat-raised-button color="accent" (click)="pushItem()" class="btn btn-blue-light mb-0 me-3" > Resize first item and push others</a> -->
@@ -1123,7 +1123,7 @@
                     <div  class="input-group mt-1 p-1 sheet-table-search">
                         <input type="text" placeholder="Search" aria-describedby="button-addon2"      (mousedown)="disableDragging($event)"
                         (mouseup)="enableDragging($event)" [(ngModel)]="tableSearch" (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)" class="form-control border-end-0 ">
-                        <button type="button" id="button-addon2" class="btn btn-primary border me-2" (click)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)" style="border-radius: 0px 4px 4px 0px;">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)">
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>

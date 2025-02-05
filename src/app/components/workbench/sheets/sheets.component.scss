@@ -266,6 +266,13 @@ button.viewQueryImg {  border: none;  background: none;}
 .sheet-table-responsive{ max-height:350px;padding: 0px;}
 .sheets-footer-card{ overflow-x: auto; overflow-y: hidden;}
 .movetodashboard-text-btn{ display: flex;justify-content: center;}
+.single-axis-card{ padding: 2px 12px;}
+.move-text{ width: max-content;}
+.calculated-hide-h{ position: absolute; right: 0px; height: -webkit-fill-available;}
+.Date-aggregation{ display: inline-block;text-align: center !important;}
+.column-remove-btn{ text-align: center !important;width: 100%;}
+.alis-measure-width{ width: -webkit-fill-available}
+.customize-accordion-h { height: auto;max-height: 350px;}
 
 
 @media (max-width: 768px) {
