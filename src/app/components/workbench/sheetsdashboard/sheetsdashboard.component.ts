@@ -3019,6 +3019,7 @@ if(this.filterName === ''){
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
       this.selectedQuerySetId = 0;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
@@ -4051,6 +4052,7 @@ const obj ={
       this.getDashboardFilterredList();
       this.toasterService.success('Filter Updated Successfully','success',{ positionClass: 'toast-top-right'});
       this.selectedOption = null;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
