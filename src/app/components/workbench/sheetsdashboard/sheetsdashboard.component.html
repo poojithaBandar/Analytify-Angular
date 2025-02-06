@@ -514,7 +514,7 @@
                             </div>
                             </ng-template>
                             <!-- @if(updateDashbpardBoolen){ -->
-                            <li [ngbNavItem]="2" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
+                            <li [ngbNavItem]="2" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen || canNavigateToAnotherPage}">
                                  <a ngbNavLink class="dashboard-tab-padding">Filters</a>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane" id="linktabs">

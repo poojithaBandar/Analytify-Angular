@@ -318,9 +318,11 @@ export class SheetsdashboardComponent {
   }
 
   static itemResize(
+    instance : SheetsdashboardComponent,
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface
-  ): void {
+  ) {
+    instance.canNavigateToAnotherPage = true;
     console.info('itemResized', item, itemComponent);
     const resize$ = fromEvent(window, 'resize');
     resize$
@@ -439,7 +441,9 @@ export class SheetsdashboardComponent {
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
       itemChangeCallback: SheetsdashboardComponent.itemChange,
-      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      // itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemResizeCallback : (item, itemComponent) =>
+      SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
@@ -467,7 +471,10 @@ export class SheetsdashboardComponent {
       resizable: {
         enabled: this.editDashboard,
         // stop: this.onResizeStop.bind(this)
-      }
+      },
+      api: {
+        resize: () => {this.canNavigateToAnotherPage = true}
+    }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
 
@@ -496,8 +503,9 @@ export class SheetsdashboardComponent {
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
       itemChangeCallback: SheetsdashboardComponent.itemChange,
-      itemResizeCallback: SheetsdashboardComponent.itemResize,
-      itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemResizeCallback : (item, itemComponent) =>
+      SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
+          itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
       fixedColWidth: this.gridItemSize,
@@ -533,8 +541,9 @@ export class SheetsdashboardComponent {
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
       itemChangeCallback: SheetsdashboardComponent.itemChange,
-      itemResizeCallback: SheetsdashboardComponent.itemResize,
-      itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemResizeCallback : (item, itemComponent) =>
+      SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
+          itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
       fixedColWidth: this.gridItemSize,
@@ -571,8 +580,9 @@ export class SheetsdashboardComponent {
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
         itemChangeCallback: SheetsdashboardComponent.itemChange,
-        itemResizeCallback: SheetsdashboardComponent.itemResize,
-        itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemResizeCallback : (item, itemComponent) =>
+        SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
+              itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
@@ -606,8 +616,9 @@ export class SheetsdashboardComponent {
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
         itemChangeCallback: SheetsdashboardComponent.itemChange,
-        itemResizeCallback: SheetsdashboardComponent.itemResize,
-        itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemResizeCallback : (item, itemComponent) =>
+        SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
+              itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
@@ -2197,7 +2208,8 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       next:(data)=>{
         console.log(data);
         this.loaderService.hide();
-        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'})
+        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'});
+        this.getDashboardFilterredList();
     },
       error:(error)=>{
         console.log(error)
