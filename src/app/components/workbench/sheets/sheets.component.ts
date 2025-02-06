@@ -345,6 +345,7 @@ export class SheetsComponent {
     ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   ];
   selectedColorScheme=[] as  any;
+  heirarchyColumnData : any [] = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
@@ -634,6 +635,16 @@ try {
         if(!this.isTopFilter){
           this.sortColumn = 'select';
           this.sortType = 0;
+        }
+        if(this.draggedDrillDownColumns.length > 0 && this.heirarchyColumnData.length > 0 && this.drillDownIndex >=0 && this.selectedSortColumnData && this.selectedSortColumnData.length > 0){
+          let columnsData = JSON.parse(JSON.stringify(this.heirarchyColumnData[this.drillDownIndex]));
+          if(this.selectedSortColumnData[0] === this.draggedColumnsData[0][0] && this.dateDrillDownSwitch){
+            this.selectedSortColumnData[0] = columnsData[0];
+            this.selectedSortColumnData[1] = columnsData[1];
+            this.selectedSortColumnData[2] = columnsData[2];
+          }
+          this.selectedSortColumnData[0] = columnsData[0];
+          this.selectedSortColumnData[1] = columnsData[1];
         }
         const obj = {
           "hierarchy_id": this.databaseId,
@@ -1649,6 +1660,8 @@ try {
       this.decimalPlaces = 0;
       this.barColor = '#4382f7';
       this.lineColor = '#38ff98';
+      this.heirarchyColumnData = [];
+      this.selectedSortColumnData = null;
    // }
   }
   saveTableData = [] as any;
@@ -1922,6 +1935,8 @@ const obj={
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
     "isDrillDownData" : this.dateDrillDownSwitch,
+    "heirarchyColumnData" : this.heirarchyColumnData,
+    "selectedSortColumnData" : this.selectedSortColumnData,
   "columns": this.draggedColumns,
   "columns_data":draggedColumnsObj,
   "rows": this.draggedRows,
@@ -2190,6 +2205,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.locationDrillDownSwitch = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
         this.isLocationFeild = this.sheetResponce?.customizeOptions?.isLocationField;
         this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
+        this.heirarchyColumnData = this.sheetResponce?.heirarchyColumnData ? this.sheetResponce?.heirarchyColumnData : [];
+        this.selectedSortColumnData = this.sheetResponce?.selectedSortColumnData ? this.sheetResponce?.selectedSortColumnData : null;
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
         } else {
@@ -3749,18 +3766,22 @@ customizechangeChartPlugin() {
         let item: any = event.previousContainer.data[event.previousIndex];
         if(item && item.column) {
           this.draggedDrillDownColumns.push(item.column);
+          let columnData = [item.column,item.data_type,'',''];
+          this.heirarchyColumnData.push(columnData);
         }
   }
 
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
+    this.heirarchyColumnData.splice(index,1);
     if (index <= 0) {
       this.drillDownIndex = 0;
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
       this.dateDrillDownSwitch = false;
       this.locationDrillDownSwitch = false;
+      this.heirarchyColumnData = [];
     } else if (index <= this.drillDownIndex) {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
@@ -3770,8 +3791,15 @@ customizechangeChartPlugin() {
 
       toggleDateSwitch(){
             this.dateDrillDownSwitch = !this.dateDrillDownSwitch;
+            this.heirarchyColumnData = [];
             if(this.dateDrillDownSwitch){
               this.draggedDrillDownColumns = ["year","quarter","month","date"];
+              this.draggedDrillDownColumns.forEach((columnType:any)=>{
+                let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
+                columnData[2] = columnType;
+                this.heirarchyColumnData.push(columnData);
+              });
+              console.log(this.heirarchyColumnData);
               this.drillDownIndex = 0;
             } else {
               this.drillDownIndex = 0;
@@ -3783,6 +3811,7 @@ customizechangeChartPlugin() {
          }
 
   toggleLocationSwitch(onColumnRemove : boolean) {
+    this.heirarchyColumnData = [];
     if(onColumnRemove) {
     this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
     }
@@ -3795,6 +3824,20 @@ customizechangeChartPlugin() {
   )
   .filter((dimension: any) => dimension) // Remove undefined results for unmatched items
   .map((dimension: any) => dimension?.column);
+      let dataTypes : any [] = [];
+      this.draggedDrillDownColumns.map((drillDown : any) => {
+        let matchedColumn = this.tableColumnsData.flatMap((table : any) =>
+          table.dimensions.filter((dim : any) => dim.column.toLowerCase() === drillDown.toLowerCase())
+        )[0];
+        dataTypes.push(matchedColumn.data_type);
+      });
+      this.draggedDrillDownColumns.forEach((column: any,index: any) => {
+        let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
+        columnData[0] = column;
+        columnData[1] = dataTypes[index];
+        this.heirarchyColumnData.push(columnData);
+      });
+      console.log(this.heirarchyColumnData);
       this.drillDownIndex = 0;
     } else {
       this.drillDownIndex = 0;
@@ -4896,12 +4939,29 @@ customizechangeChartPlugin() {
     getDimensionAndMeasures(){
       this.columnNamesForSort = [];
       this.columnsDataForSort = [];
-      this.draggedColumns.forEach((column:any, index: any)=>{
-        if (column && typeof column === 'object') {
-          this.columnNamesForSort.push({ ...column });
-        } 
-        this.columnsDataForSort.push(this.draggedColumnsData[index]);
-      });
+      if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0 && this.heirarchyColumnData && this.heirarchyColumnData.length > 0){
+        this.draggedColumns.forEach((column:any, index: any)=>{
+          let col = JSON.parse(JSON.stringify(column));
+          if(this.dateDrillDownSwitch){
+            col.type = this.heirarchyColumnData[this.drillDownIndex][2];
+          }
+          else{
+            col.column = this.heirarchyColumnData[this.drillDownIndex][0];
+            col.data_type = this.heirarchyColumnData[this.drillDownIndex][1];
+          }
+          if (col && typeof col === 'object') {
+            this.columnNamesForSort.push({ ...col });
+          } 
+          this.columnsDataForSort.push(this.draggedColumnsData[index]);
+        });
+      } else{
+        this.draggedColumns.forEach((column:any, index: any)=>{
+          if (column && typeof column === 'object') {
+            this.columnNamesForSort.push({ ...column });
+          } 
+          this.columnsDataForSort.push(this.draggedColumnsData[index]);
+        });
+      }
       this.draggedRows.forEach((row:any, index: any)=>{
         if (row && typeof row === 'object') {
           this.columnNamesForSort.push({ ...row });
