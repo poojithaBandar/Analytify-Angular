@@ -3318,7 +3318,7 @@ fetchChartData(chartData: any){
           this.draggedRows = chartData.rows;
           this.filterId =[];
           this.filterQuerySetId = chartData.datasource_quertsetid,
-          this.sheetfilter_querysets_id = null;
+          // this.sheetfilter_querysets_id = null;
           
           console.log("This is ShaetData",chartData)
           this.sheetTitle = chartData.chart_title;
