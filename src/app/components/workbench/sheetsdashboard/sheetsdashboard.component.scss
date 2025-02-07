@@ -127,6 +127,18 @@ th, td { border: 1px solid #ddd;}
 @media (max-width: 768px) {
 .big-number { font-size: 3rem; /* Responsive size for smaller screens */}
 }
+.tooltip-wrapper {
+  display: inline-block;
+  /* Ensures proper positioning */
+}
+.tooltip-disabled {
+  background-color: rgba(0, 0, 0, 0.7);
+  /* Dark background for tooltip */
+  color: white;
+  /* White text */
+  border-radius: 4px;
+  /* Rounded corners */
+}
 .disabled { pointer-events: none; opacity: 0.5;}
 a.dashboard-tab-padding.nav-link { padding: 2px; font-size: 14px;}
 .dropdown-header.sheets-title { padding: 6px 5px;}

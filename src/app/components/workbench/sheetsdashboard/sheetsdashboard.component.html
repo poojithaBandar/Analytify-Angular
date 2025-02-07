@@ -513,9 +513,24 @@
                                 </div>
                             </div>
                             </ng-template>
-                            <!-- @if(updateDashbpardBoolen){ -->
-                            <li [ngbNavItem]="2" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen || canNavigateToAnotherPage}">
-                                 <a ngbNavLink class="dashboard-tab-padding">Filters</a>
+                            <!-- @if(updateDashbpardBoolen){ -->                           
+                            <li [ngbNavItem]="2">
+                              <div class="tooltip-wrapper"
+                                [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'Please save the dashboard' : null"
+                                [tooltipClass]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'tooltip-disabled' : ''">
+
+                                <ng-container *ngIf="dashboard.length >= 1 && updateDashbpardBoolen; else disabledTemplate">
+                                  <a ngbNavLink class="dashboard-tab-padding">
+                                    Filters
+                                  </a>
+                                </ng-container>
+
+                                <ng-template #disabledTemplate>
+                                  <span class="dashboard-tab-padding disabled" tabindex="-1">
+                                    Filters
+                                  </span>
+                                </ng-template>
+                              </div>
                                     <ng-template ngbNavContent>
                                         <div class="tab-pane" id="linktabs">
                                             <div class="card-body p-0">
@@ -781,9 +796,25 @@
                                 </div>
                             </div>
                             </ng-template>
-                            <li [ngbNavItem]="3" [ngClass]="{'disabled': dashboard.length<1 || !updateDashbpardBoolen}">
-                              <a ngbNavLink class="dashboard-tab-padding">Actions</a>
-                                 <ng-template ngbNavContent>
+                            <li [ngbNavItem]="3">
+                              <div 
+                              class="tooltip-wrapper" 
+                              [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen) ? 'Please save the dashboard' : null"
+                              [tooltipClass]="(dashboard.length < 1 || !updateDashbpardBoolen) ? 'tooltip-disabled' : ''">
+                              
+                              <ng-container *ngIf="dashboard.length >= 1 && updateDashbpardBoolen; else disabledTemplateActions">
+                                  <a ngbNavLink class="dashboard-tab-padding">
+                                      Actions
+                                  </a>
+                              </ng-container>
+                              
+                              <ng-template #disabledTemplateActions>
+                                  <span class="dashboard-tab-padding disabled" tabindex="-1">
+                                      Actions
+                                  </span>
+                              </ng-template>
+                          </div>
+                                   <ng-template ngbNavContent>
                                      <div class="tab-pane" id="linktabs">
                                          <div class="card-body p-0">
                                            <div class="text-wrap">
