@@ -986,7 +986,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="card-body p-1">            
+                      <div class="card-body p-1 overflow-auto">            
                         <div *ngIf="item['chartType'] === 'Table'">
                           <div *ngIf="item['chartType'] === 'Table'" class="table-responsive">
                             <table class="table border text-nowrap text-md-nowrap mb-0">
@@ -1570,7 +1570,7 @@
                   </div>
                 </div>
               }
-              <div *ngIf="['Table', 'KPI'].includes(item['chartType'])" class="card-body p-1">
+              <div *ngIf="['Table', 'KPI'].includes(item['chartType'])" class="card-body p-1 overflow-auto">
               @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
                 <div class="big-number-container" >
                     @for(row of item['kpiData'].rows;track row){
