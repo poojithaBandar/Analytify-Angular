@@ -292,7 +292,7 @@
                                 <div class="text-wrap">
                                   <div class="row">
                                   <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2 border">
-                                    <button *ngIf="editFilters" class="btn btn-primary dropdown-toggle mb-2" (click)="addfilterOnEdit()" type="button"  aria-expanded="false" style="width: 100%;">
+                                    <button *ngIf="editFilters" class="btn btn-primary dropdown-toggle mb-2 w-100" (click)="addfilterOnEdit()" type="button"  aria-expanded="false">
                                       <i class="fa fa-plus"></i> Add Filter
                                     </button>
                                     <button *ngFor="let filterList of DahboardListFilters" type="button"  (click)="editFiltersData(filterList.dashboard_filter_id)" class="btn text-left mb-2 bg-white border w-100 cursor-pointer d-flex justify-content-between align-items-center">{{filterList.filter_name}}
@@ -421,7 +421,7 @@
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Database Name<span class="text-red">*</span>
                                             </label>
-                                          <button class="btn " style="border: 1px solid #edebeb;width: 100%; text-align: justify;">{{databaseNameForEditFilter}}</button>
+                                          <button class="btn border w-100 text-start">{{databaseNameForEditFilter}}</button>
                                           </div>
                                           <div class="form-group p-1 mb-0">
                                             <label class="form-label">Query Set Name <span class="text-red">*</span>
@@ -538,7 +538,7 @@
                                                   <div class="card-content p-0">
                                                       <div class=" mt-2 mb-2">
                                                           <div class="dropdown" ngbDropdown [autoClose]="'outside'" #mainDropdown="ngbDropdown">
-                                                              <button *ngIf="!isPublicUrl" class="btn btn-primary dropdown-toggle" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
+                                                              <button *ngIf="!isPublicUrl" class="btn btn-primary dropdown-toggle w-100" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                               <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
                                                               <div >
@@ -550,7 +550,7 @@
                                                                   <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
                                                                   <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button>
 
-                                                                  <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox" style="width: 100%;padding: 6px;max-height: 240px;overflow-y: auto;">
+                                                                  <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox select-data-card-a">
                                                                     <div class="scrollable-content" style="max-height: calc(100% - 50px); overflow-y: auto;"> <!-- Adjust the height to account for buttons -->
                                                                     <div class="input-group">
                                                                       <input type="text" [(ngModel)]="filterList.searchText" class="form-control border-end-0" placeholder="Search" aria-describedby="button-addon2">
@@ -630,7 +630,7 @@
                                 <div class="text-wrap">
                                   <div class="row">
                                   <div class="col-xl-5 col-lg-5 col-md-5 bg-light p-2 rounded-2 border">
-                                    <button *ngIf="editActions" class="btn btn-primary dropdown-toggle mb-2" (click)="editActions = false;clearActionForm();" type="button"  aria-expanded="false" style="width: 100%;">
+                                    <button *ngIf="editActions" class="btn btn-primary dropdown-toggle mb-2 w-100" (click)="editActions = false;clearActionForm();" type="button"  aria-expanded="false">
                                       <i class="fa fa-plus"></i> Add Action
                                     </button>
                                     <button *ngFor="let action of drillThroughActionList" type="button"  [ngStyle]="{'background-color' : action.drill_id == actionId ? 'var(--primary-color)' : 'white', 'color' : action.drill_id == actionId ? 'white' : 'black'}" (click)="getEditActionPreview(action.drill_id)" class="btn text-left mb-2 bg-white border w-100 cursor-pointer d-flex justify-content-between align-items-center">{{action.action_name}}
@@ -821,7 +821,7 @@
                                                <div class="card-content p-0">
                                                    <div class=" mt-2 mb-2">
                                                        <div class="">
-                                                        <button *ngIf="!isPublicUrl" class="btn btn-primary" (click)="getQuerySetForFilter();clearActionForm();openSuperScaleForActions(dashboardActions);getDrillThroughActionList()" id="applyActions" type="button" aria-expanded="false" style="width: 100%;">
+                                                        <button *ngIf="!isPublicUrl" class="btn btn-primary w-100" (click)="getQuerySetForFilter();clearActionForm();openSuperScaleForActions(dashboardActions);getDrillThroughActionList()" id="applyActions" type="button" aria-expanded="false">
                                                           <i class="fa fa-plus"></i> Add/Edit Actions
                                                         </button>
                                                         <div >
@@ -1683,20 +1683,20 @@
     </div>
 
 
-    <div class="modal-body"  style="height:335px; overflow-y: auto;">
+    <div class="modal-body icons-view-less-h">
       <div class="text-wrap">
         <div class="row">
           <div class="col-3" *ngFor="let icon of filteredIcons" (click)="selectIcon(icon)" 
           ngbTooltip="{{ icon.label }}" placement="top" container="body">
             <div class="icon-container text-center p-2 mb-1 rounded-3" [ngClass]="{'selected-icon': selectedIcon === (icon.styles[0] + ' fa-' + icon.name)}" style="cursor: pointer; border: 1px solid #ddd; border-radius: 5px;">
               <i [class]="icon.styles[0] + ' fa-' + icon.name" style="font-size: 18px;"></i>
-              <!-- <p class="mt-2" style="font-size: 12px;">{{ icon.label }}</p> -->
+              <!-- <p class="mt-2">{{ icon.label }}</p> -->
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="card mb-0 border px-4 cursor-pointer bg-light" (click)="toggleCustomize()" style="width: fit-content; border-radius: 5px 5px 0px 0px; box-shadow: none !important;">
+    <div class="card mb-0 border px-4 cursor-pointer bg-light Customize-btn-w" (click)="toggleCustomize()">
         <p class="mb-0 border-bottom">Customize <i class="fa" [class.fa-angle-double-down]="!isCustomizeVisible" [class.fa-angle-double-up]="isCustomizeVisible"></i>
         </p>
       </div>
@@ -1718,7 +1718,7 @@
               <option value="bottom-right">Bottom Right</option>
             </select>
          </div> -->
-         <div class="card mb-0 br-0 p-0" style="box-shadow: none; border: none !important;">
+         <div class="card mb-0 b-0 p-0 shadow-none">
           <div class="dropdown" ngbDropdown>
             <a href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button" 
                aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"> 
@@ -1726,7 +1726,7 @@
                 {{ selectedIconPosition ? selectedIconPosition.replace('-', ' ') : 'Select' }}
               </button>
             </a>
-            <div class="dropdown-menu size-dropdown" ngbDropdownMenu style="min-width: 150px !important; padding: 10px 20px 10px 20px;">
+            <div class="dropdown-menu size-dropdown dollar-card-w" ngbDropdownMenu>
               <div class="row">
                 <div class="col-4 mb-1 text-center p-1" *ngFor="let pos of positions">
                   <button type="button" 
