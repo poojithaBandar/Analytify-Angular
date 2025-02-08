@@ -194,6 +194,10 @@ p { margin-bottom: 0px !important;}
 .public-url-position{ position: sticky;top: 0; z-index: 2;}
 .cdkdrag-parent-card{ margin: auto 0;height: 100%; position:relative; top:-35px}
 .no-sheets-text{ font-size: medium; margin-left: 1.5%;}
+.icons-view-less-h{ height:335px; overflow-y: auto;}
+.Customize-btn-w{ width: fit-content; border-radius: 5px 5px 0px 0px; box-shadow: none !important;}
+.dollar-card-w{ min-width: 150px !important; padding: 10px 20px 10px 20px;}
+.select-data-card-a{ width: 100%;padding: 6px;max-height: 240px;overflow-y: auto;}
 
 
 
@@ -246,7 +250,7 @@ th, td { border: 1px solid #ddd;}
 button.btn { font-size: 10px !important;}
 .form-check-label { font-size: 12px;}
 .dropdown-item{ padding: 0.3rem 0.6rem !important;}
-.dropdown-menu{ min-width: 11rem;}
+// .dropdown-menu{ min-width: 11rem;}
 .custom-size-txt{ font-size: 11px;}
 .card{ padding: 5px;}
 p { font-size: 12px;}
@@ -254,7 +258,7 @@ p { font-size: 12px;}
 .form-label{ font-size: 12px;}
 .h6, h6 { font-size: 12px;}
 .form-select{ font-size: 12px;}
-.form-control{ font-size: 12px;}
+.form-control{ font-size: 12px; padding: 3px;}
 }
 .hamburger-menu{ display: grid;}
 
@@ -263,7 +267,7 @@ p { font-size: 12px;}
 .dropdown-menu.filter-popover{ left: 167px !important;}
 a.dashboard-tab-padding.nav-link { padding: 2px; font-size: 11px;}
 .dropdown-header.sheets-title { padding: 6px 5px; font-size: 12px;}
-.btn, .button-slide-out__above {font-size: 8px !important;}
+.btn, .button-slide-out__above {font-size: 9px !important;}
 a.cdk-drag.dropdown-item.sheet-bold { font-size: 11px;}
 a.cdk-drag.dropdown-item {font-size: 11px; }
 .size-text { font-size: 11px;}
@@ -274,7 +278,7 @@ th, td { border: 1px solid #ddd;}
 button.btn { font-size: 9px !important;}
 .form-check-label { font-size: 12px;}
 .dropdown-item{ padding: 0.3rem 0.6rem !important;}
-.dropdown-menu{ min-width: 10rem;}
+// .dropdown-menu{ min-width: 10rem;}
 .custom-size-txt{ font-size: 10px;}
 .card{ padding: 5px;}
 p { font-size: 12px;}
@@ -282,6 +286,6 @@ p { font-size: 12px;}
 .form-label{ font-size: 11px;}
 .h6, h6 { font-size: 11px;}
 .form-select{ font-size: 11px;}
-.form-control{ font-size: 11px;}
+.form-control{ font-size: 10px; padding: 3px;}
 }
 

@@ -10,12 +10,13 @@ a { cursor: pointer;}
 .header-bg-radius { border-radius: 0px 0px 15px 15px; }
 .landing-connect-search { display: flex; justify-content: flex-end; }
 .img-cursor{ cursor: pointer; }
-.table-responsive{ height: 523px; overflow: auto; }
+.table-responsive{ height: 518px; overflow: auto; }
 .overflow{ overflow: auto;}
 .card.img-shadow:hover { box-shadow: 0 16px 32px #21212126; }
 tr:hover { box-shadow: 0 0px 30px rgba(33, 33, 33, 0.1490196078); border-radius: 20px; }
 .cursor-pointer { cursor: pointer; }
 .properties-modal-height{ height: 500px;overflow: scroll; }
+.text-truncate { max-width: 140px !important;}
 
 
 // for Mobile Resolution //
@@ -40,7 +41,8 @@ h6 { font-size: 14px; }
 .fs-11 { font-size: 11px !important; }
 .table td{ font-size: 12px;}
 .quick-start-txt { font-size: 13px; }
-.table-responsive { height: 510px; overflow: hidden;}
+.table-responsive { height: 499px; overflow: hidden;}
+.text-truncate { max-width: 115px !important;}
 .card-text { font-size: 12px; }
 }
 
@@ -57,7 +59,8 @@ h1, h1 { font-size: 37px; }
 .new-chart-btn { font-size: 11px; }
 .form-control{ padding: 0.275rem 0.75rem; }
 .input-group-text{ padding: 0.275rem 0.75rem; }
-.table-responsive{ height: 493px; overflow: hidden; }
+.table-responsive{ height: 487px; overflow: hidden; }
+.text-truncate { max-width: 90px !important;}
 .card-text{ font-size: 11px;}
 }
 

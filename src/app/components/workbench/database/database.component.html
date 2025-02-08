@@ -35,13 +35,13 @@
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
                         <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
                             class="accordion-item">
-                            <h6 ngbAccordionHeader class="accordion-header" id="heading{{i}}">
+                            <div ngbAccordionHeader class="accordion-header" id="heading{{i}}">
                                 <button ngbAccordionButton class="accordion-button p-3 fw-500" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="true"
                                     aria-controls="collapse">
-                                    {{ menu.schema }}
+                                    <h6 class="mb-0 text-truncate">{{ menu.schema }}</h6>
                                 </button>
-                            </h6>
+                            </div>
                             <div ngbAccordionCollapse id="collapse{{i}}" class="accordion-collapse collapse"
                                 [class.show]="i === 0" aria-labelledby="heading" data-bs-parent="#accordionExample">
                                 <div class="accordion-body p-1 overflow-auto database-dropdown database-accordion-height" ngbAccordionBody>
@@ -596,7 +596,7 @@
                                 }@else{
                                 <i class="fa fa-chevron-right custom-chevron-right"></i>
                                 }
-                                <h6>{{ menu.schema }}</h6>
+                                <h6 class="text-truncate">{{ menu.schema }}</h6>
                             </span>
 
                         </div>
