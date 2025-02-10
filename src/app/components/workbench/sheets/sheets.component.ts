@@ -4242,7 +4242,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + '")';
           }
           break; 
         case 'count':
@@ -4251,7 +4251,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + '")';
           }
         break; 
         case 'countd':
@@ -4260,7 +4260,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + '")';
           }
         break;
         case 'max':
@@ -4269,7 +4269,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + '")';
           }
         break; 
         case 'min':
@@ -4278,7 +4278,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + '")';
           }
         break; 
         case 'sum':
@@ -4287,7 +4287,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + '")';
           }
         break; 
         
@@ -4422,7 +4422,7 @@ customizechangeChartPlugin() {
           }
           break; 
         case 'floor': 
-        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
+        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
         }
@@ -4432,7 +4432,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -4520,7 +4520,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'replace': 
-        if(!this.validateFormula(/^REPLACE\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*\"([^\"]*)\"\s*\)$/)){
+        if(!this.validateFormula(/^REPLACE\(\s*"([^"]+)"\."([^"]+)"\s*,\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
