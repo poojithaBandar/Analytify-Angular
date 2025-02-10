@@ -20,7 +20,7 @@
             "allowedCommonJsDependencies": [
               "moment","leaflet","filepond","dropzone","apexcharts","sweetalert","sweetalert2","can-use-dom",""
             ],
-            "outputPath": "dist/InsightApps-Angular/browser",
+            "outputPath": "dist/browser",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
