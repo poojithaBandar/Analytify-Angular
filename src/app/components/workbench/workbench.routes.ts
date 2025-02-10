@@ -23,15 +23,22 @@ export const admin: Routes = [
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
 
-      //  {
-      //   path: 'database-connection/tables/:id',
-      //   canActivate:[authGuard],
-      //   loadComponent: () =>
-      //     import('./insights/workbench.component').then((m) => m.WorkbenchComponent),
-      // },
+       {
+        path: 'datasources/view-connections/:id',
+        canActivate:[authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
 
       {
         path: 'database-connection/tables/:id',
+        canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
+        loadComponent: () =>
+          import('./database/database.component').then((m) => m.DatabaseComponent)
+      },
+      {
+        path: 'database-connection/tables/:id/:id2',
         canActivate: [authGuard],
         canDeactivate: [canDeactivateGuard],
         loadComponent: () =>

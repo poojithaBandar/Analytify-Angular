@@ -25,12 +25,13 @@ import { LoaderService } from '../../../shared/services/loader.service';
 import _ from 'lodash';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { NgxPaginationModule } from 'ngx-pagination';
 const EXCEL_TYPE =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 @Component({
   selector: 'app-database',
   standalone: true,
-  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent],
+  imports: [SharedModule,NgSelectModule,CdkDropListGroup, CdkDropList, CdkDrag,NgbModule,FormsModule,NgbModule,CommonModule,InsightsButtonComponent,NgxPaginationModule],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   animations:[
@@ -149,11 +150,21 @@ export class DatabaseComponent {
   itemCounters: any={};
   sheetCustmSqlDisable = true;
   saveQueryCheck = false
+  newHierarchyId: any;
+  searchDataSource: string = '';
+  pageNo: any;
+  panelscheckbox: any = [];
+  totalItems: any;
+  itemsPerPage: any;
+  page: number = 1;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/analytify/database-connection/tables/')){
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);
+      if (route.snapshot.params['id2']) {
+        this.newHierarchyId = +atob(route.snapshot.params['id2']);
+      }
     }
     // else if(currentUrl.includes('/insights/database-connection/files/tables/')){
     //   this.fromFileId=true;
@@ -375,9 +386,16 @@ export class DatabaseComponent {
 
   // }
 getSchemaTablesFromConnectedDb(){
+  let test = [];
+  test.push(this.databaseId);
+  if(this.newHierarchyId){
+    test.push(this.newHierarchyId);
+
+  }
   const obj ={
     search:this.searchTables,
-    querySetId:this.qurtySetId || this.custumQuerySetid
+    querySetId:this.qurtySetId || this.custumQuerySetid,
+    hierarchy_ids : test
   }
   if(obj.search == '' || obj.search == null){
     delete obj.search;
@@ -385,13 +403,17 @@ getSchemaTablesFromConnectedDb(){
   if(obj.querySetId === '0' || obj.querySetId === 0){
     delete obj.querySetId
   }
-  const IdToPass = this.databaseId
+  const IdToPass = this.databaseId;
+  this.schematableList = [];
   this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
-   this.schematableList= data?.data?.schemas;
+    data.forEach((dataTest: any) => {
+      this.schematableList.push(dataTest?.data?.schemas[0]);
+
+    });
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
    console.log('filteredscemas',this.filteredSchematableList)
-       this.databaseName = data.database.database;
-        this.hostName = data.database.hostname;
+      //  this.databaseName = data.database.database;
+      //   this.hostName = data.database.hostname;
         // this.saveQueryName = data.queryset_name;
     console.log(data)
 
@@ -1163,6 +1185,14 @@ openSuperScaled(modal: any) {
   this.tableColumnFilter = true;
   this.columnRowFilter = false;
 }
+
+openDataSourceSuperScaled(modal: any){
+  this.modalService.open(modal, {
+    centered: true,
+    windowClass: 'animate__animated animate__zoomIn',
+  });
+}
+
 openSuperScaledGetColunmns(modal: any){
   this.modalService.open(modal, {
     centered: true,
@@ -1587,7 +1617,8 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  this.router.navigate(['/analytify/datasources/view-connections'])
+  const encodedId = btoa(this.databaseId.toString());
+  this.router.navigate(['/analytify/datasources/view-connections/'+ encodedId])
 }
 
 markDirty(){
@@ -1821,5 +1852,42 @@ addNewCondition(relation : any){
   relation.conditions.push({
    
   });
+}
+
+loadDataSourcesList(){
+  let obj;
+  if( this.searchDataSource && this.searchDataSource.trim() != '' && this.searchDataSource.length > 0){
+    obj ={
+      page_no : this.pageNo,
+      search : this.searchDataSource,
+      page_count:this.itemsPerPage
+    }
+  } else {
+    obj ={
+      page_no : this.pageNo,
+      search : this.searchDataSource,
+      page_count:this.itemsPerPage
+    }
+  }
+
+  this.workbechService.fetchDataSourcesList(obj).subscribe({
+    next:(data)=>{
+     this.panelscheckbox = data.sheets;
+     this.totalItems = data.total_items;
+     this.itemsPerPage = data.items_per_page;
+    },
+    error:(error)=>{
+      console.log(error)
+    }
+  })
+}
+
+pageChangeList(page:any){
+  this.pageNo=page;
+  this.loadDataSourcesList();
+  }
+
+selectRow(panel: any) {
+  this.newHierarchyId = panel.hierarchy_id;
 }
 }

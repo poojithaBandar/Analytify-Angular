@@ -39,6 +39,12 @@ export class WorkbenchService {
     return this.http.post<any>(`${environment.apiUrl}/sheets_data/`+this.accessToken,sheet_ids);
   }
 
+  fetchDataSourcesList(obj: any) {
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/databases_tables_list/`+this.accessToken,obj);
+  }
+
   accessToken: any;
   constructor(private http: HttpClient) { }
 
