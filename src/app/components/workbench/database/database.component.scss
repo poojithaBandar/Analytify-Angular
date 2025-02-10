@@ -21,7 +21,8 @@ ul.dropdown-menu.show { min-width: -webkit-fill-available;}
 ul.dropdown-menu { box-shadow: none; background-color: transparent; }
 h6.dropdown-header { font-weight: 700; background-color: aliceblue; }
 .schema-table-height{ height: 550px; overflow: auto;}
-.sidebar { width: 230px; padding: 10px; }
+.sidebar { width: 200px; padding: 10px; }
+.text-truncate { max-width: 200px !important;}
 .menu-item {  margin-bottom: 10px; }
 .menu-title { cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
 .sub-menu { margin-top: 5px; }
@@ -39,6 +40,8 @@ h6.dropdown-header { font-weight: 700; background-color: aliceblue; }
 .fetched-card{ margin-left: 36px;}
 .search-icon-border-radius{ border-radius: 0px 4px 4px 0px !important; }
 .cursor-pointer{ cursor: pointer;}
+.custom-chevron-down{ font-size: 11px; color: #333335; margin-top: 7px !important; margin-right: 5px;}
+.custom-chevron-right{ font-size: 11px; color: #333335; margin-top: 7px !important; margin-right: 5px;}
 // .side-card {
 //   padding: 10px;
 //   background-color: #f0f0f0;

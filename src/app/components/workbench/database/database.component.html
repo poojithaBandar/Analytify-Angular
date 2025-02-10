@@ -35,13 +35,13 @@
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
                         <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
                             class="accordion-item">
-                            <h6 ngbAccordionHeader class="accordion-header" id="heading{{i}}">
+                            <div ngbAccordionHeader class="accordion-header" id="heading{{i}}">
                                 <button ngbAccordionButton class="accordion-button p-3 fw-500" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="true"
                                     aria-controls="collapse">
-                                    {{ menu.schema }}
+                                    <h6 class="mb-0 text-truncate">{{ menu.schema }}</h6>
                                 </button>
-                            </h6>
+                            </div>
                             <div ngbAccordionCollapse id="collapse{{i}}" class="accordion-collapse collapse"
                                 [class.show]="i === 0" aria-labelledby="heading" data-bs-parent="#accordionExample">
                                 <div class="accordion-body p-1 overflow-auto database-dropdown database-accordion-height" ngbAccordionBody>
@@ -149,7 +149,7 @@
                                                     ngbTooltip="Inner Join" class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill">
                                                     <img src="./assets/images/charts/inner-join.png" class="rounded-2 mrk-t  chart-icon active ms-2 join-icon-p">
                                                 </span>
-                                                <p style="margin-top: 4px;">{{relation.table1}} : {{relation.table2}}</p>
+                                                <p class="d-flex align-items-center">{{relation.table1}} : {{relation.table2}}</p>
                                                                                     <!-- <a class="tag-addon rounded-pill bg-white-transparent"
                                                                                         data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)"
                                                                                         aria-hidden="true" ><i class="fe fe-x"></i></a> -->
@@ -592,13 +592,11 @@
                         <div class="menu-title" class="" (click)="toggleSubMenu(menu)">
                             <span class="arrow d-flex">
                                 @if(menu.expanded){
-                                <i class="fa fa-chevron-down" style="font-size: 11px; color: #333335; margin-top: 7px !important;
-                                    margin-right: 5px;"></i>
+                                <i class="fa fa-chevron-down custom-chevron-down"></i>
                                 }@else{
-                                <i class="fa fa-chevron-right" style="font-size: 11px; color: #333335; margin-top: 7px !important;
-                                    margin-right: 5px;"></i>
+                                <i class="fa fa-chevron-right custom-chevron-right"></i>
                                 }
-                                <h6>{{ menu.schema }}</h6>
+                                <h6 class="text-truncate">{{ menu.schema }}</h6>
                             </span>
 
                         </div>
