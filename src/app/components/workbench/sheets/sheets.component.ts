@@ -345,6 +345,7 @@ export class SheetsComponent {
     ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   ];
   selectedColorScheme=[] as  any;
+  heirarchyColumnData : any [] = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
@@ -631,6 +632,20 @@ try {
         } else {
           draggedColumnsObj = this.draggedColumnsData
         }
+        if(!this.isTopFilter){
+          this.sortColumn = 'select';
+          this.sortType = 0;
+        }
+        if(this.draggedDrillDownColumns.length > 0 && this.heirarchyColumnData.length > 0 && this.drillDownIndex >=0 && this.selectedSortColumnData && this.selectedSortColumnData.length > 0){
+          let columnsData = JSON.parse(JSON.stringify(this.heirarchyColumnData[this.drillDownIndex]));
+          if(this.selectedSortColumnData[0] === this.draggedColumnsData[0][0] && this.dateDrillDownSwitch){
+            this.selectedSortColumnData[0] = columnsData[0];
+            this.selectedSortColumnData[1] = columnsData[1];
+            this.selectedSortColumnData[2] = columnsData[2];
+          }
+          this.selectedSortColumnData[0] = columnsData[0];
+          this.selectedSortColumnData[1] = columnsData[1];
+        }
         const obj = {
           "hierarchy_id": this.databaseId,
           "queryset_id": this.qrySetId,
@@ -644,7 +659,7 @@ try {
           "drill_down": this.drillDownObject,
           "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
           "parent_user":this.createdBy,
-          "order_column":this.selectedSortColumnData
+          "order_column":(!this.isTopFilter) ? null : this.selectedSortColumnData
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
@@ -668,7 +683,7 @@ try {
             }
             this.getDimensionAndMeasures();
             this.changeSelectedColumn();
-            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2)) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
               if(!this.table){
                 this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
               }
@@ -693,7 +708,7 @@ try {
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if(((this.pie || this.bar || this.area || this.line || this.donut) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
+            } else if(((this.pie || this.bar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
               this.bar = false;
               this.area = false;
@@ -1115,6 +1130,9 @@ try {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
+      this.selectedSortColumnData[2] = type;
+    }
       this.measureValues = [];
       if(type){
         this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
@@ -1642,6 +1660,8 @@ try {
       this.decimalPlaces = 0;
       this.barColor = '#4382f7';
       this.lineColor = '#38ff98';
+      this.heirarchyColumnData = [];
+      this.selectedSortColumnData = null;
    // }
   }
   saveTableData = [] as any;
@@ -1781,6 +1801,22 @@ sheetSave(){
     kpiColor = this.kpiColor;
     kpiFontSize = this.kpiFontSize;
   }
+  if(this.map && this.chartId == 29){
+    if(this.originalData){
+      if(this.draggedDrillDownColumns.length > 0){
+        this.originalData.categories.forEach((column:any,index:any)=>{
+          tablePreviewCol[index].column = column.name;
+          tablePreviewCol[index].result_data = column.values;
+        });
+        this.originalData.data.forEach((column:any,index:any)=>{
+          tablePreviewRow[index].column = column.name;
+          tablePreviewRow[index].result_data = column.data;
+        });
+        this.drillDownIndex = 0;
+      }
+      delete this.originalData;
+    }
+  }
   savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
     isZoom : this.isZoom,
@@ -1899,6 +1935,8 @@ const obj={
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
     "isDrillDownData" : this.dateDrillDownSwitch,
+    "heirarchyColumnData" : this.heirarchyColumnData,
+    "selectedSortColumnData" : this.selectedSortColumnData,
   "columns": this.draggedColumns,
   "columns_data":draggedColumnsObj,
   "rows": this.draggedRows,
@@ -2167,6 +2205,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.locationDrillDownSwitch = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
         this.isLocationFeild = this.sheetResponce?.customizeOptions?.isLocationField;
         this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
+        this.heirarchyColumnData = this.sheetResponce?.heirarchyColumnData ? this.sheetResponce?.heirarchyColumnData : [];
+        this.selectedSortColumnData = this.sheetResponce?.selectedSortColumnData ? this.sheetResponce?.selectedSortColumnData : null;
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
         } else {
@@ -2444,7 +2484,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 12){
         this.chartType = 'radar';
-        this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.bar = false;
         this.table = false;
           this.pie = false;
@@ -2704,6 +2744,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
     const obj={
       "hierarchy_id" :this.databaseId,
       "query_set_id":this.qrySetId,
@@ -2778,9 +2821,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     }
    console.log(this.filterDataArray)
   }
+  totalDataLength : any;
   filterDataPut(){
     // this.dimetionMeasure = [];
     this.sortedData = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
     const obj={
     //"filter_id": this.filter_id,
     "hierarchy_id": this.databaseId,
@@ -2803,6 +2850,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterId.push(responce.filter_id);
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
+        this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         this.dataExtraction();
         this.filterDataArray = [];
         this.filterDateRange = [];
@@ -2844,7 +2892,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.format_type === 'year/month/day'){
+        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day'){
           this.activeTabId = 2;
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
@@ -2928,6 +2976,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
+          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
           this.dataExtraction();
           this.filterDataArray = [];
           this.filterDateRange = [];
@@ -2936,7 +2985,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.topAggregate = 'sum';
           this.topLimit = 5;
           this.topType = 'desc';
-          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         },
         error: (error) => {
           console.log(error);
@@ -2950,8 +2998,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.dimetionMeasure.splice(index, 1);
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
-         this.dataExtraction();
          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+         this.dataExtraction();
       },
       error: (error) => {
         console.log(error);
@@ -3286,8 +3334,8 @@ fetchChartData(chartData: any){
           this.draggedColumns = chartData.columns;
           this.draggedRows = chartData.rows;
           this.filterId =[];
-          this.filterQuerySetId = null,
-          this.sheetfilter_querysets_id = null;
+          this.filterQuerySetId = chartData.datasource_quertsetid,
+          // this.sheetfilter_querysets_id = null;
           
           console.log("This is ShaetData",chartData)
           this.sheetTitle = chartData.chart_title;
@@ -3664,6 +3712,9 @@ customizechangeChartPlugin() {
     });
   }
   dateFormat(column:any, index:any, format:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
+      this.selectedSortColumnData[2] = format;
+    }
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format,""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
@@ -3679,6 +3730,9 @@ customizechangeChartPlugin() {
      this.dataExtraction();
   }
   dateAggregation(column:any, index:any, type:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
+      this.selectedSortColumnData[2] = type;
+    }
     if (type === '') {
       this.draggedColumnsData[index] = [column.column, column.data_type, type, ''];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
@@ -3712,16 +3766,22 @@ customizechangeChartPlugin() {
         let item: any = event.previousContainer.data[event.previousIndex];
         if(item && item.column) {
           this.draggedDrillDownColumns.push(item.column);
+          let columnData = [item.column,item.data_type,'',''];
+          this.heirarchyColumnData.push(columnData);
         }
   }
 
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
+    this.heirarchyColumnData.splice(index,1);
     if (index <= 0) {
       this.drillDownIndex = 0;
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
+      this.dateDrillDownSwitch = false;
+      this.locationDrillDownSwitch = false;
+      this.heirarchyColumnData = [];
     } else if (index <= this.drillDownIndex) {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
@@ -3731,8 +3791,15 @@ customizechangeChartPlugin() {
 
       toggleDateSwitch(){
             this.dateDrillDownSwitch = !this.dateDrillDownSwitch;
+            this.heirarchyColumnData = [];
             if(this.dateDrillDownSwitch){
               this.draggedDrillDownColumns = ["year","quarter","month","date"];
+              this.draggedDrillDownColumns.forEach((columnType:any)=>{
+                let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
+                columnData[2] = columnType;
+                this.heirarchyColumnData.push(columnData);
+              });
+              console.log(this.heirarchyColumnData);
               this.drillDownIndex = 0;
             } else {
               this.drillDownIndex = 0;
@@ -3744,6 +3811,7 @@ customizechangeChartPlugin() {
          }
 
   toggleLocationSwitch(onColumnRemove : boolean) {
+    this.heirarchyColumnData = [];
     if(onColumnRemove) {
     this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
     }
@@ -3756,6 +3824,20 @@ customizechangeChartPlugin() {
   )
   .filter((dimension: any) => dimension) // Remove undefined results for unmatched items
   .map((dimension: any) => dimension?.column);
+      let dataTypes : any [] = [];
+      this.draggedDrillDownColumns.map((drillDown : any) => {
+        let matchedColumn = this.tableColumnsData.flatMap((table : any) =>
+          table.dimensions.filter((dim : any) => dim.column.toLowerCase() === drillDown.toLowerCase())
+        )[0];
+        dataTypes.push(matchedColumn.data_type);
+      });
+      this.draggedDrillDownColumns.forEach((column: any,index: any) => {
+        let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
+        columnData[0] = column;
+        columnData[1] = dataTypes[index];
+        this.heirarchyColumnData.push(columnData);
+      });
+      console.log(this.heirarchyColumnData);
       this.drillDownIndex = 0;
     } else {
       this.drillDownIndex = 0;
@@ -3771,13 +3853,13 @@ customizechangeChartPlugin() {
           }
         
           goDrillDownBack(){
-            if(this.isMapChartDrillDown && this.drillDownIndex === 1){
-              this.map = true;
-              this.bar = false;
-              this.chartId = 29;
-              this.chartType = 'map';
-              this.isMapChartDrillDown = false;
-            }
+            // if(this.isMapChartDrillDown && this.drillDownIndex === 1){
+            //   this.map = true;
+            //   this.bar = false;
+            //   this.chartId = 29;
+            //   this.chartType = 'map';
+            //   this.isMapChartDrillDown = false;
+            // }
             if(this.drillDownIndex > 0) {
               this.drillDownIndex--;
               this.drillDownObject.pop();
@@ -3832,6 +3914,11 @@ customizechangeChartPlugin() {
         else if(this.donut){//pie
           if(!this.originalData){
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
+          }
+        }
+        if(this.map){//map
+          if(!this.originalData){
+            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData }
           }
         }
       }     
@@ -4771,15 +4858,15 @@ customizechangeChartPlugin() {
       this.drillDownIndex = event.drillDownIndex;
       this.draggedDrillDownColumns = event.draggedDrillDownColumns;
       this.drillDownObject = event.drillDownObject;
-      if (this.map) {
-        if (this.drillDownIndex != 0) {
-          this.map = false;
-          this.bar = true;
-          this.chartId = 6;
-          this.chartType = 'bar';
-          this.isMapChartDrillDown = true;
-        }
-      }
+      // if (this.map) {
+      //   if (this.drillDownIndex != 0) {
+      //     this.map = false;
+      //     this.bar = true;
+      //     this.chartId = 6;
+      //     this.chartType = 'bar';
+      //     this.isMapChartDrillDown = true;
+      //   }
+      // }
       this.setOriginalData();
       this.dataExtraction();
     }
@@ -4852,12 +4939,29 @@ customizechangeChartPlugin() {
     getDimensionAndMeasures(){
       this.columnNamesForSort = [];
       this.columnsDataForSort = [];
-      this.draggedColumns.forEach((column:any, index: any)=>{
-        if (column && typeof column === 'object') {
-          this.columnNamesForSort.push({ ...column });
-        } 
-        this.columnsDataForSort.push(this.draggedColumnsData[index]);
-      });
+      if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0 && this.heirarchyColumnData && this.heirarchyColumnData.length > 0){
+        this.draggedColumns.forEach((column:any, index: any)=>{
+          let col = JSON.parse(JSON.stringify(column));
+          if(this.dateDrillDownSwitch){
+            col.type = this.heirarchyColumnData[this.drillDownIndex][2];
+          }
+          else{
+            col.column = this.heirarchyColumnData[this.drillDownIndex][0];
+            col.data_type = this.heirarchyColumnData[this.drillDownIndex][1];
+          }
+          if (col && typeof col === 'object') {
+            this.columnNamesForSort.push({ ...col });
+          } 
+          this.columnsDataForSort.push(this.draggedColumnsData[index]);
+        });
+      } else{
+        this.draggedColumns.forEach((column:any, index: any)=>{
+          if (column && typeof column === 'object') {
+            this.columnNamesForSort.push({ ...column });
+          } 
+          this.columnsDataForSort.push(this.draggedColumnsData[index]);
+        });
+      }
       this.draggedRows.forEach((row:any, index: any)=>{
         if (row && typeof row === 'object') {
           this.columnNamesForSort.push({ ...row });

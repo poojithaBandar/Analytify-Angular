@@ -197,6 +197,8 @@ export class SheetsdashboardComponent {
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
 
+  calendarTotalHeight : string = '400px';
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
@@ -318,7 +320,7 @@ export class SheetsdashboardComponent {
   static itemResize(
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface
-  ): void {
+  ) : void {
     console.info('itemResized', item, itemComponent);
     const resize$ = fromEvent(window, 'resize');
     resize$
@@ -456,6 +458,7 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard && !this.isDraggingDisabled,
+        start: this.onResizeStart.bind(this),
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -464,6 +467,8 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -514,10 +519,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -550,10 +557,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -588,10 +597,11 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -623,16 +633,21 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
     }
 
     // window.dispatchEvent(new Event('resize'));
+  }
+
+  onResizeStart(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
+    this.canNavigateToAnotherPage = true;
   }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {
@@ -906,7 +921,8 @@ export class SheetsdashboardComponent {
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
-            }
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
         })
         console.log(this.sheetTagTitle);
@@ -1597,7 +1613,11 @@ export class SheetsdashboardComponent {
       return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
     }
     if(sheet.chart_id === 29){
+      let xaxis = sheet.sheet_data?.results?.mapChartXaxis;
+      let yaxis = sheet.sheet_data?.results?.mapChartYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
       return sheet.sheet_data.savedChartOptions;
+      // return this.mapChartOptions(xaxis,yaxis,savedOptions) 
     }
     if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
@@ -2030,7 +2050,8 @@ allowDrop(ev : any): void {
           const date = params.data[0];
           const value = params.data[1];
           return `Date: ${date}<br/>Value: ${value}`;
-        }
+        };
+        this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
       }
     });
      console.log('draggedDashboard',this.dashboard)
@@ -2189,7 +2210,8 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       next:(data)=>{
         console.log(data);
         this.loaderService.hide();
-        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'})
+        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'});
+        this.getDashboardFilterredList();
     },
       error:(error)=>{
         console.log(error)
@@ -2528,11 +2550,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 /////chartOptions
 barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
   if (isEchart) {
-    savedOptions.series.data = yaxis;
+    savedOptions.series[0].data = yaxis;
     savedOptions.xAxis.data = xaxis;
     return savedOptions;
   } else {
-    savedOptions.series.data = yaxis;
+    savedOptions.series[0].data = yaxis;
     savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
     return savedOptions;
   }
@@ -2999,6 +3021,7 @@ if(this.filterName === ''){
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
       this.selectedQuerySetId = 0;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
@@ -3269,6 +3292,12 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             row[rowData.column] = rowData.result[i];
           });
           item1.tableData.rows.push(row);
+      }
+      if(item1?.tableData?.tableTotalItems){
+        item1.tableData.tableTotalItems = this.tableTotalItems;
+      }
+      if(item?.tableData?.tableItemsPerPage){
+        item.tableData.tableItemsPerPage = this.tableItemsPerPage;
       }
     }
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
@@ -4025,6 +4054,7 @@ const obj ={
       this.getDashboardFilterredList();
       this.toasterService.success('Filter Updated Successfully','success',{ positionClass: 'toast-top-right'});
       this.selectedOption = null;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
@@ -4325,7 +4355,7 @@ kpiData?: KpiData;
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
-          if((sheet && sheet.chartOptions && sheet.chartOptions.chart) || sheet.isDrillDownData) {
+          if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
             sheet.chartOptions.chart.events = {
               markerClick: (event: any, chartContext: any, config: any) => {
                 let selectedXValue;
@@ -4440,7 +4470,8 @@ kpiData?: KpiData;
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
-            }
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
         })
         console.log(this.sheetTagTitle);
@@ -4696,14 +4727,14 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0);
-      if(item.chartId == '29'){
-        if (item.drillDownIndex != 0) {
-          this.chartType = 'bar';
-        }
-        else {
-          this.chartType = 'map';
-        }
-      }
+      // if(item.chartId == '29'){
+      //   if (item.drillDownIndex != 0) {
+      //     this.chartType = 'bar';
+      //   }
+      //   else {
+      //     this.chartType = 'map';
+      //   }
+      // }
         },
       error:(error)=>{
         console.log(error)
@@ -4807,8 +4838,6 @@ pageChangeTableDisplayPublic(item:any,page:any){
   if(item?.tableData?.tablePage ){
     item.tableData.tablePage = page;
   }
- 
-  
   const obj={
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
@@ -5484,12 +5513,12 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      uploadInJson(){
       if (this.uploadedImage) {
         let element :any= {
-          id: uuidv4(), // Unique ID
+          id: uuidv4(), 
           x: 10,
           y: 20,
-          rows: 2, // Adjust size
-          cols: 2, // Adjust size
-          type: 'image', // Identify it as an image
+          rows: 2,
+          cols: 2, 
+          type: 'image', 
           imageData: this.uploadedImage, // Store Base64 image data
           imageTitle:this.imageTitle
         };
@@ -5536,20 +5565,21 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
       if (itemIndex !== -1) {
         // const item1 = this.dashboard[itemIndex];
-        if (item['kpiData']) {
+        if (item['kpiImage']) {
           // Add the kpiImage key to kpiData
           this.dashboard[itemIndex] = {
             ...item,
-            kpiData: {
-              ...item.kpiData,
-              kpiImage: KpiImage,
-            },
+            kpiImage: KpiImage,
           };
-          console.log('addedKpiImage',this.dashboard);
-          this.canNavigateToAnotherPage = true;
+       
         } else {
-          console.error('kpiData is undefined for the item:', item);
+          this.dashboard[itemIndex] = {
+            ...item,
+            kpiImage: KpiImage,
+          };    
         }
+        console.log('addedKpiImage',this.dashboard);
+        this.canNavigateToAnotherPage = true;
       } else {
         console.error('Item not found in dashboard:', item);
       } 
@@ -5559,11 +5589,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       if (itemIndex !== -1) {
         const updatedItem = {
           ...this.dashboard[itemIndex],
-          kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+          kpiImage: { ...this.dashboard[itemIndex]['kpiImage'] },
         };
   
         // Delete kpiImage key if it exists
-        delete updatedItem.kpiData.kpiImage;
+        delete updatedItem.kpiImage;
   
         // Update the dashboard array
         this.dashboard[itemIndex] = updatedItem;
@@ -5617,7 +5647,6 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       console.log('kpiSize',this.selectedIconFontSize)
     }
   
-    // Handle changes to color
     changeColor(event:any): void {
       const color = event.target.value;
       this.selectedIconColor = color;
@@ -5634,7 +5663,6 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       { value: 'bottom-middle', iconClass: 'dollar-bottom-center' },
       { value: 'bottom-right', iconClass: 'dollar-bottom-right' }
     ];
-    // Handle position selection
     selectPosition(position: string): void {
       this.selectedIconPosition = position;
       console.log('kpiPosition',this.selectedIconPosition)
@@ -5642,35 +5670,33 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     applyIconInKpi(){
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === this.KpiIconItem.id);
       if (itemIndex !== -1) {
-        // const item1 = this.dashboard[itemIndex];
-        if (this.KpiIconItem['kpiData']) {
-          // Add the kpiImage key to kpiData
-          this.dashboard[itemIndex] = {
-            ...this.KpiIconItem,
-            kpiData: {
-              ...this.KpiIconItem.kpiData,
-              kpiIcon: this.selectedIcon,
-              kpiIconSize: this.selectedIconFontSize,
-              kpiIconColor:this.selectedIconColor,
-              kpiIconPosition:this.selectedIconPosition
-            },
-          };
-          this.modalService.dismissAll();
-          console.log('addedKpiIcon',this.dashboard);
-          this.canNavigateToAnotherPage = true;
-          this.selectedIcon = null;
-        } else {
-          console.error('kpiData is undefined for the item:', this.KpiIconItem);
+        if (!this.KpiIconItem.kpiIconsArray) {
+          this.KpiIconItem.kpiIconsArray = {};
         }
+            const newIconObject = {
+          kpiIcon: this.selectedIcon,
+          kpiIconSize: this.selectedIconFontSize,
+          kpiIconColor: this.selectedIconColor,
+          kpiIconPosition: this.selectedIconPosition
+        };
+        this.KpiIconItem.kpiIconsArray = newIconObject;
+            this.dashboard[itemIndex] = { 
+          ...this.KpiIconItem 
+        };
+    
+        this.modalService.dismissAll();
+        console.log('Updated kpiIconsArray:', this.dashboard);
+        this.canNavigateToAnotherPage = true;
+        this.selectedIcon = null;
       } else {
         console.error('Item not found in dashboard:', this.KpiIconItem);
-      } 
+      }
+    
     }
 
     getIconPositionStyles(position: string) {
       let styles = {};
       const offset = '10px'; // Distance from the edges
-      // Check the position value and apply corresponding styles
       switch (position) {
           case 'top-left':
             return { top: offset, left: offset, transform: 'none' };
@@ -5691,19 +5717,19 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           case 'bottom-right':
             return { bottom: offset, right: offset, transform: 'none' };
         default:
-          styles = { bottom: '0', right: '0' }; // Default fallback position
+          styles = { bottom: '0', right: '0' }; 
           break;
       }
     
       return styles;
     }
     getIconClass(icon: any): string {
-      return `${icon.styles[0]} fa-${icon.name}`; // Use the first available style
+      return `${icon.styles[0]} fa-${icon.name}`; 
     }
     priorityIcons: string[] = ['arrow-trend-up','arrow-trend-down','house','magnifying-glass','user','facebook','check','download','twitter','instagram','envelope','linkedin','arrow-up','file','calendar-days','circle-down','address-book','handshake','layer-group','users','link','sack-dollar'
-    ];; // List of prioritized icon names
+    ];; 
   filteredIcons: any[] = [];
-  showAll: boolean = false; // Toggle for showing all icons
+  showAll: boolean = false; 
 
   updateFilteredIcons(): void {
     const searchFilter = this.iconList.filter(
@@ -5714,8 +5740,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     );
 
     this.filteredIcons = this.showAll
-      ? searchFilter // Show all icons if toggled
-      : searchFilter.filter((icon) => this.priorityIcons.includes(icon.name)); // Show priority icons only
+      ? searchFilter 
+      : searchFilter.filter((icon) => this.priorityIcons.includes(icon.name)); 
   }
   toggleShowAll(): void {
     this.showAll = !this.showAll;
@@ -5728,11 +5754,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     });
     this.KpiIconItem = item;
     console.log('editKpi',item);
-    const kpiData = item.kpiData
-    this.selectedIconColor = kpiData.kpiIconColor ?? '#888'
-    this.selectedIconFontSize = kpiData.kpiIconSize ?? '24'
-    this.selectedIconPosition = kpiData.kpiIconPosition ?? 'bottom-right'
-    this.selectedIcon = kpiData.kpiIcon ?? null
+    const kpiIconsArray = item.kpiIconsArray
+    this.selectedIconColor = kpiIconsArray.kpiIconColor ?? '#888'
+    this.selectedIconFontSize = kpiIconsArray.kpiIconSize ?? '24'
+    this.selectedIconPosition = kpiIconsArray.kpiIconPosition ?? 'bottom-right'
+    this.selectedIcon = kpiIconsArray.kpiIcon ?? null
  
   }
   removeKpiIcon(item: any): void {
@@ -5740,14 +5766,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     if (itemIndex !== -1) {
       const updatedItem = {
         ...this.dashboard[itemIndex],
-        kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+        kpiIconsArray: { ...this.dashboard[itemIndex]['kpiIconsArray'] },
       };
 
       // Delete kpiIcon key if it exists
-      delete updatedItem.kpiData.kpiIcon;
-      delete updatedItem.kpiData.kpiIconPosition;
-      delete updatedItem.kpiData.kpiIconColor;
-      delete updatedItem.kpiData.kpiIconSize;
+      delete updatedItem.kpiIconsArray.kpiIcon;
+      delete updatedItem.kpiIconsArray.kpiIconPosition;
+      delete updatedItem.kpiIconsArray.kpiIconColor;
+      delete updatedItem.kpiIconsArray.kpiIconSize;
       // Update the dashboard array
       this.dashboard[itemIndex] = updatedItem;
       this.canNavigateToAnotherPage = true;
