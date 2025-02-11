@@ -471,7 +471,8 @@
                             <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                            
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Replace</a>
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
                             <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
                               [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.hierarchy_id)"
                               [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
@@ -1595,7 +1596,7 @@
                       <div class="database-logo">
                         <div class="imgcard p-4" (click)="triggerFileUpload('csv')">
                           <img src="./assets/images/Db_server_images/File Source/csv.png" alt="Image" class="card-img" />
-                          <input type="file" (change)="uploadfileCsv($event)" accept=".csv" #fileInput style="display: none;" />
+                          <input type="file" (change)="uploadfileCsv($event,'upload',{})" accept=".csv" #fileInput style="display: none;" />
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span >CSV File</span>
@@ -1604,7 +1605,7 @@
                       <div class="database-logo">
                         <div class="imgcard  p-4" (click)="triggerFileUpload('excel')">
                           <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img" />
-                          <input type="file" (change)="uploadfileExcel($event)" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
+                          <input type="file" (change)="uploadfileExcel($event,'upload',{})" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" >
                           <span >Excel File</span>

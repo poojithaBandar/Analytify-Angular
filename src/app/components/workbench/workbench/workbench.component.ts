@@ -706,13 +706,20 @@ export class WorkbenchComponent implements OnInit{
       }
     }
 
-    uploadfileCsv(event:any){
+    uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
-      if(this.fileData){
-        this.csvUpload(event.target);
+      if(this.fileData && this.fileData.type == 'text/csv'){
+        if(type === 'upload'){
+          this.csvUpload(event.target);
+        } else if(type === 'replace'){
+          this.replaceExcelOrCsvFile(event.target,database);
+        } else if(type === 'upsert'){
+          this.upsertExcelOrCsvFile(event.target,database);
+        }
+      } else{
+        this.toasterservice.error('Not a supported file format. Please select an CSV file.','info',{ positionClass: 'toast-top-center'})
       }
-
     }
     csvUpload(fileInput: any){
     const formData: FormData = new FormData();
@@ -738,13 +745,20 @@ export class WorkbenchComponent implements OnInit{
         }
       )
     }
-    uploadfileExcel(event:any){
+    uploadfileExcel(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
-      if(this.fileData){
-        this.excelUpload(event.target);
+      if(this.fileData && ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'].includes(this.fileData.type)){
+        if(type === 'upload'){
+          this.excelUpload(event.target);
+        } else if(type === 'replace'){
+          this.replaceExcelOrCsvFile(event.target,database);
+        } else if(type === 'upsert'){
+          this.upsertExcelOrCsvFile(event.target,database);
+        }
+      } else{
+        this.toasterservice.error('Not a supported file format. Please select an Excel file.','info',{ positionClass: 'toast-top-center'})
       }
-
     }
     excelUpload(fileInput: any){
       const formData: FormData = new FormData();
@@ -1224,5 +1238,45 @@ export class WorkbenchComponent implements OnInit{
     } else{
       this.disableConnectBtn = false;
     }
+  }
+  replaceExcelOrCsvFile(fileInput: any,database:any) {
+    const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData, this.fileData.name);
+    formData.append('file_type', database.database_type);
+    formData.append('hierarchy_id', database.hierarchy_id);
+    this.workbechService.replaceExcelOrCsvFile(formData).subscribe({
+      next:(responce)=>{
+        console.log(responce);
+        this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+       },
+       error: (error) => {
+        console.log(error);
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      },
+      complete: () => {
+        fileInput.value = '';
+        this.cd.detectChanges();
+      }
+    })
+  }
+  upsertExcelOrCsvFile(fileInput: any,database : any){
+    const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData, this.fileData.name);
+    formData.append('file_type', database.database_type);
+    formData.append('hierarchy_id', database.hierarchy_id);
+    this.workbechService.upsertExcelOrCsvFile(formData).subscribe({
+      next:(responce)=>{
+        console.log(responce);
+        this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+       },
+       error: (error) => {
+        console.log(error);
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      },
+      complete: () => {
+        fileInput.value = '';
+        this.cd.detectChanges();
+      }
+    })
   }
 }
