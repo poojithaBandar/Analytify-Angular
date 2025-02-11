@@ -318,11 +318,9 @@ export class SheetsdashboardComponent {
   }
 
   static itemResize(
-    instance : SheetsdashboardComponent,
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface
-  ) {
-    instance.canNavigateToAnotherPage = true;
+  ) : void {
     console.info('itemResized', item, itemComponent);
     const resize$ = fromEvent(window, 'resize');
     resize$
@@ -441,9 +439,7 @@ export class SheetsdashboardComponent {
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
       itemChangeCallback: SheetsdashboardComponent.itemChange,
-      // itemResizeCallback: SheetsdashboardComponent.itemResize,
-      itemResizeCallback : (item, itemComponent) =>
-      SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
@@ -462,6 +458,7 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard && !this.isDraggingDisabled,
+        start: this.onResizeStart.bind(this),
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -470,11 +467,10 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
-      },
-      api: {
-        resize: () => {this.canNavigateToAnotherPage = true}
-    }
+      }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
 
@@ -503,9 +499,8 @@ export class SheetsdashboardComponent {
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
       itemChangeCallback: SheetsdashboardComponent.itemChange,
-      itemResizeCallback : (item, itemComponent) =>
-      SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
-          itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
       fixedColWidth: this.gridItemSize,
@@ -524,10 +519,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -541,9 +538,8 @@ export class SheetsdashboardComponent {
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
       itemChangeCallback: SheetsdashboardComponent.itemChange,
-      itemResizeCallback : (item, itemComponent) =>
-      SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
-          itemInitCallback: SheetsdashboardComponent.itemInit,
+      itemResizeCallback: SheetsdashboardComponent.itemResize,
+      itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
       itemValidateCallback: SheetsdashboardComponent.itemValidate,
       fixedColWidth: this.gridItemSize,
@@ -561,10 +557,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -580,9 +578,8 @@ export class SheetsdashboardComponent {
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
         itemChangeCallback: SheetsdashboardComponent.itemChange,
-        itemResizeCallback : (item, itemComponent) =>
-        SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
-              itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemResizeCallback: SheetsdashboardComponent.itemResize,
+        itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
@@ -600,10 +597,11 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -616,9 +614,8 @@ export class SheetsdashboardComponent {
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
         itemChangeCallback: SheetsdashboardComponent.itemChange,
-        itemResizeCallback : (item, itemComponent) =>
-        SheetsdashboardComponent.itemResize(this, item, itemComponent), // Pass 'this' to static method
-              itemInitCallback: SheetsdashboardComponent.itemInit,
+        itemResizeCallback: SheetsdashboardComponent.itemResize,
+        itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
         itemValidateCallback: SheetsdashboardComponent.itemValidate,
         fixedColWidth: this.gridItemSize,
@@ -636,16 +633,21 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
     }
 
     // window.dispatchEvent(new Event('resize'));
+  }
+
+  onResizeStart(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
+    this.canNavigateToAnotherPage = true;
   }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {

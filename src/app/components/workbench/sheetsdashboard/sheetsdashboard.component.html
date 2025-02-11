@@ -516,10 +516,10 @@
                             <!-- @if(updateDashbpardBoolen){ -->                           
                             <li [ngbNavItem]="2">
                               <div class="tooltip-wrapper"
-                                [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'Please save the dashboard' : null"
+                                [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'Please save / update the dashboard' : null"
                                 [tooltipClass]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'tooltip-disabled' : ''">
 
-                                <ng-container *ngIf="dashboard.length >= 1 && updateDashbpardBoolen; else disabledTemplate">
+                                <ng-container *ngIf="dashboard.length >= 1 && updateDashbpardBoolen && !canNavigateToAnotherPage ; else disabledTemplate">
                                   <a ngbNavLink class="dashboard-tab-padding">
                                     Filters
                                   </a>
@@ -799,10 +799,10 @@
                             <li [ngbNavItem]="3">
                               <div 
                               class="tooltip-wrapper" 
-                              [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen) ? 'Please save the dashboard' : null"
-                              [tooltipClass]="(dashboard.length < 1 || !updateDashbpardBoolen) ? 'tooltip-disabled' : ''">
+                              [ngbTooltip]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'Please save / update the dashboard' : null"
+                              [tooltipClass]="(dashboard.length < 1 || !updateDashbpardBoolen || canNavigateToAnotherPage) ? 'tooltip-disabled' : ''">
                               
-                              <ng-container *ngIf="dashboard.length >= 1 && updateDashbpardBoolen; else disabledTemplateActions">
+                              <ng-container *ngIf="dashboard.length >= 1 && updateDashbpardBoolen && !canNavigateToAnotherPage; else disabledTemplateActions">
                                   <a ngbNavLink class="dashboard-tab-padding">
                                       Actions
                                   </a>
