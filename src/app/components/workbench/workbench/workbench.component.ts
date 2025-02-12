@@ -79,6 +79,7 @@ export class WorkbenchComponent implements OnInit{
   totalItems:any;
   fileData:any;
   viewDatasourceList = false;
+  isGoogleSheetsPage = false;
   selectedMicroSoftAuthType: string | null = null;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
@@ -88,10 +89,20 @@ export class WorkbenchComponent implements OnInit{
     if(currentUrl.includes('analytify/datasources/view-connections')){
       this.databaseconnectionsList= true;  
        this.viewNewDbs= false;
+       this.isGoogleSheetsPage = false;
     } 
     if(currentUrl.includes('analytify/datasources/new-connections')){
       this.viewNewDbs = true;
       this.databaseconnectionsList = false;
+      this.isGoogleSheetsPage = false;
+    }
+    if(currentUrl.includes('analytify/datasources/google-sheets')){
+      this.viewNewDbs = false;
+      this.databaseconnectionsList = false;
+      this.isGoogleSheetsPage = true;
+      let url = this.router.url;
+      console.log(url);
+      this.getGoogleSheetDetailsByUrl(url);
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
@@ -138,7 +149,55 @@ export class WorkbenchComponent implements OnInit{
     this.clientIdPSA = '';
     this.clientSecret = '';
     
-  }  
+  } 
+  googleSheetsData = [] as any;
+  getGoogleSheetDetailsByUrl(url:any){
+  const obj = {
+    code: url
+  }
+  this.workbechService.getGoogleSheetsDetails(obj)
+    .subscribe(
+      {
+        next: (data: any) => {
+          console.log(data);
+          this.googleSheetsData = data.sheets;
+        },
+        error: (error: any) => {
+          console.log(error);
+          if(error){
+            Swal.fire({
+              icon: 'error',
+              title: 'oops!',
+              text: error.error.message,
+              width: '400px',
+            })
+          }
+        }
+      }
+    )
+  }
+  getHierachyIdFromGsheets(id:any){
+    this.workbechService.getHierachyIdFromGsheets(id)
+      .subscribe(
+        {
+          next: (data: any) => {
+            console.log(data);
+           
+          },
+          error: (error: any) => {
+            console.log(error);
+            if(error){
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.message,
+                width: '400px',
+              })
+            }
+          }
+        }
+      )
+  }
     openPostgreSql(){
     this.openPostgreSqlForm=true;
     this.databaseconnectionsList= false;
@@ -870,7 +929,33 @@ export class WorkbenchComponent implements OnInit{
           }
       });
   }
-
+//gsheets
+connectGoogleSheets(){
+  Swal.fire({
+    title: 'This will redirect to Google SignIn page',
+    // text: 'This will redirect to QuickBooks SignIn page',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Ok'
+  }).then((result)=>{
+    if(result.isConfirmed){
+      this.workbechService.connectGoogleSheets()
+      .subscribe(
+        {
+          next: (data) => {
+            console.log(data);
+            // this.routeUrl = data.redirection_url
+            this.document.location.href = data.redirection_url;
+            this.loaderService.show();
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        }
+      )
+    }}) 
+}
     deleteDbConnection(id:any){
       // const obj ={
       //   database_id:dbId
