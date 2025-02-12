@@ -1248,6 +1248,9 @@ export class WorkbenchComponent implements OnInit{
       next:(responce)=>{
         console.log(responce);
         this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+        this.fileId=database.hierarchy_id
+        const encodedId = btoa(this.fileId.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
        },
        error: (error) => {
         console.log(error);
@@ -1268,6 +1271,9 @@ export class WorkbenchComponent implements OnInit{
       next:(responce)=>{
         console.log(responce);
         this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+        this.fileId=database.hierarchy_id
+        const encodedId = btoa(this.fileId.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
        },
        error: (error) => {
         console.log(error);
