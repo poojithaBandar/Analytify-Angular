@@ -507,7 +507,7 @@
                                                 </button>
                                             <input type="number" [(ngModel)]="rowLimit" id="input-text"
                                                 (keydown.enter)="getJoiningTableData()" placeholder="rows"
-                                                class="form-control w-30">
+                                                class="form-control w-30" min="0">
                                             <a [class.disabled]="!rowLimit || rowLimit <= 0"
                                                 [style.pointer-events]="!rowLimit || rowLimit <= 0 ? 'none' : 'auto'"
                                                 (click)="getJoiningTableData()"><i
@@ -672,7 +672,7 @@
                                     </button>
                                 <input type="number" [(ngModel)]="rowLimit" id="input-text"
                                     (keydown.enter)="executeQuery()"
-                                    placeholder="rows" class="form-control w-30">
+                                    placeholder="rows" class="form-control w-30" min="0">
                                 <a (click)="executeQuery()"><i
                                         class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
                                 <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'"
