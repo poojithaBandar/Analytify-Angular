@@ -4263,7 +4263,7 @@ kpiData?: KpiData;
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
-        search : this.searchSheets,
+        // search : this.searchSheets,
         page_count:this.itemsPerPage
 
       }
