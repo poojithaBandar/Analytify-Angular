@@ -824,6 +824,10 @@
         </div>
 
         <div class="modal-footer">
+            <div class="col text-left p-0">
+                <input type="checkbox" id="exclude" class="form-check-input" [(ngModel)]="isExclude">
+                <label for="exclude" class="form-check-label">Exclude</label>
+            </div>
             <button type="button" (click)="getSelectedRows()" [disabled]="!isAnyRowSelected()"
                 class="btn ripple btn-primary">Filter Data</button>
             <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');columnDataSearch =''">
@@ -932,6 +936,10 @@
 
         </div>
         <div class="modal-footer">
+            <div class="col text-left p-0">
+                <input type="checkbox" id="exclude" class="form-check-input" [(ngModel)]="isExclude">
+                <label for="exclude" class="form-check-label">Exclude</label>
+            </div>
             <button type="button" class="btn ripple btn-primary" [disabled]="!isAnyEditRowSelected()"
                 (click)="getSelectedRowsFromEdit()">Apply</button>
             <button type="button" class="btn ripple btn-secondary" (click)="columnDataSearch = '';
