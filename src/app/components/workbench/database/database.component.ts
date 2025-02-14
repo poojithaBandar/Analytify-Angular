@@ -151,6 +151,7 @@ export class DatabaseComponent {
   sheetCustmSqlDisable = true;
   saveQueryCheck = false
   newHierarchyId: any;
+  crossDbId! : number;
   searchDataSource: string = '';
   pageNo: any;
   panelscheckbox: any = [];
@@ -406,9 +407,11 @@ getSchemaTablesFromConnectedDb(){
   const IdToPass = this.databaseId;
   this.schematableList = [];
   this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
+    if(data[0].cross_db_id){
+      this.crossDbId = data[0].cross_db_id;
+    }
     data.forEach((dataTest: any) => {
       this.schematableList.push(dataTest?.data?.schemas[0]);
-
     });
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
    console.log('filteredscemas',this.filteredSchematableList)
@@ -1643,7 +1646,13 @@ checkNameChanged(){
         width: '400px',
       })
     } else {
-        const encodedDatabaseId = btoa(this.databaseId.toString());
+      let id ;
+      if(this.crossDbId){
+        id = this.crossDbId;
+      } else {
+        id= this.databaseId;
+      }
+        const encodedDatabaseId = btoa(id.toString());
         const encodedQuerySetId = btoa(querySetIdToPass.toString());
         this.checkNameChanged();
         if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
