@@ -924,6 +924,9 @@ export class SheetsdashboardComponent {
             };
             this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
+          if(chartId == 1){
+            this.tableItemsPerPage = sheet?.tableData?.tableItemsPerPage;
+          }
         })
         console.log(this.sheetTagTitle);
         console.log(this.dashboard);
@@ -3296,8 +3299,8 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       if(item1?.tableData?.tableTotalItems){
         item1.tableData.tableTotalItems = this.tableTotalItems;
       }
-      if(item?.tableData?.tableItemsPerPage){
-        item.tableData.tableItemsPerPage = this.tableItemsPerPage;
+      if(item1?.tableData?.tableItemsPerPage){
+        item1.tableData.tableItemsPerPage = this.tableItemsPerPage;
       }
     }
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
@@ -4478,6 +4481,9 @@ kpiData?: KpiData;
             };
             this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
+          if(chartId == 1){
+            this.tableItemsPerPage = sheet?.tableData?.tableItemsPerPage;
+          }
         })
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
@@ -4631,7 +4637,8 @@ kpiData?: KpiData;
       // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
+  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
       next:(data)=>{
@@ -4702,7 +4709,8 @@ kpiData?: KpiData;
       "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
+  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getDashboardDrillDowndata(Obj).subscribe({
       next:(data)=>{
@@ -4818,7 +4826,8 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
-    search:this.tableSearch
+    search:this.tableSearch,
+    is_exclude:this.excludeFilterIdArray
   }
   if(obj.search === '' || obj.search === null){
     delete obj.search;
@@ -4852,7 +4861,8 @@ pageChangeTableDisplayPublic(item:any,page:any){
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
-    search:this.tableSearch
+    search:this.tableSearch,
+    is_exclude:this.excludeFilterIdArray
   }
   if(obj.search === '' || obj.search === null){
     delete obj.search;
@@ -4863,7 +4873,7 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, false , false, false, false, '', false,0);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', false,0);
     },error:(error)=>{
       console.log(error.error.message);
     }

@@ -19,7 +19,7 @@
                 </div>
                 <div class="card-body p-1">
                     <div class="input-group justify-content-between">
-                    <h6 class="fw-600  mb-0 p-1">Tables</h6>
+                    <h6 class="mb-0 p-1">Tables</h6>
 
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown [autoClose]="false" #level1="ngbDropdown">
@@ -273,7 +273,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="validationMessage" class="alert"
+                                                        <div *ngIf="validationMessage" class="alert alert-card"
                                                                         [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
                                                                         {{ validationMessage }}
                                                                     </div>
