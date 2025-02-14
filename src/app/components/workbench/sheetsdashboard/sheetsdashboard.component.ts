@@ -3838,6 +3838,11 @@ formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : numb
       case 'G':
         formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
         break;
+      case '%':
+        let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+        let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
+        formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
+        break;
     }
   } else {
     formattedNumber = (value).toFixed(KPIDecimalPlaces)
@@ -4261,7 +4266,7 @@ kpiData?: KpiData;
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
-        search : this.searchSheets,
+        // search : this.searchSheets,
         page_count:this.itemsPerPage
 
       }
