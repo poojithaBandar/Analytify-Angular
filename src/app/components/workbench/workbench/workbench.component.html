@@ -397,11 +397,28 @@
                             <td>{{database.updated_at}}</td>
                             <td>
                               <div class="hstack gap-2 fs-1">
-                                <button
-                                  [disabled]="(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')"
+                                <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL')"
+                                  [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')"
                                   aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
+                                <div *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="d-flex justify-content-end" ngbDropdown>
+                                  <button aria-label="anchor" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown">
+                                    <i class="ri-edit-line" ngbTooltip="Edit database"></i>
+                                  </button>
+                                  <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-repeat"></i> Replace</a>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-upload"></i> Upsert</a>
+                                  </div>
+                                </div>
                                 <a aria-label="anchor" (click)="deleteDbConnection(database.hierarchy_id)"
                                   class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                   <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
@@ -471,7 +488,7 @@
                             <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Replace</a>
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
                             <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
                               [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.hierarchy_id)"
