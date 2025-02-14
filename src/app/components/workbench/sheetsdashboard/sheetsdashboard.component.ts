@@ -197,6 +197,8 @@ export class SheetsdashboardComponent {
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
 
+  calendarTotalHeight : string = '400px';
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
@@ -318,7 +320,7 @@ export class SheetsdashboardComponent {
   static itemResize(
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface
-  ): void {
+  ) : void {
     console.info('itemResized', item, itemComponent);
     const resize$ = fromEvent(window, 'resize');
     resize$
@@ -456,6 +458,7 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard && !this.isDraggingDisabled,
+        start: this.onResizeStart.bind(this),
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -464,6 +467,8 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -514,10 +519,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -550,10 +557,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -588,10 +597,11 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -623,16 +633,21 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
     }
 
     // window.dispatchEvent(new Event('resize'));
+  }
+
+  onResizeStart(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
+    this.canNavigateToAnotherPage = true;
   }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {
@@ -906,7 +921,8 @@ export class SheetsdashboardComponent {
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
-            }
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
         })
         console.log(this.sheetTagTitle);
@@ -2034,7 +2050,8 @@ allowDrop(ev : any): void {
           const date = params.data[0];
           const value = params.data[1];
           return `Date: ${date}<br/>Value: ${value}`;
-        }
+        };
+        this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
       }
     });
      console.log('draggedDashboard',this.dashboard)
@@ -2193,7 +2210,8 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       next:(data)=>{
         console.log(data);
         this.loaderService.hide();
-        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'})
+        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'});
+        this.getDashboardFilterredList();
     },
       error:(error)=>{
         console.log(error)
@@ -3003,6 +3021,7 @@ if(this.filterName === ''){
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
       this.selectedQuerySetId = 0;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
@@ -3273,6 +3292,12 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
             row[rowData.column] = rowData.result[i];
           });
           item1.tableData.rows.push(row);
+      }
+      if(item1?.tableData?.tableTotalItems){
+        item1.tableData.tableTotalItems = this.tableTotalItems;
+      }
+      if(item?.tableData?.tableItemsPerPage){
+        item.tableData.tableItemsPerPage = this.tableItemsPerPage;
       }
     }
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
@@ -4029,6 +4054,7 @@ const obj ={
       this.getDashboardFilterredList();
       this.toasterService.success('Filter Updated Successfully','success',{ positionClass: 'toast-top-right'});
       this.selectedOption = null;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
@@ -4444,7 +4470,8 @@ kpiData?: KpiData;
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
-            }
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
         })
         console.log(this.sheetTagTitle);

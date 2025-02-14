@@ -19,7 +19,7 @@
                 </div>
                 <div class="card-body p-1">
                     <div class="input-group justify-content-between">
-                    <h6 class="fw-600  mb-0 p-1">Tables</h6>
+                    <h6 class="mb-0 p-1">Tables</h6>
 
                     <div class="dashboard-option">
                         <div class=" p-1" ngbDropdown [autoClose]="false" #level1="ngbDropdown">
@@ -267,13 +267,13 @@
                                                                         <i class="fa fa-angle-left"></i>
                                                                     </div> -->
                                                                 </div>
-                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1" style="position: absolute; right: 0px; height: -webkit-fill-available;">
+                                                                <div (click)="calculationfieldid.hidden = !calculationfieldid.hidden" [style.pointer-events]="(((calculatedFieldFunction == 'aggregation' || calculatedFieldFunction == 'logical' || calculatedFieldFunction == 'date' || calculatedFieldFunction == 'string' || calculatedFieldFunction == 'number') &&  nestedCalculatedFieldData) || calculatedFieldFunction == 'arithematic') ? 'auto' : 'none' " class="calculated-hide-icon d-flex align-items-center bg-light rounded-2 border mb-1 calculated-hide-h">
                                                                     <i *ngIf="calculationfieldid.hidden" class="fa fa-angle-left cursor-pointer"></i>
                                                                     <i *ngIf="!calculationfieldid.hidden" class="fa fa-angle-right cursor-pointer"></i>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="validationMessage" class="alert"
+                                                        <div *ngIf="validationMessage" class="alert alert-card"
                                                                         [ngClass]="{'alert-success': isValidCalculatedField, 'alert-danger': !isValidCalculatedField}">
                                                                         {{ validationMessage }}
                                                                     </div>
@@ -576,7 +576,7 @@
                                                                 </ul> -->
                                                                 @if(formatExtractType){
                                                                 <div class="d-flex" >
-                                                                    <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button>
+                                                                    <button class="btn btn-primary" (click)="formatExtractType = '';filterSearch = '';"><i class="fa fa-long-arrow-left"></i></button>
                                                                     <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="filterSearch" (keyup.enter)="searchFilterList()" aria-describedby="button-addon2" >
                                                                     <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                 </div>
@@ -831,7 +831,7 @@
                                                     </ng-template>
                                                 </li>
                                             </ul>
-                                            <div class="panel-body tabs-menu-body p-1" style="height: 578px;">
+                                            <div class="panel-body tabs-menu-body p-1 ">
                                                 <div class="tab-content">
                                                     <div [ngbNavOutlet]="nav"></div>
                                                 </div>
@@ -968,9 +968,9 @@
                         <div class="row align-items-center">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12 maind-flex" >
                             <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
-                                <div class="title-container border rounded-2" *ngIf="!editor">
+                                <div class="title-container border-0 rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span class="card mb-0" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? {'padding-top': '1.5%', 'padding-left': '15px'} : {'padding': '1.5%'}" style="padding-left: 15px;cursor: text;"></span>
+                                    <span class="card mb-0" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '1%'}" style="padding-left: 15px;cursor: text;"></span>
                                     <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
@@ -1004,7 +1004,7 @@
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
                                     </app-insights-button>
                                 </div>
-                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
+                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             </div>
                         </div>
                         </div>
@@ -1039,32 +1039,32 @@
                                      <div class="dropup" ngbDropdown style="line-height: 0;">
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
-                                                <li class="btn btn-primary-light dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Date</li>
-                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex align-center" ngbDropdown>
+                                                <li class="btn btn-primary-light dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
+                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                    <li><a [ngClass]="columns.type === 'year' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
-                                                    <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
-                                                    <li><a [ngClass]="columns.type === 'month' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'month')">Month (January)</a></li>
-                                                    <li><a [ngClass]="columns.type === 'day' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'day')">Day (1-31)</a></li>
-                                                    <li><a [ngClass]="columns.type === 'weekdays' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekdays')">Week Day (1-7)</a></li>
-                                                    <li><a [ngClass]="columns.type === 'week numbers' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'week numbers')">Week Number (0-52)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'year' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
+                                                    <li><a [ngClass]="columns.type === 'month' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'month')">Month (January)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'day' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'day')">Day (1-31)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'weekdays' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekdays')">Week Day (1-7)</a></li>
+                                                    <li><a [ngClass]="columns.type === 'week numbers' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'week numbers')">Week Number (0-52)</a></li>
                                                     <!-- <li><a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'weekname')">Week Name (Mon-Sun)</a></li> -->
-                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
+                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup" ngbDropdown style="display: flex; align-items: center;">
-                                                <li class="btn btn-primary-light dropdown-item" ngbDropdownItem style="display: inline-block;text-align: center !important;">Measure</li>
-                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex align-center" ngbDropdown >
+                                                <li class="btn btn-primary-light dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
+                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                    <li><a [ngClass]="columns.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
-                                                    <li><a [ngClass]="columns.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
-                                                    <li><a [ngClass]="columns.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count')">Count</a></li>
-                                                    <li><a [ngClass]="columns.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count_distinct')">Count (Distinct)</a></li>
-                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'')">None</a></li>  
+                                                    <li><a [ngClass]="columns.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
+                                                    <li><a [ngClass]="columns.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
+                                                    <li><a [ngClass]="columns.type === 'count' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count')">Count</a></li>
+                                                    <li><a [ngClass]="columns.type === 'count_distinct' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'count_distinct')">Count (Distinct)</a></li>
+                                                    <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <li><a class="btn btn-secondary-light mx-0" style="text-align: center !important;width: 100%;" (click)="dragStartedColumn(index,columns.column)"> Remove</a>  </li>
+                                            <li><a class="btn btn-secondary-light mx-0 column-remove-btn"  (click)="dragStartedColumn(index,columns.column)"> Remove</a>  </li>
                                         </ul>
                                     </div>
 
@@ -1133,7 +1133,7 @@
                         </div>
                     </div>
                     <div class="row align-items-center mb-1">
-                        <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0">
                             <div class="card-area d-flex gap-2">
                                 <label for="inputName" class="form-control mb-0 row-text border">Rows</label>
                             </div> 
@@ -1161,7 +1161,7 @@
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown >
-                                                    <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light" style="width: -webkit-fill-available">@if(rows.alias){
+                                                    <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light alis-measure-width" >@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
                                                     @else if(rows.type){
@@ -1176,7 +1176,7 @@
                                                     </li>
                                                     <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
                                                     <li class="dropdown-item btn btn-primary-light Aggregation-text" ngbDropdownItem >Aggregation</li>
-                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle" style="display: inline-block;" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                         <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
@@ -1265,7 +1265,7 @@
                                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                                     aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                                 <div class="dropdown-menu  cu" ngbDropdownMenu>
-                                                                        <a class="btn btn-secondary-light mx-0" style="text-align: left !important;" (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
+                                                                        <a class="btn btn-secondary-light mx-0"  (click)="removeDrillDownColumn(index,columns)"> Remove</a>     
                                                                     </div>
                                                                 </a>
                                                         </div>
@@ -1290,13 +1290,13 @@
                 </div> -->
                 @if((pie || bar || donut || map) && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 p-1">
-                                        <button class="btn btn-primary " (click)="goDrillDownBack()" style="padding: 4px;">
+                                        <button class="btn btn-primary p-1" (click)="goDrillDownBack()">
                                             <img src="./assets/images/Tiled view sheet icons/Drill-Down.png" alt="logo" class="w-5 h-5"> </button>
                                    </div>
                                     @if(drillDownObject && drillDownObject.length > 0 && drillDownIndex > 0 && draggedDrillDownColumns && draggedDrillDownColumns.length > 0){
                                     <div class="col-lg-3 col-md-3 d-flex mt-2" >
                                         @for(column of drillDownObject;track column;let index = $index){
-                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span style="padding-top: 3px;">--</span>
+                                       <h6 class="ms-1 mb-0 p-1" > {{drillDownObject[index][draggedDrillDownColumns[index]]}}</h6> <span class="mt-1">--</span>
                                    }
                                     </div>
                                 }
@@ -1607,7 +1607,7 @@
                                 </button>
                             </li>
                         </ul>
-                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" class="movetodashboard-text-btn"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2 " >Move to Dashboard</button>
+                        <div *ngIf="!sheetsDashboard && database_name" [class.disabled]="!retriveDataSheet_id" class="movetodashboard-text-btn"><button (click)="openSelectDashboard(content)" class="nav-link BtnNewStyle px-2 move-text" >Move to Dashboard</button>
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h6 class="modal-title">Move to Dashboard</h6>
@@ -1656,11 +1656,17 @@
                                                 </div>
                                                 <div class="card-body p-1">
                                                     @for(dimen of dimetionMeasure;track dimen;let index = $index){
-                                                    <div class="example-box justify-content-start border-bottom cursor-pointer"> 
+                                                    <div class="example-box justify-content-between border-bottom cursor-pointer"> 
                                                        {{dimen.col_name}}
                                                        <div class="filter-icons">
-                                                        <i class="fe fe-edit fs-12 text-body-secondary ms-2" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
-                                                        <i class="fe fe-trash fs-12 text-body-secondary ms-1" (click)="filterDelete(index,dimen.filter_id)"></i>
+                                                        <a aria-label="anchor" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
+                                                            <i class="ri-edit-line" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
+                                                        </a>
+                                                        <a aria-label="anchor" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                                            <i class="ri-delete-bin-7-line" (click)="filterDelete(index,dimen.filter_id)"></i>
+                                                        </a>
+                                                        <!-- <i class="fe fe-edit fs-12 text-body-secondary ms-2" ></i>
+                                                        <i class="ri-delete-bin-7-line" ></i> -->
                                                     </div>
                                                     </div>
                                                 }
@@ -1671,12 +1677,12 @@
                                                       <button type="button"class="btn-close"aria-label="Close"(click)="isAllSelected = false;modal.dismiss('Cross click')">
                                                       </button>
                                                     </div>
-                                                    <div class="modal-body"  style="height: 500px; overflow: auto;">
+                                                    <div class="modal-body edit-filter-modal"  >
                                                         <!-- <div class="input-group">
                                                             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch"
                                                                 (keyup.enter)="editFilterList()" aria-describedby="button-addon2">
                                                             <button class="btn btn-primary border me-2" (click)="editFilterList()" type="button" id="button-addon2"
-                                                                style="border-radius: 0px 4px 4px 0px;"><i class="fe fe-search "></i></button>
+                                                               ><i class="fe fe-search "></i></button>
                                                         </div> -->
                                                         @if(dateList.includes(filterType)){
                                                             <div class="card panel panel-primary">
@@ -1793,7 +1799,7 @@
                                                                                 </ng-template>
                                                                             </li>
                                                                         </ul>
-                                                                        <div class="panel-body tabs-menu-body p-1" style="height: 578px;">
+                                                                        <div class="panel-body tabs-menu-body p-1" >
                                                                             <div class="tab-content">
                                                                                 <div [ngbNavOutlet]="nav"></div>
                                                                             </div>
@@ -1840,7 +1846,7 @@
                                                                                                 <!-- <label><input type="radio" name="filter" value="none" />None</label> -->
                                                                                                 <label><input type="radio" name="filter" value="by-field" checked />By field:</label>
                                                                                             </div>
-                                                                                            <div style="margin-left: 5%;">
+                                                                                            <div class="ms-4">
                                                                                                 <div class="field-options">
                                                                                                     <select [(ngModel)]="topType">
                                                                                                       <option value="desc">Top</option>
@@ -1918,7 +1924,7 @@
                                                 <div class="card-header  bg-light justify-content-between align-items-center p-2">
                                                     <div class="card-title fs-12">Charts</div>
                                                 </div>
-                                                <div class="card-body" style=" padding: 2px 12px;">
+                                                <div class="card-body single-axis-card">
                                                     <div class="row">
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': draggedRows.length<1 && draggedColumns.length<1}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Table" tooltipClass="tooltip-primary" (click)="chartDisplay(true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,1);tableDisplayPagination();"><img src="./assets/images/charts/Table-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': table}"></a>
@@ -1945,8 +1951,10 @@
                                                         <div *ngIf="isApexCharts" class="col-3 px-2 mt-2" [ngClass]="{'disabled':  (draggedRows.length>1 || draggedColumns.length>1) || draggedRows.length<1 || draggedColumns.length>0 || guagechartRowData > 1 }">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="guage" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,28)"><img src="./assets/images/charts/gauge-icon-new.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': guage}"></a>
                                                         </div>
-                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !(dateList.includes(draggedColumnsData[0]?.[1]) && draggedRows.length ===1 && draggedColumns.length === 1 && draggedColumnsData[0]?.[2] === '') }">
-                                                            <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Calendar Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,11)"><img src="./assets/images/charts/calendar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar}"></a>
+                                                        <div *ngIf="isEChatrts" class="col-3 px-2 mt-2" [ngClass]="{'disabled': !(dateList.includes(draggedColumnsData[0]?.[1]) && draggedRows.length ===1 && draggedColumns.length === 1) }">
+                                                            <a href="javascript:void(0);"  triggers="hover" [ngbTooltip]="draggedColumnsData[0]?.[2] === '' ? 'Calendar Chart' : 'change Date Extract to None'" tooltipClass="tooltip-primary" container="body" placement="top" (click)="(draggedColumnsData[0]?.[2] === '') ? chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,11) : null">
+                                                                <img src="./assets/images/charts/calendar-chart.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': calendar, 'disabled': draggedColumnsData[0]?.[2] !== ''}">
+                                                            </a>
                                                         </div>
                                                         <div class="col-3 px-2 mt-2" [ngClass]="{'disabled': (draggedRows.length>1 || draggedColumns.length>1) || ( draggedRows.length<1 || draggedColumns.length<1)}">
                                                             <a href="javascript:void(0);"  triggers="hover" ngbTooltip="Funnel Chart" tooltipClass="tooltip-primary" (click)="chartDisplay(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,27)"><img src="./assets/images/charts/funnelChart-icon.png" class="rounded-2 w-90 mrk-t border p-1 chart-icon" [ngClass]="{'active': funnel}"></a>
@@ -1999,9 +2007,9 @@
                                                             </button>
                                                     
                                                         </h6>
-                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse" aria-labelledby="heading"
+                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse customize-accordion-h" aria-labelledby="heading"
                                                             data-bs-parent="#accordionExample">
-                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                                 <ng-template>
                                                                     <div>
                                                                         <div class="sub-menu-item  p-2">
@@ -2035,7 +2043,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                    style="width: 100px;" [(ngModel)]="headerFontSize">
+                                                                                                                     [(ngModel)]="headerFontSize">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -2132,9 +2140,9 @@
                                                             </button>
                                                     
                                                         </h6>
-                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse" aria-labelledby="heading"
+                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse customize-accordion-h" aria-labelledby="heading"
                                                             data-bs-parent="#accordionExample">
-                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                                 <ng-template>
                                                                     <div>
                                                                         <div class="sub-menu-item  p-2">
@@ -2168,7 +2176,7 @@
                                                                                                         <div class="row">
                                                                                                             <div class="form-group mb-0 d-flex">
                                                                                                                 <select class="form-select form-select select2 fs-14"
-                                                                                                                    style="width: 100px;" [(ngModel)]="tableDataFontSize">
+                                                                                                                     [(ngModel)]="tableDataFontSize">
                                                                                                                     <option value="10px">10px</option>
                                                                                                                     <option value="11px">11px</option>
                                                                                                                     <option value="12px">12px</option>
@@ -2265,13 +2273,13 @@
                                                             </button>
                                                     
                                                         </h6>
-                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse" aria-labelledby="heading"
+                                                        <div ngbAccordionCollapse id="collapse" class="accordion-collapse collapse customize-accordion-h" aria-labelledby="heading"
                                                             data-bs-parent="#accordionExample">
-                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                                 <ng-template>
                                                                     <div>
                                                                         <div class="sub-menu-item  p-2">
-                                                                            <div class="form-group mb-0 p-1">
+                                                                            <div class="form-group mb-0 p-0">
                                                                                 <select class="form-select form-select select2 fs-14" [(ngModel)]="selectedChartPlugin"
                                                                                     (change)="customizechangeChartPlugin()">
                                                                                     <option *ngIf="!(radar || calendar || map)" value="apex">Basic</option>
@@ -2304,17 +2312,17 @@
                                                           <div
                                                             ngbAccordionCollapse
                                                             id="collapse"
-                                                            class="accordion-collapse collapse" 
+                                                            class="accordion-collapse collapse customize-accordion-h" 
                                                             aria-labelledby="heading"
                                                             data-bs-parent="#accordionExample"
                                                              >
-                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                            <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                               <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                   <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                               </button> -->
                                                               <ng-template>
                                                                 <div >
-                                                                  <div class="sub-menu-item  p-2" >
+                                                                  <div class="sub-menu-item  p-2 mb-0" >
                                                                           <div class="row">
                                                                             <div class="" >
                                                                                 <div class="font-color-card">
@@ -2342,7 +2350,7 @@
                                                                                                 <div class="bold-italic p-1">
                                                                                                     <div class="row">
                                                                                                         <div class="form-group mb-0 d-flex">
-                                                                                                            <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="xLabelFontSize">
+                                                                                                            <select class="form-select form-select select2 fs-14" [(ngModel)]="xLabelFontSize">
                                                                                                                 <option value="10">10px</option>
                                                                                                                 <option value="11">11px</option>
                                                                                                                 <option value="12">12px</option>
@@ -2445,15 +2453,15 @@
                                                             <div
                                                               ngbAccordionCollapse
                                                               id="collapse"
-                                                              class="accordion-collapse collapse" 
+                                                              class="accordion-collapse collapse customize-accordion-h" 
                                                               aria-labelledby="heading"
                                                               data-bs-parent="#accordionExample"
                                                                >
-                                                              <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                              <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                             
                                                                 <ng-template>
                                                                   <div >
-                                                                    <div class="sub-menu-item  p-2" >
+                                                                    <div class="sub-menu-item  p-2 mb-0" >
                                                                         <div class="row">
                                                                             
                                                                         </div>
@@ -2485,7 +2493,7 @@
                                                                                             <div class="bold-italic p-1">
                                                                                                 <div class="row">
                                                                                                     <div class="form-group mb-0 d-flex">
-                                                                                                        <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="yLabelFontSize">
+                                                                                                        <select class="form-select form-select select2 fs-14"  [(ngModel)]="yLabelFontSize">
                                                                                                             <option value="10">10px</option>
                                                                                                             <option value="11">11px</option>
                                                                                                             <option value="12">12px</option>
@@ -2570,7 +2578,7 @@
                                                             </div>
                                                     </div>
 
-                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((pie && chartId) || donut || calendar || map || (table && draggedRows.length === 0))" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -2588,11 +2596,11 @@
                                                         <div
                                                           ngbAccordionCollapse
                                                           id="collapse"
-                                                          class="accordion-collapse collapse" 
+                                                          class="accordion-collapse collapse customize-accordion-h" 
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                             <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
@@ -2626,7 +2634,7 @@
                                                                                         <div class="bold-italic p-1">
                                                                                             <div class="row">
                                                                                                 <div class="form-group mb-0 d-flex">
-                                                                                                    <select class="form-select form-select select2 fs-14" style="width: 100px;" [(ngModel)]="dataLabelsFontSize">
+                                                                                                    <select class="form-select form-select select2 fs-14" [(ngModel)]="dataLabelsFontSize">
                                                                                                         <option value="0" selected disabled>size</option>
                                                                                                         <option value="10px">10px</option>
                                                                                                         <option value="11px">11px</option>
@@ -2915,11 +2923,11 @@
                                                         <div
                                                           ngbAccordionCollapse
                                                           id="collapse"
-                                                          class="accordion-collapse collapse" 
+                                                          class="accordion-collapse collapse customize-accordion-h" 
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                             <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
@@ -2971,11 +2979,11 @@
                                                         <div
                                                           ngbAccordionCollapse
                                                           id="collapse"
-                                                          class="accordion-collapse collapse" 
+                                                          class="accordion-collapse collapse customize-accordion-h" 
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody >
                                                             <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
@@ -3027,11 +3035,11 @@
                                                         <div
                                                           ngbAccordionCollapse
                                                           id="collapse"
-                                                          class="accordion-collapse collapse" 
+                                                          class="accordion-collapse collapse customize-accordion-h" 
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody>
                                                             <ng-template>
                                                                 <div *ngIf="!((table && chartId) || kpi || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
@@ -3266,14 +3274,14 @@
                                                         <div
                                                           ngbAccordionCollapse
                                                           id="collapse"
-                                                          class="accordion-collapse collapse" 
+                                                          class="accordion-collapse collapse customize-accordion-h" 
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody >
                                                             <ng-template>
                                                                 <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                                    <label for="columnName">Column</label>
+                                                                    <label class="mb-0" for="columnName">Column</label>
                                                                     <select id="columnName" [(ngModel)]="sortColumn" style="width: 50%;" (change)="sortType = 0; changeSelectedColumn();">
                                                                         <option value="select" selected disabled>select</option>
                                                                         <option *ngFor="let column of columnNamesForSort; let i = index" [ngValue]="column">
@@ -3304,7 +3312,7 @@
                                                     </div>
 
                                                     <div *ngIf="((pie && chartId) || donut || radar)">
-                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
                                                             <div class=""> 
                                                                 <p >Legends </p>
                                                             </div>
@@ -3315,9 +3323,9 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="legendSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                            <div class="">Allignment</div>
-                                                            <div class="btn-group my-2" ngbDropdown>
+                                                        <div *ngIf="legendSwitch" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                            <div class=""><p>Allignment</p></div>
+                                                            <div class="btn-group " ngbDropdown>
                                                                 <button type="button" ngbDropdownToggle class="btn btn-primary-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                                     {{legendsAllignment}}
                                                                 </button>
@@ -3329,7 +3337,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
                                                             <div class=""> 
                                                                 <p >Data Labels </p>
                                                             </div>
@@ -3340,7 +3348,7 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                        <div *ngIf="donut && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
                                                             <div class="" > 
                                                                 <p >Label </p>
                                                             </div>
@@ -3351,17 +3359,13 @@
                                                                 <span></span>
                                                             </div>
                                                         </div>
-                                                        <div *ngIf="donut" sclass="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                            <div style="display: flex;justify-content: space-between;">
-                                                                <label>Donut Size</label>
-                                                                <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5">
-                                                            </div>
+                                                        <div *ngIf="donut" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                            <label class="mb-0">Donut Size</label>
+                                                            <input type="number" [(ngModel)]="donutSize" min="1" max="100" step="5">
                                                         </div>
-                                                        <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
-                                                            <div style="display: flex;justify-content: space-between;">
-                                                                <label for="decimalInput">Decimal Places: </label>
-                                                            <input style="height: 30px;" type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" min="0" />
-                                                            </div>
+                                                        <div *ngIf="donut && label && !isEChatrts" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3 border-bottom">
+                                                            <label class="mb-0" for="decimalInput">Decimal Places: </label>
+                                                            <input  type="number" id="decimalInput" [(ngModel)]="donutDecimalPlaces" min="0" class="w-30">
                                                         </div>
                                                     </div>
 
@@ -3390,11 +3394,11 @@
                                                         <div
                                                           ngbAccordionCollapse
                                                           id="collapse"
-                                                          class="accordion-collapse collapse" 
+                                                          class="accordion-collapse collapse customize-accordion-h" 
                                                           aria-labelledby="heading"
                                                           data-bs-parent="#accordionExample"
                                                            >
-                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody style="    height: auto;max-height: 350px;">
+                                                          <div class="accordion-body p-0  database-dropdown" ngbAccordionBody >
                                                             <!-- <button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close mt-0">
                                                                 <i class="bi bi-arrows-fullscreen drilldown-icon"></i>
                                                             </button> -->
@@ -3506,7 +3510,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="error-mgs" *ngIf="!chartSuggestions || chartSuggestions.length === 0">
-                                                    <a *ngIf="!qrySetId" (click)="goToConnections()" style="cursor: pointer;"><span
+                                                    <a class="cursor-pointer" *ngIf="!qrySetId" (click)="goToConnections()" ><span
                                                         class="add-txt text-info">Connect to DataSource</span></a>
                                                     <p *ngIf="errorMessage" [innerHTML]="errorMessage">{{ errorMessage }}</p>
                                                     <p *ngIf="errorMessage1">{{ errorMessage1 }} <a style="cursor: pointer;color: #05aff8;" (click)="routeConfigure()">Add GPT API KEY</a>to proceed.</p>

@@ -164,7 +164,7 @@
                             <div *ngIf="showAllSheets && i < 4" class="card  img-shadow mb-0">
                                 <!-- <img src="./assets/images/Landingpage-images/recently-view/recent-1.jpg" class="card-img-top " alt="img"> -->
                                 <div class="card-body p-2 d-flex align-items-center justify-content-between">
-                                    <span class="avatar avatar-sm avatar-radius w-6 h-6 border">
+                                    <span class="avatar avatar-sm avatar-radius w-6 h-6 border me-1">
                                         <!-- <img  alt="product" class="avatar-radius" src="./assets/images/icons/postSQL-icon.jpg"> -->
                                         <img *ngIf="sheetlist.chart_id === 1"
                                             src="./assets/images/Tiled view sheet icons/table-tiled-icon.jpg" alt=""
@@ -221,7 +221,7 @@
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
                                             > {{sheetlist.sheet_name | slice:0:11}}</h5>
-                                        <p class="card-text">Modified on {{sheetlist.Modified}} </p>
+                                        <p class="card-text text-truncate">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
                                         <div class="d-flex justify-content-end p-1" ngbDropdown>

@@ -789,4 +789,17 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.put<any>(`${environment.apiUrl}/refresh_dashboard/`+this.accessToken,object);
     }
+
+    //excel and csv replace & upsert(append)
+    replaceExcelOrCsvFile(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/file_replace/`+this.accessToken,object);
+    }
+
+    upsertExcelOrCsvFile(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/file_append/`+this.accessToken,object);
+    }
 }
