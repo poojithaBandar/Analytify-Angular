@@ -151,6 +151,7 @@ export class WorkbenchComponent implements OnInit{
     
   } 
   googleSheetsData = [] as any;
+  gsheetsParentId:any;
   getGoogleSheetDetailsByUrl(url:any){
   const obj = {
     code: url
@@ -161,6 +162,7 @@ export class WorkbenchComponent implements OnInit{
         next: (data: any) => {
           console.log(data);
           this.googleSheetsData = data.sheets;
+          this.gsheetsParentId = data.parent_id
         },
         error: (error: any) => {
           console.log(error);
@@ -177,12 +179,15 @@ export class WorkbenchComponent implements OnInit{
     )
   }
   getHierachyIdFromGsheets(id:any){
-    this.workbechService.getHierachyIdFromGsheets(id)
+    this.workbechService.getHierachyIdFromGsheets(this.gsheetsParentId,id)
       .subscribe(
         {
           next: (data: any) => {
             console.log(data);
-           
+            if(data.hierarchy_id){
+              const GsheetsHierarchyId = btoa(data.hierarchy_id.toString());
+              this.router.navigate(['/analytify/database-connection/tables/quickbooks/'+GsheetsHierarchyId]);
+            }
           },
           error: (error: any) => {
             console.log(error);

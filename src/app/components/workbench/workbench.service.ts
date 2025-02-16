@@ -122,10 +122,10 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.post<any>(`${environment.apiUrl}/auth/google/callback/`+this.accessToken,obj);
   }
-  getHierachyIdFromGsheets(id:any){
+  getHierachyIdFromGsheets(parentId:any,id:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.get<any>(`${environment.apiUrl}/sheets/`+this.accessToken+'/'+id);
+    return this.http.get<any>(`${environment.apiUrl}/google_sheets_data/`+this.accessToken+'/'+parentId+'/'+id);
   }
   // getTableData(obj:any){
   //   const currentUser = localStorage.getItem( 'currentUser' );
