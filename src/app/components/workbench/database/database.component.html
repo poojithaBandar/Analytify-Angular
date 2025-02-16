@@ -507,7 +507,7 @@
                                                 </button>
                                             <input type="number" [(ngModel)]="rowLimit" id="input-text"
                                                 (keydown.enter)="getJoiningTableData()" placeholder="rows"
-                                                class="form-control w-30">
+                                                class="form-control w-30" min="0">
                                             <a [class.disabled]="!rowLimit || rowLimit <= 0"
                                                 [style.pointer-events]="!rowLimit || rowLimit <= 0 ? 'none' : 'auto'"
                                                 (click)="getJoiningTableData()"><i
@@ -672,7 +672,7 @@
                                     </button>
                                 <input type="number" [(ngModel)]="rowLimit" id="input-text"
                                     (keydown.enter)="executeQuery()"
-                                    placeholder="rows" class="form-control w-30">
+                                    placeholder="rows" class="form-control w-30" min="0">
                                 <a (click)="executeQuery()"><i
                                         class="mdi mdi-arrow-right-thick result-icon me-2"></i></a>
                                 <app-insights-button [buttonName]="' Go to sheet '" [classesList]="'btn btn-primary'"
@@ -824,6 +824,10 @@
         </div>
 
         <div class="modal-footer">
+            <div class="col text-left p-0">
+                <input type="checkbox" id="exclude" class="form-check-input" [(ngModel)]="isExclude">
+                <label for="exclude" class="form-check-label">Exclude</label>
+            </div>
             <button type="button" (click)="getSelectedRows()" [disabled]="!isAnyRowSelected()"
                 class="btn ripple btn-primary">Filter Data</button>
             <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');columnDataSearch =''">
@@ -932,6 +936,10 @@
 
         </div>
         <div class="modal-footer">
+            <div class="col text-left p-0">
+                <input type="checkbox" id="exclude" class="form-check-input" [(ngModel)]="isExclude">
+                <label for="exclude" class="form-check-label">Exclude</label>
+            </div>
             <button type="button" class="btn ripple btn-primary" [disabled]="!isAnyEditRowSelected()"
                 (click)="getSelectedRowsFromEdit()">Apply</button>
             <button type="button" class="btn ripple btn-secondary" (click)="columnDataSearch = '';

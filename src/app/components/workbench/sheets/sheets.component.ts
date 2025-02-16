@@ -208,11 +208,12 @@ export class SheetsComponent {
   displayUnits: string = 'none';
   prefix: string = '';
   suffix: string = '';
-  KPIDecimalPlaces: number = 0;
+  KPIDecimalPlaces: number = 2;
   KPIRoundPlaces: number = 0;
   KPIDisplayUnits: string = 'none';
   KPIPrefix: string = '';
   KPISuffix: string = '';
+  KPIPercentageDivisor : number = 100;
   isCustomSql = false;
   canDrop = true;
   createdBy : any;
@@ -1153,6 +1154,15 @@ try {
     console.log(this.draggedRowsData);
     this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     console.log(this.draggedRows)
+    if(type === 'count' || type === 'count_distinct'){
+      this.KPIDecimalPlaces = 0;
+      this.decimalPlaces = 0;
+      this.donutDecimalPlaces = 0;
+    } else {
+      this.KPIDecimalPlaces = 2;
+      this.decimalPlaces = 2;
+      this.donutDecimalPlaces = 2;
+    }
     this.dataExtraction();
      }
   }
@@ -1353,11 +1363,12 @@ try {
     this.dateDrillDownSwitch = false;
     delete this.originalData;
     this.sheetName = ''; this.sheetTitle = '';
-    this.KPIDecimalPlaces = 0;
+    this.KPIDecimalPlaces = 2;
     this.KPIRoundPlaces = 0;
     this.KPIDisplayUnits = 'none';
     this.KPIPrefix = '';
     this.KPISuffix = '';
+    this.KPIPercentageDivisor = 100;
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
@@ -1656,8 +1667,8 @@ try {
       this.legendSwitch = true;
       this.label = true;
       this.donutSize = 50;
-      this.donutDecimalPlaces = 0;
-      this.decimalPlaces = 0;
+      this.donutDecimalPlaces = 2;
+      this.decimalPlaces = 2;
       this.barColor = '#4382f7';
       this.lineColor = '#38ff98';
       this.heirarchyColumnData = [];
@@ -1906,7 +1917,11 @@ sheetSave(){
     topLegend:this.topLegend,
     sortColumn:this.sortColumn,
     locationDrillDownSwitch:this.locationDrillDownSwitch,
-    isLocationField : this.isLocationFeild
+    isLocationField : this.isLocationFeild,
+    KPIDecimalPlaces : this.KPIDecimalPlaces,
+    KPIDisplayUnits : this.KPIDisplayUnits,
+    KPIPrefix : this.KPIPrefix,
+    KPISuffix : this.KPISuffix
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -3256,6 +3271,11 @@ renameColumns(){
         case 'G':
           formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
           break;
+        case '%':
+          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+          break;
       }
     } else {
       formattedNumber = (value).toFixed(this.KPIDecimalPlaces)
@@ -3452,8 +3472,8 @@ customizechangeChartPlugin() {
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
     this.maxValueGuage = data.maxValueGuage ?? 100;
-    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 0;
-    this.decimalPlaces = data.decimalPlaces ?? 0;
+    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 2;
+    this.decimalPlaces = data.decimalPlaces ?? 2;
     this.legendsAllignment = data.legendsAllignment ?? 'bottom';
     this.displayUnits = data.displayUnits || 'none';
     this.suffix = data.suffix ?? '';
@@ -3490,6 +3510,10 @@ customizechangeChartPlugin() {
     this.rightLegend = data.rightLegend === '' ? null : data.rightLegend
     this.sortColumn = data.sortColumn ?? 'select';
     this.locationDrillDownSwitch = data.locationDrillDownSwitch ?? false;
+    this.KPIDecimalPlaces = data.KPIDecimalPlaces ?? 2,
+    this.KPIDisplayUnits = data.KPIDisplayUnits ?? 'none',
+    this.KPIPrefix = data.KPIPrefix ?? '',
+    this.KPISuffix = data.KPISuffix ?? ''
   }
 
   resetCustomizations(){
@@ -3543,7 +3567,7 @@ customizechangeChartPlugin() {
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
     this.maxValueGuage = 100;
-    this.donutDecimalPlaces = 0;
+    this.donutDecimalPlaces = 2;
     // this.decimalPlaces = 0;
     this.legendsAllignment = 'bottom';
     // this.displayUnits = 'none';
@@ -3581,6 +3605,10 @@ customizechangeChartPlugin() {
     this.rightLegend = null
     this.sortColumn = 'select';
     this.locationDrillDownSwitch = false;
+    // this.KPIDecimalPlaces = 0,
+    // this.KPIDisplayUnits = 'none',
+    // this.KPIPrefix = '',
+    // this.KPISuffix = ''
   }
 
   sendPrompt() {
@@ -3964,7 +3992,7 @@ customizechangeChartPlugin() {
         }
         document.body.removeChild(textArea);
       }
-      donutDecimalPlaces: number = 0;
+      donutDecimalPlaces: number = 2;
 
       setDataLabelsFontStyle(fontStyle:any){
         if(fontStyle === 'B'){
