@@ -21,7 +21,8 @@ ul.dropdown-menu.show { min-width: -webkit-fill-available;}
 ul.dropdown-menu { box-shadow: none; background-color: transparent; }
 h6.dropdown-header { font-weight: 700; background-color: aliceblue; }
 .schema-table-height{ height: 550px; overflow: auto;}
-.sidebar { width: 230px; padding: 10px; }
+.sidebar { width: 200px; padding: 10px; }
+.text-truncate { max-width: 200px !important;}
 .menu-item {  margin-bottom: 10px; }
 .menu-title { cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
 .sub-menu { margin-top: 5px; }

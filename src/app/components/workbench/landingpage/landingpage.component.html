@@ -223,7 +223,7 @@
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
                                             (click)="viewSheet(sheetlist.hierarchy_id,sheetlist.queryset_id,sheetlist.sheet_id)"
                                             > {{sheetlist.sheet_name | slice:0:11}}</h5>
-                                        <p class="card-text">Modified on {{sheetlist.Modified}} </p>
+                                        <p class="card-text text-truncate">Modified on {{sheetlist.Modified}} </p>
                                     </div>
                                     <div class="dashboard-option">
                                         <div class="d-flex justify-content-end p-1" ngbDropdown>
@@ -570,6 +570,10 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'SHOPIFY'">
                                         <img alt="product" src="./assets/images/icons/shopify-large-1.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'GOOGLE_SHEETS'">
+                                        <img alt="product" src="./assets/images/icons/google-sheets.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <!-- <td>{{database.server_type}}</td> -->

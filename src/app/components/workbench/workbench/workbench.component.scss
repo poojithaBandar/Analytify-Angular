@@ -167,7 +167,17 @@ a { cursor: pointer;}
 .server-content-card{ padding-top: 70px; height: auto;}
 .Search-Database-Server{ position: absolute;top: 0;right: 215px;width: 30%!important;}
 .logo-txt { width: 6rem; }
+.Relational-database-height{ height: calc(100% - 33px);}
 
+
+.table tbody tr {
+   cursor: pointer; /* Show pointer on hover */
+   transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+
+.table tbody tr:hover {
+   background-color: #f0f0f0; /* Light gray background on hover */
+}
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
 .header-title-search{  display: inline;  padding-left: 0px;  padding-right: 0px; }
