@@ -10,5 +10,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './data-transformation.component.scss'
 })
 export class DataTransformationComponent {
-  active=1;
+  active=0;
+  defaults = ['Connections'];
 }
