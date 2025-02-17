@@ -52,6 +52,7 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 import 'pivottable';
+import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 
 interface TableRow {
   [key: string]: any;
@@ -101,7 +102,7 @@ declare var $:any;
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -987,7 +988,12 @@ export class SheetsdashboardComponent {
           }, 1000);
         }
           if(chartId == 1){
-            this.tableItemsPerPage = sheet?.tableData?.tableItemsPerPage;
+            if(sheet?.tableData?.tableItemsPerPage){
+              sheet.tableData.tableItemsPerPage = 10;
+            }
+            if(sheet?.tableData?.tablePage){
+              sheet.tableData.tablePage = 1;
+            }
           }
         })
         console.log(this.sheetTagTitle);
@@ -2189,7 +2195,14 @@ allowDrop(ev : any): void {
         };
         this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
       }
-   
+      if(chartId == 1){
+        if(sheet?.tableData?.tableItemsPerPage){
+          sheet.tableData.tableItemsPerPage = 10;
+        }
+        if(sheet?.tableData?.tablePage){
+          sheet.tableData.tablePage = 1;
+        }
+      }
     });
      console.log('draggedDashboard',this.dashboard)
     }
@@ -4682,7 +4695,12 @@ kpiData?: KpiData;
             this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
           if(chartId == 1){
-            this.tableItemsPerPage = sheet?.tableData?.tableItemsPerPage;
+            if(sheet?.tableData?.tableItemsPerPage){
+              sheet.tableData.tableItemsPerPage = 10;
+            }
+            if(sheet?.tableData?.tablePage){
+              sheet.tableData.tablePage = 1;
+            }
           }
         })
         console.log(this.sheetTagTitle);
@@ -5009,8 +5027,9 @@ kpiData?: KpiData;
   }
 }
 //tablePagination
-tableSearchDashboard(item:any){
+tableSearchDashboard(item:any,event:any){
   this.tablePageNo=1;
+  this.tableSearch = event.target.value;
   this.pageChangeTableDisplay(item,1,false,0);
 }
 pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetIndex:any){
@@ -5044,8 +5063,9 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     }
   })  
 }
-tableSearchDashboardPublic(item:any){
+tableSearchDashboardPublic(item:any,event:any){
   this.tablePageNo=1;
+  this.tableSearch = event.target.value;
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
@@ -5479,6 +5499,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       next: (data) => {
         console.log(data);
         this.getDrillThroughActionList();
+        this.actionId = '';
         this.clearActionForm();
         this.editActions = false;
         this.toasterService.success('Action Deleted Successfully', 'Success', { positionClass: 'toast-top-center' });
