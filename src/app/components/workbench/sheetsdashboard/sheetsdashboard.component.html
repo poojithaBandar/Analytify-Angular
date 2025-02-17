@@ -872,7 +872,7 @@
             <div class="card-body p-1">
                 <div class="dashboard-title-card">
                   <div class="flex-grow-1">                     
-                    <div class="title-container border" *ngIf="!editor">
+                    <div class="title-container" [ngClass]="{'border': dashboardId}" *ngIf="!editor">
                       <input *ngIf="!dashboardId && !editor" (click)="editor =true && !isPublicUrl" type="text"  placeholder="Title" [(ngModel)]="dashboardName" (input)="updatedashboardName(dashboardName)" aria-label="Sheet" class="form-control" > 
                       <div *ngIf="dashboardId && !editor" (click)="editor =true && !isPublicUrl" id="htmlContent" [innerHtml]="dashboardTagTitle" [ngStyle]="{'padding-top': dashboardTagName[0] === '<' ? '1.5%' : '0'}"></div>              
                        
@@ -1153,8 +1153,8 @@
                     </div>
                     <div  class="input-group mt-1 p-1 sheet-table-search">
                         <input type="text" placeholder="Search" aria-describedby="button-addon2"      (mousedown)="disableDragging($event)"
-                        (mouseup)="enableDragging($event)" [(ngModel)]="tableSearch" (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)" class="form-control border-end-0 ">
-                        <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="isPublicUrl ? tableSearchDashboardPublic(item) : tableSearchDashboard(item)">
+                        (mouseup)="enableDragging($event)" (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item,$event) : tableSearchDashboard(item,$event)" class="form-control border-end-0 ">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="isPublicUrl ? tableSearchDashboardPublic(item,$event) : tableSearchDashboard(item,$event)">
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>
@@ -1614,7 +1614,7 @@
                       } -->
                       <td *ngFor="let column of item.tableData?.headers" [ngStyle]="{ 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,'font-style': item['customizeOptions']?.tableDataFontStyle,
                       'text-decoration': item['customizeOptions']?.tableDataFontDecoration, 'text-align': item['customizeOptions']?.tableDataFontAlignment, 'color': item['customizeOptions']?.tableDataFontColor, 'font-weight': item['customizeOptions']?.tableDataFontWeight }">
-                        {{ row[column] }}
+                        {{ row[column] | formatMeasure : item?.numberFormat?.decimalPlaces : item?.numberFormat?.prefix : item?.numberFormat?.suffix : item?.numberFormat?.displayUnits }}
                       </td>
                     </tr>
                   
@@ -1622,7 +1622,7 @@
                   </table>
                   <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,0)"></pagination-controls>
                   <div class="pagination-count">
-                    <select  [(ngModel)]="tableItemsPerPage" (ngModelChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,0)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
+                    <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,0)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
                           <option  value="10"> 10</option>
                           <option  value="50"> 50</option>
                           <option  value="100"> 100</option>

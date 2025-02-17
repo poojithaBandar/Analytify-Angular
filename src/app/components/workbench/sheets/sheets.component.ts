@@ -703,9 +703,10 @@ try {
                 // this.updateChart();
               }
               else{
-                this.chartsOptionsSet();
+                // this.chartsOptionsSet();
               }
             }
+            this.chartsOptionsSet();
             this.getDimensionAndMeasures();
             this.changeSelectedColumn();
             if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage || this.pivotTable) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
