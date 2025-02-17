@@ -392,6 +392,9 @@
                       <td *ngIf="database.server_type === 'SHOPIFY'">
                         <img alt="product" src="./assets/images/icons/shopify-large-1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'GOOGLE_SHEETS'">
+                        <img alt="product" src="./assets/images/icons/google-sheets.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
                             <td>{{database.updated_at}}</td>
@@ -469,6 +472,8 @@
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
                                                 <span *ngIf="database.server_type === 'SHOPIFY'" class="avatar avatar rounded-circle">
                                                   <img src="./assets/images/icons/shopify-large-1.jpg" alt="" class="rounded-circle"></span>
+                                                  <span *ngIf="database.server_type === 'GOOGLE_SHEETS'" class="avatar avatar rounded-circle">
+                                                    <img src="./assets/images/icons/google-sheets.jpg" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
@@ -550,12 +555,64 @@
     </div>
 
   </div>
-  
-
-
-
 }
+@if(isGoogleSheetsPage){
+  <div class="main-container container-fluid">
+    <div class="row" class="card card-padding-top">
+    <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
+      <div class="header-title-search">
+        <div class="connect-txt">
+          <h4 class="card-title mt-2">Connected to Google Sheets</h4>
+        </div>
+    </div>
+        <div class="card-body card-p">
+            <div class="table-responsive border table-responsive-height">
+                <table class="table border text-nowrap text-md-nowrap mb-0">
+                    <thead class="table-primary bg-primary table-primary-position">
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Created on</th>
+                            <th>Last Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngIf="googleSheetsData.length === 0">
+                        <td colspan="4" class="text-center">No sheets to display!</td>
+                      </tr>
+                      <tr *ngFor="let gsheets of googleSheetsData"  title="Select Sheet" (click)="getHierachyIdFromGsheets(gsheets.id)">
+                        <td>
+                          {{gsheets.name | slice:0:15}}
+                        </td>
+                        <td>
+                          {{gsheets.mimeType}}
+                        </td>
+                        <td>
+                          {{gsheets.createdTime | date}}
+                        </td>
+                        <td>
+                          {{gsheets.modifiedTime | date}}
+                        </td>
+                       
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+          <!-- <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
+          <div class="pagination-count">
+            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getDbConnectionList()" class="form-control cursor">
+                  <option  value="10"> 10</option>
+                  <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                  <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
+               
+            </select>
+         </div> -->
+        </div>
+    </div>
+    </div>
 
+  </div>
+}
 
 
 
@@ -1696,6 +1753,14 @@
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>Shopify</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectGoogleSheets()">
+                          <img src="/assets/images/Db_server_images/google-sheets.jpg"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600">
+                          <span>Google Sheets</span>
                         </div>
                       </div>        
                     </div>
