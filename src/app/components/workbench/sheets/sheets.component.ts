@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -51,7 +51,10 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
-
+// import $ from 'jquery';
+import 'pivottable';
+// import * as $ from 'jquery';
+import 'jquery-ui/ui/widgets/sortable';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -67,6 +70,14 @@ interface RangeSliderModel {
   maxValue: number;
   options: Options;
 }
+declare global {
+  interface JQuery {
+    sortable(): JQuery;
+  }
+}
+
+declare var $:any;
+
 @Component({
   selector: 'app-sheets',
   standalone: true,
@@ -99,6 +110,7 @@ export class SheetsComponent {
   draggedColumnsData = [] as any;
   mulColData = [] as any;
   mulRowData = [] as any;
+  pivotMeasureValues = [] as any;
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
@@ -227,6 +239,7 @@ export class SheetsComponent {
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
+  draggedMeasureValues = [] as any;
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
@@ -336,7 +349,13 @@ export class SheetsComponent {
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
-
+  @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
+  transformedData: any[] = [];
+  columnKeys: string[] = [];
+  rowKeys: string[] = [];
+  valueKeys: string[] = [];
+  rawData: any = {};
+  
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
     ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -652,6 +671,7 @@ try {
           "col": draggedColumnsObj,
           "row": this.draggedRowsData,
           "filter_id": this.filterId,
+          "pivot_measure":this.draggedMeasureValuesData,
           "datasource_querysetid": this.filterQuerySetId,
           "sheetfilter_querysets_id": this.sheetfilter_querysets_id,
           "hierarchy": this.draggedDrillDownColumns,
@@ -669,6 +689,10 @@ try {
             this.chartsDataSet(responce);
             this.mulColData = responce.columns;
             this.mulRowData = responce.rows;
+            this.pivotMeasureValues = responce.pivot_measure;
+            this.pivotColumnData = responce?.data?.col;
+            this.pivotRowData = responce?.data?.row;
+            this.pivotMeasureData = responce?.data?.pivot_measure;
             if (this.chartsRowData.length > 0) {
               // this.enableDisableCharts();
               // this.chartsOptionsSet();
@@ -683,11 +707,12 @@ try {
             }
             this.getDimensionAndMeasures();
             this.changeSelectedColumn();
-            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage || this.pivotTable) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
               if(!this.table){
                 this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
               }
               this.table = true;
+              this.pivotTable = false;
               this.bar = false;
               this.area = false;
               this.line = false;
@@ -710,6 +735,7 @@ try {
               // this.tableDisplayPagination();
             } else if(((this.pie || this.bar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
+              this.pivotTable = false;
               this.bar = false;
               this.area = false;
               this.line = false;
@@ -734,6 +760,9 @@ try {
               this.chartType = 'sidebyside';
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
               this.chartType = 'sidebyside'
+            }
+            if(this.pivotTable){
+              this.pivotTableDatatransform();
             }
             if(this.table){
               this.page = 1;
@@ -817,12 +846,74 @@ try {
         }
       }
 
+      pivotRowData = [] as any;
+      pivotColumnData = [] as any;
+      pivotMeasureData = [] as any;
+        pivotTableDatatransform() {
+          if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
+            this.transformedData =[];
+          let headers: string[] = [];
+
+          this.columnKeys = this.pivotColumnData?.map((col: any) => col.column); 
+          this.rowKeys = this.pivotRowData?.map((row: any) => row.col);
+          this.valueKeys = this.pivotMeasureData?.map((col:any) =>col.col)
+          this.pivotColumnData.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+      
+          this.pivotRowData.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          this.pivotMeasureData.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+      
+          this.transformedData.push(headers); 
+          let numRows = this.pivotColumnData[0].result_data.length;
+      
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = []; 
+            this.pivotColumnData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+                  this.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            this.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+
+            this.transformedData.push(rowArray);
+          }
+          this.renderPivotTable();        
+        }
+        }
+
+        renderPivotTable() {
+          setTimeout(() => {
+
+          if (this.pivotContainer && this.pivotContainer.nativeElement) {
+              ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
+                rows: this.columnKeys,  
+                cols: this.valueKeys, 
+                // vals: this.valueKeys, 
+                aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                rendererName: "Table"
+              });
+            // }, 1000);
+          }        
+                      }, 1000);
+
+        }
+
+
       chartsDataSet(data: any) {
         let sidebysideBarColumnData = [];
         this.sheetCustomQuery = data.custom_query;
         // this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        this.pivotMeasureData = data.data?.pivotMeasure_Data ? data.data.pivotMeasure_Data : data.sheet_data?.pivotMeasure_Data ? data.sheet_data?.pivotMeasure_Data : [];
         
         this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
@@ -925,6 +1016,9 @@ try {
       chartsOptionsSet(){
         if (this.bar) {
           this.chartType = 'bar';
+        }
+        else if(this.pivotTable){
+          this.chartType = 'pivotTable'
         } else if (this.area) {
           this.chartType = 'area';
         } else if (this.line) {
@@ -1273,6 +1367,7 @@ try {
   }
   }
   table = true;
+  pivotTable = false;
   bar = false;
   sidebyside = false;
   area = false;
@@ -1290,8 +1385,9 @@ try {
   guage = false;
   calendar = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,chartId:any){
     this.table = table;
+    this.pivotTable = pivotTable;
     this.bar=bar;
     this.area=area;
     this.line=line;
@@ -1605,6 +1701,7 @@ try {
       this.donutXaxis = [];
       this.sortedData = [];
       this.table = true;
+      this.pivotTable = false;
       this.bar = false;
       this.pie = false;
       this.line = false;
@@ -1719,6 +1816,13 @@ sheetSave(){
    bandColor1 = this.color1;
    bandColor2 = this.color2;
   }
+  if(this.pivotTable && this.chartId == 9){
+    //  this.saveTableData =  this.tableDataStore;
+    //  this.savedisplayedColumns = this.displayedColumns;
+    //  this.banding = this.bandingSwitch;
+    //  bandColor1 = this.color1;
+    //  bandColor2 = this.color2;
+    }
   if(this.bar && this.chartId == 6){
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
@@ -1931,6 +2035,7 @@ const obj={
   "datasource_querysetid": this.filterQuerySetId,
   "col": this.mulColData,
   "row": this.mulRowData,
+  "pivot_measure":this.pivotMeasureValues,
   "custom_query":this.sheetCustomQuery,
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
@@ -1941,6 +2046,9 @@ const obj={
   "columns_data":draggedColumnsObj,
   "rows": this.draggedRows,
   "rows_data":this.draggedRowsData,
+  "pivotMeasure":this.draggedMeasureValues,
+  "pivotMeasure_Data":this.pivotMeasureData,
+  "pivotTransformedData":this.transformedData,
   "col":tablePreviewCol,
   "row":tablePreviewRow,
   "results": {
@@ -2160,8 +2268,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.draggedColumns=this.sheetResponce?.columns;
         this.filterQuerySetId = responce?.datasource_queryset_id;
         this.draggedRows = this.sheetResponce?.rows;
+        this.draggedMeasureValues = this.sheetResponce?.pivotMeasure; 
         this.mulColData = responce?.col_data;
         this.mulRowData = responce?.row_data;
+
+        this.pivotMeasureData = this.sheetResponce?.pivotMeasure_Data;
+        this.pivotColumnData = this.sheetResponce?.col;
+        this.pivotRowData = this.sheetResponce?.row;
+
         this.tablePaginationRows=responce?.row_data;
         this.tablePaginationColumn=responce?.col_data;
   if (isDuplicate && duplicateFilterData) {
@@ -2232,6 +2346,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.draggedRowsData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
+        if(this.sheetResponce.pivotMeasure){
+          this.draggedMeasureValues = this.sheetResponce?.pivotMeasure;
+        }
+        else{
+          this.draggedMeasureValues.forEach((res:any) => {
+            this.draggedMeasureValues.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
+          });
+        }
         // this.table = false;
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
@@ -2241,6 +2363,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
           this.table = true;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2261,6 +2384,31 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
           this.tableDisplayPagination();
         }
+        if(responce.chart_id == 9){
+          // this.tableData = this.sheetResponce.results.tableData;
+          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          this.table = false;
+          this.pivotTable = true;
+          this.bar = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.map = false
+          this.funnel = false;
+          this.guage = false;
+          this.calendar = false;
+          this.pivotTableDatatransform();
+        }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
           this.KPINumber = this.sheetResponce?.results?.kpiNumber;
@@ -2275,6 +2423,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.KPIDisplayUnits = this.sheetResponce?.results?.kpiDecimalUnit,
           this.KPIDecimalPlaces = this.sheetResponce?.results?.kpiDecimalPlaces,
           this.table = false;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2299,6 +2448,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             echarts.registerMap('world', geoJson);  // Register the map data
           });
           this.table = false;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2326,6 +2476,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       //  this.barChart();
         this.bar = true;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2349,6 +2500,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.pieChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = true;
           this.line = false;
           this.area = false;
@@ -2372,6 +2524,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.lineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = true;
           this.area = false;
@@ -2395,6 +2548,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.areaChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = true;
@@ -2418,6 +2572,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.sidebysideBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2441,6 +2596,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.stockedBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2464,6 +2620,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.barLineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2487,6 +2644,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2510,6 +2668,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2533,6 +2692,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.hGrouped();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2556,6 +2716,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.multiLineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2579,6 +2740,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.donutChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2601,6 +2763,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'heatmap';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2623,6 +2786,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'funnel';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2645,6 +2809,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'guage';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2667,6 +2832,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'calendar';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -3341,15 +3507,15 @@ fetchChartData(chartData: any){
           this.sheetTitle = chartData.chart_title;
           this.sheetTagName = chartData.chart_title;
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10);
           }
           this.dataExtraction();
 
@@ -3770,7 +3936,6 @@ customizechangeChartPlugin() {
           this.heirarchyColumnData.push(columnData);
         }
   }
-
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
@@ -3788,7 +3953,41 @@ customizechangeChartPlugin() {
     } 
        this.dataExtraction();
       }
+      draggedMeasureValuesData = [] as any;
+      measureValuesdrop(event: CdkDragDrop<string[]>){
+        console.log(event)
+            let item: any = event.previousContainer.data[event.previousIndex];
+            let copy: any = JSON.parse(JSON.stringify(item));
+          let element: any = {};
+          for(let attr in copy) {
+          if (attr == 'title') {
+            element[attr] = copy[attr];
+          } else {
+            element[attr] = copy[attr];
+          }
+        }
+        this.draggedMeasureValues.splice(event.currentIndex, 0, element);
+        event.currentIndex = this.draggedMeasureValues.indexOf(element);
+        const rowIndexMap = new Map((this.draggedMeasureValues as any[]).map((row, index) => [row.column, index]));
+        if(element.data_type == 'calculated') {
+          this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+        } else {
+        this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+        }
+        if (this.dateList.includes(element.data_type)) {
+          this.dateFormat(element, event.currentIndex, 'year');
+        } else {
+          console.log('measurerows',this.draggedMeasureValuesData)
+          this.dataExtraction();
+        }
+      }
 
+      removemeasureValuesRow(index:any,column:any){
+        this.draggedMeasureValues.splice(index, 1);
+        this.draggedMeasureValuesData.splice(index, 1);
+        this.dataExtraction();
+
+      }
       toggleDateSwitch(){
             this.dateDrillDownSwitch = !this.dateDrillDownSwitch;
             this.heirarchyColumnData = [];
@@ -4911,6 +5110,7 @@ customizechangeChartPlugin() {
       this.dateDrillDownSwitch = false;
       this.resetCustomizations();
       this.table = true;
+      this.pivotTable = false;
       this.bar = false;
       this.area = false;
       this.line = false;
