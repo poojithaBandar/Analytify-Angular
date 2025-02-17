@@ -725,9 +725,9 @@ export class SheetsdashboardComponent {
           suffix:sheet?.sheet_data?.numberFormat?.suffix
         },
         pivotData:{
-          pivotmeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+          pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
           pivotRowData:sheet?.sheet_data?.row,
-          pivotColumnData:sheet?.sheet_data.col
+          pivotColData:sheet?.sheet_data.col
         },
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
@@ -944,7 +944,7 @@ export class SheetsdashboardComponent {
           sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
             headers.push(rowObj.col);
           });
-          sheet.pivotData?.pivotmeasureData?.forEach((colObj: any) => {
+          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
             headers.push(colObj.col);
           });
       
@@ -959,7 +959,7 @@ export class SheetsdashboardComponent {
             sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
               rowArray.push(rowObj.result_data[i]);
             });
-            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
               rowArray.push(rowObj.result_data[i]);
             });
   
@@ -969,7 +969,7 @@ export class SheetsdashboardComponent {
             if (this.pivotContainer && this.pivotContainer.nativeElement) {
                 ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
                   rows: columnKeys,  
-                  cols: rowKeys, 
+                  cols: valueKeys, 
                   // vals: this.valueKeys, 
                   aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
                   rendererName: "Table"
@@ -2133,7 +2133,7 @@ allowDrop(ev : any): void {
         element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
           headers.push(rowObj.col);
         });
-        element.pivotData?.pivotmeasureData?.forEach((colObj: any) => {
+        element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
           headers.push(colObj.col);
         });
     
@@ -2148,7 +2148,7 @@ allowDrop(ev : any): void {
           element.pivotData?.pivotRowData.forEach((rowObj: any) => {
             rowArray.push(rowObj.result_data[i]);
           });
-          element.pivotData?.pivotRowData.forEach((rowObj: any) => {
+          element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
             rowArray.push(rowObj.result_data[i]);
           });
 
@@ -2158,7 +2158,7 @@ allowDrop(ev : any): void {
           if (this.pivotContainer && this.pivotContainer.nativeElement) {
               ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
                 rows: columnKeys,  
-                cols: rowKeys, 
+                cols: valueKeys, 
                 // vals: this.valueKeys, 
                 aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
                 rendererName: "Table"
@@ -3413,6 +3413,14 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item.tableData.tableItemsPerPage = this.tableItemsPerPage;
       }
     }
+    if(item.chart_id == '9'){
+      if(!item1.originalData && !isLiveReloadData){
+        item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+      }
+
+    }
+
+
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
