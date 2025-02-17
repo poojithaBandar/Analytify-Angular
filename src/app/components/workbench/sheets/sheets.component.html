@@ -1053,7 +1053,7 @@
                                 </div>                                           
                         </div>
                     </div>
-                    <div [ngStyle]="{'display': ((pivotTable) && draggedColumns && draggedColumns.length > 0 ? '' : 'none')}" class="row align-items-center mb-1">
+                    <div [ngStyle]="{'display': (pivotTable ? '' : 'none')}" class="row align-items-center mb-1">
                         <div class="col-lg-2 col-md-2 col-sm-2 col-xl-2 p-0" style="overflow: auto; white-space: nowrap;">
                            <div class="card-area d-flex gap-2">
                                <label for="inputName" class="form-control mb-0 border">Rows</label>

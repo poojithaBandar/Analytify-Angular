@@ -949,8 +949,15 @@ export class SheetsdashboardComponent {
           });
       
           transformedData.push(headers); 
-          let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
-      
+          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+          let numRows = 0;
+          if (sheet.pivotData?.pivotColData?.length > 0) {
+              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+          }
           for (let i = 0; i < numRows; i++) {
             let rowArray: any[] = []; 
             sheet.pivotData?.pivotColData.forEach((colObj: any) => {
@@ -1347,6 +1354,10 @@ export class SheetsdashboardComponent {
           item1['tableData'] = item1['originalData']['tableData'];
           delete item1['originalData'];
           }
+          if(item1.chartId == '9' && item1['originalData']){//pivot
+            item1['pivotData'] = item1['originalData']['pivotData'];
+            delete item1['originalData'];
+            }
         if(item1.chartId == '25' && item1['originalData']){//KPI
           item1['kpiData'] = item1['originalData'];
           delete item1['originalData'];
@@ -2051,6 +2062,60 @@ allowDrop(ev : any): void {
           }
       }
     }
+    if(element.chartId == 9){
+      let transformedData :any =[];
+      let headers: string[] = [];
+
+     let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
+     let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
+    let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+    element.pivotData?.pivotColData?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+      headers.push(rowObj.col);
+    });
+    element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+      headers.push(colObj.col);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (element.pivotData?.pivotColData?.length > 0) {
+        numRows = element.pivotData.pivotColData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotRowData?.length > 0) {
+        numRows = element.pivotData.pivotRowData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotMeasureData?.length > 0) {
+        numRows = element.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+    }
+
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      element.pivotData?.pivotColData.forEach((colObj: any) => {
+        rowArray.push(colObj.result_data[i]);
+      });
+      element.pivotData?.pivotRowData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+      element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+      setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
+  }
         this.dashboard.push(element);
       }
     //  } else {
@@ -2119,53 +2184,7 @@ allowDrop(ev : any): void {
         };
         this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
       }
-      if(chartId == 9){
-          let transformedData :any =[];
-          let headers: string[] = [];
-
-         let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
-         let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
-        let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
-        element.pivotData?.pivotColData?.forEach((colObj: any) => {
-          headers.push(colObj.column);
-        });
-    
-        element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
-          headers.push(rowObj.col);
-        });
-        element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
-          headers.push(colObj.col);
-        });
-    
-        transformedData.push(headers); 
-        let numRows = element.pivotData?.pivotColData[0]?.result_data.length;
-    
-        for (let i = 0; i < numRows; i++) {
-          let rowArray: any[] = []; 
-          element.pivotData?.pivotColData.forEach((colObj: any) => {
-            rowArray.push(colObj.result_data[i]);
-          });
-          element.pivotData?.pivotRowData.forEach((rowObj: any) => {
-            rowArray.push(rowObj.result_data[i]);
-          });
-          element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
-            rowArray.push(rowObj.result_data[i]);
-          });
-
-          transformedData.push(rowArray);
-        }
-          setTimeout(() => {
-          if (this.pivotContainer && this.pivotContainer.nativeElement) {
-              ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
-                rows: columnKeys,  
-                cols: valueKeys, 
-                // vals: this.valueKeys, 
-                aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
-                rendererName: "Table"
-              });
-          }        
-        }, 1000);
-      }
+   
     });
      console.log('draggedDashboard',this.dashboard)
     }
@@ -3415,9 +3434,60 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     }
     if(item.chart_id == '9'){
       if(!item1.originalData && !isLiveReloadData){
-        item1['originalData'] = _.cloneDeep({chartOptions: item1.echartOptions});
+        item1['originalData'] = _.cloneDeep({pivotData: item1.pivotData});
       }
+      let transformedData :any =[];
+      let headers: string[] = [];
 
+     let columnKeys = item?.columns?.map((col: any) => col.column); 
+     let rowKeys = item?.rows?.map((row: any) => row.column);
+    let valueKeys = item?.pivot?.map((col:any) =>col.column)
+
+    item?.columns?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    item?.rows?.forEach((rowObj: any) => {
+      headers.push(rowObj.column);
+    });
+    item?.pivot?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (item?.columns?.length > 0) {
+        numRows = item.columns[0]?.result?.length || 0;
+    } else if (item?.rows?.length > 0) {
+        numRows = item.rows[0]?.result?.length || 0;
+    } else if (item?.pivot?.length > 0) {
+        numRows = item.pivot[0]?.result?.length || 0;
+    }
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      item?.columns?.forEach((colObj: any) => {
+        rowArray.push(colObj.result[i]);
+      });
+      item?.rows?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+      item?.pivot?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+    setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
     }
 
 

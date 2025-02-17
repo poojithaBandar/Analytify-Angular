@@ -869,7 +869,14 @@ try {
           });
       
           this.transformedData.push(headers); 
-          let numRows = this.pivotColumnData[0].result_data.length;
+          let numRows = 0;
+          if (this.pivotColumnData.length > 0) {
+            numRows = this.pivotColumnData[0].result_data.length;
+            } else if (this.pivotRowData.length > 0) {
+            numRows = this.pivotRowData[0].result_data.length;
+            } else if (this.pivotMeasureData.length > 0) {
+            numRows = this.pivotMeasureData[0].result_data.length;
+            }
       
           for (let i = 0; i < numRows; i++) {
             let rowArray: any[] = []; 
@@ -1657,6 +1664,8 @@ try {
     this.draggedColumnsData =[];
     this.draggedRows = [];
     this.draggedRowsData = [];
+    this.draggedMeasureValues = [];
+    this.draggedMeasureValuesData = [];
     // this.retriveDataSheet_id = '';
     this.dimetionMeasure = [];
     this.dualAxisColumnData = [];
@@ -2271,6 +2280,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.draggedMeasureValues = this.sheetResponce?.pivotMeasure; 
         this.mulColData = responce?.col_data;
         this.mulRowData = responce?.row_data;
+        this.pivotMeasureValues = responce?.pivot_measure
 
         this.pivotMeasureData = this.sheetResponce?.pivotMeasure_Data;
         this.pivotColumnData = this.sheetResponce?.col;
@@ -2349,9 +2359,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.sheetResponce.pivotMeasure){
           this.draggedMeasureValues = this.sheetResponce?.pivotMeasure;
         }
-        else{
+        else if(this.draggedMeasureValues){
           this.draggedMeasureValues.forEach((res:any) => {
-            this.draggedMeasureValues.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
+            this.draggedMeasureValuesData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
         // this.table = false;
