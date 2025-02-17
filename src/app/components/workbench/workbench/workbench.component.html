@@ -577,6 +577,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                      <tr *ngIf="googleSheetsData.length === 0">
+                        <td colspan="4" class="text-center">No sheets to display!</td>
+                      </tr>
                       <tr *ngFor="let gsheets of googleSheetsData"  title="Select Sheet" (click)="getHierachyIdFromGsheets(gsheets.id)">
                         <td>
                           {{gsheets.name | slice:0:15}}
