@@ -1223,7 +1223,7 @@
                 @if(item['type'] === 'image'){
                   <img [src]="item['imageData']" />
                 }
-                @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1) ){
+                @if(item['isEChart'] && !(item['chartId']=== 29 || item['chartId']=== 25 || item['chartId']=== 1 || item['chartId']=== 9) ){
                   <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }" [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight, 'overflow-y': 'auto'} : {}">
                     <div id="echartsBar{{item['sheetId']}}" echarts [options]="item['echartOptions']" (chartClick)="onEChartClick($event,item)" class="echart-charts" [ngStyle]="item['chartId'] === 11 ? {'height': calendarTotalHeight} : {}"></div>
                     </div>
@@ -1261,7 +1261,7 @@
                     (setDrilldowns)="mapchartDrillDown($event, item)"></app-insight-echart>
                   } -->
                 </div>
-              } @else if(!item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1)){
+              } @else if(!item['isEChart'] && !(item['chartId']=== 25 || item['chartId']=== 1 || item['chartId']=== 9)){
                 <div class="card-body p-1" [ngClass]="{ 'hidden-overflow': isOverflowHidden, 'overflow-auto': !isOverflowHidden }">
     
                   <div *ngIf="item['chartType'] === 'Tags'" id="test567" style="height: 100%;" >
@@ -1570,7 +1570,7 @@
                   </div>
                 </div>
               }
-              <div *ngIf="['Table', 'KPI'].includes(item['chartType'])" class="card-body p-1 overflow-auto">
+              <div *ngIf="['Table', 'KPI', 'PIVOT'].includes(item['chartType'])" class="card-body p-1 overflow-auto">
               @if(item['chartType'] === 'KPI' && item['chartId']=== 25){
                 <div class="big-number-container" >
                     @for(row of item['kpiData'].rows;track row){
@@ -1634,7 +1634,15 @@
               </div>
               <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
               </div>
+              @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
+                <div id="pivotTableContainer" #pivotTableContainer></div>
+
+              }
               </div>
+              <!-- <div *ngIf="item['chartType'] === PIVOT">
+                  <div id="pivotTableContainer" #pivotTableContainer></div>
+              </div> -->
+
 
                 <!-- <div class="card-footer p-1"> -->
                     <!-- <button mat-mini-fab (mousedown)="removeItem($event, item)" (touchstart)="removeItem($event, item)">

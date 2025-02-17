@@ -51,6 +51,7 @@ import { tap } from 'rxjs/operators';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
+import 'pivottable';
 
 interface TableRow {
   [key: string]: any;
@@ -86,6 +87,7 @@ interface KpiData {
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
 }
+declare var $:any;
 
 @Component({
   selector: 'app-sheetsdashboard',
@@ -198,6 +200,7 @@ export class SheetsdashboardComponent {
   drillThroughDatabaseName : any = '';
 
   calendarTotalHeight : string = '400px';
+  @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -254,7 +257,7 @@ export class SheetsdashboardComponent {
   options!: GridsterConfig;
   nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any ,tableItemsPerPage : any, tableTotalItems : any }
 }> = [];
-  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}
+  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any
   }>;
   dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
 }> = [];
@@ -723,6 +726,11 @@ export class SheetsdashboardComponent {
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
         },
+        pivotData:{
+          pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+          pivotRowData:sheet?.sheet_data?.row,
+          pivotColData:sheet?.sheet_data.col
+        },
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
@@ -924,6 +932,60 @@ export class SheetsdashboardComponent {
             };
             this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
+          if(chartId == 9){
+            let transformedData :any =[];
+            let headers: string[] = [];
+  
+           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
+           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+      
+          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+      
+          transformedData.push(headers); 
+          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+          let numRows = 0;
+          if (sheet.pivotData?.pivotColData?.length > 0) {
+              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+          }
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = []; 
+            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+  
+            transformedData.push(rowArray);
+          }
+            setTimeout(() => {
+            if (this.pivotContainer && this.pivotContainer.nativeElement) {
+                ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+                  rows: columnKeys,  
+                  cols: valueKeys, 
+                  // vals: this.valueKeys, 
+                  aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+                  rendererName: "Table"
+                });
+            }        
+          }, 1000);
+        }
           if(chartId == 1){
             this.tableItemsPerPage = sheet?.tableData?.tableItemsPerPage;
           }
@@ -1297,6 +1359,10 @@ export class SheetsdashboardComponent {
           item1['tableData'] = item1['originalData']['tableData'];
           delete item1['originalData'];
           }
+          if(item1.chartId == '9' && item1['originalData']){//pivot
+            item1['pivotData'] = item1['originalData']['pivotData'];
+            delete item1['originalData'];
+            }
         if(item1.chartId == '25' && item1['originalData']){//KPI
           item1['kpiData'] = item1['originalData'];
           delete item1['originalData'];
@@ -1478,6 +1544,13 @@ export class SheetsdashboardComponent {
         prefix:sheet?.sheet_data?.numberFormat?.prefix,
         suffix:sheet?.sheet_data?.numberFormat?.suffix
       },
+      pivotData: sheet.sheet_type === 'PIVOT' ? {
+        pivotDataTransformed:sheet?.sheet_data?.pivotTransformedData,
+        pivotRowData:sheet?.sheet_data?.row,
+        pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+        pivotColData:sheet?.sheet_data?.col
+      }
+      : undefined,
       customizeOptions: sheet?.sheet_data?.customizeOptions
     }));
     this.sheetIdsDataSet = this.dashboardNew.map(item => item['sheetId']);
@@ -1609,6 +1682,12 @@ export class SheetsdashboardComponent {
     });
   }
   getChartOptionsBasedOnType(sheet:any){
+    if(sheet.chart_id === 9){
+      let xaxis = sheet.sheet_data?.results?.barXaxis;
+      let yaxis = sheet.sheet_data?.results?.barYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
+    }
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
@@ -1765,7 +1844,6 @@ getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1
       tablePage : 1
     };
   }
-
   onDrag(event: any, item: any){
     let data = JSON.stringify(item);
         event.dataTransfer.setData('item', data);
@@ -1830,7 +1908,8 @@ allowDrop(ev : any): void {
       drillDownIndex : 0,
       isDrillDownData : copy.isDrillDownData,
       numberFormat : copy.numberFormat,
-      customizeOptions: copy.customizeOptions
+      customizeOptions: copy.customizeOptions,
+      pivotData:copy.pivotData
       };
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
@@ -1988,6 +2067,60 @@ allowDrop(ev : any): void {
           }
       }
     }
+    if(element.chartId == 9){
+      let transformedData :any =[];
+      let headers: string[] = [];
+
+     let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
+     let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
+    let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+    element.pivotData?.pivotColData?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+      headers.push(rowObj.col);
+    });
+    element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+      headers.push(colObj.col);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (element.pivotData?.pivotColData?.length > 0) {
+        numRows = element.pivotData.pivotColData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotRowData?.length > 0) {
+        numRows = element.pivotData.pivotRowData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotMeasureData?.length > 0) {
+        numRows = element.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+    }
+
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      element.pivotData?.pivotColData.forEach((colObj: any) => {
+        rowArray.push(colObj.result_data[i]);
+      });
+      element.pivotData?.pivotRowData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+      element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+      setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
+  }
         this.dashboard.push(element);
       }
     //  } else {
@@ -2056,6 +2189,7 @@ allowDrop(ev : any): void {
         };
         this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
       }
+   
     });
      console.log('draggedDashboard',this.dashboard)
     }
@@ -3303,6 +3437,65 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
         item1.tableData.tableItemsPerPage = this.tableItemsPerPage;
       }
     }
+    if(item.chart_id == '9'){
+      if(!item1.originalData && !isLiveReloadData){
+        item1['originalData'] = _.cloneDeep({pivotData: item1.pivotData});
+      }
+      let transformedData :any =[];
+      let headers: string[] = [];
+
+     let columnKeys = item?.columns?.map((col: any) => col.column); 
+     let rowKeys = item?.rows?.map((row: any) => row.column);
+    let valueKeys = item?.pivot?.map((col:any) =>col.column)
+
+    item?.columns?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    item?.rows?.forEach((rowObj: any) => {
+      headers.push(rowObj.column);
+    });
+    item?.pivot?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (item?.columns?.length > 0) {
+        numRows = item.columns[0]?.result?.length || 0;
+    } else if (item?.rows?.length > 0) {
+        numRows = item.rows[0]?.result?.length || 0;
+    } else if (item?.pivot?.length > 0) {
+        numRows = item.pivot[0]?.result?.length || 0;
+    }
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      item?.columns?.forEach((colObj: any) => {
+        rowArray.push(colObj.result[i]);
+      });
+      item?.rows?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+      item?.pivot?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+    setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
+    }
+
+
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
@@ -4230,6 +4423,13 @@ kpiData?: KpiData;
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
         },
+        pivotData: sheet.sheet_type === 'PIVOT' ? {
+          pivotDataTransformed:sheet?.sheet_data?.pivotTransformedData,
+          pivotRowData:sheet?.sheet_data?.row,
+          pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+          pivotColData:sheet?.sheet_data?.col
+        }
+        : undefined,
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
