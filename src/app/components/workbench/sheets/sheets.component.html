@@ -1956,7 +1956,7 @@
                                         </div>
                                     </ng-template>
                                 </li>
-                                <li [ngbNavItem]="2" [class.disabled]="(draggedColumns.length === 0 && draggedRows.length ===0)">
+                                <li [ngbNavItem]="2" [class.disabled]="pivotTable || (draggedColumns.length === 0 && draggedRows.length ===0)">
                                      <a ngbNavLink class="p-1">Customize</a>
                                         <ng-template ngbNavContent>
                                             <div class="tab-pane" id="linktabs">

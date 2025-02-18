@@ -461,6 +461,7 @@ export class SheetsComponent {
       this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
       this.dashboardId = +atob(route.snapshot.params['id4']);
       console.log(this.retriveDataSheet_id)
+      this.filterQuerySetId = null;
       // this.sheetRetrive();
       }
    } 
@@ -2073,6 +2074,7 @@ const obj={
   "rows_data":this.draggedRowsData,
   "pivotMeasure":this.draggedMeasureValues,
   "pivotMeasure_Data":this.pivotMeasureData,
+  "pivotMeasureValuesData":this.draggedMeasureValuesData,
   "pivotTransformedData":this.transformedData,
   "col":tablePreviewCol,
   "row":tablePreviewRow,
@@ -2291,7 +2293,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetCustomQuery = responce?.custom_query;
         this.sheetResponce = responce?.sheet_data;
         this.draggedColumns=this.sheetResponce?.columns;
-        this.filterQuerySetId = responce?.datasource_queryset_id;
+        if(!this.filterQuerySetId){
+          this.filterQuerySetId = responce?.datasource_queryset_id;
+        }
         this.draggedRows = this.sheetResponce?.rows;
         this.draggedMeasureValues = this.sheetResponce?.pivotMeasure; 
         this.mulColData = responce?.col_data;
@@ -2374,6 +2378,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         if(this.sheetResponce.pivotMeasure){
           this.draggedMeasureValues = this.sheetResponce?.pivotMeasure;
+          this.draggedMeasureValuesData = this.sheetResponce?.pivotMeasureValuesData
         }
         else if(this.draggedMeasureValues){
           this.draggedMeasureValues.forEach((res:any) => {
@@ -5136,6 +5141,8 @@ customizechangeChartPlugin() {
       this.draggedColumnsData = [];
       this.draggedRows = [];
       this.draggedRowsData = [];
+      this.draggedMeasureValues = [];
+      this.draggedMeasureValuesData = [];
       this.draggedDrillDownColumns = [];
       this.tablePaginationCustomQuery = '';
       this.chartsColumnData = [];

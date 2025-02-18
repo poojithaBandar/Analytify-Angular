@@ -152,6 +152,7 @@ export class WorkbenchComponent implements OnInit{
   } 
   googleSheetsData = [] as any;
   gsheetsParentId:any;
+  gsheetprofile:any;
   getGoogleSheetDetailsByUrl(url:any){
   const obj = {
     code: url
@@ -162,7 +163,8 @@ export class WorkbenchComponent implements OnInit{
         next: (data: any) => {
           console.log(data);
           this.googleSheetsData = data.sheets;
-          this.gsheetsParentId = data.parent_id
+          this.gsheetsParentId = data.parent_id;
+          this.gsheetprofile = data.profile
         },
         error: (error: any) => {
           console.log(error);
