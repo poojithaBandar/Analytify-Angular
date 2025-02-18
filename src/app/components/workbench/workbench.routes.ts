@@ -22,7 +22,18 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
-
+      {
+        path: 'datasources/google-sheets/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/google-sheets',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
       //  {
       //   path: 'database-connection/tables/:id',
       //   canActivate:[authGuard],
@@ -119,12 +130,14 @@ export const admin: Routes = [
       {
         path: 'sheetsdashboard',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent)
       },
       {
         path: 'sheetscomponent/sheetsdashboard/fileId/:id1/:id2',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
         pathMatch: 'full',
@@ -132,6 +145,7 @@ export const admin: Routes = [
       {
         path: 'sheetscomponent/sheetsdashboard/:id1/:id2',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
         pathMatch: 'full',
@@ -139,12 +153,14 @@ export const admin: Routes = [
       {
         path: 'home/sheetsdashboard/:id1/:id2/:id3',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
         pathMatch: 'full',
       }, {
         path: 'home/sheetsdashboard/:id1',
         canActivate: [authGuard],
+        canDeactivate: [canDeactivateGuard],
         loadComponent: () =>
           import('./sheetsdashboard/sheetsdashboard.component').then((m) => m.SheetsdashboardComponent),
         pathMatch: 'full',

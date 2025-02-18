@@ -148,6 +148,8 @@ export class DatabaseComponent {
   filterParamPass:any;
   itemCounters: any={};
   sheetCustmSqlDisable = true;
+  saveQueryCheck = false;
+  isExclude = false;
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/analytify/database-connection/tables/')){
@@ -169,6 +171,7 @@ export class DatabaseComponent {
       if (currentUrl.includes('/analytify/database-connection/savedQuery/') && route.snapshot.params['id1'] && route.snapshot.params['id2'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
         this.fromDatabasId = true;
+        this.saveQueryCheck = true;
         this.custumQuerySetid = +atob(route.snapshot.params['id2']);
         localStorage.setItem('QuerySetId', JSON.stringify(this.qurtySetId));
         this.getSchemaTablesFromConnectedDb();
@@ -194,6 +197,7 @@ export class DatabaseComponent {
       this.fromDatabasId = true;
       this.fromSheetEditDb = true;
       this.sheetCustmSqlDisable = false;
+      this.saveQueryCheck = true;
       this.datasourceQuerysetId = atob(route.snapshot.params['id3'])
       if(this.datasourceQuerysetId==='null'){
         console.log('filterqrysetid',this.datasourceQuerysetId)
@@ -287,6 +291,9 @@ export class DatabaseComponent {
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows;
         this.datasourceQuerysetId = data.datasorce_queryset_id;
+        if(this.datasourceQuerysetId){
+          this.getfilteredCustomSqlData();
+        }
         // if(this.fromSavedQuery){
         //   if(data.file_id === null)
         //   this.getSchemaTablesFromConnectedDb();
@@ -314,6 +321,7 @@ export class DatabaseComponent {
           this.itemCounters = data.dragged_data.json_data.dragged_array_indexing;
           this.joinTypes = data.dragged_data.join_type;
           this.saveQueryName= data.dragged_data.queryset_name;
+          this.checkQerynameChange = data.dragged_data.queryset_name;
           this.datasourceQuerysetId = data.dragged_data.dastasource_queryset_id;
           this.datasourceFilterIdArray = data.dragged_data.filter_list;
           if (this.draggedtables.length > 0) {
@@ -576,15 +584,17 @@ buildCustomRelation(){
         console.log(error)
       }
       })
-
 }
 clrQuery(){
   this.sqlQuery = ''
   this.cutmquryTable=[];
   this.custmQryTime='';
   this.custmQryRows='';
+  this.datasourceQuerysetId = null;
+  this.datasourceFilterIdArrayCustomQuery = [];
   // this.gotoSheetButtonDisable = true;
   this.clearFiltersOnClearQuery();
+
 }
 clearFiltersOnClearQuery(){
   if(this.custumQuerySetid !== 0 || this.custumQuerySetid !== null || this.custumQuerySetid !== '0' ){
@@ -600,6 +610,7 @@ clearFiltersOnClearQuery(){
     })
   }
 }
+checkQerynameChange:any;
 executeQuery(){
   const obj ={
     database_id: this.databaseId,
@@ -625,6 +636,7 @@ executeQuery(){
         this.custmQryRows = data.no_of_rows;
         if(this.saveQueryName === '' || this.saveQueryName === null || this.saveQueryName === undefined){
           this.saveQueryName = data.query_name;
+          this.checkQerynameChange = data.query_name;
           this.titleMarkDirty = true;
         }
         // this.qurtySetId = data.query_set_id;
@@ -839,7 +851,7 @@ buildCustomJoin(){
   this.tableJoiningList =[];
   this.joinTypes.forEach((element : any,index : number) => {
     let object;
-    let remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias == this.draggedtables[index + 1].table);
+    let remainingTables = [this.draggedtables[index + 1]];
     if(this.relationOfTables[index] && this.relationOfTables[index].length){
     object = {
        join : element,
@@ -883,6 +895,7 @@ joiningTablesFromDelete(){
         if(this.qurtySetId === 0){
           localStorage.setItem('QuerySetId','0');
           this.datasourceQuerysetId = null;
+          this.saveQueryName = '';
         }
         this.joinTypes = data?.table_columns_and_rows?.join_types        
         console.log('joining',data)
@@ -1072,6 +1085,7 @@ if(obj.row_limit === null || obj.row_limit === undefined){
         this.gotoSheetButtonDisable = false;
         if(this.saveQueryName ==='' || this.saveQueryName === null || this.saveQueryName === undefined){
         this.saveQueryName = data.queryset_name;
+        this.checkQerynameChange = data.queryset_name;
         this.titleMarkDirty = true;
         }
         this.queryBuilt = data.custom_query;
@@ -1256,6 +1270,7 @@ selectedColumnGetRows(col:any,datatype:any){
   }
   this.colName = col;
   this.dataType = datatype;
+  this.isExclude = false;
   this.workbechService.selectedColumnGetRows(obj).subscribe(
     {
       next:(data:any) =>{
@@ -1313,7 +1328,8 @@ getSelectedRows() {
     select_values:this.selectedRows,
     range_values:null,
     col_name:this.colName,
-    data_type:this.dataType
+    data_type:this.dataType,
+    is_exclude:this.isExclude
   }
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
     {
@@ -1426,7 +1442,8 @@ editFilter(id:any){
         this.editFilterList = data.result;
         this.colName=data.column_name,
         this.dataType = data.data_type
-        this.searchEditFilterList = this.editFilterList
+        this.searchEditFilterList = this.editFilterList;
+        this.isExclude = data.is_exclude;
       },
       error:(error:any)=>{
       console.log(error);
@@ -1517,7 +1534,7 @@ getSelectedRowsFromEdit() {
   let querySetIdToPass = (this.filterParamPass === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
 
   const obj = {
-    filter_id:this.datasourceFilterId || this.editFilterId,
+    filter_id: this.editFilterId,
     hierarchy_id:this.databaseId,
     queryset_id:querySetIdToPass,
     type_of_filter:'datasource',
@@ -1525,13 +1542,19 @@ getSelectedRowsFromEdit() {
     select_values:this.selectedRows,
     range_values:null,
     col_name:this.colName,
-    data_type:this.dataType
+    data_type:this.dataType,
+    is_exclude:this.isExclude
   }
   this.workbechService.getSelectedRowsFilter(obj).subscribe(
     {
       next:(data:any) =>{
         console.log(data)
         this.datasourceFilterId = data.filter_id;
+        if(this.filterParamPass === 'fromcustomsql'){
+          this.datasourceFilterIdArrayCustomQuery.push(data.filter_id)
+        }else{
+         this.datasourceFilterIdArray.push(data.filter_id);
+        }
         this.getDsQuerysetId();
          this.modalService.dismissAll('close')
       },
@@ -1583,7 +1606,13 @@ goToConnections(){
 markDirty(){
   this.titleMarkDirty = true;
 }
-
+checkNameChanged(){
+  if(this.saveQueryCheck){
+    if(this.checkQerynameChange !== this.saveQueryName){
+    this.titleMarkDirty = true;
+    }
+  }
+}
   goToSheet(fromParam: string) {
     this.goToSheetButtonClicked = true;
       let querySetIdToPass = (fromParam === 'fromcustomsql') ? this.custumQuerySetid : this.qurtySetId;
@@ -1596,58 +1625,9 @@ markDirty(){
         width: '400px',
       })
     } else {
-      // if (this.fromFileId) {
-      //   const encodedFileId = btoa(this.fileId.toString());
-      //   const encodedQuerySetId = btoa(querySetIdToPass.toString());
-      //   if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
-      //     // Encode 'null' to represent a null value
-      //     const encodedDsQuerySetId = btoa('null');
-      //     if (this.titleMarkDirty) {
-      //       let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
-      //       this.workbechService.updateQuerySetTitle(payload).subscribe({
-      //         next: (data: any) => {
-      //           this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-      //         },
-      //         error: (error: any) => {
-      //           console.log(error);
-      //           Swal.fire({
-      //             icon: 'error',
-      //             title: 'oops!',
-      //             text: error.error.message,
-      //             width: '400px',
-      //           })
-      //         }
-      //       });
-      //     } else {
-      //       this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-      //     }
-      //   } else {
-      //     // Convert to string and encode
-      //     const encodedDsQuerySetId = btoa(this.datasourceQuerysetId.toString());
-      //     if (this.titleMarkDirty) {
-      //       let payload = { file_id: this.fileId, query_set_id: querySetIdToPass, query_name: this.saveQueryName }
-      //       this.workbechService.updateQuerySetTitle(payload).subscribe({
-      //         next: (data: any) => {
-      //           this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-      //         },
-      //         error: (error: any) => {
-      //           console.log(error);
-      //           Swal.fire({
-      //             icon: 'error',
-      //             title: 'oops!',
-      //             text: error.error.message,
-      //             width: '400px',
-      //           })
-      //         }
-      //       });
-      //     } else {
-      //       this.router.navigate(['/insights/sheets/fileId' + '/' + encodedFileId + '/' + encodedQuerySetId + '/' + encodedDsQuerySetId])
-      //     }
-      //   }
-      // }
-        // if (this.fromDatabasId) {
         const encodedDatabaseId = btoa(this.databaseId.toString());
         const encodedQuerySetId = btoa(querySetIdToPass.toString());
+        this.checkNameChanged();
         if (this.datasourceQuerysetId === null || this.datasourceQuerysetId === undefined) {
           // Encode 'null' to represent a null value
           const encodedDsQuerySetId = btoa('null');

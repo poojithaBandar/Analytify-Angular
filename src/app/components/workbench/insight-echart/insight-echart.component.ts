@@ -83,6 +83,7 @@ export class InsightEchartComponent {
   @Input() bottomLegend:any;
   @Input() legendOrient:any;
   @Input() leftLegend:any;
+  @Input() isDistributed : any;
   @Output() saveOrUpdateChart = new EventEmitter<object>();
   @Output() setDrilldowns = new EventEmitter<object>();
 
@@ -151,7 +152,7 @@ export class InsightEchartComponent {
         show: false
       }]
       this.chartOptions['dataZoom'] = obj;
-      this.chartInstance.setOption(
+      this.chartInstance?.setOption(
         this.chartOptions,true);
     }
   }
@@ -177,6 +178,7 @@ export class InsightEchartComponent {
       },
       tooltip: {
         trigger: 'axis',
+        formatter:(params:any) => params[0].name + " : " +  this.formatNumber(params[0].data) 
       },
       axisPointer: {
         type: 'none'
@@ -300,7 +302,7 @@ funnelchart(){
     });
   });
   this.chartOptions = {
-    color:this.selectedColorScheme,
+    color: this.isDistributed ? this.selectedColorScheme : this.color,
     tooltip: {
       trigger: 'item',
     },
@@ -477,10 +479,12 @@ sidebySide(){
       type: 'value',
      
       splitLine: {
+        show: this.yGridSwitch, // Always show the grid lines
         lineStyle: {
-          color: this.yGridColor
-        }, 
-        show: this.yGridSwitch
+          color: this.yGridColor, // Replace with a test color
+          width: 1, // Set a specific width
+          type: 'solid', // Solid, dashed, or dotted line
+        },
       },
       axisLine: {
         lineStyle: {
@@ -771,6 +775,7 @@ areaChart(){
     },
     tooltip: {
       trigger: 'axis',
+      formatter:(params:any) => params[0].name + ' : ' + this.formatNumber(params[0].value) 
     },
     axisPointer: {
       type: 'none'
@@ -873,6 +878,7 @@ lineChart(){
     },
     tooltip: {
       trigger: 'axis',
+      formatter:(params:any) => params[0].name + ' : ' + this.formatNumber(params[0].value) 
     },
     axisPointer: {
       type: 'none'
@@ -966,7 +972,8 @@ pieChart(){
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter:(params:any) => params.name + ' : ' + this.formatNumber(params.value) 
     },
     legend: {
           bottom: this.bottomLegend, 
@@ -1011,7 +1018,7 @@ donutChart(){
     backgroundColor: this.backgroundColor,
     color:this.selectedColorScheme,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
     },
     legend: {
       bottom: this.bottomLegend, 
@@ -1317,11 +1324,7 @@ radarChart(){
     backgroundColor: this.backgroundColor,
     tooltip: { trigger: "item" },
     legend: {
-      data: legendArray,
-      show:this.legendSwitch,
-      // orient: 'vertical',
-      // left: 'center', 
-      // bottom: '5%', 
+      bottom: 'bottom', left: 'center', orient: 'horizontal'
     },
     radar: {
       axisName: {
@@ -1338,6 +1341,7 @@ radarChart(){
   //   label: {
   //     show: this.dataLabels, // Dynamically show or hide data labels            }
   // },
+  color: this.color, // Add color array for series
   series:[
     {
         type:'radar',
@@ -1447,10 +1451,11 @@ calendarChart() {
 
   // Populate calendarData and collect years
   this.chartsColumnData.forEach((data: any, index: any) => {
-      let arr = [data, this.chartsRowData[index]];
+      let formattedDate = data.split(" ")[0];
+      let arr = [formattedDate, this.chartsRowData[index]];
       calendarData.push(arr);
 
-      const year = new Date(data).getFullYear();
+      const year = new Date(formattedDate).getFullYear();
       years.add(year);
   });
 
@@ -1461,15 +1466,16 @@ calendarChart() {
   let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
 
   // Define the height for each calendar
-  const calendarHeight = 100;  // Adjust height for better visibility
-  const yearGap = 20;  // Reduced gap between years
+  const calendarHeight = 120;  // Adjust height for better visibility
+  const yearGap = 30;  // Reduced gap between years
   const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+  this.height = (totalHeight+25)+'px';
 
   // Create multiple calendar instances, one for each year
   let calendars = yearArray.map((year: any, idx: any) => ({
-      top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
+      top: idx === 0 ? 25 : ((calendarHeight + yearGap) * idx) + 25,
       range: year.toString(),
-      cellSize: ['auto', 10],
+      cellSize: ['auto', 12],
       splitLine: {
           show: true,
           lineStyle: {
@@ -1478,7 +1484,10 @@ calendarChart() {
           }
       },
       yearLabel: {
-          margin: 20
+        show: true,
+        margin: 25,
+        fontSize: 14,
+        fontWeight: 'bold'
       }
   }));
 
@@ -1496,12 +1505,19 @@ calendarChart() {
   let dataZoomConfig = [
     {
         type: 'slider',
+        show: true,
         yAxisIndex: 0,
         start: 0,  // Starting position of the scroll
-        end: 100,  // The scroll window size (adjustable)
+        end: 50,  // The scroll window size (adjustable)
         orient: 'vertical',  // Allow vertical scrolling
         zoomLock: false,  // Disable zoom lock for flexibility
-    }
+    },
+    {
+      type: 'inside',
+      yAxisIndex: 0,
+      start: 0,
+      end: 50
+  }
 ];
 
 this.chartOptions = {
@@ -1524,11 +1540,7 @@ this.chartOptions = {
   },
   calendar: calendars,
   series: series,  // Assign filtered data series to the chart
-  grid: {
-      height: totalHeight,
-      containLabel: true
-  },
-  dataZoom: this.isZoom 
+  dataZoom: dataZoomConfig
 };
 
   console.log(this.chartOptions,'calender');
@@ -1560,7 +1572,8 @@ mapChart(){
   let maxData: number = Math.max(...this.chartsRowData);
   let result:any[] = [];
 
-  // Loop through the countries (assuming both data sets align by index)
+  if(!(this.draggedDrillDownColumns>0 || this.drillDownIndex>0)){
+    // Loop through the countries (assuming both data sets align by index)
   this.dualAxisColumnData[0].values.forEach((country: string, index: number) => {
     // Create an object for each country
     const countryData: any = { name: country , value : this.chartsRowData[index]};
@@ -1574,6 +1587,8 @@ mapChart(){
 
     result.push(countryData);
   });
+  }
+
 if(this.chartsColumnData && this.chartsColumnData.length > 1){
 minData= Math.min(...this.chartsRowData);
 }
@@ -1581,47 +1596,164 @@ if(Number.isNaN(minData) || Number.isNaN(maxData)){
  minData = 0;
  maxData = 1;
 }
+let mapChartOptions = {
+  tooltip: {
+    formatter: (params: any) => {
+      const { name, data } = params;
+      if (data) {
+        const keys = Object.keys(data);
+  const values = Object.values(data);
+  let formattedString = '';
+  keys.forEach((key, index) => {
+    if(key)
+    formattedString += `${key}: ${values[index]}<br/>`;
+  });
+ 
+  return formattedString;
+       
+      } else {
+        return `${name}: No Data`;
+      }
+    },
+        trigger: 'item',
+        showDelay: 0,
+        transitionDuration: 0.2
+      },
+  visualMap: {
+    min: minData,
+    max: maxData,
+    text: ['High', 'Low'],
+    realtime: false,
+    calculable: true,
+    inRange: {
+     color: ['lightskyblue', 'yellow', 'orangered']
+    }
+  },
+  series: [{
+    type: 'map',
+    map: 'world',
+    roam: this.isZoom,  
+    data: result
+  }]
+ };
+let barChartOptions = {
+  backgroundColor: this.backgroundColor,
+  legend: {
+    orient: 'vertical',
+    left: 'left'
+  },
+  toolbox: {
+    feature: {
+      magicType: { show: true, type: ['line'] },
+      restore: { show: true },
+      saveAsImage: { show: true }
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+  },
+  axisPointer: {
+    type: 'none'
+  },
+  dataZoom: [
+    {
+      show: this.isZoom,
+      type: 'slider'
+    },
 
-this.chartOptions = {
- tooltip: {
-   formatter: (params: any) => {
-     const { name, data } = params;
-     if (data) {
-       const keys = Object.keys(data);
- const values = Object.values(data);
- let formattedString = '';
- keys.forEach((key, index) => {
-   if(key)
-   formattedString += `${key}: ${values[index]}<br/>`;
- });
+  ],
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '13%',
+    containLabel: true,
+  },
+  xAxis: {
+    type: 'category',
+    data: this.chartsColumnData,
+    nameLocation: this.xlabelAlignment,
+    splitLine: {
+      lineStyle: {
+        color: this.xGridColor
+      }, show: this.xGridSwitch
+    },
+    axisLine: {
+      lineStyle: {
+        color: this.xLabelColor,
+      },
+    },
+    axisLabel: {
+      show: this.xLabelSwitch,
+      fontFamily: this.xLabelFontFamily,
+      fontSize: this.xLabelFontSize,
+      fontWeight: this.xlabelFontWeight,
+      color: this.dimensionColor,
+      // align: this.xlabelAlignment,// Hide xAxis labels
+      interval: 0, // Show all labels
+      padding: [10, 0, 10, 0],
+      align: this.dimensionAlignment,
+      formatter: function(value:any) {
+        return value.length > 5 ? value.substring(0, 5) + '...' : value; // Truncate long labels
+    }
+    }
+  },
+  toggleGridLines: true,
+  yAxis: {
+    type: 'value',
+    axisLine: {
+      lineStyle: {
+        color: this.yLabelColor
+      },
+      show: this.yGridSwitch
+    },
+    axisLabel: {
+      show: this.yLabelSwitch,
+      fontFamily: this.yLabelFontFamily,
+      fontSize: this.yLabelFontSize,
+      fontWeight: this.ylabelFontWeight,
+      color:this.measureColor,
+      rotate:0,
+      formatter: function(value:any) {
+        return value.length > 5 ? value.substring(0, 2) + '...' : value; // Truncate long labels
+    }
+    // formatter:(params:any) => this.formatNumber(params.value) 
+    },
+    splitLine: {
+      lineStyle: {
+        color: this.yGridColor
+      },
+      show: this.yGridSwitch
+    }
+  },
+  // itemStyle: {borderWidth : '50px' },
+  series: [
+    {
+      itemStyle: {
+        borderRadius: 5
+      },
+      label: { show: true,
+        position: this.dataLabelsFontPosition,
+        align:'center',
+        fontFamily:this.dataLabelsFontFamily,
+        fontSize:this.dataLabelsFontSize,
+        fontWeight:this.isBold ? 700 : 400,
+        color: this.dataLabelsColor,
+        formatter:(params:any) => this.formatNumber(params.value) 
+       },
+      type: 'bar',
+      barWidth: '80%',
+      data: this.chartsRowData
+      // data: this.chartsRowData.map((value: any, index: number) => ({
+      //   value,
+      //   itemStyle: { borderWidth: '50px' }
+      // })),
+    },
+  ],
+  color: this.color
 
- return formattedString;
-      
-     } else {
-       return `${name}: No Data`;
-     }
-   },
-       trigger: 'item',
-       showDelay: 0,
-       transitionDuration: 0.2
-     },
- visualMap: {
-   min: minData,
-   max: maxData,
-   text: ['High', 'Low'],
-   realtime: false,
-   calculable: true,
-   inRange: {
-    color: ['lightskyblue', 'yellow', 'orangered']
-   }
- },
- series: [{
-   type: 'map',
-   map: 'world',
-   roam: this.isZoom,  
-   data: result
- }]
 };
+this.chartOptions = this.draggedDrillDownColumns.length > 0 ? (this.drillDownIndex > 0 ? barChartOptions : mapChartOptions) : mapChartOptions
+console.log(this.chartOptions);
  }
 formatNumber(value: number): string {
   let formattedNumber = value+'';
@@ -1651,7 +1783,7 @@ formatNumber(value: number): string {
 
 private updateChartOptions(): void {
   if (this.chartInstance) {
-    this.chartInstance.setOption(this.chartOptions, true); // Update chart options dynamically
+    this.chartInstance?.setOption(this.chartOptions, true); // Update chart options dynamically
   }
 }
 
@@ -1719,7 +1851,7 @@ chartInitialize(){
     }
     else{
       this.chartInitialize();
-      this.chartInstance.setOption(this.chartOptions, true); // Full reset
+      this.chartInstance?.setOption(this.chartOptions, true); // Full reset
     }
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -1743,7 +1875,8 @@ chartInitialize(){
     }
     if(changes['isZoom']){
       if (this.chartInstance) {
-        this.chartInstance.setOption({
+
+        let obj ={
           dataZoom: this.isZoom ? [
             {
               type: 'slider',
@@ -1754,7 +1887,20 @@ chartInitialize(){
             }
           ]
         }
-        );
+        this.chartInstance?.setOption(obj);
+        this.chartOptions = { ...this.chartOptions, ...obj };
+        // this.chartInstance?.setOption({
+        //   dataZoom: this.isZoom ? [
+        //     {
+        //       type: 'slider',
+        //       show: true
+        //     }] : [{
+        //       type: 'slider',
+        //       show: false
+        //     }
+        //   ]
+        // }
+        // );
       }
     }
     if(changes['xLabelFontFamily']){
@@ -1862,7 +2008,7 @@ chartInitialize(){
         this.dataLabelsSetOptions();
       }
     }
-    if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme']){
+    if(changes['color'] || changes['barColor'] || changes['lineColor'] || changes['selectedColorScheme'] || changes['isDistributed']){
       if(this.chartInstance){
         this.colorSetOptions();
       }
@@ -1898,9 +2044,12 @@ chartInitialize(){
     if(changes['donutSize']){
       this.donutSizeChange();
     }
-    if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
-      this.sortSeries(this.sortType);
+    if(changes['isBold']){
+      this.setDatalabelsFontWeight();
     }
+    // if(this.chartType === 'bar' && changes['sortType'] && changes['sortType']?.currentValue !== 0){
+    //   this.sortSeries(this.sortType);
+    // }
     if(this.isSheetSaveOrUpdate){
       let object = {
         chartOptions : this.chartOptions
@@ -1918,7 +2067,8 @@ chartInitialize(){
         }
       }
     }   
-    this.chartInstance.setOption(obj);
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.fontFamily = this.xLabelFontFamily;
   }else if(this.chartType ==='heatmap'){
     let obj = {
       xAxis :{
@@ -1929,7 +2079,9 @@ chartInitialize(){
         }
       }
     } 
-    this.chartInstance.setOption(obj);
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.textStyle.fontFamily = this.xLabelFontFamily;
+    
   }
 
   }
@@ -1942,7 +2094,9 @@ chartInitialize(){
         }
       }]
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis[0].axisLabel.fontSize = this.xLabelFontSize;
+
   }
   else if(this,this.chartType === 'heatmap'){
     let obj ={
@@ -1954,7 +2108,8 @@ chartInitialize(){
         }
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.textStyle.fontSize = this.xLabelFontSize;
   }
   else{
     let obj ={
@@ -1964,7 +2119,8 @@ chartInitialize(){
         }
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.fontSize = this.xLabelFontSize;
   }
   }
   xlabelFontWeightSetOption(){
@@ -1976,7 +2132,8 @@ chartInitialize(){
         }
       }]
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
   }
  else if(this.chartType === 'heatmap'){
     let obj ={
@@ -1988,7 +2145,8 @@ chartInitialize(){
         }
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.textStyle.fontWeight = this.xlabelFontWeight;
   }
   else{
     let obj ={
@@ -1998,7 +2156,8 @@ chartInitialize(){
         }
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.fontWeight = this.xlabelFontWeight;
   }
   }
   dimensionColorSetOption(){
@@ -2010,7 +2169,8 @@ chartInitialize(){
           }
         }]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis[0].axisLabel.color = this.dimensionColor;
     }
    else if(this.chartType === 'heatmap'){
       let obj ={
@@ -2022,7 +2182,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis.axisLabel.textStyle.color = this.dimensionColor;
     }
     else{
       let obj ={
@@ -2032,8 +2193,9 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
-    }
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis.axisLabel.color = this.dimensionColor;
+     }
   }
   yLabelFontFamilySetOptions(){
     if(this.chartType ==='barline'){
@@ -2041,17 +2203,19 @@ chartInitialize(){
       yAxis: [
         {
           axisLabel: {
-            fontFamily: this.yLabelFontFamily, // Update for 'Bar Axis'
+            fontFamily: this.yLabelFontFamily,
           },
         },
         {
           axisLabel: {
-            fontFamily: this.yLabelFontFamily, // Update for 'Bar Axis'
+            fontFamily: this.yLabelFontFamily, 
           },
         },
       ],
      }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis[0].axisLabel.fontFamily = this.yLabelFontFamily;
+      this.chartOptions.yAxis[1].axisLabel.fontFamily = this.yLabelFontFamily;
     }
     else if(this.chartType === 'heatmap'){
       let obj ={
@@ -2063,7 +2227,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis.axisLabel.textStyle.fontFamily = this.yLabelFontFamily;
     }
     else{
       let obj ={
@@ -2073,7 +2238,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis.axisLabel.fontFamily = this.yLabelFontFamily;
     }
   }
   yLabelFontSizeSetOptions(){
@@ -2092,8 +2258,9 @@ chartInitialize(){
         },
       ],
      }
-      this.chartInstance.setOption(obj)
-    }
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis[0].axisLabel.fontSize = this.yLabelFontSize;
+      this.chartOptions.yAxis[1].axisLabel.fontSize = this.yLabelFontSize;    }
     else if(this.chartType === 'heatmap'){
       let obj ={
         yAxis :{
@@ -2104,7 +2271,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis.axisLabel.textStyle.fontSize = this.yLabelFontSize;
     }
     else{
       let obj ={
@@ -2114,7 +2282,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis.axisLabel.fontSize = this.yLabelFontSize;
     }
   }
   ylabelFontWeightSetOptions(){
@@ -2133,7 +2302,9 @@ chartInitialize(){
          },
        ],
       }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.yAxis[0].axisLabel.fontWeight = this.ylabelFontWeight;
+       this.chartOptions.yAxis[1].axisLabel.fontWeight = this.ylabelFontWeight;
      }
      else if(this.chartType === 'heatmap'){
        let obj ={
@@ -2145,8 +2316,9 @@ chartInitialize(){
            }
          }
        }
-       this.chartInstance.setOption(obj)
-     }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.yAxis.axisLabel.textStyle.fontWeight = this.ylabelFontWeight;
+      }
      else{
        let obj ={
          yAxis :{
@@ -2155,7 +2327,8 @@ chartInitialize(){
            }
          }
        }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.yAxis.axisLabel.fontWeight = this.ylabelFontWeight;
      }
   }
   measureColorSetOptions(){
@@ -2174,8 +2347,9 @@ chartInitialize(){
          },
        ],
       }
-       this.chartInstance.setOption(obj)
-     }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.yAxis[0].axisLabel.color = this.measureColor;
+       this.chartOptions.yAxis[1].axisLabel.color = this.measureColor;     }
      else if(this.chartType === 'heatmap'){
        let obj ={
          yAxis :{
@@ -2186,7 +2360,8 @@ chartInitialize(){
            }
          }
        }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.yAxis.axisLabel.textStyle.color = this.measureColor
      }
      else{
        let obj ={
@@ -2196,7 +2371,8 @@ chartInitialize(){
            }
          }
        }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.yAxis.axisLabel.color = this.measureColor;
      }
   }
   dataLabelsFontFamilySetOptions(){
@@ -2215,21 +2391,23 @@ chartInitialize(){
          },
        ],
       }
-       this.chartInstance.setOption(obj)
-     }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.fontFamily = this.dataLabelsFontFamily;
+       this.chartOptions.series[1].label.fontFamily = this.dataLabelsFontFamily  `1`;
+      }
      else if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { fontFamily: any; }; }) => {
         if (dataItem.label) { // Ensure label exists before updating
             dataItem.label.fontFamily = this.dataLabelsFontFamily;
         }
     });
-       this.chartInstance.setOption(this.chartOptions,true)
+       this.chartInstance?.setOption(this.chartOptions,true);
      }
      else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
       this.chartOptions.series.forEach((series: { label: { fontFamily: any; }; }) => {
         series.label.fontFamily = this.dataLabelsFontFamily; 
     });
-    this.chartInstance.setOption(this.chartOptions,true)
+    this.chartInstance?.setOption(this.chartOptions,true)
      }
      else{
        let obj ={
@@ -2240,7 +2418,8 @@ chartInitialize(){
            }
          }]
        }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.fontFamily = this.dataLabelsFontFamily;
      }
   }
   dataLabelsFontSizeSetOptions(){
@@ -2259,21 +2438,23 @@ chartInitialize(){
          },
        ],
       }
-       this.chartInstance.setOption(obj)
-     }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.fontSize = this.dataLabelsFontSize;
+       this.chartOptions.series[1].label.fontSize = this.dataLabelsFontSize;
+      }
      else if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { fontSize: any; }; }) => {
         if (dataItem.label) { // Ensure label exists before updating
             dataItem.label.fontSize = this.dataLabelsFontSize;
         }
     });
-       this.chartInstance.setOption(this.chartOptions,true)
+       this.chartInstance?.setOption(this.chartOptions,true)
      }
      else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
       this.chartOptions.series.forEach((series: { label: { fontSize: any; }; }) => {
         series.label.fontSize = this.dataLabelsFontSize; 
     });
-    this.chartInstance.setOption(this.chartOptions,true)
+    this.chartInstance?.setOption(this.chartOptions,true)
      }
      else{
        let obj ={
@@ -2284,7 +2465,9 @@ chartInitialize(){
            }
          }]
        }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.fontSize = this.dataLabelsFontSize
+      //  this.chartOptions = { ...this.chartOptions, ...obj };
      }
   }
   dataLabelsColorSetOptions(){
@@ -2303,19 +2486,20 @@ chartInitialize(){
          },
        ],
       }
-       this.chartInstance.setOption(obj)
-     }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.color = this.dataLabelsColor;
+       this.chartOptions.series[1].label.color = this.dataLabelsColor;     }
      else if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { color: string; }; }) => {
         dataItem.label.color = this.dataLabelsColor;
     });
-       this.chartInstance.setOption(this.chartOptions,true)
+       this.chartInstance?.setOption(this.chartOptions,true)
      }
      else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
       this.chartOptions.series.forEach((series: { label: { color: any; }; }) => {
         series.label.color = this.dataLabelsColor; 
     });
-    this.chartInstance.setOption(this.chartOptions,true)
+    this.chartInstance?.setOption(this.chartOptions,true)
      }
      else{
        let obj ={
@@ -2326,40 +2510,61 @@ chartInitialize(){
            }
          }]
        }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.color = this.dataLabelsColor
      }
   }
   dataLabelsFontPositionSetOptions(){
-    // if(this.chartType ==='barline'){
-    //   let obj ={
-    //    series: [
-    //      {
-    //        label: {
-    //         position: this.dataLabelsFontPosition, // Update for 'Bar Axis'
-    //        },
-    //      },
-    //      {
-    //       label: {
-    //         position: this.dataLabelsFontPosition, 
-    //        },
-    //      },
-    //    ],
-    //   }
-    //    this.chartInstance.setOption(obj)
-    //  }
       if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { position: any; }; }) => {
         if (dataItem.label) { // Ensure label exists before updating
             dataItem.label.position = this.dataLabelsFontPosition;
         }
     });
-       this.chartInstance.setOption(this.chartOptions,true)
+       this.chartInstance?.setOption(this.chartOptions,true)
      }
      else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
       this.chartOptions.series.forEach((series: { label: { position: any; }; }) => {
         series.label.position = this.dataLabelsFontPosition; 
     });
-    this.chartInstance.setOption(this.chartOptions,true)
+    this.chartInstance?.setOption(this.chartOptions,true)
+     }
+     else if(this.chartType ==='funnel'){
+      if(this.dataLabelsFontPosition === 'center'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'inside'
+            }
+          }]
+        }
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = 'inside' ;
+      } else if(this.dataLabelsFontPosition === 'top'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'right'
+            }
+          }]
+        }
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = 'right' ;
+      }
+      else if(this.dataLabelsFontPosition === 'bottom'){
+        let obj ={
+          series :[
+           {
+            label :{
+             position: 'left'
+            }
+          }]
+        }
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = 'left' ;
+      }
      }
      else{
       if(this.dataLabelsFontPosition === 'center'){
@@ -2371,8 +2576,8 @@ chartInitialize(){
             }
           }]
         }
-        this.chartInstance.setOption(obj)
-
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = 'inside' ;
       }
       else{
         let obj ={
@@ -2383,8 +2588,8 @@ chartInitialize(){
             }
           }]
         }
-        this.chartInstance.setOption(obj)
-
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = this.dataLabelsFontPosition ;
       }
      }
   }
@@ -2404,7 +2609,8 @@ chartInitialize(){
          },
        ],
       }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.position = 'inside';
     }
     else{
       let obj ={
@@ -2419,7 +2625,8 @@ chartInitialize(){
           },
         ],
        }
-        this.chartInstance.setOption(obj)
+        this.chartInstance?.setOption(obj);
+        this.chartOptions.series[0].label.position = this.dataLabelsBarFontPosition;
     }
      }
   }
@@ -2437,8 +2644,57 @@ chartInitialize(){
         },
       ],
      }
-      this.chartInstance.setOption(obj)
-   }
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.series[1].label.position = this.dataLabelsLineFontPosition;
+    }
+  }
+  setDatalabelsFontWeight(){
+    if(this.chartType ==='barline'){
+      let obj ={
+       series: [
+         {
+           label: {
+            fontWeight: this.isBold ? 700 : 400, // Update for 'Bar Axis'
+           },
+         },
+         {
+          label: {
+            fontWeight: this.isBold ? 700 : 400,
+           },
+         },
+       ],
+      }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.fontWeight = this.isBold ? 700 : 400;
+       this.chartOptions.series[1].label.fontWeight = this.isBold ? 700 : 400;
+      }
+     else if(this.chartType === 'radar'){
+      this.chartOptions.series[0].data.forEach((dataItem: { label: { fontWeight: any; }; }) => {
+        if (dataItem.label) { // Ensure label exists before updating
+            dataItem.label.fontWeight = this.isBold ? 700 : 400;
+        }
+    });
+       this.chartInstance?.setOption(this.chartOptions,true)
+     }
+     else if(this.chartType === 'multiline' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' || this.chartType === 'stocked' || this.chartType === 'sidebyside'){
+      this.chartOptions.series.forEach((series: { label: { fontWeight: any; }; }) => {
+        series.label.fontWeight = this.isBold ? 700 : 400; 
+    });
+    this.chartInstance?.setOption(this.chartOptions,true)
+     }
+     else{
+       let obj ={
+         series :[
+          {
+           label :{
+            fontWeight: this.isBold ? 700 : 400
+           }
+         }]
+       }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.series[0].label.fontWeight = this.isBold ? 700 : 400;
+      //  this.chartOptions = { ...this.chartOptions, ...obj };
+     }
   }
   xLabelSwitchSetOptions(){
     if(this.chartType === 'barline'){
@@ -2449,7 +2705,8 @@ chartInitialize(){
           }
         }]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis[0].axisLabel.show = this.xLabelSwitch;
     }
     else{
       let obj ={
@@ -2459,7 +2716,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis.axisLabel.show =this.xLabelSwitch;
   }
   }
   yLabelSwitchSetOptions(){
@@ -2473,7 +2731,9 @@ chartInitialize(){
       }
     ]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis[0].show = this.yLabelSwitch;
+      this.chartOptions.yAxis[1].show = this.yLabelSwitch;
     }
     else{
       let obj ={
@@ -2483,7 +2743,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis.axisLabel.show = this.yLabelSwitch;
   }
   }
   xGridSwitchSetOptions(){
@@ -2499,7 +2760,23 @@ chartInitialize(){
       }
     ]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis[0].splitLine.show = this.xGridSwitch;
+    }
+    else if(this.chartType === 'line'){
+      let obj ={
+        xAxis :[{
+          splitLine :{
+            show: this.xGridSwitch
+          }
+        },
+      {
+    
+      }
+    ]
+      }
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis.splitLine.lineStyle.show = this.xGridSwitch;
     }
     else{
       let obj ={
@@ -2509,7 +2786,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis.splitLine.show = this.xGridSwitch;
   }
   }
   yGridSwitchSetOptions(){
@@ -2527,7 +2805,9 @@ chartInitialize(){
       }
     ]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis[0].splitLine.show = this.yGridSwitch;
+      this.chartOptions.yAxis[1].splitLine.show = this.yGridSwitch;
     }
     else{
       let obj ={
@@ -2537,7 +2817,8 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis.splitLine.show = this.yGridSwitch;
   }
   }
   legendSwitchSetOptions(){
@@ -2547,7 +2828,8 @@ chartInitialize(){
             show: this.legendSwitch
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.legend.show = this.legendSwitch;
     }
   }
   dataLabelsSetOptions(){
@@ -2559,13 +2841,14 @@ chartInitialize(){
           }
         }]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.series[0].label.show = this.dataLabels;
     }
     else if(this.chartType === 'radar'){
       this.chartOptions.series[0].data.forEach((dataItem: { label: { show: boolean; }; }) => {
         dataItem.label.show = this.dataLabels; // Show or hide labels based on checkbox state
     }); 
-    this.chartInstance.setOption(this.chartOptions,true)
+    this.chartInstance?.setOption(this.chartOptions,true)
     }
   }
   colorSetOptions(){
@@ -2583,15 +2866,24 @@ chartInitialize(){
         }
     ]
       }
-      this.chartInstance.setOption(obj)
-    } else if(this.chartType === 'funnel' || this.chartType === 'stocked'
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.series[0].itemStyle.color = this.barColor;
+      this.chartOptions.series[1].lineStyle.color = this.lineColor;
+    } else if(this.chartType === 'funnel'){
+      let obj ={
+        color:this.isDistributed ? this.selectedColorScheme : this.color
+       }
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.color = this.isDistributed ? this.selectedColorScheme : this.color;
+    } else if(this.chartType === 'stocked'
        || this.chartType === 'sidebyside' || this.chartType === 'hgrouped' || this.chartType === 'hstocked' ||  
        this.chartType === 'multiline' || this.chartType === 'pie' || this.chartType === 'donut' || 
        this.chartType === 'calendar'){
       let obj ={
         color:this.selectedColorScheme
        }
-       this.chartInstance.setOption(obj)
+       this.chartInstance?.setOption(obj);
+       this.chartOptions.color = this.selectedColorScheme;
     }else if(this.chartType ==='heatmap'){
       let obj ={
         visualMap :{
@@ -2600,24 +2892,61 @@ chartInitialize(){
           }
         }
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj)
+      this.chartOptions.visualMap.inRange.color = this.selectedColorScheme;
     }
     else{
       let obj ={
        color:this.color
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj)
+      this.chartOptions.color = this.color;
+      console.log('chartoptionsecahrtcolor',this.chartOptions)
   }
   }
   dimensionsAlignmentSetOption() {
+    if(this.dimensionAlignment === 'right'){
     let obj ={
       xAxis :{
         axisLabel :{
-          align: this.dimensionAlignment
+          align: 'left'
         }
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'left';
+  }else if(this.dimensionAlignment === 'left'){
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align: 'right'
+        }
+      }
+    }
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'right';
+  }else if(this.dimensionAlignment === 'right'){
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align: 'left'
+        }
+      }
+    }
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = 'left';
+  } else{
+    let obj ={
+      xAxis :{
+        axisLabel :{
+          align:this.dimensionAlignment
+        }
+      }
+    }
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.axisLabel.align = this.dimensionAlignment;
+  }
+    
   }
   xGridColorSetOptions(){
     if(this.chartType === 'barline'){
@@ -2634,22 +2963,23 @@ chartInitialize(){
         }
     ]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis[0].splitLine.lineStyle.color = this.xGridColor;
     }else if(this.chartType === 'hgrouped'){
       let obj ={
         xAxis :[{
-          axisLabel :{
             splitLine:{
               lineStyle:{
                 color: this.xGridColor
               }
             }
           
-          }
+
         },
     ]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis.splitLine.lineStyle.color = this.xGridColor;
     }
     else{
       let obj ={
@@ -2662,7 +2992,8 @@ chartInitialize(){
         },
    
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.xAxis.splitLine.lineStyle.color = this.xGridColor;
   }
   }
   yGridColorSetOptions(){
@@ -2684,22 +3015,22 @@ chartInitialize(){
         }
     ]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+    this.chartOptions.yAxis[0].splitLine.lineStyle.color = this.yGridColor;
+    this.chartOptions.yAxis[1].splitLine.lineStyle.color = this.yGridColor;
     }else if(this.chartType === 'hgrouped'){
       let obj ={
         yAxis :[{
-          axisLabel :{
             splitLine:{
               lineStyle:{
                 color: this.yGridColor
               }
             }
-          
-          }
-        },
+                  },
     ]
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis[0].splitLine.lineStyle.color = this.yGridColor;
     }
     else{
       let obj ={
@@ -2712,14 +3043,16 @@ chartInitialize(){
         },
    
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions.yAxis.splitLine.lineStyle.color = this.yGridColor;
   }
   }
   backgroundColorSetOptions(){
       let obj ={
         backgroundColor:this.backgroundColor
       }
-      this.chartInstance.setOption(obj)
+      this.chartInstance?.setOption(obj);
+      this.chartOptions = { ...this.chartOptions, ...obj };
   }
   legendsAllignmentSetOptions(){
     if(this.chartType === 'pie' || this.chartType === 'donut'){
@@ -2735,7 +3068,7 @@ chartInitialize(){
       },
     }
     this.chartOptions.legend = obj;
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj)
   }
   else if(this.legendsAllignment === 'bottom'){
     let obj ={
@@ -2750,7 +3083,7 @@ chartInitialize(){
       },
     }
     this.chartOptions.legend = obj;
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj)
   }
   else if(this.legendsAllignment === 'left'){
     let obj ={
@@ -2762,7 +3095,7 @@ chartInitialize(){
       },
     }
     this.chartOptions.legend = obj;
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj)
   }
   else if(this.legendsAllignment === 'right'){
     let obj ={
@@ -2774,50 +3107,51 @@ chartInitialize(){
       },
     }
     this.chartOptions.legend = obj;
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj)
   }
   }
   else if(this.chartType === 'radar'){
-    if(this.legendsAllignment === 'top'){
-      let obj ={
-        legend :{
-            top : 'top',
-        },
-      }
-      this.chartInstance.setOption(obj)
+    let legendPosition: any = {};
+
+    if (this.legendsAllignment === 'top') {
+      legendPosition = { top: 'top', left: 'center', orient: 'horizontal' };
+    } 
+    else if (this.legendsAllignment === 'bottom') {
+      legendPosition = { bottom: 'bottom', left: 'center', orient: 'horizontal' };
+    } 
+    else if (this.legendsAllignment === 'left') {
+      legendPosition = { left: 'left', top: 'middle', orient: 'vertical' };
+    } 
+    else if (this.legendsAllignment === 'right') {
+      legendPosition = { right: 'right', top: 'middle', orient: 'vertical' };
     }
-    else if(this.legendsAllignment === 'bottom'){
-      let obj ={
-        legend :{
-            bottom : 'bottom',
-        },
-      }
-      this.chartInstance.setOption(obj)
-    }
-    else if(this.legendsAllignment === 'left'){
-      let obj ={
-        legend :{
-            left : 'left',
-        },
-      }
-      this.chartInstance.setOption(obj)
-    }
-    else if(this.legendsAllignment === 'right'){
-      let obj ={
-        legend :{
-            right : 'right',
-        },
-      }
-      this.chartInstance.setOption(obj)
-    }
+    
+    // Ensure `legend.data` is defined properly
+    const legendData = this.radarRowData.map((dataItem: any) => ({
+      name: dataItem.name
+    }));
+    
+    // Removing conflicting properties
+    ['top', 'bottom', 'left', 'right'].forEach((prop) => {
+      if (!legendPosition[prop]) delete this.chartOptions.legend[prop];
+    });
+    
+    // Apply the updated legend options
+    this.chartOptions.legend = {
+      ...this.chartOptions.legend,
+      ...legendPosition,
+      data: legendData,  // Ensure data is set
+      show:this.legendSwitch,
+    };
+      this.chartInstance?.setOption({ legend: this.chartOptions.legend });
   }
   }
   selectedColorSchemeSetOptions(){
     let obj = {
       color:this.selectedColorScheme
     }
-    this.chartInstance.setOption(obj)
-
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.color = this.selectedColorScheme;
   }
   donutSizeChange(){
     let obj ={
@@ -2825,7 +3159,8 @@ chartInitialize(){
         radius: [this.donutSize+'%' , '70%']
       }]
     }
-    this.chartInstance.setOption(obj);
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.series[0].radius = [this.donutSize+'%' , '70%'];
   }
 updateNumberFormat(){
   if(this.chartType === 'bar'){
@@ -2903,7 +3238,7 @@ updateNumberFormat(){
     // this.eFunnelChartOptions.series.label.formatter = (params:any) => this.formatNumber(params.value);
     // this.eFunnelChartOptions.yAxis.axisLabel.formatter = (value:any) => this.formatNumber(value);
   }
-  this.chartInstance.setOption(this.chartOptions,true)
+  this.chartInstance?.setOption(this.chartOptions,true)
 
 }
 
@@ -2914,7 +3249,8 @@ updateCategories(){
       data:this.chartsColumnData
     }
    }
-   this.chartInstance.setOption(obj)
+   this.chartInstance?.setOption(obj);
+   this.chartOptions.xAxis.data =this.chartsColumnData;
   } else if(this.chartType === 'pie'){
     let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
       value: value,
@@ -2925,7 +3261,8 @@ updateCategories(){
         data:combinedArray
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.series.data = combinedArray;
   } else if(this.chartType === 'donut'){
     let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
       value: value,
@@ -2936,7 +3273,8 @@ updateCategories(){
         data:combinedArray
       }]
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.series[0].data = combinedArray;
   } else if(this.chartType === 'sidebyside' || this.chartType === 'stocked' || this.chartType === 'multiline' || this.chartType === 'heatmap'){
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
@@ -2945,7 +3283,8 @@ updateCategories(){
         data:categories
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.xAxis.data = categories;
   }else if(this.chartType === 'barline'){
   const dimensions: Dimension[] = this.dualAxisColumnData;
   const categories = this.flattenDimensions(dimensions);
@@ -2954,8 +3293,9 @@ updateCategories(){
       data:categories
     }]
   }
-  this.chartInstance.setOption(obj)
-  } else if(this.chartType === 'hstocked' || this.chartType === 'hgrouped'){
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.xAxis[0].data = categories;
+} else if(this.chartType === 'hstocked' || this.chartType === 'hgrouped'){
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
     let obj ={
@@ -2963,7 +3303,8 @@ updateCategories(){
         data:categories
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.yAxis.data = categories;
   } else if(this.chartType === 'radar'){
     const dimensions: Dimension[] = this.dualAxisColumnData;
     const categories = this.flattenDimensions(dimensions);
@@ -2981,7 +3322,9 @@ updateCategories(){
         indicator:radarArray
       }
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.legend.data = legendArray;
+    this.chartOptions.radar.indicator = legendArray;
   } else if(this.chartType === 'funnel'){
     const combinedArray: any[] = [];
     this.dualAxisColumnData.forEach((item: any) => {
@@ -2999,7 +3342,8 @@ updateCategories(){
       data:combinedArray
     }]
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.series[0].data = combinedArray;
 
   }
 
@@ -3011,7 +3355,8 @@ updateSeries(){
        data:this.chartsRowData
      }]
     }
-    this.chartInstance.setOption(obj)
+    this.chartInstance?.setOption(obj);
+    this.chartOptions.series[0].data = this.chartsRowData;
 }  else if(this.chartType === 'pie'){
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
     value: value,
@@ -3022,7 +3367,8 @@ updateSeries(){
       data:combinedArray
     }
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.series.data = combinedArray;
 } else if(this.chartType === 'donut'){
   let combinedArray = this.chartsRowData.map((value : any, index :number) => ({
     value: value,
@@ -3033,13 +3379,15 @@ updateSeries(){
       data:combinedArray
     }]
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.series[0].data = combinedArray;
 } else if(this.chartType === 'sidebyside' || this.chartType === 'stocked' || this.chartType === 'hstocked' || this.chartType === 'hgrouped' || this.chartType === 'multiline'){
   let yaxisOptions = _.cloneDeep(this.dualAxisRowData);
   let obj ={
     series:yaxisOptions
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.series = yaxisOptions;
 } else if(this.chartType === 'barline'){
   let obj ={
     series:[
@@ -3053,21 +3401,27 @@ updateSeries(){
     }
   ]
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.series[0].name = obj.series[0]?.name;
+  this.chartOptions.series[0].data = obj.series[0]?.data;
+  this.chartOptions.series[1].name = obj.series[1]?.name;
+  this.chartOptions.series[1].data = obj.series[1]?.data;
 } else if(this.chartType === 'radar'){
   let obj ={
     series:[
       {data:this.radarRowData}
     ]
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.series[0].data = this.radarRowData;
 } else if(this.chartType === 'heatmap'){
   let obj ={
     yAxis:{
       data:this.dualAxisRowData
     }
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.yAxis.data = this.dualAxisRowData;
 } else if(this.chartType === 'funnel'){
   const combinedArray: any[] = [];
     this.dualAxisColumnData.forEach((item: any) => {
@@ -3085,43 +3439,46 @@ updateSeries(){
       data:combinedArray
     }]
   }
-  this.chartInstance.setOption(obj)
+  this.chartInstance?.setOption(obj);
+  this.chartOptions.series[0].data = combinedArray;
 
 }
 
 }
-sort(sortType: any, numbers: any, labels: any) {
-  let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
+// sort(sortType: any, numbers: any, labels: any) {
+//   let pairedData = numbers.map((num: any, index: any) => [num, labels[index]]);
 
-  if (sortType === 'ascending') {
-    pairedData.sort((a: any, b: any) => a[0] - b[0]);
-  } else if (sortType === 'descending') {
-    pairedData.sort((a: any, b: any) => b[0] - a[0]);
-  } else if(sortType === 'none'){
-    pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
-  }
+//   if (sortType === 'ascending') {
+//     pairedData.sort((a: any, b: any) => a[0] - b[0]);
+//   } else if (sortType === 'descending') {
+//     pairedData.sort((a: any, b: any) => b[0] - a[0]);
+//   } else if(sortType === 'none'){
+//     pairedData = this.chartsRowData.map((num: any, index: any) => [num, this.chartsColumnData[index]])
+//   }
 
-  const sortedNumbers = pairedData.map((pair: any) => pair[0]);
-  const sortedLabels = pairedData.map((pair: any) => pair[1]);
+//   const sortedNumbers = pairedData.map((pair: any) => pair[0]);
+//   const sortedLabels = pairedData.map((pair: any) => pair[1]);
+//   return { sortedNumbers, sortedLabels };
+// }
+// sortSeries(sortType: any) {
+//  if (this.chartType === 'bar') {
+//   const numbers = this.chartOptions.series[0].data;
+//   const labels = this.chartOptions.xAxis.data;
+//   const sortedData = this.sort(sortType, numbers, labels);
+//   let obj={
+//     series:[{
+//       data:sortedData.sortedNumbers
+//     }],
+//     xAxis:{
+//       data:sortedData.sortedLabels
+//     }
+//   }
+//   this.chartInstance?.setOption(obj);
+//   // this.chartOptions.series[0].data = sortedData.sortedNumbers;
+//   // this.chartOptions.xAxis.data = sortedData.sortedLabels;
 
-  return { sortedNumbers, sortedLabels };
-}
-sortSeries(sortType: any) {
- if (this.chartType === 'bar') {
-  const numbers = this.chartOptions.series[0].data;
-  const labels = this.chartOptions.xAxis.data;
-  const sortedData = this.sort(sortType, numbers, labels);
-  let obj={
-    series:[{
-      data:sortedData.sortedNumbers
-    }],
-    xAxis:{
-      data:sortedData.sortedLabels
-    }
-  }
-  this.chartInstance.setOption(obj)
-  }
-}
+//   }
+// }
   onChartClick(event: any) {
     if (this.drillDownIndex < this.draggedDrillDownColumns.length - 1) {
       console.log('X-axis value:', event.name);
