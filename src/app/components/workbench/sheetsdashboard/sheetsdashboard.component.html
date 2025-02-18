@@ -633,7 +633,7 @@
                                     <button *ngIf="editActions" class="btn btn-primary dropdown-toggle mb-2 w-100" (click)="editActions = false;clearActionForm();" type="button"  aria-expanded="false">
                                       <i class="fa fa-plus"></i> Add Action
                                     </button>
-                                    <button *ngFor="let action of drillThroughActionList" type="button"  [ngStyle]="{'background-color' : action.drill_id == actionId ? 'var(--primary-color)' : 'white', 'color' : action.drill_id == actionId ? 'white' : 'black'}" (click)="getEditActionPreview(action.drill_id)" class="btn text-left mb-2 bg-white border w-100 cursor-pointer d-flex justify-content-between align-items-center">{{action.action_name}}
+                                    <button *ngFor="let action of drillThroughActionList" type="button"  [ngStyle]="{'background-color' : action.drill_id == actionId ? 'var(--primary-color) !important' : 'white !important', 'color' : action.drill_id == actionId ? 'white' : 'black'}" (click)="getEditActionPreview(action.drill_id)" class="btn text-left mb-2 bg-white border w-100 cursor-pointer d-flex justify-content-between align-items-center">{{action.action_name}}
                                       <a (click)="deleteDashboardAction([action.drill_id]);$event.stopPropagation()"><i class="ri-delete-bin-7-line btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light"></i></a>
                                     </button>
 
