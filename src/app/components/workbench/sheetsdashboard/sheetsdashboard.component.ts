@@ -4493,6 +4493,7 @@ kpiData?: KpiData;
        this.itemsPerPage = data.items_per_page;
       },
       error:(error)=>{
+        this.panelscheckbox = [];
         console.log(error)
       }
     })
@@ -4886,14 +4887,14 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0);
-      if(item.chartId == '29'){
-        if (item.drillDownIndex != 0) {
-          this.chartType = 'bar';
-        }
-        else {
-          this.chartType = 'map';
-        }
-      }
+      // if(item.chartId == '29'){
+      //   if (item.drillDownIndex != 0) {
+      //     this.chartType = 'bar';
+      //   }
+      //   else {
+      //     this.chartType = 'map';
+      //   }
+      // }
         },
       error:(error)=>{
         console.log(error)

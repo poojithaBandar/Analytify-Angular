@@ -291,6 +291,9 @@ export class DatabaseComponent {
         this.showingRowsCustomQuery=data.no_of_rows
         this.totalRowsCustomQuery=data.total_rows;
         this.datasourceQuerysetId = data.datasorce_queryset_id;
+        if(this.datasourceQuerysetId){
+          this.getfilteredCustomSqlData();
+        }
         // if(this.fromSavedQuery){
         //   if(data.file_id === null)
         //   this.getSchemaTablesFromConnectedDb();
@@ -1547,6 +1550,11 @@ getSelectedRowsFromEdit() {
       next:(data:any) =>{
         console.log(data)
         this.datasourceFilterId = data.filter_id;
+        if(this.filterParamPass === 'fromcustomsql'){
+          this.datasourceFilterIdArrayCustomQuery.push(data.filter_id)
+        }else{
+         this.datasourceFilterIdArray.push(data.filter_id);
+        }
         this.getDsQuerysetId();
          this.modalService.dismissAll('close')
       },
