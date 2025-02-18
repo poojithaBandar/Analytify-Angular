@@ -2074,6 +2074,7 @@ const obj={
   "rows_data":this.draggedRowsData,
   "pivotMeasure":this.draggedMeasureValues,
   "pivotMeasure_Data":this.pivotMeasureData,
+  "pivotMeasureValuesData":this.draggedMeasureValuesData,
   "pivotTransformedData":this.transformedData,
   "col":tablePreviewCol,
   "row":tablePreviewRow,
@@ -2377,6 +2378,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
         if(this.sheetResponce.pivotMeasure){
           this.draggedMeasureValues = this.sheetResponce?.pivotMeasure;
+          this.draggedMeasureValuesData = this.sheetResponce?.pivotMeasureValuesData
         }
         else if(this.draggedMeasureValues){
           this.draggedMeasureValues.forEach((res:any) => {
@@ -5139,6 +5141,8 @@ customizechangeChartPlugin() {
       this.draggedColumnsData = [];
       this.draggedRows = [];
       this.draggedRowsData = [];
+      this.draggedMeasureValues = [];
+      this.draggedMeasureValuesData = [];
       this.draggedDrillDownColumns = [];
       this.tablePaginationCustomQuery = '';
       this.chartsColumnData = [];
