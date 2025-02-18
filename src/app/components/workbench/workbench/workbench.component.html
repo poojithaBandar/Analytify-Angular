@@ -560,11 +560,12 @@
   <div class="main-container container-fluid">
     <div class="row" class="card card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
-      <div class="header-title-search">
-        <div class="connect-txt">
-          <h4 class="card-title mt-2">Connected to Google Sheets</h4>
-        </div>
-    </div>
+      <div class="d-flex flex-nowrap align-items-center gap-2 px-5 py-2">
+        <h4 class="card-title mt-2 mb-0 me-3">Connected to Google Sheets:</h4>
+        <span *ngIf="gsheetprofile?.email" class="border rounded-2 px-3 py-2 d-inline-flex align-items-center">
+          <i class="fas fa-user-circle me-2"></i> {{ gsheetprofile.email }}
+        </span>
+      </div>
         <div class="card-body card-p">
             <div class="table-responsive border table-responsive-height">
                 <table class="table border text-nowrap text-md-nowrap mb-0">
