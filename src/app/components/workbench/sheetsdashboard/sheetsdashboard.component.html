@@ -1152,9 +1152,9 @@
                     <div class="">
                     </div>
                     <div  class="input-group mt-1 p-1 sheet-table-search">
-                        <input type="text" placeholder="Search" aria-describedby="button-addon2"      (mousedown)="disableDragging($event)"
-                        (mouseup)="enableDragging($event)" (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item,$event) : tableSearchDashboard(item,$event)" class="form-control border-end-0 ">
-                        <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="isPublicUrl ? tableSearchDashboardPublic(item,$event) : tableSearchDashboard(item,$event)">
+                        <input #searchInput type="text" placeholder="Search" aria-describedby="button-addon2"      (mousedown)="disableDragging($event)"
+                        (mouseup)="enableDragging($event)" (keydown.enter)="isPublicUrl ? tableSearchDashboardPublic(item,searchInput.value) : tableSearchDashboard(item,searchInput.value)" class="form-control border-end-0 ">
+                        <button type="button" id="button-addon2" class="btn btn-primary border me-2 search-icon-border-radius" (click)="isPublicUrl ? tableSearchDashboardPublic(item,searchInput.value) : tableSearchDashboard(item,searchInput.value)">
                         <i class="fe fe-search"></i></button>
                     </div>
                    </div>
