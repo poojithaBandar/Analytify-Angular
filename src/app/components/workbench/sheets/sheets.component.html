@@ -368,7 +368,7 @@
                                                 aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.column)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
-                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                            <div class="dropdown-menu SelectDropDownCard" ngbDropdownMenu>
                                                 <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,measures)"> Apply Filters </a>
                                                 <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                             </div>

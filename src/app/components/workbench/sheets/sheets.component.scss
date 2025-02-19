@@ -275,6 +275,21 @@ button.viewQueryImg {  border: none;  background: none;}
 .customize-accordion-h { height: auto;max-height: 350px;}
 
 
+@media ( 1280px <= width <= 1600px) {
+  .dropdown-menu.SelectDropDownCard.show {
+    position: absolute;
+    transform: none !important;
+    left: -107px !important;
+    min-width: 110px !important;
+    top: 24px !important;
+  }
+  .dropdown-menu.filtersDropDown.show {
+    transform: none !important;
+    left: -107px !important;
+    min-width: 110px !important;
+    top: 24px !important;
+}
+}
 
 @media (max-width: 768px) {
   .big-number { font-size: 3rem; /* Responsive size for smaller screens */ }
