@@ -308,12 +308,12 @@
                                               <p>Add Filters</p>
                                             </div>
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Filter Name <span  class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Filter Name <span  class="text-red">*</span><i ngbTooltip="Enter a unique name for your custom filter to easily identify it for future reference." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                               <input type="text" placeholder="Enter Filter Name" [(ngModel)]="filterName" class="form-control border">
                                             </div>
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Database Name<span class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Database Name<span class="text-red">*</span><i ngbTooltip="Choose the database you wish to query from the available options." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                               <select id="databaseSelect" [(ngModel)]="selectedDatabase"  (change)="onDatabaseChange()" class="form-select form-select select2 "  >
                                               <option value="" disabled selected>Select Database name</option>
@@ -321,7 +321,7 @@
                                               </select>
                                             </div>
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Query Set Name <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Query Set Name <span class="text-red">*</span><i ngbTooltip="Select the specific queryset you want to apply the filter to, narrowing down the data results." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                               <!-- <select [(ngModel)]="selectedQuerySetId" (change)="getColumnsForFilter()"   class="form-select form-select select2 " >
                                                                                             <option value="0" disabled selected >Select Queryset name</option>
@@ -352,7 +352,7 @@
                                             </div>
                                     
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Column <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Column <span class="text-red">*</span><i ngbTooltip="Pick the columns you want to display or analyze from the selected queryset." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                             <ng-select [items]="dropdownOptions"
                                                        bindLabel="value"
@@ -377,7 +377,7 @@
                                             </ng-select>
                                             </div>
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Apply to Selected worksheets <i class="icon icon-info ms-1"></i></label>
+                                              <label class="form-label">Apply to Selected worksheets <i ngbTooltip="Confirm and apply the custom filter settings to the currently active worksheet for data manipulation." class="icon icon-info ms-1 cursor-pointer"></i></label>
                                               <div class="form body border p-2 rounded-2 Selected-worksheets-h">
 
                                                 <div *ngIf="sheetsFilterNames?.length > 0" class="form-check">
@@ -646,12 +646,12 @@
                                               <p>Add Actions</p>
                                             </div>
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Action Name <span  class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Action Name <span  class="text-red">*</span><i ngbTooltip="Provide a descriptive name for your custom action to easily recognize its purpose within the drill-through process." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                               <input type="text" placeholder="Enter Action Name" [(ngModel)]="actionName" class="form-control border">
                                             </div>
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Database Name<span class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Database Name<span class="text-red">*</span><i ngbTooltip="Choose the database you wish to query from the available options." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                               <select id="databaseSelect" [(ngModel)]="drillThroughDatabaseName"  (change)="onDatabaseChange()" class="form-select form-select select2 "  >
                                               <option value="" disabled selected >Select Database name</option>
@@ -659,7 +659,7 @@
                                               </select>
                                             </div>
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Query Set Name <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Query Set Name <span class="text-red">*</span><i ngbTooltip="Choose the specific queryset that will serve as the basis for the drill-through operation, determining the data context." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                               <!-- <select [(ngModel)]="drillThroughQuerySetId" (change)="getSheetsForActions()"  class="form-select form-select select2 " >
                                                 <option value="0" disabled selected >Select Queryset name</option>
@@ -679,7 +679,7 @@
                                             </div>
                                     
                                             <div class="form-group p-1 mb-0">
-                                              <label class="form-label">Source Sheet <span class="text-red">*</span><i class="icon icon-info ms-1"></i>
+                                              <label class="form-label">Source Sheet <span class="text-red">*</span><i ngbTooltip="Select the source sheet that contains the initial data or metrics you want to analyze further through the drill-through action." class="icon icon-info ms-1 cursor-pointer"></i>
                                               </label>
                                               <select [(ngModel)]="sourceSheetId" (change)="getTargetSheetsList()"  class="form-select form-select select2 " >
                                                 <option value="0" disabled selected>Select Source Sheet</option>
@@ -689,7 +689,7 @@
                                             </select>
                                             </div>
                                             <div class="form-group p-1">
-                                              <label class="form-label">Target Sheets <span class="text-red">*</span> <i class="icon icon-info ms-1"></i></label>
+                                              <label class="form-label">Target Sheets <span class="text-red">*</span> <i ngbTooltip="Specify the target sheet where the drill-through results will be displayed, allowing for detailed exploration of the selected data." class="icon icon-info ms-1 cursor-pointer"></i></label>
                                               <div [class.disabled]="sourceSheetId === 0"  class="form body border p-2 rounded-2 Target-sheets-h">
 
                                                 <div *ngIf="(targetSheetList?.length ?? 0) > 0" class="form-check">
