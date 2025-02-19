@@ -261,8 +261,10 @@ p { font-size: 12px;}
 .h6, h6 { font-size: 12px;}
 .form-select{ font-size: 12px;}
 .form-control{ font-size: 12px; padding: 3px;}
+.dropdown-menu { min-width: 10rem;}
 }
 .hamburger-menu{ display: grid;}
+
 
 // for 100% Resolution //
 @media ( 1280px <= width <= 1420px) {
@@ -290,5 +292,6 @@ p { font-size: 12px;}
 .h6, h6 { font-size: 11px;}
 .form-select{ font-size: 11px;}
 .form-control{ font-size: 10px; padding: 3px;}
+.dropdown-menu { min-width: 10rem;}
 }
 
