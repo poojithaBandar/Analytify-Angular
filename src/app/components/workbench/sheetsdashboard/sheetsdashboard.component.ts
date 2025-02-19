@@ -5037,9 +5037,9 @@ kpiData?: KpiData;
   }
 }
 //tablePagination
-tableSearchDashboard(item:any,event:any){
+tableSearchDashboard(item:any,value:any){
   this.tablePageNo=1;
-  this.tableSearch = event.target.value;
+  this.tableSearch = value;
   this.pageChangeTableDisplay(item,1,false,0);
 }
 pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetIndex:any){
@@ -5073,9 +5073,9 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     }
   })  
 }
-tableSearchDashboardPublic(item:any,event:any){
+tableSearchDashboardPublic(item:any,value:any){
   this.tablePageNo=1;
-  this.tableSearch = event.target.value;
+  this.tableSearch = value;
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
