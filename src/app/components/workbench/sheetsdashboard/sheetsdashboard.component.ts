@@ -51,6 +51,8 @@ import { tap } from 'rxjs/operators';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
+import 'pivottable';
+import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 
 interface TableRow {
   [key: string]: any;
@@ -86,6 +88,7 @@ interface KpiData {
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
 }
+declare var $:any;
 
 @Component({
   selector: 'app-sheetsdashboard',
@@ -99,7 +102,7 @@ interface KpiData {
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -197,6 +200,9 @@ export class SheetsdashboardComponent {
   drillThroughActionList : any[] =[];
   drillThroughDatabaseName : any = '';
 
+  calendarTotalHeight : string = '400px';
+  @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
+
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
      private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef, private http: HttpClient,private sharedService:SharedService){
@@ -252,7 +258,7 @@ export class SheetsdashboardComponent {
   options!: GridsterConfig;
   nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any ,tableItemsPerPage : any, tableTotalItems : any }
 }> = [];
-  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}
+  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any
   }>;
   dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
 }> = [];
@@ -318,7 +324,7 @@ export class SheetsdashboardComponent {
   static itemResize(
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface
-  ): void {
+  ) : void {
     console.info('itemResized', item, itemComponent);
     const resize$ = fromEvent(window, 'resize');
     resize$
@@ -456,6 +462,7 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard && !this.isDraggingDisabled,
+        start: this.onResizeStart.bind(this),
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -464,6 +471,8 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -514,10 +523,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -550,10 +561,12 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        
+        start: this.onResizeStart.bind(this),
       },
       resizable: {
         enabled: this.editDashboard,
+        start: this.onResizeStart.bind(this),
+
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -588,10 +601,11 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -623,16 +637,21 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          
+          start: this.onResizeStart.bind(this),
         },
         resizable: {
           enabled: this.editDashboard,
+          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
     }
 
     // window.dispatchEvent(new Event('resize'));
+  }
+
+  onResizeStart(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
+    this.canNavigateToAnotherPage = true;
   }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {
@@ -707,6 +726,11 @@ export class SheetsdashboardComponent {
           displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
+        },
+        pivotData:{
+          pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+          pivotRowData:sheet?.sheet_data?.row,
+          pivotColData:sheet?.sheet_data.col
         },
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
@@ -906,6 +930,69 @@ export class SheetsdashboardComponent {
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
+          }
+          if(chartId == 9){
+            let transformedData :any =[];
+            let headers: string[] = [];
+  
+           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
+           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+      
+          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+      
+          transformedData.push(headers); 
+          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+          let numRows = 0;
+          if (sheet.pivotData?.pivotColData?.length > 0) {
+              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+          }
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = []; 
+            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+  
+            transformedData.push(rowArray);
+          }
+            setTimeout(() => {
+            if (this.pivotContainer && this.pivotContainer.nativeElement) {
+                ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+                  rows: columnKeys,  
+                  cols: valueKeys, 
+                  // vals: this.valueKeys, 
+                  aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+                  rendererName: "Table"
+                });
+            }        
+          }, 1000);
+        }
+          if(chartId == 1){
+            if(sheet?.tableData?.tableItemsPerPage){
+              sheet.tableData.tableItemsPerPage = 10;
+            }
+            if(sheet?.tableData?.tablePage){
+              sheet.tableData.tablePage = 1;
             }
           }
         })
@@ -1278,6 +1365,10 @@ export class SheetsdashboardComponent {
           item1['tableData'] = item1['originalData']['tableData'];
           delete item1['originalData'];
           }
+          if(item1.chartId == '9' && item1['originalData']){//pivot
+            item1['pivotData'] = item1['originalData']['pivotData'];
+            delete item1['originalData'];
+            }
         if(item1.chartId == '25' && item1['originalData']){//KPI
           item1['kpiData'] = item1['originalData'];
           delete item1['originalData'];
@@ -1459,6 +1550,13 @@ export class SheetsdashboardComponent {
         prefix:sheet?.sheet_data?.numberFormat?.prefix,
         suffix:sheet?.sheet_data?.numberFormat?.suffix
       },
+      pivotData: sheet.sheet_type === 'PIVOT' ? {
+        pivotDataTransformed:sheet?.sheet_data?.pivotTransformedData,
+        pivotRowData:sheet?.sheet_data?.row,
+        pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+        pivotColData:sheet?.sheet_data?.col
+      }
+      : undefined,
       customizeOptions: sheet?.sheet_data?.customizeOptions
     }));
     this.sheetIdsDataSet = this.dashboardNew.map(item => item['sheetId']);
@@ -1590,6 +1688,12 @@ export class SheetsdashboardComponent {
     });
   }
   getChartOptionsBasedOnType(sheet:any){
+    if(sheet.chart_id === 9){
+      let xaxis = sheet.sheet_data?.results?.barXaxis;
+      let yaxis = sheet.sheet_data?.results?.barYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
+    }
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
@@ -1597,7 +1701,11 @@ export class SheetsdashboardComponent {
       return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
     }
     if(sheet.chart_id === 29){
+      let xaxis = sheet.sheet_data?.results?.mapChartXaxis;
+      let yaxis = sheet.sheet_data?.results?.mapChartYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
       return sheet.sheet_data.savedChartOptions;
+      // return this.mapChartOptions(xaxis,yaxis,savedOptions) 
     }
     if(sheet.chart_id === 17){
       let xaxis = sheet.sheet_data?.results?.areaXaxis;
@@ -1742,7 +1850,6 @@ getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1
       tablePage : 1
     };
   }
-
   onDrag(event: any, item: any){
     let data = JSON.stringify(item);
         event.dataTransfer.setData('item', data);
@@ -1807,7 +1914,8 @@ allowDrop(ev : any): void {
       drillDownIndex : 0,
       isDrillDownData : copy.isDrillDownData,
       numberFormat : copy.numberFormat,
-      customizeOptions: copy.customizeOptions
+      customizeOptions: copy.customizeOptions,
+      pivotData:copy.pivotData
       };
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
@@ -1965,6 +2073,60 @@ allowDrop(ev : any): void {
           }
       }
     }
+    if(element.chartId == 9){
+      let transformedData :any =[];
+      let headers: string[] = [];
+
+     let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
+     let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
+    let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+    element.pivotData?.pivotColData?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+      headers.push(rowObj.col);
+    });
+    element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+      headers.push(colObj.col);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (element.pivotData?.pivotColData?.length > 0) {
+        numRows = element.pivotData.pivotColData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotRowData?.length > 0) {
+        numRows = element.pivotData.pivotRowData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotMeasureData?.length > 0) {
+        numRows = element.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+    }
+
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      element.pivotData?.pivotColData.forEach((colObj: any) => {
+        rowArray.push(colObj.result_data[i]);
+      });
+      element.pivotData?.pivotRowData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+      element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+      setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
+  }
         this.dashboard.push(element);
       }
     //  } else {
@@ -2030,6 +2192,15 @@ allowDrop(ev : any): void {
           const date = params.data[0];
           const value = params.data[1];
           return `Date: ${date}<br/>Value: ${value}`;
+        };
+        this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
+      }
+      if(chartId == 1){
+        if(sheet?.tableData?.tableItemsPerPage){
+          sheet.tableData.tableItemsPerPage = 10;
+        }
+        if(sheet?.tableData?.tablePage){
+          sheet.tableData.tablePage = 1;
         }
       }
     });
@@ -2189,7 +2360,8 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       next:(data)=>{
         console.log(data);
         this.loaderService.hide();
-        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'})
+        this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'});
+        this.getDashboardFilterredList();
     },
       error:(error)=>{
         console.log(error)
@@ -2528,11 +2700,11 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 /////chartOptions
 barChartOptions(xaxis:any,yaxis:any,savedOptions : any, isEchart : boolean){
   if (isEchart) {
-    savedOptions.series.data = yaxis;
+    savedOptions.series[0].data = yaxis;
     savedOptions.xAxis.data = xaxis;
     return savedOptions;
   } else {
-    savedOptions.series.data = yaxis;
+    savedOptions.series[0].data = yaxis;
     savedOptions.xaxis.categories = xaxis.map((category : any)  => category === null ? 'null' : category);
     return savedOptions;
   }
@@ -2999,6 +3171,7 @@ if(this.filterName === ''){
       this.toasterService.success('Filter Added Successfully','success',{ positionClass: 'toast-top-center'})
       this.selectedOption = null;
       this.selectedQuerySetId = 0;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
@@ -3270,7 +3443,72 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           });
           item1.tableData.rows.push(row);
       }
+      if(item1?.tableData?.tableTotalItems){
+        item1.tableData.tableTotalItems = this.tableTotalItems;
+      }
+      if(item1?.tableData?.tableItemsPerPage){
+        item1.tableData.tableItemsPerPage = this.tableItemsPerPage;
+      }
     }
+    if(item.chart_id == '9'){
+      if(!item1.originalData && !isLiveReloadData){
+        item1['originalData'] = _.cloneDeep({pivotData: item1.pivotData});
+      }
+      let transformedData :any =[];
+      let headers: string[] = [];
+
+     let columnKeys = item?.columns?.map((col: any) => col.column); 
+     let rowKeys = item?.rows?.map((row: any) => row.column);
+    let valueKeys = item?.pivot?.map((col:any) =>col.column)
+
+    item?.columns?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    item?.rows?.forEach((rowObj: any) => {
+      headers.push(rowObj.column);
+    });
+    item?.pivot?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (item?.columns?.length > 0) {
+        numRows = item.columns[0]?.result?.length || 0;
+    } else if (item?.rows?.length > 0) {
+        numRows = item.rows[0]?.result?.length || 0;
+    } else if (item?.pivot?.length > 0) {
+        numRows = item.pivot[0]?.result?.length || 0;
+    }
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      item?.columns?.forEach((colObj: any) => {
+        rowArray.push(colObj.result[i]);
+      });
+      item?.rows?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+      item?.pivot?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+    setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
+    }
+
+
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
@@ -3806,6 +4044,11 @@ formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : numb
       case 'G':
         formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
         break;
+      case '%':
+        let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+        let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
+        formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
+        break;
     }
   } else {
     formattedNumber = (value).toFixed(KPIDecimalPlaces)
@@ -4025,6 +4268,7 @@ const obj ={
       this.getDashboardFilterredList();
       this.toasterService.success('Filter Updated Successfully','success',{ positionClass: 'toast-top-right'});
       this.selectedOption = null;
+      this.clearAllFilters();
     },
     error:(error)=>{
       console.log(error)
@@ -4192,6 +4436,13 @@ kpiData?: KpiData;
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
         },
+        pivotData: sheet.sheet_type === 'PIVOT' ? {
+          pivotDataTransformed:sheet?.sheet_data?.pivotTransformedData,
+          pivotRowData:sheet?.sheet_data?.row,
+          pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+          pivotColData:sheet?.sheet_data?.col
+        }
+        : undefined,
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
@@ -4228,7 +4479,7 @@ kpiData?: KpiData;
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
-        search : this.searchSheets,
+        // search : this.searchSheets,
         page_count:this.itemsPerPage
 
       }
@@ -4242,6 +4493,7 @@ kpiData?: KpiData;
        this.itemsPerPage = data.items_per_page;
       },
       error:(error)=>{
+        this.panelscheckbox = [];
         console.log(error)
       }
     })
@@ -4325,7 +4577,7 @@ kpiData?: KpiData;
         this.dashboard.forEach((sheet : any)=>{
           console.log('Before sanitization:', sheet.data.sheetTagName);
           this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
-          if((sheet && sheet.chartOptions && sheet.chartOptions.chart) || sheet.isDrillDownData) {
+          if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
             sheet.chartOptions.chart.events = {
               markerClick: (event: any, chartContext: any, config: any) => {
                 let selectedXValue;
@@ -4440,6 +4692,15 @@ kpiData?: KpiData;
               const date = params.data[0];
               const value = params.data[1];
               return `Date: ${date}<br/>Value: ${value}`;
+            };
+            this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
+          }
+          if(chartId == 1){
+            if(sheet?.tableData?.tableItemsPerPage){
+              sheet.tableData.tableItemsPerPage = 10;
+            }
+            if(sheet?.tableData?.tablePage){
+              sheet.tableData.tablePage = 1;
             }
           }
         })
@@ -4595,7 +4856,8 @@ kpiData?: KpiData;
       // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
+  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
       next:(data)=>{
@@ -4625,14 +4887,14 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0);
-      if(item.chartId == '29'){
-        if (item.drillDownIndex != 0) {
-          this.chartType = 'bar';
-        }
-        else {
-          this.chartType = 'map';
-        }
-      }
+      // if(item.chartId == '29'){
+      //   if (item.drillDownIndex != 0) {
+      //     this.chartType = 'bar';
+      //   }
+      //   else {
+      //     this.chartType = 'map';
+      //   }
+      // }
         },
       error:(error)=>{
         console.log(error)
@@ -4666,7 +4928,8 @@ kpiData?: KpiData;
       "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
+  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getDashboardDrillDowndata(Obj).subscribe({
       next:(data)=>{
@@ -4696,14 +4959,14 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0);
-      if(item.chartId == '29'){
-        if (item.drillDownIndex != 0) {
-          this.chartType = 'bar';
-        }
-        else {
-          this.chartType = 'map';
-        }
-      }
+      // if(item.chartId == '29'){
+      //   if (item.drillDownIndex != 0) {
+      //     this.chartType = 'bar';
+      //   }
+      //   else {
+      //     this.chartType = 'map';
+      //   }
+      // }
         },
       error:(error)=>{
         console.log(error)
@@ -4765,8 +5028,9 @@ kpiData?: KpiData;
   }
 }
 //tablePagination
-tableSearchDashboard(item:any){
+tableSearchDashboard(item:any,value:any){
   this.tablePageNo=1;
+  this.tableSearch = value;
   this.pageChangeTableDisplay(item,1,false,0);
 }
 pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetIndex:any){
@@ -4782,7 +5046,8 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
-    search:this.tableSearch
+    search:this.tableSearch,
+    is_exclude:this.excludeFilterIdArray
   }
   if(obj.search === '' || obj.search === null){
     delete obj.search;
@@ -4799,16 +5064,15 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     }
   })  
 }
-tableSearchDashboardPublic(item:any){
+tableSearchDashboardPublic(item:any,value:any){
   this.tablePageNo=1;
+  this.tableSearch = value;
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
   if(item?.tableData?.tablePage ){
     item.tableData.tablePage = page;
   }
- 
-  
   const obj={
     sheet_id:item.sheetId ?? item.sheet_id,
     id:this.keysArray,
@@ -4818,7 +5082,8 @@ pageChangeTableDisplayPublic(item:any,page:any){
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
-    search:this.tableSearch
+    search:this.tableSearch,
+    is_exclude:this.excludeFilterIdArray
   }
   if(obj.search === '' || obj.search === null){
     delete obj.search;
@@ -4829,7 +5094,7 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, false , false, false, false, '', false,0);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', false,0);
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5235,6 +5500,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       next: (data) => {
         console.log(data);
         this.getDrillThroughActionList();
+        this.actionId = '';
         this.clearActionForm();
         this.editActions = false;
         this.toasterService.success('Action Deleted Successfully', 'Success', { positionClass: 'toast-top-center' });
@@ -5484,12 +5750,12 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
      uploadInJson(){
       if (this.uploadedImage) {
         let element :any= {
-          id: uuidv4(), // Unique ID
+          id: uuidv4(), 
           x: 10,
           y: 20,
-          rows: 2, // Adjust size
-          cols: 2, // Adjust size
-          type: 'image', // Identify it as an image
+          rows: 2,
+          cols: 2, 
+          type: 'image', 
           imageData: this.uploadedImage, // Store Base64 image data
           imageTitle:this.imageTitle
         };
@@ -5536,20 +5802,21 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === item.id);
       if (itemIndex !== -1) {
         // const item1 = this.dashboard[itemIndex];
-        if (item['kpiData']) {
+        if (item['kpiImage']) {
           // Add the kpiImage key to kpiData
           this.dashboard[itemIndex] = {
             ...item,
-            kpiData: {
-              ...item.kpiData,
-              kpiImage: KpiImage,
-            },
+            kpiImage: KpiImage,
           };
-          console.log('addedKpiImage',this.dashboard);
-          this.canNavigateToAnotherPage = true;
+       
         } else {
-          console.error('kpiData is undefined for the item:', item);
+          this.dashboard[itemIndex] = {
+            ...item,
+            kpiImage: KpiImage,
+          };    
         }
+        console.log('addedKpiImage',this.dashboard);
+        this.canNavigateToAnotherPage = true;
       } else {
         console.error('Item not found in dashboard:', item);
       } 
@@ -5559,11 +5826,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       if (itemIndex !== -1) {
         const updatedItem = {
           ...this.dashboard[itemIndex],
-          kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+          kpiImage: { ...this.dashboard[itemIndex]['kpiImage'] },
         };
   
         // Delete kpiImage key if it exists
-        delete updatedItem.kpiData.kpiImage;
+        delete updatedItem.kpiImage;
   
         // Update the dashboard array
         this.dashboard[itemIndex] = updatedItem;
@@ -5617,7 +5884,6 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       console.log('kpiSize',this.selectedIconFontSize)
     }
   
-    // Handle changes to color
     changeColor(event:any): void {
       const color = event.target.value;
       this.selectedIconColor = color;
@@ -5634,7 +5900,6 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       { value: 'bottom-middle', iconClass: 'dollar-bottom-center' },
       { value: 'bottom-right', iconClass: 'dollar-bottom-right' }
     ];
-    // Handle position selection
     selectPosition(position: string): void {
       this.selectedIconPosition = position;
       console.log('kpiPosition',this.selectedIconPosition)
@@ -5642,35 +5907,33 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     applyIconInKpi(){
       const itemIndex = this.dashboard.findIndex((d) => d['id'] === this.KpiIconItem.id);
       if (itemIndex !== -1) {
-        // const item1 = this.dashboard[itemIndex];
-        if (this.KpiIconItem['kpiData']) {
-          // Add the kpiImage key to kpiData
-          this.dashboard[itemIndex] = {
-            ...this.KpiIconItem,
-            kpiData: {
-              ...this.KpiIconItem.kpiData,
-              kpiIcon: this.selectedIcon,
-              kpiIconSize: this.selectedIconFontSize,
-              kpiIconColor:this.selectedIconColor,
-              kpiIconPosition:this.selectedIconPosition
-            },
-          };
-          this.modalService.dismissAll();
-          console.log('addedKpiIcon',this.dashboard);
-          this.canNavigateToAnotherPage = true;
-          this.selectedIcon = null;
-        } else {
-          console.error('kpiData is undefined for the item:', this.KpiIconItem);
+        if (!this.KpiIconItem.kpiIconsArray) {
+          this.KpiIconItem.kpiIconsArray = {};
         }
+            const newIconObject = {
+          kpiIcon: this.selectedIcon,
+          kpiIconSize: this.selectedIconFontSize,
+          kpiIconColor: this.selectedIconColor,
+          kpiIconPosition: this.selectedIconPosition
+        };
+        this.KpiIconItem.kpiIconsArray = newIconObject;
+            this.dashboard[itemIndex] = { 
+          ...this.KpiIconItem 
+        };
+    
+        this.modalService.dismissAll();
+        console.log('Updated kpiIconsArray:', this.dashboard);
+        this.canNavigateToAnotherPage = true;
+        this.selectedIcon = null;
       } else {
         console.error('Item not found in dashboard:', this.KpiIconItem);
-      } 
+      }
+    
     }
 
     getIconPositionStyles(position: string) {
       let styles = {};
       const offset = '10px'; // Distance from the edges
-      // Check the position value and apply corresponding styles
       switch (position) {
           case 'top-left':
             return { top: offset, left: offset, transform: 'none' };
@@ -5691,19 +5954,19 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
           case 'bottom-right':
             return { bottom: offset, right: offset, transform: 'none' };
         default:
-          styles = { bottom: '0', right: '0' }; // Default fallback position
+          styles = { bottom: '0', right: '0' }; 
           break;
       }
     
       return styles;
     }
     getIconClass(icon: any): string {
-      return `${icon.styles[0]} fa-${icon.name}`; // Use the first available style
+      return `${icon.styles[0]} fa-${icon.name}`; 
     }
     priorityIcons: string[] = ['arrow-trend-up','arrow-trend-down','house','magnifying-glass','user','facebook','check','download','twitter','instagram','envelope','linkedin','arrow-up','file','calendar-days','circle-down','address-book','handshake','layer-group','users','link','sack-dollar'
-    ];; // List of prioritized icon names
+    ];; 
   filteredIcons: any[] = [];
-  showAll: boolean = false; // Toggle for showing all icons
+  showAll: boolean = false; 
 
   updateFilteredIcons(): void {
     const searchFilter = this.iconList.filter(
@@ -5714,8 +5977,8 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     );
 
     this.filteredIcons = this.showAll
-      ? searchFilter // Show all icons if toggled
-      : searchFilter.filter((icon) => this.priorityIcons.includes(icon.name)); // Show priority icons only
+      ? searchFilter 
+      : searchFilter.filter((icon) => this.priorityIcons.includes(icon.name)); 
   }
   toggleShowAll(): void {
     this.showAll = !this.showAll;
@@ -5728,11 +5991,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     });
     this.KpiIconItem = item;
     console.log('editKpi',item);
-    const kpiData = item.kpiData
-    this.selectedIconColor = kpiData.kpiIconColor ?? '#888'
-    this.selectedIconFontSize = kpiData.kpiIconSize ?? '24'
-    this.selectedIconPosition = kpiData.kpiIconPosition ?? 'bottom-right'
-    this.selectedIcon = kpiData.kpiIcon ?? null
+    const kpiIconsArray = item.kpiIconsArray
+    this.selectedIconColor = kpiIconsArray.kpiIconColor ?? '#888'
+    this.selectedIconFontSize = kpiIconsArray.kpiIconSize ?? '24'
+    this.selectedIconPosition = kpiIconsArray.kpiIconPosition ?? 'bottom-right'
+    this.selectedIcon = kpiIconsArray.kpiIcon ?? null
  
   }
   removeKpiIcon(item: any): void {
@@ -5740,14 +6003,14 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     if (itemIndex !== -1) {
       const updatedItem = {
         ...this.dashboard[itemIndex],
-        kpiData: { ...this.dashboard[itemIndex]['kpiData'] },
+        kpiIconsArray: { ...this.dashboard[itemIndex]['kpiIconsArray'] },
       };
 
       // Delete kpiIcon key if it exists
-      delete updatedItem.kpiData.kpiIcon;
-      delete updatedItem.kpiData.kpiIconPosition;
-      delete updatedItem.kpiData.kpiIconColor;
-      delete updatedItem.kpiData.kpiIconSize;
+      delete updatedItem.kpiIconsArray.kpiIcon;
+      delete updatedItem.kpiIconsArray.kpiIconPosition;
+      delete updatedItem.kpiIconsArray.kpiIconColor;
+      delete updatedItem.kpiIconsArray.kpiIconSize;
       // Update the dashboard array
       this.dashboard[itemIndex] = updatedItem;
       this.canNavigateToAnotherPage = true;

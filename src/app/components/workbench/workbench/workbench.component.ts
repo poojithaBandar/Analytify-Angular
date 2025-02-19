@@ -79,6 +79,7 @@ export class WorkbenchComponent implements OnInit{
   totalItems:any;
   fileData:any;
   viewDatasourceList = false;
+  isGoogleSheetsPage = false;
   selectedMicroSoftAuthType: string | null = null;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
@@ -88,10 +89,20 @@ export class WorkbenchComponent implements OnInit{
     if(currentUrl.includes('analytify/datasources/view-connections')){
       this.databaseconnectionsList= true;  
        this.viewNewDbs= false;
+       this.isGoogleSheetsPage = false;
     } 
     if(currentUrl.includes('analytify/datasources/new-connections')){
       this.viewNewDbs = true;
       this.databaseconnectionsList = false;
+      this.isGoogleSheetsPage = false;
+    }
+    if(currentUrl.includes('analytify/datasources/google-sheets')){
+      this.viewNewDbs = false;
+      this.databaseconnectionsList = false;
+      this.isGoogleSheetsPage = true;
+      let url = this.router.url;
+      console.log(url);
+      this.getGoogleSheetDetailsByUrl(url);
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
@@ -138,7 +149,72 @@ export class WorkbenchComponent implements OnInit{
     this.clientIdPSA = '';
     this.clientSecret = '';
     
-  }  
+  } 
+  googleSheetsData = [] as any;
+  gsheetsParentId:any;
+  gsheetprofile:any;
+  getGoogleSheetDetailsByUrl(url:any){
+  const obj = {
+    code: url
+  }
+  this.workbechService.getGoogleSheetsDetails(obj)
+    .subscribe(
+      {
+        next: (data: any) => {
+          console.log(data);
+          this.googleSheetsData = data.sheets;
+          this.gsheetsParentId = data.parent_id;
+          this.gsheetprofile = data.profile
+        },
+        error: (error: any) => {
+          console.log(error);
+          if(error.error.message === 'Invalid grant, please re-authorize'){
+            Swal.fire({
+              title: 'oops! connection lost to Google Sheets',
+              text:'Click OK to redirect Google Authentication',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ok'
+            }).then((result)=>{
+              if(result.isConfirmed){
+                this.document.location.href = error.error.redirect_url;
+              }
+              else{
+                this.router.navigate(['analytify/datasources/new-connections'])
+              }
+            }) 
+
+          }
+        }
+      }
+    )
+  }
+  getHierachyIdFromGsheets(id:any){
+    this.workbechService.getHierachyIdFromGsheets(this.gsheetsParentId,id)
+      .subscribe(
+        {
+          next: (data: any) => {
+            console.log(data);
+            if(data.hierarchy_id){
+              const GsheetsHierarchyId = btoa(data.hierarchy_id.toString());
+              this.router.navigate(['/analytify/database-connection/tables/quickbooks/'+GsheetsHierarchyId]);
+            }
+          },
+          error: (error: any) => {
+            console.log(error);
+            if(error){
+              Swal.fire({
+                icon: 'error',
+                title: 'oops!',
+                text: error.error.message,
+                width: '400px',
+              })
+            }
+          }
+        }
+      )
+  }
     openPostgreSql(){
     this.openPostgreSqlForm=true;
     this.databaseconnectionsList= false;
@@ -706,13 +782,20 @@ export class WorkbenchComponent implements OnInit{
       }
     }
 
-    uploadfileCsv(event:any){
+    uploadfileCsv(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
-      if(this.fileData){
-        this.csvUpload(event.target);
+      if(this.fileData && this.fileData.type == 'text/csv'){
+        if(type === 'upload'){
+          this.csvUpload(event.target);
+        } else if(type === 'replace'){
+          this.replaceExcelOrCsvFile(event.target,database);
+        } else if(type === 'upsert'){
+          this.upsertExcelOrCsvFile(event.target,database);
+        }
+      } else{
+        this.toasterservice.error('Not a supported file format. Please select an CSV file.','info',{ positionClass: 'toast-top-center'})
       }
-
     }
     csvUpload(fileInput: any){
     const formData: FormData = new FormData();
@@ -738,13 +821,20 @@ export class WorkbenchComponent implements OnInit{
         }
       )
     }
-    uploadfileExcel(event:any){
+    uploadfileExcel(event:any,type:any,database:any){
       const file:File = event.target.files[0];
       this.fileData = file;
-      if(this.fileData){
-        this.excelUpload(event.target);
+      if(this.fileData && ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'].includes(this.fileData.type)){
+        if(type === 'upload'){
+          this.excelUpload(event.target);
+        } else if(type === 'replace'){
+          this.replaceExcelOrCsvFile(event.target,database);
+        } else if(type === 'upsert'){
+          this.upsertExcelOrCsvFile(event.target,database);
+        }
+      } else{
+        this.toasterservice.error('Not a supported file format. Please select an Excel file.','info',{ positionClass: 'toast-top-center'})
       }
-
     }
     excelUpload(fileInput: any){
       const formData: FormData = new FormData();
@@ -856,7 +946,33 @@ export class WorkbenchComponent implements OnInit{
           }
       });
   }
-
+//gsheets
+connectGoogleSheets(){
+  Swal.fire({
+    title: 'This will redirect to Google SignIn page',
+    // text: 'This will redirect to QuickBooks SignIn page',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Ok'
+  }).then((result)=>{
+    if(result.isConfirmed){
+      this.workbechService.connectGoogleSheets()
+      .subscribe(
+        {
+          next: (data) => {
+            console.log(data);
+            // this.routeUrl = data.redirection_url
+            this.document.location.href = data.redirection_url;
+            this.loaderService.show();
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        }
+      )
+    }}) 
+}
     deleteDbConnection(id:any){
       // const obj ={
       //   database_id:dbId
@@ -1224,5 +1340,51 @@ export class WorkbenchComponent implements OnInit{
     } else{
       this.disableConnectBtn = false;
     }
+  }
+  replaceExcelOrCsvFile(fileInput: any,database:any) {
+    const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData, this.fileData.name);
+    formData.append('file_type', database.database_type);
+    formData.append('hierarchy_id', database.hierarchy_id);
+    this.workbechService.replaceExcelOrCsvFile(formData).subscribe({
+      next:(responce)=>{
+        console.log(responce);
+        this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+        this.fileId=database.hierarchy_id
+        const encodedId = btoa(this.fileId.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+       },
+       error: (error) => {
+        console.log(error);
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      },
+      complete: () => {
+        fileInput.value = '';
+        this.cd.detectChanges();
+      }
+    })
+  }
+  upsertExcelOrCsvFile(fileInput: any,database : any){
+    const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData, this.fileData.name);
+    formData.append('file_type', database.database_type);
+    formData.append('hierarchy_id', database.hierarchy_id);
+    this.workbechService.upsertExcelOrCsvFile(formData).subscribe({
+      next:(responce)=>{
+        console.log(responce);
+        this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+        this.fileId=database.hierarchy_id
+        const encodedId = btoa(this.fileId.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+       },
+       error: (error) => {
+        console.log(error);
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      },
+      complete: () => {
+        fileInput.value = '';
+        this.cd.detectChanges();
+      }
+    })
   }
 }

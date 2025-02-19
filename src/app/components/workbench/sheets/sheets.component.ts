@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -51,7 +51,10 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
-
+// import $ from 'jquery';
+import 'pivottable';
+// import * as $ from 'jquery';
+import 'jquery-ui/ui/widgets/sortable';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -67,6 +70,14 @@ interface RangeSliderModel {
   maxValue: number;
   options: Options;
 }
+declare global {
+  interface JQuery {
+    sortable(): JQuery;
+  }
+}
+
+declare var $:any;
+
 @Component({
   selector: 'app-sheets',
   standalone: true,
@@ -99,6 +110,7 @@ export class SheetsComponent {
   draggedColumnsData = [] as any;
   mulColData = [] as any;
   mulRowData = [] as any;
+  pivotMeasureValues = [] as any;
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
@@ -209,11 +221,12 @@ export class SheetsComponent {
   displayUnits: string = 'none';
   prefix: string = '';
   suffix: string = '';
-  KPIDecimalPlaces: number = 0;
+  KPIDecimalPlaces: number = 2;
   KPIRoundPlaces: number = 0;
   KPIDisplayUnits: string = 'none';
   KPIPrefix: string = '';
   KPISuffix: string = '';
+  KPIPercentageDivisor : number = 100;
   isCustomSql = false;
   canDrop = true;
   createdBy : any;
@@ -228,6 +241,7 @@ export class SheetsComponent {
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
+  draggedMeasureValues = [] as any;
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
@@ -337,7 +351,13 @@ export class SheetsComponent {
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
-
+  @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
+  transformedData: any[] = [];
+  columnKeys: string[] = [];
+  rowKeys: string[] = [];
+  valueKeys: string[] = [];
+  rawData: any = {};
+  
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
     ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -347,6 +367,7 @@ export class SheetsComponent {
   ];
   selectedColorScheme=[] as  any;
   hasUnSavedChanges = false;
+  heirarchyColumnData : any [] = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
@@ -442,6 +463,7 @@ export class SheetsComponent {
       this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
       this.dashboardId = +atob(route.snapshot.params['id4']);
       console.log(this.retriveDataSheet_id)
+      this.filterQuerySetId = null;
       // this.sheetRetrive();
       }
    } 
@@ -633,12 +655,27 @@ try {
         } else {
           draggedColumnsObj = this.draggedColumnsData
         }
+        if(!this.isTopFilter){
+          this.sortColumn = 'select';
+          this.sortType = 0;
+        }
+        if(this.draggedDrillDownColumns.length > 0 && this.heirarchyColumnData.length > 0 && this.drillDownIndex >=0 && this.selectedSortColumnData && this.selectedSortColumnData.length > 0){
+          let columnsData = JSON.parse(JSON.stringify(this.heirarchyColumnData[this.drillDownIndex]));
+          if(this.selectedSortColumnData[0] === this.draggedColumnsData[0][0] && this.dateDrillDownSwitch){
+            this.selectedSortColumnData[0] = columnsData[0];
+            this.selectedSortColumnData[1] = columnsData[1];
+            this.selectedSortColumnData[2] = columnsData[2];
+          }
+          this.selectedSortColumnData[0] = columnsData[0];
+          this.selectedSortColumnData[1] = columnsData[1];
+        }
         const obj = {
           "hierarchy_id": this.databaseId,
           "queryset_id": this.qrySetId,
           "col": draggedColumnsObj,
           "row": this.draggedRowsData,
           "filter_id": this.filterId,
+          "pivot_measure":this.draggedMeasureValuesData,
           "datasource_querysetid": this.filterQuerySetId,
           "sheetfilter_querysets_id": this.sheetfilter_querysets_id,
           "hierarchy": this.draggedDrillDownColumns,
@@ -646,7 +683,7 @@ try {
           "drill_down": this.drillDownObject,
           "next_drill_down": this.draggedDrillDownColumns[this.drillDownIndex],
           "parent_user":this.createdBy,
-          "order_column":this.selectedSortColumnData
+          "order_column":(!this.isTopFilter) ? null : this.selectedSortColumnData
         }
         this.workbechService.getDataExtraction(obj).subscribe({
           next: (responce: any) => {
@@ -656,6 +693,10 @@ try {
             this.chartsDataSet(responce);
             this.mulColData = responce.columns;
             this.mulRowData = responce.rows;
+            this.pivotMeasureValues = responce.pivot_measure;
+            this.pivotColumnData = responce?.data?.col;
+            this.pivotRowData = responce?.data?.row;
+            this.pivotMeasureData = responce?.data?.pivot_measure;
             if (this.chartsRowData.length > 0) {
               // this.enableDisableCharts();
               // this.chartsOptionsSet();
@@ -665,16 +706,18 @@ try {
                 // this.updateChart();
               }
               else{
-                this.chartsOptionsSet();
+                // this.chartsOptionsSet();
               }
             }
+            this.chartsOptionsSet();
             this.getDimensionAndMeasures();
             this.changeSelectedColumn();
-            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2)) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage || this.pivotTable) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
               if(!this.table){
                 this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
               }
               this.table = true;
+              this.pivotTable = false;
               this.bar = false;
               this.area = false;
               this.line = false;
@@ -695,8 +738,9 @@ try {
               this.calendar = false;
               this.map=false;
               // this.tableDisplayPagination();
-            } else if(((this.pie || this.bar || this.area || this.line || this.donut) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
+            } else if(((this.pie || this.bar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
+              this.pivotTable = false;
               this.bar = false;
               this.area = false;
               this.line = false;
@@ -721,6 +765,9 @@ try {
               this.chartType = 'sidebyside';
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
               this.chartType = 'sidebyside'
+            }
+            if(this.pivotTable){
+              this.pivotTableDatatransform();
             }
             if(this.table){
               this.page = 1;
@@ -805,12 +852,81 @@ try {
         }
       }
 
+      pivotRowData = [] as any;
+      pivotColumnData = [] as any;
+      pivotMeasureData = [] as any;
+        pivotTableDatatransform() {
+          if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
+            this.transformedData =[];
+          let headers: string[] = [];
+
+          this.columnKeys = this.pivotColumnData?.map((col: any) => col.column); 
+          this.rowKeys = this.pivotRowData?.map((row: any) => row.col);
+          this.valueKeys = this.pivotMeasureData?.map((col:any) =>col.col)
+          this.pivotColumnData.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+      
+          this.pivotRowData.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          this.pivotMeasureData.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+      
+          this.transformedData.push(headers); 
+          let numRows = 0;
+          if (this.pivotColumnData.length > 0) {
+            numRows = this.pivotColumnData[0].result_data.length;
+            } else if (this.pivotRowData.length > 0) {
+            numRows = this.pivotRowData[0].result_data.length;
+            } else if (this.pivotMeasureData.length > 0) {
+            numRows = this.pivotMeasureData[0].result_data.length;
+            }
+      
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = []; 
+            this.pivotColumnData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+                  this.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            this.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+
+            this.transformedData.push(rowArray);
+          }
+          this.renderPivotTable();        
+        }
+        }
+
+        renderPivotTable() {
+          setTimeout(() => {
+
+          if (this.pivotContainer && this.pivotContainer.nativeElement) {
+              ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
+                rows: this.columnKeys,  
+                cols: this.valueKeys, 
+                // vals: this.valueKeys, 
+                aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                rendererName: "Table"
+              });
+            // }, 1000);
+          }        
+                      }, 1000);
+
+        }
+
+
       chartsDataSet(data: any) {
         let sidebysideBarColumnData = [];
         this.sheetCustomQuery = data.custom_query;
         // this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        this.pivotMeasureData = data.data?.pivotMeasure_Data ? data.data.pivotMeasure_Data : data.sheet_data?.pivotMeasure_Data ? data.sheet_data?.pivotMeasure_Data : [];
         
         this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
@@ -913,6 +1029,9 @@ try {
       chartsOptionsSet(){
         if (this.bar) {
           this.chartType = 'bar';
+        }
+        else if(this.pivotTable){
+          this.chartType = 'pivotTable'
         } else if (this.area) {
           this.chartType = 'area';
         } else if (this.line) {
@@ -1118,6 +1237,9 @@ try {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
   rowMeasuresCount(rows:any,index:any,type:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
+      this.selectedSortColumnData[2] = type;
+    }
       this.measureValues = [];
       if(type){
         this.measureValues = [rows.column,"aggregate",type,rows.alias ? rows.alias : ""];
@@ -1138,6 +1260,15 @@ try {
     console.log(this.draggedRowsData);
     this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     console.log(this.draggedRows)
+    if(type === 'count' || type === 'count_distinct'){
+      this.KPIDecimalPlaces = 0;
+      this.decimalPlaces = 0;
+      this.donutDecimalPlaces = 0;
+    } else {
+      this.KPIDecimalPlaces = 2;
+      this.decimalPlaces = 2;
+      this.donutDecimalPlaces = 2;
+    }
     this.dataExtraction();
      }
   }
@@ -1258,6 +1389,7 @@ try {
   }
   }
   table = true;
+  pivotTable = false;
   bar = false;
   sidebyside = false;
   area = false;
@@ -1275,8 +1407,9 @@ try {
   guage = false;
   calendar = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,chartId:any){
     this.table = table;
+    this.pivotTable = pivotTable;
     this.bar=bar;
     this.area=area;
     this.line=line;
@@ -1340,11 +1473,12 @@ try {
     this.dateDrillDownSwitch = false;
     delete this.originalData;
     this.sheetName = ''; this.sheetTitle = '';
-    this.KPIDecimalPlaces = 0;
+    this.KPIDecimalPlaces = 2;
     this.KPIRoundPlaces = 0;
     this.KPIDisplayUnits = 'none';
     this.KPIPrefix = '';
     this.KPISuffix = '';
+    this.KPIPercentageDivisor = 100;
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
@@ -1567,6 +1701,8 @@ try {
     this.draggedColumnsData =[];
     this.draggedRows = [];
     this.draggedRowsData = [];
+    this.draggedMeasureValues = [];
+    this.draggedMeasureValuesData = [];
     // this.retriveDataSheet_id = '';
     this.dimetionMeasure = [];
     this.dualAxisColumnData = [];
@@ -1611,6 +1747,7 @@ try {
       this.donutXaxis = [];
       this.sortedData = [];
       this.table = true;
+      this.pivotTable = false;
       this.bar = false;
       this.pie = false;
       this.line = false;
@@ -1662,10 +1799,12 @@ try {
       this.legendSwitch = true;
       this.label = true;
       this.donutSize = 50;
-      this.donutDecimalPlaces = 0;
-      this.decimalPlaces = 0;
+      this.donutDecimalPlaces = 2;
+      this.decimalPlaces = 2;
       this.barColor = '#4382f7';
       this.lineColor = '#38ff98';
+      this.heirarchyColumnData = [];
+      this.selectedSortColumnData = null;
    // }
   }
   saveTableData = [] as any;
@@ -1723,6 +1862,13 @@ sheetSave(){
    bandColor1 = this.color1;
    bandColor2 = this.color2;
   }
+  if(this.pivotTable && this.chartId == 9){
+    //  this.saveTableData =  this.tableDataStore;
+    //  this.savedisplayedColumns = this.displayedColumns;
+    //  this.banding = this.bandingSwitch;
+    //  bandColor1 = this.color1;
+    //  bandColor2 = this.color2;
+    }
   if(this.bar && this.chartId == 6){
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
@@ -1804,6 +1950,22 @@ sheetSave(){
     kpiData = this.tablePreviewRow;
     kpiColor = this.kpiColor;
     kpiFontSize = this.kpiFontSize;
+  }
+  if(this.map && this.chartId == 29){
+    if(this.originalData){
+      if(this.draggedDrillDownColumns.length > 0){
+        this.originalData.categories.forEach((column:any,index:any)=>{
+          tablePreviewCol[index].column = column.name;
+          tablePreviewCol[index].result_data = column.values;
+        });
+        this.originalData.data.forEach((column:any,index:any)=>{
+          tablePreviewRow[index].column = column.name;
+          tablePreviewRow[index].result_data = column.data;
+        });
+        this.drillDownIndex = 0;
+      }
+      delete this.originalData;
+    }
   }
   savedChartOptions = this.chartOptionsSet;
   let customizeObject = {
@@ -1894,7 +2056,11 @@ sheetSave(){
     topLegend:this.topLegend,
     sortColumn:this.sortColumn,
     locationDrillDownSwitch:this.locationDrillDownSwitch,
-    isLocationField : this.isLocationFeild
+    isLocationField : this.isLocationFeild,
+    KPIDecimalPlaces : this.KPIDecimalPlaces,
+    KPIDisplayUnits : this.KPIDisplayUnits,
+    KPIPrefix : this.KPIPrefix,
+    KPISuffix : this.KPISuffix
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -1919,14 +2085,21 @@ const obj={
   "datasource_querysetid": this.filterQuerySetId,
   "col": this.mulColData,
   "row": this.mulRowData,
+  "pivot_measure":this.pivotMeasureValues,
   "custom_query":this.sheetCustomQuery,
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
     "isDrillDownData" : this.dateDrillDownSwitch,
+    "heirarchyColumnData" : this.heirarchyColumnData,
+    "selectedSortColumnData" : this.selectedSortColumnData,
   "columns": this.draggedColumns,
   "columns_data":draggedColumnsObj,
   "rows": this.draggedRows,
   "rows_data":this.draggedRowsData,
+  "pivotMeasure":this.draggedMeasureValues,
+  "pivotMeasure_Data":this.pivotMeasureData,
+  "pivotMeasureValuesData":this.draggedMeasureValuesData,
+  "pivotTransformedData":this.transformedData,
   "col":tablePreviewCol,
   "row":tablePreviewRow,
   "results": {
@@ -2144,10 +2317,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetCustomQuery = responce?.custom_query;
         this.sheetResponce = responce?.sheet_data;
         this.draggedColumns=this.sheetResponce?.columns;
-        this.filterQuerySetId = responce?.datasource_queryset_id;
+        if(!this.filterQuerySetId){
+          this.filterQuerySetId = responce?.datasource_queryset_id;
+        }
         this.draggedRows = this.sheetResponce?.rows;
+        this.draggedMeasureValues = this.sheetResponce?.pivotMeasure; 
         this.mulColData = responce?.col_data;
         this.mulRowData = responce?.row_data;
+        this.pivotMeasureValues = responce?.pivot_measure
+
+        this.pivotMeasureData = this.sheetResponce?.pivotMeasure_Data;
+        this.pivotColumnData = this.sheetResponce?.col;
+        this.pivotRowData = this.sheetResponce?.row;
+
         this.tablePaginationRows=responce?.row_data;
         this.tablePaginationColumn=responce?.col_data;
   if (isDuplicate && duplicateFilterData) {
@@ -2191,6 +2373,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.locationDrillDownSwitch = this.sheetResponce?.customizeOptions?.locationDrillDownSwitch;
         this.isLocationFeild = this.sheetResponce?.customizeOptions?.isLocationField;
         this.draggedDrillDownColumns = this.sheetResponce?.drillDownHierarchy ? this.sheetResponce.drillDownHierarchy : [];
+        this.heirarchyColumnData = this.sheetResponce?.heirarchyColumnData ? this.sheetResponce?.heirarchyColumnData : [];
+        this.selectedSortColumnData = this.sheetResponce?.selectedSortColumnData ? this.sheetResponce?.selectedSortColumnData : null;
         if(this.isEChatrts){
           this.selectedChartPlugin = 'echart';
         } else {
@@ -2216,6 +2400,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.draggedRowsData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
+        if(this.sheetResponce.pivotMeasure){
+          this.draggedMeasureValues = this.sheetResponce?.pivotMeasure;
+          this.draggedMeasureValuesData = this.sheetResponce?.pivotMeasureValuesData
+        }
+        else if(this.draggedMeasureValues){
+          this.draggedMeasureValues.forEach((res:any) => {
+            this.draggedMeasureValuesData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
+          });
+        }
         // this.table = false;
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
@@ -2225,6 +2418,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
           this.table = true;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2245,6 +2439,31 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
           this.tableDisplayPagination();
         }
+        if(responce.chart_id == 9){
+          // this.tableData = this.sheetResponce.results.tableData;
+          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          this.table = false;
+          this.pivotTable = true;
+          this.bar = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.map = false
+          this.funnel = false;
+          this.guage = false;
+          this.calendar = false;
+          this.pivotTableDatatransform();
+        }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
           this.KPINumber = this.sheetResponce?.results?.kpiNumber;
@@ -2259,6 +2478,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.KPIDisplayUnits = this.sheetResponce?.results?.kpiDecimalUnit,
           this.KPIDecimalPlaces = this.sheetResponce?.results?.kpiDecimalPlaces,
           this.table = false;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2283,6 +2503,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             echarts.registerMap('world', geoJson);  // Register the map data
           });
           this.table = false;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2310,6 +2531,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       //  this.barChart();
         this.bar = true;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2333,6 +2555,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.pieChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = true;
           this.line = false;
           this.area = false;
@@ -2356,6 +2579,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.lineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = true;
           this.area = false;
@@ -2379,6 +2603,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.areaChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = true;
@@ -2402,6 +2627,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.sidebysideBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2425,6 +2651,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.stockedBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2448,6 +2675,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.barLineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2468,9 +2696,10 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
        }
        if(responce.chart_id == 12){
         this.chartType = 'radar';
-        this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
+        // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2494,6 +2723,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2517,6 +2747,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.hGrouped();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2540,6 +2771,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.multiLineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2563,6 +2795,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.donutChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2585,6 +2818,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'heatmap';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2607,6 +2841,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'funnel';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2629,6 +2864,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'guage';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2651,6 +2887,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'calendar';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2728,6 +2965,9 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   extractTypesForTab : any[] = ['year','quarter','month','day','week number','weekdays','count','count_distinct','min','max'];
   extractAggregateTypes : any[] = ['count','count_distinct','min','max'];
   filterDataGet(){
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
     const obj={
       "hierarchy_id" :this.databaseId,
       "query_set_id":this.qrySetId,
@@ -2802,9 +3042,13 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     }
    console.log(this.filterDataArray)
   }
+  totalDataLength : any;
   filterDataPut(){
     // this.dimetionMeasure = [];
     this.sortedData = [];
+    if(this.activeTabId === 4){
+      this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
     const obj={
     //"filter_id": this.filter_id,
     "hierarchy_id": this.databaseId,
@@ -2827,6 +3071,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.filterId.push(responce.filter_id);
         this.filter_id=responce.filter_id
         this.dimetionMeasure.push({"col_name":this.filterName,"data_type":this.filterType,"filter_id":responce.filter_id,"top_bottom":this.activeTabId === 4 ? ['top'] : null});
+        this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         this.dataExtraction();
         this.filterDataArray = [];
         this.filterDateRange = [];
@@ -2869,7 +3114,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.format_type === 'year/month/day'){
+        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day'){
           this.activeTabId = 2;
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
@@ -2949,10 +3194,12 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "is_exclude":this.isExclude,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
+      "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
       "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
+          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
           this.dataExtraction();
           this.filterDataArray = [];
           this.filterDateRange = [];
@@ -2961,7 +3208,6 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.topAggregate = 'sum';
           this.topLimit = 5;
           this.topType = 'desc';
-          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
         },
         error: (error) => {
           console.log(error);
@@ -2976,8 +3222,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.dimetionMeasure.splice(index, 1);
        let index1 = this.filterId.findIndex((i:any) => i == filterId);
          this.filterId.splice(index1, 1);
-         this.dataExtraction();
          this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+         this.dataExtraction();
       },
       error: (error) => {
         console.log(error);
@@ -3235,6 +3481,11 @@ renameColumns(){
         case 'G':
           formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
           break;
+        case '%':
+          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+          break;
       }
     } else {
       formattedNumber = (value).toFixed(this.KPIDecimalPlaces)
@@ -3313,22 +3564,22 @@ fetchChartData(chartData: any){
           this.draggedColumns = chartData.columns;
           this.draggedRows = chartData.rows;
           this.filterId =[];
-          this.filterQuerySetId = null,
-          this.sheetfilter_querysets_id = null;
+          this.filterQuerySetId = chartData.datasource_quertsetid,
+          // this.sheetfilter_querysets_id = null;
           
           console.log("This is ShaetData",chartData)
           this.sheetTitle = chartData.chart_title;
           this.sheetTagName = chartData.chart_title;
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10);
           }
           this.dataExtraction();
 
@@ -3431,8 +3682,8 @@ customizechangeChartPlugin() {
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
     this.maxValueGuage = data.maxValueGuage ?? 100;
-    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 0;
-    this.decimalPlaces = data.decimalPlaces ?? 0;
+    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 2;
+    this.decimalPlaces = data.decimalPlaces ?? 2;
     this.legendsAllignment = data.legendsAllignment ?? 'bottom';
     this.displayUnits = data.displayUnits || 'none';
     this.suffix = data.suffix ?? '';
@@ -3469,6 +3720,10 @@ customizechangeChartPlugin() {
     this.rightLegend = data.rightLegend === '' ? null : data.rightLegend
     this.sortColumn = data.sortColumn ?? 'select';
     this.locationDrillDownSwitch = data.locationDrillDownSwitch ?? false;
+    this.KPIDecimalPlaces = data.KPIDecimalPlaces ?? 2,
+    this.KPIDisplayUnits = data.KPIDisplayUnits ?? 'none',
+    this.KPIPrefix = data.KPIPrefix ?? '',
+    this.KPISuffix = data.KPISuffix ?? ''
   }
 
   resetCustomizations(){
@@ -3522,7 +3777,7 @@ customizechangeChartPlugin() {
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
     this.maxValueGuage = 100;
-    this.donutDecimalPlaces = 0;
+    this.donutDecimalPlaces = 2;
     // this.decimalPlaces = 0;
     this.legendsAllignment = 'bottom';
     // this.displayUnits = 'none';
@@ -3560,6 +3815,10 @@ customizechangeChartPlugin() {
     this.rightLegend = null
     this.sortColumn = 'select';
     this.locationDrillDownSwitch = false;
+    // this.KPIDecimalPlaces = 0,
+    // this.KPIDisplayUnits = 'none',
+    // this.KPIPrefix = '',
+    // this.KPISuffix = ''
   }
 
   sendPrompt() {
@@ -3712,6 +3971,9 @@ customizechangeChartPlugin() {
     });
   }
   dateFormat(column:any, index:any, format:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
+      this.selectedSortColumnData[2] = format;
+    }
     if(format === ''){
       this.draggedColumnsData[index] = [column.column,column.data_type,format,""];
       this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
@@ -3727,6 +3989,9 @@ customizechangeChartPlugin() {
      this.dataExtraction();
   }
   dateAggregation(column:any, index:any, type:any){
+    if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === column.column && this.selectedSortColumnData[2] === this.draggedColumnsData[index][2]){
+      this.selectedSortColumnData[2] = type;
+    }
     if (type === '') {
       this.draggedColumnsData[index] = [column.column, column.data_type, type, ''];
       this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
@@ -3760,27 +4025,73 @@ customizechangeChartPlugin() {
         let item: any = event.previousContainer.data[event.previousIndex];
         if(item && item.column) {
           this.draggedDrillDownColumns.push(item.column);
+          let columnData = [item.column,item.data_type,'',''];
+          this.heirarchyColumnData.push(columnData);
         }
   }
-
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
+    this.heirarchyColumnData.splice(index,1);
     if (index <= 0) {
       this.drillDownIndex = 0;
       this.draggedDrillDownColumns = [];
       this.drillDownObject = [];
+      this.dateDrillDownSwitch = false;
+      this.locationDrillDownSwitch = false;
+      this.heirarchyColumnData = [];
     } else if (index <= this.drillDownIndex) {
       this.drillDownObject = this.drillDownObject.slice(0, index - 1);
       this.drillDownIndex = index - 1;
     } 
        this.dataExtraction();
       }
+      draggedMeasureValuesData = [] as any;
+      measureValuesdrop(event: CdkDragDrop<string[]>){
+        console.log(event)
+            let item: any = event.previousContainer.data[event.previousIndex];
+            let copy: any = JSON.parse(JSON.stringify(item));
+          let element: any = {};
+          for(let attr in copy) {
+          if (attr == 'title') {
+            element[attr] = copy[attr];
+          } else {
+            element[attr] = copy[attr];
+          }
+        }
+        this.draggedMeasureValues.splice(event.currentIndex, 0, element);
+        event.currentIndex = this.draggedMeasureValues.indexOf(element);
+        const rowIndexMap = new Map((this.draggedMeasureValues as any[]).map((row, index) => [row.column, index]));
+        if(element.data_type == 'calculated') {
+          this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+        } else {
+        this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+        }
+        if (this.dateList.includes(element.data_type)) {
+          this.dateFormat(element, event.currentIndex, 'year');
+        } else {
+          console.log('measurerows',this.draggedMeasureValuesData)
+          this.dataExtraction();
+        }
+      }
 
+      removemeasureValuesRow(index:any,column:any){
+        this.draggedMeasureValues.splice(index, 1);
+        this.draggedMeasureValuesData.splice(index, 1);
+        this.dataExtraction();
+
+      }
       toggleDateSwitch(){
             this.dateDrillDownSwitch = !this.dateDrillDownSwitch;
+            this.heirarchyColumnData = [];
             if(this.dateDrillDownSwitch){
               this.draggedDrillDownColumns = ["year","quarter","month","date"];
+              this.draggedDrillDownColumns.forEach((columnType:any)=>{
+                let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
+                columnData[2] = columnType;
+                this.heirarchyColumnData.push(columnData);
+              });
+              console.log(this.heirarchyColumnData);
               this.drillDownIndex = 0;
             } else {
               this.drillDownIndex = 0;
@@ -3792,6 +4103,7 @@ customizechangeChartPlugin() {
          }
 
   toggleLocationSwitch(onColumnRemove : boolean) {
+    this.heirarchyColumnData = [];
     if(onColumnRemove) {
     this.locationDrillDownSwitch = !this.locationDrillDownSwitch;
     }
@@ -3804,6 +4116,20 @@ customizechangeChartPlugin() {
   )
   .filter((dimension: any) => dimension) // Remove undefined results for unmatched items
   .map((dimension: any) => dimension?.column);
+      let dataTypes : any [] = [];
+      this.draggedDrillDownColumns.map((drillDown : any) => {
+        let matchedColumn = this.tableColumnsData.flatMap((table : any) =>
+          table.dimensions.filter((dim : any) => dim.column.toLowerCase() === drillDown.toLowerCase())
+        )[0];
+        dataTypes.push(matchedColumn.data_type);
+      });
+      this.draggedDrillDownColumns.forEach((column: any,index: any) => {
+        let columnData = JSON.parse(JSON.stringify(this.draggedColumnsData[0]));
+        columnData[0] = column;
+        columnData[1] = dataTypes[index];
+        this.heirarchyColumnData.push(columnData);
+      });
+      console.log(this.heirarchyColumnData);
       this.drillDownIndex = 0;
     } else {
       this.drillDownIndex = 0;
@@ -3819,13 +4145,13 @@ customizechangeChartPlugin() {
           }
         
           goDrillDownBack(){
-            if(this.isMapChartDrillDown && this.drillDownIndex === 1){
-              this.map = true;
-              this.bar = false;
-              this.chartId = 29;
-              this.chartType = 'map';
-              this.isMapChartDrillDown = false;
-            }
+            // if(this.isMapChartDrillDown && this.drillDownIndex === 1){
+            //   this.map = true;
+            //   this.bar = false;
+            //   this.chartId = 29;
+            //   this.chartType = 'map';
+            //   this.isMapChartDrillDown = false;
+            // }
             if(this.drillDownIndex > 0) {
               this.drillDownIndex--;
               this.drillDownObject.pop();
@@ -3882,6 +4208,11 @@ customizechangeChartPlugin() {
             this.originalData = {categories: this.chartsColumnData , data:this.chartsRowData };
           }
         }
+        if(this.map){//map
+          if(!this.originalData){
+            this.originalData = {categories: this.dualAxisColumnData , data:this.dualAxisRowData }
+          }
+        }
       }     
       viewQuery(modal:any){
         this.modalService.open(modal, {
@@ -3925,7 +4256,7 @@ customizechangeChartPlugin() {
         }
         document.body.removeChild(textArea);
       }
-      donutDecimalPlaces: number = 0;
+      donutDecimalPlaces: number = 2;
 
       setDataLabelsFontStyle(fontStyle:any){
         if(fontStyle === 'B'){
@@ -4205,7 +4536,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + '")';
           }
           break; 
         case 'count':
@@ -4214,7 +4545,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + '")';
           }
         break; 
         case 'countd':
@@ -4223,7 +4554,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + '")';
           }
         break;
         case 'max':
@@ -4232,7 +4563,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + '")';
           }
         break; 
         case 'min':
@@ -4241,7 +4572,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + '")';
           }
         break; 
         case 'sum':
@@ -4250,7 +4581,7 @@ customizechangeChartPlugin() {
             let newString = '"' + tableName + '"."' + columnName + '")';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
-            this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + ')';
+            this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + '")';
           }
         break; 
         
@@ -4385,7 +4716,7 @@ customizechangeChartPlugin() {
           }
           break; 
         case 'floor': 
-        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
+        if(!this.validateFormula(/^FLOOR\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
         }
@@ -4395,7 +4726,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -4483,7 +4814,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'replace': 
-        if(!this.validateFormula(/^REPLACE\(\s*"([^"]+)"\.\"([^"]+)\"\s*,\s*\"([^\"]*)\"\s*,\s*\"([^\"]*)\"\s*\)$/)){
+        if(!this.validateFormula(/^REPLACE\(\s*"([^"]+)"\."([^"]+)"\s*,\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)$/)){
           this.isValidCalculatedField = false;
           this.validationMessage = 'Invalid Syntax';
           return false;
@@ -4821,15 +5152,15 @@ customizechangeChartPlugin() {
       this.drillDownIndex = event.drillDownIndex;
       this.draggedDrillDownColumns = event.draggedDrillDownColumns;
       this.drillDownObject = event.drillDownObject;
-      if (this.map) {
-        if (this.drillDownIndex != 0) {
-          this.map = false;
-          this.bar = true;
-          this.chartId = 6;
-          this.chartType = 'bar';
-          this.isMapChartDrillDown = true;
-        }
-      }
+      // if (this.map) {
+      //   if (this.drillDownIndex != 0) {
+      //     this.map = false;
+      //     this.bar = true;
+      //     this.chartId = 6;
+      //     this.chartType = 'bar';
+      //     this.isMapChartDrillDown = true;
+      //   }
+      // }
       this.setOriginalData();
       this.dataExtraction();
     }
@@ -4861,6 +5192,8 @@ customizechangeChartPlugin() {
       this.draggedColumnsData = [];
       this.draggedRows = [];
       this.draggedRowsData = [];
+      this.draggedMeasureValues = [];
+      this.draggedMeasureValuesData = [];
       this.draggedDrillDownColumns = [];
       this.tablePaginationCustomQuery = '';
       this.chartsColumnData = [];
@@ -4874,6 +5207,7 @@ customizechangeChartPlugin() {
       this.dateDrillDownSwitch = false;
       this.resetCustomizations();
       this.table = true;
+      this.pivotTable = false;
       this.bar = false;
       this.area = false;
       this.line = false;
@@ -4902,12 +5236,29 @@ customizechangeChartPlugin() {
     getDimensionAndMeasures(){
       this.columnNamesForSort = [];
       this.columnsDataForSort = [];
-      this.draggedColumns.forEach((column:any, index: any)=>{
-        if (column && typeof column === 'object') {
-          this.columnNamesForSort.push({ ...column });
-        } 
-        this.columnsDataForSort.push(this.draggedColumnsData[index]);
-      });
+      if(this.draggedDrillDownColumns && this.draggedDrillDownColumns.length > 0 && this.heirarchyColumnData && this.heirarchyColumnData.length > 0){
+        this.draggedColumns.forEach((column:any, index: any)=>{
+          let col = JSON.parse(JSON.stringify(column));
+          if(this.dateDrillDownSwitch){
+            col.type = this.heirarchyColumnData[this.drillDownIndex][2];
+          }
+          else{
+            col.column = this.heirarchyColumnData[this.drillDownIndex][0];
+            col.data_type = this.heirarchyColumnData[this.drillDownIndex][1];
+          }
+          if (col && typeof col === 'object') {
+            this.columnNamesForSort.push({ ...col });
+          } 
+          this.columnsDataForSort.push(this.draggedColumnsData[index]);
+        });
+      } else{
+        this.draggedColumns.forEach((column:any, index: any)=>{
+          if (column && typeof column === 'object') {
+            this.columnNamesForSort.push({ ...column });
+          } 
+          this.columnsDataForSort.push(this.draggedColumnsData[index]);
+        });
+      }
       this.draggedRows.forEach((row:any, index: any)=>{
         if (row && typeof row === 'object') {
           this.columnNamesForSort.push({ ...row });
