@@ -1449,39 +1449,40 @@ calendarChart() {
   let calendarData: any[] = [];
   let years: Set<any> = new Set();
 
-  // Populate calendarData and collect years
-  this.chartsColumnData.forEach((data: any, index: any) => {
+  if (this.chartsColumnData.length > 0 && this.chartsRowData.length > 0) {
+    // Populate calendarData and collect years
+    this.chartsColumnData.forEach((data: any, index: any) => {
       let formattedDate = data.split(" ")[0];
       let arr = [formattedDate, this.chartsRowData[index]];
       calendarData.push(arr);
 
       const year = new Date(formattedDate).getFullYear();
       years.add(year);
-  });
+    });
 
-  const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
-  const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
+    const minValue = this.chartsRowData.reduce((a: any, b: any) => (a < b ? a : b), Infinity);
+    const maxValue = this.chartsRowData.reduce((a: any, b: any) => (a > b ? a : b), -Infinity);
 
-  // Convert years set to array and sort it in ascending order
-  let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
+    // Convert years set to array and sort it in ascending order
+    let yearArray = Array.from(years).sort((a: any, b: any) => a - b);
 
-  // Define the height for each calendar
-  const calendarHeight = 120;  // Adjust height for better visibility
-  const yearGap = 30;  // Reduced gap between years
-  const totalHeight = (calendarHeight + yearGap) * yearArray.length;
-  this.height = (totalHeight+25)+'px';
+    // Define the height for each calendar
+    const calendarHeight = 120;  // Adjust height for better visibility
+    const yearGap = 30;  // Reduced gap between years
+    const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+    this.height = (totalHeight+25)+'px';
 
-  // Create multiple calendar instances, one for each year
-  let calendars = yearArray.map((year: any, idx: any) => ({
+    // Create multiple calendar instances, one for each year
+    let calendars = yearArray.map((year: any, idx: any) => ({
       top: idx === 0 ? 25 : ((calendarHeight + yearGap) * idx) + 25,
       range: year.toString(),
       cellSize: ['auto', 12],
       splitLine: {
-          show: true,
-          lineStyle: {
-              color: '#000',
-              width: 1
-          }
+        show: true,
+        lineStyle: {
+          color: '#000',
+          width: 1
+        }
       },
       yearLabel: {
         show: true,
@@ -1489,21 +1490,21 @@ calendarChart() {
         fontSize: 14,
         fontWeight: 'bold'
       }
-  }));
+    }));
 
-  // Extract data for each year and assign to different series
-  let series = yearArray.map((year: any) => {
+    // Extract data for each year and assign to different series
+    let series = yearArray.map((year: any) => {
       const yearData = calendarData.filter(d => new Date(d[0]).getFullYear() === year);
       return {
-          type: 'heatmap',
-          coordinateSystem: 'calendar',
-          calendarIndex: yearArray.indexOf(year),
-          data: yearData
+        type: 'heatmap',
+        coordinateSystem: 'calendar',
+        calendarIndex: yearArray.indexOf(year),
+        data: yearData
       };
-  });
+    });
 
-  let dataZoomConfig = [
-    {
+    let dataZoomConfig = [
+      {
         type: 'slider',
         show: true,
         yAxisIndex: 0,
@@ -1511,37 +1512,41 @@ calendarChart() {
         end: 50,  // The scroll window size (adjustable)
         orient: 'vertical',  // Allow vertical scrolling
         zoomLock: false,  // Disable zoom lock for flexibility
-    },
-    {
-      type: 'inside',
-      yAxisIndex: 0,
-      start: 0,
-      end: 50
-  }
-];
+      },
+      {
+        type: 'inside',
+        yAxisIndex: 0,
+        start: 0,
+        end: 50
+      }
+    ];
 
-this.chartOptions = {
-  color:this.selectedColorScheme,
-  tooltip: {
-      position: 'top',
-      formatter: function (params: any) {
+    this.chartOptions = {
+      tooltip: {
+        position: 'bottom',
+        formatter: function (params: any) {
           const date = params.data[0];
           const value = params.data[1];
           return `Date: ${date}<br/>Value: ${value}`;
-      }
-  },
-  visualMap: {
-      min: minValue,
-      max: maxValue,
-      calculable: true,
-      orient: 'horizontal',
-      left: 'center',
-      top: 'bottom'
-  },
-  calendar: calendars,
-  series: series,  // Assign filtered data series to the chart
-  dataZoom: dataZoomConfig
-};
+        }
+      },
+      visualMap: {
+        min: minValue,
+        max: maxValue,
+        calculable: true,
+        orient: 'horizontal',
+        left: 'center',
+        top: 'bottom'
+      },
+      calendar: calendars,
+      series: series,  // Assign filtered data series to the chart
+      dataZoom: dataZoomConfig
+    };
+  } 
+  else {
+    this.chartOptions = {};
+  }
+
 
   console.log(this.chartOptions,'calender');
 }

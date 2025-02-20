@@ -3971,7 +3971,8 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           console.log(this.filteredRowData);
           this.filteredColumnData.forEach((data: any) => {
             data?.values.forEach((column:any, index: any)=>{
-              let arr = [new Date(column).toISOString().split('T')[0], this.filteredRowData[0]?.data[index]];
+              let formattedDate = column.split(" ")[0];
+              let arr = [formattedDate, this.filteredRowData[0]?.data[index]];
               calendarData.push(arr);
 
               const year = new Date(column).getFullYear();
@@ -3989,15 +3990,16 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           };
         });
 
-        const calendarHeight = 100;  // Adjust height for better visibility
-        const yearGap = 20;  // Reduced gap between years
+        const calendarHeight = 120;  // Adjust height for better visibility
+        const yearGap = 30;  // Reduced gap between years
         const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+        this.calendarTotalHeight = (totalHeight+25)+'px';
     
         // Create multiple calendar instances, one for each year
         let calendars = yearArray.map((year: any, idx: any) => ({
             top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
             range: year.toString(),
-            cellSize: ['auto', 10],
+            cellSize: ['auto', 12],
             splitLine: {
                 show: true,
                 lineStyle: {
@@ -4006,7 +4008,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                 }
             },
             yearLabel: {
-                margin: 20
+              show: true,
+              margin: 25,
+              fontSize: 14,
+              fontWeight: 'bold'
             }
         }));
 
@@ -5216,7 +5221,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               })
             })
           }
-        } else if(![1, 25, 10, 24, 28, 11, 29].includes(chartId)){
+        } else if(![1, 25, 10, 24, 11, 29].includes(chartId)){
           if (sheet.echartOptions?.yAxis?.axisLabel) {
             sheet.echartOptions.yAxis.axisLabel.formatter = (val: any) => {
               return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
@@ -5256,7 +5261,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               return `${category}: ${formattedValue}`;
             }
           }
-        } else if(![1, 25, 10, 24, 28].includes(chartId)){
+        } else if(![1, 25, 10, 24].includes(chartId)){
+          if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
+            sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: number) => {
+              const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              return `${formattedValue}%`;
+            };
+          }
           if (sheet.chartOptions?.yaxis?.labels) {
             sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
               return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);

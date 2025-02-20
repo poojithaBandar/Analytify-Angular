@@ -1236,6 +1236,9 @@ try {
   rowMeasuresCount(rows:any,index:any,type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
       this.selectedSortColumnData[2] = type;
+      if(rows.alias){
+        this.selectedSortColumnData[3] = rows.alias;
+      }
     }
       this.measureValues = [];
       if(type){
