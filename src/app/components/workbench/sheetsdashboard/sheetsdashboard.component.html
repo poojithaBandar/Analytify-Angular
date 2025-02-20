@@ -538,7 +538,7 @@
                                                   <div class="card-content p-0">
                                                       <div class=" mt-2 mb-2">
                                                           <div class="dropdown" ngbDropdown [autoClose]="'outside'" #mainDropdown="ngbDropdown">
-                                                              <button *ngIf="!isPublicUrl" class="btn btn-primary dropdown-toggle w-100" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                              <button *ngIf="!isPublicUrl" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary dropdown-toggle w-100" (click)="getQuerySetForFilter();openSuperScaled(dashboardFilters)" id="applyfilters" ngbDropdownToggle type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                               <i class="fa fa-plus"></i> Add/Edit Filters
                                                               </button>
                                                               <div >
@@ -821,7 +821,7 @@
                                                <div class="card-content p-0">
                                                    <div class=" mt-2 mb-2">
                                                        <div class="">
-                                                        <button *ngIf="!isPublicUrl" class="btn btn-primary w-100" (click)="getQuerySetForFilter();clearActionForm();openSuperScaleForActions(dashboardActions);getDrillThroughActionList()" id="applyActions" type="button" aria-expanded="false">
+                                                        <button *ngIf="!isPublicUrl" [disabled]="dashboard.length < 1 || canNavigateToAnotherPage" class="btn btn-primary w-100" (click)="getQuerySetForFilter();clearActionForm();openSuperScaleForActions(dashboardActions);getDrillThroughActionList()" id="applyActions" type="button" aria-expanded="false">
                                                           <i class="fa fa-plus"></i> Add/Edit Actions
                                                         </button>
                                                         <div >
