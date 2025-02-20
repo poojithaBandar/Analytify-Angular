@@ -168,13 +168,23 @@ export class WorkbenchComponent implements OnInit{
         },
         error: (error: any) => {
           console.log(error);
-          if(error){
+          if(error.error.message === 'Invalid grant, please re-authorize'){
             Swal.fire({
-              icon: 'error',
-              title: 'oops!',
-              text: error.error.message,
-              width: '400px',
-            })
+              title: 'oops! connection lost to Google Sheets',
+              text:'Click OK to redirect Google Authentication',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ok'
+            }).then((result)=>{
+              if(result.isConfirmed){
+                this.document.location.href = error.error.redirect_url;
+              }
+              else{
+                this.router.navigate(['analytify/datasources/new-connections'])
+              }
+            }) 
+
           }
         }
       }
