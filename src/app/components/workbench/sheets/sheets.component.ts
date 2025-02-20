@@ -1462,6 +1462,51 @@ try {
   selected = new FormControl(0);
 
   addSheet(isDuplicate : boolean) {
+    if(this.hasUnSavedChanges){
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to switch?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.columnsData();
+          if (this.active !== 3){
+            this.active = 1;
+          }
+          this.retriveDataSheet_id = '';
+          this.draggedDrillDownColumns = [];
+          this.drillDownObject = [];
+          this.drillDownIndex = 0;
+          this.dateDrillDownSwitch = false;
+          delete this.originalData;
+          this.sheetName = ''; this.sheetTitle = '';
+          this.KPIDecimalPlaces = 2;
+          this.KPIRoundPlaces = 0;
+          this.KPIDisplayUnits = 'none';
+          this.KPIPrefix = '';
+          this.KPISuffix = '';
+          this.KPIPercentageDivisor = 100;
+          if(this.sheetName != ''){
+             this.tabs.push(this.sheetName);
+          }else{
+            this.getChartData();
+            this.sheetNumber = this.tabs.length+1;
+             this.tabs.push('Sheet ' +this.sheetNumber);
+             this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+             this.selectedTabIndex = this.tabs.length - 1;
+             this.sheetTagName = 'Sheet ' +this.sheetNumber;
+             this.setChartType();
+          }
+          this.kpi=false;
+          this.resetCustomizations();
+        }
+      })
+    }else{
     this.columnsData();
     if (this.active !== 3){
       this.active = 1;
@@ -1492,6 +1537,7 @@ try {
     }
     this.kpi=false;
     this.resetCustomizations();
+  }
   }
 
   sheetDuplicate(){
@@ -1534,66 +1580,160 @@ try {
     this.sheetTagName = name;
   }
   removeTab() {
-    console.log(this.SheetIndex)
-    const obj = {
-      sheet_id: this.retriveDataSheet_id,
-    }
-    this.workbechService.deleteSheetMessage(obj)
-      .subscribe(
-        {
-          next: (data: any) => {
-            console.log(data);
-            Swal.fire({
-              title: 'Are you sure?',
-              text: data.message,
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                const idToPass = this.databaseId;
-                this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
-                // this.workbechService.deleteSheet(this.databaseId, this.qrySetId, this.retriveDataSheet_id).subscribe({
-                //   next: (data: any) => {
-                    console.log(data);
-                    if (data) {
-                      this.tabs.splice(this.SheetIndex, 1);
-                      // Swal.fire({
-                      //   icon: 'success',
-                      //   title: 'Deleted!',
-                      //   text: 'Deleted Successfully',
-                      //   width: '200px',
-                      // })
-                      this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
-                      this.getChartData();
-                      this.retriveDataSheet_id = '';
-                    }
-                  },
-                  error: (error: any) => {
-                    Swal.fire({
-                      icon: 'warning',
-                      text: error.error.message,
-                      width: '200px',
-                    })
-                    console.log(error)
-                  }
-                }
-                )
-              }
-            })
-          },
-          error: (error: any) => {
-            Swal.fire({
-              icon: 'warning',
-              text: error.error.message,
-              width: '300px',
-            })
-            console.log(error)
+    if(this.hasUnSavedChanges){
+      if(!this.retriveDataSheet_id){
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to delete?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.tabs.splice(this.SheetIndex, 1);
+          if(this.SheetIndex === 0){
+            this.addSheet(false);
           }
         }
-      )
+        })
+      }
+      else{
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to delete?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          console.log(this.SheetIndex)
+          const obj = {
+            sheet_id: this.retriveDataSheet_id,
+          }
+          this.workbechService.deleteSheetMessage(obj)
+            .subscribe(
+              {
+                next: (data: any) => {
+                  console.log(data);
+                  Swal.fire({
+                    title: 'Are you sure?',
+                    text: data.message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      const idToPass = this.databaseId;
+                      this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                          console.log(data);
+                          if (data) {
+                            this.tabs.splice(this.SheetIndex, 1);
+                            if(this.SheetIndex === 0){
+                              this.addSheet(false);
+                            }
+                            this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                            this.getChartData();
+                            this.retriveDataSheet_id = '';
+                          }
+                        },
+                        error: (error: any) => {
+                          Swal.fire({
+                            icon: 'warning',
+                            text: error.error.message,
+                            width: '200px',
+                          })
+                          console.log(error)
+                        }
+                      }
+                      )
+                    }
+                  })
+                },
+                error: (error: any) => {
+                  Swal.fire({
+                    icon: 'warning',
+                    text: error.error.message,
+                    width: '300px',
+                  })
+                  console.log(error)
+                }
+              }
+            )
+        }
+      })
+    }
+    }
+    else{
+      if(!this.retriveDataSheet_id){
+        this.tabs.splice(this.SheetIndex, 1);
+        this.SheetSavePlusEnabled.splice(0, 1);
+      }else{
+      console.log(this.SheetIndex)
+      const obj = {
+        sheet_id: this.retriveDataSheet_id,
+      }
+      this.workbechService.deleteSheetMessage(obj)
+        .subscribe(
+          {
+            next: (data: any) => {
+              console.log(data);
+              Swal.fire({
+                title: 'Are you sure?',
+                text: data.message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const idToPass = this.databaseId;
+                  this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                      console.log(data);
+                      if (data) {
+                        this.tabs.splice(this.SheetIndex, 1);
+                        if(this.SheetIndex === 0){
+                          this.addSheet(false);
+                        }
+                        this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                        this.getChartData();
+                        this.retriveDataSheet_id = '';
+                      }
+                    },
+                    error: (error: any) => {
+                      Swal.fire({
+                        icon: 'warning',
+                        text: error.error.message,
+                        width: '200px',
+                      })
+                      console.log(error)
+                    }
+                  }
+                  )
+                }
+              })
+            },
+            error: (error: any) => {
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+              console.log(error)
+            }
+          }
+        )
+      }
+    }
+
   }
   onChange(event:MatTabChangeEvent){
     if (!this.suppressTabChangeEvent) {
