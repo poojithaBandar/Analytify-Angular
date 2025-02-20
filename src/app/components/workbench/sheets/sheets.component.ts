@@ -144,6 +144,7 @@ export class SheetsComponent {
   isMeasureEdit : boolean = false;
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
+  suppressTabChangeEvent : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -365,6 +366,7 @@ export class SheetsComponent {
     ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   ];
   selectedColorScheme=[] as  any;
+  hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
@@ -778,6 +780,7 @@ try {
           }
         }
         )
+        this.hasUnSavedChanges=true;
       }
 
       pageChangeTableDisplay(page:any){
@@ -1438,6 +1441,7 @@ try {
     }
     this.resetCustomizations();
     this.chartsOptionsSet(); 
+    this.hasUnSavedChanges=true;
   }
   // enableDisableCharts(){
   //   console.log(this.draggedColumnsData);
@@ -1459,7 +1463,53 @@ try {
   // }
   tabs : any [] = [];
   selected = new FormControl(0);
+
   addSheet(isDuplicate : boolean) {
+    if(this.hasUnSavedChanges){
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to switch?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.columnsData();
+          if (this.active !== 3){
+            this.active = 1;
+          }
+          this.retriveDataSheet_id = '';
+          this.draggedDrillDownColumns = [];
+          this.drillDownObject = [];
+          this.drillDownIndex = 0;
+          this.dateDrillDownSwitch = false;
+          delete this.originalData;
+          this.sheetName = ''; this.sheetTitle = '';
+          this.KPIDecimalPlaces = 2;
+          this.KPIRoundPlaces = 0;
+          this.KPIDisplayUnits = 'none';
+          this.KPIPrefix = '';
+          this.KPISuffix = '';
+          this.KPIPercentageDivisor = 100;
+          if(this.sheetName != ''){
+             this.tabs.push(this.sheetName);
+          }else{
+            this.getChartData();
+            this.sheetNumber = this.tabs.length+1;
+             this.tabs.push('Sheet ' +this.sheetNumber);
+             this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+             this.selectedTabIndex = this.tabs.length - 1;
+             this.sheetTagName = 'Sheet ' +this.sheetNumber;
+             this.setChartType();
+          }
+          this.kpi=false;
+          this.resetCustomizations();
+        }
+      })
+    }else{
     this.columnsData();
     if (this.active !== 3){
       this.active = 1;
@@ -1490,6 +1540,7 @@ try {
     }
     this.kpi=false;
     this.resetCustomizations();
+  }
   }
 
   sheetDuplicate(){
@@ -1532,143 +1583,256 @@ try {
     this.sheetTagName = name;
   }
   removeTab() {
-    console.log(this.SheetIndex)
-    const obj = {
-      sheet_id: this.retriveDataSheet_id,
-    }
-    this.workbechService.deleteSheetMessage(obj)
-      .subscribe(
-        {
-          next: (data: any) => {
-            console.log(data);
-            Swal.fire({
-              title: 'Are you sure?',
-              text: data.message,
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                const idToPass = this.databaseId;
-                this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
-                // this.workbechService.deleteSheet(this.databaseId, this.qrySetId, this.retriveDataSheet_id).subscribe({
-                //   next: (data: any) => {
-                    console.log(data);
-                    if (data) {
-                      this.tabs.splice(this.SheetIndex, 1);
-                      // Swal.fire({
-                      //   icon: 'success',
-                      //   title: 'Deleted!',
-                      //   text: 'Deleted Successfully',
-                      //   width: '200px',
-                      // })
-                      this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
-                      this.getChartData();
-                      this.retriveDataSheet_id = '';
-                    }
-                  },
-                  error: (error: any) => {
-                    Swal.fire({
-                      icon: 'warning',
-                      text: error.error.message,
-                      width: '200px',
-                    })
-                    console.log(error)
-                  }
-                }
-                )
-              }
-            })
-          },
-          error: (error: any) => {
-            Swal.fire({
-              icon: 'warning',
-              text: error.error.message,
-              width: '300px',
-            })
-            console.log(error)
+    if(this.hasUnSavedChanges){
+      if(!this.retriveDataSheet_id){
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to delete?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.tabs.splice(this.SheetIndex, 1);
+          if(this.SheetIndex === 0){
+            this.addSheet(false);
           }
         }
-      )
+        })
+      }
+      else{
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to delete?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          console.log(this.SheetIndex)
+          const obj = {
+            sheet_id: this.retriveDataSheet_id,
+          }
+          this.workbechService.deleteSheetMessage(obj)
+            .subscribe(
+              {
+                next: (data: any) => {
+                  console.log(data);
+                  Swal.fire({
+                    title: 'Are you sure?',
+                    text: data.message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      const idToPass = this.databaseId;
+                      this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                          console.log(data);
+                          if (data) {
+                            this.tabs.splice(this.SheetIndex, 1);
+                            if(this.SheetIndex === 0){
+                              this.addSheet(false);
+                            }
+                            this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                            this.getChartData();
+                            this.retriveDataSheet_id = '';
+                          }
+                        },
+                        error: (error: any) => {
+                          Swal.fire({
+                            icon: 'warning',
+                            text: error.error.message,
+                            width: '200px',
+                          })
+                          console.log(error)
+                        }
+                      }
+                      )
+                    }
+                  })
+                },
+                error: (error: any) => {
+                  Swal.fire({
+                    icon: 'warning',
+                    text: error.error.message,
+                    width: '300px',
+                  })
+                  console.log(error)
+                }
+              }
+            )
+        }
+      })
+    }
+    }
+    else{
+      if(!this.retriveDataSheet_id){
+        this.tabs.splice(this.SheetIndex, 1);
+        this.SheetSavePlusEnabled.splice(0, 1);
+      }else{
+      console.log(this.SheetIndex)
+      const obj = {
+        sheet_id: this.retriveDataSheet_id,
+      }
+      this.workbechService.deleteSheetMessage(obj)
+        .subscribe(
+          {
+            next: (data: any) => {
+              console.log(data);
+              Swal.fire({
+                title: 'Are you sure?',
+                text: data.message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const idToPass = this.databaseId;
+                  this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                      console.log(data);
+                      if (data) {
+                        this.tabs.splice(this.SheetIndex, 1);
+                        if(this.SheetIndex === 0){
+                          this.addSheet(false);
+                        }
+                        this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                        this.getChartData();
+                        this.retriveDataSheet_id = '';
+                      }
+                    },
+                    error: (error: any) => {
+                      Swal.fire({
+                        icon: 'warning',
+                        text: error.error.message,
+                        width: '200px',
+                      })
+                      console.log(error)
+                    }
+                  }
+                  )
+                }
+              })
+            },
+            error: (error: any) => {
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+              console.log(error)
+            }
+          }
+        )
+      }
+    }
+
   }
   onChange(event:MatTabChangeEvent){
-    console.log('tabs',event);
-    this.selectedTabIndex =  event.index;
-    const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
-    const selectedSheetId = selectedTab.id; // Access the sheet_id
-  
-    this.draggedDrillDownColumns = [];
-    this.drillDownObject = [];
-    this.drillDownIndex = 0;
-    this.sheetName = '';
-    this.dateDrillDownSwitch = false;
-    this.locationDrillDownSwitch = false;
-    delete this.originalData;
-    console.log(event)
-    if(event.index === -1){
-     this.retriveDataSheet_id = 1;
-    }
-    this.SheetIndex = event.index;
-    this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
-    this.sheetTitle = this.sheetName;
+    if (!this.suppressTabChangeEvent) {
+      this.selectedTabIndex = event.index;
+      if (this.hasUnSavedChanges) {
+        // this.selectedTabIndex =  event.index;
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to switch?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.hasUnSavedChanges = false;
+            console.log('tabs', event);
+            this.selectedTabIndex = event.index;
+            const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+            const selectedSheetId = selectedTab.id; // Access the sheet_id
 
-    this.sheetTagName = this.sheetName;
-    this.sheetTagTitle = this.sheetName;
-    this.draggedColumns = [];
-    this.draggedColumnsData = [];
-    this.draggedRows = [];
-    this.draggedRowsData = [];
-    this.displayedColumns = [];
-    this.retriveDataSheet_id = '';
-    this.getChartData();
-    if(selectedSheetId){
-      this.retriveDataSheet_id = selectedSheetId;
-      this.sheetRetrive(false);
-    }
+            this.draggedDrillDownColumns = [];
+            this.drillDownObject = [];
+            this.drillDownIndex = 0;
+            this.sheetName = '';
+            this.dateDrillDownSwitch = false;
+            delete this.originalData;
+            console.log(event)
+            if (event.index === -1) {
+              this.retriveDataSheet_id = 1;
+            }
+            this.SheetIndex = event.index;
+            this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+            this.sheetTitle = this.sheetName;
 
-    // const obj = {
-    //   "server_id": this.databaseId,
-    //   "queryset_id": this.qrySetId,
-    // } as any;
-    // if (this.fromFileId) {
-    //   delete obj.server_id;
-    //   obj.file_id = this.fileId;
-    // }
-    // this.workbechService.getSheetNames(obj).subscribe({
-    //   next: (responce: any) => {
-    //     this.sheetList = responce.data;
-    //     if (!this.sheetList.some(sheet => sheet.sheet_name === this.sheetName)) {
-    //       this.retriveDataSheet_id = '';
-    //     } else {
-    //       this.sheetList.forEach(sheet => {
-    //         if (sheet.sheet_name === this.sheetName) {
-    //           this.retriveDataSheet_id = sheet.id;
-    //         }
-    //       });
-    //     }
-    //     // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-    //     // inputElement.innerHTML = event.tab?.textLabel;
-    //     this.sheetTagName = event.tab?.textLabel;
-    //     console.log(this.sheetName)
-    //     console.log(this.retriveDataSheet_id);
-    //     this.draggedColumns = [];
-    //     this.draggedColumnsData = [];
-    //     this.draggedRows = [];
-    //     this.draggedRowsData = [];
-    //     this.displayedColumns = [];
-    //     this.getChartData();
-    //    if(this.retriveDataSheet_id){
-    //       this.sheetRetrive();
-    //    }
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //   }
-    // }
-    // )
-    this.kpi = false;
+            this.sheetTagName = this.sheetName;
+            this.sheetTagTitle = this.sheetName;
+            this.draggedColumns = [];
+            this.draggedColumnsData = [];
+            this.draggedRows = [];
+            this.draggedRowsData = [];
+            this.displayedColumns = [];
+            this.retriveDataSheet_id = '';
+            this.getChartData();
+            this.columnsData();
+            if (selectedSheetId) {
+              this.retriveDataSheet_id = selectedSheetId;
+              this.sheetRetrive(false);
+            }
+            this.kpi = false;
+            return;
+          } else {
+            this.selectedTabIndex = this.SheetIndex;
+            this.suppressTabChangeEvent = true;
+          }
+        });
+      } else {
+        console.log('tabs', event);
+        this.selectedTabIndex = event.index;
+        const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+        const selectedSheetId = selectedTab.id; // Access the sheet_id
+
+        this.draggedDrillDownColumns = [];
+        this.drillDownObject = [];
+        this.drillDownIndex = 0;
+        this.sheetName = '';
+        this.dateDrillDownSwitch = false;
+        delete this.originalData;
+        console.log(event)
+        if (event.index === -1) {
+          this.retriveDataSheet_id = 1;
+        }
+        this.SheetIndex = event.index;
+        this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+        this.sheetTitle = this.sheetName;
+
+        this.sheetTagName = this.sheetName;
+        this.sheetTagTitle = this.sheetName;
+        this.draggedColumns = [];
+        this.draggedColumnsData = [];
+        this.draggedRows = [];
+        this.draggedRowsData = [];
+        this.displayedColumns = [];
+        this.retriveDataSheet_id = '';
+        this.getChartData();
+        this.columnsData();
+        if (selectedSheetId) {
+          this.retriveDataSheet_id = selectedSheetId;
+          this.sheetRetrive(false);
+        }
+        this.kpi = false;
+      }
+    } else {
+      this.suppressTabChangeEvent = false;
+    }
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -2250,7 +2414,7 @@ if(this.retriveDataSheet_id){
 }
 )
 }
-
+this.hasUnSavedChanges = false;
   }
 sheetTagTitle : any;
 sheetChartId : any;
@@ -3066,6 +3230,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   filterEditGet(){
     this.filterData = [];
@@ -3192,6 +3357,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         }
       }
     )
+    this.hasUnSavedChanges = true;
   }
   filterDelete(index:any,filterId:any){
   this.sortedData = [];
@@ -3207,6 +3373,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   openSuperScaledModal(modal: any,type:any) {
     if(type === undefined){
@@ -3870,10 +4037,30 @@ customizechangeChartPlugin() {
     };
   }
   openSelectDashboard(modal : any){
-    this.modalService.open(modal, {
-      centered: true,
-      windowClass: 'animate__animated animate__zoomIn',
-    });
+    if (this.hasUnSavedChanges) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Your work has not been saved, Do you want to continue?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "Yes", allow navigation
+          this.modalService.open(modal, {
+            centered: true,
+            windowClass: 'animate__animated animate__zoomIn',
+          });
+        }
+      });
+    } else {
+      this.modalService.open(modal, {
+        centered: true,
+        windowClass: 'animate__animated animate__zoomIn',
+      });
+    }
   }
   dashboardList : any[] = [];
   getDashboardsList() {
@@ -3893,6 +4080,7 @@ customizechangeChartPlugin() {
     })
   }
   async moveToDashboard(){
+    this.hasUnSavedChanges = false;
     if(this.selectedDashboardId > 0) {
       this.dashboardId = this.selectedDashboardId;
     }
@@ -4300,7 +4488,9 @@ customizechangeChartPlugin() {
       }
       canNavigate(): boolean {
         // This is handled in the functional guard
-        return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+       // return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+        return this.hasUnSavedChanges;
+
       }
 
       getSheetList(){
