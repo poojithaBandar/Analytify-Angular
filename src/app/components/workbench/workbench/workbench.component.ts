@@ -83,7 +83,7 @@ export class WorkbenchComponent implements OnInit{
   selectedMicroSoftAuthType: string | null = null;
   selectedHirchyIdCrsDb:string | null = null;
 
-  iscrossDbSelect = true;
+  iscrossDbSelect = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
