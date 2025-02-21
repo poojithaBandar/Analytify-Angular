@@ -316,9 +316,11 @@ export class SheetsdashboardComponent {
   iconList: any[] = []
   static itemChange(
     item: GridsterItem,
-    itemComponent: GridsterItemComponentInterface
+    itemComponent: GridsterItemComponentInterface,
+    compInstance: SheetsdashboardComponent
   ): void {
     console.info('itemChanged', item, itemComponent);
+    compInstance.canNavigateToAnotherPage = true;
   }
 
   static itemResize(
@@ -334,6 +336,7 @@ export class SheetsdashboardComponent {
       )
       .subscribe((event) => {
         console.log('resize is finished');
+        
       });
      window.dispatchEvent(new Event('resize'));
     }
@@ -442,7 +445,7 @@ export class SheetsdashboardComponent {
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
       itemResizeCallback: SheetsdashboardComponent.itemResize,
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -462,7 +465,6 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard && !this.isDraggingDisabled,
-        start: this.onResizeStart.bind(this),
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -471,9 +473,6 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
-
-        // stop: this.onResizeStop.bind(this)
       }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
@@ -487,6 +486,10 @@ export class SheetsdashboardComponent {
       this.getSavedDashboardDataPublic();
     });
 
+  }
+
+  onItemResize(item: GridsterItem, itemComponent: any): void {
+    SheetsdashboardComponent.itemChange(item, itemComponent, this);
   }
   changeGridType(gridType : string){
     let displayGrid = DisplayGrid.Always;
@@ -502,7 +505,7 @@ export class SheetsdashboardComponent {
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
       itemResizeCallback: SheetsdashboardComponent.itemResize,
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -523,12 +526,13 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
+        stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+          // Optional logic when dragging stops
+          console.log('Drag stopped for item', item);
+        }
       },
       resizable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
-
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -541,7 +545,7 @@ export class SheetsdashboardComponent {
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
       itemResizeCallback: SheetsdashboardComponent.itemResize,
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -561,11 +565,13 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
+        stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+          // Optional logic when dragging stops
+          console.log('Drag stopped for item', item);
+        }
       },
       resizable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
 
         // stop: this.onResizeStop.bind(this)
       }
@@ -581,7 +587,7 @@ export class SheetsdashboardComponent {
         initCallback: SheetsdashboardComponent.gridInit,
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
         itemResizeCallback: SheetsdashboardComponent.itemResize,
         itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -601,12 +607,13 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
+          stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+            // Optional logic when dragging stops
+            console.log('Drag stopped for item', item);
+          }
         },
         resizable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
-          // stop: this.onResizeStop.bind(this)
         }
       };
     } else {
@@ -617,7 +624,7 @@ export class SheetsdashboardComponent {
         initCallback: SheetsdashboardComponent.gridInit,
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
         itemResizeCallback: SheetsdashboardComponent.itemResize,
         itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -637,11 +644,13 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
+          stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+            // Optional logic when dragging stops
+            console.log('Drag stopped for item', item);
+          }
         },
         resizable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -650,9 +659,6 @@ export class SheetsdashboardComponent {
     // window.dispatchEvent(new Event('resize'));
   }
 
-  onResizeStart(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
-    this.canNavigateToAnotherPage = true;
-  }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {
       chart: {
@@ -1260,7 +1266,6 @@ export class SheetsdashboardComponent {
    
   }
   updateDashboard(isLiveReloadData : boolean){
-    this.canNavigateToAnotherPage = false;
     if(!isLiveReloadData){
       this.takeScreenshot();
     }
@@ -1328,6 +1333,7 @@ export class SheetsdashboardComponent {
         //   width: '400px',
         // })
         this.dashboardsheetsIdArray = this.sheetsIdArray;
+        this.canNavigateToAnotherPage = false;
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         if(!isLiveReloadData){
           this.saveDashboardimageUpdate();
@@ -2293,9 +2299,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 
         //   this.router.navigate(['/insights/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         // } else {
-          this.databaseId = sheetdata.databaseId;
+          let databaseId = sheetdata.databaseId;
           this.qrySetId = sheetdata.qrySetId;
-          const encodedServerId = btoa(this.databaseId.toString());
+          const encodedServerId = btoa(databaseId.toString());
           const encodedQuerySetId = btoa(this.qrySetId.toString());
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
@@ -2361,7 +2367,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         console.log(data);
         this.loaderService.hide();
         this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'});
-        this.getDashboardFilterredList();
+        this.getDashboardFilterredList(true);
     },
       error:(error)=>{
         console.log(error)
@@ -3187,7 +3193,7 @@ if(this.filterName === ''){
 }
 }
 
-getDashboardFilterredList(){
+getDashboardFilterredList(onSheetRemove? : boolean){
   const Obj ={
     dashboard_id:this.dashboardId
   }
@@ -3195,6 +3201,9 @@ getDashboardFilterredList(){
     next:(data)=>{
       console.log(data);
       this.DahboardListFilters = data
+      if(onSheetRemove && data?.length <= 0){
+        this.active = 1;
+      }
     },
     error:(error)=>{
       console.log(error)
@@ -5028,9 +5037,9 @@ kpiData?: KpiData;
   }
 }
 //tablePagination
-tableSearchDashboard(item:any,event:any){
+tableSearchDashboard(item:any,value:any){
   this.tablePageNo=1;
-  this.tableSearch = event.target.value;
+  this.tableSearch = value;
   this.pageChangeTableDisplay(item,1,false,0);
 }
 pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetIndex:any){
@@ -5064,9 +5073,9 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     }
   })  
 }
-tableSearchDashboardPublic(item:any,event:any){
+tableSearchDashboardPublic(item:any,value:any){
   this.tablePageNo=1;
-  this.tableSearch = event.target.value;
+  this.tableSearch = value;
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
