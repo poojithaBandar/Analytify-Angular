@@ -4600,6 +4600,7 @@ customizechangeChartPlugin() {
             this.validationMessage = '';
             this.isEditCalculatedField = false;
             event.close();
+            ngbdropdownevent.close();
             this.columnsData();
             this.toasterService.success('Added Successfully', 'success', { positionClass: 'toast-top-right' });
 
@@ -4676,7 +4677,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*"),\s*\d+\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -4831,7 +4832,7 @@ customizechangeChartPlugin() {
             return true;
           break; 
           case 'parse':
-            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*'dd-mm-yyyy'\s*\)$/)){
+            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*(['"])dd-mm-yyyy\2\s*\)$/)){
               this.isValidCalculatedField = false;
               this.validationMessage = 'Invalid Syntax';
               return false;
