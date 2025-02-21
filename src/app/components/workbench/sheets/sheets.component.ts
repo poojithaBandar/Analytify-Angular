@@ -5437,4 +5437,30 @@ customizechangeChartPlugin() {
     topLimit : number = 5;
     selectedTopColumn : any = 'select';
     topAggregate : string = 'sum';
+
+
+    previewFromDate : any;
+    previewToDate : any;
+    selectedDateFormat : any = 'previous_year';
+    relativeDateType : any = 1;
+    setDefaultDates(){
+      const currentDate = new Date();
+
+      if(this.selectedDateFormat === 'previous_year'){
+        this.previewToDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        this.previewFromDate = new Date(currentDate.getFullYear() - 1, 0, 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      } else if(this.selectedDateFormat === 'thsi_year'){
+        
+      } else if(this.selectedDateFormat === 'next_year'){
+
+      } else if(this.selectedDateFormat === 'year_to_date'){
+
+      } else if(this.selectedDateFormat === 'last_year'){
+
+      } else if(this.selectedDateFormat === 'next_year'){
+
+      }
+      this.previewToDate = currentDate.toLocaleDateString('en-US', {year: 'numeric',month: 'long',day: 'numeric'});
+      this.previewFromDate = new Date(currentDate.getFullYear() - 1, 0, 1).toLocaleDateString('en-US', {year: 'numeric',month: 'long',day: 'numeric'});
+    }
 }

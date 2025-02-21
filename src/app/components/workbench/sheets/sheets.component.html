@@ -438,7 +438,7 @@
                                         <div class="tabs-menu-boxed">
                                             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
                                                 <li [ngbNavItem]="1" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
-                                                    <a ngbNavLink class="p-3">General</a>
+                                                    <a ngbNavLink class="p-3 TabShadow">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div class="d-flex">
@@ -464,7 +464,7 @@
                                                     </ng-template>
                                                 </li>
                                                 <li [ngbNavItem]="2" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
-                                                    <a ngbNavLink class="p-3">Range of dates</a>
+                                                    <a ngbNavLink class="p-3 TabShadow">Range of dates</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
@@ -486,7 +486,7 @@
                                                     </ng-template>
                                                 </li>
                                                 <li [ngbNavItem]="3" (click)="filterSearch = '';">
-                                                    <a ngbNavLink class="p-3">Extract</a>
+                                                    <a ngbNavLink class="p-3 TabShadow">Extract</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body p-0">
@@ -550,6 +550,233 @@
                                                                     }
                                                                 </div>
                                                                 }
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
+                                                <li [ngbNavItem]="5">
+                                                    <a ngbNavLink class="p-3 TabShadow">Relative Dates</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane" id="linktabs">
+                                                            <div class="card-body p-2 border bt-0">
+                                                                <div class="d-lg-flex d-block">
+                                                                    <div class="border">
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="relativeDateType" class="nav flex-column nav-pills" id="vertical-tab"
+                                                                            role="tablist" aria-orientation="vertical">
+                                                                            <li [ngbNavItem]="1" className="nav-link text-start" id="years-tab"><a ngbNavLink>Years</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="years" role="tabpanel" aria-labelledby="years-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Previous Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> This Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Year to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Last</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> Years</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> Years</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="2" className="nav-link text-start" id="quarters-tab"><a ngbNavLink>Quarters</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Previous Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> This Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Quarter to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Last</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="3" className="nav-link text-start" id="month-tab"><a ngbNavLink>Months</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="month" role="tabpanel" aria-labelledby="month-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Previous Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> This Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Month to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Last</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> months</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> months</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="4" className="nav-link text-start" id="weeks-tab"><a ngbNavLink>Weeks</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="weeks" role="tabpanel" aria-labelledby="weeks-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Previous Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> This Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Week to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Last</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> weeks</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> weeks</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="5" className="nav-link text-start" id="days-tab"><a ngbNavLink>Days</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="days" role="tabpanel" aria-labelledby="days-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Yesterday </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Today </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Tomorrow </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Last</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> days</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" name="relativeDates" class="form-check-input">
+                                                                                                    <label class="form-check-label"> Next</label>
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <label class="form-check-label ms-2"> days</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                            
+                                                                    <div class="p-2 border">
+                                                                        <div class="tab-content" id="vertical-tabContent">
+                                                                            <div [ngbNavOutlet]="nav"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mt-3">
+                                                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                                                    <label class="form-check-label">Preview </label>
+                                                                </div>
+                                                                <div class="col-xl-8 col-lg-8 col-md-8">
+                                                                   <div class="d-flex align-items-center">
+                                                                    <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" value="Nov 10, 2024" type="text">
+                                                                    <label class="form-check-label ms-2 me-2">to </label>
+                                                                    <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" value="Nov 10, 2024" type="text">
+                                                                   </div>
+                                                                </div>
+                                                                <div class="">
+                                                                    <div class="form-check mt-3 d-flex align-items-center">
+                                                                        <input  type="checkbox" class="form-check-input">
+                                                                        <label class="form-check-label"> Anchor relative to </label>
+                                                                        <input  type="text" id="input-label" class="form-control w-30 ms-3 border">
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -654,7 +881,7 @@
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
@@ -900,7 +1127,7 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
@@ -1865,7 +2092,7 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
+                                                        <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>

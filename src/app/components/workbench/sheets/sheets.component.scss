@@ -273,6 +273,11 @@ button.viewQueryImg {  border: none;  background: none;}
 .column-remove-btn{ text-align: center !important;width: 100%;}
 .alis-measure-width{ width: -webkit-fill-available}
 .customize-accordion-h { height: auto;max-height: 350px;}
+a.TabShadow.nav-link.active {
+  color: var(--primary-color);
+  box-shadow: 0px -5px 5px 1px rgb(0 0 0 / 8%);
+}
+.bt-0{border-top: none !important;}
 
 
 @media ( 1280px <= width <= 1600px) {
