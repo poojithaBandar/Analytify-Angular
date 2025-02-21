@@ -81,28 +81,43 @@ export class WorkbenchComponent implements OnInit{
   viewDatasourceList = false;
   isGoogleSheetsPage = false;
   selectedMicroSoftAuthType: string | null = null;
+  selectedHirchyIdCrsDb:string | null = null;
+
+  iscrossDbSelect = true;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('analytify/datasources/view-connections')){
-      this.databaseconnectionsList= true;  
-       this.viewNewDbs= false;
-       this.isGoogleSheetsPage = false;
-    } 
-    if(currentUrl.includes('analytify/datasources/new-connections')){
-      this.viewNewDbs = true;
-      this.databaseconnectionsList = false;
-      this.isGoogleSheetsPage = false;
-    }
-    if(currentUrl.includes('analytify/datasources/google-sheets')){
-      this.viewNewDbs = false;
-      this.databaseconnectionsList = false;
-      this.isGoogleSheetsPage = true;
-      let url = this.router.url;
-      console.log(url);
-      this.getGoogleSheetDetailsByUrl(url);
+    if (currentUrl.startsWith('/analytify/datasources/')) {
+      if (currentUrl.includes('view-connections')) {
+        this.databaseconnectionsList = true;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+        // this.iscrossDbSelect = false;
+      } else if (currentUrl.includes('new-connections')) {
+        this.viewNewDbs = true;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = false;
+        // this.iscrossDbSelect = false;
+      } else if (currentUrl.includes('google-sheets')) {
+        this.viewNewDbs = false;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = true;
+        this.iscrossDbSelect = false;
+        console.log(currentUrl);
+        this.getGoogleSheetDetailsByUrl(currentUrl);
+      }else if(currentUrl.includes('crossdatabase/viewconnection')){
+        this.iscrossDbSelect = true;
+        this.databaseconnectionsList = true;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+      }else if(currentUrl.includes('crossdatabase/newconnection')){
+        this.iscrossDbSelect = true;
+        this.viewNewDbs = true;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = false;
+      }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
@@ -1387,4 +1402,17 @@ connectGoogleSheets(){
       }
     })
   }
+
+  onSelectedHIDCrsDb(hId:any){
+    if (this.selectedHirchyIdCrsDb === hId) {
+      this.selectedHirchyIdCrsDb = null;  // Unselect if clicking the same one
+    } else {
+      this.selectedHirchyIdCrsDb = hId;  // Select new one
+    }
+    console.log(hId);
+  }
+
+
+
+
 }

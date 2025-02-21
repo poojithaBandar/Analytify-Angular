@@ -122,7 +122,15 @@
 //     }
 
 // 
-
+.selectable-card {
+   cursor: pointer; /* Makes it look clickable */
+   transition: background-color 0.3s ease-in-out;
+ }
+ 
+ .selectable-card.selected {
+   background-color: rgba(0, 123, 255, 0.2); /* Light blue highlight */
+   border: 2px solid #007bff; /* Blue border */
+ }
 .card-padding-top { padding-top: 15px; }
 .search-icon-border-radius { border-radius: 0px 4px 4px 0px !important; }
 .table-responsive-height { height: 26rem; }
