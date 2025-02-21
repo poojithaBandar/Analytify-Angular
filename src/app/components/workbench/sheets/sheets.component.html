@@ -654,7 +654,7 @@
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
@@ -728,52 +728,52 @@
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body p-0">
                                                                 <ul *ngIf="!formatExtractType" class="mb-2">
-                                                                  <li (click)="formatExtractType = 'year'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'year'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Years</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'quarter'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'quarter'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Quaters</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'month'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'month'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Months</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'day'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'day'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Days</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'week number'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'week numbers'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Week numbers</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'weekdays'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'weekdays'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                   </li>
                                                                 </ul>
                                                                 <!-- <ul *ngIf="!formatExtractType">
-                                                                  <li (click)="formatExtractType = 'count'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'count'; filterDataArray = []; filterDataGet()">
                                                                      <i class="fa fa-calendar-o me-1"></i>
                                                                     <label for="defaultCheck1" class="form-check-label">Count</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'count_distinct'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'count_distinct'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                    <label for="defaultCheck1" class="form-check-label">Count (Distinct)</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'min'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'min'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                    <label for="defaultCheck1" class="form-check-label">Minimum</label>
                                                                   </li>
-                                                                  <li (click)="formatExtractType = 'max'; filterEditGet()">
+                                                                  <li (click)="formatExtractType = 'max'; filterDataArray = []; filterDataGet()">
                                                                     <i class="fa fa-calendar-o me-1"></i>
                                                                    <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                   </li>
                                                                 </ul> -->
                                                                 @if(formatExtractType){
                                                                     <div class="d-flex">
-                                                                        <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
+                                                                        <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button>
                                                                         <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
                                                                         <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                     </div>
@@ -900,7 +900,7 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
@@ -1695,52 +1695,52 @@
                                                                                     <div class="tab-pane" id="linktabs">
                                                                                         <div class="card-body p-0">
                                                                                             <ul *ngIf="!formatExtractType" class="mb-2">
-                                                                                              <li (click)="formatExtractType = 'year'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'year'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Years</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'quarter'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'quarter'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Quaters</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'month'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'month'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Months</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'day'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'day'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Days</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'week number'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'week numbers'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Week numbers</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'weekdays'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'weekdays'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Weekdays</label>
                                                                                               </li>
                                                                                             </ul>
                                                                                             <!-- <ul *ngIf="!formatExtractType">
-                                                                                              <li (click)="formatExtractType = 'count'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'count'; filterDataArray = []; filterDataGet()">
                                                                                                  <i class="fa fa-calendar-o me-1"></i>
                                                                                                 <label for="defaultCheck1" class="form-check-label">Count</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'count_distinct'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'count_distinct'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                <label for="defaultCheck1" class="form-check-label">Count (Distinct)</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'min'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'min'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                <label for="defaultCheck1" class="form-check-label">Minimum</label>
                                                                                               </li>
-                                                                                              <li (click)="formatExtractType = 'max'; filterEditGet()">
+                                                                                              <li (click)="formatExtractType = 'max'; filterDataArray = []; filterDataGet()">
                                                                                                 <i class="fa fa-calendar-o me-1"></i>
                                                                                                <label for="defaultCheck1" class="form-check-label">Maximum</label>
                                                                                               </li>
                                                                                             </ul> -->
                                                                                             @if(formatExtractType){
                                                                                                 <div class="d-flex">
-                                                                                                    <!-- <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button> -->
+                                                                                                    <button class="btn btn-primary" (click)="formatExtractType = '';"><i class="fa fa-long-arrow-left"></i></button>
                                                                                                     <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="editFilterSearch" (keyup.enter)="editFilterList()" aria-describedby="button-addon2" >
                                                                                                     <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="editFilterList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
                                                                                                 </div>
@@ -1865,7 +1865,7 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0" *ngIf="![3,4].includes(activeTabId)">
+                                                        <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
@@ -2256,7 +2256,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="!((table && chartId) || (pie && chartId) || donut || kpi || funnel || guage || calendar || radar)" ngbAccordionItem  class="accordion-item mb-2 border">
                                                           <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                             <button
                                                               ngbAccordionButton

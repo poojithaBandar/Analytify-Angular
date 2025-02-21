@@ -3169,6 +3169,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "is_exclude":this.isExclude,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
+      "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
       "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {

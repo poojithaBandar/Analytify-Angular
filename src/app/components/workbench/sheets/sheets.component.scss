@@ -323,6 +323,10 @@ label { font-size: 12px; }
 .body.table-responsive{ max-height: 310px !important;}
 .query-text { height: 160px; overflow-y: auto; outline: none; border: 1px solid #edebeb; border-radius: 5px; }
 .alert-card{ height: 80px; overflow: auto;}
+.number-formatting label {  display: block;  margin-top: 5px; margin-bottom: 1px;}
+.number-formatting select {  width: 100%;  padding: 5px;  margin-top: 1px;}
+.number-formatting{ border: 1px solid #ccc;  padding: 10px;  width: 170px; }
+.number-formatting input { width: 100%; padding: 5px; margin-top: 1px; }
 }
 
 @media ( 1280px <= width <= 1570px) {
@@ -367,6 +371,9 @@ label { font-size: 12px;}
 .body.table-responsive{ max-height: 270px !important;}
 .query-text { height: 150px; overflow-y: auto; outline: none; border: 1px solid #edebeb; border-radius: 5px; }
 .alert-card{ height: 80px; overflow: auto;}
+.number-formatting label {  display: block;  margin-top: 5px; margin-bottom: 2px; font-size: 11px;}
+.number-formatting{ border: 1px solid #ccc;  padding: 10px;  width: 159px; }
+.number-formatting input { width: 100%; padding: 5px; margin-top: 1px; }
 }
 
  // for 110% Resolution //
