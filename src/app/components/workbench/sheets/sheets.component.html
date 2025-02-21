@@ -433,10 +433,10 @@
                         </div>
                         <div class="modal-body sheet-filter-modal">
                             @if(dateList.includes(filterType)){
-                                <div class="card panel panel-primary">
+                                <div class="card panel panel-primary shadow-none">
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
-                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14 pb-1" >
                                                 <li [ngbNavItem]="1" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
                                                     <a ngbNavLink class="p-3 TabShadow">General</a>
                                                     <ng-template ngbNavContent>
@@ -558,9 +558,9 @@
                                                     <a ngbNavLink class="p-3 TabShadow">Relative Dates</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
-                                                            <div class="card-body p-2 border bt-0">
+                                                            <div class="card-body p-0 border rounded-3">
                                                                 <div class="d-lg-flex d-block">
-                                                                    <div class="border">
+                                                                    <div class="border-end">
                                                                         <ul ngbNav #nav="ngbNav" [(activeId)]="relativeDateType" class="nav flex-column nav-pills" id="vertical-tab"
                                                                             role="tablist" aria-orientation="vertical">
                                                                             <li [ngbNavItem]="1" className="nav-link text-start" id="years-tab"><a ngbNavLink>Years</a>
@@ -587,7 +587,7 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" name="relativeDates" class="form-check-input">
                                                                                                     <label class="form-check-label"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace">
                                                                                                     <label class="form-check-label ms-2"> Years</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
@@ -625,7 +625,7 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" name="relativeDates" class="form-check-input">
                                                                                                     <label class="form-check-label"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace">
                                                                                                     <label class="form-check-label ms-2"> Quarters</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
@@ -663,7 +663,7 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" name="relativeDates" class="form-check-input">
                                                                                                     <label class="form-check-label"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace">
                                                                                                     <label class="form-check-label ms-2"> months</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
@@ -701,7 +701,7 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" name="relativeDates" class="form-check-input">
                                                                                                     <label class="form-check-label"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace">
                                                                                                     <label class="form-check-label ms-2"> weeks</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
@@ -735,7 +735,7 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" name="relativeDates" class="form-check-input">
                                                                                                     <label class="form-check-label"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2">
+                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace">
                                                                                                     <label class="form-check-label ms-2"> days</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
@@ -752,37 +752,41 @@
                                                                         </ul>
                                                                     </div>
                                                             
-                                                                    <div class="p-2 border">
+                                                                    <div class="p-2">
                                                                         <div class="tab-content" id="vertical-tabContent">
                                                                             <div [ngbNavOutlet]="nav"></div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="row mt-3">
-                                                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                                            <div class="row p-2">
+                                                                <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
                                                                     <label class="form-check-label">Preview </label>
                                                                 </div>
-                                                                <div class="col-xl-8 col-lg-8 col-md-8">
+                                                                <div class="col-xl-7 col-lg-7 col-md-7">
                                                                    <div class="d-flex align-items-center">
                                                                     <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" value="Nov 10, 2024" type="text">
-                                                                    <label class="form-check-label ms-2 me-2">to </label>
+                                                                    <label class="form-check-label ms-1 me-1">to </label>
                                                                     <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" value="Nov 10, 2024" type="text">
                                                                    </div>
                                                                 </div>
-                                                                <div class="">
-                                                                    <div class="form-check mt-3 d-flex align-items-center">
-                                                                        <input  type="checkbox" class="form-check-input">
-                                                                        <label class="form-check-label"> Anchor relative to </label>
-                                                                        <input  type="text" id="input-label" class="form-control w-30 ms-3 border">
-                                                                    </div>
+                                                            </div>
+                                                            <div class="row p-2">
+                                                                <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
+                                                                    <input  type="checkbox" class="form-check-input">
+                                                                    <label class="form-check-label"> Anchor relative to </label>
                                                                 </div>
+                                                                <div class="col-xl-7 col-lg-7 col-md-7">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <input  type="text" id="input-label" class="form-control w-30 border">
+                                                                    </div>
+                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </ng-template>
                                                 </li>
                                             </ul>
-                                            <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                            <div class="panel-body tabs-menu-body p-0 panel-body-h">
                                                 <div class="tab-content">
                                                     <div [ngbNavOutlet]="nav"></div>
                                                 </div>
@@ -1874,7 +1878,7 @@
                                                             <div class="card panel panel-primary">
                                                                 <div class="tab-menu-heading tab-menu-heading-boxed">
                                                                     <div class="tabs-menu-boxed">
-                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14 pb-1" >
                                                                             <li [ngbNavItem]="1" [class.disabled]="formatExtractType || (activeTabId !== 1)">
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
@@ -1997,7 +2001,7 @@
                                                             <div class="card panel panel-primary">
                                                                 <div class="tab-menu-heading tab-menu-heading-boxed">
                                                                     <div class="tabs-menu-boxed">
-                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14 pb-1" >
                                                                             <li [ngbNavItem]="1" [class.disabled]="activeTabId !== 1">
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
