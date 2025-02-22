@@ -5442,26 +5442,301 @@ customizechangeChartPlugin() {
 
     previewFromDate : any;
     previewToDate : any;
-    selectedDateFormat : any = 'previous_year';
+    selectedDateFormat : string = 'thisYear';
     relativeDateType : any = 1;
-    setDefaultDates(){
-      const currentDate = new Date();
-
-      if(this.selectedDateFormat === 'previous_year'){
-        this.previewToDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        this.previewFromDate = new Date(currentDate.getFullYear() - 1, 0, 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      } else if(this.selectedDateFormat === 'thsi_year'){
-        
-      } else if(this.selectedDateFormat === 'next_year'){
-
-      } else if(this.selectedDateFormat === 'year_to_date'){
-
-      } else if(this.selectedDateFormat === 'last_year'){
-
-      } else if(this.selectedDateFormat === 'next_year'){
-
+    last : number = 3;
+    next : number = 3;
+    isAnchor : boolean = false;
+    anchorDate : any;
+    
+    //years
+    getYearPreview(){
+      let startDate: any;
+      let endDate: any;
+      if(this.selectedDateFormat === 'previousYear'){
+        let dates = this.getYearDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'thisYear'){
+        let dates = this.getYearDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'nextYear'){
+        let dates = this.getYearDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'yearToDate'){
+        let dates = this.getYearDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if(this.selectedDateFormat === 'lastYearCount' && this.last){
+        let firstYear = this.getYearDates(-(this.last-1)); // Start from N years back
+        let lastYear = this.getYearDates(0); // End at last year
+        startDate = firstYear.start;
+        endDate = lastYear.end;
+      } else if(this.selectedDateFormat === 'nextYearCount' && this.next){
+        let firstYear = this.getYearDates(0); // Start from this year
+        let lastYear = this.getYearDates(this.next - 1); // End at N years forward
+        startDate = firstYear.start;
+        endDate = lastYear.end;
       }
-      this.previewToDate = currentDate.toLocaleDateString('en-US', {year: 'numeric',month: 'long',day: 'numeric'});
-      this.previewFromDate = new Date(currentDate.getFullYear() - 1, 0, 1).toLocaleDateString('en-US', {year: 'numeric',month: 'long',day: 'numeric'});
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+
+      // for payload
+      const from = this.previewFromDate.split('-').join('/');
+      const to = this.previewToDate.split('-').join('/');
+      const payload = [from, to];
+      console.log(payload);
+    }
+    getYearDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      
+      let year = now.getFullYear() + offset; // Adjust the year by offset
+    
+      return {
+        start: new Date(year, 0, 1), // January 1st
+        end: new Date(year, 11, 31), // December 31st
+      };
+    }
+
+    //quarters
+    getQuarterPreview(){
+      let startDate: any;
+      let endDate: any;
+      if (this.selectedDateFormat === 'previousQuarter') {
+        let dates = this.getQuarterDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisQuarter') {
+        let dates = this.getQuarterDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextQuarter') {
+        let dates = this.getQuarterDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      }  else if (this.selectedDateFormat === 'quarterToDate') {
+        let dates = this.getQuarterDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastQuarterCount' && this.last) {
+        let firstQuarter = this.getQuarterDates(-(this.last-1)); // Start from N quarters back
+        let lastQuarter = this.getQuarterDates(0); // End at this quarter
+        startDate = firstQuarter.start;
+        endDate = lastQuarter.end;
+      } else if (this.selectedDateFormat === 'nextQuarterCount' && this.next) {
+        let firstQuarter = this.getQuarterDates(0); // Start from this quarter
+        let lastQuarter = this.getQuarterDates((this.next-1)); // End at N quarters forward
+        startDate = firstQuarter.start;
+        endDate = lastQuarter.end;
+      }
+      
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getQuarterDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let currentQuarter = Math.floor(now.getMonth() / 3); // 0-3 (Q1-Q4)
+      let year = now.getFullYear();
+  
+      let quarter = (currentQuarter + offset) % 4;
+      if (quarter < 0) quarter += 4; // Ensure positive value
+      let adjustedYear = year + Math.floor((currentQuarter + offset) / 4);
+  
+      let startMonth = quarter * 3;
+      let endMonth = startMonth + 2;
+  
+      return {
+        start: new Date(adjustedYear, startMonth, 1),
+        end: new Date(adjustedYear, endMonth + 1, 0), // Last day of quarter
+      };
+    }
+
+    //months
+    getMonthsPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'previousMonth') {
+        let dates = this.getMonthDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisMonth') {
+        let dates = this.getMonthDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextMonth') {
+        let dates = this.getMonthDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'monthToDate') {
+        let dates = this.getMonthDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastMonthCount' && this.last) {
+        let firstMonth = this.getMonthDates(-(this.last-1)); // Start from N months back
+        let lastMonth = this.getMonthDates(0); // End at last month
+        startDate = firstMonth.start;
+        endDate = lastMonth.end;
+      } else if (this.selectedDateFormat === 'nextMonthCount' && this.next) {
+        let firstMonth = this.getMonthDates(0); // Start from this month
+        let lastMonth = this.getMonthDates(this.next - 1); // End at N months forward
+        startDate = firstMonth.start;
+        endDate = lastMonth.end;
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getMonthDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let year = now.getFullYear();
+      let month = now.getMonth() + offset; // Adjust the month by offset
+      let adjustedYear = year + Math.floor(month / 12);
+      let adjustedMonth = month % 12;
+      if (adjustedMonth < 0) {
+        adjustedMonth += 12;
+        adjustedYear--;
+      }
+    
+      return {
+        start: new Date(adjustedYear, adjustedMonth, 1),
+        end: new Date(adjustedYear, adjustedMonth + 1, 0), // Last day of month
+      };
+    }
+
+    //weeks
+    getWeeksPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'previousWeek') {
+        let dates = this.getWeekDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisWeek') {
+        let dates = this.getWeekDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextWeek') {
+        let dates = this.getWeekDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'weekToDate') {
+        let dates = this.getWeekDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastWeekCount' && this.last) {
+        let firstWeek = this.getWeekDates(-(this.last-1)); // Start from N weeks back
+        let lastWeek = this.getWeekDates(0); // End at last week
+        startDate = firstWeek.start;
+        endDate = lastWeek.end;
+      } else if (this.selectedDateFormat === 'nextWeekCount' && this.next) {
+        let firstWeek = this.getWeekDates(0); // Start from this week
+        let lastWeek = this.getWeekDates(this.next - 1); // End at N weeks forward
+        startDate = firstWeek.start;
+        endDate = lastWeek.end;
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getWeekDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let currentDayOfWeek = now.getDay(); // 0 (Sunday) - 6 (Saturday)
+      let startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - currentDayOfWeek + offset * 7); // Sunday as start of the week
+      let endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday as end of the week
+    
+      return {
+        start: startOfWeek,
+        end: endOfWeek,
+      };
+    }
+
+    //days
+    getDaysPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'yesterday') {
+        startDate = this.getDayDate(-1);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'today') {
+        startDate = this.getDayDate(0);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'tomorrow') {
+        startDate = this.getDayDate(1);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'lastDaysCount' && this.last) {
+        startDate = this.getDayDate(-(this.last-1)); // Start N days back
+        endDate = this.getDayDate(0); // End at yesterday
+      } else if (this.selectedDateFormat === 'nextDaysCount' && this.next) {
+        startDate = this.getDayDate(0); // Start from today
+        endDate = this.getDayDate(this.next - 1); // End N days forward
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getDayDate(offset: number): Date {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      now.setDate(now.getDate() + offset); // Adjust the date by offset
+      return now;
+    }
+
+    //anchor date change
+    anchorDateChange(){
+      if(this.relativeDateType === 1){
+        this.getYearPreview();
+      } else if(this.relativeDateType === 2){
+        this.getQuarterPreview();
+      } else if(this.relativeDateType === 3){
+        this.getMonthsPreview();
+      } else if(this.relativeDateType === 4){
+        this.getWeeksPreview();
+      } else if(this.relativeDateType === 5){
+        this.getDaysPreview();
+      }
+    }
+
+    //setEditPreview
+    getEditRelativeDatePreview(){
+      //--> need to these properties geteditdata method for preview
+      let a = [5,'today', 2, 3, '']
+      this.relativeDateType = 5;
+      this.selectedDateFormat = 'today';
+      this.last = 2;
+      this.next = 2;
+      this.isAnchor = true;
+      this.anchorDate = new Date();
+      this.anchorDateChange();
     }
 }
