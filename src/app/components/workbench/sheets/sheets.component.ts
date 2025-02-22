@@ -5726,6 +5726,15 @@ customizechangeChartPlugin() {
         this.getDaysPreview();
       }
     }
+    setAnchorDate(){
+      if(this.isAnchor){
+        const today = new Date();
+        this.anchorDate = today.toISOString().split('T')[0];
+      } else{
+        this.anchorDate = '';
+      }
+      this.anchorDateChange();
+    }
 
     //setEditPreview
     getEditRelativeDatePreview(){
