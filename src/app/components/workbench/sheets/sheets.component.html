@@ -344,7 +344,7 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
-                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,dimensions)"> Apply Filters </button>
                                             <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                         </div>
                                     </div>
@@ -369,7 +369,7 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                             <div class="dropdown-menu SelectDropDownCard" ngbDropdownMenu>
-                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,measures)"> Apply Filters </a>
+                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </a>
                                                 <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                             </div>
                                         </div>
@@ -408,7 +408,7 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
                                                     <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
                                                     <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
@@ -587,13 +587,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastYearCount" (change)="getYearPreview()">
                                                                                                     <label class="form-check-label" for="lastYearCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
                                                                                                     <label class="form-check-label ms-2"> Years</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYearCount" (change)="getYearPreview()">
                                                                                                     <label class="form-check-label" for="nextYearCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
                                                                                                     <label class="form-check-label ms-2"> Years</label>
                                                                                                 </div>
                                                                                             </div>
@@ -625,13 +625,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastQuarterCount" (change)="getQuarterPreview()">
                                                                                                     <label class="form-check-label" for="lastQuarterCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
                                                                                                     <label class="form-check-label ms-2"> Quarters</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarterCount" (change)="getQuarterPreview()">
                                                                                                     <label class="form-check-label" for="nextQuarterCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
                                                                                                     <label class="form-check-label ms-2"> Quarters</label>
                                                                                                 </div>
                                                                                             </div>
@@ -663,13 +663,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastMonthCount" (change)="getMonthsPreview()">
                                                                                                     <label class="form-check-label" for="lastMonthCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
                                                                                                     <label class="form-check-label ms-2"> months</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonthCount" (change)="getMonthsPreview()">
                                                                                                     <label class="form-check-label" for="nextMonthCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
                                                                                                     <label class="form-check-label ms-2"> months</label>
                                                                                                 </div>
                                                                                             </div>
@@ -701,13 +701,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastWeekCount" (change)="getWeeksPreview()">
                                                                                                     <label class="form-check-label" for="lastWeekCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
                                                                                                     <label class="form-check-label ms-2"> weeks</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeekCount" (change)="getWeeksPreview()">
                                                                                                     <label class="form-check-label" for="nextWeekCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
                                                                                                     <label class="form-check-label ms-2"> weeks</label>
                                                                                                 </div>
                                                                                             </div>
@@ -735,13 +735,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastDaysCount" (change)="getDaysPreview()">
                                                                                                     <label class="form-check-label" for="lastDaysCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
                                                                                                     <label class="form-check-label ms-2"> days</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextDaysCount" (change)="getDaysPreview()">
                                                                                                     <label class="form-check-label" for="nextDaysCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
                                                                                                     <label class="form-check-label ms-2"> days</label>
                                                                                                 </div>
                                                                                             </div>
@@ -891,7 +891,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -1055,13 +1055,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastYearCount" (change)="getYearPreview()">
                                                                                                     <label class="form-check-label" for="lastYearCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
                                                                                                     <label class="form-check-label ms-2"> Years</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYearCount" (change)="getYearPreview()">
                                                                                                     <label class="form-check-label" for="nextYearCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
                                                                                                     <label class="form-check-label ms-2"> Years</label>
                                                                                                 </div>
                                                                                             </div>
@@ -1093,13 +1093,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastQuarterCount" (change)="getQuarterPreview()">
                                                                                                     <label class="form-check-label" for="lastQuarterCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
                                                                                                     <label class="form-check-label ms-2"> Quarters</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarterCount" (change)="getQuarterPreview()">
                                                                                                     <label class="form-check-label" for="nextQuarterCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
                                                                                                     <label class="form-check-label ms-2"> Quarters</label>
                                                                                                 </div>
                                                                                             </div>
@@ -1131,13 +1131,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastMonthCount" (change)="getMonthsPreview()">
                                                                                                     <label class="form-check-label" for="lastMonthCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
                                                                                                     <label class="form-check-label ms-2"> months</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonthCount" (change)="getMonthsPreview()">
                                                                                                     <label class="form-check-label" for="nextMonthCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
                                                                                                     <label class="form-check-label ms-2"> months</label>
                                                                                                 </div>
                                                                                             </div>
@@ -1169,13 +1169,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastWeekCount" (change)="getWeeksPreview()">
                                                                                                     <label class="form-check-label" for="lastWeekCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
                                                                                                     <label class="form-check-label ms-2"> weeks</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeekCount" (change)="getWeeksPreview()">
                                                                                                     <label class="form-check-label" for="nextWeekCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
                                                                                                     <label class="form-check-label ms-2"> weeks</label>
                                                                                                 </div>
                                                                                             </div>
@@ -1203,13 +1203,13 @@
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="lastDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastDaysCount" (change)="getDaysPreview()">
                                                                                                     <label class="form-check-label" for="lastDaysCount"> Last</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
                                                                                                     <label class="form-check-label ms-2"> days</label>
                                                                                                 </div>
                                                                                                 <div class="form-check mb-3">
                                                                                                     <input  type="radio" id="nextDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextDaysCount" (change)="getDaysPreview()">
                                                                                                     <label class="form-check-label" for="nextDaysCount"> Next</label>
-                                                                                                    <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
                                                                                                     <label class="form-check-label ms-2"> days</label>
                                                                                                 </div>
                                                                                             </div>
@@ -1369,7 +1369,7 @@
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -2255,13 +2255,13 @@
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="lastYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastYearCount" (change)="getYearPreview()">
                                                                                                                                 <label class="form-check-label" for="lastYearCount"> Last</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> Years</label>
                                                                                                                             </div>
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="nextYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYearCount" (change)="getYearPreview()">
                                                                                                                                 <label class="form-check-label" for="nextYearCount"> Next</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> Years</label>
                                                                                                                             </div>
                                                                                                                         </div>
@@ -2293,13 +2293,13 @@
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="lastQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastQuarterCount" (change)="getQuarterPreview()">
                                                                                                                                 <label class="form-check-label" for="lastQuarterCount"> Last</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> Quarters</label>
                                                                                                                             </div>
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="nextQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarterCount" (change)="getQuarterPreview()">
                                                                                                                                 <label class="form-check-label" for="nextQuarterCount"> Next</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> Quarters</label>
                                                                                                                             </div>
                                                                                                                         </div>
@@ -2331,13 +2331,13 @@
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="lastMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastMonthCount" (change)="getMonthsPreview()">
                                                                                                                                 <label class="form-check-label" for="lastMonthCount"> Last</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> months</label>
                                                                                                                             </div>
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="nextMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonthCount" (change)="getMonthsPreview()">
                                                                                                                                 <label class="form-check-label" for="nextMonthCount"> Next</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> months</label>
                                                                                                                             </div>
                                                                                                                         </div>
@@ -2369,13 +2369,13 @@
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="lastWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastWeekCount" (change)="getWeeksPreview()">
                                                                                                                                 <label class="form-check-label" for="lastWeekCount"> Last</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> weeks</label>
                                                                                                                             </div>
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="nextWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeekCount" (change)="getWeeksPreview()">
                                                                                                                                 <label class="form-check-label" for="nextWeekCount"> Next</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> weeks</label>
                                                                                                                             </div>
                                                                                                                         </div>
@@ -2403,13 +2403,13 @@
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="lastDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastDaysCount" (change)="getDaysPreview()">
                                                                                                                                 <label class="form-check-label" for="lastDaysCount"> Last</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2 BitSpace" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> days</label>
                                                                                                                             </div>
                                                                                                                             <div class="form-check mb-3">
                                                                                                                                 <input  type="radio" id="nextDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextDaysCount" (change)="getDaysPreview()">
                                                                                                                                 <label class="form-check-label" for="nextDaysCount"> Next</label>
-                                                                                                                                <input type="number" class="w-30 ms-2 p-0 rounded-2" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
                                                                                                                                 <label class="form-check-label ms-2"> days</label>
                                                                                                                             </div>
                                                                                                                         </div>
@@ -2567,7 +2567,7 @@
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
+                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close

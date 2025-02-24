@@ -347,6 +347,20 @@ export class SheetsComponent {
   rightLegend:any = null;
   sortType : any = 0;
 
+  topType: string = 'desc';
+  topLimit: number = 5;
+  selectedTopColumn: any = 'select';
+  topAggregate: string = 'sum';
+
+  previewFromDate: any;
+  previewToDate: any;
+  selectedDateFormat: string = 'thisYear';
+  relativeDateType: any = 1;
+  last: number = 3;
+  next: number = 3;
+  isAnchor: boolean = false;
+  anchorDate: any;
+
   locationDrillDownSwitch: boolean = false;
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
@@ -3188,9 +3202,21 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   totalDataLength : any;
   filterDataPut(){
     // this.dimetionMeasure = [];
+    let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
       this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
+    if(this.activeTabId === 5){
+      if (this.previewFromDate && this.previewToDate) {
+        const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
+        const toDateParts = this.previewToDate.split('-'); // ['31', '12', '2025']
+        let from = `${fromDateParts[2]}/${fromDateParts[1]}/${fromDateParts[0]}`
+        let to = `${toDateParts[2]}/${toDateParts[1]}/${toDateParts[0]}`
+        relativeDateRange = [from, to];
+      }
+      this.last = this.last === 0 ? 3 : this.last;
+      this.next = this.next === 0 ? 3 : this.next;
     }
     const obj={
     //"filter_id": this.filter_id,
@@ -3198,7 +3224,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": this.filterDateRange,
+    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
     "data_type":this.filterType,
@@ -3207,7 +3233,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
     "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
-    "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
+    "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null,
+    "relative_date": this.activeTabId === 5 ? [this.relativeDateType,this.selectedDateFormat,this.last,this.next,(this.isAnchor ? this.anchorDate : ''),''] : null
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -3224,6 +3251,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.topLimit = 5;
         this.topType = 'desc';
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+        this.defaultRelativeDates();
       },
       error: (error) => {
         console.log(error);
@@ -3257,11 +3285,21 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day'){
+        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day' && !responce?.relative_date){
           this.activeTabId = 2;
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
           this.activeTabId = 4;
+        }
+        else if(responce?.relative_date && responce?.relative_date.length > 0){
+          this.activeTabId = 5;
+          this.relativeDateType = responce?.relative_date[0];
+          this.selectedDateFormat = responce?.relative_date[1];
+          this.last = responce?.relative_date[2];
+          this.next = responce?.relative_date[3];
+          this.isAnchor = responce?.relative_date[4] ? true : false;
+          this.anchorDate = responce?.relative_date[4];
+          this.anchorDateChange();
         }
         else {
           this.activeTabId = 1;
@@ -3324,13 +3362,25 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   filterDataEditArray = [] as any;
   filterDataEditPut(){
     this.sortedData = [];
+    let relativeDateRange : any[] = [];
+    if(this.activeTabId === 5){
+      if (this.previewFromDate && this.previewToDate) {
+        const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
+        const toDateParts = this.previewToDate.split('-'); // ['31', '12', '2025']
+        let from = `${fromDateParts[2]}/${fromDateParts[1]}/${fromDateParts[0]}`
+        let to = `${toDateParts[2]}/${toDateParts[1]}/${toDateParts[0]}`
+        relativeDateRange = [from, to];
+      }
+      this.last = this.last === 0 ? 3 : this.last;
+      this.next = this.next === 0 ? 3 : this.next;
+    }
     const obj={
       "filter_id": this.filter_id,
       "hierarchy_id": this.databaseId,
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": this.filterDateRange,
+      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
       "data_type":this.filterType,
@@ -3338,7 +3388,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
       "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
-      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
+      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null,
+      "relative_date": this.activeTabId === 5 ? [this.relativeDateType,this.selectedDateFormat,this.last,this.next,(this.isAnchor ? this.anchorDate : ''),''] : null
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -3351,6 +3402,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.topAggregate = 'sum';
           this.topLimit = 5;
           this.topType = 'desc';
+          this.defaultRelativeDates();
         },
         error: (error) => {
           console.log(error);
@@ -5433,21 +5485,6 @@ customizechangeChartPlugin() {
       }
       this.dataExtraction();
     }
-
-    topType : string = 'desc';
-    topLimit : number = 5;
-    selectedTopColumn : any = 'select';
-    topAggregate : string = 'sum';
-
-
-    previewFromDate : any;
-    previewToDate : any;
-    selectedDateFormat : string = 'thisYear';
-    relativeDateType : any = 1;
-    last : number = 3;
-    next : number = 3;
-    isAnchor : boolean = false;
-    anchorDate : any;
     
     //years
     getYearPreview(){
@@ -5482,12 +5519,6 @@ customizechangeChartPlugin() {
       }
       this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
       this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
-
-      // for payload
-      const from = this.previewFromDate.split('-').join('/');
-      const to = this.previewToDate.split('-').join('/');
-      const payload = [from, to];
-      console.log(payload);
     }
     getYearDates(offset: number): { start: Date; end: Date } {
       let now;
@@ -5735,17 +5766,43 @@ customizechangeChartPlugin() {
       }
       this.anchorDateChange();
     }
-
-    //setEditPreview
-    getEditRelativeDatePreview(){
-      //--> need to these properties geteditdata method for preview
-      let a = [5,'today', 2, 3, '']
-      this.relativeDateType = 5;
-      this.selectedDateFormat = 'today';
-      this.last = 2;
-      this.next = 2;
-      this.isAnchor = true;
-      this.anchorDate = new Date();
-      this.anchorDateChange();
+    defaultRelativeDates() {
+      this.relativeDateType = 1;
+      this.selectedDateFormat = 'thisYear';
+      this.last = 3;
+      this.next = 3;
+      this.isAnchor = false;
+      this.anchorDate = '';
+    }
+    applyButtonDisableForRelativeDates(){
+      let isValid : boolean = false;
+      if(this.activeTabId === 5 && this.selectedDateFormat && !this.isAnchor){
+        if((this.selectedDateFormat.includes('last') || this.selectedDateFormat.includes('next')) && this.selectedDateFormat.includes('Count')){
+          if(this.selectedDateFormat.includes('last') && this.selectedDateFormat.includes('Count') && this.last){
+            isValid = true;
+          } else if(this.selectedDateFormat.includes('next') && this.selectedDateFormat.includes('Count') && this.next){
+            isValid = true;
+          } else{
+            isValid = false;
+          }
+        } else{
+          isValid = true;
+        }
+      } else if(this.activeTabId === 5 && this.selectedDateFormat && this.isAnchor && this.anchorDate){
+        if((this.selectedDateFormat.includes('last') || this.selectedDateFormat.includes('next')) && this.selectedDateFormat.includes('Count')){
+          if(this.selectedDateFormat.includes('last') && this.selectedDateFormat.includes('Count') && this.last){
+            isValid = true;
+          } else if(this.selectedDateFormat.includes('next') && this.selectedDateFormat.includes('Count') && this.next){
+            isValid = true;
+          } else{
+            isValid = false;
+          }
+        } else{
+          isValid = true;
+        }
+      } else{
+        isValid = false;
+      }
+      return isValid;
     }
 }
