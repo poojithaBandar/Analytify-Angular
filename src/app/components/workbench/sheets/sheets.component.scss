@@ -281,6 +281,13 @@ a.TabShadow.nav-link.active {
 .nav-link {
   margin-inline: 0px;
 }
+.Hierarchy-box-bg{     color: rgb(var(--warning-rgb)) !important;
+  background: rgba(var(--warning-rgb), .1) !important;
+  border-color: rgba(var(--warning-rgb), .1);
+  padding: 3px 13px;
+  border-radius: 15px;
+  border: 1px solid;}
+
 
 @media ( 1280px <= width <= 1600px) {
   .dropdown-menu.SelectDropDownCard.show {
@@ -338,7 +345,7 @@ h6 { font-size: 12px; }
 .p-3 { padding: 0.55rem !important; }
 .accordion-button { font-size: 12px; }
 .fs-14 { font-size: 12px !important; }
-button.btn { font-size: 11px; }
+button.btn { font-size: 11px !important; }
 .dropdown-item{ padding: 0.5rem 0.5rem !important; font-size: 12px; }
 p { font-size: 12px; }
 label { font-size: 12px; }

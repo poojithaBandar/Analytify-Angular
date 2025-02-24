@@ -273,6 +273,11 @@
                                         (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)"
                                         [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
                                         class="fe fe-upload"></i> Upsert</a>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-plus"></i> Append</a>
                                   </div>
                                 </div>
                                 <a aria-label="anchor" (click)="deleteDbConnection(database.hierarchy_id)"
@@ -349,6 +354,7 @@
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-plus"></i> Append</a>
                             <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
                               [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.hierarchy_id)"
                               [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
