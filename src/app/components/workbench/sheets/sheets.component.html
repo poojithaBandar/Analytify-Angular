@@ -930,7 +930,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
                                 <div class="title-container border-0 rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span class="card mb-0" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '1%'}" style="padding-left: 15px;cursor: text;"></span>
+                                    <span class="card mb-0" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;"></span>
                                     <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
                                         <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
@@ -969,6 +969,7 @@
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
                                 <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border column-drag-items" 
+                                
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)"
@@ -987,9 +988,9 @@
                                      <div class="dropup" ngbDropdown style="line-height: 0;">
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex align-center" ngbDropdown>
-                                                <li class="btn btn-primary-light dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
-                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                                <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
+                                                <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                     <li><a [ngClass]="columns.type === 'year' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
                                                     <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
@@ -1001,9 +1002,9 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex align-center" ngbDropdown >
-                                                <li class="btn btn-primary-light dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
-                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                                <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
+                                                <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                     <li><a [ngClass]="columns.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
                                                     <li><a [ngClass]="columns.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
@@ -1118,7 +1119,7 @@
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown >
-                                                    <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light alis-measure-width" >@if(rows.alias){
+                                                    <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light alis-measure-width border" >@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
                                                     @else if(rows.type){
@@ -1132,8 +1133,8 @@
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
                                                     <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
-                                                    <li class="dropdown-item btn btn-primary-light Aggregation-text" ngbDropdownItem >Aggregation</li>
-                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Aggregation</li>
+                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                         <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
@@ -1216,9 +1217,9 @@
                                                     [cdkDropListData]="draggedDrillDownColumns" 
                                                     (cdkDropListDropped)="drillDownColumndrop($event)">
                                                         @for(columns of draggedDrillDownColumns;track columns;let index = $index){
-                                                        <div class="example-box border-end" cdkDrag >
+                                                        <div class="example-box Hierarchy-box-bg" cdkDrag >
                                                             {{ columns }}
-                                                            <div class="" ngbDropdown style="margin-top: 5px;">
+                                                            <div class="" ngbDropdown >
                                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                                     aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                                 <div class="dropdown-menu  cu" ngbDropdownMenu>
