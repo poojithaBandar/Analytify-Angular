@@ -807,6 +807,8 @@ export class WorkbenchComponent implements OnInit{
           this.replaceExcelOrCsvFile(event.target,database);
         } else if(type === 'upsert'){
           this.upsertExcelOrCsvFile(event.target,database);
+        } else if(type === 'append'){
+          this.appendExcelOrCsvFile(event.target,database);
         }
       } else{
         this.toasterservice.error('Not a supported file format. Please select an CSV file.','info',{ positionClass: 'toast-top-center'})
@@ -846,6 +848,8 @@ export class WorkbenchComponent implements OnInit{
           this.replaceExcelOrCsvFile(event.target,database);
         } else if(type === 'upsert'){
           this.upsertExcelOrCsvFile(event.target,database);
+        }  else if(type === 'append'){
+          this.appendExcelOrCsvFile(event.target,database);
         }
       } else{
         this.toasterservice.error('Not a supported file format. Please select an Excel file.','info',{ positionClass: 'toast-top-center'})
@@ -1415,4 +1419,27 @@ connectGoogleSheets(){
 
 
 
+  appendExcelOrCsvFile(fileInput: any,database : any){
+    const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData, this.fileData.name);
+    formData.append('file_type', database.database_type);
+    formData.append('hierarchy_id', database.hierarchy_id);
+    this.workbechService.appendExcelOrCsvFile(formData).subscribe({
+      next:(responce)=>{
+        console.log(responce);
+        this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+        this.fileId=database.hierarchy_id
+        const encodedId = btoa(this.fileId.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+       },
+       error: (error) => {
+        console.log(error);
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      },
+      complete: () => {
+        fileInput.value = '';
+        this.cd.detectChanges();
+      }
+    })
+  }
 }
