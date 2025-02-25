@@ -216,6 +216,8 @@
                                             class="avatar-radius">
                                         <img *ngIf="sheetlist.chart_id === 11" src="./assets/images/Tiled view sheet icons/calendar-bg.png" alt=""
                                             class="avatar-radius">
+                                        <img *ngIf="sheetlist.chart_id === 9" src="./assets/images/Tiled view sheet icons/pivot-table.jpg" alt=""
+                                            class="avatar-radius">
                                     </span>
                                     <div class="dashboard-card-title">
                                         <h5 class="card-title   mb-1 cursor-pointer" ngbTooltip="{{sheetlist.sheet_name}}"
@@ -298,6 +300,8 @@
                                         <img *ngIf="sheetlist.chart_id === 29" src="./assets/images/Tiled view sheet icons/spider-bg.png" alt=""
                                             class="avatar-radius">
                                         <img *ngIf="sheetlist.chart_id === 11" src="./assets/images/Tiled view sheet icons/calendar-bg.png" alt=""
+                                            class="avatar-radius">
+                                        <img *ngIf="sheetlist.chart_id === 9" src="./assets/images/Tiled view sheet icons/pivot-table.jpg" alt=""
                                             class="avatar-radius">
                                     </span>
                                     <div class="dashboard-card-title">
@@ -568,6 +572,10 @@
                                     </td>
                                     <td *ngIf="database.server_type === 'SHOPIFY'">
                                         <img alt="product" src="./assets/images/icons/shopify-large-1.jpg"
+                                            class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
+                                    </td>
+                                    <td *ngIf="database.server_type === 'GOOGLE_SHEETS'">
+                                        <img alt="product" src="./assets/images/icons/google-sheets.jpg"
                                             class="w-5 h-5 border me-2">{{database.server_type | lowercase}}
                                     </td>
                                     <!-- <td>{{database.server_type}}</td> -->

@@ -139,7 +139,7 @@ th, td { border: 1px solid #ddd;}
   border-radius: 4px;
   /* Rounded corners */
 }
-.disabled { pointer-events: none; opacity: 0.5;}
+.disabled { pointer-events: none; opacity: 0.5;font-size: 14px;}
 a.dashboard-tab-padding.nav-link { padding: 2px; font-size: 14px;}
 .dropdown-header.sheets-title { padding: 6px 5px;}
 #capture-element { width: 100% !important;}
@@ -198,6 +198,7 @@ p { margin-bottom: 0px !important;}
 .Customize-btn-w{ width: fit-content; border-radius: 5px 5px 0px 0px; box-shadow: none !important;}
 .dollar-card-w{ min-width: 150px !important; padding: 10px 20px 10px 20px;}
 .select-data-card-a{ width: 100%;padding: 6px;max-height: 240px;overflow-y: auto;}
+.form-control-pad{ padding: 0.170rem 0.65rem;}
 
 
 
@@ -234,6 +235,7 @@ th, td { border: 1px solid #ddd;}
 
 // for 90% Resolution //
 @media ( 1420px <= width <= 1560px) {
+ .disabled{font-size: 12px;} 
 .dropdown-menu.filter-popover{ left: 191px !important;}
 .app-sidebar .side-menu__label{ font-size: 12px;}
 .app-sidebar .main-sidebar-header{ width: 10.9rem;}
@@ -259,11 +261,14 @@ p { font-size: 12px;}
 .h6, h6 { font-size: 12px;}
 .form-select{ font-size: 12px;}
 .form-control{ font-size: 12px; padding: 3px;}
+.dropdown-menu { min-width: 10rem;}
 }
 .hamburger-menu{ display: grid;}
 
+
 // for 100% Resolution //
 @media ( 1280px <= width <= 1420px) {
+  .disabled{font-size: 12px;} 
 .dropdown-menu.filter-popover{ left: 167px !important;}
 a.dashboard-tab-padding.nav-link { padding: 2px; font-size: 11px;}
 .dropdown-header.sheets-title { padding: 6px 5px; font-size: 12px;}
@@ -287,5 +292,6 @@ p { font-size: 12px;}
 .h6, h6 { font-size: 11px;}
 .form-select{ font-size: 11px;}
 .form-control{ font-size: 10px; padding: 3px;}
+.dropdown-menu { min-width: 10rem;}
 }
 

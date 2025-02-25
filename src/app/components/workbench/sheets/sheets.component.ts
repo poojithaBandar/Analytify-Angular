@@ -1,4 +1,4 @@
-import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
@@ -51,7 +51,10 @@ import { InsightEchartComponent } from '../insight-echart/insight-echart.compone
 import { SharedService } from '../../../shared/services/shared.service';
 import { DefaultColorPickerService } from '../../../services/default-color-picker.service';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
-
+// import $ from 'jquery';
+import 'pivottable';
+// import * as $ from 'jquery';
+import 'jquery-ui/ui/widgets/sortable';
 declare type HorizontalAlign = 'left' | 'center' | 'right';
 declare type VerticalAlign = 'top' | 'center' | 'bottom';
 declare type MixedAlign = 'left' | 'right' | 'top' | 'bottom' | 'center';
@@ -67,6 +70,14 @@ interface RangeSliderModel {
   maxValue: number;
   options: Options;
 }
+declare global {
+  interface JQuery {
+    sortable(): JQuery;
+  }
+}
+
+declare var $:any;
+
 @Component({
   selector: 'app-sheets',
   standalone: true,
@@ -99,6 +110,7 @@ export class SheetsComponent {
   draggedColumnsData = [] as any;
   mulColData = [] as any;
   mulRowData = [] as any;
+  pivotMeasureValues = [] as any;
   draggedRowsData = [] as any;
   tablePreviewColumn = [] as any;
   tablePreviewRow = [] as any;
@@ -132,6 +144,7 @@ export class SheetsComponent {
   isMeasureEdit : boolean = false;
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
+  suppressTabChangeEvent : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -208,11 +221,12 @@ export class SheetsComponent {
   displayUnits: string = 'none';
   prefix: string = '';
   suffix: string = '';
-  KPIDecimalPlaces: number = 0;
+  KPIDecimalPlaces: number = 2;
   KPIRoundPlaces: number = 0;
   KPIDisplayUnits: string = 'none';
   KPIPrefix: string = '';
   KPISuffix: string = '';
+  KPIPercentageDivisor : number = 100;
   isCustomSql = false;
   canDrop = true;
   createdBy : any;
@@ -227,6 +241,7 @@ export class SheetsComponent {
   backgroundColor: string = '#fff';
   canEditDb = false;
   draggedDrillDownColumns = [] as any;
+  draggedMeasureValues = [] as any;
   drillDownIndex : number = 0;
   originalData : any ;
   dateDrillDownSwitch : boolean = false;
@@ -332,11 +347,31 @@ export class SheetsComponent {
   rightLegend:any = null;
   sortType : any = 0;
 
+  topType: string = 'desc';
+  topLimit: number = 5;
+  selectedTopColumn: any = 'select';
+  topAggregate: string = 'sum';
+
+  previewFromDate: any;
+  previewToDate: any;
+  selectedDateFormat: string = 'thisYear';
+  relativeDateType: any = 1;
+  last: number = 3;
+  next: number = 3;
+  isAnchor: boolean = false;
+  anchorDate: any;
+
   locationDrillDownSwitch: boolean = false;
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
   isLocationFeild: boolean = false;
-
+  @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
+  transformedData: any[] = [];
+  columnKeys: string[] = [];
+  rowKeys: string[] = [];
+  valueKeys: string[] = [];
+  rawData: any = {};
+  
   colorSchemes = [
     ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
     ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
@@ -345,6 +380,7 @@ export class SheetsComponent {
     ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   ];
   selectedColorScheme=[] as  any;
+  hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
@@ -441,6 +477,7 @@ export class SheetsComponent {
       this.retriveDataSheet_id = +atob(route.snapshot.params['id3']);
       this.dashboardId = +atob(route.snapshot.params['id4']);
       console.log(this.retriveDataSheet_id)
+      this.filterQuerySetId = null;
       // this.sheetRetrive();
       }
    } 
@@ -652,6 +689,7 @@ try {
           "col": draggedColumnsObj,
           "row": this.draggedRowsData,
           "filter_id": this.filterId,
+          "pivot_measure":this.draggedMeasureValuesData,
           "datasource_querysetid": this.filterQuerySetId,
           "sheetfilter_querysets_id": this.sheetfilter_querysets_id,
           "hierarchy": this.draggedDrillDownColumns,
@@ -669,6 +707,10 @@ try {
             this.chartsDataSet(responce);
             this.mulColData = responce.columns;
             this.mulRowData = responce.rows;
+            this.pivotMeasureValues = responce.pivot_measure;
+            this.pivotColumnData = responce?.data?.col;
+            this.pivotRowData = responce?.data?.row;
+            this.pivotMeasureData = responce?.data?.pivot_measure;
             if (this.chartsRowData.length > 0) {
               // this.enableDisableCharts();
               // this.chartsOptionsSet();
@@ -678,16 +720,18 @@ try {
                 // this.updateChart();
               }
               else{
-                this.chartsOptionsSet();
+                // this.chartsOptionsSet();
               }
             }
+            this.chartsOptionsSet();
             this.getDimensionAndMeasures();
             this.changeSelectedColumn();
-            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
+            if (((this.kpi || this.guage) && (this.draggedColumns.length > 0 || this.draggedRows.length !== 1)) || (!(this.kpi || this.guage || this.pivotTable) &&(this.draggedColumns.length < 1 || this.draggedRows.length < 1)) || (this.map && (this.draggedRows.length < 1 || this.draggedColumns.length != 1)) || (this.barLine && this.draggedRows.length !== 2) || (this.calendar && this.draggedColumnsData[0]?.[2] !== '')) {
               if(!this.table){
                 this.toasterService.info('Changed to Table Chart','Info',{ positionClass: 'toast-top-right'});
               }
               this.table = true;
+              this.pivotTable = false;
               this.bar = false;
               this.area = false;
               this.line = false;
@@ -710,6 +754,7 @@ try {
               // this.tableDisplayPagination();
             } else if(((this.pie || this.bar || this.area || this.line || this.donut || this.funnel || this.calendar) && (this.draggedColumns.length > 1 || this.draggedRows.length > 1))) {
               this.table = false;
+              this.pivotTable = false;
               this.bar = false;
               this.area = false;
               this.line = false;
@@ -735,6 +780,9 @@ try {
               this.toasterService.info('Changed to Dual Axis Chart','Info',{ positionClass: 'toast-top-right'});
               this.chartType = 'sidebyside'
             }
+            if(this.pivotTable){
+              this.pivotTableDatatransform();
+            }
             if(this.table){
               this.page = 1;
               this.pageNo = 1;
@@ -746,6 +794,7 @@ try {
           }
         }
         )
+        this.hasUnSavedChanges=true;
       }
 
       pageChangeTableDisplay(page:any){
@@ -817,12 +866,81 @@ try {
         }
       }
 
+      pivotRowData = [] as any;
+      pivotColumnData = [] as any;
+      pivotMeasureData = [] as any;
+        pivotTableDatatransform() {
+          if (this.draggedRows.length > 0 || this.draggedColumns.length > 0) {
+            this.transformedData =[];
+          let headers: string[] = [];
+
+          this.columnKeys = this.pivotColumnData?.map((col: any) => col.column); 
+          this.rowKeys = this.pivotRowData?.map((row: any) => row.col);
+          this.valueKeys = this.pivotMeasureData?.map((col:any) =>col.col)
+          this.pivotColumnData.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+      
+          this.pivotRowData.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          this.pivotMeasureData.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+      
+          this.transformedData.push(headers); 
+          let numRows = 0;
+          if (this.pivotColumnData.length > 0) {
+            numRows = this.pivotColumnData[0].result_data.length;
+            } else if (this.pivotRowData.length > 0) {
+            numRows = this.pivotRowData[0].result_data.length;
+            } else if (this.pivotMeasureData.length > 0) {
+            numRows = this.pivotMeasureData[0].result_data.length;
+            }
+      
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = []; 
+            this.pivotColumnData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+                  this.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            this.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+
+            this.transformedData.push(rowArray);
+          }
+          this.renderPivotTable();        
+        }
+        }
+
+        renderPivotTable() {
+          setTimeout(() => {
+
+          if (this.pivotContainer && this.pivotContainer.nativeElement) {
+              ($(this.pivotContainer.nativeElement) as any).pivot(this.transformedData, {
+                rows: this.columnKeys,  
+                cols: this.valueKeys, 
+                // vals: this.valueKeys, 
+                aggregator:$.pivotUtilities.aggregators["Sum"](this.rowKeys),
+                rendererName: "Table"
+              });
+            // }, 1000);
+          }        
+                      }, 1000);
+
+        }
+
+
       chartsDataSet(data: any) {
         let sidebysideBarColumnData = [];
         this.sheetCustomQuery = data.custom_query;
         // this.sheetfilter_querysets_id = data.sheetfilter_querysets_id || data.sheet_filter_quereyset_ids;
         this.tablePreviewColumn = data.data?.col ? data.data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.tablePreviewRow = data.data?.row ? data.data.row : data.sheet_data?.row ? data.sheet_data.row : [];
+        this.pivotMeasureData = data.data?.pivotMeasure_Data ? data.data.pivotMeasure_Data : data.sheet_data?.pivotMeasure_Data ? data.sheet_data?.pivotMeasure_Data : [];
         
         this.storeTableColumn = data?.table_data?.col ? data.table_data.col : data.sheet_data?.col ? data.sheet_data.col : [];
         this.storeTableRow = data?.table_data?.row ? data.table_data.row : data.sheet_data?.row ? data.sheet_data.row : [];
@@ -925,6 +1043,9 @@ try {
       chartsOptionsSet(){
         if (this.bar) {
           this.chartType = 'bar';
+        }
+        else if(this.pivotTable){
+          this.chartType = 'pivotTable'
         } else if (this.area) {
           this.chartType = 'area';
         } else if (this.line) {
@@ -1132,6 +1253,9 @@ try {
   rowMeasuresCount(rows:any,index:any,type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
       this.selectedSortColumnData[2] = type;
+      if(rows.alias){
+        this.selectedSortColumnData[3] = rows.alias;
+      }
     }
       this.measureValues = [];
       if(type){
@@ -1153,6 +1277,15 @@ try {
     console.log(this.draggedRowsData);
     this.draggedRows[index] = {column:rows.column,data_type:rows.data_type,type:type,alias:rows.alias};
     console.log(this.draggedRows)
+    if(type === 'count' || type === 'count_distinct'){
+      this.KPIDecimalPlaces = 0;
+      this.decimalPlaces = 0;
+      this.donutDecimalPlaces = 0;
+    } else {
+      this.KPIDecimalPlaces = 2;
+      this.decimalPlaces = 2;
+      this.donutDecimalPlaces = 2;
+    }
     this.dataExtraction();
      }
   }
@@ -1273,6 +1406,7 @@ try {
   }
   }
   table = true;
+  pivotTable = false;
   bar = false;
   sidebyside = false;
   area = false;
@@ -1290,8 +1424,9 @@ try {
   guage = false;
   calendar = false;
   chartDisplay(table:boolean,bar:boolean,area:boolean,line:boolean,pie:boolean,sidebysideBar:boolean,stocked:boolean,barLine:boolean,
-    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,chartId:any){
+    horizentalStocked:boolean,grouped:boolean,multiLine:boolean,donut:boolean,radar:boolean,kpi:any,heatMap:any,funnel:any,guage:boolean,map:boolean,calendar:boolean,pivotTable:boolean,chartId:any){
     this.table = table;
+    this.pivotTable = pivotTable;
     this.bar=bar;
     this.area=area;
     this.line=line;
@@ -1320,6 +1455,7 @@ try {
     }
     this.resetCustomizations();
     this.chartsOptionsSet(); 
+    this.hasUnSavedChanges=true;
   }
   // enableDisableCharts(){
   //   console.log(this.draggedColumnsData);
@@ -1341,7 +1477,53 @@ try {
   // }
   tabs : any [] = [];
   selected = new FormControl(0);
+
   addSheet(isDuplicate : boolean) {
+    if(this.hasUnSavedChanges){
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to switch?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.columnsData();
+          if (this.active !== 3){
+            this.active = 1;
+          }
+          this.retriveDataSheet_id = '';
+          this.draggedDrillDownColumns = [];
+          this.drillDownObject = [];
+          this.drillDownIndex = 0;
+          this.dateDrillDownSwitch = false;
+          delete this.originalData;
+          this.sheetName = ''; this.sheetTitle = '';
+          this.KPIDecimalPlaces = 2;
+          this.KPIRoundPlaces = 0;
+          this.KPIDisplayUnits = 'none';
+          this.KPIPrefix = '';
+          this.KPISuffix = '';
+          this.KPIPercentageDivisor = 100;
+          if(this.sheetName != ''){
+             this.tabs.push(this.sheetName);
+          }else{
+            this.getChartData();
+            this.sheetNumber = this.tabs.length+1;
+             this.tabs.push('Sheet ' +this.sheetNumber);
+             this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+             this.selectedTabIndex = this.tabs.length - 1;
+             this.sheetTagName = 'Sheet ' +this.sheetNumber;
+             this.setChartType();
+          }
+          this.kpi=false;
+          this.resetCustomizations();
+        }
+      })
+    }else{
     this.columnsData();
     if (this.active !== 3){
       this.active = 1;
@@ -1353,11 +1535,12 @@ try {
     this.dateDrillDownSwitch = false;
     delete this.originalData;
     this.sheetName = ''; this.sheetTitle = '';
-    this.KPIDecimalPlaces = 0;
+    this.KPIDecimalPlaces = 2;
     this.KPIRoundPlaces = 0;
     this.KPIDisplayUnits = 'none';
     this.KPIPrefix = '';
     this.KPISuffix = '';
+    this.KPIPercentageDivisor = 100;
     if(this.sheetName != ''){
        this.tabs.push(this.sheetName);
     }else{
@@ -1371,6 +1554,7 @@ try {
     }
     this.kpi=false;
     this.resetCustomizations();
+  }
   }
 
   sheetDuplicate(){
@@ -1413,143 +1597,256 @@ try {
     this.sheetTagName = name;
   }
   removeTab() {
-    console.log(this.SheetIndex)
-    const obj = {
-      sheet_id: this.retriveDataSheet_id,
-    }
-    this.workbechService.deleteSheetMessage(obj)
-      .subscribe(
-        {
-          next: (data: any) => {
-            console.log(data);
-            Swal.fire({
-              title: 'Are you sure?',
-              text: data.message,
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                const idToPass = this.databaseId;
-                this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
-                // this.workbechService.deleteSheet(this.databaseId, this.qrySetId, this.retriveDataSheet_id).subscribe({
-                //   next: (data: any) => {
-                    console.log(data);
-                    if (data) {
-                      this.tabs.splice(this.SheetIndex, 1);
-                      // Swal.fire({
-                      //   icon: 'success',
-                      //   title: 'Deleted!',
-                      //   text: 'Deleted Successfully',
-                      //   width: '200px',
-                      // })
-                      this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
-                      this.getChartData();
-                      this.retriveDataSheet_id = '';
-                    }
-                  },
-                  error: (error: any) => {
-                    Swal.fire({
-                      icon: 'warning',
-                      text: error.error.message,
-                      width: '200px',
-                    })
-                    console.log(error)
-                  }
-                }
-                )
-              }
-            })
-          },
-          error: (error: any) => {
-            Swal.fire({
-              icon: 'warning',
-              text: error.error.message,
-              width: '300px',
-            })
-            console.log(error)
+    if(this.hasUnSavedChanges){
+      if(!this.retriveDataSheet_id){
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to delete?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.tabs.splice(this.SheetIndex, 1);
+          if(this.SheetIndex === 0){
+            this.addSheet(false);
           }
         }
-      )
+        })
+      }
+      else{
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to delete?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          console.log(this.SheetIndex)
+          const obj = {
+            sheet_id: this.retriveDataSheet_id,
+          }
+          this.workbechService.deleteSheetMessage(obj)
+            .subscribe(
+              {
+                next: (data: any) => {
+                  console.log(data);
+                  Swal.fire({
+                    title: 'Are you sure?',
+                    text: data.message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      const idToPass = this.databaseId;
+                      this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                          console.log(data);
+                          if (data) {
+                            this.tabs.splice(this.SheetIndex, 1);
+                            if(this.SheetIndex === 0){
+                              this.addSheet(false);
+                            }
+                            this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                            this.getChartData();
+                            this.retriveDataSheet_id = '';
+                          }
+                        },
+                        error: (error: any) => {
+                          Swal.fire({
+                            icon: 'warning',
+                            text: error.error.message,
+                            width: '200px',
+                          })
+                          console.log(error)
+                        }
+                      }
+                      )
+                    }
+                  })
+                },
+                error: (error: any) => {
+                  Swal.fire({
+                    icon: 'warning',
+                    text: error.error.message,
+                    width: '300px',
+                  })
+                  console.log(error)
+                }
+              }
+            )
+        }
+      })
+    }
+    }
+    else{
+      if(!this.retriveDataSheet_id){
+        this.tabs.splice(this.SheetIndex, 1);
+        this.SheetSavePlusEnabled.splice(0, 1);
+      }else{
+      console.log(this.SheetIndex)
+      const obj = {
+        sheet_id: this.retriveDataSheet_id,
+      }
+      this.workbechService.deleteSheetMessage(obj)
+        .subscribe(
+          {
+            next: (data: any) => {
+              console.log(data);
+              Swal.fire({
+                title: 'Are you sure?',
+                text: data.message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const idToPass = this.databaseId;
+                  this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                      console.log(data);
+                      if (data) {
+                        this.tabs.splice(this.SheetIndex, 1);
+                        if(this.SheetIndex === 0){
+                          this.addSheet(false);
+                        }
+                        this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                        this.getChartData();
+                        this.retriveDataSheet_id = '';
+                      }
+                    },
+                    error: (error: any) => {
+                      Swal.fire({
+                        icon: 'warning',
+                        text: error.error.message,
+                        width: '200px',
+                      })
+                      console.log(error)
+                    }
+                  }
+                  )
+                }
+              })
+            },
+            error: (error: any) => {
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+              console.log(error)
+            }
+          }
+        )
+      }
+    }
+
   }
   onChange(event:MatTabChangeEvent){
-    console.log('tabs',event);
-    this.selectedTabIndex =  event.index;
-    const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
-    const selectedSheetId = selectedTab.id; // Access the sheet_id
-  
-    this.draggedDrillDownColumns = [];
-    this.drillDownObject = [];
-    this.drillDownIndex = 0;
-    this.sheetName = '';
-    this.dateDrillDownSwitch = false;
-    this.locationDrillDownSwitch = false;
-    delete this.originalData;
-    console.log(event)
-    if(event.index === -1){
-     this.retriveDataSheet_id = 1;
-    }
-    this.SheetIndex = event.index;
-    this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
-    this.sheetTitle = this.sheetName;
+    if (!this.suppressTabChangeEvent) {
+      this.selectedTabIndex = event.index;
+      if (this.hasUnSavedChanges) {
+        // this.selectedTabIndex =  event.index;
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to switch?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.hasUnSavedChanges = false;
+            console.log('tabs', event);
+            this.selectedTabIndex = event.index;
+            const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+            const selectedSheetId = selectedTab.id; // Access the sheet_id
 
-    this.sheetTagName = this.sheetName;
-    this.sheetTagTitle = this.sheetName;
-    this.draggedColumns = [];
-    this.draggedColumnsData = [];
-    this.draggedRows = [];
-    this.draggedRowsData = [];
-    this.displayedColumns = [];
-    this.retriveDataSheet_id = '';
-    this.getChartData();
-    if(selectedSheetId){
-      this.retriveDataSheet_id = selectedSheetId;
-      this.sheetRetrive(false);
-    }
+            this.draggedDrillDownColumns = [];
+            this.drillDownObject = [];
+            this.drillDownIndex = 0;
+            this.sheetName = '';
+            this.dateDrillDownSwitch = false;
+            delete this.originalData;
+            console.log(event)
+            if (event.index === -1) {
+              this.retriveDataSheet_id = 1;
+            }
+            this.SheetIndex = event.index;
+            this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+            this.sheetTitle = this.sheetName;
 
-    // const obj = {
-    //   "server_id": this.databaseId,
-    //   "queryset_id": this.qrySetId,
-    // } as any;
-    // if (this.fromFileId) {
-    //   delete obj.server_id;
-    //   obj.file_id = this.fileId;
-    // }
-    // this.workbechService.getSheetNames(obj).subscribe({
-    //   next: (responce: any) => {
-    //     this.sheetList = responce.data;
-    //     if (!this.sheetList.some(sheet => sheet.sheet_name === this.sheetName)) {
-    //       this.retriveDataSheet_id = '';
-    //     } else {
-    //       this.sheetList.forEach(sheet => {
-    //         if (sheet.sheet_name === this.sheetName) {
-    //           this.retriveDataSheet_id = sheet.id;
-    //         }
-    //       });
-    //     }
-    //     // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-    //     // inputElement.innerHTML = event.tab?.textLabel;
-    //     this.sheetTagName = event.tab?.textLabel;
-    //     console.log(this.sheetName)
-    //     console.log(this.retriveDataSheet_id);
-    //     this.draggedColumns = [];
-    //     this.draggedColumnsData = [];
-    //     this.draggedRows = [];
-    //     this.draggedRowsData = [];
-    //     this.displayedColumns = [];
-    //     this.getChartData();
-    //    if(this.retriveDataSheet_id){
-    //       this.sheetRetrive();
-    //    }
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //   }
-    // }
-    // )
-    this.kpi = false;
+            this.sheetTagName = this.sheetName;
+            this.sheetTagTitle = this.sheetName;
+            this.draggedColumns = [];
+            this.draggedColumnsData = [];
+            this.draggedRows = [];
+            this.draggedRowsData = [];
+            this.displayedColumns = [];
+            this.retriveDataSheet_id = '';
+            this.getChartData();
+            this.columnsData();
+            if (selectedSheetId) {
+              this.retriveDataSheet_id = selectedSheetId;
+              this.sheetRetrive(false);
+            }
+            this.kpi = false;
+            return;
+          } else {
+            this.selectedTabIndex = this.SheetIndex;
+            this.suppressTabChangeEvent = true;
+          }
+        });
+      } else {
+        console.log('tabs', event);
+        this.selectedTabIndex = event.index;
+        const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+        const selectedSheetId = selectedTab.id; // Access the sheet_id
+
+        this.draggedDrillDownColumns = [];
+        this.drillDownObject = [];
+        this.drillDownIndex = 0;
+        this.sheetName = '';
+        this.dateDrillDownSwitch = false;
+        delete this.originalData;
+        console.log(event)
+        if (event.index === -1) {
+          this.retriveDataSheet_id = 1;
+        }
+        this.SheetIndex = event.index;
+        this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+        this.sheetTitle = this.sheetName;
+
+        this.sheetTagName = this.sheetName;
+        this.sheetTagTitle = this.sheetName;
+        this.draggedColumns = [];
+        this.draggedColumnsData = [];
+        this.draggedRows = [];
+        this.draggedRowsData = [];
+        this.displayedColumns = [];
+        this.retriveDataSheet_id = '';
+        this.getChartData();
+        this.columnsData();
+        if (selectedSheetId) {
+          this.retriveDataSheet_id = selectedSheetId;
+          this.sheetRetrive(false);
+        }
+        this.kpi = false;
+      }
+    } else {
+      this.suppressTabChangeEvent = false;
+    }
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -1561,6 +1858,8 @@ try {
     this.draggedColumnsData =[];
     this.draggedRows = [];
     this.draggedRowsData = [];
+    this.draggedMeasureValues = [];
+    this.draggedMeasureValuesData = [];
     // this.retriveDataSheet_id = '';
     this.dimetionMeasure = [];
     this.dualAxisColumnData = [];
@@ -1605,6 +1904,7 @@ try {
       this.donutXaxis = [];
       this.sortedData = [];
       this.table = true;
+      this.pivotTable = false;
       this.bar = false;
       this.pie = false;
       this.line = false;
@@ -1656,8 +1956,8 @@ try {
       this.legendSwitch = true;
       this.label = true;
       this.donutSize = 50;
-      this.donutDecimalPlaces = 0;
-      this.decimalPlaces = 0;
+      this.donutDecimalPlaces = 2;
+      this.decimalPlaces = 2;
       this.barColor = '#4382f7';
       this.lineColor = '#38ff98';
       this.heirarchyColumnData = [];
@@ -1719,6 +2019,13 @@ sheetSave(){
    bandColor1 = this.color1;
    bandColor2 = this.color2;
   }
+  if(this.pivotTable && this.chartId == 9){
+    //  this.saveTableData =  this.tableDataStore;
+    //  this.savedisplayedColumns = this.displayedColumns;
+    //  this.banding = this.bandingSwitch;
+    //  bandColor1 = this.color1;
+    //  bandColor2 = this.color2;
+    }
   if(this.bar && this.chartId == 6){
     this.saveBar = this.chartsRowData;
     this.barXaxis = this.chartsColumnData.map((category : any)  => category === null ? 'null' : category);
@@ -1906,7 +2213,11 @@ sheetSave(){
     topLegend:this.topLegend,
     sortColumn:this.sortColumn,
     locationDrillDownSwitch:this.locationDrillDownSwitch,
-    isLocationField : this.isLocationFeild
+    isLocationField : this.isLocationFeild,
+    KPIDecimalPlaces : this.KPIDecimalPlaces,
+    KPIDisplayUnits : this.KPIDisplayUnits,
+    KPIPrefix : this.KPIPrefix,
+    KPISuffix : this.KPISuffix
   }
   // this.sheetTagName = this.sheetTitle;
   let draggedColumnsObj;
@@ -1931,6 +2242,7 @@ const obj={
   "datasource_querysetid": this.filterQuerySetId,
   "col": this.mulColData,
   "row": this.mulRowData,
+  "pivot_measure":this.pivotMeasureValues,
   "custom_query":this.sheetCustomQuery,
   "data":{
     "drillDownHierarchy":this.draggedDrillDownColumns,
@@ -1941,6 +2253,10 @@ const obj={
   "columns_data":draggedColumnsObj,
   "rows": this.draggedRows,
   "rows_data":this.draggedRowsData,
+  "pivotMeasure":this.draggedMeasureValues,
+  "pivotMeasure_Data":this.pivotMeasureData,
+  "pivotMeasureValuesData":this.draggedMeasureValuesData,
+  "pivotTransformedData":this.transformedData,
   "col":tablePreviewCol,
   "row":tablePreviewRow,
   "results": {
@@ -2112,7 +2428,7 @@ if(this.retriveDataSheet_id){
 }
 )
 }
-
+this.hasUnSavedChanges = false;
   }
 sheetTagTitle : any;
 sheetChartId : any;
@@ -2158,10 +2474,19 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.sheetCustomQuery = responce?.custom_query;
         this.sheetResponce = responce?.sheet_data;
         this.draggedColumns=this.sheetResponce?.columns;
-        this.filterQuerySetId = responce?.datasource_queryset_id;
+        if(!this.filterQuerySetId){
+          this.filterQuerySetId = responce?.datasource_queryset_id;
+        }
         this.draggedRows = this.sheetResponce?.rows;
+        this.draggedMeasureValues = this.sheetResponce?.pivotMeasure; 
         this.mulColData = responce?.col_data;
         this.mulRowData = responce?.row_data;
+        this.pivotMeasureValues = responce?.pivot_measure
+
+        this.pivotMeasureData = this.sheetResponce?.pivotMeasure_Data;
+        this.pivotColumnData = this.sheetResponce?.col;
+        this.pivotRowData = this.sheetResponce?.row;
+
         this.tablePaginationRows=responce?.row_data;
         this.tablePaginationColumn=responce?.col_data;
   if (isDuplicate && duplicateFilterData) {
@@ -2232,6 +2557,15 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             this.draggedRowsData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
           });
         }
+        if(this.sheetResponce.pivotMeasure){
+          this.draggedMeasureValues = this.sheetResponce?.pivotMeasure;
+          this.draggedMeasureValuesData = this.sheetResponce?.pivotMeasureValuesData
+        }
+        else if(this.draggedMeasureValues){
+          this.draggedMeasureValues.forEach((res:any) => {
+            this.draggedMeasureValuesData.push([res.column,res.data_type,"",res.alias ? res.alias : ""])
+          });
+        }
         // this.table = false;
         this.chartsDataSet(responce);
         if(responce.chart_id == 1){
@@ -2241,6 +2575,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.color1 = this.sheetResponce?.results?.color1;
           this.color2 = this.sheetResponce?.results?.color2;
           this.table = true;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2261,6 +2596,31 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.calendar = false;
           this.tableDisplayPagination();
         }
+        if(responce.chart_id == 9){
+          // this.tableData = this.sheetResponce.results.tableData;
+          this.displayedColumns = this.sheetResponce?.results.tableColumns;
+          this.table = false;
+          this.pivotTable = true;
+          this.bar = false;
+          this.pie = false;
+          this.line = false;
+          this.area = false;
+          this.sidebyside = false;
+          this.stocked = false;
+          this.barLine = false;
+          this.horizentalStocked = false;
+          this.grouped = false;
+          this.multiLine = false;
+          this.donut = false;
+          this.radar = false;
+          this.kpi = false;
+          this.heatMap = false;
+          this.map = false
+          this.funnel = false;
+          this.guage = false;
+          this.calendar = false;
+          this.pivotTableDatatransform();
+        }
         if(responce.chart_id == 25){
           this.tablePreviewRow = this.sheetResponce?.results?.kpiData;
           this.KPINumber = this.sheetResponce?.results?.kpiNumber;
@@ -2275,6 +2635,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.KPIDisplayUnits = this.sheetResponce?.results?.kpiDecimalUnit,
           this.KPIDecimalPlaces = this.sheetResponce?.results?.kpiDecimalPlaces,
           this.table = false;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2299,6 +2660,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
             echarts.registerMap('world', geoJson);  // Register the map data
           });
           this.table = false;
+          this.pivotTable = false;
           this.bar = false;
           this.pie = false;
           this.line = false;
@@ -2326,6 +2688,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       //  this.barChart();
         this.bar = true;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2349,6 +2712,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.pieChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = true;
           this.line = false;
           this.area = false;
@@ -2372,6 +2736,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.lineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = true;
           this.area = false;
@@ -2395,6 +2760,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.areaChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = true;
@@ -2418,6 +2784,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.sidebysideBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2441,6 +2808,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.stockedBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2464,6 +2832,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.barLineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2487,6 +2856,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.dualAxisColumnData = this.sheetResponce.results.barLineXaxis;
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2510,6 +2880,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.horizentalStockedBar();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2533,6 +2904,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.hGrouped();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2556,6 +2928,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.multiLineChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2579,6 +2952,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         // this.donutChart();
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2601,6 +2975,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'heatmap';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2623,6 +2998,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'funnel';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2645,6 +3021,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'guage';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2667,6 +3044,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.chartType = 'calendar';
         this.bar = false;
         this.table = false;
+        this.pivotTable = false;
           this.pie = false;
           this.line = false;
           this.area = false;
@@ -2824,9 +3202,21 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   totalDataLength : any;
   filterDataPut(){
     // this.dimetionMeasure = [];
+    let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
       this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
+    if(this.activeTabId === 5){
+      if (this.previewFromDate && this.previewToDate) {
+        const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
+        const toDateParts = this.previewToDate.split('-'); // ['31', '12', '2025']
+        let from = `${fromDateParts[2]}/${fromDateParts[1]}/${fromDateParts[0]}`
+        let to = `${toDateParts[2]}/${toDateParts[1]}/${toDateParts[0]}`
+        relativeDateRange = [from, to];
+      }
+      this.last = this.last === 0 ? 3 : this.last;
+      this.next = this.next === 0 ? 3 : this.next;
     }
     const obj={
     //"filter_id": this.filter_id,
@@ -2834,7 +3224,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": this.filterDateRange,
+    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
     "data_type":this.filterType,
@@ -2843,7 +3233,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
     "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
-    "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
+    "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null,
+    "relative_date": this.activeTabId === 5 ? [this.relativeDateType,this.selectedDateFormat,this.last,this.next,(this.isAnchor ? this.anchorDate : ''),''] : null
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -2860,12 +3251,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.topLimit = 5;
         this.topType = 'desc';
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+        this.defaultRelativeDates();
       },
       error: (error) => {
         console.log(error);
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   filterEditGet(){
     this.filterData = [];
@@ -2892,11 +3285,21 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day'){
+        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day' && !responce?.relative_date){
           this.activeTabId = 2;
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
           this.activeTabId = 4;
+        }
+        else if(responce?.relative_date && responce?.relative_date.length > 0){
+          this.activeTabId = 5;
+          this.relativeDateType = responce?.relative_date[0];
+          this.selectedDateFormat = responce?.relative_date[1];
+          this.last = responce?.relative_date[2];
+          this.next = responce?.relative_date[3];
+          this.isAnchor = responce?.relative_date[4] ? true : false;
+          this.anchorDate = responce?.relative_date[4];
+          this.anchorDateChange();
         }
         else {
           this.activeTabId = 1;
@@ -2959,20 +3362,34 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   filterDataEditArray = [] as any;
   filterDataEditPut(){
     this.sortedData = [];
+    let relativeDateRange : any[] = [];
+    if(this.activeTabId === 5){
+      if (this.previewFromDate && this.previewToDate) {
+        const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
+        const toDateParts = this.previewToDate.split('-'); // ['31', '12', '2025']
+        let from = `${fromDateParts[2]}/${fromDateParts[1]}/${fromDateParts[0]}`
+        let to = `${toDateParts[2]}/${toDateParts[1]}/${toDateParts[0]}`
+        relativeDateRange = [from, to];
+      }
+      this.last = this.last === 0 ? 3 : this.last;
+      this.next = this.next === 0 ? 3 : this.next;
+    }
     const obj={
       "filter_id": this.filter_id,
       "hierarchy_id": this.databaseId,
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": this.filterDateRange,
+      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
       "data_type":this.filterType,
       "is_exclude":this.isExclude,
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
-      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
+      "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
+      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null,
+      "relative_date": this.activeTabId === 5 ? [this.relativeDateType,this.selectedDateFormat,this.last,this.next,(this.isAnchor ? this.anchorDate : ''),''] : null
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -2985,12 +3402,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.topAggregate = 'sum';
           this.topLimit = 5;
           this.topType = 'desc';
+          this.defaultRelativeDates();
         },
         error: (error) => {
           console.log(error);
         }
       }
     )
+    this.hasUnSavedChanges = true;
   }
   filterDelete(index:any,filterId:any){
   this.sortedData = [];
@@ -3006,6 +3425,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   openSuperScaledModal(modal: any,type:any) {
     if(type === undefined){
@@ -3256,6 +3676,11 @@ renameColumns(){
         case 'G':
           formattedNumber = (value / 1_000_000_000_000).toFixed(this.KPIDecimalPlaces) + 'G';
           break;
+        case '%':
+          this.KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+          let percentageValue = (value / this.KPIPercentageDivisor) * 100; // Convert to percentage
+          formattedNumber = percentageValue.toFixed(this.KPIDecimalPlaces) + ' %'; // Keep decimals
+          break;
       }
     } else {
       formattedNumber = (value).toFixed(this.KPIDecimalPlaces)
@@ -3341,15 +3766,15 @@ fetchChartData(chartData: any){
           this.sheetTitle = chartData.chart_title;
           this.sheetTagName = chartData.chart_title;
           if (chartData.chart_type.toLowerCase().includes("bar")){
-            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
+            this.chartDisplay(false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,6);
           }else if (chartData.chart_type.toLowerCase().includes("pie")){
-            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
+            this.chartDisplay(false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,24);
           }else if (chartData.chart_type.toLowerCase().includes("line")){
-            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
+            this.chartDisplay(false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,13);
           }else if (chartData.chart_type.toLowerCase().includes("area")){
-            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
+            this.chartDisplay(false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,17);
           }else if (chartData.chart_type.toLowerCase().includes("donut")){
-            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,10);
+            this.chartDisplay(false,false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,10);
           }
           this.dataExtraction();
 
@@ -3452,8 +3877,8 @@ customizechangeChartPlugin() {
     this.kpiFontSize = data.kpiFontSize ?? 3;
     this.minValueGuage = data.minValueGuage ?? 0;
     this.maxValueGuage = data.maxValueGuage ?? 100;
-    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 0;
-    this.decimalPlaces = data.decimalPlaces ?? 0;
+    this.donutDecimalPlaces = data.donutDecimalPlaces ?? 2;
+    this.decimalPlaces = data.decimalPlaces ?? 2;
     this.legendsAllignment = data.legendsAllignment ?? 'bottom';
     this.displayUnits = data.displayUnits || 'none';
     this.suffix = data.suffix ?? '';
@@ -3490,6 +3915,10 @@ customizechangeChartPlugin() {
     this.rightLegend = data.rightLegend === '' ? null : data.rightLegend
     this.sortColumn = data.sortColumn ?? 'select';
     this.locationDrillDownSwitch = data.locationDrillDownSwitch ?? false;
+    this.KPIDecimalPlaces = data.KPIDecimalPlaces ?? 2,
+    this.KPIDisplayUnits = data.KPIDisplayUnits ?? 'none',
+    this.KPIPrefix = data.KPIPrefix ?? '',
+    this.KPISuffix = data.KPISuffix ?? ''
   }
 
   resetCustomizations(){
@@ -3543,7 +3972,7 @@ customizechangeChartPlugin() {
     this.kpiFontSize = '3';
     this.minValueGuage = 0;
     this.maxValueGuage = 100;
-    this.donutDecimalPlaces = 0;
+    this.donutDecimalPlaces = 2;
     // this.decimalPlaces = 0;
     this.legendsAllignment = 'bottom';
     // this.displayUnits = 'none';
@@ -3581,6 +4010,10 @@ customizechangeChartPlugin() {
     this.rightLegend = null
     this.sortColumn = 'select';
     this.locationDrillDownSwitch = false;
+    // this.KPIDecimalPlaces = 0,
+    // this.KPIDisplayUnits = 'none',
+    // this.KPIPrefix = '',
+    // this.KPISuffix = ''
   }
 
   sendPrompt() {
@@ -3656,10 +4089,30 @@ customizechangeChartPlugin() {
     };
   }
   openSelectDashboard(modal : any){
-    this.modalService.open(modal, {
-      centered: true,
-      windowClass: 'animate__animated animate__zoomIn',
-    });
+    if (this.hasUnSavedChanges) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Your work has not been saved, Do you want to continue?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "Yes", allow navigation
+          this.modalService.open(modal, {
+            centered: true,
+            windowClass: 'animate__animated animate__zoomIn',
+          });
+        }
+      });
+    } else {
+      this.modalService.open(modal, {
+        centered: true,
+        windowClass: 'animate__animated animate__zoomIn',
+      });
+    }
   }
   dashboardList : any[] = [];
   getDashboardsList() {
@@ -3679,6 +4132,7 @@ customizechangeChartPlugin() {
     })
   }
   async moveToDashboard(){
+    this.hasUnSavedChanges = false;
     if(this.selectedDashboardId > 0) {
       this.dashboardId = this.selectedDashboardId;
     }
@@ -3770,7 +4224,6 @@ customizechangeChartPlugin() {
           this.heirarchyColumnData.push(columnData);
         }
   }
-
   removeDrillDownColumn(index:any,column:any){
        
     this.draggedDrillDownColumns.splice(index, 1);
@@ -3788,7 +4241,41 @@ customizechangeChartPlugin() {
     } 
        this.dataExtraction();
       }
+      draggedMeasureValuesData = [] as any;
+      measureValuesdrop(event: CdkDragDrop<string[]>){
+        console.log(event)
+            let item: any = event.previousContainer.data[event.previousIndex];
+            let copy: any = JSON.parse(JSON.stringify(item));
+          let element: any = {};
+          for(let attr in copy) {
+          if (attr == 'title') {
+            element[attr] = copy[attr];
+          } else {
+            element[attr] = copy[attr];
+          }
+        }
+        this.draggedMeasureValues.splice(event.currentIndex, 0, element);
+        event.currentIndex = this.draggedMeasureValues.indexOf(element);
+        const rowIndexMap = new Map((this.draggedMeasureValues as any[]).map((row, index) => [row.column, index]));
+        if(element.data_type == 'calculated') {
+          this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", element.field_name]);
+        } else {
+        this.draggedMeasureValuesData.splice(event.currentIndex, 0,[element.column, element.data_type, "", ""]);
+        }
+        if (this.dateList.includes(element.data_type)) {
+          this.dateFormat(element, event.currentIndex, 'year');
+        } else {
+          console.log('measurerows',this.draggedMeasureValuesData)
+          this.dataExtraction();
+        }
+      }
 
+      removemeasureValuesRow(index:any,column:any){
+        this.draggedMeasureValues.splice(index, 1);
+        this.draggedMeasureValuesData.splice(index, 1);
+        this.dataExtraction();
+
+      }
       toggleDateSwitch(){
             this.dateDrillDownSwitch = !this.dateDrillDownSwitch;
             this.heirarchyColumnData = [];
@@ -3964,7 +4451,7 @@ customizechangeChartPlugin() {
         }
         document.body.removeChild(textArea);
       }
-      donutDecimalPlaces: number = 0;
+      donutDecimalPlaces: number = 2;
 
       setDataLabelsFontStyle(fontStyle:any){
         if(fontStyle === 'B'){
@@ -4053,7 +4540,9 @@ customizechangeChartPlugin() {
       }
       canNavigate(): boolean {
         // This is handled in the functional guard
-        return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+       // return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+        return this.hasUnSavedChanges;
+
       }
 
       getSheetList(){
@@ -4356,6 +4845,7 @@ customizechangeChartPlugin() {
             this.validationMessage = '';
             this.isEditCalculatedField = false;
             event.close();
+            ngbdropdownevent.close();
             this.columnsData();
             this.toasterService.success('Added Successfully', 'success', { positionClass: 'toast-top-right' });
 
@@ -4432,7 +4922,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*"),\s*\d+\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -4587,7 +5077,7 @@ customizechangeChartPlugin() {
             return true;
           break; 
           case 'parse':
-            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*'dd-mm-yyyy'\s*\)$/)){
+            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*(['"])dd-mm-yyyy\2\s*\)$/)){
               this.isValidCalculatedField = false;
               this.validationMessage = 'Invalid Syntax';
               return false;
@@ -4898,6 +5388,8 @@ customizechangeChartPlugin() {
       this.draggedColumnsData = [];
       this.draggedRows = [];
       this.draggedRowsData = [];
+      this.draggedMeasureValues = [];
+      this.draggedMeasureValuesData = [];
       this.draggedDrillDownColumns = [];
       this.tablePaginationCustomQuery = '';
       this.chartsColumnData = [];
@@ -4911,6 +5403,7 @@ customizechangeChartPlugin() {
       this.dateDrillDownSwitch = false;
       this.resetCustomizations();
       this.table = true;
+      this.pivotTable = false;
       this.bar = false;
       this.area = false;
       this.line = false;
@@ -4992,9 +5485,324 @@ customizechangeChartPlugin() {
       }
       this.dataExtraction();
     }
+    
+    //years
+    getYearPreview(){
+      let startDate: any;
+      let endDate: any;
+      if(this.selectedDateFormat === 'previousYear'){
+        let dates = this.getYearDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'thisYear'){
+        let dates = this.getYearDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'nextYear'){
+        let dates = this.getYearDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'yearToDate'){
+        let dates = this.getYearDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if(this.selectedDateFormat === 'lastYearCount' && this.last){
+        let firstYear = this.getYearDates(-(this.last-1)); // Start from N years back
+        let lastYear = this.getYearDates(0); // End at last year
+        startDate = firstYear.start;
+        endDate = lastYear.end;
+      } else if(this.selectedDateFormat === 'nextYearCount' && this.next){
+        let firstYear = this.getYearDates(0); // Start from this year
+        let lastYear = this.getYearDates(this.next - 1); // End at N years forward
+        startDate = firstYear.start;
+        endDate = lastYear.end;
+      }
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getYearDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      
+      let year = now.getFullYear() + offset; // Adjust the year by offset
+    
+      return {
+        start: new Date(year, 0, 1), // January 1st
+        end: new Date(year, 11, 31), // December 31st
+      };
+    }
 
-    topType : string = 'desc';
-    topLimit : number = 5;
-    selectedTopColumn : any = 'select';
-    topAggregate : string = 'sum';
+    //quarters
+    getQuarterPreview(){
+      let startDate: any;
+      let endDate: any;
+      if (this.selectedDateFormat === 'previousQuarter') {
+        let dates = this.getQuarterDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisQuarter') {
+        let dates = this.getQuarterDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextQuarter') {
+        let dates = this.getQuarterDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      }  else if (this.selectedDateFormat === 'quarterToDate') {
+        let dates = this.getQuarterDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastQuarterCount' && this.last) {
+        let firstQuarter = this.getQuarterDates(-(this.last-1)); // Start from N quarters back
+        let lastQuarter = this.getQuarterDates(0); // End at this quarter
+        startDate = firstQuarter.start;
+        endDate = lastQuarter.end;
+      } else if (this.selectedDateFormat === 'nextQuarterCount' && this.next) {
+        let firstQuarter = this.getQuarterDates(0); // Start from this quarter
+        let lastQuarter = this.getQuarterDates((this.next-1)); // End at N quarters forward
+        startDate = firstQuarter.start;
+        endDate = lastQuarter.end;
+      }
+      
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getQuarterDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let currentQuarter = Math.floor(now.getMonth() / 3); // 0-3 (Q1-Q4)
+      let year = now.getFullYear();
+  
+      let quarter = (currentQuarter + offset) % 4;
+      if (quarter < 0) quarter += 4; // Ensure positive value
+      let adjustedYear = year + Math.floor((currentQuarter + offset) / 4);
+  
+      let startMonth = quarter * 3;
+      let endMonth = startMonth + 2;
+  
+      return {
+        start: new Date(adjustedYear, startMonth, 1),
+        end: new Date(adjustedYear, endMonth + 1, 0), // Last day of quarter
+      };
+    }
+
+    //months
+    getMonthsPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'previousMonth') {
+        let dates = this.getMonthDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisMonth') {
+        let dates = this.getMonthDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextMonth') {
+        let dates = this.getMonthDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'monthToDate') {
+        let dates = this.getMonthDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastMonthCount' && this.last) {
+        let firstMonth = this.getMonthDates(-(this.last-1)); // Start from N months back
+        let lastMonth = this.getMonthDates(0); // End at last month
+        startDate = firstMonth.start;
+        endDate = lastMonth.end;
+      } else if (this.selectedDateFormat === 'nextMonthCount' && this.next) {
+        let firstMonth = this.getMonthDates(0); // Start from this month
+        let lastMonth = this.getMonthDates(this.next - 1); // End at N months forward
+        startDate = firstMonth.start;
+        endDate = lastMonth.end;
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getMonthDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let year = now.getFullYear();
+      let month = now.getMonth() + offset; // Adjust the month by offset
+      let adjustedYear = year + Math.floor(month / 12);
+      let adjustedMonth = month % 12;
+      if (adjustedMonth < 0) {
+        adjustedMonth += 12;
+        adjustedYear--;
+      }
+    
+      return {
+        start: new Date(adjustedYear, adjustedMonth, 1),
+        end: new Date(adjustedYear, adjustedMonth + 1, 0), // Last day of month
+      };
+    }
+
+    //weeks
+    getWeeksPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'previousWeek') {
+        let dates = this.getWeekDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisWeek') {
+        let dates = this.getWeekDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextWeek') {
+        let dates = this.getWeekDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'weekToDate') {
+        let dates = this.getWeekDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastWeekCount' && this.last) {
+        let firstWeek = this.getWeekDates(-(this.last-1)); // Start from N weeks back
+        let lastWeek = this.getWeekDates(0); // End at last week
+        startDate = firstWeek.start;
+        endDate = lastWeek.end;
+      } else if (this.selectedDateFormat === 'nextWeekCount' && this.next) {
+        let firstWeek = this.getWeekDates(0); // Start from this week
+        let lastWeek = this.getWeekDates(this.next - 1); // End at N weeks forward
+        startDate = firstWeek.start;
+        endDate = lastWeek.end;
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getWeekDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let currentDayOfWeek = now.getDay(); // 0 (Sunday) - 6 (Saturday)
+      let startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - currentDayOfWeek + offset * 7); // Sunday as start of the week
+      let endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday as end of the week
+    
+      return {
+        start: startOfWeek,
+        end: endOfWeek,
+      };
+    }
+
+    //days
+    getDaysPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'yesterday') {
+        startDate = this.getDayDate(-1);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'today') {
+        startDate = this.getDayDate(0);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'tomorrow') {
+        startDate = this.getDayDate(1);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'lastDaysCount' && this.last) {
+        startDate = this.getDayDate(-(this.last-1)); // Start N days back
+        endDate = this.getDayDate(0); // End at yesterday
+      } else if (this.selectedDateFormat === 'nextDaysCount' && this.next) {
+        startDate = this.getDayDate(0); // Start from today
+        endDate = this.getDayDate(this.next - 1); // End N days forward
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getDayDate(offset: number): Date {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      now.setDate(now.getDate() + offset); // Adjust the date by offset
+      return now;
+    }
+
+    //anchor date change
+    anchorDateChange(){
+      if(this.relativeDateType === 1){
+        this.getYearPreview();
+      } else if(this.relativeDateType === 2){
+        this.getQuarterPreview();
+      } else if(this.relativeDateType === 3){
+        this.getMonthsPreview();
+      } else if(this.relativeDateType === 4){
+        this.getWeeksPreview();
+      } else if(this.relativeDateType === 5){
+        this.getDaysPreview();
+      }
+    }
+    setAnchorDate(){
+      if(this.isAnchor){
+        const today = new Date();
+        this.anchorDate = today.toISOString().split('T')[0];
+      } else{
+        this.anchorDate = '';
+      }
+      this.anchorDateChange();
+    }
+    defaultRelativeDates() {
+      this.relativeDateType = 1;
+      this.selectedDateFormat = 'thisYear';
+      this.last = 3;
+      this.next = 3;
+      this.isAnchor = false;
+      this.anchorDate = '';
+    }
+    applyButtonDisableForRelativeDates(){
+      let isValid : boolean = false;
+      if(this.activeTabId === 5 && this.selectedDateFormat && !this.isAnchor){
+        if((this.selectedDateFormat.includes('last') || this.selectedDateFormat.includes('next')) && this.selectedDateFormat.includes('Count')){
+          if(this.selectedDateFormat.includes('last') && this.selectedDateFormat.includes('Count') && this.last){
+            isValid = true;
+          } else if(this.selectedDateFormat.includes('next') && this.selectedDateFormat.includes('Count') && this.next){
+            isValid = true;
+          } else{
+            isValid = false;
+          }
+        } else{
+          isValid = true;
+        }
+      } else if(this.activeTabId === 5 && this.selectedDateFormat && this.isAnchor && this.anchorDate){
+        if((this.selectedDateFormat.includes('last') || this.selectedDateFormat.includes('next')) && this.selectedDateFormat.includes('Count')){
+          if(this.selectedDateFormat.includes('last') && this.selectedDateFormat.includes('Count') && this.last){
+            isValid = true;
+          } else if(this.selectedDateFormat.includes('next') && this.selectedDateFormat.includes('Count') && this.next){
+            isValid = true;
+          } else{
+            isValid = false;
+          }
+        } else{
+          isValid = true;
+        }
+      } else{
+        isValid = false;
+      }
+      return isValid;
+    }
 }

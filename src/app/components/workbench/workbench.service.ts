@@ -112,7 +112,21 @@ export class WorkbenchService {
     return this.http.get<any>(`${environment.apiUrl}/salesforce/`+this.accessToken);
   }
 
-
+  connectGoogleSheets(){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/auth/google/`+this.accessToken);
+  }
+  getGoogleSheetsDetails(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/auth/google/callback/`+this.accessToken,obj);
+  }
+  getHierachyIdFromGsheets(parentId:any,id:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.get<any>(`${environment.apiUrl}/google_sheets_data/`+this.accessToken+'/'+parentId+'/'+id);
+  }
   // getTableData(obj:any){
   //   const currentUser = localStorage.getItem( 'currentUser' );
   //   console.log(JSON.parse( currentUser!))
@@ -792,6 +806,12 @@ deleteUser(id:any){
     }
 
     upsertExcelOrCsvFile(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/file_upsert/`+this.accessToken,object);
+    }
+
+    appendExcelOrCsvFile(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/file_append/`+this.accessToken,object);

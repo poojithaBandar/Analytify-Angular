@@ -1,156 +1,6 @@
 <app-page-header title="Database Connections" moduleId="datasource" title1="Home" activeitem="Data Source"></app-page-header>
 <!-- CONTAINER -->
-
-<ng-template #mdo let-modal >
-
-    <div  >
-      <div >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">PostgreSQL</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-2">
-                <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
-              </div>
-              <div class="mb-2">
-                <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                <div class="d-flex">
-                <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
-                <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
-              </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Connect</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-  
-  <ng-template #oracle let-modal >
-
-    <div  >
-      <div >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">Oracle</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-2">
-                <label for="recipient-name" class="col-form-label">Server:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
-              </div>
-              <div class="mb-2">
-                <label for="message-text" class="col-form-label">Port:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Service Name1:</label>
-                <input type="text" class="form-control" [(ngModel)]="OracleServiceName" [ngModelOptions]="{standalone: true}" placeholder="orcl">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Username:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g.Analytify">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Password:</label>
-                <div class="d-flex">
-                  <input type="text" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"[type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
-                <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>
-                </div>                          
-            </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Connect</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #mySql let-modal >
-
-    <div  >
-      <div >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">MySQL</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-2">
-                <label for="recipient-name" class="col-form-label">Server:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
-              </div>
-              <div class="mb-2">
-                <label for="message-text" class="col-form-label">Port:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. mysql">
-              </div>
-             
-              <div class="mb-2">
-                <label class="col-form-label">Username:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g.Analytify">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Password:</label>
-                <div class="d-flex">
-                  <input type="text" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"[type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
-                <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>
-                </div>                          
-            </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Connect</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-
   <ng-template #EditDbCon let-modal >
-
     <div  >
       <div >
         <div class="modal-content">
@@ -302,7 +152,7 @@
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
       <div class="header-title-search">
         <div class="connect-txt">
-          <h4 class="card-title mt-2">Connected Database</h4>
+          <h4 class="card-title mt-2">{{ iscrossDbSelect ? 'Select Database' : 'Connected Database' }}</h4>
         </div>
         <div class="new-data-btn d-flex text-align-center">
           <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
@@ -314,8 +164,10 @@
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="searchDbConnectionList()">
             <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" (click)="searchDbConnectionList()" id="button-addon2"><i class="fe fe-search "></i></button>
             
-            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
+            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
             (btnClickEvent)="routeNewDatabase()"></app-insights-button>
+            <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" class="btn btn-primary" type="button" >Select & Move</button>
+
             <!-- <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" ><i class="fa fa-plus"></i> New Database</button> -->
           </div>
         </div>
@@ -338,7 +190,7 @@
                             <th>Created on</th>
                             <th>Created by</th>
                             <th>Last Modified</th>
-                            <th>Actions</th>
+                            <th *ngIf="!iscrossDbSelect">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -347,7 +199,8 @@
                           currentPage: page,
                           totalItems: totalItems
                         }">
-                            <td (click)="getTablesFromConnectedDb(database.hierarchy_id)">
+                            <td (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id)">
+                              <span><input type="checkbox" [checked]="selectedHirchyIdCrsDb === database.hierarchy_id" (change)="onSelectedHIDCrsDb(database.hierarchy_id)" *ngIf="iscrossDbSelect"></span>
                                 <a ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
                                </td>
                             <td *ngIf="database.server_type === 'POSTGRESQL'">
@@ -392,16 +245,41 @@
                       <td *ngIf="database.server_type === 'SHOPIFY'">
                         <img alt="product" src="./assets/images/icons/shopify-large-1.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
                       </td>
+                      <td *ngIf="database.server_type === 'GOOGLE_SHEETS'">
+                        <img alt="product" src="./assets/images/icons/google-sheets.jpg" class="w-5 h-5 border me-2">{{database.server_type}}
+                      </td>
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
                             <td>{{database.updated_at}}</td>
-                            <td>
+                            <td  *ngIf="!iscrossDbSelect">
                               <div class="hstack gap-2 fs-1">
-                                <button
-                                  [disabled]="(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')"
+                                <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL')"
+                                  [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')"
                                   aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
+                                <div *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="d-flex justify-content-end" ngbDropdown>
+                                  <button aria-label="anchor" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light" ngbDropdownToggle data-bs-toggle="dropdown">
+                                    <i class="ri-edit-line" ngbTooltip="Edit database"></i>
+                                  </button>
+                                  <div class="dropdown-menu" ngbDropdownMenu>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-repeat"></i> Replace</a>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-upload"></i> Upsert</a>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-plus"></i> Append</a>
+                                  </div>
+                                </div>
                                 <a aria-label="anchor" (click)="deleteDbConnection(database.hierarchy_id)"
                                   class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                   <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
@@ -421,7 +299,8 @@
                     currentPage: page,
                     totalItems: totalItems
                   }"  class="col-md-12 col-xl-3">
-                  <div class="card card-box-shadow ">
+                  <div class="card card-box-shadow selectable-card"  [class.selected]="iscrossDbSelect && selectedHirchyIdCrsDb === database.hierarchy_id"
+                         (click)="iscrossDbSelect ? onSelectedHIDCrsDb(database.hierarchy_id) : null">
                     <div class="card-header  tiled-header-bg bg-primary tiled-card-header-padding">
                       <div class="d-sm-flex align-items-center">
                         <span *ngIf="database.server_type === 'ORACLE'" class="avatar avatar rounded-circle">
@@ -452,16 +331,18 @@
                                                 <img src="./assets/images/icons/Halopsa-icon.png" alt="" class="rounded-circle"></span>
                                                 <span *ngIf="database.server_type === 'SHOPIFY'" class="avatar avatar rounded-circle">
                                                   <img src="./assets/images/icons/shopify-large-1.jpg" alt="" class="rounded-circle"></span>
+                                                  <span *ngIf="database.server_type === 'GOOGLE_SHEETS'" class="avatar avatar rounded-circle">
+                                                    <img src="./assets/images/icons/google-sheets.jpg" alt="" class="rounded-circle"></span>
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
-                                  <a (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
+                                  <a (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
                               </h6>
                               
                           </div>
                       </div>
   
-                      <div class="col-auto">
+                      <div class="col-auto"  *ngIf="!iscrossDbSelect">
                         <div class="d-flex justify-content-end p-1" ngbDropdown>
                           <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                               aria-haspopup="true" aria-expanded="false" class=""><i
@@ -471,8 +352,9 @@
                             <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
-                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Replace</a>
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-plus"></i> Append</a>
                             <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
                               [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.hierarchy_id)"
                               [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
@@ -533,12 +415,65 @@
     </div>
 
   </div>
-  
-
-
-
 }
+@if(isGoogleSheetsPage){
+  <div class="main-container container-fluid">
+    <div class="row" class="card card-padding-top">
+    <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
+      <div class="d-flex flex-nowrap align-items-center gap-2 px-5 py-2">
+        <h4 class="card-title mt-2 mb-0 me-3">Connected to Google Sheets:</h4>
+        <span *ngIf="gsheetprofile?.email" class="border rounded-2 px-3 py-2 d-inline-flex align-items-center">
+          <i class="fas fa-user-circle me-2"></i> {{ gsheetprofile.email }}
+        </span>
+      </div>
+        <div class="card-body card-p">
+            <div class="table-responsive border table-responsive-height">
+                <table class="table border text-nowrap text-md-nowrap mb-0">
+                    <thead class="table-primary bg-primary table-primary-position">
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Created on</th>
+                            <th>Last Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngIf="googleSheetsData.length === 0">
+                        <td colspan="4" class="text-center">No sheets to display!</td>
+                      </tr>
+                      <tr *ngFor="let gsheets of googleSheetsData"  title="Select Sheet" (click)="getHierachyIdFromGsheets(gsheets.id)">
+                        <td>
+                          {{gsheets.name | slice:0:15}}
+                        </td>
+                        <td>
+                          {{gsheets.mimeType}}
+                        </td>
+                        <td>
+                          {{gsheets.createdTime | date}}
+                        </td>
+                        <td>
+                          {{gsheets.modifiedTime | date}}
+                        </td>
+                       
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+          <!-- <pagination-controls previousLabel="Prev" nextLabel="Next" (pageChange)="pageChangegetconnectionList((page = $event))"></pagination-controls>
+          <div class="pagination-count">
+            <select  [(ngModel)]="itemsPerPage" (ngModelChange)="getDbConnectionList()" class="form-control cursor">
+                  <option  value="10"> 10</option>
+                  <option [disabled]="!(totalItems > 10)" value="20"> 20</option>
+                  <option [disabled]="!(totalItems > 20)" value="30"> 30</option>
+               
+            </select>
+         </div> -->
+        </div>
+    </div>
+    </div>
 
+  </div>
+}
 
 
 
@@ -582,7 +517,7 @@
                           </div>
                           <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                           </div>
                       </form>
                   </div>
@@ -658,7 +593,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                             </div>
                         </form>
                     </div>
@@ -951,7 +886,7 @@
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
                       </div>
@@ -1045,7 +980,7 @@
                               </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                 </div>
                             </form>
                         </div>
@@ -1121,7 +1056,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                   </div>
                               </form>
                           </div>
@@ -1198,7 +1133,7 @@
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="ibmDb2SignIn()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
                       </div>
@@ -1269,7 +1204,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Connect</button>
+                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                   </div>
                               </form>
                           </div>
@@ -1351,7 +1286,7 @@
                                         
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()" [disabled]="pathError || displayNameError">Connect</button>
+                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()" [disabled]="pathError || displayNameError">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                     </div>
                                 </form>
                             </div>
@@ -1679,6 +1614,14 @@
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>Shopify</span>
+                        </div>
+                      </div>
+                      <div class="database-logo">
+                        <div class="imgcard p-4" (click)="connectGoogleSheets()">
+                          <img src="/assets/images/Db_server_images/google-sheets.jpg"alt="Image" class="card-img">
+                        </div>
+                        <div class="logo-txt mt-2 text-center fw-600">
+                          <span>Google Sheets</span>
                         </div>
                       </div>        
                     </div>

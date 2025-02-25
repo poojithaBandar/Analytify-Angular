@@ -273,7 +273,37 @@ button.viewQueryImg {  border: none;  background: none;}
 .column-remove-btn{ text-align: center !important;width: 100%;}
 .alis-measure-width{ width: -webkit-fill-available}
 .customize-accordion-h { height: auto;max-height: 350px;}
+a.TabShadow.nav-link.active {
+  color: var(--primary-color);
+  box-shadow: 0px -5px 5px 1px rgb(0 0 0 / 8%);
+}
+.bt-0{border-top: none !important;}
+.nav-link {
+  margin-inline: 0px;
+}
+.Hierarchy-box-bg{     color: rgb(var(--warning-rgb)) !important;
+  background: rgba(var(--warning-rgb), .1) !important;
+  border-color: rgba(var(--warning-rgb), .1);
+  padding: 3px 13px;
+  border-radius: 15px;
+  border: 1px solid;}
 
+
+@media ( 1280px <= width <= 1600px) {
+  .dropdown-menu.SelectDropDownCard.show {
+    position: absolute;
+    transform: none !important;
+    left: -107px !important;
+    min-width: 110px !important;
+    top: 24px !important;
+  }
+  .dropdown-menu.filtersDropDown.show {
+    transform: none !important;
+    left: -107px !important;
+    min-width: 110px !important;
+    top: 24px !important;
+}
+}
 
 @media (max-width: 768px) {
   .big-number { font-size: 3rem; /* Responsive size for smaller screens */ }
@@ -315,11 +345,17 @@ h6 { font-size: 12px; }
 .p-3 { padding: 0.55rem !important; }
 .accordion-button { font-size: 12px; }
 .fs-14 { font-size: 12px !important; }
-button.btn { font-size: 11px; }
+button.btn { font-size: 11px !important; }
 .dropdown-item{ padding: 0.5rem 0.5rem !important; font-size: 12px; }
 p { font-size: 12px; }
 label { font-size: 12px; }
 .body.table-responsive{ max-height: 310px !important;}
+.query-text { height: 160px; overflow-y: auto; outline: none; border: 1px solid #edebeb; border-radius: 5px; }
+.alert-card{ height: 80px; overflow: auto;}
+.number-formatting label {  display: block;  margin-top: 5px; margin-bottom: 1px;}
+.number-formatting select {  width: 100%;  padding: 5px;  margin-top: 1px;}
+.number-formatting{ border: 1px solid #ccc;  padding: 10px;  width: 170px; }
+.number-formatting input { width: 100%; padding: 5px; margin-top: 1px; }
 }
 
 @media ( 1280px <= width <= 1570px) {
@@ -362,6 +398,11 @@ button.btn { font-size: 11px;}
 p { font-size: 12px;}
 label { font-size: 12px;}
 .body.table-responsive{ max-height: 270px !important;}
+.query-text { height: 150px; overflow-y: auto; outline: none; border: 1px solid #edebeb; border-radius: 5px; }
+.alert-card{ height: 80px; overflow: auto;}
+.number-formatting label {  display: block;  margin-top: 5px; margin-bottom: 2px; font-size: 11px;}
+.number-formatting{ border: 1px solid #ccc;  padding: 10px;  width: 159px; }
+.number-formatting input { width: 100%; padding: 5px; margin-top: 1px; }
 }
 
  // for 110% Resolution //
@@ -380,4 +421,13 @@ app-insights-button {font-size: 12px; }
 .example-box { font-size: 11px;}
 .title-container { font-size: 13px;}
 .nav-link { font-size: 11px;}
+}
+
+div#pivotTableContainer {
+  margin: 20px;
+  width: 100%;
+  height: 500px;
+}
+input.BitSpace {
+  margin-left: 13px !important;
 }

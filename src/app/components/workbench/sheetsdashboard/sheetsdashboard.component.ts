@@ -51,6 +51,8 @@ import { tap } from 'rxjs/operators';
 import { InsightEchartComponent } from '../insight-echart/insight-echart.component';
 import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.json';
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
+import 'pivottable';
+import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
 
 interface TableRow {
   [key: string]: any;
@@ -86,6 +88,7 @@ interface KpiData {
   kpiDecimalUnit : string;
   kpiDecimalPlaces: number;
 }
+declare var $:any;
 
 @Component({
   selector: 'app-sheetsdashboard',
@@ -99,7 +102,7 @@ interface KpiData {
   imports: [NgxEchartsModule,SharedModule,NgbModule,CommonModule,ResizableModule,GridsterModule,
     CommonModule,GridsterItemComponent,GridsterComponent,NgApexchartsModule,CdkDropListGroup, NgSelectModule,
     CdkDropList, CdkDrag,ChartsStoreComponent,FormsModule, MatTabsModule , CKEditorModule , InsightsButtonComponent,
-    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe],
+    NgxPaginationModule,NgSelectModule, InsightEchartComponent,SharedModule,FilterIconsPipe,FormatMeasurePipe],
   templateUrl: './sheetsdashboard.component.html',
   styleUrl: './sheetsdashboard.component.scss'
 })
@@ -198,6 +201,7 @@ export class SheetsdashboardComponent {
   drillThroughDatabaseName : any = '';
 
   calendarTotalHeight : string = '400px';
+  @ViewChild('pivotTableContainer', { static: false }) pivotContainer!: ElementRef;
 
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private router:Router,private screenshotService: ScreenshotService,
     private loaderService:LoaderService,private modalService:NgbModal, private viewTemplateService:ViewTemplateDrivenService,private toasterService:ToastrService,
@@ -254,7 +258,7 @@ export class SheetsdashboardComponent {
   options!: GridsterConfig;
   nestedDashboard: Array<GridsterItem & { data?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any ,tableItemsPerPage : any, tableTotalItems : any }
 }> = [];
-  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}
+  dashboard!: Array<GridsterItem & { sheetId?: number ,data?: any, chartType?: any,   chartOptions?: ApexOptions, echartOptions : any, chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any ,tablePage : number  }, numberFormat?: {donutDecimalPlaces: any,decimalPlaces: any,displayUnits: any,prefix:any,suffix:any}, pivotData?:any
   }>;
   dashboardTest: Array<GridsterItem & { data?: any, chartType?: any,   chartOptions?: ApexOptions,  chartInstance?: ApexCharts,chartData?: any[],tableData?: { headers: any[], rows: any[], banding: any, color1: any, color2: any, tableItemsPerPage : any, tableTotalItems : any  }
 }> = [];
@@ -312,9 +316,11 @@ export class SheetsdashboardComponent {
   iconList: any[] = []
   static itemChange(
     item: GridsterItem,
-    itemComponent: GridsterItemComponentInterface
+    itemComponent: GridsterItemComponentInterface,
+    compInstance: SheetsdashboardComponent
   ): void {
     console.info('itemChanged', item, itemComponent);
+    compInstance.canNavigateToAnotherPage = true;
   }
 
   static itemResize(
@@ -330,6 +336,7 @@ export class SheetsdashboardComponent {
       )
       .subscribe((event) => {
         console.log('resize is finished');
+        
       });
      window.dispatchEvent(new Event('resize'));
     }
@@ -438,7 +445,7 @@ export class SheetsdashboardComponent {
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
       itemResizeCallback: SheetsdashboardComponent.itemResize,
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -458,7 +465,6 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard && !this.isDraggingDisabled,
-        start: this.onResizeStart.bind(this),
         stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
           // Optional logic when dragging stops
           console.log('Drag stopped for item', item);
@@ -467,9 +473,6 @@ export class SheetsdashboardComponent {
       },
       resizable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
-
-        // stop: this.onResizeStop.bind(this)
       }
     };
     const savedItems = JSON.parse(localStorage.getItem('dashboardItems') || '[]');
@@ -483,6 +486,10 @@ export class SheetsdashboardComponent {
       this.getSavedDashboardDataPublic();
     });
 
+  }
+
+  onItemResize(item: GridsterItem, itemComponent: any): void {
+    SheetsdashboardComponent.itemChange(item, itemComponent, this);
   }
   changeGridType(gridType : string){
     let displayGrid = DisplayGrid.Always;
@@ -498,7 +505,7 @@ export class SheetsdashboardComponent {
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
       itemResizeCallback: SheetsdashboardComponent.itemResize,
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -519,12 +526,13 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
+        stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+          // Optional logic when dragging stops
+          console.log('Drag stopped for item', item);
+        }
       },
       resizable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
-
         // stop: this.onResizeStop.bind(this)
       }
     };
@@ -537,7 +545,7 @@ export class SheetsdashboardComponent {
       initCallback: SheetsdashboardComponent.gridInit,
       destroyCallback: SheetsdashboardComponent.gridDestroy,
       gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-      itemChangeCallback: SheetsdashboardComponent.itemChange,
+      itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
       itemResizeCallback: SheetsdashboardComponent.itemResize,
       itemInitCallback: SheetsdashboardComponent.itemInit,
       itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -557,11 +565,13 @@ export class SheetsdashboardComponent {
       pushItems: true,
       draggable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
+        stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+          // Optional logic when dragging stops
+          console.log('Drag stopped for item', item);
+        }
       },
       resizable: {
         enabled: this.editDashboard,
-        start: this.onResizeStart.bind(this),
 
         // stop: this.onResizeStop.bind(this)
       }
@@ -577,7 +587,7 @@ export class SheetsdashboardComponent {
         initCallback: SheetsdashboardComponent.gridInit,
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
         itemResizeCallback: SheetsdashboardComponent.itemResize,
         itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -597,12 +607,13 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
+          stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+            // Optional logic when dragging stops
+            console.log('Drag stopped for item', item);
+          }
         },
         resizable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
-          // stop: this.onResizeStop.bind(this)
         }
       };
     } else {
@@ -613,7 +624,7 @@ export class SheetsdashboardComponent {
         initCallback: SheetsdashboardComponent.gridInit,
         destroyCallback: SheetsdashboardComponent.gridDestroy,
         gridSizeChangedCallback: SheetsdashboardComponent.gridSizeChanged,
-        itemChangeCallback: SheetsdashboardComponent.itemChange,
+        itemChangeCallback: (item, itemComponent) => this.onItemResize(item, itemComponent),
         itemResizeCallback: SheetsdashboardComponent.itemResize,
         itemInitCallback: SheetsdashboardComponent.itemInit,
         itemRemovedCallback: SheetsdashboardComponent.itemRemoved,
@@ -633,11 +644,13 @@ export class SheetsdashboardComponent {
         pushItems: true,
         draggable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
+          stop: (item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent) => {
+            // Optional logic when dragging stops
+            console.log('Drag stopped for item', item);
+          }
         },
         resizable: {
           enabled: this.editDashboard,
-          start: this.onResizeStart.bind(this),
           // stop: this.onResizeStop.bind(this)
         }
       };
@@ -646,9 +659,6 @@ export class SheetsdashboardComponent {
     // window.dispatchEvent(new Event('resize'));
   }
 
-  onResizeStart(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
-    this.canNavigateToAnotherPage = true;
-  }
   restoreChartOptions(chartType: ChartType,xval:any,yval:any){
     return {
       chart: {
@@ -722,6 +732,11 @@ export class SheetsdashboardComponent {
           displayUnits:sheet?.sheet_data?.numberFormat?.displayUnits,
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
+        },
+        pivotData:{
+          pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+          pivotRowData:sheet?.sheet_data?.row,
+          pivotColData:sheet?.sheet_data.col
         },
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
@@ -923,6 +938,68 @@ export class SheetsdashboardComponent {
               return `Date: ${date}<br/>Value: ${value}`;
             };
             this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
+          }
+          if(chartId == 9){
+            let transformedData :any =[];
+            let headers: string[] = [];
+  
+           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
+           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+      
+          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+      
+          transformedData.push(headers); 
+          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+          let numRows = 0;
+          if (sheet.pivotData?.pivotColData?.length > 0) {
+              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+          }
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = []; 
+            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+  
+            transformedData.push(rowArray);
+          }
+            setTimeout(() => {
+            if (this.pivotContainer && this.pivotContainer.nativeElement) {
+                ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+                  rows: columnKeys,  
+                  cols: valueKeys, 
+                  // vals: this.valueKeys, 
+                  aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+                  rendererName: "Table"
+                });
+            }        
+          }, 1000);
+        }
+          if(chartId == 1){
+            if(sheet?.tableData?.tableItemsPerPage){
+              sheet.tableData.tableItemsPerPage = 10;
+            }
+            if(sheet?.tableData?.tablePage){
+              sheet.tableData.tablePage = 1;
+            }
           }
         })
         console.log(this.sheetTagTitle);
@@ -1189,7 +1266,6 @@ export class SheetsdashboardComponent {
    
   }
   updateDashboard(isLiveReloadData : boolean){
-    this.canNavigateToAnotherPage = false;
     if(!isLiveReloadData){
       this.takeScreenshot();
     }
@@ -1257,6 +1333,7 @@ export class SheetsdashboardComponent {
         //   width: '400px',
         // })
         this.dashboardsheetsIdArray = this.sheetsIdArray;
+        this.canNavigateToAnotherPage = false;
         this.toasterService.success('Dashboard Updated Successfully','success',{ positionClass: 'toast-top-right'});
         if(!isLiveReloadData){
           this.saveDashboardimageUpdate();
@@ -1294,6 +1371,10 @@ export class SheetsdashboardComponent {
           item1['tableData'] = item1['originalData']['tableData'];
           delete item1['originalData'];
           }
+          if(item1.chartId == '9' && item1['originalData']){//pivot
+            item1['pivotData'] = item1['originalData']['pivotData'];
+            delete item1['originalData'];
+            }
         if(item1.chartId == '25' && item1['originalData']){//KPI
           item1['kpiData'] = item1['originalData'];
           delete item1['originalData'];
@@ -1475,6 +1556,13 @@ export class SheetsdashboardComponent {
         prefix:sheet?.sheet_data?.numberFormat?.prefix,
         suffix:sheet?.sheet_data?.numberFormat?.suffix
       },
+      pivotData: sheet.sheet_type === 'PIVOT' ? {
+        pivotDataTransformed:sheet?.sheet_data?.pivotTransformedData,
+        pivotRowData:sheet?.sheet_data?.row,
+        pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+        pivotColData:sheet?.sheet_data?.col
+      }
+      : undefined,
       customizeOptions: sheet?.sheet_data?.customizeOptions
     }));
     this.sheetIdsDataSet = this.dashboardNew.map(item => item['sheetId']);
@@ -1606,6 +1694,12 @@ export class SheetsdashboardComponent {
     });
   }
   getChartOptionsBasedOnType(sheet:any){
+    if(sheet.chart_id === 9){
+      let xaxis = sheet.sheet_data?.results?.barXaxis;
+      let yaxis = sheet.sheet_data?.results?.barYaxis;
+      let savedOptions = sheet.sheet_data.savedChartOptions;
+      return this.barChartOptions(xaxis,yaxis,savedOptions,sheet.sheet_data.isEChart) 
+    }
     if(sheet.chart_id === 6){
       let xaxis = sheet.sheet_data?.results?.barXaxis;
       let yaxis = sheet.sheet_data?.results?.barYaxis;
@@ -1762,7 +1856,6 @@ getTableData(tableData: any): { headers: any[], rows: any[],banding: any, color1
       tablePage : 1
     };
   }
-
   onDrag(event: any, item: any){
     let data = JSON.stringify(item);
         event.dataTransfer.setData('item', data);
@@ -1827,7 +1920,8 @@ allowDrop(ev : any): void {
       drillDownIndex : 0,
       isDrillDownData : copy.isDrillDownData,
       numberFormat : copy.numberFormat,
-      customizeOptions: copy.customizeOptions
+      customizeOptions: copy.customizeOptions,
+      pivotData:copy.pivotData
       };
       // this.qrySetId.push(copy.qrySetId);
       // if(copy.fileId){
@@ -1985,6 +2079,60 @@ allowDrop(ev : any): void {
           }
       }
     }
+    if(element.chartId == 9){
+      let transformedData :any =[];
+      let headers: string[] = [];
+
+     let columnKeys = element.pivotData?.pivotColData?.map((col: any) => col.column); 
+     let rowKeys = element.pivotData?.pivotRowData?.map((row: any) => row.col);
+    let valueKeys = element.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+    element.pivotData?.pivotColData?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    element.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+      headers.push(rowObj.col);
+    });
+    element.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+      headers.push(colObj.col);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (element.pivotData?.pivotColData?.length > 0) {
+        numRows = element.pivotData.pivotColData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotRowData?.length > 0) {
+        numRows = element.pivotData.pivotRowData[0]?.result_data?.length || 0;
+    } else if (element.pivotData?.pivotMeasureData?.length > 0) {
+        numRows = element.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+    }
+
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      element.pivotData?.pivotColData.forEach((colObj: any) => {
+        rowArray.push(colObj.result_data[i]);
+      });
+      element.pivotData?.pivotRowData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+      element.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result_data[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+      setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
+  }
         this.dashboard.push(element);
       }
     //  } else {
@@ -2052,6 +2200,14 @@ allowDrop(ev : any): void {
           return `Date: ${date}<br/>Value: ${value}`;
         };
         this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
+      }
+      if(chartId == 1){
+        if(sheet?.tableData?.tableItemsPerPage){
+          sheet.tableData.tableItemsPerPage = 10;
+        }
+        if(sheet?.tableData?.tablePage){
+          sheet.tableData.tablePage = 1;
+        }
       }
     });
      console.log('draggedDashboard',this.dashboard)
@@ -2143,9 +2299,9 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
 
         //   this.router.navigate(['/insights/sheetsdashboard/sheets/fileId/' + encodedServerId + '/' + encodedQuerySetId + '/' + encodedSheetId + '/' + encodedDashboardId])
         // } else {
-          this.databaseId = sheetdata.databaseId;
+          let databaseId = sheetdata.databaseId;
           this.qrySetId = sheetdata.qrySetId;
-          const encodedServerId = btoa(this.databaseId.toString());
+          const encodedServerId = btoa(databaseId.toString());
           const encodedQuerySetId = btoa(this.qrySetId.toString());
           const encodedSheetId = btoa(sheetId.toString());
           const encodedDashboardId = btoa(this.dashboardId.toString());
@@ -2211,7 +2367,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         console.log(data);
         this.loaderService.hide();
         this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'});
-        this.getDashboardFilterredList();
+        this.getDashboardFilterredList(true);
     },
       error:(error)=>{
         console.log(error)
@@ -3037,7 +3193,7 @@ if(this.filterName === ''){
 }
 }
 
-getDashboardFilterredList(){
+getDashboardFilterredList(onSheetRemove? : boolean){
   const Obj ={
     dashboard_id:this.dashboardId
   }
@@ -3045,6 +3201,9 @@ getDashboardFilterredList(){
     next:(data)=>{
       console.log(data);
       this.DahboardListFilters = data
+      if(onSheetRemove && data?.length <= 0){
+        this.active = 1;
+      }
     },
     error:(error)=>{
       console.log(error)
@@ -3296,10 +3455,69 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
       if(item1?.tableData?.tableTotalItems){
         item1.tableData.tableTotalItems = this.tableTotalItems;
       }
-      if(item?.tableData?.tableItemsPerPage){
-        item.tableData.tableItemsPerPage = this.tableItemsPerPage;
+      if(item1?.tableData?.tableItemsPerPage){
+        item1.tableData.tableItemsPerPage = this.tableItemsPerPage;
       }
     }
+    if(item.chart_id == '9'){
+      if(!item1.originalData && !isLiveReloadData){
+        item1['originalData'] = _.cloneDeep({pivotData: item1.pivotData});
+      }
+      let transformedData :any =[];
+      let headers: string[] = [];
+
+     let columnKeys = item?.columns?.map((col: any) => col.column); 
+     let rowKeys = item?.rows?.map((row: any) => row.column);
+    let valueKeys = item?.pivot?.map((col:any) =>col.column)
+
+    item?.columns?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    item?.rows?.forEach((rowObj: any) => {
+      headers.push(rowObj.column);
+    });
+    item?.pivot?.forEach((colObj: any) => {
+      headers.push(colObj.column);
+    });
+
+    transformedData.push(headers); 
+    let numRows = 0;
+    if (item?.columns?.length > 0) {
+        numRows = item.columns[0]?.result?.length || 0;
+    } else if (item?.rows?.length > 0) {
+        numRows = item.rows[0]?.result?.length || 0;
+    } else if (item?.pivot?.length > 0) {
+        numRows = item.pivot[0]?.result?.length || 0;
+    }
+    for (let i = 0; i < numRows; i++) {
+      let rowArray: any[] = []; 
+      item?.columns?.forEach((colObj: any) => {
+        rowArray.push(colObj.result[i]);
+      });
+      item?.rows?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+      item?.pivot?.forEach((rowObj: any) => {
+        rowArray.push(rowObj.result[i]);
+      });
+
+      transformedData.push(rowArray);
+    }
+    setTimeout(() => {
+      if (this.pivotContainer && this.pivotContainer.nativeElement) {
+          ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
+            rows: columnKeys,  
+            cols: valueKeys, 
+            // vals: this.valueKeys, 
+            aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
+            rendererName: "Table"
+          });
+      }        
+    }, 1000);
+    }
+
+
       if((item.chart_id == '6' || item.chartId == '6' && (isFilter || isDrillDown)) || (item1.chartId == '6' && isDrillThrough)){//bar
         if(item1.isEChart){ 
           if(!item1.originalData && !isLiveReloadData){
@@ -3753,7 +3971,8 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           console.log(this.filteredRowData);
           this.filteredColumnData.forEach((data: any) => {
             data?.values.forEach((column:any, index: any)=>{
-              let arr = [new Date(column).toISOString().split('T')[0], this.filteredRowData[0]?.data[index]];
+              let formattedDate = column.split(" ")[0];
+              let arr = [formattedDate, this.filteredRowData[0]?.data[index]];
               calendarData.push(arr);
 
               const year = new Date(column).getFullYear();
@@ -3771,15 +3990,16 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
           };
         });
 
-        const calendarHeight = 100;  // Adjust height for better visibility
-        const yearGap = 20;  // Reduced gap between years
+        const calendarHeight = 120;  // Adjust height for better visibility
+        const yearGap = 30;  // Reduced gap between years
         const totalHeight = (calendarHeight + yearGap) * yearArray.length;
+        this.calendarTotalHeight = (totalHeight+25)+'px';
     
         // Create multiple calendar instances, one for each year
         let calendars = yearArray.map((year: any, idx: any) => ({
             top: idx === 0 ? 25 : (calendarHeight + yearGap) * idx,
             range: year.toString(),
-            cellSize: ['auto', 10],
+            cellSize: ['auto', 12],
             splitLine: {
                 show: true,
                 lineStyle: {
@@ -3788,7 +4008,10 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
                 }
             },
             yearLabel: {
-                margin: 20
+              show: true,
+              margin: 25,
+              fontSize: 14,
+              fontWeight: 'bold'
             }
         }));
 
@@ -3834,6 +4057,11 @@ formatKPINumber(value : number, KPIDisplayUnits: string, KPIDecimalPlaces : numb
         break;
       case 'G':
         formattedNumber = (value / 1_000_000_000_000).toFixed(KPIDecimalPlaces) + 'G';
+        break;
+      case '%':
+        let KPIPercentageDivisor = Math.pow(10, Math.floor(Math.log10(value)) + 1); // Get next power of 10
+        let percentageValue = (value / KPIPercentageDivisor) * 100; // Convert to percentage
+        formattedNumber = percentageValue.toFixed(KPIDecimalPlaces) + ' %'; // Keep decimals
         break;
     }
   } else {
@@ -4222,6 +4450,13 @@ kpiData?: KpiData;
           prefix:sheet?.sheet_data?.numberFormat?.prefix,
           suffix:sheet?.sheet_data?.numberFormat?.suffix
         },
+        pivotData: sheet.sheet_type === 'PIVOT' ? {
+          pivotDataTransformed:sheet?.sheet_data?.pivotTransformedData,
+          pivotRowData:sheet?.sheet_data?.row,
+          pivotMeasureData:sheet?.sheet_data?.pivotMeasure_Data,
+          pivotColData:sheet?.sheet_data?.col
+        }
+        : undefined,
         customizeOptions: sheet?.sheet_data?.customizeOptions
       }));
       this.setSelectedSheetData();
@@ -4258,7 +4493,7 @@ kpiData?: KpiData;
       obj ={
         sheet_ids : this.sheetIdsDataSet,
         page_no : this.pageNo,
-        search : this.searchSheets,
+        // search : this.searchSheets,
         page_count:this.itemsPerPage
 
       }
@@ -4272,6 +4507,7 @@ kpiData?: KpiData;
        this.itemsPerPage = data.items_per_page;
       },
       error:(error)=>{
+        this.panelscheckbox = [];
         console.log(error)
       }
     })
@@ -4473,6 +4709,14 @@ kpiData?: KpiData;
             };
             this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
+          if(chartId == 1){
+            if(sheet?.tableData?.tableItemsPerPage){
+              sheet.tableData.tableItemsPerPage = 10;
+            }
+            if(sheet?.tableData?.tablePage){
+              sheet.tableData.tablePage = 1;
+            }
+          }
         })
         console.log(this.sheetTagTitle);
         if(!data.dashboard_tag_name){
@@ -4626,7 +4870,8 @@ kpiData?: KpiData;
       // "file_id": item.fileId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
+  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getPublicDashboardDrillDowndata(Obj).subscribe({
       next:(data)=>{
@@ -4656,14 +4901,14 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0);
-      if(item.chartId == '29'){
-        if (item.drillDownIndex != 0) {
-          this.chartType = 'bar';
-        }
-        else {
-          this.chartType = 'map';
-        }
-      }
+      // if(item.chartId == '29'){
+      //   if (item.drillDownIndex != 0) {
+      //     this.chartType = 'bar';
+      //   }
+      //   else {
+      //     this.chartType = 'map';
+      //   }
+      // }
         },
       error:(error)=>{
         console.log(error)
@@ -4697,7 +4942,8 @@ kpiData?: KpiData;
       "hierarchy_id":item.databaseId,
       "is_date":item.isDrillDownData,
   "drill_down":item.drillDownObject,
-  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex]
+  "next_drill_down":item.drillDownHierarchy[item.drillDownIndex],
+  "is_exclude":this.excludeFilterIdArray
     }
     this.workbechService.getDashboardDrillDowndata(Obj).subscribe({
       next:(data)=>{
@@ -4796,8 +5042,9 @@ kpiData?: KpiData;
   }
 }
 //tablePagination
-tableSearchDashboard(item:any){
+tableSearchDashboard(item:any,value:any){
   this.tablePageNo=1;
+  this.tableSearch = value;
   this.pageChangeTableDisplay(item,1,false,0);
 }
 pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetIndex:any){
@@ -4813,7 +5060,8 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
-    search:this.tableSearch
+    search:this.tableSearch,
+    is_exclude:this.excludeFilterIdArray
   }
   if(obj.search === '' || obj.search === null){
     delete obj.search;
@@ -4830,8 +5078,9 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
     }
   })  
 }
-tableSearchDashboardPublic(item:any){
+tableSearchDashboardPublic(item:any,value:any){
   this.tablePageNo=1;
+  this.tableSearch = value;
   this.pageChangeTableDisplayPublic(item,1);
 }
 pageChangeTableDisplayPublic(item:any,page:any){
@@ -4847,7 +5096,8 @@ pageChangeTableDisplayPublic(item:any,page:any){
     page_no: page,
     page_count: this.tableItemsPerPage,
     dashboard_id:this.dashboardId,
-    search:this.tableSearch
+    search:this.tableSearch,
+    is_exclude:this.excludeFilterIdArray
   }
   if(obj.search === '' || obj.search === null){
     delete obj.search;
@@ -4858,7 +5108,7 @@ pageChangeTableDisplayPublic(item:any,page:any){
       data.data['sheet_id']=item.sheetId ?? item.sheet_id,
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
-      this.setDashboardSheetData(data.data, false , false, false, false, '', false,0);
+      this.setDashboardSheetData(data.data, true , false, false, false, '', false,0);
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -4971,7 +5221,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               })
             })
           }
-        } else if(![1, 25, 10, 24, 28, 11, 29].includes(chartId)){
+        } else if(![1, 25, 10, 24, 11, 29].includes(chartId)){
           if (sheet.echartOptions?.yAxis?.axisLabel) {
             sheet.echartOptions.yAxis.axisLabel.formatter = (val: any) => {
               return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
@@ -5011,7 +5261,13 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               return `${category}: ${formattedValue}`;
             }
           }
-        } else if(![1, 25, 10, 24, 28].includes(chartId)){
+        } else if(![1, 25, 10, 24].includes(chartId)){
+          if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
+            sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: number) => {
+              const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
+              return `${formattedValue}%`;
+            };
+          }
           if (sheet.chartOptions?.yaxis?.labels) {
             sheet.chartOptions.yaxis.labels.formatter = (val: number) => {
               return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
@@ -5264,6 +5520,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       next: (data) => {
         console.log(data);
         this.getDrillThroughActionList();
+        this.actionId = '';
         this.clearActionForm();
         this.editActions = false;
         this.toasterService.success('Action Deleted Successfully', 'Success', { positionClass: 'toast-top-center' });
@@ -5556,6 +5813,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
            if(this.uploadedKpiImage){
             this.updateKPIImage(this.kpiItem, this.uploadedKpiImage);
             }
+            event.target.value = '';
          };
          reader.readAsDataURL(file);
         }

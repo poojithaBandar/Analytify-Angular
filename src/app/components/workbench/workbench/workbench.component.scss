@@ -122,7 +122,15 @@
 //     }
 
 // 
-
+.selectable-card {
+   cursor: pointer; /* Makes it look clickable */
+   transition: background-color 0.3s ease-in-out;
+ }
+ 
+ .selectable-card.selected {
+   background-color: rgba(0, 123, 255, 0.2); /* Light blue highlight */
+   border: 2px solid #007bff; /* Blue border */
+ }
 .card-padding-top { padding-top: 15px; }
 .search-icon-border-radius { border-radius: 0px 4px 4px 0px !important; }
 .table-responsive-height { height: 26rem; }
@@ -169,6 +177,15 @@ a { cursor: pointer;}
 .logo-txt { width: 6rem; }
 .Relational-database-height{ height: calc(100% - 33px);}
 
+
+.table tbody tr {
+   cursor: pointer; /* Show pointer on hover */
+   transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+
+.table tbody tr:hover {
+   background-color: #f0f0f0; /* Light gray background on hover */
+}
 // for Mobile Resolution //
 @media only screen and ( max-width : 578px ) {
 .header-title-search{  display: inline;  padding-left: 0px;  padding-right: 0px; }
