@@ -1,5 +1,5 @@
 .drag-txt { text-align: center; }
-button.BtnNewStyle { margin-inline: 0px !important; border-radius: 0px !important;  background-color: rgb(35 145 192 / 7%); border: 1px solid var(--primary-color); }
+button.BtnNewStyle { margin-inline: 0px !important; border-radius: 0px !important;  background-color: rgb(35 145 192 / 7%); border: 1px solid var(--primary-color); height: 48px;}
 .nav-link.BtnNewStyle.active { background: #ccedec !important; color: #036e6c !important; border-bottom: 2px solid #036e6c; border-top: none;}
 button.BtnNewStyle.span-right {  border-right: 0px; padding: 8px 6px 8px 15px;}
 button.BtnNewStyle.span-left { border-left: 0px;  padding: 8px 15px 8px 6px;}
@@ -287,6 +287,18 @@ a.TabShadow.nav-link.active {
   padding: 3px 13px;
   border-radius: 15px;
   border: 1px solid;}
+.Hierarchy-box-bg{ color: rgb(var(--warning-rgb)) !important; background: rgba(var(--warning-rgb), .1) !important; border-color: rgba(var(--warning-rgb), .1); padding: 3px 13px; border-radius: 15px; border: 1px solid;}
+div#pivotTableContainer { margin: 20px; width: 100%; height: 500px; }
+.ConnectionsCardHeight { height: calc(100% - 0px); }
+.ContentAreaCardHeight { height: calc(100% - 0px); padding: 10px 10px; background-color: var(--custom-white); border: 1px solid var(--default-border) !important;  border-radius: 7px; }
+.dataCuCardHeight { height: calc(100% - 0px); }
+button.IconProperties { padding: 4px 4px; }
+button.IconProperties img { width: 24px !important; height: 24px !important;  object-fit: fill; }
+.SearchBarCu{ padding: 6px 8px !important; border-top-left-radius: 5px !important; border-top-right-radius: 0px !important; border-bottom-right-radius: 0px !important;  border-bottom-left-radius: 6px !important; }
+button.FaFaIconProperties:hover{ border-top-left-radius: 0px !important; border-top-right-radius: 5px !important; border-bottom-right-radius: 5px !important; border-bottom-left-radius: 1px !important; border-top-width: 1.5px !important;  border-right-width: 1.5px !important; border-bottom-width: 1.5px !important; border-left-width: 1.5px !important; border-color: var(--primary-color) !important; }
+i.FaFaIconProperties { font-size: 16px; }
+button.FaFaIconProperties { padding: 6px 8px; border-top-left-radius: 0px !important; border-top-right-radius: 5px !important; border-bottom-right-radius: 5px !important; border-bottom-left-radius: 1px !important; border-top-width: 1.5px !important; border-right-width: 1.5px !important; border-bottom-width: 1.5px !important; border-left-width: 1.5px !important; border-color: var(--primary-color) !important; }
+
 
 
 @media ( 1280px <= width <= 1600px) {
@@ -430,4 +442,32 @@ div#pivotTableContainer {
 }
 input.BitSpace {
   margin-left: 13px !important;
+}
+@media ( 1163px <= width <= 1280px){
+  .ConnectionsCardHeight {height: calc(100% - 252px);}
+  .ContentAreaCardHeight {height: calc(100% - 252px);}
+  .dataCuCardHeight {height: calc(100% - 252px);}
+  .show-chart-card {height: calc(100% - 300px);}
+  .show-chart-card-no-heirarchy {height: calc(100% - 169px);}
+}
+@media ( 1280px <= width <= 1422px){
+  .ConnectionsCardHeight {height: calc(100% - 66px);}
+  .ContentAreaCardHeight {height: calc(100% - 66px);}
+  .dataCuCardHeight {height: calc(100% - 66px);}
+  .show-chart-card {height: calc(100% - 160px);}
+  .show-chart-card-no-heirarchy {height: calc(100% - 129px);}
+}
+@media ( 1422px <= width <= 1480px){
+  .ConnectionsCardHeight {height: calc(100% - 46px);}
+  .ContentAreaCardHeight {height: calc(100% - 46px);}
+  .dataCuCardHeight {height: calc(100% - 46px);}
+  .show-chart-card {height: calc(100% - 169px);}
+  .show-chart-card-no-heirarchy {height: calc(100% - 135px);}
+}
+@media ( 1480px <= width <= 1600px){
+  .ConnectionsCardHeight {height: calc(100% - 21px);}
+  .ContentAreaCardHeight {height: calc(100% - 21px);}
+  .dataCuCardHeight {height: calc(100% - 21px);}
+  .show-chart-card {height: calc(100% - 180px);}
+  .show-chart-card-no-heirarchy {height: calc(100% - 140px);}
 }
