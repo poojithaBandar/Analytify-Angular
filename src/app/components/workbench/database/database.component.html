@@ -9,7 +9,7 @@
             <div class="p-2 br-0 mb-0  border-bottom d-block">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0">Connections</h6>
-                    <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
+                    <a [ngClass]="{ 'disabled': crossDbId }" [attr.disabled]="crossDbId ? true : null" [ngbTooltip]="crossDbId ? 'You can connect two Datasources only' : ''" (click)="crossDbId ? $event.preventDefault() : goToConnections()"><span  class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" [ngbTooltip]="hostName?.length > 15 ? hostName : null">{{hostName?.length > 15 ? (hostName| slice:0:15)+'...':hostName}}</p>
             </div>
@@ -295,7 +295,7 @@
                                 <div class="">
                                     <div class="card mb-0 border joining-T-H br-0" >
                                         <div class="card-header bg-light d-flex align-items-center justify-content-between p-4">
-                                            <h6 class="m-0">Table Custom Join</h6>
+                                            <h6 class="m-0">Build Relation</h6>
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()"
                                                 ngbtooltip="fa fa-chevron-left"
                                                 class="fa fa-chevron-left chevron-left-icon border-0"></i>
@@ -304,27 +304,6 @@
                                         <div class="card-body">
                                             @if(isOpen){
                                             <div class=" gap-1 d-flex flex-wrap p-2">
-                                                <!-- <ng-select [items]="dropdownOptions"
-                                                       bindLabel="value"
-                                                       [(ngModel)]="selectedOption"
-                                                       [groupBy]="'group'" 
-                                                       [searchable]="true"
-                                                       [searchFn]="customSearch.bind(this)"
-                                                       (change)="updateRemainingTables($event)"
-                                                       placeholder="Select column"
-                                                       [clearable]="true">
-                                            
-                                              
-                                              <ng-template ng-optgroup-tmp let-item="item">
-                                                <strong>{{ item.group }}</strong> 
-                                              </ng-template>
-                                            
-                                            
-                                              <ng-template ng-option-tmp let-item="item">
-                                                {{ item.value }} 
-                                              </ng-template>
-                                            
-                                            </ng-select> -->
                                                 <div ngbDropdown class="btn-group my-2 dropdown">
                                                     <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
                                                         style="width: 124px;" aria-expanded="false"
@@ -332,11 +311,11 @@
                                                         selectedClmnT1:'Select Column') | slice:0:13}}</button>
                                                     <ul ngbDropdownMenu class="dropdown-menu drpdwnhgt">
                                                         <li>
-                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT1" (input)="filterColumnsT1()" placeholder="Search columns..." />                                                          
+                                                            <input class="form-control" type="text" [(ngModel)]="searchTermT1" (input)="filterColumnsT1CrsDb()" placeholder="Search columns..." />                                                          
                                                         </li>
-                                                        @for(table of filteredTablesT1;track table){
+                                                        @for(table of crossDbFilteredTablesT1;track table){
                                                         <li class="dropdown-plus-title">
-                                                            {{ table.schema }}.{{ table.alias }}
+                                                            {{table.table}}.({{ table.schema }})
                                                         </li>
                                                         @for(column of table.columns;track column){
                                                         <li>
@@ -348,7 +327,7 @@
                                                         }
                                                     </ul>
                                                 </div>
-                                                <div ngbDropdown class="btn-group my-2 dropdown">
+                                                <!-- <div ngbDropdown class="btn-group my-2 dropdown">
                                                     <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
                                                         style="width: 93px;" aria-expanded="false"
                                                         class="dropdown-toggle btn btn-info-light">{{ selectedJoin ?
@@ -367,7 +346,7 @@
                                                                 (click)="selectedJoin = 'full Outer'"
                                                                 ngbDropdownItem>Full Outer</a></li>
                                                     </ul>
-                                                </div>
+                                                </div> -->
                                                 <div ngbDropdown class="btn-group my-2 dropdown">
                                                     <button type="button" ngbDropdownToggle data-bs-toggle="dropdown"
                                                         style="width: 93px;" aria-expanded="false"
@@ -400,7 +379,7 @@
                                                         </li>
                                                         @for(table of filteredTablesT2;track table){
                                                         <li class="dropdown-plus-title">
-                                                            {{ table.schema }}.{{ table.alias }}
+                                                            {{table.table}}.({{ table.schema }})
                                                         </li>
                                                         @for(column of table.columns;track column){
                                                         <li><a class="dropdown-item" ngbDropdownItem
@@ -410,35 +389,14 @@
                                                         }
                                                     </ul>
                                                 </div>
-                                                <!-- <ng-select [items]="remainingDropdownOptions"
-                                                bindLabel="value"
-                                                [(ngModel)]="selectedOption"
-                                                [groupBy]="'group'" 
-                                                [searchable]="true"
-                                                [searchFn]="customSearch.bind(this)"
-                                            
-                                                placeholder="Select column"
-                                                [clearable]="true">
-                                     
-                                 
-                                       <ng-template ng-optgroup-tmp let-item="item">
-                                         <strong>{{ item.group }}</strong>  
-                                       </ng-template>
-                                     
-                                      
-                                       <ng-template ng-option-tmp let-item="item">
-                                         {{ item.value }} 
-                                       </ng-template>
-                                     
-                                     </ng-select> -->
                                             </div>
                                             <div class="modal-footer border-0">
-                                                <button class="btn btn-secondary" (click)="clearJoinCondns()"
+                                                <button class="btn btn-secondary" (click)="clearRelationCondns()"
                                                     aria-expanded="false">
                                                     clear
                                                 </button>
                                                 <button class="btn btn-primary" [disabled]="!selectedClmnT2"
-                                                    (click)="customTableJoin()" aria-expanded="false">
+                                                    (click)="buildRelation()" aria-expanded="false">
                                                     Join
                                                 </button>
                                             </div>
@@ -446,51 +404,24 @@
 
 
 
-                                            <!-- <div >
-                                                @if(relationOfTables.length){
-                                                    <div class="card-header">
-                                                        <h3 class="card-title">Joinings:</h3>
-                                                       
-                                                    </div>                                   
-                                                    <ul class="tags" >
-                                                        @for(relation of displayJoiningCndnsList;track relation;let i = $index){
-                                                        <li class="tag rounded-pill bg-primary tx-fixed-white alert" id="row16">
-                                                            <span class="tag-avatar avatar avatar-sm bg-white text-primary rounded-pill"><i class="fa fa-circle"></i>
-                                                                <i class="fa fa-circle" ></i></span>
-                                                                {{relation}}
-                                                            <a class="tag-addon rounded-pill bg-white-transparent" data-bs-dismiss="alert" (click)="deleteJoiningRelation(i)" aria-hidden="true"><i class="fe fe-x"></i></a>
-                                                        </li>
-                                                        }
-                                                    </ul>                            
-                                                }
-                                                @if(!relationOfTables.length){
-                                                    <div class="card-header">
-                                                        <h3 class="card-title">Joinings:</h3>
-                                                    </div>                                   
-                                                    <ul class="tags">
-                                                        <li class="tag">No relation found</li>
-                                                    </ul>                            
-                                                }
-                                            </div> -->
-
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
                             <div class="p-0"
-                                [ngClass]="draggedtables?.length < 2 ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
+                                [ngClass]="!crossDbId ? 'col-xxl-12 col-xl-12 col-lg-12 col-md-12 p-0':isOpen ? 'col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0':''">
                                 <div class="card mb-0 border joining-T-H"  [ngClass]="isOpen ? 'right-card':''"
                                     [class.expanded]="!isOpen">
                                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            @if(draggedtables?.length > 1){
+                                            @if(crossDbId){
                                             @if(!isOpen){
                                             <i data-bs-toggle="tooltip" (click)="toggleCard()"
                                                 ngbtooltip="fa fa-chevron-left" 
                                                 class="fa fa-chevron-right chevron-right-icon p-2 border-0 ">
                                                 <button class="TextTransform">
-                                                    <p class="mb-0">Table Custom Join</p>
+                                                    <p class="mb-0">Build Relation</p>
                                                 </button>
                                             </i>
                                             }
@@ -524,7 +455,7 @@
                                         <h6 class="fs-12 mt-2 mb-0 drag-txt">Result preview</h6>
                                         }@else{
                                         <div class="table-responsive Result-preview-table-h" 
-                                            [class.table-left]="draggedtables?.length > 1 && !isOpen"
+                                            [class.table-left]="crossDbId && !isOpen"
                                             [class.table-right]="draggedtables?.length === 1 || (draggedtables?.length > 1 && isOpen)">
                                             <table
                                                 class="table border text-nowrap text-md-nowrap table-striped table-bordered mb-0 ">

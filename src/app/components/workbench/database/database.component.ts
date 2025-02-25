@@ -150,6 +150,10 @@ export class DatabaseComponent {
   sheetCustmSqlDisable = true;
   saveQueryCheck = false;
   isExclude = false;
+  crossDbId= '';
+  crossDbFilteredTablesT1: any[] = [];
+  originalCrossDbTablesT1: any;
+
   constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
     const currentUrl = this.router.url;
     if(currentUrl.includes('/analytify/database-connection/tables/')){
@@ -381,7 +385,8 @@ export class DatabaseComponent {
 getSchemaTablesFromConnectedDb(){
   const obj ={
     search:this.searchTables,
-    querySetId:this.qurtySetId || this.custumQuerySetid
+    querySetId:this.qurtySetId || this.custumQuerySetid,
+    hierarchy_ids:[this.databaseId]
   }
   if(obj.search == '' || obj.search == null){
     delete obj.search;
@@ -390,12 +395,25 @@ getSchemaTablesFromConnectedDb(){
     delete obj.querySetId
   }
   const IdToPass = this.databaseId
+  this.schematableList =[];
   this.workbechService.getSchemaTablesFromConnectedDb(IdToPass,obj).subscribe({next: (data) => {
-   this.schematableList= data?.data?.schemas;
+    if(data[0].cross_db_id){
+      this.crossDbId = data[0].cross_db_id;
+      console.log(this.crossDbId.length)
+        console.log(this.crossDbId)
+      this.crossDbFilteredTablesT1 = data[0].data?.schemas[0].tables
+      this.filteredTablesT2 = data[1].data?.schemas[0].tables
+      this.originalCrossDbTablesT1 = data[0].data?.schemas[0].tables;
+
+    }
+    data.forEach((dataTest: any) => {                                   
+      this.schematableList.push(dataTest?.data?.schemas[0]);
+    });
+  //  this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
    console.log('filteredscemas',this.filteredSchematableList)
-       this.databaseName = data.database.database;
-        this.hostName = data.database.hostname;
+       this.databaseName = data[0].database.display_name;
+        // this.hostName = data.database.hostname;
         // this.saveQueryName = data.queryset_name;
     console.log(data)
 
@@ -435,7 +453,7 @@ for (const obj of arraysOfObjects) {
 }
 return result;
 }
-drop(event: CdkDragDrop<string[]>) {
+drop(event: CdkDragDrop<string[]>) {4
   if (event.previousContainer === event.container) {
     // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     console.log('Internal swap is restricted.');
@@ -722,10 +740,10 @@ filterColumnsT1() {
 }
 
 updateRemainingTables(item:any) {
-  this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
-  this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
-  this.filteredTablesT2 = this.remainingTables;
-  this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
+  // this.remainingTables = this.draggedtables.filter((table: { alias: string; }) => table.alias !== this.selectedAliasT1);
+  // this.remainingDropdownOptions = this.buildDropdownOptions(this.remainingTables);
+  // this.filteredTablesT2 = this.remainingTables;
+  // this.selectedAliasT2 = this.remainingTables.length > 0 ? this.remainingTables[0].alias : '';
 }
 filterColumnsT2(relation: any) {
   // If search term is empty, return all tables excluding the selected one
@@ -1600,7 +1618,8 @@ getfilteredCustomSqlData(){
   
 }
 goToConnections(){
-  this.router.navigate(['/analytify/datasources/view-connections'])
+  const hidToPass = btoa(this.databaseId.toString());
+  this.router.navigate(['/analytify/datasources/crossdatabase/viewconnection/'+hidToPass])
 }
 
 markDirty(){
@@ -1834,5 +1853,59 @@ addNewCondition(relation : any){
   relation.conditions.push({
    
   });
+}
+
+
+
+filterColumnsT1CrsDb() {
+  if (this.searchTermT1.trim() === '') {
+    // Restore the original data when search is cleared
+    this.crossDbFilteredTablesT1 = [...this.originalCrossDbTablesT1];  
+    return;
+  }
+
+  this.crossDbFilteredTablesT1 = this.originalCrossDbTablesT1
+    .map((table: { columns: any[] }) => {
+      const filteredColumns = table.columns.filter(column =>
+        column.column.toLowerCase().includes(this.searchTermT1.toLowerCase())
+      );
+
+      return filteredColumns.length > 0 
+        ? { ...table, columns: filteredColumns } 
+        : null;
+    })
+    .filter((table:any): table is { columns: any[] } => table !== null);
+}
+buildRelation(){
+  const relation = [{db1: this.selectedSchema1,
+    table1: this.getSelectedT1,
+    firstcolumn: this.selectedClmnT1,
+    operator: "=",
+    db2:this.selectedSchema2,
+    table2: this.getSelectedT2,
+    secondcolumn: this.selectedClmnT2}]
+  const obj ={
+   hierarchy_id:this.databaseId,
+   joining_conditions:relation
+  }
+  this.workbechService.buildRelation(obj).subscribe({
+    next:(data:any)=>{
+      console.log(data);
+    },
+    error:(error:any)=>{
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'oops!',
+        text: error.error.message,
+        width: '400px',
+      })
+    }
+  }) 
+}
+clearRelationCondns(){
+  this.selectedCndn ='Operator';
+  this.selectedClmnT1=null
+  this.selectedClmnT2=null;
 }
 }

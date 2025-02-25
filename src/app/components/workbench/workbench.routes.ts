@@ -29,13 +29,13 @@ export const admin: Routes = [
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
       {
-        path: 'datasources/crossdatabase/viewconnection:id',
+        path: 'datasources/crossdatabase/viewconnection/:id',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
       {
-        path: 'datasources/crossdatabase/newconnection:id',
+        path: 'datasources/crossdatabase/newconnection/:id',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),

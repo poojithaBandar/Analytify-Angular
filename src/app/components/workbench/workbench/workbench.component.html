@@ -166,7 +166,7 @@
             
             <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
             (btnClickEvent)="routeNewDatabase()"></app-insights-button>
-            <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" class="btn btn-primary" type="button" >Select & Move</button>
+            <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" (click)="connectCrossDbs()" class="btn btn-primary rounded-2" type="button" >Select & Move</button>
 
             <!-- <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" ><i class="fa fa-plus"></i> New Database</button> -->
           </div>
@@ -198,10 +198,14 @@
                           itemsPerPage: itemsPerPage,
                           currentPage: page,
                           totalItems: totalItems
-                        }">
-                            <td (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id)">
-                              <span><input type="checkbox" [checked]="selectedHirchyIdCrsDb === database.hierarchy_id" (change)="onSelectedHIDCrsDb(database.hierarchy_id)" *ngIf="iscrossDbSelect"></span>
+                        }" class="selectable-card" (click)="iscrossDbSelect ? onSelectedHIDCrsDb(database.hierarchy_id) : null"
+                        [class.selected-table]="iscrossDbSelect && selectedHirchyIdCrsDb === database.hierarchy_id">
+                            <td (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)">
+                              <!-- <span><input type="checkbox" [checked]="selectedHirchyIdCrsDb === database.hierarchy_id" (change)="onSelectedHIDCrsDb(database.hierarchy_id)"></span> -->
                                 <a ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
+                                <span  *ngIf="database.is_cross_db" ngbTooltip="{{database.display_name}}">
+                                  <img src="./assets/images/icons/crossdatabase-black.png" class=" avatar-radius avatar-databse-sm cover-image ms-2">
+                                </span>
                                </td>
                             <td *ngIf="database.server_type === 'POSTGRESQL'">
                               <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
@@ -331,14 +335,17 @@
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
-                                  <a (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
+                                  <a (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
                               </h6>
                               
                           </div>
                       </div>
   
-                      <div class="col-auto"  *ngIf="!iscrossDbSelect">
+                      <div class="col-auto p-0"  *ngIf="!iscrossDbSelect">
                         <div class="d-flex justify-content-end p-1" ngbDropdown>
+                          <span *ngIf="database.is_cross_db" ngbTooltip="{{database.display_name}}">
+                            <img src="./assets/images/icons/crossdatabase-icon.png" class="avatar avatar-radius avatar-databse-sm cover-image">
+                          </span>
                           <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                               aria-haspopup="true" aria-expanded="false" class=""><i
                                   class="fe fe-more-vertical fs-18 text-body-secondary"></i>

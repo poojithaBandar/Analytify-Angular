@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule } from '@angular/forms';
@@ -83,8 +83,9 @@ export class WorkbenchComponent implements OnInit{
   selectedMicroSoftAuthType: string | null = null;
   selectedHirchyIdCrsDb:string | null = null;
 
-  iscrossDbSelect = true;
-  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
+  iscrossDbSelect = false;
+  primaryHierachyId:any;
+  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
@@ -112,6 +113,7 @@ export class WorkbenchComponent implements OnInit{
         this.databaseconnectionsList = true;
         this.viewNewDbs = false;
         this.isGoogleSheetsPage = false;
+        this.primaryHierachyId = +atob(route.snapshot.params['id']);
       }else if(currentUrl.includes('crossdatabase/newconnection')){
         this.iscrossDbSelect = true;
         this.viewNewDbs = true;
@@ -122,10 +124,20 @@ export class WorkbenchComponent implements OnInit{
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
   routeNewDatabase(){
+    if(this.iscrossDbSelect){
+      const encodedId = btoa(this.primaryHierachyId.toString());
+      this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId])
+    }else{
     this.router.navigate(['analytify/datasources/new-connections'])
+    }
   }
   routeViewDatabase(){
-    this.router.navigate(['analytify/datasources/view-connections'])
+    if(this.iscrossDbSelect){
+      const encodedId = btoa(this.primaryHierachyId.toString());
+      this.router.navigate(['analytify/datasources/crossdatabase/viewconnection/'+encodedId])
+    }else{
+      this.router.navigate(['analytify/datasources/view-connections'])
+    }
   }
 
     postGreServerName = '';
@@ -250,12 +262,17 @@ export class WorkbenchComponent implements OnInit{
               console.log(responce);
               console.log('tablelist',this.tableList)
               if(responce){
-                this.databaseName = responce.database.database_name
+                this.databaseName = responce.database.display_name
                 this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -405,7 +422,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openOracleForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -607,7 +629,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMySqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -642,7 +669,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMicrosoftSqlServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -676,7 +708,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openSnowflakeServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -710,7 +747,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMongoDbForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -778,7 +820,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -822,7 +869,12 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.fileId=responce.hierarchy_id
               const encodedId = btoa(this.fileId.toString());
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
@@ -861,7 +913,12 @@ export class WorkbenchComponent implements OnInit{
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.fileId=responce.hierarchy_id
                 const encodedId = btoa(this.fileId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -1160,7 +1217,7 @@ connectGoogleSheets(){
     this.getDbConnectionList();
   }
   getDbConnectionList(){
-    const Obj ={
+    const Obj: { search?: any; page_no: number; page_count?: any; remove_hierarchy_id?: boolean } ={
       search : this.searchDbName,
       page_no:this.pageNo,
       page_count:this.itemsPerPage
@@ -1171,6 +1228,9 @@ connectGoogleSheets(){
     }
     if(Obj.page_count == undefined || Obj.page_count == null){
       delete Obj.page_count
+    }
+    if(this.iscrossDbSelect){
+      Obj.remove_hierarchy_id = this.primaryHierachyId
     }
     this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
       next:(data)=>{
@@ -1191,15 +1251,17 @@ connectGoogleSheets(){
       }
     })
   }
-  getTablesFromConnectedDb(id:any){
+  getTablesFromConnectedDb(id:any,crsdbId:any){
     // if(dbId === null){
-    const encodedId = btoa(id.toString());
+    if(crsdbId){
+    const encodedId = btoa(crsdbId.toString());
     this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-    // }
-    // if(fileId === null){
-    //   const encodedId = btoa(dbId.toString());
-    //   this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
-    //   }
+    }
+    else{
+      const encodedId = btoa(id.toString());
+    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]); 
+    }
+
 }
 
   onDeleteItem(index: number) {
@@ -1410,6 +1472,27 @@ connectGoogleSheets(){
       this.selectedHirchyIdCrsDb = hId;  // Select new one
     }
     console.log(hId);
+  }
+  connectCrossDbs(){
+    const obj ={
+      hierarchy_ids:[this.primaryHierachyId,this.selectedHirchyIdCrsDb]
+    }
+    this.workbechService.crossDbConnection(obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        const encodedId = btoa(data[0].cross_db_id.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+       },
+      error:(error)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
   }
 
 
