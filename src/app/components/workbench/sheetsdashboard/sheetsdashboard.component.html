@@ -32,7 +32,7 @@
               <div class="input-group">
                 <input type="text" class="form-control border-end-0 " [(ngModel)]="searchSheets" (keydown.enter)="fetchSheetsListSearch()" placeholder="Search" >
                 <button class="btn btn-primary border me-2  search-icon-border-radius" (click)="fetchSheetsListSearch()"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
-                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
+                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard();pivotReinitialize()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
                 <button *ngIf="panelscheckbox?.length<1" type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="sheetsRoute()" ><i class="fa fa-plus"></i> New Sheet</button>
                 <button type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="isSheetsView = false" >Close</button>
 
@@ -1635,8 +1635,8 @@
               <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
               </div>
               @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
-                <div id="pivotTableContainer" #pivotTableContainer></div>
-
+                <!-- <div [id]="'pivotTableContainer' + item.id" #pivotTableContainer></div> -->
+                <div #pivotTableContainer></div>
               }
               </div>
               <!-- <div *ngIf="item['chartType'] === PIVOT">
