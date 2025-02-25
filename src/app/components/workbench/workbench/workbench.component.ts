@@ -81,28 +81,43 @@ export class WorkbenchComponent implements OnInit{
   viewDatasourceList = false;
   isGoogleSheetsPage = false;
   selectedMicroSoftAuthType: string | null = null;
+  selectedHirchyIdCrsDb:string | null = null;
+
+  iscrossDbSelect = false;
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('analytify/datasources/view-connections')){
-      this.databaseconnectionsList= true;  
-       this.viewNewDbs= false;
-       this.isGoogleSheetsPage = false;
-    } 
-    if(currentUrl.includes('analytify/datasources/new-connections')){
-      this.viewNewDbs = true;
-      this.databaseconnectionsList = false;
-      this.isGoogleSheetsPage = false;
-    }
-    if(currentUrl.includes('analytify/datasources/google-sheets')){
-      this.viewNewDbs = false;
-      this.databaseconnectionsList = false;
-      this.isGoogleSheetsPage = true;
-      let url = this.router.url;
-      console.log(url);
-      this.getGoogleSheetDetailsByUrl(url);
+    if (currentUrl.startsWith('/analytify/datasources/')) {
+      if (currentUrl.includes('view-connections')) {
+        this.databaseconnectionsList = true;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+        // this.iscrossDbSelect = false;
+      } else if (currentUrl.includes('new-connections')) {
+        this.viewNewDbs = true;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = false;
+        // this.iscrossDbSelect = false;
+      } else if (currentUrl.includes('google-sheets')) {
+        this.viewNewDbs = false;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = true;
+        this.iscrossDbSelect = false;
+        console.log(currentUrl);
+        this.getGoogleSheetDetailsByUrl(currentUrl);
+      }else if(currentUrl.includes('crossdatabase/viewconnection')){
+        this.iscrossDbSelect = true;
+        this.databaseconnectionsList = true;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+      }else if(currentUrl.includes('crossdatabase/newconnection')){
+        this.iscrossDbSelect = true;
+        this.viewNewDbs = true;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = false;
+      }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
@@ -792,6 +807,8 @@ export class WorkbenchComponent implements OnInit{
           this.replaceExcelOrCsvFile(event.target,database);
         } else if(type === 'upsert'){
           this.upsertExcelOrCsvFile(event.target,database);
+        } else if(type === 'append'){
+          this.appendExcelOrCsvFile(event.target,database);
         }
       } else{
         this.toasterservice.error('Not a supported file format. Please select an CSV file.','info',{ positionClass: 'toast-top-center'})
@@ -812,6 +829,8 @@ export class WorkbenchComponent implements OnInit{
           },
           error: (error) => {
             console.log(error);
+            fileInput.value = '';
+            this.cd.detectChanges();
             this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
           },
           complete: () => {
@@ -831,6 +850,8 @@ export class WorkbenchComponent implements OnInit{
           this.replaceExcelOrCsvFile(event.target,database);
         } else if(type === 'upsert'){
           this.upsertExcelOrCsvFile(event.target,database);
+        }  else if(type === 'append'){
+          this.appendExcelOrCsvFile(event.target,database);
         }
       } else{
         this.toasterservice.error('Not a supported file format. Please select an Excel file.','info',{ positionClass: 'toast-top-center'})
@@ -851,6 +872,8 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
+              fileInput.value = '';
+              this.cd.detectChanges();
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             },
             complete: () => {
@@ -1356,6 +1379,8 @@ connectGoogleSheets(){
        },
        error: (error) => {
         console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       },
       complete: () => {
@@ -1379,6 +1404,46 @@ connectGoogleSheets(){
        },
        error: (error) => {
         console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      },
+      complete: () => {
+        fileInput.value = '';
+        this.cd.detectChanges();
+      }
+    })
+  }
+
+  onSelectedHIDCrsDb(hId:any){
+    if (this.selectedHirchyIdCrsDb === hId) {
+      this.selectedHirchyIdCrsDb = null;  // Unselect if clicking the same one
+    } else {
+      this.selectedHirchyIdCrsDb = hId;  // Select new one
+    }
+    console.log(hId);
+  }
+
+
+
+
+  appendExcelOrCsvFile(fileInput: any,database : any){
+    const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData, this.fileData.name);
+    formData.append('file_type', database.database_type);
+    formData.append('hierarchy_id', database.hierarchy_id);
+    this.workbechService.appendExcelOrCsvFile(formData).subscribe({
+      next:(responce)=>{
+        console.log(responce);
+        this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+        this.fileId=database.hierarchy_id
+        const encodedId = btoa(this.fileId.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+       },
+       error: (error) => {
+        console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       },
       complete: () => {
