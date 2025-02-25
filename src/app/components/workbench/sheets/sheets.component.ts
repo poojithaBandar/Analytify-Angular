@@ -5643,7 +5643,7 @@ customizechangeChartPlugin() {
       let adjustedMonth = month % 12;
       if (adjustedMonth < 0) {
         adjustedMonth += 12;
-        adjustedYear--;
+        // adjustedYear--;
       }
     
       return {
