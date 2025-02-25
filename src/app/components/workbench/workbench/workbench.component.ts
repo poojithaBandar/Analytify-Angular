@@ -829,6 +829,8 @@ export class WorkbenchComponent implements OnInit{
           },
           error: (error) => {
             console.log(error);
+            fileInput.value = '';
+            this.cd.detectChanges();
             this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
           },
           complete: () => {
@@ -870,6 +872,8 @@ export class WorkbenchComponent implements OnInit{
             },
             error: (error) => {
               console.log(error);
+              fileInput.value = '';
+              this.cd.detectChanges();
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             },
             complete: () => {
@@ -1375,6 +1379,8 @@ connectGoogleSheets(){
        },
        error: (error) => {
         console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       },
       complete: () => {
@@ -1398,6 +1404,8 @@ connectGoogleSheets(){
        },
        error: (error) => {
         console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       },
       complete: () => {
@@ -1434,6 +1442,8 @@ connectGoogleSheets(){
        },
        error: (error) => {
         console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       },
       complete: () => {

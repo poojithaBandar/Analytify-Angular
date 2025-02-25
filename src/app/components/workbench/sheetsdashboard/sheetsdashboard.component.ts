@@ -5813,6 +5813,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
            if(this.uploadedKpiImage){
             this.updateKPIImage(this.kpiItem, this.uploadedKpiImage);
             }
+            event.target.value = '';
          };
          reader.readAsDataURL(file);
         }
