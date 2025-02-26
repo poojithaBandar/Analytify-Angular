@@ -43,7 +43,7 @@ button.BtnRowStyle.span-left { border-left: 0px; padding: 1px 3px 1px 4px; }
   background: #000; 
   }
 
-.example-box { padding: 3px 5px; color: var(--primary-color); display: flex; flex-direction: row; align-items: center; justify-content: space-between; box-sizing: border-box; cursor: move; font-size: 14px; margin-right: 5px; border-radius: 5px 5px 0px 0px; }
+.example-box { padding: 3px 5px; color: var(--primary-color); display: flex; flex-direction: row; align-items: center; justify-content: space-between; box-sizing: border-box; cursor: move; font-size: 14px; margin-right: 5px; border-radius: 5px 5px 0px 0px; line-height: 0; }
 .example-box1 { padding: 3px 13px; color: rgb(var(--success-rgb))!important;  display: flex;  flex-direction: row;  align-items: center;  justify-content: space-between;  box-sizing: border-box;  cursor: move; font-size: 14px; margin-right: 5px; }
 .example-list {  width: 1000px; max-width: 100%;  min-height: 60px;  display: flex;  flex-direction: row; border-radius: 4px; overflow-x: auto; }
 .table-container { margin: 20px; }
@@ -368,6 +368,7 @@ label { font-size: 12px; }
 .number-formatting select {  width: 100%;  padding: 5px;  margin-top: 1px;}
 .number-formatting{ border: 1px solid #ccc;  padding: 10px;  width: 170px; }
 .number-formatting input { width: 100%; padding: 5px; margin-top: 1px; }
+.w-90 { width: 100% !important; }
 }
 
 @media ( 1280px <= width <= 1570px) {
@@ -415,6 +416,7 @@ label { font-size: 12px;}
 .number-formatting label {  display: block;  margin-top: 5px; margin-bottom: 2px; font-size: 11px;}
 .number-formatting{ border: 1px solid #ccc;  padding: 10px;  width: 159px; }
 .number-formatting input { width: 100%; padding: 5px; margin-top: 1px; }
+.w-90 { width: 100% !important; }
 }
 
  // for 110% Resolution //
@@ -451,16 +453,16 @@ input.BitSpace {
   .show-chart-card-no-heirarchy {height: calc(100% - 169px);}
 }
 @media ( 1280px <= width <= 1422px){
-  .ConnectionsCardHeight {height: calc(100% - 66px);}
-  .ContentAreaCardHeight {height: calc(100% - 66px);}
-  .dataCuCardHeight {height: calc(100% - 66px);}
+  .ConnectionsCardHeight {height: calc(100% - 25px);}
+  .ContentAreaCardHeight {height: calc(100% - 25px);}
+  .dataCuCardHeight {height: calc(100% - 25px);}
   .show-chart-card {height: calc(100% - 160px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 129px);}
 }
 @media ( 1422px <= width <= 1480px){
-  .ConnectionsCardHeight {height: calc(100% - 46px);}
-  .ContentAreaCardHeight {height: calc(100% - 46px);}
-  .dataCuCardHeight {height: calc(100% - 46px);}
+  .ConnectionsCardHeight {height: calc(100% - 24px);}
+  .ContentAreaCardHeight {height: calc(100% - 24px);}
+  .dataCuCardHeight {height: calc(100% - 24px);}
   .show-chart-card {height: calc(100% - 169px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 135px);}
 }
