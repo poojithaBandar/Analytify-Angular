@@ -294,7 +294,12 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./configure/configure.component').then((m) => m.ConfigureComponent),
       },
-
+      {
+        path: 'update-password',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
+      },
     ]
   }
  ];

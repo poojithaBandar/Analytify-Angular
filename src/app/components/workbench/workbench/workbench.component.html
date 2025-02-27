@@ -147,7 +147,7 @@
   </ng-template>
 <!-- screen2 -->
 @if(databaseconnectionsList){
-  <div class="main-container container-fluid">
+  <div class="main-container container-fluid TopHeader">
     <div class="row" class="card card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
       <div class="header-title-search">
@@ -164,7 +164,7 @@
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="searchDbConnectionList()">
             <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" (click)="searchDbConnectionList()" id="button-addon2"><i class="fe fe-search "></i></button>
             
-            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
+            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2 p-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
             (btnClickEvent)="routeNewDatabase()"></app-insights-button>
             <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" (click)="connectCrossDbs()" class="btn btn-primary rounded-2" type="button" >Select & Move</button>
 
@@ -277,6 +277,11 @@
                                         (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)"
                                         [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
                                         class="fe fe-upload"></i> Upsert</a>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-plus"></i> Append</a>
                                   </div>
                                 </div>
                                 <a aria-label="anchor" (click)="deleteDbConnection(database.hierarchy_id)"
@@ -356,6 +361,7 @@
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-plus"></i> Append</a>
                             <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
                               [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.hierarchy_id)"
                               [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
@@ -418,7 +424,7 @@
   </div>
 }
 @if(isGoogleSheetsPage){
-  <div class="main-container container-fluid">
+  <div class="main-container container-fluid TopHeader">
     <div class="row" class="card card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
       <div class="d-flex flex-nowrap align-items-center gap-2 px-5 py-2">
@@ -480,7 +486,7 @@
 
   <!-- screen3 -->
   @if(openPostgreSqlForm){
-    <div class="main-container container-fluid px-4" >
+    <div class="main-container container-fluid px-4 TopHeader" >
       <div class="row">
           <div class="col-md-12 col-xl-6 p-1 mb-0">
               <div class="card Relational-database-height">
@@ -556,7 +562,7 @@
   </div>
     }
     @if(openMySqlForm){
-      <div class="main-container container-fluid px-4" >
+      <div class="main-container container-fluid px-4 TopHeader" >
         <div class="row">
             <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card Relational-database-height">
@@ -626,7 +632,7 @@
     </div>
       }
       @if(openConnectWiseForm){
-        <div class="main-container container-fluid px-4">
+        <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                   <div class="card Relational-database-height">
@@ -694,7 +700,7 @@
       </div>
         }
         @if(openHaloPSAForm){
-          <div class="main-container container-fluid px-4" >
+          <div class="main-container container-fluid px-4 TopHeader" >
             <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card Relational-database-height">
@@ -773,7 +779,7 @@
           </div>
           }
             @if(openShopifyForm){
-          <div class="main-container container-fluid px-4">
+          <div class="main-container container-fluid px-4 TopHeader">
             <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card Relational-database-height">
@@ -849,7 +855,7 @@
           </div>
           }
       @if(openOracleForm){
-        <div class="main-container container-fluid px-4">
+        <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                   <div class="card Relational-database-height">
@@ -925,7 +931,7 @@
       
         } 
         @if(openMicrosoftSqlServerForm){
-          <div class="main-container container-fluid px-4">
+          <div class="main-container container-fluid px-4 TopHeader">
             <div class="row">
                 <div class="col-md-12 col-xl-6 p-1 mb-0">
                     <div class="card Relational-database-height">
@@ -1019,7 +1025,7 @@
         
           } 
           @if(openSnowflakeServerForm){
-            <div class="main-container container-fluid px-4">
+            <div class="main-container container-fluid px-4 TopHeader">
               <div class="row">
                   <div class="col-md-12 col-xl-6 p-1 mb-0">
                       <div class="card Relational-database-height">
@@ -1096,7 +1102,7 @@
           
             } 
           @if(ibmDb2Form){
-            <div class="main-container container-fluid px-4" >
+            <div class="main-container container-fluid px-4 TopHeader" >
               <div class="row">
                 <div class="col-md-12 col-xl-6 p-1 mb-0">
                   <div class="card Relational-database-height">
@@ -1167,7 +1173,7 @@
           
             } 
           @if(openMongoDbForm){
-            <div class="main-container container-fluid px-4">
+            <div class="main-container container-fluid px-4 TopHeader">
               <div class="row">
                   <div class="col-md-12 col-xl-6 p-1 mb-0">
                       <div class="card Relational-database-height">
@@ -1264,7 +1270,7 @@
           
             } 
             @if(sqlLiteForm){
-              <div class="main-container container-fluid px-4">
+              <div class="main-container container-fluid px-4 TopHeader">
                 <div class="row">
                     <div class="col-md-12 col-xl-6 p-1 mb-0">
                         <div class="card Relational-database-height">
@@ -1324,7 +1330,7 @@
 
 
     @if(viewNewDbs){
-      <div class="main-container container-fluid">
+      <div class="main-container container-fluid TopHeader">
         <div class="row p-4">
         <div class="col-sm-12 col-lg-12 col-xl-12 p-0">
             <div class="card-header mb-3 border-0">
