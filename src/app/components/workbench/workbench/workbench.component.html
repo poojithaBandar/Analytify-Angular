@@ -164,9 +164,9 @@
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="searchDbConnectionList()">
             <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" (click)="searchDbConnectionList()" id="button-addon2"><i class="fe fe-search "></i></button>
             
-            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
+            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2 p-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
             (btnClickEvent)="routeNewDatabase()"></app-insights-button>
-            <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" class="btn btn-primary" type="button" >Select & Move</button>
+            <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" (click)="connectCrossDbs()" class="btn btn-primary rounded-2" type="button" >Select & Move</button>
 
             <!-- <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" ><i class="fa fa-plus"></i> New Database</button> -->
           </div>
@@ -198,10 +198,14 @@
                           itemsPerPage: itemsPerPage,
                           currentPage: page,
                           totalItems: totalItems
-                        }">
-                            <td (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id)">
-                              <span><input type="checkbox" [checked]="selectedHirchyIdCrsDb === database.hierarchy_id" (change)="onSelectedHIDCrsDb(database.hierarchy_id)" *ngIf="iscrossDbSelect"></span>
+                        }" class="selectable-card" (click)="iscrossDbSelect ? onSelectedHIDCrsDb(database.hierarchy_id) : null"
+                        [class.selected-table]="iscrossDbSelect && selectedHirchyIdCrsDb === database.hierarchy_id">
+                            <td (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)">
+                              <!-- <span><input type="checkbox" [checked]="selectedHirchyIdCrsDb === database.hierarchy_id" (change)="onSelectedHIDCrsDb(database.hierarchy_id)"></span> -->
                                 <a ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
+                                <span  *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}">
+                                  <img src="./assets/images/icons/crossdatabase-black.png" class=" avatar-radius avatar-databse-sm cover-image ms-2">
+                                </span>
                                </td>
                             <td *ngIf="database.server_type === 'POSTGRESQL'">
                               <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
@@ -336,14 +340,17 @@
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
-                                  <a (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
+                                  <a (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
                               </h6>
                               
                           </div>
                       </div>
   
-                      <div class="col-auto"  *ngIf="!iscrossDbSelect">
+                      <div class="col-auto p-0"  *ngIf="!iscrossDbSelect">
                         <div class="d-flex justify-content-end p-1" ngbDropdown>
+                          <span *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}">
+                            <img src="./assets/images/icons/crossdatabase-icon.png" class="avatar avatar-radius avatar-databse-sm cover-image">
+                          </span>
                           <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                               aria-haspopup="true" aria-expanded="false" class=""><i
                                   class="fe fe-more-vertical fs-18 text-body-secondary"></i>
@@ -660,7 +667,7 @@
                                   </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
                       </div>
@@ -731,7 +738,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="haloPSASignIn()"
-                          [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">Connect</button>
+                          [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
                     </form>
                   </div>
@@ -803,7 +810,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="shopifySignIn()"
-                          [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName ) ">Connect</button>
+                          [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
                     </form>
                   </div>
@@ -1561,15 +1568,15 @@
                     <h6 class="mb-3">Integrations</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectxAmplify()">
-                          <img src="https://media.licdn.com/dms/image/v2/C510BAQF5JiTv2uiWsQ/company-logo_200_200/company-logo_200_200/0/1630585990556/xamplify_logo?e=2147483647&v=beta&t=lvDimx47zMGKu8vT4wXji2MpjoXmnaLJFaUX12bd_8U"alt="Image" class="card-img">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectxAmplify()">
+                          <img src="./assets/images/Db_server_images/xAmplify-icon.png"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span >xAmplify</span>
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectQuickBooks()">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectQuickBooks()">
                           <img src="https://cdn.worldvectorlogo.com/logos/quickbooks-2.svg"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
@@ -1577,7 +1584,7 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectSalesforce()">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectSalesforce()">
                           <img src="./assets/images/Db_server_images/salesforce-icon.png"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" >
@@ -1601,7 +1608,7 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectJira()">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectJira()">
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Jira_Logo.svg/120px-Jira_Logo.svg.png?20230123125334"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" >
@@ -1617,8 +1624,8 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectGoogleSheets()">
-                          <img src="/assets/images/Db_server_images/google-sheets.jpg"alt="Image" class="card-img">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectGoogleSheets()">
+                          <img src="/assets/images/Db_server_images/googlesheets-icon.png"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>Google Sheets</span>
