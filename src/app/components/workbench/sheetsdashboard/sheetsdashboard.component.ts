@@ -920,7 +920,7 @@ export class SheetsdashboardComponent {
             }
         }
       }
-          console.log('After sanitization:', sheet.data.sheetTagName);
+          // console.log('After sanitization:', sheet.data.sheetTagName);
           this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
           if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
             sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
@@ -989,9 +989,13 @@ export class SheetsdashboardComponent {
           sheet.valueKeys = valueKeys;
             setTimeout(() => {
             // if (this.pivotContainer && this.pivotContainer.nativeElement) {
+              const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+              if (pivotTables.length !== this.pivotContainers.length) {
+                console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+              }
               this.pivotContainers.forEach((pivotContainer, index) => {
               if (pivotContainer && pivotContainer.nativeElement) {
-                const pivotData = this.dashboard[index]; // Get the corresponding pivot data
+                const pivotData = pivotTables[index]; // Get the corresponding pivot data
 
                 ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
                   rows: pivotData['columnKeys'],  
@@ -2136,27 +2140,19 @@ allowDrop(ev : any): void {
     element.rowKeys = rowKeys;
     element.valueKeys = valueKeys;
       setTimeout(() => {
-    //   if (this.pivotContainer && this.pivotContainer.nativeElement) {
-    //       ($(this.pivotContainer.nativeElement) as any).pivot(transformedData, {
-    //         rows: columnKeys,  
-    //         cols: valueKeys, 
-    //         // vals: this.valueKeys, 
-    //         aggregator:$.pivotUtilities.aggregators["Sum"](rowKeys),
-    //         rendererName: "Table"
-    //       });
-    //   }        
-    // }, 1000);
     this.cdr.detectChanges();  // Ensures ViewChildren is updated
-
     console.log("Pivot Containers:", this.pivotContainers);
     console.log("Pivot Containers Length:", this.pivotContainers.length);
 
+    const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+
+    if (pivotTables.length !== this.pivotContainers.length) {
+      console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+    }
     this.pivotContainers.forEach((pivotContainer, index) => {
       if (pivotContainer && pivotContainer.nativeElement) {
-        const pivotData = this.dashboard[index]; // Get the corresponding pivot data
-  
-        // if (pivotData.chartType === 'PIVOT' && pivotData.chartId === 9) {
-          ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
+        const pivotData = pivotTables[index]; // Get the corresponding pivot data
+            ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
         rows: pivotData['columnKeys'],  
         cols: pivotData['valueKeys'], 
             aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
@@ -2175,9 +2171,9 @@ allowDrop(ev : any): void {
      
     //  this.initializeChartData(element);  // Initialize chart after adding
     this.dashboard.forEach((sheet:any)=>{
-      console.log('Before sanitization:', sheet.data.sheetTagName);
+      // console.log('Before sanitization:', sheet.data.sheetTagName);
       this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
-      console.log('After sanitization:', sheet.data.sheetTagName);
+      // console.log('After sanitization:', sheet.data.sheetTagName);
 
       if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
         sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
@@ -3543,9 +3539,14 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
     item1.rowKeys = rowKeys;
     item1.valueKeys = valueKeys;
     setTimeout(() => {
+      const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+
+      if (pivotTables.length !== this.pivotContainers.length) {
+        console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+      }
       this.pivotContainers.forEach((pivotContainer, index) => {
       if (pivotContainer && pivotContainer.nativeElement) {
-        const pivotData = this.dashboard[index]; // Get the corresponding pivot data
+        const pivotData = pivotTables[index]; // Get the corresponding pivot data
 
         ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
           rows: pivotData['columnKeys'],  
@@ -4703,8 +4704,8 @@ kpiData?: KpiData;
         this.sheetIdsDataSet = data.selected_sheet_ids;
         let self = this;
         this.dashboard.forEach((sheet : any)=>{
-          console.log('Before sanitization:', sheet.data.sheetTagName);
-          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          // console.log('Before sanitization:', sheet.data.sheetTagName);
+          // this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
           if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
             sheet.chartOptions.chart.events = {
               markerClick: (event: any, chartContext: any, config: any) => {
@@ -4802,7 +4803,7 @@ kpiData?: KpiData;
               }
           }
           }
-          console.log('After sanitization:', sheet.data.sheetTagName);
+          // console.log('After sanitization:', sheet.data.sheetTagName);
           this.donutDecimalPlaces = sheet?.numberFormat?.donutDecimalPlaces;
           if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
             sheet.chartOptions.plotOptions.pie.donut.labels.total.formatter = (w:any) => {
@@ -4823,6 +4824,72 @@ kpiData?: KpiData;
             };
             this.calendarTotalHeight = ((150 * sheet.echartOptions.calendar.length) + 25) + 'px';
           }
+          if(chartId == 9){
+            let transformedData :any =[];
+            let headers: string[] = [];
+  
+           let columnKeys = sheet.pivotData?.pivotColData?.map((col: any) => col.column); 
+           let rowKeys = sheet.pivotData?.pivotRowData?.map((row: any) => row.col);
+          let valueKeys = sheet.pivotData?.pivotMeasureData?.map((col:any) =>col.col)
+          sheet.pivotData?.pivotColData?.forEach((colObj: any) => {
+            headers.push(colObj.column);
+          });
+      
+          sheet.pivotData?.pivotRowData?.forEach((rowObj: any) => {
+            headers.push(rowObj.col);
+          });
+          sheet.pivotData?.pivotMeasureData?.forEach((colObj: any) => {
+            headers.push(colObj.col);
+          });
+      
+          transformedData.push(headers); 
+          // let numRows = sheet.pivotData?.pivotColData[0]?.result_data.length;
+          let numRows = 0;
+          if (sheet.pivotData?.pivotColData?.length > 0) {
+              numRows = sheet.pivotData.pivotColData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotRowData?.length > 0) {
+              numRows = sheet.pivotData.pivotRowData[0]?.result_data?.length || 0;
+          } else if (sheet.pivotData?.pivotMeasureData?.length > 0) {
+              numRows = sheet.pivotData.pivotMeasureData[0]?.result_data?.length || 0;
+          }
+          for (let i = 0; i < numRows; i++) {
+            let rowArray: any[] = []; 
+            sheet.pivotData?.pivotColData.forEach((colObj: any) => {
+              rowArray.push(colObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotRowData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+            sheet.pivotData?.pivotMeasureData.forEach((rowObj: any) => {
+              rowArray.push(rowObj.result_data[i]);
+            });
+  
+            transformedData.push(rowArray);
+          }
+          sheet.transformedData = transformedData;
+          sheet.columnKeys = columnKeys;
+          sheet.rowKeys = rowKeys;
+          sheet.valueKeys = valueKeys;
+            setTimeout(() => {
+            // if (this.pivotContainer && this.pivotContainer.nativeElement) {
+              const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+              if (pivotTables.length !== this.pivotContainers.length) {
+                console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
+              }
+              this.pivotContainers.forEach((pivotContainer, index) => {
+              if (pivotContainer && pivotContainer.nativeElement) {
+                const pivotData = pivotTables[index]; // Get the corresponding pivot data
+
+                ($(pivotContainer.nativeElement) as any).pivot(pivotData['transformedData'], { // ✅ Use pivot-specific data
+                  rows: pivotData['columnKeys'],  
+                  cols: pivotData['valueKeys'], 
+                      aggregator: $.pivotUtilities.aggregators["Sum"](pivotData['rowKeys']),
+                      rendererName: "Table"
+                    });
+            }   
+          });     
+          }, 1000);
+        }
           if(chartId == 1){
             if(sheet?.tableData?.tableItemsPerPage){
               sheet.tableData.tableItemsPerPage = 10;

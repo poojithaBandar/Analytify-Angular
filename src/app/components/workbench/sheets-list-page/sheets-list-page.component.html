@@ -278,7 +278,7 @@
                             <span class="fw-semibold fs-14">Database Name: </span>
                         </div>
                         <div class="col-md-6">
-                            <span class="fs-14" [ngbTooltip]="sheets.database_name.length > 13 ? sheets.database_name : null">  {{ sheets.database_name.length > 13 ? (sheets.database_name | slice: 0: 13) + '...' : sheets.database_name }}</span>
+                            <span class="fs-14" [ngbTooltip]="sheets?.database_name?.length > 13 ? sheets?.database_name : null">  {{ sheets.database_name?.length > 13 ? (sheets.database_name | slice: 0: 13) + '...' : sheets.database_name }}</span>
                         </div>
                     </div>
                     <div class="row">
