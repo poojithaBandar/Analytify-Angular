@@ -240,7 +240,8 @@ button.viewQueryImg {  border: none;  background: none;}
 .justify-top  { padding: 5px 13px; margin-left: 11px; border: 1px solid #d6d6d6; border-radius: 6px; cursor: pointer; margin-bottom: 20px;}
 .resetColorButton{ height: 20px; width: 50px; background-color: var(--primary-color);border-radius: 5px; border: none; color: white;}
 .chart-container { width: 100%; height: 100% !important;}
-.aggregation-select{ background-color: var(--primary-color);}
+.aggregation-select{ background-color: var(--primary-color); color: #fff;}
+.aggregation-select:hover { color: #000; }
 .Semantic-layer-card { min-width: 600px;  max-width: 1000px;}
 .query-text { height: 250px; overflow-y: auto; outline: none; border: 1px solid #edebeb; border-radius: 5px; }
 .description-text{ overflow-y: auto;  height: 250px; }
@@ -369,6 +370,7 @@ label { font-size: 12px; }
 .number-formatting{ border: 1px solid #ccc;  padding: 10px;  width: 170px; }
 .number-formatting input { width: 100%; padding: 5px; margin-top: 1px; }
 .w-90 { width: 100% !important; }
+.Aggregation-select-padding{ padding: 12px !important;}
 }
 
 @media ( 1280px <= width <= 1570px) {

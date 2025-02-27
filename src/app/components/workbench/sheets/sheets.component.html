@@ -29,7 +29,7 @@
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
                                 <div class="" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
-                                <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
+                                <a class="dropdown-item btn-primary-light" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
                                 <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
                                     <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
                                         <div cdkDropList cdkDropListOrientation="horizontal" class="form-control calculated-parent-card" 
@@ -281,7 +281,7 @@
                                                             <button
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
-                                                            <button class="btn btn-primary mt-0"
+                                                            <button class="btn btn-secondary mt-0"
                                                                 (click)="isEditCalculatedField = false;level1.close();level2.close();calculationfieldid.hidden = true">Close </button>
                                                         </div>
                                                 </div>
@@ -314,7 +314,7 @@
                             <div  class="menu-item mb-1">
                                 
                             
-                            <div class="menu-title" class="example-box bg-light border w-100 menu-title-font-weight"  (click)="toggleSubMenu(columns)">
+                            <div class="menu-title" class="example-box bg-light border w-100 menu-title-font-weight py-3"  (click)="toggleSubMenu(columns)">
                                 <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                     {{columns.table_alias}} </span>
 
@@ -344,8 +344,8 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
-                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,dimensions)"> Apply Filters </button>
-                                            <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
+                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                            <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                         </div>
                                     </div>
                                   </div>
@@ -369,8 +369,8 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                             <div class="dropdown-menu SelectDropDownCard" ngbDropdownMenu>
-                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </a>
-                                                <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                <a *ngIf="!filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </a>
+                                                <a *ngIf="filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                             </div>
                                         </div>
                                       </div>
@@ -383,7 +383,7 @@
                             <div  class="menu-item mb-1">
                                 
                             
-                                <div class="menu-title" class="example-box border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
+                                <div class="menu-title" class="example-box border w-100 bg-light py-3" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
                                     <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                         Calculated Fields </span>
     
@@ -408,10 +408,10 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
-                                                    <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
-                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
-                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                    <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
+                                                    <a class="dropdown-item btn-secondary-light border" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
                                                 </div>
                                             </div>
                                           </div>

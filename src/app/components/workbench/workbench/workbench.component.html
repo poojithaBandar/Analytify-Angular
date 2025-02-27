@@ -164,7 +164,7 @@
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="searchDbConnectionList()">
             <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" (click)="searchDbConnectionList()" id="button-addon2"><i class="fe fe-search "></i></button>
             
-            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
+            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary me-2 p-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
             (btnClickEvent)="routeNewDatabase()"></app-insights-button>
             <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" class="btn btn-primary" type="button" >Select & Move</button>
 
