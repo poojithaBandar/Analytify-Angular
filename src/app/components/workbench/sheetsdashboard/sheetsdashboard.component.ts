@@ -3454,6 +3454,7 @@ clearAllFilters(): void {
 
 setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boolean, isDrillDown : boolean, isDrillThrough : boolean, drillThroughSheetId: any, isLiveReloadData : boolean,liveSheetIndex:any){
   this.dashboard.forEach((item1:any) => {
+    if(item1.sheetId){
     if((((item1.sheetId == item.sheet_id || item1.sheetId == item.sheetId) && (isFilter || isDrillDown)) || (isDrillThrough && item1.sheetId == drillThroughSheetId))){
       if(item.chart_id == '1'){//table
         if(!item1.originalData && !isLiveReloadData){
@@ -4077,6 +4078,7 @@ setDashboardSheetData(item:any , isFilter : boolean , onApplyFilterClick : boole
 
       console.log('filtered dashboard-data',item1)
     }
+  }
 })
 if(isLiveReloadData && liveSheetIndex == this.dashboard.length-1){
   this.updateDashboard(isLiveReloadData);
