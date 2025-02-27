@@ -119,6 +119,7 @@ export class WorkbenchComponent implements OnInit{
         this.viewNewDbs = true;
         this.databaseconnectionsList = false;
         this.isGoogleSheetsPage = false;
+        this.primaryHierachyId = +atob(route.snapshot.params['id']);
       }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
@@ -546,7 +547,13 @@ export class WorkbenchComponent implements OnInit{
               this.modalService.dismissAll();
               this.openShopifyForm = false;
               const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
@@ -573,7 +580,13 @@ export class WorkbenchComponent implements OnInit{
               this.modalService.dismissAll();
               this.openConnectWiseForm = false;
               const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
@@ -599,7 +612,13 @@ export class WorkbenchComponent implements OnInit{
               this.modalService.dismissAll();
               this.openHaloPSAForm = false;
               const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
@@ -870,7 +889,7 @@ export class WorkbenchComponent implements OnInit{
               this.fileId=responce.hierarchy_id
               const encodedId = btoa(this.fileId.toString());
               if(this.iscrossDbSelect){
-                this.selectedHirchyIdCrsDb = this.databaseId
+                this.selectedHirchyIdCrsDb = this.fileId
                 this.connectCrossDbs();
               }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
@@ -914,7 +933,7 @@ export class WorkbenchComponent implements OnInit{
                 this.fileId=responce.hierarchy_id
                 const encodedId = btoa(this.fileId.toString());
                 if(this.iscrossDbSelect){
-                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.selectedHirchyIdCrsDb = this.fileId
                   this.connectCrossDbs();
                 }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);

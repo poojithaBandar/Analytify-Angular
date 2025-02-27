@@ -412,7 +412,11 @@ getSchemaTablesFromConnectedDb(){
   //  this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas
    console.log('filteredscemas',this.filteredSchematableList)
-       this.databaseName = data[0].database.display_name;
+   if(data[0].is_cross_db){
+       this.databaseName = data[0]?.display_name +"+" +data[1]?.display_name;
+   }else{
+    this.databaseName = data[0]?.display_name;
+   }
         // this.hostName = data.database.hostname;
         // this.saveQueryName = data.queryset_name;
     console.log(data)
