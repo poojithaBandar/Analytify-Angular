@@ -148,7 +148,6 @@ export class WorkbenchComponent implements OnInit{
     PostGrePassword = '';
     OracleServiceName = '';
     displayName ='';
-    clientId = '';
     companyId = '';
     siteURL = '';
     siteURLPSA = '';
@@ -168,7 +167,6 @@ export class WorkbenchComponent implements OnInit{
     this.OracleServiceName = '';
     this.displayName ='';
     this.path='';
-    this.clientId = '';
     this.privateKey = '';
     this.publicKey = '';
     this.siteURL = '';
@@ -291,7 +289,6 @@ export class WorkbenchComponent implements OnInit{
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
-        "client_id": this.clientId,
         "display_name": this.displayName,
         "hierarchy_id":this.databaseId
     }
@@ -512,13 +509,7 @@ export class WorkbenchComponent implements OnInit{
         this.publicKeyError = true;
       }
     }
-    clientIdError(){
-      if(this.clientId){
-        this.clientIDError = false;
-      }else{
-        this.clientIDError = true;
-      }
-    }
+
     shopifyapiTokenError(){
       if(this.shopifyToken){
         this.shopifyApiTokenError = false;
@@ -569,7 +560,6 @@ export class WorkbenchComponent implements OnInit{
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
-        "client_id": this.clientId,
         "display_name": this.displayName
     }
       this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
@@ -1179,7 +1169,6 @@ connectGoogleSheets(){
         this.siteURL = editData.site_url;
         this.publicKey = editData.public_key;
         this.privateKey = editData.private_key;
-        this.clientId = editData.client_id;
         this.displayName = editData.display_name;
     } else if (this.databaseType == "halops") {
       this.siteURLPSA = editData.site_url;
@@ -1317,7 +1306,6 @@ connectGoogleSheets(){
   this.OracleServiceName = '';
   this.displayName ='';
   this.fileData = '';
-  this.clientId = '';
   this.privateKey = '';
   this.publicKey = '';
   this.siteURL = '';
@@ -1332,7 +1320,6 @@ connectGoogleSheets(){
   displayNameError:boolean = false;
   passwordError:boolean = false;
   pathError:boolean = false;
-  clientIDError:boolean = false;
   siteURLError:boolean = false;
   siteURLErrorPSA:boolean = false;
   clientIDPSAError:boolean = false;
