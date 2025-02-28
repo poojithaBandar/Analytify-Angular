@@ -98,6 +98,12 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/get_file/`+id+'/'+this.accessToken);
   }
+  //crossDb
+  crossDbConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken,obj);
+  }
 
   //Quickbooks
   connectQuickBooks(){
@@ -166,7 +172,12 @@ export class WorkbenchService {
   getSchemaTablesFromConnectedDb(id:any,obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken+'/'+id,obj)
+    return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken,obj)
+  }
+  buildRelation(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/crossdb_relation/`+this.accessToken,obj)
   }
   getColumnsData(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );

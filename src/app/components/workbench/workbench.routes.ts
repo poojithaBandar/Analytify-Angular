@@ -29,13 +29,13 @@ export const admin: Routes = [
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
       {
-        path: 'datasources/crossdatabase/viewconnection:id',
+        path: 'datasources/crossdatabase/viewconnection/:id',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
       {
-        path: 'datasources/crossdatabase/newconnection:id',
+        path: 'datasources/crossdatabase/newconnection/:id',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
@@ -300,8 +300,14 @@ export const admin: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),
-      }
+      },
 
+      {
+        path: 'update-password',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
+      },
     ]
   }
  ];
