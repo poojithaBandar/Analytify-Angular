@@ -827,4 +827,17 @@ deleteUser(id:any){
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/file_append/`+this.accessToken,object);
     }
+
+    //data transformation
+    getTablesForDataTransformation(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/Database_tables/`+this.accessToken,object);
+    }
+
+    setTransformations(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/Database_Transformation/`+this.accessToken,object);
+    }
 }

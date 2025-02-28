@@ -270,7 +270,8 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.confirmPopupForDataTransformation(obj, encodedId);
+                  // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -424,7 +425,8 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.confirmPopupForDataTransformation(obj, encodedId);
+                  // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -642,7 +644,8 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.confirmPopupForDataTransformation(obj, encodedId);
+                  // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -682,7 +685,8 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.confirmPopupForDataTransformation(obj, encodedId);
+                  // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -721,7 +725,8 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.confirmPopupForDataTransformation(obj, encodedId);
+                  // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -760,7 +765,8 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.confirmPopupForDataTransformation(obj, encodedId);
+                  // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -795,7 +801,8 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                this.confirmPopupForDataTransformation(obj, encodedId);
+                // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
               }
             },
             error: (error) => {
@@ -833,7 +840,8 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.confirmPopupForDataTransformation('sqlite', encodedId);
+                  // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -1540,5 +1548,25 @@ connectGoogleSheets(){
         this.cd.detectChanges();
       }
     })
+  }
+
+  confirmPopupForDataTransformation(dbDetails:any, encodedId:string){
+    Swal.fire({
+      position: "center",
+      icon: "question",
+      title: "Do you want to do transformations on the data?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Skip',
+      cancelButtonText: 'Data Transformation',
+    }).then((result)=>{
+      if(result.isConfirmed){
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+      } else{
+        // let encodedObject = btoa(JSON.stringify(dbDetails).toString());
+        let object = JSON.stringify(dbDetails);
+        this.router.navigate(['/analytify/databaseConnection/dataTransformation/'+object]);
+      }
+    });
   }
 }
