@@ -31,10 +31,6 @@
                           <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
                           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                       </div>
-                      <div class="mb-2">
-                        <label [ngClass]="{'error-label': clientIDError}" class="col-form-label">Client Id <span class="text-danger ms-1" >*</span></label>
-                        <input [ngClass]="{'error-input': clientIDError}" type="text" class="form-control" [(ngModel)]="clientId" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdError()">
-                      </div>
               </form>
             } @else if(databaseType == 'halops') {
               <form>
@@ -127,7 +123,7 @@
           <div class="modal-footer">
             @if(databaseType == 'connectwise') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">Update</button>
       
             } @else if(databaseType == 'halops') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
@@ -661,13 +657,9 @@
                                       <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
                                       <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                                   </div>
-                                  <div class="mb-4">
-                                    <label [ngClass]="{'error-label': clientIDError}" class="col-form-label">Client Id <span class="text-danger ms-1" >*</span></label>
-                                    <input [ngClass]="{'error-input': clientIDError}" type="text" class="form-control" [(ngModel)]="clientId" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdError()">
-                                  </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
+                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
                       </div>
