@@ -1411,10 +1411,11 @@
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                    <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
+                                    <!-- <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
-                                    </app-insights-button>
+                                    </app-insights-button> -->
+                                    <button class="viewQueryImg" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
                                 <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             </div>
@@ -2061,7 +2062,8 @@
                                             <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary " [disabled]="!retriveDataSheet_id" (click)="gotoDashboard(); modal.close('Save click')"> New Dashboard</button>
+                                    <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary'" [previledgeId]="34" [isBtn]="true"
+                                    (btnClickEvent)="gotoDashboard();modal.close('Save click')" [gotoSheetButton]="!retriveDataSheet_id" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
                                 </div>
                             
                             
