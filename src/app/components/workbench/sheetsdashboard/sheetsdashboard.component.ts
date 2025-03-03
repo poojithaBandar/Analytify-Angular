@@ -194,7 +194,7 @@ export class SheetsdashboardComponent {
   drillThroughQuerySetId : any[] = [];
   dashboardActionsList : any[] = [];
   actionName = '';
-  sourceSheetList: any[] = [];
+  sourceSheetList: any = {};
   targetSheetList : any[] = [];
   isAllTargetSheetsSelected : boolean = false;
   editActions : boolean = false;
@@ -5509,7 +5509,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
     }
   }
   getSheetsForActions(){
-    this.sourceSheetList = [];
+    this.sourceSheetList = {};
     this.targetSheetList = [];
     this.sourceSheetId = 0;
     this.targetSheetIds = [];
@@ -5534,18 +5534,40 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       }
     })
   }
-  getTargetSheetsList(){
-    this.targetSheetList =this.sourceSheetList.map(sheet => ({
-      ...sheet,
-      selected: false,
-    })).filter(sheet => sheet.id != this.sourceSheetId);
-    console.log('source:',this.sourceSheetList, 'target: ',this.targetSheetList);
+  getSheetCategories(): string[] {
+    return Object.keys(this.sourceSheetList);
   }
+  // getTargetSheetsList(){
+  //   this.targetSheetList =this.sourceSheetList.map(sheet => ({
+  //     ...sheet,
+  //     selected: false,
+  //   })).filter(sheet => sheet.id != this.sourceSheetId);
+  //   console.log('source:',this.sourceSheetList, 'target: ',this.targetSheetList);
+  // }
+  getTargetSheetsList() {
+    this.targetSheetList = [];
+    this.isAllTargetSheetsSelected = false;
+    const sourceCategory = Object.keys(this.sourceSheetList);
+    sourceCategory.forEach((category: any) => {
+      this.sourceSheetList[category].forEach((sheet: any) => {
+        if (sheet.sheet_id == this.sourceSheetId) {
+          this.targetSheetList = this.sourceSheetList[category].filter((sheet: any) => sheet.sheet_id != this.sourceSheetId)
+            .map((sheet: any) => ({
+              ...sheet,
+              selected: false,
+            }));
+        }
+      })
+    })
+
+    console.log("Target Sheets:", this.targetSheetList);
+  }
+  
   updateSelectedSheets() {
     this.targetSheetIds = [];
     const selectedSheets = this.targetSheetList.filter(sheet => sheet.selected);
     selectedSheets.forEach((sheet:any)=>{
-      this.targetSheetIds.push(sheet.id);
+      this.targetSheetIds.push(sheet.sheet_id);
     });
     this.isAllTargetSheetsSelected = this.targetSheetList.length === selectedSheets.length;
     console.log('Selected Sheets:', selectedSheets,this.targetSheetIds);
@@ -5642,26 +5664,48 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             })
           }
         });
-        data.main_sheet_data.forEach((sheet:any)=>{
-          let object = {
-            id : sheet.sheet_id,
-            name : sheet.sheet_name
-          }
-          this.sourceSheetList.push(object);
-          if(sheet.selected){
-            this.sourceSheetId = sheet.sheet_id;
-          }
-        });
-        data.target_sheet_data.forEach((sheet:any)=>{
-          if(sheet.sheet_id != this.sourceSheetId){
-            let object = {
-              id : sheet.sheet_id,
-              name : sheet.sheet_name,
-              selected : sheet.selected
+
+        const sourceCategory = Object.keys(data.main_sheet_data);
+        let selectedSourceCategory = '';
+        sourceCategory.forEach((category: any) => {
+          data.main_sheet_data[category].forEach((sheet: any) => {
+            if(sheet.selected){
+              selectedSourceCategory = category;
+              this.sourceSheetId = sheet.sheet_id;
             }
-            this.targetSheetList.push(object);
-          }
+          });
         });
+
+        this.sourceSheetList = data.main_sheet_data;
+        let updatedSourceSheetList: any = {};
+        Object.keys(this.sourceSheetList).forEach((category: any) => {
+          updatedSourceSheetList[category] = this.sourceSheetList[category].map(({ selected, ...rest }: any) => rest);
+        });
+        this.sourceSheetList = updatedSourceSheetList;
+
+        data.target_sheet_data[selectedSourceCategory].forEach((sheet:any)=>{
+          if(sheet.sheet_id != this.sourceSheetId){
+            this.targetSheetList.push(sheet);
+          }
+        })
+
+        // Object.keys(data.main_sheet_data).forEach((sheet:any)=>{
+          
+        //   this.sourceSheetList.push(object);
+        //   if(sheet.selected){
+        //     this.sourceSheetId = sheet.sheet_id;
+        //   }
+        // });
+        // data.target_sheet_data.forEach((sheet:any)=>{
+        //   if(sheet.sheet_id != this.sourceSheetId){
+        //     let object = {
+        //       id : sheet.sheet_id,
+        //       name : sheet.sheet_name,
+        //       selected : sheet.selected
+        //     }
+        //     this.targetSheetList.push(object);
+        //   }
+        // });
         this.updateSelectedSheets();
         this.onDatabaseChange();
       },
@@ -5763,7 +5807,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
       sheet.selected = false;
     });
     this.targetSheetIds = [];
-    this.sourceSheetList = [];
+    this.sourceSheetList = {};
     this.targetSheetList = [];
     this.actionId = '';
     this.drillThroughDatabaseName = '';
