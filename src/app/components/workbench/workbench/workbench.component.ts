@@ -85,12 +85,18 @@ export class WorkbenchComponent implements OnInit{
 
   iscrossDbSelect = false;
   primaryHierachyId:any;
+  canUploadExcel = false;
+  canUploadCsv = false;
   schemaList: any[] = [];
   selectedSchema : string = 'public';
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
+
+    this.canUploadExcel = this.viewTemplateService.canUploadExcel();
+    this.canUploadCsv = this.viewTemplateService.canUploadCsv();
+
     const currentUrl = this.router.url; 
     if (currentUrl.startsWith('/analytify/datasources/')) {
       if (currentUrl.includes('view-connections')) {

@@ -25,6 +25,7 @@ import { LoaderService } from '../../../shared/services/loader.service';
 import _ from 'lodash';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { ViewTemplateDrivenService } from '../view-template-driven.service';
 const EXCEL_TYPE =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 @Component({
@@ -153,9 +154,14 @@ export class DatabaseComponent {
   crossDbId= '';
   crossDbFilteredTablesT1: any[] = [];
   originalCrossDbTablesT1: any;
-
-  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService){
+  dragTablestoSemanticLayer = false;
+  deleteTablesFromSemanticLayer = false;
+  canSearchTablesInSemanticLayer = false;
+  constructor( private workbechService:WorkbenchService,private router:Router,private route:ActivatedRoute,private modalService: NgbModal,private toasterService:ToastrService,private loaderService:LoaderService,private templateService:ViewTemplateDrivenService){
     const currentUrl = this.router.url;
+    this.dragTablestoSemanticLayer = this.templateService.dragTablesToSemanticLayer();
+    this.deleteTablesFromSemanticLayer = this.templateService.canDeleteTablesFromSemanticLayer();
+    this.canSearchTablesInSemanticLayer = this.templateService.canSearchTablesInSemanticLayer();
     if(currentUrl.includes('/analytify/database-connection/tables/')){
       this.fromDatabasId=true
       this.databaseId = +atob(route.snapshot.params['id']);

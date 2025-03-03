@@ -20,7 +20,9 @@
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="userName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchUserList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary rounded-1" (click)="addUserRoute()"><i class="fa fa-plus"></i> Add User</button>
+            <app-insights-button [classesList]="'btn btn-primary rounded-1'" [buttonName]="' Add User'" [previledgeId]="62" [isBtn]="true"
+              (btnClickEvent)="addUserRoute();" [faIconList]="'fa fa-plus'" [isIcon]="true">
+            </app-insights-button>
           </div>
         </div>
     </div>
