@@ -68,7 +68,18 @@ h6.dropdown-header { font-weight: 700; background-color: aliceblue; }
 .right-card.expanded {
   // flex: 2; /* Adjust this value to control how much the right card expands */
 max-width: 1226px; min-width: 1226px; margin:  auto 0; }
-button.TextTransform { top: 181px; position: absolute; transform: translate(0%, 0%) rotate(270deg); left: -119px;  padding: 17px 90px; border: none;  border-bottom: 1px solid #9b9999; border-radius: 5px 0px 0px 0px;  font-family: sans-serif; }
+button.TextTransform { 
+      top: 181px;
+      position: absolute;
+      transform: translate(0%, 0%) rotate(270deg);
+      left: -119px;
+      padding: 17px 96px;
+      border: none;
+      border-bottom: 1px solid #9b9999;
+      border-radius: 5px 0px 0px 0px;
+      letter-spacing: 1px;
+      font-family: sans-serif;
+  }
 .drpdwnhgt{ height: 220px; overflow-y: auto; background-color: #ffffff !important; }
 .table-left{ margin-left: 48px }
 .table-right{ margin-left: 0px!important; }

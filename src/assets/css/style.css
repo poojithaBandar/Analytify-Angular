@@ -55421,3 +55421,45 @@ p {
 button.btn {
   font-size: 13px;
 }
+
+.app-header { padding-inline-start: 13rem ;}
+.app-content { margin-inline-start: 13rem ; }
+
+ /* for 90% Resolution */
+ @media ( 1420px <= width <= 1560px) {
+  .app-header { padding-inline-start: 11rem; }
+  .app-content { margin-inline-start: 11rem;  }
+}
+
+ /* for 100% Resolution */
+ @media ( 1280px <= width <= 1420px) {
+  .app-header { padding-inline-start: 10rem;}
+  .app-content { margin-inline-start: 10rem;  }
+}
+
+    /* for 110% Resolution  */
+    @media ( 1163px <= width <= 1279px) {
+      .app-header {
+          padding-inline-start: 11rem;
+      }
+      .app-content {
+          margin-inline-start: 11rem;
+          padding: 0 0.5rem;
+      }
+    }
+
+    /* for 125% Resolution */
+    @media ( 1024px <= width <= 1163px) {
+      .app-header {
+          padding-inline-start: 10rem;
+      }
+      .app-content {
+          margin-inline-start: 10rem;
+          padding: 0 0.5rem;
+      }
+    }
+
+    .TopHeader {
+      position: relative;
+      top: 135px;
+    }

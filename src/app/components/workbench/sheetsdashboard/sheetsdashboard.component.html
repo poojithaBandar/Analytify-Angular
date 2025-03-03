@@ -21,7 +21,7 @@
   </div> -->
 
   @if(isSheetsView){
-    <div class="main-container container-fluid">
+    <div class="main-container container-fluid TopHeader">
       <div class="row" class="card card-padding-top">
         <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
           <div class="d-flex justify-content-between p-2">
@@ -31,7 +31,7 @@
               <div class="input-group">
                 <input type="text" class="form-control border-end-0 " [(ngModel)]="searchSheets" (keydown.enter)="fetchSheetsListSearch()" placeholder="Search" >
                 <button class="btn btn-primary border me-2  search-icon-border-radius" (click)="fetchSheetsListSearch()"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
-                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
+                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard();pivotReinitialize()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
                 <button *ngIf="panelscheckbox?.length<1" type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="sheetsRoute()" ><i class="fa fa-plus"></i> New Sheet</button>
                 <button type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="isSheetsView = false" >Close</button>
 
@@ -142,10 +142,10 @@
     </div>
   } @else {
     
-    <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
+    <div class="main-container container-fluid TopHeader" [ngClass]="{ 'public-mtop': isPublicUrl}">
       <div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
 
-    <div class="col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
+    <div class="col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card PositionSticky" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }" class="card p-0" >
         <!-- <div class="card mb-0"> -->
           <!-- <div class="card-body p-0"> -->
@@ -1255,71 +1255,67 @@
                     <i [class]="item['kpiIconsArray']?.kpiIcon" [style.font-size]="item['kpiIconsArray']?.kpiIconSize + 'px'"
                       [style.color]="item['kpiIconsArray']?.kpiIconColor"
                       [ngStyle]="getIconPositionStyles(item['kpiIconsArray']?.kpiIconPosition)" style="position: absolute;"></i>
-                  </div>
-                  }
-                  <div *ngIf="item['chartType'] === 'Table'">
-                    <div *ngIf="item['chartType'] === 'Table'" class="table-responsive">
-                      <table class="table border text-nowrap text-md-nowrap mb-0">
-                        <thead>
-                          <tr>
-                            @for(column of item.tableData?.headers;track column){
-                            <th
-                              [ngStyle]="{ 'font-family': item['customizeOptions']?.headerFontFamily, 'font-size': item['customizeOptions']?.headerFontSize, 'text-align': item['customizeOptions']?.headerFontAlignment, 
-                                      'font-weight': item['customizeOptions']?.headerFontWeight, 'color': item['customizeOptions']?.headerFontColor, 'font-style': item['customizeOptions']?.headerFontStyle, 'text-decoration': item['customizeOptions']?.headerFontDecoration }">
-                              {{ column }}
-                              <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
-                                          <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
-                                            aria-haspopup="true" aria-expanded="false" class=""><i
-                                              class="fe fe-more-vertical fs-18 text-body-secondary"></i>
-                                          </a>
-                                          <div class="dropdown-menu" ngbDropdownMenu>
-                                            <button class="dropdown-item" (click)="tableColumnSort('default', column)">Default</button>
-                                            <button class="dropdown-item" (click)="tableColumnSort('ascending', column)">Ascending</button>
-                                            <button class="dropdown-item" (click)="tableColumnSort('descending', column)">Descending</button>
-                                          </div>
-                                        </span> -->
-                            </th>
-                            }
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
-                          <tr
-                            *ngFor="let row of (item?.tableData?.rows || [] | paginate: {itemsPerPage:item?.tableData?.tableItemsPerPage, currentPage:item?.tableData?.tablePage,totalItems:item?.tableData?.tableTotalItems ,id: item.sheetId + 'page'});let i = index"
-                            [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
-                            [ngStyle]="{ 'background-color': (i % 2 === 0 ? item?.tableData?.color1 : item?.tableData?.color2) }">
-                            <!-- @for(column of item.tableData?.headers;track column){
-                                  <td>{{ row[column] }}</td>
-                                  } -->
-                            <td *ngFor="let column of item.tableData?.headers"
-                              [ngStyle]="{ 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,'font-style': item['customizeOptions']?.tableDataFontStyle,
-                                  'text-decoration': item['customizeOptions']?.tableDataFontDecoration, 'text-align': item['customizeOptions']?.tableDataFontAlignment, 'color': item['customizeOptions']?.tableDataFontColor, 'font-weight': item['customizeOptions']?.tableDataFontWeight }">
-                              {{ row[column] | formatMeasure : item?.numberFormat?.decimalPlaces : item?.numberFormat?.prefix :
-                              item?.numberFormat?.suffix : item?.numberFormat?.displayUnits }}
-                            </td>
-                          </tr>
-            
-                        </tbody>
-                      </table>
-                      <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'"
-                        (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,0)">
-                      </pagination-controls>
-                      <div class="pagination-count">
-                        <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage"
-                          (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,0)"
-                          (mousedown)="stopDragging($event)" class="form-control cursor form-control-pad">
-                          <option value="10"> 10</option>
-                          <option value="50"> 50</option>
-                          <option value="100"> 100</option>
-                          <option value="500"> 500</option>
-                          <option value="1000"> 1000</option>
-            
-                        </select>
-                      </div>
-                    </div>
-                    <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
-                  </div>
-                  @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
+                </div>
+              }
+              <div *ngIf="item['chartType'] === 'Table'">
+                <div *ngIf="item['chartType'] === 'Table'" class="table-responsive" >
+                  <table class="table border text-nowrap text-md-nowrap mb-0">
+                      <thead>
+                        <tr>
+                          @for(column of item.tableData?.headers;track column){
+                          <th [ngStyle]="{ 'font-family': item['customizeOptions']?.headerFontFamily, 'font-size': item['customizeOptions']?.headerFontSize, 'text-align': item['customizeOptions']?.headerFontAlignment, 
+                          'font-weight': item['customizeOptions']?.headerFontWeight, 'color': item['customizeOptions']?.headerFontColor, 'font-style': item['customizeOptions']?.headerFontStyle, 'text-decoration': item['customizeOptions']?.headerFontDecoration }">{{ column }}
+                            <!-- <span class=" p-1" style="float: inline-end;" ngbDropdown>
+                              <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
+                                aria-haspopup="true" aria-expanded="false" class=""><i
+                                  class="fe fe-more-vertical fs-18 text-body-secondary"></i>
+                              </a>
+                              <div class="dropdown-menu" ngbDropdownMenu>
+                                <button class="dropdown-item" (click)="tableColumnSort('default', column)">Default</button>
+                                <button class="dropdown-item" (click)="tableColumnSort('ascending', column)">Ascending</button>
+                                <button class="dropdown-item" (click)="tableColumnSort('descending', column)">Descending</button>
+                              </div>
+                            </span> -->
+                          </th>
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
+                           <!-- @for(row of item.tableData?.rows;track row;let i = $index){ -->
+                    <tr *ngFor="let row of (item?.tableData?.rows || [] | paginate: {itemsPerPage:item?.tableData?.tableItemsPerPage, currentPage:item?.tableData?.tablePage,totalItems:item?.tableData?.tableTotalItems ,id: item.sheetId + 'page'});let i = index" 
+                    [ngClass]="item.tableData?.banding ? (i % 2 === 0 ? 'even-row' : 'odd-row') : ''"
+                    [ngStyle]="{ 'background-color': (i % 2 === 0 ? item?.tableData?.color1 : item?.tableData?.color2) }">
+                      <!-- @for(column of item.tableData?.headers;track column){
+                      <td>{{ row[column] }}</td>
+                      } -->
+                      <td *ngFor="let column of item.tableData?.headers" [ngStyle]="{ 'font-family': item['customizeOptions']?.tableDataFontFamily, 'font-size': item['customizeOptions']?.tableDataFontSize,'font-style': item['customizeOptions']?.tableDataFontStyle,
+                      'text-decoration': item['customizeOptions']?.tableDataFontDecoration, 'text-align': item['customizeOptions']?.tableDataFontAlignment, 'color': item['customizeOptions']?.tableDataFontColor, 'font-weight': item['customizeOptions']?.tableDataFontWeight }">
+                        {{ row[column] | formatMeasure : item?.numberFormat?.decimalPlaces : item?.numberFormat?.prefix : item?.numberFormat?.suffix : item?.numberFormat?.displayUnits }}
+                      </td>
+                    </tr>
+                  
+                      </tbody>
+                  </table>
+                  <pagination-controls previousLabel="Prev" nextLabel="Next" [id]="item.sheetId + 'page'" (pageChange)="isPublicUrl ? pageChangeTableDisplayPublic(item,($event)) : pageChangeTableDisplay(item,($event),false,0)"></pagination-controls>
+                  <div class="pagination-count">
+                    <select *ngIf="item?.tableData" [(ngModel)]="item.tableData!.tableItemsPerPage" (ngModelChange)="tableItemsPerPage = item.tableData!.tableItemsPerPage; item.tableData!.tablePage = 1; isPublicUrl ? pageChangeTableDisplayPublic(item,item?.tableData?.tablePage) : pageChangeTableDisplay(item,item?.tableData?.tablePage,false,0)" (mousedown)="stopDragging($event)"class="form-control cursor form-control-pad">
+                          <option  value="10"> 10</option>
+                          <option  value="50"> 50</option>
+                          <option  value="100"> 100</option>
+                          <option  value="500"> 500</option>
+                          <option  value="1000"> 1000</option>
+
+                    </select>
+                 </div>
+              </div>
+              <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
+              </div>
+              @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
+                <!-- <div [id]="'pivotTableContainer' + item.id" #pivotTableContainer></div> -->
+                <div #pivotTableContainer></div>
+              }
+              </div>
+              <!-- <div *ngIf="item['chartType'] === PIVOT">
                   <div id="pivotTableContainer" #pivotTableContainer></div>
             
                   }

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule } from '@angular/forms';
@@ -81,36 +81,64 @@ export class WorkbenchComponent implements OnInit{
   viewDatasourceList = false;
   isGoogleSheetsPage = false;
   selectedMicroSoftAuthType: string | null = null;
-  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,
+  selectedHirchyIdCrsDb:string | null = null;
+
+  iscrossDbSelect = false;
+  primaryHierachyId:any;
+  constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
     localStorage.setItem('customQuerySetId', '0');
     const currentUrl = this.router.url; 
-    if(currentUrl.includes('analytify/datasources/view-connections')){
-      this.databaseconnectionsList= true;  
-       this.viewNewDbs= false;
-       this.isGoogleSheetsPage = false;
-    } 
-    if(currentUrl.includes('analytify/datasources/new-connections')){
-      this.viewNewDbs = true;
-      this.databaseconnectionsList = false;
-      this.isGoogleSheetsPage = false;
-    }
-    if(currentUrl.includes('analytify/datasources/google-sheets')){
-      this.viewNewDbs = false;
-      this.databaseconnectionsList = false;
-      this.isGoogleSheetsPage = true;
-      let url = this.router.url;
-      console.log(url);
-      this.getGoogleSheetDetailsByUrl(url);
+    if (currentUrl.startsWith('/analytify/datasources/')) {
+      if (currentUrl.includes('view-connections')) {
+        this.databaseconnectionsList = true;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+        // this.iscrossDbSelect = false;
+      } else if (currentUrl.includes('new-connections')) {
+        this.viewNewDbs = true;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = false;
+        // this.iscrossDbSelect = false;
+      } else if (currentUrl.includes('google-sheets')) {
+        this.viewNewDbs = false;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = true;
+        this.iscrossDbSelect = false;
+        console.log(currentUrl);
+        this.getGoogleSheetDetailsByUrl(currentUrl);
+      }else if(currentUrl.includes('crossdatabase/viewconnection')){
+        this.iscrossDbSelect = true;
+        this.databaseconnectionsList = true;
+        this.viewNewDbs = false;
+        this.isGoogleSheetsPage = false;
+        this.primaryHierachyId = +atob(route.snapshot.params['id']);
+      }else if(currentUrl.includes('crossdatabase/newconnection')){
+        this.iscrossDbSelect = true;
+        this.viewNewDbs = true;
+        this.databaseconnectionsList = false;
+        this.isGoogleSheetsPage = false;
+        this.primaryHierachyId = +atob(route.snapshot.params['id']);
+      }
     }
     this.viewDatasourceList = this.viewTemplateService.viewDtabase();
   }
   routeNewDatabase(){
+    if(this.iscrossDbSelect){
+      const encodedId = btoa(this.primaryHierachyId.toString());
+      this.router.navigate(['analytify/datasources/crossdatabase/newconnection/'+encodedId])
+    }else{
     this.router.navigate(['analytify/datasources/new-connections'])
+    }
   }
   routeViewDatabase(){
-    this.router.navigate(['analytify/datasources/view-connections'])
+    if(this.iscrossDbSelect){
+      const encodedId = btoa(this.primaryHierachyId.toString());
+      this.router.navigate(['analytify/datasources/crossdatabase/viewconnection/'+encodedId])
+    }else{
+      this.router.navigate(['analytify/datasources/view-connections'])
+    }
   }
 
     postGreServerName = '';
@@ -120,7 +148,6 @@ export class WorkbenchComponent implements OnInit{
     PostGrePassword = '';
     OracleServiceName = '';
     displayName ='';
-    clientId = '';
     companyId = '';
     siteURL = '';
     siteURLPSA = '';
@@ -140,7 +167,6 @@ export class WorkbenchComponent implements OnInit{
     this.OracleServiceName = '';
     this.displayName ='';
     this.path='';
-    this.clientId = '';
     this.privateKey = '';
     this.publicKey = '';
     this.siteURL = '';
@@ -235,12 +261,17 @@ export class WorkbenchComponent implements OnInit{
               console.log(responce);
               console.log('tablelist',this.tableList)
               if(responce){
-                this.databaseName = responce.database.database_name
+                this.databaseName = responce.database.display_name
                 this.databaseId = responce.database?.hierarchy_id
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -258,7 +289,6 @@ export class WorkbenchComponent implements OnInit{
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
-        "client_id": this.clientId,
         "display_name": this.displayName,
         "hierarchy_id":this.databaseId
     }
@@ -390,7 +420,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openOracleForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -474,13 +509,7 @@ export class WorkbenchComponent implements OnInit{
         this.publicKeyError = true;
       }
     }
-    clientIdError(){
-      if(this.clientId){
-        this.clientIDError = false;
-      }else{
-        this.clientIDError = true;
-      }
-    }
+
     shopifyapiTokenError(){
       if(this.shopifyToken){
         this.shopifyApiTokenError = false;
@@ -509,7 +538,13 @@ export class WorkbenchComponent implements OnInit{
               this.modalService.dismissAll();
               this.openShopifyForm = false;
               const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
@@ -525,7 +560,6 @@ export class WorkbenchComponent implements OnInit{
         "site_url": this.siteURL,
         "public_key":this.publicKey,
         "private_key": this.privateKey,
-        "client_id": this.clientId,
         "display_name": this.displayName
     }
       this.workbechService.connectWiseConnection(obj).subscribe({next: (responce) => {
@@ -536,7 +570,13 @@ export class WorkbenchComponent implements OnInit{
               this.modalService.dismissAll();
               this.openConnectWiseForm = false;
               const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
@@ -562,7 +602,13 @@ export class WorkbenchComponent implements OnInit{
               this.modalService.dismissAll();
               this.openHaloPSAForm = false;
               const encodedId = btoa(this.databaseId.toString());
+              // this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.databaseId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
@@ -592,7 +638,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMySqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -627,7 +678,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMicrosoftSqlServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -661,7 +717,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openSnowflakeServerForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -695,7 +756,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.openMongoDbForm = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -763,7 +829,12 @@ export class WorkbenchComponent implements OnInit{
                 this.modalService.dismissAll();
                 this.ibmDb2Form = false;
                 const encodedId = btoa(this.databaseId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.databaseId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
@@ -792,6 +863,8 @@ export class WorkbenchComponent implements OnInit{
           this.replaceExcelOrCsvFile(event.target,database);
         } else if(type === 'upsert'){
           this.upsertExcelOrCsvFile(event.target,database);
+        } else if(type === 'append'){
+          this.appendExcelOrCsvFile(event.target,database);
         }
       } else{
         this.toasterservice.error('Not a supported file format. Please select an CSV file.','info',{ positionClass: 'toast-top-center'})
@@ -807,11 +880,18 @@ export class WorkbenchComponent implements OnInit{
               this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
               this.fileId=responce.hierarchy_id
               const encodedId = btoa(this.fileId.toString());
+              if(this.iscrossDbSelect){
+                this.selectedHirchyIdCrsDb = this.fileId
+                this.connectCrossDbs();
+              }else{
               this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+              }
             }
           },
           error: (error) => {
             console.log(error);
+            fileInput.value = '';
+            this.cd.detectChanges();
             this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
           },
           complete: () => {
@@ -831,6 +911,8 @@ export class WorkbenchComponent implements OnInit{
           this.replaceExcelOrCsvFile(event.target,database);
         } else if(type === 'upsert'){
           this.upsertExcelOrCsvFile(event.target,database);
+        }  else if(type === 'append'){
+          this.appendExcelOrCsvFile(event.target,database);
         }
       } else{
         this.toasterservice.error('Not a supported file format. Please select an Excel file.','info',{ positionClass: 'toast-top-center'})
@@ -846,11 +928,18 @@ export class WorkbenchComponent implements OnInit{
                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
                 this.fileId=responce.hierarchy_id
                 const encodedId = btoa(this.fileId.toString());
+                if(this.iscrossDbSelect){
+                  this.selectedHirchyIdCrsDb = this.fileId
+                  this.connectCrossDbs();
+                }else{
                 this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
               }
             },
             error: (error) => {
               console.log(error);
+              fileInput.value = '';
+              this.cd.detectChanges();
               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             },
             complete: () => {
@@ -1080,7 +1169,6 @@ connectGoogleSheets(){
         this.siteURL = editData.site_url;
         this.publicKey = editData.public_key;
         this.privateKey = editData.private_key;
-        this.clientId = editData.client_id;
         this.displayName = editData.display_name;
     } else if (this.databaseType == "halops") {
       this.siteURLPSA = editData.site_url;
@@ -1145,7 +1233,7 @@ connectGoogleSheets(){
     this.getDbConnectionList();
   }
   getDbConnectionList(){
-    const Obj ={
+    const Obj: { search?: any; page_no: number; page_count?: any; remove_hierarchy_id?: boolean } ={
       search : this.searchDbName,
       page_no:this.pageNo,
       page_count:this.itemsPerPage
@@ -1156,6 +1244,9 @@ connectGoogleSheets(){
     }
     if(Obj.page_count == undefined || Obj.page_count == null){
       delete Obj.page_count
+    }
+    if(this.iscrossDbSelect){
+      Obj.remove_hierarchy_id = this.primaryHierachyId
     }
     this.workbechService.getdatabaseConnectionsList(Obj).subscribe({
       next:(data)=>{
@@ -1176,15 +1267,17 @@ connectGoogleSheets(){
       }
     })
   }
-  getTablesFromConnectedDb(id:any){
+  getTablesFromConnectedDb(id:any,crsdbId:any){
     // if(dbId === null){
-    const encodedId = btoa(id.toString());
+    if(crsdbId){
+    const encodedId = btoa(crsdbId.toString());
     this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-    // }
-    // if(fileId === null){
-    //   const encodedId = btoa(dbId.toString());
-    //   this.router.navigate(['/insights/database-connection/tables/'+encodedId]);
-    //   }
+    }
+    else{
+      const encodedId = btoa(id.toString());
+    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]); 
+    }
+
 }
 
   onDeleteItem(index: number) {
@@ -1213,7 +1306,6 @@ connectGoogleSheets(){
   this.OracleServiceName = '';
   this.displayName ='';
   this.fileData = '';
-  this.clientId = '';
   this.privateKey = '';
   this.publicKey = '';
   this.siteURL = '';
@@ -1228,7 +1320,6 @@ connectGoogleSheets(){
   displayNameError:boolean = false;
   passwordError:boolean = false;
   pathError:boolean = false;
-  clientIDError:boolean = false;
   siteURLError:boolean = false;
   siteURLErrorPSA:boolean = false;
   clientIDPSAError:boolean = false;
@@ -1356,6 +1447,8 @@ connectGoogleSheets(){
        },
        error: (error) => {
         console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       },
       complete: () => {
@@ -1379,6 +1472,67 @@ connectGoogleSheets(){
        },
        error: (error) => {
         console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
+        this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+      },
+      complete: () => {
+        fileInput.value = '';
+        this.cd.detectChanges();
+      }
+    })
+  }
+
+  onSelectedHIDCrsDb(hId:any){
+    if (this.selectedHirchyIdCrsDb === hId) {
+      this.selectedHirchyIdCrsDb = null;  // Unselect if clicking the same one
+    } else {
+      this.selectedHirchyIdCrsDb = hId;  // Select new one
+    }
+    console.log(hId);
+  }
+  connectCrossDbs(){
+    const obj ={
+      hierarchy_ids:[this.primaryHierachyId,this.selectedHirchyIdCrsDb]
+    }
+    this.workbechService.crossDbConnection(obj).subscribe({
+      next:(data)=>{
+        console.log(data);
+        const encodedId = btoa(data[0].cross_db_id.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+       },
+      error:(error)=>{
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    })
+  }
+
+
+
+
+  appendExcelOrCsvFile(fileInput: any,database : any){
+    const formData: FormData = new FormData();
+    formData.append('file_path', this.fileData, this.fileData.name);
+    formData.append('file_type', database.database_type);
+    formData.append('hierarchy_id', database.hierarchy_id);
+    this.workbechService.appendExcelOrCsvFile(formData).subscribe({
+      next:(responce)=>{
+        console.log(responce);
+        this.toasterservice.success(responce.message,'success',{ positionClass: 'toast-top-right'});
+        this.fileId=database.hierarchy_id
+        const encodedId = btoa(this.fileId.toString());
+        this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+       },
+       error: (error) => {
+        console.log(error);
+        fileInput.value = '';
+        this.cd.detectChanges();
         this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
       },
       complete: () => {

@@ -29,6 +29,18 @@ export const admin: Routes = [
           import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
       },
       {
+        path: 'datasources/crossdatabase/viewconnection/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
+        path: 'datasources/crossdatabase/newconnection/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./workbench/workbench.component').then((m) => m.WorkbenchComponent),
+      },
+      {
         path: 'datasources/google-sheets',
         canActivate: [authGuard],
         loadComponent: () =>
@@ -282,7 +294,12 @@ export const admin: Routes = [
         loadComponent: () =>
           import('./configure/configure.component').then((m) => m.ConfigureComponent),
       },
-
+      {
+        path: 'update-password',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./update-password/update-password.component').then((m) => m.UpdatePasswordComponent),
+      },
     ]
   }
  ];
