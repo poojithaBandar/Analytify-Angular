@@ -22,15 +22,15 @@
             <div class="mb-0 br-0 pt-0 schema-table-height" >
                 <div class="mb-0 p-0 py-1 border-bottom-0">
                     <div class="input-group ">
-                        <input type="text" class="form-control border-end-0" placeholder="Search Tables"
-                            [(ngModel)]="searchTables" (keydown.enter)="getSchemaTablesFromConnectedDb()">
-                        <button type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()"
+                        <input type="text" class="form-control border-end-0" [placeholder]="canSearchTablesInSemanticLayer ? 'Search Tables' : 'Search disabled on this account'"
+                            [(ngModel)]="searchTables" (keydown.enter)="canSearchTablesInSemanticLayer ? getSchemaTablesFromConnectedDb() : null">
+                        <button [disabled]="!canSearchTablesInSemanticLayer" type="button" aria-label="button" (click)="getSchemaTablesFromConnectedDb()"
                             class="btn input-group-text btn-primary tx-fixed-white border-start-0">
                             <i class="fe fe-search" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-
+                
                 <div class="card-body p-0 overflow-auto">
                     <div ngbAccordion [closeOthers]="true" class="accordion" id="accordionExample">
                         <div *ngFor="let menu of schematableList; let i = index" ngbAccordionItem [collapsed]="i !== 0"
@@ -53,7 +53,7 @@
                                             [cdkDropListData]="menu.tables" [cdkDropListConnectedTo]="[destinationList]"
                                             (cdkDropListDropped)="drop($event)">
                                             <div *ngFor="let submenu of menu.tables"
-                                                class="sub-menu-item example-box subMenuFlex p-2 border rounded-3" cdkDrag>
+                                                class="sub-menu-item example-box subMenuFlex p-2 border rounded-3" cdkDrag [cdkDragDisabled]="!dragTablestoSemanticLayer">
                                                 <i class="fa fa-table table-icon-p"></i>
                                                 <span [ngbTooltip]="submenu.table.length > 15 ? submenu.table : null">{{submenu.table ? (submenu.table.length > 15 ? (submenu.table| slice:0:15)+'...':submenu.table) : ''}}</span>
                                             </div>
@@ -104,7 +104,7 @@
                                         <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto">{{item.alias | slice:0:16}}({{item.schema | slice:0:12}})
                                         <!-- <i class="ri-delete-bin-7-line"  data-bs-toggle="tooltip" (click)="onDeleteItem($index)" ngbTooltip="delete table"></i> -->
 
-                                        <a aria-label="anchor" (click)="onDeleteItem($index,item.alias)"
+                                        <a aria-label="anchor" (click)="onDeleteItem($index,item.alias)" [style.pointer-events]="deleteTablesFromSemanticLayer ? 'auto' : 'none'"
                                             class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                             <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                                         </a>
