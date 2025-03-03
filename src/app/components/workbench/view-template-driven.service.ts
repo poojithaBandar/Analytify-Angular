@@ -47,4 +47,28 @@ editDatasource(){
 editsheet(){
   return this.rolesprevilgeService.userHasPriviledge(18);
 }
+dragTablesToSemanticLayer(){
+  return this.rolesprevilgeService.userHasPriviledge(7);
+}
+canDeleteTablesFromSemanticLayer(){
+  return this.rolesprevilgeService.userHasPriviledge(9);
+}
+canSearchTablesInSemanticLayer(){
+  return this.rolesprevilgeService.userHasPriviledge(15);
+}
+canUploadExcel(){
+  return this.rolesprevilgeService.userHasPriviledge(67);
+}
+canUploadCsv(){
+  return this.rolesprevilgeService.userHasPriviledge(65);
+}
+canDownloadDashbaord(){
+  return this.rolesprevilgeService.userHasPriviledge(42);
+}
+canShareDashbaord(){
+  return this.rolesprevilgeService.userHasPriviledge(43);
+}
+canDeleteSheetInSheetComponent(){
+  return this.rolesprevilgeService.userHasPriviledge(19);
+}
 }

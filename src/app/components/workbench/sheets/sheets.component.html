@@ -2017,7 +2017,7 @@
                                 </li>
                             </div>
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0" data-bs-toggle="tab" role="tab"
+                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0 && !deleteSheetInSheetComponent" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
