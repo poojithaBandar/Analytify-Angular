@@ -387,7 +387,7 @@
                                             
                                             </ng-select>
                                             </div>
-                                            <div class="form-group p-1 mb-0">
+                                            <!-- <div class="form-group p-1 mb-0">
                                               <label class="form-label">Apply to Selected worksheets <i ngbTooltip="Confirm and apply the custom filter settings to the currently active worksheet for data manipulation." class="icon icon-info ms-1 cursor-pointer"></i></label>
                                               <div class="form body border p-2 rounded-2 Selected-worksheets-h">
 
@@ -405,9 +405,49 @@
                                                 </div>
                                               }
                                               </div>
+                                            </div> -->
+                                           
+                                            <div class="form-group p-1 mb-0">
+                                              <label class="form-label">
+                                                Apply to Selected Worksheets
+                                                <i ngbTooltip="Confirm and apply the custom filter settings to the currently active worksheet for data manipulation." 
+                                                   class="icon icon-info ms-1 cursor-pointer">
+                                                </i>
+                                              </label>
+                                            
+                                              <div class="form body border p-2 rounded-2 Selected-worksheets-h">
+                                                
+                                                <!-- Select All Checkbox -->
+                                                <div *ngIf="sheetsFilterNames?.length > 0" class="form-check">
+                                                  <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected" 
+                                                         (change)="toggleAllRows($event)" class="form-check-input">
+                                                  <label for="selectAll" class="form-check-label">Select All</label>
+                                                </div>
+                                            
+                                                <!-- (Parent Checkboxes) -->
+                                                <div *ngFor="let parent of sheetsFilterNames; let i = index">
+                                                  <div class="form-check">
+                                                    <input type="checkbox" [id]="'parentCheck' + i" [(ngModel)]="parent.selected"
+                                                           (change)="toggleParentSelection(parent)" class="form-check-input">
+                                                    <label [for]="'parentCheck' + i" class="form-check-label">
+                                                      {{ parent.title }}
+                                                    </label>
+                                                  </div>
+                                            
+                                                  <!-- (Child Checkboxes) -->
+                                                  <div *ngFor="let sheet of parent.sheets; let j = index" class="ms-3">
+                                                    <div class="form-check">
+                                                      <input type="checkbox" [id]="'childCheck' + i + j" [(ngModel)]="sheet.selected"
+                                                             (change)="toggleChildSelection(parent)" class="form-check-input">
+                                                      <label [for]="'childCheck' + i + j" class="form-check-label">
+                                                        {{ sheet.label.name }}
+                                                      </label>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
                                             </div>
-                                           
-                                           
+                                            
 
                                             <div class="py-2 mt-3">
                                               <button type="button" [disabled]="!isAnyRowSelected() || !selectedOption || selectedQuerySetId === 0"  (click)="getSelectedData();columnSearch = ''" class="btn ripple btn-primary me-2">Save</button>
@@ -494,7 +534,7 @@
                                           </div>
                                             <label class="form-label">Apply to Selected worksheets</label>
                                          
-                                          <div class="form body border p-2 Selected-worksheets-h">
+                                          <!-- <div class="form body border p-2 Selected-worksheets-h">
 
                                             <div class="form-check">
 
@@ -509,8 +549,43 @@
                                               <label for="invalidCheck" [for]="'defaultCheck' + i" class="form-check-label "> <p>{{rows1.name ? rows1.name : rows1?.label?.name}}</p> </label>
                                             </div>
                                           }
-                                          </div>
+                                          </div> -->
 
+                                          <div class="form body border p-2 Selected-worksheets-h">
+
+                                            <!-- Select All Checkbox -->
+                                            <div class="form-check">
+                                              <input type="checkbox" id="selectAll" [(ngModel)]="isAllSelected"
+                                                     (change)="toggleAllRowsEdit($event)" class="form-check-input">
+                                              <label for="selectAll" class="form-check-label">Select All</label>
+                                            </div>
+                                          
+                                            <!-- Iterate Over Parent Titles -->
+                                            <div *ngFor="let parent of sheetsFilterNamesFromEdit; let i = index" class="mt-2">
+                                              
+                                              <!-- Parent Checkbox as a Header -->
+                                              <div class="form-check parent-header fw-bold">
+                                                <input type="checkbox" [id]="'parentCheck' + i" [(ngModel)]="parent.selected"
+                                                       (change)="toggleParentSelectionEdit(parent)" class="form-check-input">
+                                                <label [for]="'parentCheck' + i" class="form-check-label">{{ parent.title }}</label>
+                                              </div>
+                                          
+                                              <!-- Child Checkboxes -->
+                                              <div class="ms-3">
+                                                <div *ngFor="let child of parent.sheets; let j = index" class="form-check">
+                                                  <input type="checkbox" [id]="'childCheck' + i + j" [(ngModel)]="child.selected"
+                                                         (change)="toggleChildSelectionEdit(parent)" class="form-check-input">
+                                                  <label [for]="'childCheck' + i + j" class="form-check-label">
+                                                    {{ child.name }}
+                                                  </label>
+                                                </div>
+                                              </div>
+                                          
+                                            </div>
+                                          
+                                          </div>
+                                          
+                                          
                                           <div class="py-2 mt-3">
                                             <button type="button" [disabled]="!isAnySheetSelected() || !selectedOption" (click)="updateFilters()" class="btn ripple btn-primary me-2">Update</button>
                                             <button type="button" class="btn ripple btn-secondary " (click)="selectClmnEdit = '';filterName='';closeFilterModal();isAllSelected = false"> Cancel </button>

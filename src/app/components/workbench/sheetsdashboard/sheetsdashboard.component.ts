@@ -2977,8 +2977,18 @@ getColumnsForFilter(){
     next:(data)=>{
       console.log(data);
       this.columnFilterNames=data.response_data.tables;
-      this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
       this.buildDropdownOptions(this.columnFilterNames); 
+      // this.sheetsFilterNames= data.sheets?.map((name: any) => ({ label: name, selected: false }))
+      const rawData = data?.sheets
+      this.sheetsFilterNames = Object.keys(rawData).map((key) => ({
+        title: key, // Parent name (Sheet Title)
+        selected: false, // Default unchecked
+        sheets: rawData[key].map((sheet: any) => ({
+          label: { id: sheet.sheet_id, name: sheet.sheet_name },
+          selected: false // Default unchecked
+        }))
+      }));
+      console.log('transformed sheetdata', this.sheetsFilterNames)
     },
     error:(error)=>{
       console.log(error)
@@ -3108,13 +3118,13 @@ loadSelectedForEditing() {
 ResetDashboard(){
   this.dashboard =[];
 }
-updateSelectedRows(){
-  this.selectedRows = this.sheetsFilterNames
-  .filter((row: { selected: any; }) => row.selected)
-  .map((row: { label: any; }) => row.label.id);
-console.log('selected rows', this.selectedRows);
-this.isAllSelected = this.sheetsFilterNames.every((row: { selected: any; }) => row.selected);
-}
+// updateSelectedRows(){
+//   this.selectedRows = this.sheetsFilterNames
+//   .filter((row: { selected: any; }) => row.selected)
+//   .map((row: { label: any; }) => row.label.id);
+// console.log('selected rows', this.selectedRows);
+// this.isAllSelected = this.sheetsFilterNames.every((row: { selected: any; }) => row.selected);
+// }
 getColumnSelectionLabel(filterList: any): string {
   // Get the filtered columns using the provided method
   const filteredColumns = this.getFilteredColumns(filterList);
@@ -3130,15 +3140,57 @@ getColumnSelectionLabel(filterList: any): string {
     return 'Multiple Values'; // Display 'Multiple Values' if more than one column is selected
   }
 }
+updateSelectedRows() {
+  this.selectedRows = this.sheetsFilterNames
+    .flatMap((parent: any) => parent.sheets)
+    .filter((sheet: { selected: any }) => sheet.selected)
+    .map((sheet: { label: any }) => sheet.label.id);
 
+  console.log('Selected Rows:', this.selectedRows);
+
+  this.isAllSelected = this.sheetsFilterNames.every((parent: any) =>
+    parent.sheets.every((sheet: { selected: boolean }) => sheet.selected)
+  );
+}
+
+// Toggle Select All /
 toggleAllRows(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  this.sheetsFilterNames.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+
+  this.sheetsFilterNames.forEach((parent: any) => {
+    parent.selected = isChecked; // Select/Deselect parent
+    parent.sheets.forEach((sheet: any) => (sheet.selected = isChecked));
+  });
+
   this.updateSelectedRows();
 }
-isAnyRowSelected(): boolean {
-  return this.sheetsFilterNames.some((row: { selected: any; }) => row.selected);
+
+//Toggle Parent Selection - Select/Deselect All Children //
+toggleParentSelection(parent: any) {
+  parent.sheets.forEach((sheet: any) => (sheet.selected = parent.selected));
+  this.updateSelectedRows();
 }
+
+// Toggle Child Selection - Update Parent Selection /
+toggleChildSelection(parent: any) {
+  parent.selected = parent.sheets.every((sheet: { selected: any }) => sheet.selected);
+  this.updateSelectedRows();
+}
+
+// Check if at least one row is selected /
+isAnyRowSelected(): boolean {
+  return this.sheetsFilterNames.some((parent: any) =>
+    parent.sheets.some((sheet: { selected: any }) => sheet.selected)
+  );
+}
+// toggleAllRows(event: Event) {
+//   const isChecked = (event.target as HTMLInputElement).checked;
+//   this.sheetsFilterNames.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+//   this.updateSelectedRows();
+// }
+// isAnyRowSelected(): boolean {
+//   return this.sheetsFilterNames.some((row: { selected: any; }) => row.selected);
+// }
 validateQuerySetSelection(){
   if (this.selectedQuerySetId === 0) {
     this.selectedQuerySetId = null; // Reset to null if no valid option is selected
@@ -4229,7 +4281,7 @@ editFiltersData(id:any){
     next:(data)=>{
       console.log(data);
       this.filterName = data.filter_name;
-      this.sheetsFilterNamesFromEdit = data.sheets;
+      // this.sheetsFilterNamesFromEdit = data.sheets;
       this.querysetNameEdit = data.queryname;
       this.selectClmnEdit = data.selected_column;
       this.selectdColmnDtypeEdit = data.datatype;
@@ -4243,6 +4295,26 @@ editFiltersData(id:any){
       this.selectedQuerySetId = data.selected_query_id.map(
         (item: { queryset_id: any; }) => item.queryset_id
       );
+
+      // const rawDataEdit = data?.sheets;
+      this.sheetsFilterNamesFromEdit = Object.entries(data?.sheets as Record<string, any[]>).map(([title, value]) => {
+        const sheets = value as Array<{ sheet_id: number; sheet_name: string; selected?: boolean }>; // Explicit assertion
+      
+        return {
+          title,
+          selected: sheets.length > 0 && sheets.every(sheet => sheet.selected || false), // Ensure sheets is an array
+          expanded: true,
+          sheets: sheets.map(sheet => ({
+            id: sheet.sheet_id,
+            name: sheet.sheet_name,
+            selected: sheet.selected || false,
+          })),
+        };
+      });
+      
+      
+      this.isAllSelected = this.sheetsFilterNamesFromEdit.every((parent: { selected: any; }) => parent.selected);
+
       this.updateSelectedRowsEdit();
       // this.getColumnsFromEdit(data.query_id,data.dashboard_id);
       this.getColumnsForFilterEdit(this.selectedQuerySetId,data.dashboard_id);
@@ -4286,19 +4358,63 @@ editFiltersData(id:any){
 //     }
 //   })
 // }
-isAnySheetSelected(){
-  return this.sheetsFilterNamesFromEdit.some((sheet: { selected: any; }) => sheet.selected);
+// isAnySheetSelected(){
+//   return this.sheetsFilterNamesFromEdit.some((sheet: { selected: any; }) => sheet.selected);
+// }
+// updateSelectedRowsEdit(){
+//   this.selectedRowsEdit = this.sheetsFilterNamesFromEdit
+//   .filter((row: { selected: any; }) => row.selected)
+//   .map((row: { id: any; }) => row.id);
+// console.log('selected rows', this.selectedRowsEdit);
+// this.isAllSelected = this.sheetsFilterNamesFromEdit.every((row: { selected: any; }) => row.selected);
+// }
+// toggleAllRowsEdit(event: Event) {
+//   const isChecked = (event.target as HTMLInputElement).checked;
+//   this.sheetsFilterNamesFromEdit.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+//   this.updateSelectedRowsEdit();
+// }
+
+isAnySheetSelected(): boolean {
+  return this.sheetsFilterNamesFromEdit.some((parent: { selected: any; sheets: any[]; }) =>
+    parent.selected || parent.sheets.some((child: { selected: any; }) => child.selected)
+  );
 }
-updateSelectedRowsEdit(){
+
+// Update selected rows when checkboxes change
+updateSelectedRowsEdit() {
   this.selectedRowsEdit = this.sheetsFilterNamesFromEdit
-  .filter((row: { selected: any; }) => row.selected)
-  .map((row: { id: any; }) => row.id);
-console.log('selected rows', this.selectedRowsEdit);
-this.isAllSelected = this.sheetsFilterNamesFromEdit.every((row: { selected: any; }) => row.selected);
+    .flatMap((parent: { sheets: any[]; }) => parent.sheets.filter((child: { selected: any; }) => child.selected).map((child: { id: any; }) => child.id));
+
+  console.log('Selected Rows:', this.selectedRowsEdit);
+
+  // Update select all checkbox state
+  this.isAllSelected = this.sheetsFilterNamesFromEdit.every((parent: { selected: any; sheets: any[]; }) =>
+    parent.selected || parent.sheets.every((child: { selected: any; }) => child.selected)
+  );
 }
+
+// When select all is toggled
 toggleAllRowsEdit(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  this.sheetsFilterNamesFromEdit.forEach((row: { selected: boolean; }) => row.selected = isChecked);
+
+  this.sheetsFilterNamesFromEdit.forEach((parent: { selected: boolean; sheets: any[]; }) => {
+    parent.selected = isChecked;
+    parent.sheets.forEach((child: { selected: boolean; }) => child.selected = isChecked);
+  });
+
+  this.updateSelectedRowsEdit();
+}
+
+// When Parent Checkbox is checks
+toggleParentSelectionEdit(parent: any) {
+  parent.sheets.forEach((child: { selected: any; }) => child.selected = parent.selected);
+  this.updateSelectedRowsEdit();
+}
+
+//  When Child Checkbox is checkd
+toggleChildSelectionEdit(parent: any) {
+  // If all children are selected, mark the parent as selected
+  parent.selected = parent.sheets.every((child: { selected: any; }) => child.selected);
   this.updateSelectedRowsEdit();
 }
 closeColumnsDropdownEdit(colName:any,colDatatype:any, dropdown: NgbDropdown) {
