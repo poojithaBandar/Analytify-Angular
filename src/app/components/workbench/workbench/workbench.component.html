@@ -117,17 +117,20 @@
                 <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button> 
                 </div>                         
               </div>
-              @if(schemaList.length > 0) {
                 <div class="mb-2 ">
                   <label class="col-form-label">SELECT SCHEMA </label>
-                  <select id="schemaSelect" [(ngModel)]="selectedSchema"
+                  @if(schemaList.length <= 0 || !schemaList) {
+                  <input type="text" class="form-control" disabled [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}" placeholder="SchemaName">
+                  }
+                  @if(schemaList && schemaList.length > 0) {
+                  <select id="schemaSelect" [(ngModel)]="selectedSchema" (change)="onSchemaChange()"
                     class="form-select" [ngModelOptions]="{standalone: true}">
                     <option value="" disabled>Select Schema</option>
                     <option *ngFor="let schema of schemaList;" [value]="schema">{{ schema }}</option>
                     
                   </select>
+                }
                 </div>
-              }
             </form>
           }
           </div>
@@ -144,7 +147,7 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
             } @else {
-              <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
+              <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Change Schema</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
             }
@@ -535,10 +538,10 @@
                                 </div>
                               
                               </div>
-                              @if(schemaList.length > 0) {
+                              @if(schemaList && schemaList.length > 0) {
                               <div class="form-group">
                                 <label class="col-form-label">Select Schema <i ngbTooltip="By default public schema will be selected, if no schema is choosen." class="icon icon-info ms-1 cursor-pointer"></i> </label>
-                                <select id="schemaupdateSelect" [(ngModel)]="selectedSchema"
+                                <select id="schemaupdateSelect" [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}"
                                   class="form-select">
                                   <option value="public" disabled selected>Select Schema</option>
                                   <option *ngFor="let schema of schemaList" [value]="schema">{{ schema }}</option>

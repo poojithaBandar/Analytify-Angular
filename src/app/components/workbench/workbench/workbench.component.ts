@@ -1576,4 +1576,7 @@ connectGoogleSheets(){
       }
     })
   }
+  onSchemaChange(){
+    this.toasterservice.info('On Updating your existing sheets will not work as expected as you are changing schema','info',{ positionClass: 'toast-center-center'});
+  }
 }
