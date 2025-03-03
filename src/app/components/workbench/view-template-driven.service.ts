@@ -57,10 +57,12 @@ canSearchTablesInSemanticLayer(){
   return this.rolesprevilgeService.userHasPriviledge(15);
 }
 canUploadExcel(){
-  return this.rolesprevilgeService.userHasPriviledge(67);
+  return true;
+  // return this.rolesprevilgeService.userHasPriviledge(67);
 }
 canUploadCsv(){
-  return this.rolesprevilgeService.userHasPriviledge(65);
+  return true;
+  // return this.rolesprevilgeService.userHasPriviledge(65);
 }
 canDownloadDashbaord(){
   return this.rolesprevilgeService.userHasPriviledge(42);

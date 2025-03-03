@@ -18,7 +18,9 @@
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="dashboardName" (keyup.enter)="searchDashboarList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchDashboarList()" type="button" id="button-addon2"><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary new-sheet-btn-radius" (click)="dashboardRoute()"><i class="fa fa-plus"></i> New Dashboard</button>
+
+            <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary new-sheet-btn-radius'" [previledgeId]="34" [isBtn]="true"
+            (btnClickEvent)="dashboardRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
 
           </div>
         </div>
