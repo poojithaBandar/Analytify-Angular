@@ -142,6 +142,7 @@ export class SheetsComponent {
   editFilterSearch! : string;
   tableSearch! : string;
   isMeasureEdit : boolean = false;
+  isDimensionEdit : boolean = false;
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
   suppressTabChangeEvent : boolean = false;
@@ -1294,6 +1295,15 @@ try {
   onAliasChange(rows : any , index : any){
     this.isMeasureEdit = false;
     this.rowMeasuresCount(rows, index, rows.type);
+  }
+
+  onColumnAliasChange(column : any , index : any){
+    this.isDimensionEdit = false;
+    if (this.draggedColumnsData[index]) {
+      this.draggedColumnsData[index][3] = column.alias ? column.alias : "";
+      this.draggedColumns[index].alias = column.alias ? column.alias : "";
+      this.dataExtraction();
+    }
   }
    drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {

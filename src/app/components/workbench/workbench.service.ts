@@ -98,6 +98,12 @@ export class WorkbenchService {
     this.accessToken = JSON.parse( currentUser! )['Token'];
     return this.http.get<any>(`${environment.apiUrl}/get_file/`+id+'/'+this.accessToken);
   }
+
+  fetchSchemaList(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/get-schemas/`+this.accessToken, obj);
+  }
   //crossDb
   crossDbConnection(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );

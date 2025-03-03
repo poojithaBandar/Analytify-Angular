@@ -87,6 +87,8 @@ export class WorkbenchComponent implements OnInit{
   primaryHierachyId:any;
   canUploadExcel = false;
   canUploadCsv = false;
+  schemaList: any[] = [];
+  selectedSchema : string = 'public';
   constructor(private modalService: NgbModal, private workbechService:WorkbenchService,private router:Router,private toasterservice:ToastrService,private route:ActivatedRoute,
     private viewTemplateService:ViewTemplateDrivenService,@Inject(DOCUMENT) private document: Document,private loaderService:LoaderService,private cd:ChangeDetectorRef){ 
     localStorage.setItem('QuerySetId', '0');
@@ -168,6 +170,8 @@ export class WorkbenchComponent implements OnInit{
     this.postGrePortName = '';
     this.postGreDatabaseName = '';
     this.postGreServerName = '';
+    this.schemaList = [];
+    this.selectedSchema = 'public';
     this.postGreUserName = '';
     this.PostGrePassword = '';
     this.OracleServiceName = '';
@@ -261,7 +265,8 @@ export class WorkbenchComponent implements OnInit{
           "username":this.postGreUserName,
           "password":this.PostGrePassword,
           "database": this.postGreDatabaseName,
-          "display_name":this.displayName
+          "display_name":this.displayName,
+          "schema": this.selectedSchema
       }
         this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
               console.log(responce);
@@ -375,7 +380,8 @@ export class WorkbenchComponent implements OnInit{
           "password":this.PostGrePassword,
           "database": this.postGreDatabaseName,
           "display_name":this.displayName,
-          "database_id":this.databaseId
+          "database_id":this.databaseId,
+          "schema": this.selectedSchema
       }as any
       if(this.databaseType === 'oracle'){
         delete obj.database
@@ -384,6 +390,8 @@ export class WorkbenchComponent implements OnInit{
         this.workbechService.postGreSqlConnectionput(obj).subscribe({next: (responce) => {
               console.log(responce);
               this.modalService.dismissAll('close');
+              this.schemaList = [];
+              this.selectedSchema = 'public';
               if(responce){
                 this.toasterservice.success('Updated Successfully','success',{ positionClass: 'toast-top-right'});
               }
@@ -1198,6 +1206,9 @@ connectGoogleSheets(){
       } else {
         this.postGreDatabaseName = editData.database;
       }
+      if(this.databaseType == 'postgresql'){
+        this.selectedSchema = editData.schema;
+      }
       this.errorCheck();
     }
   }
@@ -1305,6 +1316,8 @@ connectGoogleSheets(){
   this.openHaloPSAForm = false;
   this.openShopifyForm = false;
   this.postGreServerName = '';
+  this.schemaList = [];
+  this.selectedSchema = 'public';
   this.postGrePortName = '';
   this.postGreDatabaseName = '';
   this.postGreUserName = '';
@@ -1519,8 +1532,30 @@ connectGoogleSheets(){
     })
   }
 
-
-
+  fetchSchemaList() {
+    this.loaderService.show();
+    const obj = {
+      "database_type": "postgresql",
+      "hostname": this.postGreServerName,
+      "port": this.postGrePortName,
+      "username": this.postGreUserName,
+      "password": this.PostGrePassword,
+      "database": this.postGreDatabaseName,
+      "display_name": this.displayName
+    }
+    this.workbechService.fetchSchemaList(obj).subscribe({
+      next: (responce) => {
+        if (responce && responce.schemas) {
+          this.schemaList = responce.schemas;
+          this.loaderService.hide();
+        }
+      },
+      error: (error) => {
+        console.log(error);
+        this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      }
+    })
+  }
 
   appendExcelOrCsvFile(fileInput: any,database : any){
     const formData: FormData = new FormData();
@@ -1546,5 +1581,8 @@ connectGoogleSheets(){
         this.cd.detectChanges();
       }
     })
+  }
+  onSchemaChange(){
+    this.toasterservice.info('On Updating your existing sheets will not work as expected as you are changing schema','info',{ positionClass: 'toast-center-center'});
   }
 }
