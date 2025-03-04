@@ -5,7 +5,7 @@
 </button>
     <div class="page-title TitlePaddings" [innerHTML]="dashbaordName"></div>
     <div *ngIf="!multiLevel" class="d-flex"> 
-        <button type="button"  (click)="helpRoute()" class="btn btn-icon btn-primary-light me-3 rounded-5">
+        <button type="button" ngbTooltip="Help" container="body" (click)="helpRoute()" class="btn btn-icon btn-primary-light me-3 rounded-5">
             <i class="fa fa-question-circle" style=" font-size: 24px;"></i>
         </button>
         <ol class="breadcrumb" style=" line-height: 2.7;">
