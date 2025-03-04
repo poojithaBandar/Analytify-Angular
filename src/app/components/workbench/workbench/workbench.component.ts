@@ -1552,7 +1552,8 @@ connectGoogleSheets(){
       },
       error: (error) => {
         console.log(error);
-        this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+        this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' });
+        this.loaderService.hide();
       }
     })
   }
