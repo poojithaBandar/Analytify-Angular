@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-data-transformation',
@@ -48,7 +49,14 @@ export class DataTransformationComponent {
       this.getTablesForDataTransformation();
     }
   }
-  
+
+  addNewTransform(index: number){
+    if (!this.selectedTransformations[index]) {
+      this.selectedTransformations[index] = [{}]; // Initialize if not set
+    } else {
+      this.selectedTransformations[index].push({});
+    }
+  }  
   drop(event: CdkDragDrop<any[]>) {
     let item: any = event.previousContainer.data[event.previousIndex];
     let copy: any = JSON.parse(JSON.stringify(item));
@@ -63,18 +71,21 @@ export class DataTransformationComponent {
     this.draggedtables.push(element);
   }
 
-  setTransformationType(index: number, transformationKey: any,event: any, isDropdown :boolean, isInput:boolean) {
+  setTransformationType(index: number, transformationKey: any,event: any, isDropdown :boolean, isInput:boolean,transformationIndex: number) {
     if (!this.selectedTransformations[index]) {
       this.selectedTransformations[index] = []; // Initialize if not set
     }
-    if(isInput){
-      this.selectedTransformations[index][2] = event.target.value;
-    } else if(isDropdown){
-      this.selectedTransformations[index][1] = event.target.value;
-    }  
-    if(transformationKey){
-      this.selectedTransformations[index][0] = transformationKey;
+    if(!this.selectedTransformations[index][transformationIndex]){
+      this.selectedTransformations[index][transformationIndex] = {input : '',dropdown:'',keys:[],key:''}
     }
+    if(isInput){
+      this.selectedTransformations[index][transformationIndex].input = event.target.value;
+    } else if(isDropdown){
+      this.selectedTransformations[index][transformationIndex].dropdown = event.target.value;
+    } if(transformationKey){
+      this.selectedTransformations[index][transformationIndex].key = transformationKey;
+    }
+
   }
 
   editTransformation(index:any, transformationIndex:any, transformationKey: string[]){

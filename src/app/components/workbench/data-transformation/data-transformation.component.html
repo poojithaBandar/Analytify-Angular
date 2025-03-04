@@ -1,6 +1,4 @@
-<p>data-transformation works!</p>
-
-<div class="main-container container-fluid mt-5 TopHeader">
+<div class="main-container container-fluid mt-2 TopHeader">
         <!-- ROW-1 OPEN -->
         <div class="row ">
             <div class="col-md-12">
@@ -179,70 +177,20 @@
                                                                 <i class="fe fe-trash"></i>
                                                             </a>
                                                             <a *ngIf="!selectedTransformations[index]?.length" aria-label="add"
-                                                                class="btn btn-sm btn-primary rounded-circle plus-icon-size" ngbDropdownToggle data-bs-toggle="dropdown">
+                                                                class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                 <i class="fe fe-plus text-white text-sm"></i>
                                                             </a>
-                                                        </div>
-
-                                                        <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                                          @for (transformation of transformationTypes; track transformation.key) {
-                                                            @if(transformation.needColumn){
-                                                                <div class="dropup d-flex text-center" ngbDropdown>
-                                                                    <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem> {{ transformation.label }} </li>
-                                                                    <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block"
-                                                                        ngbDropdownToggle data-bs-toggle="dropdown"></i>
-                                                                        <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
-                                                                            <div>
-                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column to replace null values." class="icon icon-info ms-1 cursor-pointer"></i>
-                                                                                </label>
-                                                                            <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false)">
-                                                                                @for(column of item.columns; track column){
-                                                                                    <option [value]="column.col">{{column?.col}}</option>
-                                                                                } 
-                                                                            </select>
-                                                                            </div>
-                                                                            <div>
-                                                                                <input type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true)" class="form-control border">
-                                                                            </div>
-                                                                        </ul>
-                                                                        
-                                                                    <!-- <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
-                                                                        @for(column of item.columns; track column){
-                                                                        <li class="btn btn-primary-light border transformations-dropdown" [ngbPopover]="popContent" [popoverTitle]="popTitle">
-                                                                            <a> {{column?.col}}</a> <i class="fa fa-edit"></i>
-                                                                            <ul ngbDropdownMenu>
-                                                                                <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem></li>
-                                                                            </ul>
-                                                                        </li>
-                                                                        }
-                                                                        <ng-template #popContent>Hello, <b>naren</b>!</ng-template>
-                                                                        <ng-template #popTitle>Fancy <b>content!!</b></ng-template>
-                                                                        <li><button type="button" class="btn btn-outline-secondary" [ngbPopover]="popContent" [popoverTitle]="popTitle">
-                                                                            I've got markup and bindings in my popover!
-                                                                        </button></li>
-                                                                    </ul> -->
-                                                                </div>
-                                                                } @else{
-                                                                <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
-                                                                    (click)="setTransformationType(index, transformation.key, null, false, false)">
-                                                                    <a>
-                                                                        {{ transformation.label }}
-                                                                    </a>
-                                                                </li>
-                                                                }
-                                                          }
-                                                        </ul>
+                                                        </div>  
                                                       </div>
-                                                  
                                                       <!-- Transformation Chain -->
-                                                      @for (transformation of selectedTransformations[index]; let transformationIndex = $index; track transformation) {
+                                                      @for (transformationtable of selectedTransformations[index]; let transformationIndex = $index; track transformationtable) {
                                                         <img src="../../../../assets/images/data-transformation/right_arrow.png" class="image-width" alt="arrow image">
                                                   
-                                                        <div class="d-flex align-items-center border position-relative border-dark-subtle rounded-3 mb-1 cursor-auto w-20"
+                                                        <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center position-relative"
                                                             ngbDropdown>
-                                                            <span class="flex-grow-1" ngbTooltip="{{ getTransformationLabel(index, transformationIndex) }}" placement="top"
+                                                            <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations[index][transformationIndex].key }}" placement="top"
                                                                 container="body">
-                                                                {{ getTransformationLabel(index, transformationIndex) | slice:0:14 }}
+                                                                {{ selectedTransformations[index][transformationIndex].key | slice:0:14 }}
                                                             </span>
                                                         
                                                         
@@ -256,7 +204,7 @@
                                                                     <i class="fe fe-trash"></i>
                                                                 </a>
                                                                 <a *ngIf="isLastTransformation(index, transformationIndex)" (click)="isAddTransformation = true" aria-label="add"
-                                                                    class="btn btn-sm btn-primary rounded-circle plus-icon-size" ngbDropdownToggle data-bs-toggle="dropdown">
+                                                                    class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                     <i class="fe fe-plus text-white text-sm"></i>
                                                                 </a>
                                                             </div>
@@ -275,17 +223,17 @@
                                                                     <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block"
                                                                         ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                         <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
-                                                                            <div>
+                                                                            <div class="p-2">
                                                                                 <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column to replace null values." class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
-                                                                            <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false)">
+                                                                            <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
                                                                                 @for(column of item.columns; track column){
                                                                                     <option [value]="column.col">{{column?.col}}</option>
                                                                                 } 
                                                                             </select>
                                                                             </div>
-                                                                            <div>
-                                                                                <input type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true)" class="form-control border">
+                                                                            <div class="p-2">
+                                                                                <input type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
                                                                             </div>
                                                                         </ul>
 
@@ -300,7 +248,7 @@
                                                                 </div>
                                                                 } @else{
                                                                 <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
-                                                                (click)="isAddTransformation ? setTransformationType(index, transformation.key, null,false, false) : editTransformation(index, transformationIndex, [transformation.key])">
+                                                                (click)="setTransformationType(index, transformation.key, null,false, false,transformationIndex)">
                                                                     <a> {{ transformation.label }} </a>
                                                                 </li>
                                                                 }
