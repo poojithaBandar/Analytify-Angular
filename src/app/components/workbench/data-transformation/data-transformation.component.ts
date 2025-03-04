@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { SharedModule } from '../../../shared/sharedmodule';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-data-transformation',
   standalone: true,
-  imports: [SharedModule,NgbModule,DragDropModule,CommonModule],
+  imports: [SharedModule,NgbModule,DragDropModule,CommonModule, NgbPopoverModule],
   templateUrl: './data-transformation.component.html',
   styleUrl: './data-transformation.component.scss'
 })
@@ -19,12 +20,12 @@ export class DataTransformationComponent {
   tables = [{tables : '', columns : []}];
   draggedtables: any[] = [];
   isAddTransformation : boolean = false;
-  credentials : any = {};
-  selectedTransformations: { [key: number]: string[][] } = {};
+  selectedTransformations: any = {};
   hierarchyId : any;
   schema : any;
+  databaseName : any;
   transformationTypes = [
-    { key: 'deduplicate', label: 'Remove duplicates', needColumn: false },
+    { key: 'duplicate', label: 'Remove duplicates', needColumn: false },
     { key: 'replace_values', label: 'Handle null values', needColumn: true },
     { key: 'special_char_remove', label: 'Remove special characters', needColumn: true },
     { key: 'alter_datatypes', label: 'Change data types', needColumn: true },
@@ -35,16 +36,15 @@ export class DataTransformationComponent {
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
-      if (route.snapshot.params['credentials']) {
-        // this.credentials = +atob(JSON.parse(route.snapshot.params['credentials']));
-        this.credentials = JSON.parse(route.snapshot.params['credentials'])
-        console.log(this.credentials);
+      if (route.snapshot.params['id']) {
+        this.hierarchyId = +atob(route.snapshot.params['id']);
+        console.log(this.hierarchyId);
       }
     }
   }
 
   ngOnInit() {
-    if(this.credentials){
+    if(this.hierarchyId){
       this.getTablesForDataTransformation();
     }
   }
@@ -63,11 +63,18 @@ export class DataTransformationComponent {
     this.draggedtables.push(element);
   }
 
-  setTransformationType(index: number, transformationKey: string[]) {
+  setTransformationType(index: number, transformationKey: any,event: any, isDropdown :boolean, isInput:boolean) {
     if (!this.selectedTransformations[index]) {
       this.selectedTransformations[index] = []; // Initialize if not set
     }
-    this.selectedTransformations[index].push(transformationKey);
+    if(isInput){
+      this.selectedTransformations[index][2] = event.target.value;
+    } else if(isDropdown){
+      this.selectedTransformations[index][1] = event.target.value;
+    }  
+    if(transformationKey){
+      this.selectedTransformations[index][0] = transformationKey;
+    }
   }
 
   editTransformation(index:any, transformationIndex:any, transformationKey: string[]){
@@ -79,7 +86,7 @@ export class DataTransformationComponent {
       return;
     }
 
-    this.selectedTransformations[index][transformationIndex] = transformationKey; 
+    // this.selectedTransformations[index][transformationIndex] = transformationKey; 
   }
 
   getTransformationLabel(index: number, transformationIndex: number): string {
@@ -109,15 +116,22 @@ export class DataTransformationComponent {
   }
 
   getTablesForDataTransformation(){
-    this.workbechService.getTablesForDataTransformation(this.credentials).subscribe({
+    this.workbechService.getTablesForDataTransformation(this.hierarchyId).subscribe({
       next: (response: any) => {
         console.log(response);
-        this.tables = response.data.tables;
-        this.hierarchyId = response.data.database.hierarchy_id;
-        this.schema = response.data.schema
+        this.tables = response.tables;
+        // this.hierarchyId = response.data.database.hierarchy_id;
+        this.schema = response.schema;
+        this.databaseName = response.databas_name;
       },
       error: (error) => {
         console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
       }
     });
   }

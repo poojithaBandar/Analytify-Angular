@@ -296,7 +296,7 @@ export const admin: Routes = [
       },
 
       {
-        path: 'databaseConnection/dataTransformation/:credentials',
+        path: 'databaseConnection/dataTransformation/:id',
         canActivate: [authGuard],
         loadComponent: () =>
           import('./data-transformation/data-transformation.component').then((m) => m.DataTransformationComponent),

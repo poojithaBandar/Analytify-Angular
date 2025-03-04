@@ -56,10 +56,10 @@
                                                 <ng-template>
                                                     <div class="px-3 py-2 br-0 mb-0 border-bottom d-block">
                                                         <div class="d-flex align-items-center justify-content-between">
-                                                            <h6 class="mb-0">{{credentials?.database}}</h6>
+                                                            <h6 class="mb-0">{{databaseName}}</h6>
                                                             <!-- <i class="bi-plus-circle plus-icon"></i> -->
                                                         </div>
-                                                        <p class="mb-0">{{credentials?.database_type}}</p>
+                                                        <p class="mb-0">{{schema}}</p>
                                                     </div>
                                                     <!-- <div class="mb-0 px-3 py-2 br-0 border-bottom">
                                                         <h6 class="mb-0">Database</h6>
@@ -191,17 +191,40 @@
                                                                     <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem> {{ transformation.label }} </li>
                                                                     <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block"
                                                                         ngbDropdownToggle data-bs-toggle="dropdown"></i>
-                                                                    <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
+                                                                        <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
+                                                                            <div>
+                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column to replace null values." class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                            <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false)">
+                                                                                @for(column of item.columns; track column){
+                                                                                    <option [value]="column.col">{{column?.col}}</option>
+                                                                                } 
+                                                                            </select>
+                                                                            </div>
+                                                                            <div>
+                                                                                <input type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true)" class="form-control border">
+                                                                            </div>
+                                                                        </ul>
+                                                                        
+                                                                    <!-- <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
                                                                         @for(column of item.columns; track column){
-                                                                        <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem (click)="setTransformationType(index, [transformation.key,column.col])">
-                                                                            <a> {{column?.col}} </a>
+                                                                        <li class="btn btn-primary-light border transformations-dropdown" [ngbPopover]="popContent" [popoverTitle]="popTitle">
+                                                                            <a> {{column?.col}}</a> <i class="fa fa-edit"></i>
+                                                                            <ul ngbDropdownMenu>
+                                                                                <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem></li>
+                                                                            </ul>
                                                                         </li>
                                                                         }
-                                                                    </ul>
+                                                                        <ng-template #popContent>Hello, <b>naren</b>!</ng-template>
+                                                                        <ng-template #popTitle>Fancy <b>content!!</b></ng-template>
+                                                                        <li><button type="button" class="btn btn-outline-secondary" [ngbPopover]="popContent" [popoverTitle]="popTitle">
+                                                                            I've got markup and bindings in my popover!
+                                                                        </button></li>
+                                                                    </ul> -->
                                                                 </div>
                                                                 } @else{
                                                                 <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
-                                                                    (click)="setTransformationType(index, [transformation.key])">
+                                                                    (click)="setTransformationType(index, transformation.key, null, false, false)">
                                                                     <a>
                                                                         {{ transformation.label }}
                                                                     </a>
@@ -251,18 +274,33 @@
                                                                     <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem> {{ transformation.label }} </li>
                                                                     <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block"
                                                                         ngbDropdownToggle data-bs-toggle="dropdown"></i>
-                                                                    <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
+                                                                        <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
+                                                                            <div>
+                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column to replace null values." class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                </label>
+                                                                            <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false)">
+                                                                                @for(column of item.columns; track column){
+                                                                                    <option [value]="column.col">{{column?.col}}</option>
+                                                                                } 
+                                                                            </select>
+                                                                            </div>
+                                                                            <div>
+                                                                                <input type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true)" class="form-control border">
+                                                                            </div>
+                                                                        </ul>
+
+                                                                    <!-- <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
                                                                         @for(column of item.columns; track column){
                                                                         <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
-                                                                            (click)="isAddTransformation ? setTransformationType(index, [transformation.key,column.col]) : editTransformation(index, transformationIndex, [transformation.key,column.col])">
+                                                                            (click)="isAddTransformation ? setTransformationType(index, transformation.key,null, false) : editTransformation(index, transformationIndex, [transformation.key,column.col])">
                                                                             <a> {{column?.col}} </a>
                                                                         </li>
                                                                         }
-                                                                    </ul>
+                                                                    </ul> -->
                                                                 </div>
                                                                 } @else{
                                                                 <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
-                                                                (click)="isAddTransformation ? setTransformationType(index, [transformation.key]) : editTransformation(index, transformationIndex, [transformation.key])">
+                                                                (click)="isAddTransformation ? setTransformationType(index, transformation.key, null,false, false) : editTransformation(index, transformationIndex, [transformation.key])">
                                                                     <a> {{ transformation.label }} </a>
                                                                 </li>
                                                                 }
