@@ -53,6 +53,7 @@ import iconsData from '../../../../assets/iconfonts/font-awesome/metadata/icons.
 import { FilterIconsPipe } from '../../../shared/pipes/iconsFilterPipe';
 import 'pivottable';
 import { FormatMeasurePipe } from '../../../shared/pipes/format-measure.pipe';
+import { cloneDeep } from 'lodash';
 
 interface TableRow {
   [key: string]: any;
@@ -1116,9 +1117,15 @@ export class SheetsdashboardComponent {
       try {
         // Wait for the screenshot to be taken
         await this.takeScreenshot();
-  
+        
         // Assign other data after screenshot
-        this.assignOriginalDataToDashboard();
+        let dashboardData = this.assignOriginalDataToDashboard(this.dashboard);
+        let sheetTabsData = _.cloneDeep(this.sheetTabs);
+        if(this.sheetTabs && this.sheetTabs.length > 0){
+          sheetTabsData.forEach((sheetData) => {
+            sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+          })
+        } 
         this.setQuerySetIds();
         let tabNames;
         let sheetIds;
@@ -1139,8 +1146,8 @@ export class SheetsdashboardComponent {
           selected_sheet_ids: this.sheetIdsDataSet,
           dashboard_name: this.dashboardName,
           dashboard_tag_name: this.dashboardTagName,
-          data: this.dashboard,
-          tab_data: this.sheetTabs,
+          data: dashboardData,
+          tab_data: sheetTabsData,
           tab_name: tabNames,
           tab_sheets: sheetIds,
           // file_id: this.fileId,
@@ -1190,6 +1197,14 @@ export class SheetsdashboardComponent {
         }
       }
     });
+    this.sheetTabs
+        .forEach(tab => tab.dashboard.forEach((sheet:any) => {
+          if (sheet['type'] !== 'image') { 
+            if (sheet.qrySetId) {
+              this.qrySetId.push(sheet.qrySetId);
+            }
+          }
+        }))
   }
   takeScreenshot(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -1323,7 +1338,13 @@ export class SheetsdashboardComponent {
         width: '400px',
       })
     }else{
-      let dashboardData = this.assignOriginalDataToDashboard();
+      let dashboardData = this.assignOriginalDataToDashboard(this.dashboard);
+      let sheetTabsData = _.cloneDeep(this.sheetTabs);
+      if(this.sheetTabs && this.sheetTabs.length > 0){
+        sheetTabsData.forEach((sheetData) => {
+          sheetData.dashboard  = this.assignOriginalDataToDashboard(sheetData.dashboard);
+        })
+      }  
       this.setQuerySetIds();
       let obj;
       // if(this.fileId && this.fileId.length){
@@ -1363,7 +1384,7 @@ export class SheetsdashboardComponent {
           dashboard_tag_name:this.dashboardTagName,
           selected_sheet_ids:this.sheetIdsDataSet,
           data : dashboardData,
-          tab_data : this.sheetTabs,
+          tab_data : sheetTabsData,
           tab_name: tabNames,
           tab_sheets: sheetIds,
           user_ids:this.usersForUpdateDashboard,
@@ -1405,8 +1426,8 @@ export class SheetsdashboardComponent {
   }
   }
 
-  assignOriginalDataToDashboard(){
-    let dashboardData = _.cloneDeep(this.dashboard);
+  assignOriginalDataToDashboard(inputData: any[]){
+    let dashboardData = _.cloneDeep(inputData);
     dashboardData.forEach((item1:any) => {
       if(item1.drillDownIndex >= 0){
         item1.drillDownIndex = 0;
@@ -1979,7 +2000,6 @@ allowDrop(ev : any): void {
       // if(copy.fileId){
       //   this.fileId.push(copy.fileId);
       // } else {
-      this.databaseId.push(copy.databaseId);
       // }
       //   if(element.chartOptions?.chart?.type === 'bar'){
       //      element['chartData'].forEach((item: { name: any; value: any; }) => {
@@ -2001,7 +2021,8 @@ allowDrop(ev : any): void {
       //  if(event.event.target.offsetParent.id == 'cdk-drop-list-0'){
       const index = this.findSheetIndex(copy.sheetId);
       const tabIndex = this.findSheetInTabIndex(copy.sheetId);
-      if (index == -1 || tabIndex) {
+      if (index == -1 && tabIndex) {
+        this.databaseId.push(copy.databaseId);
         this.disableDashboardUpdate = false;
         this.setDashboardNewSheets(copy.sheetId, true);
 
@@ -2366,6 +2387,7 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
       if(removeIndex >= 0){
         this.dashboard.splice(removeIndex, 1);
         let popqryIndex = this.qrySetId.findIndex((number:any) => number == item.qrySetId);
+      }
         // this.qrySetId.splice(popqryIndex, 1);
         if(this.dashboardId){
           this.deleteSheetFilter(item.sheetId);
@@ -2378,7 +2400,6 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
         let popIndex = this.databaseId.findIndex((number:any) => number == item.databaseId);
         this.databaseId.splice(popIndex, 1);
       // }
-      }
     }
     this.canNavigateToAnotherPage = true;
     }
@@ -3447,13 +3468,18 @@ getFilteredData(){
         this.filteredRowData.push(obj);
         console.log('filterowData',this.filteredRowData)
       });
-      if(item.chart_id === 1){
-        this.pageChangeTableDisplay(item,1,false,0)
-        // this.tablePageNo =1;
-        this.tablePage=1
-      }else{
-      this.setDashboardSheetData(item, true , true, false, false, '', false,0,this.dashboard);
-      }
+        if (item.chart_id === 1) {
+          this.pageChangeTableDisplay(item, 1, false, 0)
+          // this.tablePageNo =1;
+          this.tablePage = 1
+        } else {
+          this.setDashboardSheetData(item, true, true, false, false, '', false, 0, this.dashboard);
+          if (this.displayTabs) {
+            this.sheetTabs.forEach((tabData: any) => {
+              this.setDashboardSheetData(item, true, true, false, false, '', false, 0, tabData.dashboard);
+            })
+          }
+        }
     });
       },
     error:(error)=>{
@@ -5136,6 +5162,11 @@ kpiData?: KpiData;
           this.pageChangeTableDisplayPublic(item,1)
         }else{
         this.setDashboardSheetData(item, true , true, false, false, '', false,0,this.dashboard);
+        if (this.displayTabs) {
+          this.sheetTabs.forEach((tabData: any) => {
+            this.setDashboardSheetData(item, true, true, false, false, '', false, 0, tabData.dashboard);
+          })
+        }
         }
       });
         },
@@ -5236,6 +5267,11 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(item, false, false, true, false, '', false, 0, tabData.dashboard);
+        })
+      }
       // if(item.chartId == '29'){
       //   if (item.drillDownIndex != 0) {
       //     this.chartType = 'bar';
@@ -5308,6 +5344,11 @@ kpiData?: KpiData;
         console.log('filterowData',this.filteredRowData)
       });
       this.setDashboardSheetData(item, false, false, true, false, '', false,0,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(item, false, false, true, false, '', false, 0, tabData.dashboard);
+        })
+      }
       // if(item.chartId == '29'){
       //   if (item.drillDownIndex != 0) {
       //     this.chartType = 'bar';
@@ -5408,6 +5449,12 @@ pageChangeTableDisplay(item:any,page:any,isLiveReloadData : boolean,liveSheetInd
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
       this.setDashboardSheetData(data.data, true , false, false, false, '', isLiveReloadData,liveSheetIndex,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(data.data, true, false, false, false, '', isLiveReloadData, liveSheetIndex, tabData.dashboard);
+        })
+      }
+      
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5444,6 +5491,11 @@ pageChangeTableDisplayPublic(item:any,page:any){
       this.tableItemsPerPage = data.items_per_page;
       this.tableTotalItems = data.total_items;
       this.setDashboardSheetData(data.data, true , false, false, false, '', false,0,this.dashboard);
+      if (this.displayTabs) {
+        this.sheetTabs.forEach((tabData: any) => {
+          this.setDashboardSheetData(data.data, true, false, false, false, '', false, 0, tabData.dashboard);
+        })
+      }
     },error:(error)=>{
       console.log(error.error.message);
     }
@@ -5991,6 +6043,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.filteredRowData.push(rowObject);
           }
           this.setDashboardSheetData(item,false,false, false,true,sheet.sheet_id, false,0,this.dashboard);
+          if (this.displayTabs) {
+            this.sheetTabs.forEach((tabData: any) => {
+              this.setDashboardSheetData(item, false, false, false, true, sheet.sheet_id, false, 0, tabData.dashboard);
+            })
+          }
         });
       },
       error: (error) => {
@@ -6048,6 +6105,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             console.log('filterowData', this.filteredRowData);
           });
           this.setDashboardSheetData([],false,false, false,true,sheet.sheet_id, false,0,this.dashboard);
+          if (this.displayTabs) {
+            this.sheetTabs.forEach((tabData: any) => {
+              this.setDashboardSheetData([], false, false, false, true, sheet.sheet_id, false, 0, tabData.dashboard);
+            })
+          }
         });
       },
       error: (error) => {
@@ -6469,6 +6531,11 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             this.tablePage=1
           }else{
           this.setDashboardSheetData(item, true , true, false, false, '',true,index,this.dashboard);
+          if (this.displayTabs) {
+            this.sheetTabs.forEach((tabData: any) => {
+              this.setDashboardSheetData(item, true, true, false, false, '', true, index, tabData.dashboard);
+            })
+          }
           }
         });
           },

@@ -1554,7 +1554,7 @@
                           [buttonName]="'Goto Sheet'" [previledgeIdsList]="[20,18]" [isBtn]="false"
                           (btnClickEvent)="viewSheet(item)" [isIcon]="false"></app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl" [classesList]="'dropdown-item'" [buttonName]="'Remove'"
-                          [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, false)" [isIcon]="false">
+                          [previledgeId]="37" [isBtn]="false" (btnClickEvent)="removeItem($event, item, true)" [isIcon]="false">
                         </app-insights-button>
                         <app-insights-button *ngIf="!isPublicUrl && item['chartId'] === 25 && !item['kpiImage']"
                           [classesList]="'dropdown-item'" [buttonName]="'Upload Background Image'" [previledgeId]="37"
