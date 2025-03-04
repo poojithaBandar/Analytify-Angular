@@ -1411,10 +1411,11 @@
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                    <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
+                                    <!-- <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
-                                    </app-insights-button>
+                                    </app-insights-button> -->
+                                    <button class="viewQueryImg" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
                                 <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             </div>
@@ -1440,7 +1441,9 @@
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(columns of draggedColumns;track columns;let index = $index){
                                     <div class="example-box  example-box-bg" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
-                                        @if(columns.type){
+                                        @if(columns.alias){
+                                            {{ columns.alias }}
+                                        } @else if(columns.type){
                                             {{ columns.type }} ({{columns.column}})
                                         } @else if(columns.field_name) {
                                             {{ columns.field_name }}
@@ -1452,6 +1455,19 @@
                                      <div class="dropup" ngbDropdown style="line-height: 0;">
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
+                                            <li  *ngIf="!isDimensionEdit" class="btn btn-primary-light alis-measure-width border" >@if(columns.alias){
+                                                {{ columns.alias }}
+                                            }
+                                            @else if(columns.type){
+                                                {{ columns.type }} ({{columns.column}})
+                                            }@else if(columns.field_name){
+                                                {{ columns.field_name }}
+                                            }
+                                            @else{   
+                                                 {{ columns.column }}
+                                            } <i (click)="isDimensionEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
+                                            <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
+                                            </li>
                                             <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
                                                 <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
                                                 <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
@@ -2017,7 +2033,7 @@
                                 </li>
                             </div>
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0" data-bs-toggle="tab" role="tab"
+                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0 && !deleteSheetInSheetComponent" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
@@ -2046,7 +2062,8 @@
                                             <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary " [disabled]="!retriveDataSheet_id" (click)="gotoDashboard(); modal.close('Save click')"> New Dashboard</button>
+                                    <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary'" [previledgeId]="34" [isBtn]="true"
+                                    (btnClickEvent)="gotoDashboard();modal.close('Save click')" [gotoSheetButton]="!retriveDataSheet_id" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
                                 </div>
                             
                             

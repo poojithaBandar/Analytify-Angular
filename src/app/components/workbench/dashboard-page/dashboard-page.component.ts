@@ -46,9 +46,11 @@ export class DashboardPageComponent implements OnInit{
   host:any; 
   @ViewChild('propertiesModal') propertiesModal : any;
 
+  
 constructor(private workbechService:WorkbenchService,private router:Router,private templateViewService:ViewTemplateDrivenService,private toasterService:ToastrService,
   private modalService:NgbModal,private toasterservice:ToastrService,private loaderService:LoaderService){
   this.viewDashboardList=this.templateViewService.viewDashboard()
+
 }
 ngOnInit(){
   this.loaderService.hide();
