@@ -190,7 +190,7 @@
                                                             ngbDropdown>
                                                             <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations[index][transformationIndex].key }}" placement="top"
                                                                 container="body">
-                                                                {{ selectedTransformations[index][transformationIndex].key | slice:0:14 }}
+                                                                {{ selectedTransformations[index][transformationIndex].key | slice:0:13 }}
                                                             </span>
                                                         
                                                         
@@ -224,16 +224,23 @@
                                                                         ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                                         <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
                                                                             <div class="p-2">
-                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column to replace null values." class="icon icon-info ms-1 cursor-pointer"></i>
+                                                                                <label class="form-label">Select Column <span  class="text-red">*</span><i ngbTooltip="Select a column" class="icon icon-info ms-1 cursor-pointer"></i>
                                                                                 </label>
                                                                             <select class="form-select" (change)="setTransformationType(index, transformation.key, $event, true, false,transformationIndex)">
+                                                                                <option selected disabled>Select Column</option>
                                                                                 @for(column of item.columns; track column){
-                                                                                    <option [value]="column.col">{{column?.col}}</option>
+                                                                                    <option *ngIf="(transformation.key == 'alter_datatypes' && !dateList.includes(column.dtype)) || transformation.key != 'alter_datatypes'"  [value]="column.col">{{column?.col}}</option>
                                                                                 } 
                                                                             </select>
                                                                             </div>
                                                                             <div class="p-2">
-                                                                                <input type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
+                                                                                <input *ngIf="transformation.key == 'replace_values'" type="text" placeholder="Enter Replace Value" (blur)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)" class="form-control border">
+                                                                                <select *ngIf="transformation.key == 'alter_datatypes'" class="form-select" (change)="setTransformationType(index, transformation.key, $event, false, true,transformationIndex)">
+                                                                                    <option selected disabled>Select Data Type</option>
+                                                                                    <option value="int">Integer</option>
+                                                                                    <option value="float">Float</option>
+                                                                                    <option value="string">String</option>
+                                                                                </select>
                                                                             </div>
                                                                         </ul>
 
@@ -272,8 +279,8 @@
                     </div>
                     <div class="card-footer p-3">
                         <div class="float-end d-inline-block btn-list">
-                            <a class="btn btn-primary">Decline</a>
-                            <a class="btn btn-secondary" (click)="getValue()">Agree and Continue</a>
+                            <a class="btn btn-primary" (click)="setTransformations(false)">Import & Load</a>
+                            <!-- <a class="btn btn-secondary" (click)="getValue()">Agree and Continue</a> -->
                         </div>
                     </div>
                 </div>

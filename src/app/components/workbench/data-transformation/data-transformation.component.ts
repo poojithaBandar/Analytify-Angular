@@ -34,6 +34,12 @@ export class DataTransformationComponent {
     { key: 'lower', label: 'Lower case', needColumn: true },
     { key: 'title', label: 'Title case', needColumn: true }
   ];
+  dateList = ['date', 'time', 'datetime', 'timestamp', 'timestamp with time zone', 'timestamp without time zone', 'timezone', 'time zone', 
+    'timestamptz', 'nullable(date)', 'nullable(time)', 'nullable(datetime)', 'nullable(timestamp)', 'nullable(timestamp with time zone)',
+    'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)', 
+    'datetime64', 'datetime32', 'date32', 'nullable(date32)', 'nullable(datetime64)', 'nullable(datetime32)', 'date', 'datetime', 'time', 
+    'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 
+    'nullable(date32)']
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
@@ -113,11 +119,6 @@ export class DataTransformationComponent {
   isLastTransformation(index: number, transformationIndex: number): boolean {
     return transformationIndex === this.selectedTransformations[index]?.length - 1;
   }
-
-  getValue(){
-    console.log(this.draggedtables, this.selectedTransformations);
-    this.setTransformations();
-  }
   removeTransformation(index: number, transformationIndex: number) {
     this.selectedTransformations[index].splice(transformationIndex, 1);
   }
@@ -131,7 +132,6 @@ export class DataTransformationComponent {
       next: (response: any) => {
         console.log(response);
         this.tables = response.tables;
-        // this.hierarchyId = response.data.database.hierarchy_id;
         this.schema = response.schema;
         this.databaseName = response.databas_name;
       },
@@ -147,7 +147,7 @@ export class DataTransformationComponent {
     });
   }
 
-  setTransformations(){
+  setTransformations(isInvidualTableRun : boolean){
     let transformationList : any[] = []
     this.draggedtables.forEach((table:any,index:any)=>{
       let object = {
@@ -157,19 +157,23 @@ export class DataTransformationComponent {
       }
       this.selectedTransformations[index].forEach((tableWiseTransformations:any)=>{
         let obj = {
-          type: tableWiseTransformations[0] as string,
+          type: tableWiseTransformations.key as string,
           keys: [] as any[]
         }
-        if(tableWiseTransformations.length > 1){
-          if(['upper','lower','title'].includes(tableWiseTransformations[0])){
+        if(tableWiseTransformations){
+          if(['upper','lower','title'].includes(tableWiseTransformations.key)){
             obj.type = 'case_change';
-            obj.keys.push(tableWiseTransformations[1]);
-            obj.keys.push(tableWiseTransformations[0]);
-          } else if(tableWiseTransformations[0] === 'replace_values'){
-            obj.keys.push(tableWiseTransformations[1]);
+            obj.keys.push(tableWiseTransformations.dropdown);
+            obj.keys.push(tableWiseTransformations.key);
+          } else if(tableWiseTransformations.key === 'replace_values'){
+            obj.keys.push(tableWiseTransformations.dropdown);
             obj.keys.push(null);
-          } else{
-            obj.keys.push(tableWiseTransformations[1]);
+            obj.keys.push(tableWiseTransformations.input);
+          } else if(tableWiseTransformations.key === 'alter_datatypes'){
+            obj.keys.push(tableWiseTransformations.dropdown);
+            obj.keys.push(tableWiseTransformations.input);
+          } else if(tableWiseTransformations.key === 'special_char_remove'){
+            obj.keys.push(tableWiseTransformations.dropdown);
           }
         }
         object.transform.push(obj)
@@ -178,17 +182,25 @@ export class DataTransformationComponent {
     });
     let object = {
       id : this.hierarchyId,
-      transformation_list: transformationList
+      transformation_list: transformationList,
+      ...(isInvidualTableRun && { preview: isInvidualTableRun })
     }
     console.log('payload : ',object);
-    // this.workbechService.setTransformations(object).subscribe({
-    //   next: (response: any) => {
-    //     console.log(response);
-    //     this.tables = response.data.tables;
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //   }
-    // });
+    this.workbechService.setTransformations(object).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        let encodedId = btoa(response.parent_id.toString());
+        this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'oops!',
+          text: error.error.message,
+          width: '400px',
+        })
+      }
+    });
   }
 }
