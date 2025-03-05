@@ -5799,7 +5799,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
             }
             this.filteredRowData.push(rowObject);
           }
-          this.setDashboardSheetData(item,false,false, false,true,sheet.sheet_id, false,0);
+          this.setDashboardSheetData(sheet,false,false, false,true,sheet.sheet_id, false,0);
         });
       },
       error: (error) => {
