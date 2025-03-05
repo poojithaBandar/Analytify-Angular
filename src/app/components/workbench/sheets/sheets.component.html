@@ -1411,10 +1411,11 @@
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                    <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
+                                    <!-- <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
-                                    </app-insights-button>
+                                    </app-insights-button> -->
+                                    <button class="viewQueryImg" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
                                 <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             </div>
@@ -2024,7 +2025,7 @@
                             
                             <div>
                                 <li role="presentation" class="nav-item">
-                                    <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
+                                    <button type="button" ngbnavlink="" ngbTooltip="Add Sheet" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
                                         class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" >
                                         <i class="fa fa-plus-square"></i>
@@ -2032,14 +2033,14 @@
                                 </li>
                             </div>
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0" data-bs-toggle="tab" role="tab"
+                                <button type="button" ngbnavlink="" ngbTooltip="Delete Sheet" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0 && !deleteSheetInSheetComponent" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" ngbtooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
+                                <button type="button" ngbnavlink="" ngbTooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="sheetDuplicate()" >
                                     <i class="fa fa-copy"></i>
@@ -2061,7 +2062,8 @@
                                             <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary " [disabled]="!retriveDataSheet_id" (click)="gotoDashboard(); modal.close('Save click')"> New Dashboard</button>
+                                    <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary'" [previledgeId]="34" [isBtn]="true"
+                                    (btnClickEvent)="gotoDashboard();modal.close('Save click')" [gotoSheetButton]="!retriveDataSheet_id" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
                                 </div>
                             
                             
@@ -2099,10 +2101,10 @@
                                                     <div class="example-box justify-content-between border-bottom cursor-pointer"> 
                                                        {{dimen.col_name}}
                                                        <div class="filter-icons">
-                                                        <a aria-label="anchor" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
-                                                            <i class="ri-edit-line" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
+                                                        <a aria-label="anchor" ngbTooltip="Edit" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
+                                                            <i class="ri-edit-line"  (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
                                                         </a>
-                                                        <a aria-label="anchor" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                                        <a aria-label="anchor" ngbTooltip="Delete" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                                             <i class="ri-delete-bin-7-line" (click)="filterDelete(index,dimen.filter_id)"></i>
                                                         </a>
                                                         <!-- <i class="fe fe-edit fs-12 text-body-secondary ms-2" ></i>

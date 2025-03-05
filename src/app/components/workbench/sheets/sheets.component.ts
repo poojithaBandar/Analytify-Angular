@@ -383,9 +383,10 @@ export class SheetsComponent {
   selectedColorScheme=[] as  any;
   hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
-
+  deleteSheetInSheetComponent = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
+      this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -4738,7 +4739,7 @@ customizechangeChartPlugin() {
         case 'average':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + '")';
@@ -4747,7 +4748,7 @@ customizechangeChartPlugin() {
         case 'count':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + '")';
@@ -4756,7 +4757,7 @@ customizechangeChartPlugin() {
         case 'countd':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + '")';
@@ -4765,7 +4766,7 @@ customizechangeChartPlugin() {
         case 'max':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + '")';
@@ -4774,7 +4775,7 @@ customizechangeChartPlugin() {
         case 'min':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + '")';
@@ -4783,7 +4784,7 @@ customizechangeChartPlugin() {
         case 'sum':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + '")';

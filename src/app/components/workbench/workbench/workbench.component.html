@@ -166,11 +166,11 @@
           <h4 class="card-title mt-2">{{ iscrossDbSelect ? 'Select Database' : 'Connected Database' }}</h4>
         </div>
         <div class="new-data-btn d-flex text-align-center">
-          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Grid View" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Table View" (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
 
-          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Grid View" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Table View" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
           <div class="input-group">
             <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="searchDbConnectionList()">
             <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" (click)="searchDbConnectionList()" id="button-addon2"><i class="fe fe-search "></i></button>
@@ -366,7 +366,7 @@
                               aria-haspopup="true" aria-expanded="false" class=""><i
                                   class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                           </a>
-                          <div class="dropdown-menu" ngbDropdownMenu>
+                        <div class="dropdown-menu" ngbDropdownMenu>
                             <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
@@ -1559,7 +1559,7 @@
                     <h6 class="mb-3">File Source</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="triggerFileUpload('csv')">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': !canUploadCsv}" (click)="canUploadCsv ? triggerFileUpload('csv') : null" [attr.title]="!canUploadCsv ? 'You have no privilege to upload' : null">
                           <img src="./assets/images/Db_server_images/File Source/csv.png" alt="Image" class="card-img" />
                           <input type="file" (change)="uploadfileCsv($event,'upload',{})" accept=".csv" #fileInput style="display: none;" />
                         </div>
@@ -1568,7 +1568,7 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard  p-4" (click)="triggerFileUpload('excel')">
+                        <div class="imgcard  p-4" [ngClass]="{'op-4': !canUploadExcel}" (click)="canUploadExcel ? triggerFileUpload('excel') : null" [attr.title]="!canUploadExcel ? 'You have no privilege to upload' : null">
                           <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img" />
                           <input type="file" (change)="uploadfileExcel($event,'upload',{})" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
                         </div>
