@@ -507,7 +507,7 @@
             <div class="p-2 br-0 mb-0 border-bottom d-block ">
                 <div class="d-flex align-items-center justify-content-between ">
                     <h6 class="mb-0">Connections</h6>
-                    <a (click)="goToConnections()"><span class="add-txt text-info">Add</span></a>
+                    <a [ngClass]="{ 'disabled': crossDbId }" [attr.disabled]="crossDbId ? true : null" [ngbTooltip]="crossDbId ? 'You can connect two Datasources only' : ''" (click)="crossDbId ? $event.preventDefault() : goToConnections()"><span class="add-txt text-info">Add</span></a>
                 </div>
                 <p class=" mb-0" ngbTooltip="{{hostName}}">{{hostName | slice:0:15}}</p>
             </div>
