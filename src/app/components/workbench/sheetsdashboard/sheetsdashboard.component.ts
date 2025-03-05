@@ -2396,6 +2396,21 @@ arraysHaveSameData(arr1: number[], arr2: number[]): boolean {
     this.workbechService.deleteSheetFilter(reqObj).subscribe({
       next:(data)=>{
         console.log(data);
+        if (data?.filter_id) {
+
+          let filterIdStr = data.filter_id.map(String);
+          filterIdStr.forEach((key: string) => {
+            if (this.storeSelectedColData?.test.hasOwnProperty(key)) {
+              delete this.storeSelectedColData.test[key];
+              console.log(`Deleted key from storeSelectedColData: ${key}`);
+            }
+          });
+          console.log('Updated storeSelectedColData:', this.storeSelectedColData);
+          console.log('Updated Extracted Keys:', this.keysArray);
+          console.log('Updated Extracted Data:', this.dataArray);
+        }
+        
+        
         this.loaderService.hide();
         this.toasterService.info('Filters on Removed Sheet will be deleted.','info',{ positionClass: 'toast-top-center'});
         this.getDashboardFilterredList(true);
