@@ -557,7 +557,7 @@ if(value === 'public'){
   this.createUrl = true;
   this.shareAsPrivate = false
   const publicDashboardId = btoa(this.dashboardId.toString());
-  this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
+  this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
   this.publishDashboard();
 } else if(value === 'private'){
   this.createUrl = false;

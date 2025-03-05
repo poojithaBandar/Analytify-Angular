@@ -1,11 +1,11 @@
    <!-- PAGE-HEADER -->
-   <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-2 DashboardFixedHader app-header">
+   <div class="page-header d-flex align-items-center justify-content-between border-bottom mb-2">
     <button  *ngIf="isPublicUrl" type="button" class="btn btn-icon btn-primary-light me-3 rounded-5 hamburger-menu">
         <i class="fa fa-bars" (click)="toggleSidebar()" style=" font-size: 24px;"></i>
 </button>
-    <div class="page-title TitlePaddings" [innerHTML]="dashbaordName"></div>
+    <div class="page-title col-10 TitlePaddings" [innerHTML]="dashbaordName"></div>
     <div *ngIf="!multiLevel" class="d-flex"> 
-        <button type="button"  (click)="helpRoute()" class="btn btn-icon btn-primary-light me-3 rounded-5">
+        <button type="button" ngbTooltip="Help" container="body" (click)="helpRoute()" class="btn btn-icon btn-primary-light me-3 rounded-5">
             <i class="fa fa-question-circle" style=" font-size: 24px;"></i>
         </button>
         <ol class="breadcrumb" style=" line-height: 2.7;">
