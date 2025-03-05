@@ -793,8 +793,10 @@ export class SheetsdashboardComponent {
         }
         this.dashboardTagTitle = this.sanitizer.bypassSecurityTrustHtml(this.dashboardTagName);
         this.dashboard.forEach((sheet : any)=>{
-          console.log('Before sanitization:', sheet.data?.sheetTagName);
-          this.sheetTagTitle[sheet.data?.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
+          // console.log('Before sanitization:', sheet.data?.sheetTagName);
+          if(sheet.data?.sheetTagName){
+            this.sheetTagTitle[sheet.data?.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data?.sheetTagName);
+          }
           if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
           sheet.chartOptions.chart.events = {
             markerClick: (event: any, chartContext: any, config: any) => {
@@ -2173,7 +2175,9 @@ allowDrop(ev : any): void {
     //  this.initializeChartData(element);  // Initialize chart after adding
     this.dashboard.forEach((sheet:any)=>{
       // console.log('Before sanitization:', sheet.data.sheetTagName);
-      this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+      if(sheet.data?.sheetTagName){
+        this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+      }
       // console.log('After sanitization:', sheet.data.sheetTagName);
 
       if(sheet['chartId'] === 10 && sheet.chartOptions && sheet.chartOptions.plotOptions && sheet.chartOptions.plotOptions.pie && sheet.chartOptions.plotOptions.pie.donut && sheet.chartOptions.plotOptions.pie.donut.labels && sheet.chartOptions.plotOptions.pie.donut.labels.total){
@@ -4727,7 +4731,9 @@ kpiData?: KpiData;
         let self = this;
         this.dashboard.forEach((sheet : any)=>{
           // console.log('Before sanitization:', sheet.data.sheetTagName);
-          // this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          if(sheet.data?.sheetTagName){
+          this.sheetTagTitle[sheet.data.title] = this.sanitizer.bypassSecurityTrustHtml(sheet.data.sheetTagName);
+          }
           if((sheet && sheet.chartOptions && sheet.chartOptions.chart)) {
             sheet.chartOptions.chart.events = {
               markerClick: (event: any, chartContext: any, config: any) => {
@@ -5424,7 +5430,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               })
             })
           }
-        } else if(![1, 25, 10, 24, 11, 29].includes(chartId)){
+        } else if(![1, 25, 10, 24, 11, 29, 9].includes(chartId)){
           if (sheet.echartOptions?.yAxis?.axisLabel) {
             sheet.echartOptions.yAxis.axisLabel.formatter = (val: any) => {
               return this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);
@@ -5464,7 +5470,7 @@ formatNumber(value: number,decimalPlaces:number,displayUnits:string,prefix:strin
               return `${category}: ${formattedValue}`;
             }
           }
-        } else if(![1, 25, 10, 24].includes(chartId)){
+        } else if(![1, 25, 10, 24, 9].includes(chartId)){
           if(chartId === 28 && sheet.chartOptions?.plotOptions?.radialBar?.dataLabels?.value){
             sheet.chartOptions.plotOptions.radialBar.dataLabels.value.formatter = (val: number) => {
               const formattedValue = this.formatNumber(val, numberFormat?.decimalPlaces, numberFormat?.displayUnits, numberFormat?.prefix, numberFormat?.suffix);

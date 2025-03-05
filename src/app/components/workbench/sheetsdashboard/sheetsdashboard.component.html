@@ -8,7 +8,7 @@
   <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/analytify/sheets" activeitem="Dashboard"></app-page-header>
   </div> -->
   
-  <div *ngIf="isPublicUrl" style="margin-top: 60px;">
+  <div *ngIf="isPublicUrl">
     
     <app-page-header (btnClickEvent)="toggleSidebar()" title="{{dashboardTagName}}" title1="public" [isPublicUrl]="false" activeitem="Dashboard"></app-page-header>
     </div>
