@@ -122,14 +122,14 @@
                   @if(schemaList.length <= 0 || !schemaList) {
                   <input type="text" class="form-control" disabled [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}" placeholder="SchemaName">
                   }
-                  @if(schemaList && schemaList.length > 0) {
+                  <!-- @if(schemaList && schemaList.length > 0) {
                   <select id="schemaSelect" [(ngModel)]="selectedSchema" (change)="onSchemaChange()"
                     class="form-select" [ngModelOptions]="{standalone: true}">
                     <option value="" disabled>Select Schema</option>
                     <option *ngFor="let schema of schemaList;" [value]="schema">{{ schema }}</option>
                     
                   </select>
-                }
+                } -->
                 </div>
             </form>
           }
@@ -147,7 +147,6 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
             } @else {
-              <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Change Schema</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
             }
