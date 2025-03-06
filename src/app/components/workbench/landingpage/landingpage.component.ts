@@ -557,7 +557,7 @@ if(value === 'public'){
   this.createUrl = true;
   this.shareAsPrivate = false
   const publicDashboardId = btoa(this.dashboardId.toString());
-  this.publicUrl = 'http://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
+  this.publicUrl = 'https://'+this.host+':'+this.port+'/public/dashboard/'+publicDashboardId
   this.publishDashboard();
 } else if(value === 'private'){
   this.createUrl = false;
@@ -611,13 +611,14 @@ fallbackCopyTextToClipboard(text: string): void {
   }
   document.body.removeChild(textArea);
 }
-onRolesChange(selected: number[]) {
-  this.selectedRoleIds = selected
-   this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
-  console.log(this.selectedRoleIds);
-
-  // You can store or process the selected values here
-}
+  onRolesChange(selected: number[]) {
+    this.selectedRoleIds = selected
+    this.selectedRoleIdsToNumbers = selected.map(value => Number(value));
+    console.log(this.selectedRoleIds);
+    if (this.selectedRoleIds.length === 0) {
+      this.selectedUserIds = []
+    }
+  }
 getSelectedUsers(selected: number[]){
   this.selectedUserIds = selected;
   this.selectedUserIdsToNumbers = this.selectedUserIds.map((value: any) => Number(value));

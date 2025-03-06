@@ -8,7 +8,7 @@
   <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/analytify/sheets" activeitem="Dashboard"></app-page-header>
   </div> -->
   
-  <div *ngIf="isPublicUrl" style="margin-top: 60px;">
+  <div *ngIf="isPublicUrl">
     
     <app-page-header (btnClickEvent)="toggleSidebar()" title="{{dashboardTagName}}" title1="public" [isPublicUrl]="false" activeitem="Dashboard"></app-page-header>
     </div>
@@ -547,7 +547,7 @@
                                                                 <p class="p-1 mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
-                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList).length > 20 ? (getColumnSelectionLabel(filterList) | slice: 0:20) + '...' : getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
                                                                   <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button>
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox select-data-card-a">

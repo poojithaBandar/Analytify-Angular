@@ -384,9 +384,14 @@ export class SheetsComponent {
   hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
   deleteSheetInSheetComponent = false;
+  canAddDashbaordInSheet = false;
+  canEditDashbaordInSheet = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
+      this.canEditDashbaordInSheet = this.templateService.editDashboard();
+      this.canAddDashbaordInSheet = this.templateService.addDashboard();
+
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -509,7 +514,9 @@ export class SheetsComponent {
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
+    if(this.canAddDashbaordInSheet || this.canEditDashbaordInSheet){
     this.getDashboardsList();
+    }
     this.setChartType();
     // this.colorService.color$.subscribe((color) => {
     //   this.color = this.rgbStringToHex(color);
@@ -1090,7 +1097,7 @@ try {
       }
 
       KPIChart(){
-        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
+        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data[0]);
         this.formatKPINumber();
       }
       tableNameMethod(schemaname: any, tablename: any, tableAlias: any){
@@ -3671,8 +3678,8 @@ renameColumns(){
   }
 
   formatKPINumber() {
-    let formattedNumber = this.tablePreviewRow[0].result_data[0]+'';
-    let value = this.tablePreviewRow[0].result_data[0];
+    let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
+    let value = this.tablePreviewRow[0]?.result_data[0];
     if (this.KPIDisplayUnits !== 'none') {
       switch (this.KPIDisplayUnits) {
         case 'K':
@@ -3694,7 +3701,7 @@ renameColumns(){
           break;
       }
     } else {
-      formattedNumber = (value).toFixed(this.KPIDecimalPlaces)
+      formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
     }
 
     this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
@@ -4181,15 +4188,15 @@ customizechangeChartPlugin() {
       this.selectedSortColumnData[2] = format;
     }
     if(format === ''){
-      this.draggedColumnsData[index] = [column.column,column.data_type,format,""];
-      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
+      this.draggedColumnsData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
+      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
      }else if(format === '-Select-'){
-      this.draggedColumnsData[index] = [column.column,column.data_type,'',''];
-      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:''};
+      this.draggedColumnsData[index] = [column.column,column.data_type,'',column.alias ? column.alias : ""];
+      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:'', alias: column.alias ? column.alias : ""};
      }
      else{
-      this.draggedColumnsData[index] = [column.column, "date", format,''];
-      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format };
+      this.draggedColumnsData[index] = [column.column, "date", format,column.alias ? column.alias : ""];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
      }
      this.dataExtraction();
@@ -4199,12 +4206,12 @@ customizechangeChartPlugin() {
       this.selectedSortColumnData[2] = type;
     }
     if (type === '') {
-      this.draggedColumnsData[index] = [column.column, column.data_type, type, ''];
-      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
+      this.draggedColumnsData[index] = [column.column, column.data_type, type, column.alias ? column.alias : ""];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
     }
     else {
-      this.draggedColumnsData[index] = [column.column, "aggregate", type, ''];
-      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
+      this.draggedColumnsData[index] = [column.column, "aggregate", type, column.alias ? column.alias : ""];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
     }
     this.dataExtraction();
