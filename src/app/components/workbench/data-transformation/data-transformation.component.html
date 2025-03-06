@@ -1,13 +1,13 @@
-<div class="main-container container-fluid mt-2 TopHeader">
+<div class="main-container container-fluid mt-5">
         <!-- ROW-1 OPEN -->
         <div class="row ">
-            <div class="col-md-12">
+            <div class="col-md-12 mt-4">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-center align-items-center m-2">
                             <!-- <img class="me-2 w-40p" src="./assets/images/icons/1.png" alt=""> -->
                             <div>
-                                <h5 class="mb-0"><b>Transformations Layer</b></h5>
+                                <h5 class="card-title mb-0">Transformations Layer</h5>
                                 <!-- <p class="mb-0 text-muted">Last Updated Jan 27, 2023</p> -->
                             </div>
                         </div>
@@ -154,26 +154,27 @@
                                 </div>
                                
                             </div>
-                            <div class="col-9 p-4">
+                            <div class="col-9 py-0">
                                 <div type="button" class="card mb-0 hide-show-btn btn-primary">
                                     <i class="fa fa-angle-left fs-18"></i>
                                 </div>
                                 <div class="tab-content terms" id="vertical-tabContent">
                                     <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0"> -->
                                         <!-- <div class="card card-body databse-T-H mb-0 br-0 p-0"> -->
-                                            <div class="card-body example-list-drop mb-0" cdkDropList #destinationList="cdkDropList"
+                                            <div class="card-body example-list-drop mb-0 py-0" cdkDropList #destinationList="cdkDropList"
                                                 [cdkDropListData]="draggedtables" (cdkDropListDropped)="drop($event)">
                                         
                                                 @for (item of draggedtables; track item; let index = $index) {
                                                     <div class="d-flex overflow-auto">
                                                       <!-- Table Element -->
-                                                      <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center position-relative" ngbDropdown>
-                                                        <span class="flex-grow-1" ngbTooltip="{{ item.tables }}" placement="top" container="body">
-                                                          {{ item.tables | slice:0:14 }}
-                                                        </span>
+                                                      <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " ngbDropdown>
+                                                      
 
-                                                        <div class="d-flex position-absolute end-0 gap-1 m-1">
-                                                            <a (click)="removeTable(index)" aria-label="remove" class="btn btn-sm btn-danger rounded-circle plus-icon-size">
+                                                        <div class="d-flex  end-0 gap-1 m-1">
+                                                            <span class="flex-grow-1" ngbTooltip="{{ item.tables }}" placement="top" container="body">
+                                                                {{ item.tables | slice:0:14 }}
+                                                              </span>
+                                                            <a (click)="removeTable(index)" aria-label="remove" class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
                                                                 <i class="fe fe-trash"></i>
                                                             </a>
                                                             <a *ngIf="!selectedTransformations[index]?.length" aria-label="add"
@@ -186,7 +187,7 @@
                                                       @for (transformationtable of selectedTransformations[index]; let transformationIndex = $index; track transformationtable) {
                                                         <img src="../../../../assets/images/data-transformation/right_arrow.png" class="image-width" alt="arrow image">
                                                   
-                                                        <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center position-relative"
+                                                        <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center "
                                                             ngbDropdown>
                                                             <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations[index][transformationIndex].key }}" placement="top"
                                                                 container="body">
@@ -194,13 +195,13 @@
                                                             </span>
                                                         
                                                         
-                                                            <div class="d-flex position-absolute end-0 gap-1 m-1">
+                                                            <div class="d-flex  end-0 gap-1 m-1">
                                                                 <a (click)="isAddTransformation = false" aria-label="edit" class="btn btn-sm btn-primary-light rounded-circle plus-icon-size" ngbDropdownToggle
                                                                     data-bs-toggle="dropdown">
                                                                     <i class="fe fe-edit"></i>
                                                                 </a>
                                                                 <a (click)="removeTransformation(index, transformationIndex)" aria-label="remove"
-                                                                    class="btn btn-sm btn-danger rounded-circle plus-icon-size">
+                                                                    class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
                                                                     <i class="fe fe-trash"></i>
                                                                 </a>
                                                                 <a *ngIf="isLastTransformation(index, transformationIndex)" (click)="isAddTransformation = true" aria-label="add"
@@ -211,7 +212,7 @@
 
                                                           <!-- Show Dropdown ONLY on the Last Transformation -->
                                                           <!-- <a *ngIf="isLastTransformation(index, transformationIndex)" 
-                                                             aria-label="anchor" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 m-1 plus-icon-size"
+                                                             aria-label="anchor" class="btn btn-sm btn-primary rounded-circle  bottom-0 end-0 m-1 plus-icon-size"
                                                              ngbDropdownToggle data-bs-toggle="dropdown">
                                                             <i class="fe fe-plus text-white text-sm"></i>
                                                           </a> -->
