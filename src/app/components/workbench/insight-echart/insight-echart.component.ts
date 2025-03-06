@@ -628,7 +628,8 @@ hgroupedChart(){
           color: this.yGridColor
         },
         show: this.yGridSwitch
-      }
+      },
+      inverse: true
     },
     series:yaxisOptions.map((series:any) => ({
       ...series,
@@ -735,7 +736,8 @@ hstackedChart(){
           color: this.yGridColor
         },
         show: this.yGridSwitch
-      }
+      },
+      inverse: true
     },
     series:yaxisOptions.map((series:any) => ({
       ...series,
