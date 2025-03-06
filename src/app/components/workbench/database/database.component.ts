@@ -413,7 +413,9 @@ getSchemaTablesFromConnectedDb(){
 
     }
     data.forEach((dataTest: any) => {                                   
-      this.schematableList.push(dataTest?.data?.schemas[0]);
+      if(dataTest?.data?.schemas && dataTest?.data?.schemas.length > 0){
+        this.schematableList.push(dataTest?.data?.schemas[0]);
+      }
     });
   //  this.schematableList= data?.data?.schemas;
   //  this.filteredSchematableList = this.schematableList?.data?.schemas

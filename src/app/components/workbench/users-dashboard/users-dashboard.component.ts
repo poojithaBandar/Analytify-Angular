@@ -27,7 +27,7 @@ export class UsersDashboardComponent {
   totalItems:any;
   savedUsersList =[] as any;
   userAddedRolesList =[] as any;
-  searchUser :any
+  // searchUser :any
   addUserForm:FormGroup;
   confirmPasswordError = false;
   userEditHidePassword = false;
@@ -157,10 +157,10 @@ toggleClass1 = "off-line";
   }
   getUserList(){
     const obj ={
-      search : this.searchUser,
+      search : this.userName,
       page_no:this.pageNo,
     page_count:this.itemsPerPage
-    }
+    } as any
     if(obj.search === '' || obj.search === null){
       delete obj.search
     }

@@ -384,9 +384,14 @@ export class SheetsComponent {
   hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
   deleteSheetInSheetComponent = false;
+  canAddDashbaordInSheet = false;
+  canEditDashbaordInSheet = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
       this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
+      this.canEditDashbaordInSheet = this.templateService.editDashboard();
+      this.canAddDashbaordInSheet = this.templateService.addDashboard();
+
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -509,7 +514,9 @@ export class SheetsComponent {
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
+    if(this.canAddDashbaordInSheet || this.canEditDashbaordInSheet){
     this.getDashboardsList();
+    }
     this.setChartType();
     // this.colorService.color$.subscribe((color) => {
     //   this.color = this.rgbStringToHex(color);
