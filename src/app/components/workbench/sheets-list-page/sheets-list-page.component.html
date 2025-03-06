@@ -27,7 +27,10 @@
           </select>
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="sheetName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchUserList()" type="button" id="button-addon2" ><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary new-sheet-btn-radius" (click)="sheetsRoute()"><i class="fa fa-plus"></i> New Sheet</button>
+            <!-- <button type="button" class="btn btn-primary new-sheet-btn-radius" (click)="sheetsRoute()"><i class="fa fa-plus"></i> New Sheet</button> -->
+            
+            <app-insights-button [buttonName]="' New Sheet'" [classesList]="'btn btn-primary new-sheet-btn-radius'" [previledgeId]="17" [isBtn]="true"
+            (btnClickEvent)="sheetsRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
 
           </div>
         </div>
