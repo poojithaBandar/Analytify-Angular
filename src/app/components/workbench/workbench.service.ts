@@ -99,6 +99,18 @@ export class WorkbenchService {
     return this.http.get<any>(`${environment.apiUrl}/get_file/`+id+'/'+this.accessToken);
   }
 
+  fetchSchemaList(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/get-schemas/`+this.accessToken, obj);
+  }
+  //crossDb
+  crossDbConnection(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken,obj);
+  }
+
   //Quickbooks
   connectQuickBooks(){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -166,7 +178,12 @@ export class WorkbenchService {
   getSchemaTablesFromConnectedDb(id:any,obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
     this.accessToken = JSON.parse( currentUser! )['Token'];
-    return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken+'/'+id,obj)
+    return this.http.post<any>(`${environment.apiUrl}/server_tables/`+this.accessToken,obj)
+  }
+  buildRelation(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.post<any>(`${environment.apiUrl}/crossdb_relation/`+this.accessToken,obj)
   }
   getColumnsData(obj:any){
     const currentUser = localStorage.getItem( 'currentUser' );
@@ -806,6 +823,12 @@ deleteUser(id:any){
     }
 
     upsertExcelOrCsvFile(object : any){
+      const currentUser = localStorage.getItem( 'currentUser' );
+      this.accessToken = JSON.parse( currentUser! )['Token'];
+      return this.http.post<any>(`${environment.apiUrl}/file_upsert/`+this.accessToken,object);
+    }
+
+    appendExcelOrCsvFile(object : any){
       const currentUser = localStorage.getItem( 'currentUser' );
       this.accessToken = JSON.parse( currentUser! )['Token'];
       return this.http.post<any>(`${environment.apiUrl}/file_append/`+this.accessToken,object);

@@ -1,162 +1,12 @@
-<app-page-header title="Database Connections" moduleId="datasource" title1="Home" activeitem="Data Source"></app-page-header>
+<app-page-header title="Datasource Connections" moduleId="datasource" title1="Home" activeitem="Data Source"></app-page-header>
 <!-- CONTAINER -->
-
-<ng-template #mdo let-modal >
-
-    <div  >
-      <div >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">PostgreSQL</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-2">
-                <label for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
-              </div>
-              <div class="mb-2">
-                <label for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
-                <div class="d-flex">
-                <input type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
-                <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>                          
-              </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="postgreSignIn()">Connect</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-  
-  <ng-template #oracle let-modal >
-
-    <div  >
-      <div >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">Oracle</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-2">
-                <label for="recipient-name" class="col-form-label">Server:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
-              </div>
-              <div class="mb-2">
-                <label for="message-text" class="col-form-label">Port:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Service Name1:</label>
-                <input type="text" class="form-control" [(ngModel)]="OracleServiceName" [ngModelOptions]="{standalone: true}" placeholder="orcl">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Username:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g.Analytify">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Password:</label>
-                <div class="d-flex">
-                  <input type="text" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"[type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
-                <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>
-                </div>                          
-            </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="OracleSignIn()">Connect</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #mySql let-modal >
-
-    <div  >
-      <div >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inputModalLabel">MySQL</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-2">
-                <label for="recipient-name" class="col-form-label">Server:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url">
-              </div>
-              <div class="mb-2">
-                <label for="message-text" class="col-form-label">Port:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="1521">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. mysql">
-              </div>
-             
-              <div class="mb-2">
-                <label class="col-form-label">Username:</label>
-                <input type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" placeholder="e.g.Analytify">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps">
-              </div>
-              <div class="mb-2">
-                <label class="col-form-label">Password:</label>
-                <div class="d-flex">
-                  <input type="text" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}"[type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******">
-                <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button>
-                </div>                          
-            </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-            <button type="button" class="btn btn-primary" (click)="mySqlSignIn()">Connect</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-
   <ng-template #EditDbCon let-modal >
-
     <div  >
       <div >
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="inputModalLabel">Edit Database</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close('cross click')"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="schemaList = [];modal.close('cross click')"></button>
           </div>
           <div class="modal-body">
             @if(databaseType == 'connectwise') {
@@ -180,10 +30,6 @@
                       <div class="mb-2">
                           <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
                           <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
-                      </div>
-                      <div class="mb-2">
-                        <label [ngClass]="{'error-label': clientIDError}" class="col-form-label">Client Id <span class="text-danger ms-1" >*</span></label>
-                        <input [ngClass]="{'error-input': clientIDError}" type="text" class="form-control" [(ngModel)]="clientId" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdError()">
                       </div>
               </form>
             } @else if(databaseType == 'halops') {
@@ -242,27 +88,27 @@
             <form>
               <div class="mb-2">
                 <label [ngClass]="{'error-label': serverError}" for="recipient-name" class="col-form-label">SERVER<span class="text-danger ms-1" >*</span></label>
-                <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()">
+                <input [ngClass]="{'error-input': serverError}" type="text" class="form-control" [(ngModel)]="postGreServerName" [ngModelOptions]="{standalone: true}" placeholder="Host Name/Host Url" (input)="serverConditionError()" readonly >
               </div>
               <div class="mb-2">
                 <label [ngClass]="{'error-label': portError}" for="message-text" class="col-form-label">PORT<span class="text-danger ms-1" >*</span></label>
-                <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432" (input)="portConditionError()">
+                <input [ngClass]="{'error-input': portError}" type="text" class="form-control" [(ngModel)]="postGrePortName" [ngModelOptions]="{standalone: true}" placeholder="e.g. 5432" (input)="portConditionError()" readonly >
               </div>
               <div *ngIf="databaseType !=='oracle' " class="mb-2">
                 <label [ngClass]="{'error-label': databaseError}" class="col-form-label">DATABASE<span class="text-danger ms-1" >*</span></label>
-                <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL" (input)="databaseConditionError()">
+                <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL" (input)="databaseConditionError()" readonly >
               </div>
               <div *ngIf="databaseType ==='oracle' " class="mb-2">
                 <label [ngClass]="{'error-label': databaseError}" class="col-form-label">Service Name<span class="text-danger ms-1" >*</span></label>
-                <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL" (input)="databaseConditionError()">
+                <input [ngClass]="{'error-input': databaseError}" type="text" class="form-control" [(ngModel)]="postGreDatabaseName" [ngModelOptions]="{standalone: true}" placeholder="e.g. PostgreSQL" (input)="databaseConditionError()" readonly >
               </div>
               <div class="mb-2">
                 <label [ngClass]="{'error-label': userNameError}" class="col-form-label">USER NAME <span class="text-danger ms-1" >*</span></label>
-                <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()">
+                <input [ngClass]="{'error-input': userNameError}" type="text" class="form-control" [(ngModel)]="postGreUserName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="userNameConditionError()" readonly >
               </div>
               <div class="mb-2">
                 <label [ngClass]="{'error-label': displayNameError}" class="col-form-label">DISPLAY NAME <span class="text-danger ms-1" >*</span></label>
-                <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps"  (input)="displayNameConditionError()">
+                <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps"  (input)="displayNameConditionError()" readonly >
               </div>
               <div class="mb-2">
                 <label (input)="passwordConditionError()" class="col-form-label">PASSWORD <span class="text-danger ms-1" >*</span></label>
@@ -271,13 +117,27 @@
                 <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button> 
                 </div>                         
               </div>
+                <div class="mb-2 ">
+                  <label class="col-form-label">SELECT SCHEMA </label>
+                  @if(schemaList.length <= 0 || !schemaList) {
+                  <input type="text" class="form-control" disabled [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}" placeholder="SchemaName">
+                  }
+                  <!-- @if(schemaList && schemaList.length > 0) {
+                  <select id="schemaSelect" [(ngModel)]="selectedSchema" (change)="onSchemaChange()"
+                    class="form-select" [ngModelOptions]="{standalone: true}">
+                    <option value="" disabled>Select Schema</option>
+                    <option *ngFor="let schema of schemaList;" [value]="schema">{{ schema }}</option>
+                    
+                  </select>
+                } -->
+                </div>
             </form>
           }
           </div>
           <div class="modal-footer">
             @if(databaseType == 'connectwise') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
-              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">Update</button>
+              <button type="button" class="btn btn-primary" (click)="connectWiseUpdate()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">Update</button>
       
             } @else if(databaseType == 'halops') {
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
@@ -287,7 +147,7 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
               <button type="button" class="btn btn-primary" (click)="shopifyConnectionUpdate()" [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName)">Update</button>
             } @else {
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.close('cross click')">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="schemaList = [];modal.close('cross click')">Close</button>
             <button type="button" class="btn btn-primary" (click)="DatabaseUpdate()" [disabled]="disableConnectBtn">Update</button>
             }
           </div>
@@ -297,31 +157,33 @@
   </ng-template>
 <!-- screen2 -->
 @if(databaseconnectionsList){
-  <div class="main-container container-fluid">
+  <div class="main-container container-fluid TopHeader">
     <div class="row" class="card card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
       <div class="header-title-search">
         <div class="connect-txt">
-          <h4 class="card-title mt-2">Connected Database</h4>
+          <h4 class="card-title mt-2">{{ iscrossDbSelect ? 'Select Datasource' : 'Connected Datasource' }}</h4>
         </div>
         <div class="new-data-btn d-flex text-align-center">
-          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Grid View" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Table View" (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
 
-          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Grid View" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Table View" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
           <div class="input-group">
-            <input type="text" class="form-control border-end-0 " placeholder="Search Database Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="searchDbConnectionList()">
+            <input type="text" class="form-control border-end-0 " placeholder="Search Datasource Server" [(ngModel)]="searchDbName" aria-describedby="button-addon2" (keyup.enter)="searchDbConnectionList()">
             <button class="btn btn-primary border me-2 search-icon-border-radius" type="button" (click)="searchDbConnectionList()" id="button-addon2"><i class="fe fe-search "></i></button>
             
-            <app-insights-button [buttonName]="' New Database'" [classesList]="'btn btn-primary'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
+            <app-insights-button [buttonName]="' New Datasource'" [classesList]="'btn btn-primary me-2 p-2'" [isIcon]="true" [previledgeId]="1" [faIconList]="'fa fa-plus'" [isBtn]="true"
             (btnClickEvent)="routeNewDatabase()"></app-insights-button>
+            <button *ngIf="iscrossDbSelect" [disabled]="!selectedHirchyIdCrsDb" (click)="connectCrossDbs()" class="btn btn-primary rounded-2" type="button" >Select & Move</button>
+
             <!-- <button type="button" class="btn btn-primary" (click)="databaseconnectionsList=false;viewNewDbs=true;" ><i class="fa fa-plus"></i> New Database</button> -->
           </div>
         </div>
     </div>
     <div *ngIf="viewDatasourceList && connectionList?.length === 0">
-      Connect to new Database!
+      Connect to new Datasource!
     </div>
     <div *ngIf="!viewDatasourceList">
       you don't have permission to view!
@@ -333,12 +195,12 @@
                 <table class="table border text-nowrap text-md-nowrap mb-0">
                     <thead class="table-primary bg-primary table-primary-position">
                         <tr>
-                            <th>Database</th>
+                            <th>Datasources</th>
                             <th>Server</th>
                             <th>Created on</th>
                             <th>Created by</th>
                             <th>Last Modified</th>
-                            <th>Actions</th>
+                            <th *ngIf="!iscrossDbSelect">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -346,9 +208,14 @@
                           itemsPerPage: itemsPerPage,
                           currentPage: page,
                           totalItems: totalItems
-                        }">
-                            <td (click)="getTablesFromConnectedDb(database.hierarchy_id)">
+                        }" class="selectable-card" (click)="iscrossDbSelect ? onSelectedHIDCrsDb(database.hierarchy_id) : null"
+                        [class.selected-table]="iscrossDbSelect && selectedHirchyIdCrsDb === database.hierarchy_id">
+                            <td (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)">
+                              <!-- <span><input type="checkbox" [checked]="selectedHirchyIdCrsDb === database.hierarchy_id" (change)="onSelectedHIDCrsDb(database.hierarchy_id)"></span> -->
                                 <a ngbTooltip="{{database.display_name}}"> {{database.display_name | slice:0:15}}</a>
+                                <span  *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}">
+                                  <img src="./assets/images/icons/crossdatabase-black.png" class=" avatar-radius avatar-databse-sm cover-image ms-2">
+                                </span>
                                </td>
                             <td *ngIf="database.server_type === 'POSTGRESQL'">
                               <img alt="product" src="./assets/images/icons/postSQL-icon.jpg" class="w-5 h-5 border me-2">{{database.server_type}} 
@@ -398,10 +265,10 @@
                             <td>{{database.created_at}}</td>
                             <td>{{database.created_by}}</td>
                             <td>{{database.updated_at}}</td>
-                            <td>
+                            <td  *ngIf="!iscrossDbSelect">
                               <div class="hstack gap-2 fs-1">
                                 <button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL')"
-                                  [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')"
+                                  [disabled]="(database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS')"
                                   aria-label="anchor" (click)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                                   class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light">
                                   <i class="ri-edit-line" ngbTooltip="Edit database"></i></button>
@@ -420,9 +287,14 @@
                                         (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)"
                                         [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
                                         class="fe fe-upload"></i> Upsert</a>
+                                    <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item"
+                                      (click)="fileInput.click()"><input type="file"
+                                        (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)"
+                                        [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i
+                                        class="fe fe-plus"></i> Append</a>
                                   </div>
                                 </div>
-                                <a aria-label="anchor" (click)="deleteDbConnection(database.hierarchy_id)"
+                                <a aria-label="anchor"  (click)="deleteDbConnection(database.is_cross_db ? database?.cross_db_id : database.hierarchy_id)"
                                   class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                   <i class="ri-delete-bin-7-line" ngbTooltip="Delete database"></i>
                                 </a>
@@ -441,7 +313,8 @@
                     currentPage: page,
                     totalItems: totalItems
                   }"  class="col-md-12 col-xl-3">
-                  <div class="card card-box-shadow ">
+                  <div class="card card-box-shadow selectable-card"  [class.selected]="iscrossDbSelect && selectedHirchyIdCrsDb === database.hierarchy_id"
+                         (click)="iscrossDbSelect ? onSelectedHIDCrsDb(database.hierarchy_id) : null">
                     <div class="card-header  tiled-header-bg bg-primary tiled-card-header-padding">
                       <div class="d-sm-flex align-items-center">
                         <span *ngIf="database.server_type === 'ORACLE'" class="avatar avatar rounded-circle">
@@ -477,26 +350,30 @@
                           <div class="ms-2 mt-sm-0 mt-2">
                             <!-- <span class="text-muted  pe-2 fs-12 float-start">Server</span> -->
                               <h6 class="mb-1">
-                                  <a (click)="getTablesFromConnectedDb(database.hierarchy_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
+                                  <a (click)="iscrossDbSelect ? null : getTablesFromConnectedDb(database.hierarchy_id,database.cross_db_id)" ngbTooltip="{{database.display_name}}" class="float-start">{{database.display_name | slice:0:15}}</a>
                               </h6>
                               
                           </div>
                       </div>
   
-                      <div class="col-auto">
+                      <div class="col-auto p-0"  *ngIf="!iscrossDbSelect">
                         <div class="d-flex justify-content-end p-1" ngbDropdown>
+                          <span *ngIf="database.is_cross_db" ngbTooltip="{{database.cross_db_names}}">
+                            <img src="./assets/images/icons/crossdatabase-icon.png" class="avatar avatar-radius avatar-databse-sm cover-image">
+                          </span>
                           <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                               aria-haspopup="true" aria-expanded="false" class=""><i
                                   class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                           </a>
-                          <div class="dropdown-menu" ngbDropdownMenu>
-                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
+                        <div class="dropdown-menu" ngbDropdownMenu>
+                            <app-insights-button *ngIf="!(database.server_type === 'CSV' || database.server_type ==='EXCEL' || database.server_type ==='SQLITE' || database.server_type ==='QUICKBOOKS' || database.server_type ==='SALESFORCE' || database.server_type ==='GOOGLE_SHEETS')" [buttonName]="' Edit'" [classesList]="'dropdown-item'" [previledgeId]="2" [isBtn]="false"
                               [tabIndex]="0" (btnClickEvent)="editDbDetails(database.hierarchy_id);editDbConnectionModal(EditDbCon);"
                               [faIconList]="'fe fe-edit me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()" ><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event,'replace',database) : uploadfileExcel($event,'replace',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-repeat"></i> Replace</a>
                             <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'upsert',database) : uploadfileExcel($event, 'upsert',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-upload"></i> Upsert</a>
+                            <a *ngIf="(database.server_type === 'CSV' || database.server_type ==='EXCEL')" class="dropdown-item" (click)="fileInput.click()"><input type="file" (change)="database.server_type === 'CSV' ? uploadfileCsv($event, 'append',database) : uploadfileExcel($event, 'append',database)" [attr.accept]="database.server_type === 'CSV' ? '.csv' : '.xlsx, .xls'" #fileInput style="display: none;" /><i class="fe fe-plus"></i> Append</a>
                             <app-insights-button [buttonName]="' Delete'" [classesList]="'dropdown-item  btn btn-secondary-light'" [previledgeId]="3"
-                              [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.hierarchy_id)"
+                              [isBtn]="false" [tabIndex]="0" (btnClickEvent)="deleteDbConnection(database.is_cross_db ? database?.cross_db_id : database.hierarchy_id)"
                               [faIconList]="'fe fe-trash me-2 d-inline-flex'" [isIcon]="true"></app-insights-button>
                           </div>
                       </div>
@@ -557,7 +434,7 @@
   </div>
 }
 @if(isGoogleSheetsPage){
-  <div class="main-container container-fluid">
+  <div class="main-container container-fluid TopHeader">
     <div class="row" class="card card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
       <div class="d-flex flex-nowrap align-items-center gap-2 px-5 py-2">
@@ -619,7 +496,7 @@
 
   <!-- screen3 -->
   @if(openPostgreSqlForm){
-    <div class="main-container container-fluid px-4" >
+    <div class="main-container container-fluid px-4 TopHeader" >
       <div class="row">
           <div class="col-md-12 col-xl-6 p-1 mb-0">
               <div class="card Relational-database-height">
@@ -649,15 +526,31 @@
                                 <input [ngClass]="{'error-input': displayNameError}" type="text" class="form-control" [(ngModel)]="displayName" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. InsignApps" (input)="displayNameConditionError()">
                               </div>
                               <div class="form-group">
-                                  <label [ngClass]="{'error-label': passwordError}" class="col-form-label">Password <span class="text-danger ms-1" >*</span></label>
-                                  <div class="d-flex">
-                                    <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword" [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'" placeholder="e.g. ******" (input)="passwordConditionError()">
-                                  <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i class="ri-eye-{{toggleClass1}} align-middle"></i></button> 
-                                  </div>                  
-                          </div>
+                                <label [ngClass]="{'error-label': passwordError}" class="col-form-label">Password <span
+                                    class="text-danger ms-1">*</span></label>
+                                <div class="d-flex">
+                                  <input [ngClass]="{'error-input': passwordError}" type="password" class="form-control" [(ngModel)]="PostGrePassword"
+                                    [ngModelOptions]="{standalone: true}" autocomplete="new-mypswd" [type]="showPassword1 ? 'text' : 'password'"
+                                    placeholder="e.g. ******" (input)="passwordConditionError()">
+                                  <button class="btn btn-light" (click)="toggleVisibility1()" type="button" id="button-addon21"><i
+                                      class="ri-eye-{{toggleClass1}} align-middle"></i></button>
+                                </div>
+                              
+                              </div>
+                              @if(schemaList && schemaList.length > 0) {
+                              <div class="form-group">
+                                <label class="col-form-label">Select Schema <i ngbTooltip="By default public schema will be selected, if no schema is choosen." class="icon icon-info ms-1 cursor-pointer"></i> </label>
+                                <select id="schemaupdateSelect" [(ngModel)]="selectedSchema" [ngModelOptions]="{standalone: true}"
+                                  class="form-select">
+                                  <option value="public" disabled selected>Select Schema</option>
+                                  <option *ngFor="let schema of schemaList" [value]="schema">{{ schema }}</option>
+                                </select>
+                              </div>
+                            }
                           <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" (click)="fetchSchemaList()" [disabled]="disableConnectBtn">Fetch Schema</button>
                               <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                              <button type="button" class="btn btn-primary" (click)="postgreSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                           </div>
                       </form>
                   </div>
@@ -695,7 +588,7 @@
   </div>
     }
     @if(openMySqlForm){
-      <div class="main-container container-fluid px-4" >
+      <div class="main-container container-fluid px-4 TopHeader" >
         <div class="row">
             <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card Relational-database-height">
@@ -733,7 +626,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                <button type="button" class="btn btn-primary" (click)="mySqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                             </div>
                         </form>
                     </div>
@@ -765,7 +658,7 @@
     </div>
       }
       @if(openConnectWiseForm){
-        <div class="main-container container-fluid px-4">
+        <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                   <div class="card Relational-database-height">
@@ -794,13 +687,9 @@
                                       <label [ngClass]="{'error-label': privateKeyError}" class="col-form-label">Private Key <span class="text-danger ms-1" >*</span></label>
                                       <input [ngClass]="{'error-input': privateKeyError}" type="text" class="form-control" [(ngModel)]="privateKey" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. hE1k84ArEoQWZVgb" (input)="privateConnectWiseError()">
                                   </div>
-                                  <div class="mb-4">
-                                    <label [ngClass]="{'error-label': clientIDError}" class="col-form-label">Client Id <span class="text-danger ms-1" >*</span></label>
-                                    <input [ngClass]="{'error-input': clientIDError}" type="text" class="form-control" [(ngModel)]="clientId" [ngModelOptions]="{standalone: true}" autocomplete="new-myname" placeholder="e.g. 004d3e9d-25rr-461b-913c-1b6901bssa1" (input)="clientIdError()">
-                                  </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || clientIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && clientId && displayName) ">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="connectWiseSignIn()" [disabled]="(companyIDError || privateKeyError || displayNameError || publicKeyError || siteURLError) || !(companyId && siteURL && privateKey && publicKey && displayName) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
                       </div>
@@ -833,7 +722,7 @@
       </div>
         }
         @if(openHaloPSAForm){
-          <div class="main-container container-fluid px-4" >
+          <div class="main-container container-fluid px-4 TopHeader" >
             <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card Relational-database-height">
@@ -871,7 +760,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="haloPSASignIn()"
-                          [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">Connect</button>
+                          [disabled]="(clientIDPSAError || siteURLErrorPSA || displayNameError || clientSecretError) || !(clientSecret && clientIdPSA && siteURLPSA && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
                     </form>
                   </div>
@@ -912,7 +801,7 @@
           </div>
           }
             @if(openShopifyForm){
-          <div class="main-container container-fluid px-4">
+          <div class="main-container container-fluid px-4 TopHeader">
             <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                 <div class="card Relational-database-height">
@@ -943,7 +832,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()">Close</button>
                         <button type="button" class="btn btn-primary" (click)="shopifySignIn()"
-                          [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName ) ">Connect</button>
+                          [disabled]="(shopifyApiTokenError || shopifyNameError || displayNameError) || !(shopifyToken && shopifyName && displayName ) ">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                       </div>
                     </form>
                   </div>
@@ -988,7 +877,7 @@
           </div>
           }
       @if(openOracleForm){
-        <div class="main-container container-fluid px-4">
+        <div class="main-container container-fluid px-4 TopHeader">
           <div class="row">
               <div class="col-md-12 col-xl-6 p-1 mb-0">
                   <div class="card Relational-database-height">
@@ -1026,7 +915,7 @@
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="OracleSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
                       </div>
@@ -1064,7 +953,7 @@
       
         } 
         @if(openMicrosoftSqlServerForm){
-          <div class="main-container container-fluid px-4">
+          <div class="main-container container-fluid px-4 TopHeader">
             <div class="row">
                 <div class="col-md-12 col-xl-6 p-1 mb-0">
                     <div class="card Relational-database-height">
@@ -1120,7 +1009,7 @@
                               </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                    <button type="button" class="btn btn-primary" (click)="microsoftSqlSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                 </div>
                             </form>
                         </div>
@@ -1158,7 +1047,7 @@
         
           } 
           @if(openSnowflakeServerForm){
-            <div class="main-container container-fluid px-4">
+            <div class="main-container container-fluid px-4 TopHeader">
               <div class="row">
                   <div class="col-md-12 col-xl-6 p-1 mb-0">
                       <div class="card Relational-database-height">
@@ -1196,7 +1085,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">Connect</button>
+                                      <button type="button" class="btn btn-primary" (click)="snowflakeSignIn()" [disabled]="disableConnectBtn">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                   </div>
                               </form>
                           </div>
@@ -1235,7 +1124,7 @@
           
             } 
           @if(ibmDb2Form){
-            <div class="main-container container-fluid px-4" >
+            <div class="main-container container-fluid px-4 TopHeader" >
               <div class="row">
                 <div class="col-md-12 col-xl-6 p-1 mb-0">
                   <div class="card Relational-database-height">
@@ -1273,7 +1162,7 @@
                               </div>
                               <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" (click)="ibmDb2SignIn()" >Close</button>
-                                  <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Connect</button>
+                                  <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                               </div>
                           </form>
                       </div>
@@ -1306,7 +1195,7 @@
           
             } 
           @if(openMongoDbForm){
-            <div class="main-container container-fluid px-4">
+            <div class="main-container container-fluid px-4 TopHeader">
               <div class="row">
                   <div class="col-md-12 col-xl-6 p-1 mb-0">
                       <div class="card Relational-database-height">
@@ -1344,7 +1233,7 @@
                                   </div>
                                   <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">Connect</button>
+                                      <button type="button" class="btn btn-primary" (click)="mongoDbSignIn()">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                   </div>
                               </form>
                           </div>
@@ -1403,7 +1292,7 @@
           
             } 
             @if(sqlLiteForm){
-              <div class="main-container container-fluid px-4">
+              <div class="main-container container-fluid px-4 TopHeader">
                 <div class="row">
                     <div class="col-md-12 col-xl-6 p-1 mb-0">
                         <div class="card Relational-database-height">
@@ -1426,7 +1315,7 @@
                                         
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" (click)="gotoNewConnections()" >Close</button>
-                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()" [disabled]="pathError || displayNameError">Connect</button>
+                                        <button type="button" class="btn btn-primary" (click)="sqLiteSignIn()" [disabled]="pathError || displayNameError">{{ iscrossDbSelect ? 'Connect & Move' : 'Connect' }}</button>
                                     </div>
                                 </form>
                             </div>
@@ -1463,18 +1352,18 @@
 
 
     @if(viewNewDbs){
-      <div class="main-container container-fluid">
+      <div class="main-container container-fluid TopHeader">
         <div class="row p-4">
         <div class="col-sm-12 col-lg-12 col-xl-12 p-0">
             <div class="card-header mb-3 border-0">
-                <h4 class="card-title">Connect to Database</h4>
+                <h4 class="card-title">Connect to Datasource</h4>
                 <div>
                     <div class="input-group Search-Database-Server">
-                        <input type="text" class="form-control border-end-0" placeholder="Search Database Server" aria-describedby="button-addon2">
-                        <button class="btn btn-primary" type="button" id="button-addon2"><i class="bi bi-search"></i></button>
+                        <!-- <input type="text" class="form-control border-end-0" placeholder="Search Datasource Server" aria-describedby="button-addon2">
+                        <button class="btn btn-primary" type="button" id="button-addon2"><i class="bi bi-search"></i></button> -->
                         
                     </div>
-                    <app-insights-button [buttonName]="' View Connected Database'" [classesList]="'btn btn-primary'" [isIcon]="true"
+                    <app-insights-button [buttonName]="' View Connected Datasources'" [classesList]="'btn btn-primary'" [isIcon]="true"
                       [previledgeId]="4" [faIconList]="'fa fa-eye'" [isBtn]="true" style="position: absolute;top: 0;right: 0;"
                       (btnClickEvent)="routeViewDatabase()"></app-insights-button>
 
@@ -1669,7 +1558,7 @@
                     <h6 class="mb-3">File Source</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="triggerFileUpload('csv')">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': !canUploadCsv}" (click)="canUploadCsv ? triggerFileUpload('csv') : null" [attr.title]="!canUploadCsv ? 'You have no privilege to upload' : null">
                           <img src="./assets/images/Db_server_images/File Source/csv.png" alt="Image" class="card-img" />
                           <input type="file" (change)="uploadfileCsv($event,'upload',{})" accept=".csv" #fileInput style="display: none;" />
                         </div>
@@ -1678,7 +1567,7 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard  p-4" (click)="triggerFileUpload('excel')">
+                        <div class="imgcard  p-4" [ngClass]="{'op-4': !canUploadExcel}" (click)="canUploadExcel ? triggerFileUpload('excel') : null" [attr.title]="!canUploadExcel ? 'You have no privilege to upload' : null">
                           <img src="./assets/images/Db_server_images/File Source/excel-logo.png" alt="Image" class="card-img" />
                           <input type="file" (change)="uploadfileExcel($event,'upload',{})" #fileInput1 style="display: none;" accept=".xlsx, .xls" />
                         </div>
@@ -1701,15 +1590,15 @@
                     <h6 class="mb-3">Integrations</h6>
                     <div class="image-card-container">
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectxAmplify()">
-                          <img src="https://media.licdn.com/dms/image/v2/C510BAQF5JiTv2uiWsQ/company-logo_200_200/company-logo_200_200/0/1630585990556/xamplify_logo?e=2147483647&v=beta&t=lvDimx47zMGKu8vT4wXji2MpjoXmnaLJFaUX12bd_8U"alt="Image" class="card-img">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectxAmplify()">
+                          <img src="./assets/images/Db_server_images/xAmplify-icon.png"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span >xAmplify</span>
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectQuickBooks()">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectQuickBooks()">
                           <img src="https://cdn.worldvectorlogo.com/logos/quickbooks-2.svg"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
@@ -1717,7 +1606,7 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectSalesforce()">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}" (click)="!iscrossDbSelect && connectSalesforce()">
                           <img src="./assets/images/Db_server_images/salesforce-icon.png"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" >
@@ -1741,7 +1630,7 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectJira()">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectJira()">
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Jira_Logo.svg/120px-Jira_Logo.svg.png?20230123125334"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600" >
@@ -1757,8 +1646,8 @@
                         </div>
                       </div>
                       <div class="database-logo">
-                        <div class="imgcard p-4" (click)="connectGoogleSheets()">
-                          <img src="/assets/images/Db_server_images/google-sheets.jpg"alt="Image" class="card-img">
+                        <div class="imgcard p-4" [ngClass]="{'op-4': iscrossDbSelect}"  (click)="!iscrossDbSelect && connectGoogleSheets()">
+                          <img src="/assets/images/Db_server_images/googlesheets-icon.png"alt="Image" class="card-img">
                         </div>
                         <div class="logo-txt mt-2 text-center fw-600">
                           <span>Google Sheets</span>

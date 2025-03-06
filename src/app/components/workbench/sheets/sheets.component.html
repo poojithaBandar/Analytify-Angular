@@ -1,7 +1,7 @@
 <div class="main-container container-fluid mt-5"> 
     <div class="row sheets-page-fixed">
         <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 p-1 mt-3">
-            <div class="card mb-0 border rounded-3 p-1" >
+            <div class="card mb-0 border rounded-3 p-0 ConnectionsCardHeight" >
                 <div class="card-body p-0 ">
                     <div class=" mb-0 p-2 br-0 border-bottom">
                         <div class="d-flex align-items-center justify-content-between ">
@@ -29,7 +29,7 @@
                             </a>
                             <div class="dropdown-menu" ngbDropdownMenu>
                                 <div class="" ngbDropdown [autoClose]="false" #level2="ngbDropdown">
-                                <a class="dropdown-item" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
+                                <a class="dropdown-item btn-primary-light" ngbDropdownToggle href="javascript:void(0);" (click)="addCalculatedField();" > {{isEditCalculatedField ? "Edit Calculated Field" : "Add Calculated Field"}} </a>
                                 <div class="dropdown-menu Semantic-layer-card" ngbDropdownMenu>
                                     <!-- <div class="col-lg-12 col-md-10 col-sm-10 col-xl-10 p-0"> -->
                                         <div cdkDropList cdkDropListOrientation="horizontal" class="form-control calculated-parent-card" 
@@ -281,7 +281,7 @@
                                                             <button
                                                                 [disabled]="!(calculatedFieldLogic  && calculatedFieldName && (calculatedFieldLogic.length > 0 || calculatedFieldName.length > 0))"
                                                                 class="btn btn-primary mt-0" (click)="applyCalculatedFields(level2,level1);">Apply </button>
-                                                            <button class="btn btn-primary mt-0"
+                                                            <button class="btn btn-secondary mt-0"
                                                                 (click)="isEditCalculatedField = false;level1.close();level2.close();calculationfieldid.hidden = true">Close </button>
                                                         </div>
                                                 </div>
@@ -314,7 +314,7 @@
                             <div  class="menu-item mb-1">
                                 
                             
-                            <div class="menu-title" class="example-box bg-light border w-100 menu-title-font-weight"  (click)="toggleSubMenu(columns)">
+                            <div class="menu-title" class="example-box bg-light border w-100 menu-title-font-weight py-3"  (click)="toggleSubMenu(columns)">
                                 <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                     {{columns.table_alias}} </span>
 
@@ -344,8 +344,8 @@
                                                 class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                         </a>
                                         <div class="dropdown-menu filtersDropDown" ngbDropdownMenu>
-                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,dimensions)"> Apply Filters </button>
-                                            <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
+                                            <button *ngIf="!filterAdded" class="dropdown-item filtersBtnWidth btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,dimensions)"> Apply Filters </button>
+                                            <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,dimensions)"> Edit Filters </a>
                                         </div>
                                     </div>
                                   </div>
@@ -368,9 +368,9 @@
                                                 aria-haspopup="true" aria-expanded="false" class="" (click)="editFilterCheck(measures.column)"><i
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
-                                            <div class="dropdown-menu" ngbDropdownMenu>
-                                                <a *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,measures)"> Apply Filters </a>
-                                                <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                            <div class="dropdown-menu SelectDropDownCard" ngbDropdownMenu>
+                                                <a *ngIf="!filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </a>
+                                                <a *ngIf="filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem href="javascript:void(0);" (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
                                             </div>
                                         </div>
                                       </div>
@@ -383,7 +383,7 @@
                             <div  class="menu-item mb-1">
                                 
                             
-                                <div class="menu-title" class="example-box border w-100" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
+                                <div class="menu-title" class="example-box border w-100 bg-light py-3" style=" font-weight: 700;" (click)="toggleSubMenu(columns)">
                                     <span class="arrow"> <i *ngIf="!columns.expanded" class="fa fa-chevron-down"></i> <i *ngIf="columns.expanded" class="fa fa-chevron-up"></i>
                                         Calculated Fields </span>
     
@@ -408,10 +408,10 @@
                                                     class="fe fe-more-vertical fs-18 text-body-secondary"></i>
                                             </a>
                                                 <div class="dropdown-menu" ngbDropdownMenu>
-                                                    <button *ngIf="!filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; openSuperScaled(content,measures)"> Apply Filters </button>
-                                                    <a *ngIf="filterAdded" class="dropdown-item" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
-                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
-                                                    <a class="dropdown-item" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
+                                                    <button *ngIf="!filterAdded" class="dropdown-item btn-primary-light" ngbDropdownItem  (click)="formatExtractType = ''; filterSearch = ''; activeTabId = 1; defaultRelativeDates(); openSuperScaled(content,measures)"> Apply Filters </button>
+                                                    <a *ngIf="filterAdded" class="dropdown-item btn-primary-light border" ngbDropdownItem  (click)="formatExtractType = ''; editFilterSearch = ''; openSuperScalededitFilter(contentedit,measures)"> Edit Filters </a>
+                                                    <a class="dropdown-item btn-primary-light border" ngbDropdownItem href="javascript:void(0);" (click)="level1.open();isEditCalculatedField = true;fetchCalculatedFields(measures.id);level2.open();"> Edit Calculated Field </a>
+                                                    <a class="dropdown-item btn-secondary-light border" ngbDropdownItem href="javascript:void(0);" (click)="deleteCalculationField(measures.id)"> Delete </a>
                                                 </div>
                                             </div>
                                           </div>
@@ -433,12 +433,12 @@
                         </div>
                         <div class="modal-body sheet-filter-modal">
                             @if(dateList.includes(filterType)){
-                                <div class="card panel panel-primary">
+                                <div class="card panel panel-primary shadow-none">
                                     <div class="tab-menu-heading tab-menu-heading-boxed">
                                         <div class="tabs-menu-boxed">
-                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14 pb-1" >
                                                 <li [ngbNavItem]="1" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
-                                                    <a ngbNavLink class="p-3">General</a>
+                                                    <a ngbNavLink class="p-3 TabShadow">General</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane active" id="activetabs">
                                                             <div class="d-flex">
@@ -464,7 +464,7 @@
                                                     </ng-template>
                                                 </li>
                                                 <li [ngbNavItem]="2" (click)="formatExtractType = ''; filterSearch = ''; filterDataGet()">
-                                                    <a ngbNavLink class="p-3">Range of dates</a>
+                                                    <a ngbNavLink class="p-3 TabShadow">Range of dates</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body">
@@ -486,7 +486,7 @@
                                                     </ng-template>
                                                 </li>
                                                 <li [ngbNavItem]="3" (click)="filterSearch = '';">
-                                                    <a ngbNavLink class="p-3">Extract</a>
+                                                    <a ngbNavLink class="p-3 TabShadow">Extract</a>
                                                     <ng-template ngbNavContent>
                                                         <div class="tab-pane" id="linktabs">
                                                             <div class="card-body p-0">
@@ -554,8 +554,240 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
+                                                <li [ngbNavItem]="5" (click)="relativeDateType = 1;getYearPreview();">
+                                                    <a ngbNavLink class="p-3 TabShadow">Relative Dates</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane" id="linktabs">
+                                                            <div class="card-body p-0 border rounded-3">
+                                                                <div class="d-lg-flex d-block">
+                                                                    <div class="border-end">
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="relativeDateType" class="nav flex-column nav-pills" id="vertical-tab"
+                                                                            role="tablist" aria-orientation="vertical">
+                                                                            <li [ngbNavItem]="1" (click)="selectedDateFormat = 'thisYear';getYearPreview()" className="nav-link text-start" id="years-tab"><a ngbNavLink>Years</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="years" role="tabpanel" aria-labelledby="years-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousYear" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="previousYear"> Previous Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisYear" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="thisYear"> This Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYear" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="nextYear"> Next Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="yearToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="yearToDate" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="yearToDate"> Year to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastYearCount" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="lastYearCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Years</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYearCount" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="nextYearCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Years</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="2" (click)="selectedDateFormat = 'thisQuarter';getQuarterPreview()" className="nav-link text-start" id="quarters-tab"><a ngbNavLink>Quarters</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousQuarter" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="previousQuarter"> Previous Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisQuarter" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="thisQuarter"> This Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarter" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="nextQuarter"> Next Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="quarterToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="quarterToDate" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="quarterToDate"> Quarter to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastQuarterCount" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="lastQuarterCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarterCount" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="nextQuarterCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="3" (click)="selectedDateFormat = 'thisMonth';getMonthsPreview()" className="nav-link text-start" id="month-tab"><a ngbNavLink>Months</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="month" role="tabpanel" aria-labelledby="month-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousMonth" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="previousMonth"> Previous Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisMonth" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="thisMonth"> This Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonth" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="nextMonth"> Next Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="monthToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="monthToDate" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="monthToDate"> Month to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastMonthCount" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="lastMonthCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label ms-2"> months</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonthCount" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="nextMonthCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label ms-2"> months</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="4" (click)="selectedDateFormat = 'thisWeek';getWeeksPreview()" className="nav-link text-start" id="weeks-tab"><a ngbNavLink>Weeks</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="weeks" role="tabpanel" aria-labelledby="weeks-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousWeek" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="previousWeek"> Previous Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisWeek" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="thisWeek"> This Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeek" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="nextWeek"> Next Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="weekToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="weekToDate" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="weekToDate"> Week to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastWeekCount" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="lastWeekCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label ms-2"> weeks</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeekCount" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="nextWeekCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label ms-2"> weeks</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="5" (click)="selectedDateFormat = 'today';getDaysPreview()" className="nav-link text-start" id="days-tab"><a ngbNavLink>Days</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="days" role="tabpanel" aria-labelledby="days-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="yesterday" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="yesterday" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="yesterday"> Yesterday </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="today" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="today" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="today"> Today </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="tomorrow" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="tomorrow" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="tomorrow"> Tomorrow </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastDaysCount" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="lastDaysCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
+                                                                                                    <label class="form-check-label ms-2"> days</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextDaysCount" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="nextDaysCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
+                                                                                                    <label class="form-check-label ms-2"> days</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                            
+                                                                    <div class="p-2">
+                                                                        <div class="tab-content" id="vertical-tabContent">
+                                                                            <div [ngbNavOutlet]="nav"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row p-2">
+                                                                <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
+                                                                    <label class="form-check-label">Preview </label>
+                                                                </div>
+                                                                <div class="col-xl-7 col-lg-7 col-md-7">
+                                                                   <div class="d-flex align-items-center">
+                                                                    <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" [(ngModel)]="previewFromDate" type="text">
+                                                                    <label class="form-check-label ms-1 me-1">to </label>
+                                                                    <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" [(ngModel)]="previewToDate" type="text">
+                                                                   </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row p-2">
+                                                                <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
+                                                                    <input type="checkbox" id="anchor" class="form-check-input" [(ngModel)]="isAnchor" (change)="setAnchorDate()">
+                                                                    <label class="form-check-label" for="anchor"> Anchor relative to </label>
+                                                                </div>
+                                                                <div class="col-xl-7 col-lg-7 col-md-7">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <input *ngIf="!isAnchor" type="text" id="input-label" disabled class="form-control w-50 border" value="Today">
+                                                                        <input *ngIf="isAnchor" type="date" id="input-label" class="form-control w-50 border" [(ngModel)]="anchorDate" (change)="anchorDateChange()">
+                                                                    </div>
+                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
                                             </ul>
-                                            <div class="panel-body tabs-menu-body p-1 panel-body-h">
+                                            <div class="panel-body tabs-menu-body p-0 panel-body-h">
                                                 <div class="tab-content">
                                                     <div [ngbNavOutlet]="nav"></div>
                                                 </div>
@@ -654,12 +886,12 @@
                             }
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
                                     class="btn ripple btn-primary me-2" (click)="filterDataPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="modal.close('Save click');isAllSelected = false;">
                                     Close
@@ -790,6 +1022,238 @@
                                                         </div>
                                                     </ng-template>
                                                 </li>
+                                                <li [ngbNavItem]="5" [class.disabled]="activeTabId !== 5" (click)="relativeDateType = 1;getYearPreview();">
+                                                    <a ngbNavLink class="p-3 TabShadow">Relative Dates</a>
+                                                    <ng-template ngbNavContent>
+                                                        <div class="tab-pane" id="linktabs">
+                                                            <div class="card-body p-0 border rounded-3">
+                                                                <div class="d-lg-flex d-block">
+                                                                    <div class="border-end">
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="relativeDateType" class="nav flex-column nav-pills" id="vertical-tab"
+                                                                            role="tablist" aria-orientation="vertical">
+                                                                            <li [ngbNavItem]="1" (click)="selectedDateFormat = 'thisYear';getYearPreview()" className="nav-link text-start" id="years-tab"><a ngbNavLink>Years</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="years" role="tabpanel" aria-labelledby="years-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousYear" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="previousYear"> Previous Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisYear" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="thisYear"> This Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYear" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="nextYear"> Next Year </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="yearToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="yearToDate" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="yearToDate"> Year to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastYearCount" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="lastYearCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Years</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYearCount" (change)="getYearPreview()">
+                                                                                                    <label class="form-check-label" for="nextYearCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Years</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="2" (click)="selectedDateFormat = 'thisQuarter';getQuarterPreview()" className="nav-link text-start" id="quarters-tab"><a ngbNavLink>Quarters</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousQuarter" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="previousQuarter"> Previous Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisQuarter" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="thisQuarter"> This Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarter" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="nextQuarter"> Next Quarter </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="quarterToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="quarterToDate" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="quarterToDate"> Quarter to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastQuarterCount" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="lastQuarterCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarterCount" (change)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label" for="nextQuarterCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
+                                                                                                    <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="3" (click)="selectedDateFormat = 'thisMonth';getMonthsPreview()" className="nav-link text-start" id="month-tab"><a ngbNavLink>Months</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="month" role="tabpanel" aria-labelledby="month-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousMonth" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="previousMonth"> Previous Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisMonth" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="thisMonth"> This Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonth" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="nextMonth"> Next Month </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="monthToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="monthToDate" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="monthToDate"> Month to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastMonthCount" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="lastMonthCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label ms-2"> months</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonthCount" (change)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label" for="nextMonthCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
+                                                                                                    <label class="form-check-label ms-2"> months</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="4" (click)="selectedDateFormat = 'thisWeek';getWeeksPreview()" className="nav-link text-start" id="weeks-tab"><a ngbNavLink>Weeks</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="weeks" role="tabpanel" aria-labelledby="weeks-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="previousWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousWeek" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="previousWeek"> Previous Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="thisWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisWeek" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="thisWeek"> This Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeek" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="nextWeek"> Next Week </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="weekToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="weekToDate" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="weekToDate"> Week to date</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastWeekCount" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="lastWeekCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label ms-2"> weeks</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeekCount" (change)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label" for="nextWeekCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
+                                                                                                    <label class="form-check-label ms-2"> weeks</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                            <li [ngbNavItem]="5" (click)="selectedDateFormat = 'today';getDaysPreview()" className="nav-link text-start" id="days-tab"><a ngbNavLink>Days</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane " id="days" role="tabpanel" aria-labelledby="days-tab"tabindex="0">
+                                                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                            <div class="previous-year-card">
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="yesterday" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="yesterday" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="yesterday"> Yesterday </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="today" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="today" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="today"> Today </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="tomorrow" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="tomorrow" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="tomorrow"> Tomorrow </label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="lastDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastDaysCount" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="lastDaysCount"> Last</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
+                                                                                                    <label class="form-check-label ms-2"> days</label>
+                                                                                                </div>
+                                                                                                <div class="form-check mb-3">
+                                                                                                    <input  type="radio" id="nextDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextDaysCount" (change)="getDaysPreview()">
+                                                                                                    <label class="form-check-label" for="nextDaysCount"> Next</label>
+                                                                                                    <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
+                                                                                                    <label class="form-check-label ms-2"> days</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                            
+                                                                    <div class="p-2">
+                                                                        <div class="tab-content" id="vertical-tabContent">
+                                                                            <div [ngbNavOutlet]="nav"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row p-2">
+                                                                <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
+                                                                    <label class="form-check-label">Preview </label>
+                                                                </div>
+                                                                <div class="col-xl-7 col-lg-7 col-md-7">
+                                                                   <div class="d-flex align-items-center">
+                                                                    <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" [(ngModel)]="previewFromDate" type="text">
+                                                                    <label class="form-check-label ms-1 me-1">to </label>
+                                                                    <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" [(ngModel)]="previewToDate" type="text">
+                                                                   </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row p-2">
+                                                                <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
+                                                                    <input type="checkbox" id="anchor" class="form-check-input" [(ngModel)]="isAnchor" (change)="setAnchorDate()">
+                                                                    <label class="form-check-label" for="anchor"> Anchor relative to </label>
+                                                                </div>
+                                                                <div class="col-xl-7 col-lg-7 col-md-7">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <input *ngIf="!isAnchor" type="text" id="input-label" disabled class="form-control w-50 border" value="Today">
+                                                                        <input *ngIf="isAnchor" type="date" id="input-label" class="form-control w-50 border" [(ngModel)]="anchorDate" (change)="anchorDateChange()">
+                                                                    </div>
+                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </li>
                                             </ul>
                                             <div class="panel-body tabs-menu-body p-1 ">
                                                 <div class="tab-content">
@@ -900,12 +1364,12 @@
                         } -->
                         </div>
                         <div class="modal-footer">
-                            <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
+                            <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
                                 <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                 <label for="exclude" class="form-check-label">Exclude</label>
                             </div>
                             <div class="text-right">
-                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button" class="btn ripple btn-primary me-2"
+                                <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button" class="btn ripple btn-primary me-2"
                                     (click)="filterDataEditPut();isAllSelected = false; modal.dismiss('Cross click')">Apply</button>
                                 <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click');">
                                     Close
@@ -921,8 +1385,8 @@
             </div>
         </div>
         <div class="col-xxl-8 col-xl-8 col-lg-7 col-md-7 p-1 mt-3">
+            <div class="ContentAreaCardHeight">
            <div class="card p-0 mb-1 border">
-           
                 <div class="card p-0 mb-1 bg-light" style="border: none !important;">
                     <div class="card-body title-padding">
                         <div class="row align-items-center">
@@ -930,16 +1394,16 @@
                             <div class="col-lg-9 col-md-9 col-sm-9 p-1" >
                                 <div class="title-container border-0 rounded-2" *ngIf="!editor">
                                     <input *ngIf="!retriveDataSheet_id && titleShow && !editor" (click)="editor =true" id="inptele" type="text" placeholder="Sheet Name" aria-label="Sheet" class="form-control" [(ngModel)]="sheetTitle" (input)="sheetNameChange(sheetTitle,$event)">
-                                    <span class="card mb-0" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '1%'}" style="padding-left: 15px;cursor: text;"></span>
+                                    <span class="card mb-0 SearchBarCu" *ngIf="(retriveDataSheet_id || !titleShow) && !editor" (click)="titleShow =true; editor =true" id="htmlContent" [innerHtml]="sheetTagTitle" [ngStyle]="sheetTagName[0] === '<' ? { 'padding-left': '15px'} : {'padding': '0.8%'}" style="padding-left: 15px;cursor: text;"></span>
                                     <!-- <ckeditor *ngIf="editor" placeholder="Sheet Name" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName"></ckeditor> -->
                                     <span class="title-editor" (click)="toggleEditor()">
-                                        <button class="btn btn-primary"><i class="fa fa-pencil"></i></button>
+                                        <button class="btn btn-primary FaFaIconProperties"><i class="fa fa-pencil FaFaIconProperties"></i></button>
                                     </span>
                                 </div> 
                                 <ckeditor *ngIf="editor" placeholder="Sheet Name" (ready)="$event.editing.view.focus();" [editor]="Editor" [config]="editorConfig" [(ngModel)]="sheetTagName" (ngModelChange)="updateSheetName()"></ckeditor>
                             </div>
 
-                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex justify-content-between" >
+                            <div class="col-lg-3 col-md-3 col-sm-3 p-1 d-flex justify-content-end" >
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
                                     <app-insights-button *ngIf="!retriveDataSheet_id" [buttonName]="'Save'" [classesList]="'btn btn-primary update-btn '" [isIcon]="false" [previledgeId]="17" [isBtn]="true"
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false"></app-insights-button>
@@ -947,12 +1411,13 @@
                                     (btnClickEvent)="(table || kpi || pivotTable) ? sheetSave() : this.isSheetSaveOrUpdate = true; editor=false" [ngClass]="{'disabled': sheetTagName.length<1}"></app-insights-button>
                                 </div>
                                 <div [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0">
-                                    <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
+                                    <!-- <app-insights-button [classesList]="'viewQueryImg'" [previledgeId]="72" [isBtn]="true"
                                         (btnClickEvent)="viewQuery(viewQueryModal)"  [isIcon]="false" [toolTip]="' View Query'"
                                         [ngClass]="{'disabled': sheetTagName.length < 1}" [imageUrl]="'./assets/images/icons/view-query.png'">
-                                    </app-insights-button>
+                                    </app-insights-button> -->
+                                    <button class="viewQueryImg" ngbTooltip=" View Query" [ngClass]="{'disabled': sheetTagName.length < 1}" (click)="viewQuery(viewQueryModal)"> <img [src]="'./assets/images/icons/view-query.png'" alt="icon" /></button>
                                 </div>
-                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
+                                <button [class.disabled]="draggedColumnsData.length == 0 && draggedRowsData.length == 0" ngbTooltip="clear sheet" placement="bottom" triggers="hover"  type="button" class="btn btn-primary mt-0 IconProperties" (click)="clearSheetConfirmation();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             </div>
                         </div>
                         </div>
@@ -969,13 +1434,16 @@
                         <div class="col-lg-10 col-md-10 col-sm-10 col-xl-10 p-0" >
                             
                                 <div cdkDropList cdkDropListOrientation="horizontal" class="example-list form-control border column-drag-items" 
+                                
                                 #columnList="cdkDropList" 
                                 [cdkDropListData]="draggedColumns" 
                                 (cdkDropListDropped)="columndrop($event)"
                                 [cdkDropListDisabled]="canDrop"  [ngClass]="{'drag-disabled': canDrop}">
                                     @for(columns of draggedColumns;track columns;let index = $index){
                                     <div class="example-box  example-box-bg" (cdkDragStarted)="dragStartedColumn(index,columns.column)" cdkDrag >
-                                        @if(columns.type){
+                                        @if(columns.alias){
+                                            {{ columns.alias }}
+                                        } @else if(columns.type){
                                             {{ columns.type }} ({{columns.column}})
                                         } @else if(columns.field_name) {
                                             {{ columns.field_name }}
@@ -987,9 +1455,22 @@
                                      <div class="dropup" ngbDropdown style="line-height: 0;">
                                         <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                         <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex align-center" ngbDropdown>
-                                                <li class="btn btn-primary-light dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
-                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <li  *ngIf="!isDimensionEdit" class="btn btn-primary-light alis-measure-width border" >@if(columns.alias){
+                                                {{ columns.alias }}
+                                            }
+                                            @else if(columns.type){
+                                                {{ columns.type }} ({{columns.column}})
+                                            }@else if(columns.field_name){
+                                                {{ columns.field_name }}
+                                            }
+                                            @else{   
+                                                 {{ columns.column }}
+                                            } <i (click)="isDimensionEdit = true;" class="fa fa-pencil ms-1 sum-pencil-icon"></i> </li>
+                                            <li  *ngIf="isDimensionEdit"><input (blur)="onColumnAliasChange(columns, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="columns.alias" class="form-control checkbox-color">
+                                            </li>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown>
+                                                <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Date</li>
+                                                <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                     <li><a [ngClass]="columns.type === 'year' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'year')">Year (2024)</a></li>
                                                     <li><a [ngClass]="columns.type === 'quarter' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'quarter')">Quarter</a></li>
@@ -1001,9 +1482,9 @@
                                                     <li><a [ngClass]="columns.type === '' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateFormat(columns,index,'')">None</a></li>  
                                                 </ul>
                                             </div>
-                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex align-center" ngbDropdown >
-                                                <li class="btn btn-primary-light dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
-                                                <i class="btn btn-primary-light fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                            <div  *ngIf="dateList.includes(columns.data_type)" class="dropup d-flex text-center" ngbDropdown >
+                                                <li class="btn btn-primary-light border dropdown-item Date-aggregation" ngbDropdownItem>Measure</li>
+                                                <i class="btn btn-primary-light border fe fe-chevron-right fs-18 text-body-secondary dropdown-toggle inline-block" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                     <li><a [ngClass]="columns.type === 'min' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'min')">Min</a></li>
                                                     <li><a [ngClass]="columns.type === 'max' ? 'aggregation-select' : ''" class="dropdown-item Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="dateAggregation(columns,index,'max')">Max</a></li>
@@ -1118,7 +1599,7 @@
                                             <i class="fe fe-chevron-down fs-18 text-body-secondary dropdown-toggle" ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                             <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                 <div class="dropup" ngbDropdown >
-                                                    <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light alis-measure-width" >@if(rows.alias){
+                                                    <li  *ngIf="!isMeasureEdit" class="btn btn-primary-light alis-measure-width border" >@if(rows.alias){
                                                         {{ rows.alias }}
                                                     }
                                                     @else if(rows.type){
@@ -1132,8 +1613,8 @@
                                                     <li  *ngIf="isMeasureEdit"><input (blur)="onAliasChange(rows, index)" type="text" placeholder="Enter Filter Name" [(ngModel)]="rows.alias" class="form-control checkbox-color">
                                                     </li>
                                                     <div *ngIf="rows?.data_type != 'calculated'" class="d-flex text-center">
-                                                    <li class="dropdown-item btn btn-primary-light Aggregation-text" ngbDropdownItem >Aggregation</li>
-                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
+                                                    <li class="dropdown-item btn btn-primary-light Aggregation-text border" ngbDropdownItem >Aggregation</li>
+                                                    <i class="fe fe-chevron-right fs-18 text-body-secondary btn btn-primary-light dropdown-toggle inline-block border "  ngbDropdownToggle data-bs-toggle="dropdown"></i>
                                                 </div>
                                                     <ul class="dropdown-menu custom-dropdown" ngbDropdownMenu>
                                                         <li *ngIf="!stringList.includes(rows.data_type)"><a [ngClass]="rows.type === 'sum' ? 'aggregation-select' : ''" class="dropdown-item border Aggregation-select-padding" ngbDropdownItem href="javascript:void(0);" (click)="rowMeasuresCount(rows,index,'sum')">Sum</a></li>
@@ -1216,9 +1697,9 @@
                                                     [cdkDropListData]="draggedDrillDownColumns" 
                                                     (cdkDropListDropped)="drillDownColumndrop($event)">
                                                         @for(columns of draggedDrillDownColumns;track columns;let index = $index){
-                                                        <div class="example-box border-end" cdkDrag >
+                                                        <div class="example-box Hierarchy-box-bg" cdkDrag >
                                                             {{ columns }}
-                                                            <div class="" ngbDropdown style="margin-top: 5px;">
+                                                            <div class="" ngbDropdown >
                                                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" ngbDropdownToggle
                                                                     aria-haspopup="true" aria-expanded="false" class=""><i class="fe fe-chevron-down fs-18 text-body-secondary"></i>
                                                                 <div class="dropdown-menu  cu" ngbDropdownMenu>
@@ -1235,7 +1716,7 @@
                 </div>
             </div>
                     
-            <div class="card mb-0 border" [ngClass]="(bar || pie || donut || map) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
+            <div class="card mb-0 border" [ngClass]="(bar || pie || donut || map || pivotTable) ? 'show-chart-card' : 'show-chart-card-no-heirarchy'">
                 @if(!(table || kpi)){
                     <div class="input-group">
                 <!-- <div class="col-lg-3 col-md-3 p-1">
@@ -1544,7 +2025,7 @@
                             
                             <div>
                                 <li role="presentation" class="nav-item">
-                                    <button type="button" ngbnavlink="" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
+                                    <button type="button" ngbnavlink="" ngbTooltip="Add Sheet" [class.disabled]="SheetSavePlusEnabled.length>0" data-bs-toggle="tab"
                                         role="tab" aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1"
                                         class="nav-link BtnNewStyle sheet-bottom-icon" (click)="addSheet(false)" >
                                         <i class="fa fa-plus-square"></i>
@@ -1552,14 +2033,14 @@
                                 </li>
                             </div>
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
+                                <button type="button" ngbnavlink="" ngbTooltip="Delete Sheet" [class.disabled]="!retriveDataSheet_id && SheetIndex === 0 && !deleteSheetInSheetComponent" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="removeTab()" >
                                     <i class="fe fe-trash"></i>
                                 </button>
                             </li>
                             <li role="presentation" class="nav-item">
-                                <button type="button" ngbnavlink="" ngbtooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
+                                <button type="button" ngbnavlink="" ngbTooltip="Duplicate Sheet" [class.disabled]="!retriveDataSheet_id" data-bs-toggle="tab" role="tab"
                                     aria-selected="true" id="ngb-nav-24" aria-disabled="false" tabindex="-1" class="nav-link BtnNewStyle sheet-bottom-icon"
                                     (click)="sheetDuplicate()" >
                                     <i class="fa fa-copy"></i>
@@ -1581,7 +2062,8 @@
                                             <option *ngFor="let dashboard of dashboardList" [value]="dashboard.dashboard_id">{{dashboard.dashboard_name}}</option>
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary " [disabled]="!retriveDataSheet_id" (click)="gotoDashboard(); modal.close('Save click')"> New Dashboard</button>
+                                    <app-insights-button [buttonName]="' New Dashboard'" [classesList]="'btn btn-primary'" [previledgeId]="34" [isBtn]="true"
+                                    (btnClickEvent)="gotoDashboard();modal.close('Save click')" [gotoSheetButton]="!retriveDataSheet_id" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
                                 </div>
                             
                             
@@ -1599,8 +2081,9 @@
                 </div>
 
              </div>
+             </div>
              <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 mt-3 p-1">
-                <div class="card panel panel-primary border">
+                <div class="card panel panel-primary border dataCuCardHeight">
                     <div class="tab-menu-heading tab-menu-heading-boxed">
                         <div class="tabs-menu1">
                             <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav panel-tabs fs-14 justify-content-between">
@@ -1618,10 +2101,10 @@
                                                     <div class="example-box justify-content-between border-bottom cursor-pointer"> 
                                                        {{dimen.col_name}}
                                                        <div class="filter-icons">
-                                                        <a aria-label="anchor" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
-                                                            <i class="ri-edit-line" (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
+                                                        <a aria-label="anchor" ngbTooltip="Edit" class="btn btn-icon btn-sm btn-info-light btn-wave waves-effect waves-light me-2">
+                                                            <i class="ri-edit-line"  (click)="openSuperScalededitFilter(contentedit,dimen)"></i>
                                                         </a>
-                                                        <a aria-label="anchor" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
+                                                        <a aria-label="anchor" ngbTooltip="Delete" class="btn btn-icon btn-sm btn-danger-light btn-wave waves-effect waves-light">
                                                             <i class="ri-delete-bin-7-line" (click)="filterDelete(index,dimen.filter_id)"></i>
                                                         </a>
                                                         <!-- <i class="fe fe-edit fs-12 text-body-secondary ms-2" ></i>
@@ -1647,7 +2130,7 @@
                                                             <div class="card panel panel-primary">
                                                                 <div class="tab-menu-heading tab-menu-heading-boxed">
                                                                     <div class="tabs-menu-boxed">
-                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14 pb-1" >
                                                                             <li [ngbNavItem]="1" [class.disabled]="formatExtractType || (activeTabId !== 1)">
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
@@ -1757,6 +2240,238 @@
                                                                                     </div>
                                                                                 </ng-template>
                                                                             </li>
+                                                                            <li [ngbNavItem]="5" [class.disabled]="activeTabId !== 5">
+                                                                                <a ngbNavLink class="p-3 TabShadow">Relative Dates</a>
+                                                                                <ng-template ngbNavContent>
+                                                                                    <div class="tab-pane" id="linktabs">
+                                                                                        <div class="card-body p-0 border rounded-3">
+                                                                                            <div class="d-lg-flex d-block">
+                                                                                                <div class="border-end">
+                                                                                                    <ul ngbNav #nav="ngbNav" [(activeId)]="relativeDateType" class="nav flex-column nav-pills" id="vertical-tab"
+                                                                                                        role="tablist" aria-orientation="vertical">
+                                                                                                        <li [ngbNavItem]="1" (click)="selectedDateFormat = 'thisYear';getYearPreview()" className="nav-link text-start" id="years-tab"><a ngbNavLink>Years</a>
+                                                                                                            <ng-template ngbNavContent>
+                                                                                                                <div class="tab-pane " id="years" role="tabpanel" aria-labelledby="years-tab"tabindex="0">
+                                                                                                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                                                        <div class="previous-year-card">
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="previousYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousYear" (change)="getYearPreview()">
+                                                                                                                                <label class="form-check-label" for="previousYear"> Previous Year </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="thisYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisYear" (change)="getYearPreview()">
+                                                                                                                                <label class="form-check-label" for="thisYear"> This Year </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextYear" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYear" (change)="getYearPreview()">
+                                                                                                                                <label class="form-check-label" for="nextYear"> Next Year </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="yearToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="yearToDate" (change)="getYearPreview()">
+                                                                                                                                <label class="form-check-label" for="yearToDate"> Year to date</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="lastYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastYearCount" (change)="getYearPreview()">
+                                                                                                                                <label class="form-check-label" for="lastYearCount"> Last</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastYearCount'" [(ngModel)]="last" (input)="getYearPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> Years</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextYearCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextYearCount" (change)="getYearPreview()">
+                                                                                                                                <label class="form-check-label" for="nextYearCount"> Next</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextYearCount'" [(ngModel)]="next" (input)="getYearPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> Years</label>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </ng-template>
+                                                                                                        </li>
+                                                                                                        <li [ngbNavItem]="2" (click)="selectedDateFormat = 'thisQuarter';getQuarterPreview()" className="nav-link text-start" id="quarters-tab"><a ngbNavLink>Quarters</a>
+                                                                                                            <ng-template ngbNavContent>
+                                                                                                                <div class="tab-pane " id="quarters" role="tabpanel" aria-labelledby="quarters-tab"tabindex="0">
+                                                                                                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                                                        <div class="previous-year-card">
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="previousQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousQuarter" (change)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label" for="previousQuarter"> Previous Quarter </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="thisQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisQuarter" (change)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label" for="thisQuarter"> This Quarter </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextQuarter" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarter" (change)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label" for="nextQuarter"> Next Quarter </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="quarterToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="quarterToDate" (change)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label" for="quarterToDate"> Quarter to date</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="lastQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastQuarterCount" (change)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label" for="lastQuarterCount"> Last</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastQuarterCount'" [(ngModel)]="last" (input)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextQuarterCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextQuarterCount" (change)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label" for="nextQuarterCount"> Next</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextQuarterCount'" [(ngModel)]="next" (input)="getQuarterPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> Quarters</label>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </ng-template>
+                                                                                                        </li>
+                                                                                                        <li [ngbNavItem]="3" (click)="selectedDateFormat = 'thisMonth';getMonthsPreview()" className="nav-link text-start" id="month-tab"><a ngbNavLink>Months</a>
+                                                                                                            <ng-template ngbNavContent>
+                                                                                                                <div class="tab-pane " id="month" role="tabpanel" aria-labelledby="month-tab"tabindex="0">
+                                                                                                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                                                        <div class="previous-year-card">
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="previousMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousMonth" (change)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label" for="previousMonth"> Previous Month </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="thisMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisMonth" (change)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label" for="thisMonth"> This Month </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextMonth" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonth" (change)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label" for="nextMonth"> Next Month </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="monthToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="monthToDate" (change)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label" for="monthToDate"> Month to date</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="lastMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastMonthCount" (change)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label" for="lastMonthCount"> Last</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastMonthCount'" [(ngModel)]="last" (input)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> months</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextMonthCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextMonthCount" (change)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label" for="nextMonthCount"> Next</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextMonthCount'" [(ngModel)]="next" (input)="getMonthsPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> months</label>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </ng-template>
+                                                                                                        </li>
+                                                                                                        <li [ngbNavItem]="4" (click)="selectedDateFormat = 'thisWeek';getWeeksPreview()" className="nav-link text-start" id="weeks-tab"><a ngbNavLink>Weeks</a>
+                                                                                                            <ng-template ngbNavContent>
+                                                                                                                <div class="tab-pane " id="weeks" role="tabpanel" aria-labelledby="weeks-tab"tabindex="0">
+                                                                                                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                                                        <div class="previous-year-card">
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="previousWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="previousWeek" (change)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label" for="previousWeek"> Previous Week </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="thisWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="thisWeek" (change)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label" for="thisWeek"> This Week </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextWeek" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeek" (change)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label" for="nextWeek"> Next Week </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="weekToDate" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="weekToDate" (change)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label" for="weekToDate"> Week to date</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="lastWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastWeekCount" (change)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label" for="lastWeekCount"> Last</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastWeekCount'" [(ngModel)]="last" (input)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> weeks</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextWeekCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextWeekCount" (change)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label" for="nextWeekCount"> Next</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextWeekCount'" [(ngModel)]="next" (input)="getWeeksPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> weeks</label>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </ng-template>
+                                                                                                        </li>
+                                                                                                        <li [ngbNavItem]="5" (click)="selectedDateFormat = 'today';getDaysPreview()" className="nav-link text-start" id="days-tab"><a ngbNavLink>Days</a>
+                                                                                                            <ng-template ngbNavContent>
+                                                                                                                <div class="tab-pane " id="days" role="tabpanel" aria-labelledby="days-tab"tabindex="0">
+                                                                                                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                                                                                                        <div class="previous-year-card">
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="yesterday" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="yesterday" (change)="getDaysPreview()">
+                                                                                                                                <label class="form-check-label" for="yesterday"> Yesterday </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="today" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="today" (change)="getDaysPreview()">
+                                                                                                                                <label class="form-check-label" for="today"> Today </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="tomorrow" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="tomorrow" (change)="getDaysPreview()">
+                                                                                                                                <label class="form-check-label" for="tomorrow"> Tomorrow </label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="lastDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="lastDaysCount" (change)="getDaysPreview()">
+                                                                                                                                <label class="form-check-label" for="lastDaysCount"> Last</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 BitSpace text-center" min="1" [disabled]="selectedDateFormat !== 'lastDaysCount'" [(ngModel)]="last" (input)="getDaysPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> days</label>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-check mb-3">
+                                                                                                                                <input  type="radio" id="nextDaysCount" name="relativeDates" class="form-check-input" [(ngModel)]="selectedDateFormat" value="nextDaysCount" (change)="getDaysPreview()">
+                                                                                                                                <label class="form-check-label" for="nextDaysCount"> Next</label>
+                                                                                                                                <input type="number" class="w-20 ms-2 p-0 rounded-2 text-center" min="1" [disabled]="selectedDateFormat !== 'nextDaysCount'" [(ngModel)]="next" (input)="getDaysPreview()">
+                                                                                                                                <label class="form-check-label ms-2"> days</label>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </ng-template>
+                                                                                                        </li>
+                                                                                                    </ul>
+                                                                                                </div>
+                                                                                        
+                                                                                                <div class="p-2">
+                                                                                                    <div class="tab-content" id="vertical-tabContent">
+                                                                                                        <div [ngbNavOutlet]="nav"></div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row p-2">
+                                                                                            <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
+                                                                                                <label class="form-check-label">Preview </label>
+                                                                                            </div>
+                                                                                            <div class="col-xl-7 col-lg-7 col-md-7">
+                                                                                               <div class="d-flex align-items-center">
+                                                                                                <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" [(ngModel)]="previewFromDate" type="text">
+                                                                                                <label class="form-check-label ms-1 me-1">to </label>
+                                                                                                <input class="form-control" readonly="" disabled="" aria-label="Disabled input example" [(ngModel)]="previewToDate" type="text">
+                                                                                               </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row p-2">
+                                                                                            <div class="col-xl-5 col-lg-5 col-md-5 d-flex align-items-center">
+                                                                                                <input type="checkbox" id="anchor" class="form-check-input" [(ngModel)]="isAnchor" (change)="setAnchorDate()">
+                                                                                                <label class="form-check-label" for="anchor"> Anchor relative to </label>
+                                                                                            </div>
+                                                                                            <div class="col-xl-7 col-lg-7 col-md-7">
+                                                                                                <div class="d-flex align-items-center">
+                                                                                                    <input *ngIf="!isAnchor" type="text" id="input-label" disabled class="form-control w-50 border" value="Today">
+                                                                                                    <input *ngIf="isAnchor" type="date" id="input-label" class="form-control w-50 border" [(ngModel)]="anchorDate" (change)="anchorDateChange()">
+                                                                                                </div>
+                                                                                             </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </ng-template>
+                                                                            </li>
                                                                         </ul>
                                                                         <div class="panel-body tabs-menu-body p-1" >
                                                                             <div class="tab-content">
@@ -1770,7 +2485,7 @@
                                                             <div class="card panel panel-primary">
                                                                 <div class="tab-menu-heading tab-menu-heading-boxed">
                                                                     <div class="tabs-menu-boxed">
-                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14" >
+                                                                        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTabId" class="nav panel-tabs fs-14 pb-1" >
                                                                             <li [ngbNavItem]="1" [class.disabled]="activeTabId !== 1">
                                                                                 <a ngbNavLink class="p-3">General</a>
                                                                                 <ng-template ngbNavContent>
@@ -1865,12 +2580,12 @@
                                                     } -->
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <div class="col text-left p-0" *ngIf="![2,3,4].includes(activeTabId)">
+                                                        <div class="col text-left p-0" *ngIf="![2,3,4,5].includes(activeTabId)">
                                                             <input type="checkbox" id="exclude" [(ngModel)]="isExclude" class="form-check-input">
                                                             <label for="exclude" class="form-check-label">Exclude</label>
                                                         </div>
                                                         <div class="text-right">
-                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select')" type="button"
+                                                            <button [disabled]="!(filterDataArray?.length > 0 || filterDateRange.length > 0 || selectedTopColumn != 'select' || applyButtonDisableForRelativeDates())" type="button"
                                                                 class="btn ripple btn-primary me-2" (click)="filterDataEditPut(); isAllSelected = false;modal.dismiss('Cross click')">Apply</button>
                                                             <button type="button" class="btn ripple btn-secondary" (click)="isAllSelected = false;modal.close('Save click')">
                                                                 Close
@@ -3219,7 +3934,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2">
+                                                    <div *ngIf="(draggedColumns.length !== 0 || draggedRows.length !==0) && !(kpi || guage || calendar)" [class.disabled]="!isTopFilter" ngbAccordionItem  class="accordion-item mb-2">
                                                         <h6 ngbAccordionHeader class="accordion-header" id="heading">
                                                           <button
                                                             ngbAccordionButton
@@ -3488,7 +4203,7 @@
                                                             <i class="fe fe-mic"></i>
                                                         </button>
                                                         <button type="button" class="btn btn-icon btn-primary brround" (click)="sendPrompt()">
-                                                                <i class="fa fa-paper-plane-o"></i>
+                                                                <i class="fa fa-paper-plane"></i>
                                                             </button>
                                                     </div>
                                                     <p></p>

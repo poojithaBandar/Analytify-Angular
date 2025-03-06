@@ -1,7 +1,7 @@
 <app-page-header title="Sheets List" moduleId="sheets" title1="Home" activeitem="Sheets"></app-page-header>
 
 
-<div class="main-container container-fluid">
+<div class="main-container container-fluid TopHeader">
 
     <div class="row" class="card card-padding-top">
     <div class="col-sm-12 col-lg-12 col-xl-12 p-0">
@@ -10,11 +10,11 @@
           <h4 class="card-title mt-2">Sheets</h4>
         </div>
         <div class="new-data-btn d-flex text-align-center">
-          <button *ngIf="gridView" type="button" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="gridView" type="button"  (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Grid View" class="btn btn-icon btn-outline-primary me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="gridView" type="button" ngbTooltip="Table View" (click)="gridView=false" class="btn btn-icon btn-primary-light me-3" ><i class="fa fa-th-list"></i></button>
 
-          <button *ngIf="!gridView" type="button" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
-          <button *ngIf="!gridView" type="button" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Grid View" (click)="gridView=true" class="btn btn-icon btn-primary-light me-1"><i class="fa fa-th-large"></i></button>
+          <button *ngIf="!gridView" type="button" ngbTooltip="Table View" class="btn btn-icon btn-outline-primary me-3" ><i class="fa fa-th-list"></i></button>
 
 
           <div class="input-group">
@@ -27,7 +27,10 @@
           </select>
             <input type="text" class="form-control border-end-0 " placeholder="Search" [(ngModel)]="sheetName" (keyup.enter)="searchUserList()" aria-describedby="button-addon2" >
             <button class="btn btn-primary border me-2 search-icon-border-radius" (click)="searchUserList()" type="button" id="button-addon2" ><i class="fe fe-search "></i></button>
-            <button type="button" class="btn btn-primary new-sheet-btn-radius" (click)="sheetsRoute()"><i class="fa fa-plus"></i> New Sheet</button>
+            <!-- <button type="button" class="btn btn-primary new-sheet-btn-radius" (click)="sheetsRoute()"><i class="fa fa-plus"></i> New Sheet</button> -->
+            
+            <app-insights-button [buttonName]="' New Sheet'" [classesList]="'btn btn-primary new-sheet-btn-radius'" [previledgeId]="17" [isBtn]="true"
+            (btnClickEvent)="sheetsRoute()" [isIcon]="true" [faIconList]="'fa fa-plus'"></app-insights-button>
 
           </div>
         </div>
@@ -278,7 +281,7 @@
                             <span class="fw-semibold fs-14">Database Name: </span>
                         </div>
                         <div class="col-md-6">
-                            <span class="fs-14" [ngbTooltip]="sheets.database_name.length > 13 ? sheets.database_name : null">  {{ sheets.database_name.length > 13 ? (sheets.database_name | slice: 0: 13) + '...' : sheets.database_name }}</span>
+                            <span class="fs-14" [ngbTooltip]="sheets?.database_name?.length > 13 ? sheets?.database_name : null">  {{ sheets.database_name?.length > 13 ? (sheets.database_name | slice: 0: 13) + '...' : sheets.database_name }}</span>
                         </div>
                     </div>
                     <div class="row">

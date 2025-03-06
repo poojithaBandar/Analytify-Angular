@@ -8,7 +8,7 @@
   <app-page-header title="Dashboard" moduleId="dashboard" title1="Home" [multiLevel]="true" title2="sheets" title2Route="/analytify/sheets" activeitem="Dashboard"></app-page-header>
   </div> -->
   
-  <div *ngIf="isPublicUrl" style="margin-top: 60px;">
+  <div *ngIf="isPublicUrl">
     
     <app-page-header (btnClickEvent)="toggleSidebar()" title="{{dashboardTagName}}" title1="public" [isPublicUrl]="false" activeitem="Dashboard"></app-page-header>
     </div>
@@ -22,7 +22,7 @@
   </div> -->
 
   @if(isSheetsView){
-    <div class="main-container container-fluid">
+    <div class="main-container container-fluid TopHeader">
       <div class="row" class="card card-padding-top">
         <div class="col-sm-12 col-lg-12 col-xl-12 p-0" >
           <div class="d-flex justify-content-between p-2">
@@ -32,7 +32,7 @@
               <div class="input-group">
                 <input type="text" class="form-control border-end-0 " [(ngModel)]="searchSheets" (keydown.enter)="fetchSheetsListSearch()" placeholder="Search" >
                 <button class="btn btn-primary border me-2  search-icon-border-radius" (click)="fetchSheetsListSearch()"  type="button" id="button-addon2"><i class="fe fe-search "></i></button>
-                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
+                <button *ngIf="panelscheckbox?.length>0" type="button" [disabled]="sheetIdsDataSet?.length <= 0"  (click)="loadDashboard();pivotReinitialize()" class="btn ripple btn-primary me-2 new-sheet-btn-radius" >Move To Dashboard</button>
                 <button *ngIf="panelscheckbox?.length<1" type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="sheetsRoute()" ><i class="fa fa-plus"></i> New Sheet</button>
                 <button type="button" class="btn ripple btn-primary me-2 new-sheet-btn-radius" (click)="isSheetsView = false" >Close</button>
 
@@ -143,10 +143,10 @@
     </div>
   } @else {
     
-    <div class="main-container container-fluid" [ngClass]="{ 'public-mtop': isPublicUrl}">
+    <div class="main-container container-fluid TopHeader" [ngClass]="{ 'public-mtop': isPublicUrl}">
       <div class="row" style="margin-inline-start: auto !important;" [ngClass]="{ 'header-visibile': isPublicUrl, }">
 
-    <div class="col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card" id="sticky-sidebar">
+    <div class="col-xl-2 col-lg-2 col-md-2 p-1 mt-0 card PositionSticky" id="sticky-sidebar">
 	      <div [ngClass]="{ 'sticky-top-publicUrl': isPublicUrl, 'sticky-top': !isPublicUrl }" class="card p-0" >
         <!-- <div class="card mb-0"> -->
           <!-- <div class="card-body p-0"> -->
@@ -547,7 +547,7 @@
                                                                 <p class="p-1 mb-0 category-text">{{filterList.filter_name}}</p>
                                           
                                                                 <div ngbDropdown class="dropdown" #nestedDropdown1="ngbDropdown" [autoClose]="'outside'">
-                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
+                                                                  <button type="button" *ngIf="!isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterId(filterList.dashboard_filter_id,filterList,false)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">{{ getColumnSelectionLabel(filterList).length > 20 ? (getColumnSelectionLabel(filterList) | slice: 0:20) + '...' : getColumnSelectionLabel(filterList) }} <i class="fa fa-angle-down" ></i></button>
                                                                   <button type="button" *ngIf="isPublicUrl" ngbDropdownToggle id="dropdownColumns1" (click)="getColDataFromFilterIdPublic(filterList.dashboard_filter_id,filterList)" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn border filterColumnbtn select-column-text">Select Column <i class="fa fa-angle-down" ></i></button>
 
                                                                   <ul ngbDropdownMenu aria-labelledby="dropdownColumns1" class="dropdown-menu dropdwnChechkbox select-data-card-a">
@@ -862,7 +862,7 @@
     </div>
     <!-- <div class="dashboard-area"  [ngClass]="{ 'header-visibile': isPublicUrl, }"> -->
     <div class="col-xl-10 col-lg-10 col-md-10" id="dashboard-content">
-      <div type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" class="card mb-0 hide-show-btn btn-primary">
+      <div type="button" (click)="issheetListPaneOpen = !issheetListPaneOpen; toggleSidebar()" [ngbTooltip]="issheetListPaneOpen ? 'Collapse' : 'Expand'" class="card mb-0 hide-show-btn btn-primary">
         <i *ngIf="issheetListPaneOpen" class="fa fa-angle-left fs-18"></i>
         <i *ngIf="!issheetListPaneOpen" class="fa fa-angle-right fs-18"></i>
       </div>
@@ -891,11 +891,13 @@
                         </div>
 
                         <div class="min-w-fit-content ms-1">              
-                        <span *ngIf="!isPublicUrl" class="title-editor ms-1" (click)="toggleEditor()">
+                        <span *ngIf="!isPublicUrl" ngbTooltip="Edit Title" class="title-editor ms-1" (click)="toggleEditor()">
                           <button  class="btn btn-primary me-1"><i class="fa fa-pencil"></i></button>
                         </span>
-                            <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0" *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button>
-                            <button [disabled]="disableDashboardUpdate" class="btn btn-primary mt-0" *ngIf="updateDashbpardBoolen && !this.isPublicUrl" (click)="updateDashboard(false);editor =false">Update </button>
+                        <span [ngbTooltip]="dashboard.length === 0 ? 'Add sheet to save dashboard' : ''">
+                            <button [disabled]="dashboard.length === 0" class="btn btn-primary mt-0"  *ngIf="!updateDashbpardBoolen && !this.isPublicUrl" (click)="saveDashboard();editor =false">Save </button></span>
+                            <app-insights-button *ngIf="updateDashbpardBoolen && !this.isPublicUrl" [buttonName]="'Update'" [gotoSheetButton]="disableDashboardUpdate" [classesList]="'btn btn-primary mt-0'" [isIcon]="false" [previledgeId]="37" [isBtn]="true" 
+                            (btnClickEvent)="updateDashboard(false);editor =false"></app-insights-button>
                             <button [disabled]="dashboard.length === 0" ngbTooltip="clear dashbaord" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="clearDashboard();"><img src="./assets/images/icons/erase.png" alt="logo" class="w-4 h-4"></button>
                             <button [disabled]="dashboard.length === 0 || !updateDashbpardBoolen" ngbTooltip="Sync data" *ngIf="!isPublicUrl && !isSampleDashboard" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="refreshDashboard();"><i class="fa fa-refresh"></i></button>
                             <!-- <button *ngIf="!isPublicUrl" style="margin-left: 5px;" type="button" class="btn btn-primary mt-0" (click)="addTabs();">Add Tab</button> -->
@@ -1635,8 +1637,8 @@
               <!-- <app-charts-store [chartData]="item.chartOptions"></app-charts-store> -->
               </div>
               @if(item['chartType'] === 'PIVOT' && item['chartId'] === 9){
-                <div id="pivotTableContainer" #pivotTableContainer></div>
-
+                <!-- <div [id]="'pivotTableContainer' + item.id" #pivotTableContainer></div> -->
+                <div #pivotTableContainer></div>
               }
               </div>
               <!-- <div *ngIf="item['chartType'] === PIVOT">

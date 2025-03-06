@@ -199,4 +199,10 @@ logOut(){
         //  }); 
          return of({ success: false });
   }
+  
+  updatePassword(obj:any){
+    const currentUser = localStorage.getItem( 'currentUser' );
+    this.accessToken = JSON.parse( currentUser! )['Token'];
+    return this.http.put<any>(`${environment.apiUrl}/updatepassword/`+this.accessToken,obj)
+  }
 }

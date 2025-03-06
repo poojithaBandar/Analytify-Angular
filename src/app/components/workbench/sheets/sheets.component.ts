@@ -142,8 +142,10 @@ export class SheetsComponent {
   editFilterSearch! : string;
   tableSearch! : string;
   isMeasureEdit : boolean = false;
+  isDimensionEdit : boolean = false;
   calculatedFieldName! : string
   isEditCalculatedField : boolean = false;
+  suppressTabChangeEvent : boolean = false;
  /* private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
     {"Framework": "React", "Stars": "150793", "Released": "2013"},
@@ -346,6 +348,20 @@ export class SheetsComponent {
   rightLegend:any = null;
   sortType : any = 0;
 
+  topType: string = 'desc';
+  topLimit: number = 5;
+  selectedTopColumn: any = 'select';
+  topAggregate: string = 'sum';
+
+  previewFromDate: any;
+  previewToDate: any;
+  selectedDateFormat: string = 'thisYear';
+  relativeDateType: any = 1;
+  last: number = 3;
+  next: number = 3;
+  isAnchor: boolean = false;
+  anchorDate: any;
+
   locationDrillDownSwitch: boolean = false;
   locationHeirarchyFieldList: string[] = ['country', 'state', 'city'];
   locationHeirarchyList: string[] = ['country', 'state', 'city'];
@@ -365,10 +381,17 @@ export class SheetsComponent {
     ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
   ];
   selectedColorScheme=[] as  any;
+  hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
-
+  deleteSheetInSheetComponent = false;
+  canAddDashbaordInSheet = false;
+  canEditDashbaordInSheet = false;
   constructor(private workbechService:WorkbenchService,private route:ActivatedRoute,private modalService: NgbModal,private router:Router,private zone: NgZone, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef,
     private templateService:ViewTemplateDrivenService,private toasterService:ToastrService,private loaderService:LoaderService, private http: HttpClient, private colorService : DefaultColorPickerService,private sharedService: SharedService){   
+      this.deleteSheetInSheetComponent = this.templateService.canDeleteSheetInSheetComponent();
+      this.canEditDashbaordInSheet = this.templateService.editDashboard();
+      this.canAddDashbaordInSheet = this.templateService.addDashboard();
+
     if(this.router.url.includes('/analytify/sheets')){
       if (route.snapshot.params['id1'] && route.snapshot.params['id2']&& route.snapshot.params['id3'] ) {
         this.databaseId = +atob(route.snapshot.params['id1']);
@@ -491,7 +514,9 @@ export class SheetsComponent {
     this.columnsData();
     this.sheetTitle = this.sheetTitle +this.sheetNumber;
     this.getSheetNames();
+    if(this.canAddDashbaordInSheet || this.canEditDashbaordInSheet){
     this.getDashboardsList();
+    }
     this.setChartType();
     // this.colorService.color$.subscribe((color) => {
     //   this.color = this.rgbStringToHex(color);
@@ -778,6 +803,7 @@ try {
           }
         }
         )
+        this.hasUnSavedChanges=true;
       }
 
       pageChangeTableDisplay(page:any){
@@ -1071,7 +1097,7 @@ try {
       }
 
       KPIChart(){
-        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0].result_data[0]);
+        this.KPINumber = _.cloneDeep(this.tablePreviewRow[0]?.result_data[0]);
         this.formatKPINumber();
       }
       tableNameMethod(schemaname: any, tablename: any, tableAlias: any){
@@ -1236,6 +1262,9 @@ try {
   rowMeasuresCount(rows:any,index:any,type:any){
     if(this.selectedSortColumnData && this.selectedSortColumnData.length > 0 && this.selectedSortColumnData[0] === rows.column && this.selectedSortColumnData[2] === this.draggedRowsData[index][2]){
       this.selectedSortColumnData[2] = type;
+      if(rows.alias){
+        this.selectedSortColumnData[3] = rows.alias;
+      }
     }
       this.measureValues = [];
       if(type){
@@ -1273,6 +1302,15 @@ try {
   onAliasChange(rows : any , index : any){
     this.isMeasureEdit = false;
     this.rowMeasuresCount(rows, index, rows.type);
+  }
+
+  onColumnAliasChange(column : any , index : any){
+    this.isDimensionEdit = false;
+    if (this.draggedColumnsData[index]) {
+      this.draggedColumnsData[index][3] = column.alias ? column.alias : "";
+      this.draggedColumns[index].alias = column.alias ? column.alias : "";
+      this.dataExtraction();
+    }
   }
    drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -1435,6 +1473,7 @@ try {
     }
     this.resetCustomizations();
     this.chartsOptionsSet(); 
+    this.hasUnSavedChanges=true;
   }
   // enableDisableCharts(){
   //   console.log(this.draggedColumnsData);
@@ -1456,7 +1495,53 @@ try {
   // }
   tabs : any [] = [];
   selected = new FormControl(0);
+
   addSheet(isDuplicate : boolean) {
+    if(this.hasUnSavedChanges){
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to switch?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.columnsData();
+          if (this.active !== 3){
+            this.active = 1;
+          }
+          this.retriveDataSheet_id = '';
+          this.draggedDrillDownColumns = [];
+          this.drillDownObject = [];
+          this.drillDownIndex = 0;
+          this.dateDrillDownSwitch = false;
+          delete this.originalData;
+          this.sheetName = ''; this.sheetTitle = '';
+          this.KPIDecimalPlaces = 2;
+          this.KPIRoundPlaces = 0;
+          this.KPIDisplayUnits = 'none';
+          this.KPIPrefix = '';
+          this.KPISuffix = '';
+          this.KPIPercentageDivisor = 100;
+          if(this.sheetName != ''){
+             this.tabs.push(this.sheetName);
+          }else{
+            this.getChartData();
+            this.sheetNumber = this.tabs.length+1;
+             this.tabs.push('Sheet ' +this.sheetNumber);
+             this.SheetSavePlusEnabled.push('Sheet ' +this.sheetNumber);
+             this.selectedTabIndex = this.tabs.length - 1;
+             this.sheetTagName = 'Sheet ' +this.sheetNumber;
+             this.setChartType();
+          }
+          this.kpi=false;
+          this.resetCustomizations();
+        }
+      })
+    }else{
     this.columnsData();
     if (this.active !== 3){
       this.active = 1;
@@ -1487,6 +1572,7 @@ try {
     }
     this.kpi=false;
     this.resetCustomizations();
+  }
   }
 
   sheetDuplicate(){
@@ -1529,143 +1615,256 @@ try {
     this.sheetTagName = name;
   }
   removeTab() {
-    console.log(this.SheetIndex)
-    const obj = {
-      sheet_id: this.retriveDataSheet_id,
-    }
-    this.workbechService.deleteSheetMessage(obj)
-      .subscribe(
-        {
-          next: (data: any) => {
-            console.log(data);
-            Swal.fire({
-              title: 'Are you sure?',
-              text: data.message,
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                const idToPass = this.databaseId;
-                this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
-                // this.workbechService.deleteSheet(this.databaseId, this.qrySetId, this.retriveDataSheet_id).subscribe({
-                //   next: (data: any) => {
-                    console.log(data);
-                    if (data) {
-                      this.tabs.splice(this.SheetIndex, 1);
-                      // Swal.fire({
-                      //   icon: 'success',
-                      //   title: 'Deleted!',
-                      //   text: 'Deleted Successfully',
-                      //   width: '200px',
-                      // })
-                      this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
-                      this.getChartData();
-                      this.retriveDataSheet_id = '';
-                    }
-                  },
-                  error: (error: any) => {
-                    Swal.fire({
-                      icon: 'warning',
-                      text: error.error.message,
-                      width: '200px',
-                    })
-                    console.log(error)
-                  }
-                }
-                )
-              }
-            })
-          },
-          error: (error: any) => {
-            Swal.fire({
-              icon: 'warning',
-              text: error.error.message,
-              width: '300px',
-            })
-            console.log(error)
+    if(this.hasUnSavedChanges){
+      if(!this.retriveDataSheet_id){
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to delete?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          this.tabs.splice(this.SheetIndex, 1);
+          if(this.SheetIndex === 0){
+            this.addSheet(false);
           }
         }
-      )
+        })
+      }
+      else{
+      Swal.fire({
+        position: "center",
+        icon: "question",
+        title: "You have unsaved sheet,would you like to delete?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if(result.isConfirmed){
+          this.hasUnSavedChanges = false;
+          console.log(this.SheetIndex)
+          const obj = {
+            sheet_id: this.retriveDataSheet_id,
+          }
+          this.workbechService.deleteSheetMessage(obj)
+            .subscribe(
+              {
+                next: (data: any) => {
+                  console.log(data);
+                  Swal.fire({
+                    title: 'Are you sure?',
+                    text: data.message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      const idToPass = this.databaseId;
+                      this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                          console.log(data);
+                          if (data) {
+                            this.tabs.splice(this.SheetIndex, 1);
+                            if(this.SheetIndex === 0){
+                              this.addSheet(false);
+                            }
+                            this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                            this.getChartData();
+                            this.retriveDataSheet_id = '';
+                          }
+                        },
+                        error: (error: any) => {
+                          Swal.fire({
+                            icon: 'warning',
+                            text: error.error.message,
+                            width: '200px',
+                          })
+                          console.log(error)
+                        }
+                      }
+                      )
+                    }
+                  })
+                },
+                error: (error: any) => {
+                  Swal.fire({
+                    icon: 'warning',
+                    text: error.error.message,
+                    width: '300px',
+                  })
+                  console.log(error)
+                }
+              }
+            )
+        }
+      })
+    }
+    }
+    else{
+      if(!this.retriveDataSheet_id){
+        this.tabs.splice(this.SheetIndex, 1);
+        this.SheetSavePlusEnabled.splice(0, 1);
+      }else{
+      console.log(this.SheetIndex)
+      const obj = {
+        sheet_id: this.retriveDataSheet_id,
+      }
+      this.workbechService.deleteSheetMessage(obj)
+        .subscribe(
+          {
+            next: (data: any) => {
+              console.log(data);
+              Swal.fire({
+                title: 'Are you sure?',
+                text: data.message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const idToPass = this.databaseId;
+                  this.workbechService.deleteSheet(idToPass,this.qrySetId,this.retriveDataSheet_id).subscribe({next: (data:any) => {
+                      console.log(data);
+                      if (data) {
+                        this.tabs.splice(this.SheetIndex, 1);
+                        if(this.SheetIndex === 0){
+                          this.addSheet(false);
+                        }
+                        this.toasterService.success('Deleted Successfully','success',{ positionClass: 'toast-top-right'});
+                        this.getChartData();
+                        this.retriveDataSheet_id = '';
+                      }
+                    },
+                    error: (error: any) => {
+                      Swal.fire({
+                        icon: 'warning',
+                        text: error.error.message,
+                        width: '200px',
+                      })
+                      console.log(error)
+                    }
+                  }
+                  )
+                }
+              })
+            },
+            error: (error: any) => {
+              Swal.fire({
+                icon: 'warning',
+                text: error.error.message,
+                width: '300px',
+              })
+              console.log(error)
+            }
+          }
+        )
+      }
+    }
+
   }
   onChange(event:MatTabChangeEvent){
-    console.log('tabs',event);
-    this.selectedTabIndex =  event.index;
-    const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
-    const selectedSheetId = selectedTab.id; // Access the sheet_id
-  
-    this.draggedDrillDownColumns = [];
-    this.drillDownObject = [];
-    this.drillDownIndex = 0;
-    this.sheetName = '';
-    this.dateDrillDownSwitch = false;
-    this.locationDrillDownSwitch = false;
-    delete this.originalData;
-    console.log(event)
-    if(event.index === -1){
-     this.retriveDataSheet_id = 1;
-    }
-    this.SheetIndex = event.index;
-    this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
-    this.sheetTitle = this.sheetName;
+    if (!this.suppressTabChangeEvent) {
+      this.selectedTabIndex = event.index;
+      if (this.hasUnSavedChanges) {
+        // this.selectedTabIndex =  event.index;
+        Swal.fire({
+          position: "center",
+          icon: "question",
+          title: "You have unsaved sheet,would you like to switch?",
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.hasUnSavedChanges = false;
+            console.log('tabs', event);
+            this.selectedTabIndex = event.index;
+            const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+            const selectedSheetId = selectedTab.id; // Access the sheet_id
 
-    this.sheetTagName = this.sheetName;
-    this.sheetTagTitle = this.sheetName;
-    this.draggedColumns = [];
-    this.draggedColumnsData = [];
-    this.draggedRows = [];
-    this.draggedRowsData = [];
-    this.displayedColumns = [];
-    this.retriveDataSheet_id = '';
-    this.getChartData();
-    if(selectedSheetId){
-      this.retriveDataSheet_id = selectedSheetId;
-      this.sheetRetrive(false);
-    }
+            this.draggedDrillDownColumns = [];
+            this.drillDownObject = [];
+            this.drillDownIndex = 0;
+            this.sheetName = '';
+            this.dateDrillDownSwitch = false;
+            delete this.originalData;
+            console.log(event)
+            if (event.index === -1) {
+              this.retriveDataSheet_id = 1;
+            }
+            this.SheetIndex = event.index;
+            this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+            this.sheetTitle = this.sheetName;
 
-    // const obj = {
-    //   "server_id": this.databaseId,
-    //   "queryset_id": this.qrySetId,
-    // } as any;
-    // if (this.fromFileId) {
-    //   delete obj.server_id;
-    //   obj.file_id = this.fileId;
-    // }
-    // this.workbechService.getSheetNames(obj).subscribe({
-    //   next: (responce: any) => {
-    //     this.sheetList = responce.data;
-    //     if (!this.sheetList.some(sheet => sheet.sheet_name === this.sheetName)) {
-    //       this.retriveDataSheet_id = '';
-    //     } else {
-    //       this.sheetList.forEach(sheet => {
-    //         if (sheet.sheet_name === this.sheetName) {
-    //           this.retriveDataSheet_id = sheet.id;
-    //         }
-    //       });
-    //     }
-    //     // const inputElement = document.getElementById('htmlContent') as HTMLInputElement;
-    //     // inputElement.innerHTML = event.tab?.textLabel;
-    //     this.sheetTagName = event.tab?.textLabel;
-    //     console.log(this.sheetName)
-    //     console.log(this.retriveDataSheet_id);
-    //     this.draggedColumns = [];
-    //     this.draggedColumnsData = [];
-    //     this.draggedRows = [];
-    //     this.draggedRowsData = [];
-    //     this.displayedColumns = [];
-    //     this.getChartData();
-    //    if(this.retriveDataSheet_id){
-    //       this.sheetRetrive();
-    //    }
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //   }
-    // }
-    // )
-    this.kpi = false;
+            this.sheetTagName = this.sheetName;
+            this.sheetTagTitle = this.sheetName;
+            this.draggedColumns = [];
+            this.draggedColumnsData = [];
+            this.draggedRows = [];
+            this.draggedRowsData = [];
+            this.displayedColumns = [];
+            this.retriveDataSheet_id = '';
+            this.getChartData();
+            this.columnsData();
+            if (selectedSheetId) {
+              this.retriveDataSheet_id = selectedSheetId;
+              this.sheetRetrive(false);
+            }
+            this.kpi = false;
+            return;
+          } else {
+            this.selectedTabIndex = this.SheetIndex;
+            this.suppressTabChangeEvent = true;
+          }
+        });
+      } else {
+        console.log('tabs', event);
+        this.selectedTabIndex = event.index;
+        const selectedTab = this.tabs[event.index]; // Get the selected tab using the index
+        const selectedSheetId = selectedTab.id; // Access the sheet_id
+
+        this.draggedDrillDownColumns = [];
+        this.drillDownObject = [];
+        this.drillDownIndex = 0;
+        this.sheetName = '';
+        this.dateDrillDownSwitch = false;
+        delete this.originalData;
+        console.log(event)
+        if (event.index === -1) {
+          this.retriveDataSheet_id = 1;
+        }
+        this.SheetIndex = event.index;
+        this.sheetName = selectedTab.sheet_name ? selectedTab.sheet_name : selectedTab;
+        this.sheetTitle = this.sheetName;
+
+        this.sheetTagName = this.sheetName;
+        this.sheetTagTitle = this.sheetName;
+        this.draggedColumns = [];
+        this.draggedColumnsData = [];
+        this.draggedRows = [];
+        this.draggedRowsData = [];
+        this.displayedColumns = [];
+        this.retriveDataSheet_id = '';
+        this.getChartData();
+        this.columnsData();
+        if (selectedSheetId) {
+          this.retriveDataSheet_id = selectedSheetId;
+          this.sheetRetrive(false);
+        }
+        this.kpi = false;
+      }
+    } else {
+      this.suppressTabChangeEvent = false;
+    }
   }
   getChartData(){
    // if(this.draggedColumns && this.draggedRows && !this.retriveDataSheet_id){
@@ -2247,7 +2446,7 @@ if(this.retriveDataSheet_id){
 }
 )
 }
-
+this.hasUnSavedChanges = false;
   }
 sheetTagTitle : any;
 sheetChartId : any;
@@ -3021,9 +3220,21 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   totalDataLength : any;
   filterDataPut(){
     // this.dimetionMeasure = [];
+    let relativeDateRange : any[]=[];
     this.sortedData = [];
     if(this.activeTabId === 4){
       this.totalDataLength = this.tablePreviewColumn[0]?.result_data?.length;
+    }
+    if(this.activeTabId === 5){
+      if (this.previewFromDate && this.previewToDate) {
+        const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
+        const toDateParts = this.previewToDate.split('-'); // ['31', '12', '2025']
+        let from = `${fromDateParts[2]}/${fromDateParts[1]}/${fromDateParts[0]}`
+        let to = `${toDateParts[2]}/${toDateParts[1]}/${toDateParts[0]}`
+        relativeDateRange = [from, to];
+      }
+      this.last = this.last === 0 ? 3 : this.last;
+      this.next = this.next === 0 ? 3 : this.next;
     }
     const obj={
     //"filter_id": this.filter_id,
@@ -3031,7 +3242,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "queryset_id": this.qrySetId,
     "type_of_filter":"sheet",
     "datasource_querysetid" : this.filterQuerySetId,
-    "range_values": this.filterDateRange,
+    "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
     "select_values":this.filterDataArray,
     "col_name":this.filterName,
     "data_type":this.filterType,
@@ -3040,7 +3251,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
     "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
     "is_calculated": this.filterType == 'calculated' ? true : false,
     "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
-    "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
+    "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null,
+    "relative_date": this.activeTabId === 5 ? [this.relativeDateType,this.selectedDateFormat,this.last,this.next,(this.isAnchor ? this.anchorDate : ''),''] : null
 }
   this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
         console.log(responce);
@@ -3057,12 +3269,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         this.topLimit = 5;
         this.topType = 'desc';
         this.isTopFilter = !this.dimetionMeasure.some((column: any) => column.top_bottom && column.top_bottom.length>0);
+        this.defaultRelativeDates();
       },
       error: (error) => {
         console.log(error);
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   filterEditGet(){
     this.filterData = [];
@@ -3089,11 +3303,21 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
         if(this.formatExtractType){
           this.activeTabId = 3;
         }
-        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day'){
+        else if(responce?.range_values && responce?.range_values.length > 0 && responce?.format_type === 'year/month/day' && !responce?.relative_date){
           this.activeTabId = 2;
         }
         else if(responce?.top_bottom && responce?.top_bottom.length>0){
           this.activeTabId = 4;
+        }
+        else if(responce?.relative_date && responce?.relative_date.length > 0){
+          this.activeTabId = 5;
+          this.relativeDateType = responce?.relative_date[0];
+          this.selectedDateFormat = responce?.relative_date[1];
+          this.last = responce?.relative_date[2];
+          this.next = responce?.relative_date[3];
+          this.isAnchor = responce?.relative_date[4] ? true : false;
+          this.anchorDate = responce?.relative_date[4];
+          this.anchorDateChange();
         }
         else {
           this.activeTabId = 1;
@@ -3156,13 +3380,25 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
   filterDataEditArray = [] as any;
   filterDataEditPut(){
     this.sortedData = [];
+    let relativeDateRange : any[] = [];
+    if(this.activeTabId === 5){
+      if (this.previewFromDate && this.previewToDate) {
+        const fromDateParts = this.previewFromDate.split('-'); // ['01', '01', '2025']
+        const toDateParts = this.previewToDate.split('-'); // ['31', '12', '2025']
+        let from = `${fromDateParts[2]}/${fromDateParts[1]}/${fromDateParts[0]}`
+        let to = `${toDateParts[2]}/${toDateParts[1]}/${toDateParts[0]}`
+        relativeDateRange = [from, to];
+      }
+      this.last = this.last === 0 ? 3 : this.last;
+      this.next = this.next === 0 ? 3 : this.next;
+    }
     const obj={
       "filter_id": this.filter_id,
       "hierarchy_id": this.databaseId,
       "queryset_id": this.qrySetId,
       "type_of_filter":"sheet",
       "datasource_querysetid" : this.filterQuerySetId,
-      "range_values": this.filterDateRange,
+      "range_values": this.activeTabId === 2 ? this.filterDateRange : (this.activeTabId === 5 ? relativeDateRange : []),
       "select_values":this.filterDataArray,
       "col_name":this.filterName,
       "data_type":this.filterType,
@@ -3170,7 +3406,8 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       "field_logic" : this.filterCalculatedFieldLogic?.length > 0 ? this.filterCalculatedFieldLogic : null,
       "is_calculated": this.filterType == 'calculated' ? true : false,
       "format_date" : this.activeTabId === 2 ? 'year/month/day' :this.formatExtractType,
-      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null
+      "top_bottom": this.activeTabId === 4 ? [this.selectedTopColumn,this.topAggregate,this.topLimit,this.topType] : null,
+      "relative_date": this.activeTabId === 5 ? [this.relativeDateType,this.selectedDateFormat,this.last,this.next,(this.isAnchor ? this.anchorDate : ''),''] : null
   }
     this.workbechService.filterPut(obj).subscribe({next: (responce:any) => {
           console.log(responce);
@@ -3183,12 +3420,14 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
           this.topAggregate = 'sum';
           this.topLimit = 5;
           this.topType = 'desc';
+          this.defaultRelativeDates();
         },
         error: (error) => {
           console.log(error);
         }
       }
     )
+    this.hasUnSavedChanges = true;
   }
   filterDelete(index:any,filterId:any){
   this.sortedData = [];
@@ -3204,6 +3443,7 @@ this.workbechService.sheetGet(obj,this.retriveDataSheet_id).subscribe({next: (re
       }
     }
   )
+  this.hasUnSavedChanges = true;
   }
   openSuperScaledModal(modal: any,type:any) {
     if(type === undefined){
@@ -3438,8 +3678,8 @@ renameColumns(){
   }
 
   formatKPINumber() {
-    let formattedNumber = this.tablePreviewRow[0].result_data[0]+'';
-    let value = this.tablePreviewRow[0].result_data[0];
+    let formattedNumber = this.tablePreviewRow[0]?.result_data[0]+'';
+    let value = this.tablePreviewRow[0]?.result_data[0];
     if (this.KPIDisplayUnits !== 'none') {
       switch (this.KPIDisplayUnits) {
         case 'K':
@@ -3461,7 +3701,7 @@ renameColumns(){
           break;
       }
     } else {
-      formattedNumber = (value).toFixed(this.KPIDecimalPlaces)
+      formattedNumber = (value)?.toFixed(this.KPIDecimalPlaces)
     }
 
     this.KPINumber = this.KPIPrefix + formattedNumber + this.KPISuffix;
@@ -3867,10 +4107,30 @@ customizechangeChartPlugin() {
     };
   }
   openSelectDashboard(modal : any){
-    this.modalService.open(modal, {
-      centered: true,
-      windowClass: 'animate__animated animate__zoomIn',
-    });
+    if (this.hasUnSavedChanges) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Your work has not been saved, Do you want to continue?",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked "Yes", allow navigation
+          this.modalService.open(modal, {
+            centered: true,
+            windowClass: 'animate__animated animate__zoomIn',
+          });
+        }
+      });
+    } else {
+      this.modalService.open(modal, {
+        centered: true,
+        windowClass: 'animate__animated animate__zoomIn',
+      });
+    }
   }
   dashboardList : any[] = [];
   getDashboardsList() {
@@ -3890,6 +4150,7 @@ customizechangeChartPlugin() {
     })
   }
   async moveToDashboard(){
+    this.hasUnSavedChanges = false;
     if(this.selectedDashboardId > 0) {
       this.dashboardId = this.selectedDashboardId;
     }
@@ -3927,15 +4188,15 @@ customizechangeChartPlugin() {
       this.selectedSortColumnData[2] = format;
     }
     if(format === ''){
-      this.draggedColumnsData[index] = [column.column,column.data_type,format,""];
-      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format};
+      this.draggedColumnsData[index] = [column.column,column.data_type,format,column.alias ? column.alias : ""];
+      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:format, alias: column.alias ? column.alias : ""};
      }else if(format === '-Select-'){
-      this.draggedColumnsData[index] = [column.column,column.data_type,'',''];
-      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:''};
+      this.draggedColumnsData[index] = [column.column,column.data_type,'',column.alias ? column.alias : ""];
+      this.draggedColumns[index] = {column:column.column,data_type:column.data_type,type:'', alias: column.alias ? column.alias : ""};
      }
      else{
-      this.draggedColumnsData[index] = [column.column, "date", format,''];
-      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format };
+      this.draggedColumnsData[index] = [column.column, "date", format,column.alias ? column.alias : ""];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: format, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
      }
      this.dataExtraction();
@@ -3945,12 +4206,12 @@ customizechangeChartPlugin() {
       this.selectedSortColumnData[2] = type;
     }
     if (type === '') {
-      this.draggedColumnsData[index] = [column.column, column.data_type, type, ''];
-      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
+      this.draggedColumnsData[index] = [column.column, column.data_type, type, column.alias ? column.alias : ""];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
     }
     else {
-      this.draggedColumnsData[index] = [column.column, "aggregate", type, ''];
-      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type };
+      this.draggedColumnsData[index] = [column.column, "aggregate", type, column.alias ? column.alias : ""];
+      this.draggedColumns[index] = { column: column.column, data_type: column.data_type, type: type, alias: column.alias ? column.alias : "" };
       console.log(this.draggedColumns);
     }
     this.dataExtraction();
@@ -4297,7 +4558,9 @@ customizechangeChartPlugin() {
       }
       canNavigate(): boolean {
         // This is handled in the functional guard
-        return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+       // return this.retriveDataSheet_id ? false:((this.draggedColumns.length>0 || this.draggedRows.length>0)?true:false);
+        return this.hasUnSavedChanges;
+
       }
 
       getSheetList(){
@@ -4483,7 +4746,7 @@ customizechangeChartPlugin() {
         case 'average':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'AVG("' + tableName + '"."' + columnName + '")';
@@ -4492,7 +4755,7 @@ customizechangeChartPlugin() {
         case 'count':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'COUNT("' + tableName + '"."' + columnName + '")';
@@ -4501,7 +4764,7 @@ customizechangeChartPlugin() {
         case 'countd':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'COUNT( DISTINCT "' + tableName + '"."' + columnName + '")';
@@ -4510,7 +4773,7 @@ customizechangeChartPlugin() {
         case 'max':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'MAX("' + tableName + '"."' + columnName + '")';
@@ -4519,7 +4782,7 @@ customizechangeChartPlugin() {
         case 'min':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'MIN("' + tableName + '"."' + columnName + '")';
@@ -4528,7 +4791,7 @@ customizechangeChartPlugin() {
         case 'sum':
           hasContentInsideParentheses = /\(.*[^\s)]\)/.test(this.calculatedFieldLogic);
           if (hasContentInsideParentheses) {
-            let newString = '"' + tableName + '"."' + columnName + '")';
+            let newString = '"' + tableName + '"."' + columnName + '"';
             this.calculatedFieldLogic = this.calculatedFieldLogic.replace(/\)\s*$/, ` ${newString})`);
           } else {
             this.calculatedFieldLogic = 'SUM("' + tableName + '"."' + columnName + '")';
@@ -4600,6 +4863,7 @@ customizechangeChartPlugin() {
             this.validationMessage = '';
             this.isEditCalculatedField = false;
             event.close();
+            ngbdropdownevent.close();
             this.columnsData();
             this.toasterService.success('Added Successfully', 'success', { positionClass: 'toast-top-right' });
 
@@ -4676,7 +4940,7 @@ customizechangeChartPlugin() {
           }
         break; 
         case 'round':
-          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*")\)$/)){
+          if(!this.validateFormula(/^ROUND\((-?\d+(\.\d+)?|"[a-zA-Z0-9_()]*"\."[a-zA-Z0-9_()]*"),\s*\d+\)$/)){
             this.isValidCalculatedField = false;
             this.validationMessage = 'Invalid Syntax';
             return false;
@@ -4831,7 +5095,7 @@ customizechangeChartPlugin() {
             return true;
           break; 
           case 'parse':
-            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*'dd-mm-yyyy'\s*\)$/)){
+            if(!this.validateFormula(/^TO_CHAR\(\s*(.+?)\s*,\s*(['"])dd-mm-yyyy\2\s*\)$/)){
               this.isValidCalculatedField = false;
               this.validationMessage = 'Invalid Syntax';
               return false;
@@ -5239,9 +5503,324 @@ customizechangeChartPlugin() {
       }
       this.dataExtraction();
     }
+    
+    //years
+    getYearPreview(){
+      let startDate: any;
+      let endDate: any;
+      if(this.selectedDateFormat === 'previousYear'){
+        let dates = this.getYearDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'thisYear'){
+        let dates = this.getYearDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'nextYear'){
+        let dates = this.getYearDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if(this.selectedDateFormat === 'yearToDate'){
+        let dates = this.getYearDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if(this.selectedDateFormat === 'lastYearCount' && this.last){
+        let firstYear = this.getYearDates(-(this.last-1)); // Start from N years back
+        let lastYear = this.getYearDates(0); // End at last year
+        startDate = firstYear.start;
+        endDate = lastYear.end;
+      } else if(this.selectedDateFormat === 'nextYearCount' && this.next){
+        let firstYear = this.getYearDates(0); // Start from this year
+        let lastYear = this.getYearDates(this.next - 1); // End at N years forward
+        startDate = firstYear.start;
+        endDate = lastYear.end;
+      }
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getYearDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      
+      let year = now.getFullYear() + offset; // Adjust the year by offset
+    
+      return {
+        start: new Date(year, 0, 1), // January 1st
+        end: new Date(year, 11, 31), // December 31st
+      };
+    }
 
-    topType : string = 'desc';
-    topLimit : number = 5;
-    selectedTopColumn : any = 'select';
-    topAggregate : string = 'sum';
+    //quarters
+    getQuarterPreview(){
+      let startDate: any;
+      let endDate: any;
+      if (this.selectedDateFormat === 'previousQuarter') {
+        let dates = this.getQuarterDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisQuarter') {
+        let dates = this.getQuarterDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextQuarter') {
+        let dates = this.getQuarterDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      }  else if (this.selectedDateFormat === 'quarterToDate') {
+        let dates = this.getQuarterDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastQuarterCount' && this.last) {
+        let firstQuarter = this.getQuarterDates(-(this.last-1)); // Start from N quarters back
+        let lastQuarter = this.getQuarterDates(0); // End at this quarter
+        startDate = firstQuarter.start;
+        endDate = lastQuarter.end;
+      } else if (this.selectedDateFormat === 'nextQuarterCount' && this.next) {
+        let firstQuarter = this.getQuarterDates(0); // Start from this quarter
+        let lastQuarter = this.getQuarterDates((this.next-1)); // End at N quarters forward
+        startDate = firstQuarter.start;
+        endDate = lastQuarter.end;
+      }
+      
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getQuarterDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let currentQuarter = Math.floor(now.getMonth() / 3); // 0-3 (Q1-Q4)
+      let year = now.getFullYear();
+  
+      let quarter = (currentQuarter + offset) % 4;
+      if (quarter < 0) quarter += 4; // Ensure positive value
+      let adjustedYear = year + Math.floor((currentQuarter + offset) / 4);
+  
+      let startMonth = quarter * 3;
+      let endMonth = startMonth + 2;
+  
+      return {
+        start: new Date(adjustedYear, startMonth, 1),
+        end: new Date(adjustedYear, endMonth + 1, 0), // Last day of quarter
+      };
+    }
+
+    //months
+    getMonthsPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'previousMonth') {
+        let dates = this.getMonthDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisMonth') {
+        let dates = this.getMonthDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextMonth') {
+        let dates = this.getMonthDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'monthToDate') {
+        let dates = this.getMonthDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastMonthCount' && this.last) {
+        let firstMonth = this.getMonthDates(-(this.last-1)); // Start from N months back
+        let lastMonth = this.getMonthDates(0); // End at last month
+        startDate = firstMonth.start;
+        endDate = lastMonth.end;
+      } else if (this.selectedDateFormat === 'nextMonthCount' && this.next) {
+        let firstMonth = this.getMonthDates(0); // Start from this month
+        let lastMonth = this.getMonthDates(this.next - 1); // End at N months forward
+        startDate = firstMonth.start;
+        endDate = lastMonth.end;
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getMonthDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let year = now.getFullYear();
+      let month = now.getMonth() + offset; // Adjust the month by offset
+      let adjustedYear = year + Math.floor(month / 12);
+      let adjustedMonth = month % 12;
+      if (adjustedMonth < 0) {
+        adjustedMonth += 12;
+        // adjustedYear--;
+      }
+    
+      return {
+        start: new Date(adjustedYear, adjustedMonth, 1),
+        end: new Date(adjustedYear, adjustedMonth + 1, 0), // Last day of month
+      };
+    }
+
+    //weeks
+    getWeeksPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'previousWeek') {
+        let dates = this.getWeekDates(-1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'thisWeek') {
+        let dates = this.getWeekDates(0);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'nextWeek') {
+        let dates = this.getWeekDates(1);
+        startDate = dates.start;
+        endDate = dates.end;
+      } else if (this.selectedDateFormat === 'weekToDate') {
+        let dates = this.getWeekDates(0);
+        startDate = dates.start;
+        endDate = this.isAnchor && this.anchorDate ? new Date(this.anchorDate) : new Date();
+      } else if (this.selectedDateFormat === 'lastWeekCount' && this.last) {
+        let firstWeek = this.getWeekDates(-(this.last-1)); // Start from N weeks back
+        let lastWeek = this.getWeekDates(0); // End at last week
+        startDate = firstWeek.start;
+        endDate = lastWeek.end;
+      } else if (this.selectedDateFormat === 'nextWeekCount' && this.next) {
+        let firstWeek = this.getWeekDates(0); // Start from this week
+        let lastWeek = this.getWeekDates(this.next - 1); // End at N weeks forward
+        startDate = firstWeek.start;
+        endDate = lastWeek.end;
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getWeekDates(offset: number): { start: Date; end: Date } {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      let currentDayOfWeek = now.getDay(); // 0 (Sunday) - 6 (Saturday)
+      let startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - currentDayOfWeek + offset * 7); // Sunday as start of the week
+      let endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday as end of the week
+    
+      return {
+        start: startOfWeek,
+        end: endOfWeek,
+      };
+    }
+
+    //days
+    getDaysPreview(){
+      let startDate: any;
+      let endDate: any;
+
+      if (this.selectedDateFormat === 'yesterday') {
+        startDate = this.getDayDate(-1);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'today') {
+        startDate = this.getDayDate(0);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'tomorrow') {
+        startDate = this.getDayDate(1);
+        endDate = startDate;
+      } else if (this.selectedDateFormat === 'lastDaysCount' && this.last) {
+        startDate = this.getDayDate(-(this.last-1)); // Start N days back
+        endDate = this.getDayDate(0); // End at yesterday
+      } else if (this.selectedDateFormat === 'nextDaysCount' && this.next) {
+        startDate = this.getDayDate(0); // Start from today
+        endDate = this.getDayDate(this.next - 1); // End N days forward
+      }
+
+      this.previewFromDate = new Intl.DateTimeFormat('en-GB').format(new Date(startDate)).replace(/\//g, '-');
+      this.previewToDate = new Intl.DateTimeFormat('en-GB').format(new Date(endDate)).replace(/\//g, '-');
+    }
+    getDayDate(offset: number): Date {
+      let now;
+      if(this.isAnchor && this.anchorDate){
+        now = new Date(this.anchorDate);
+      } else{
+        now = new Date();
+      }
+      now.setDate(now.getDate() + offset); // Adjust the date by offset
+      return now;
+    }
+
+    //anchor date change
+    anchorDateChange(){
+      if(this.relativeDateType === 1){
+        this.getYearPreview();
+      } else if(this.relativeDateType === 2){
+        this.getQuarterPreview();
+      } else if(this.relativeDateType === 3){
+        this.getMonthsPreview();
+      } else if(this.relativeDateType === 4){
+        this.getWeeksPreview();
+      } else if(this.relativeDateType === 5){
+        this.getDaysPreview();
+      }
+    }
+    setAnchorDate(){
+      if(this.isAnchor){
+        const today = new Date();
+        this.anchorDate = today.toISOString().split('T')[0];
+      } else{
+        this.anchorDate = '';
+      }
+      this.anchorDateChange();
+    }
+    defaultRelativeDates() {
+      this.relativeDateType = 1;
+      this.selectedDateFormat = 'thisYear';
+      this.last = 3;
+      this.next = 3;
+      this.isAnchor = false;
+      this.anchorDate = '';
+    }
+    applyButtonDisableForRelativeDates(){
+      let isValid : boolean = false;
+      if(this.activeTabId === 5 && this.selectedDateFormat && !this.isAnchor){
+        if((this.selectedDateFormat.includes('last') || this.selectedDateFormat.includes('next')) && this.selectedDateFormat.includes('Count')){
+          if(this.selectedDateFormat.includes('last') && this.selectedDateFormat.includes('Count') && this.last){
+            isValid = true;
+          } else if(this.selectedDateFormat.includes('next') && this.selectedDateFormat.includes('Count') && this.next){
+            isValid = true;
+          } else{
+            isValid = false;
+          }
+        } else{
+          isValid = true;
+        }
+      } else if(this.activeTabId === 5 && this.selectedDateFormat && this.isAnchor && this.anchorDate){
+        if((this.selectedDateFormat.includes('last') || this.selectedDateFormat.includes('next')) && this.selectedDateFormat.includes('Count')){
+          if(this.selectedDateFormat.includes('last') && this.selectedDateFormat.includes('Count') && this.last){
+            isValid = true;
+          } else if(this.selectedDateFormat.includes('next') && this.selectedDateFormat.includes('Count') && this.next){
+            isValid = true;
+          } else{
+            isValid = false;
+          }
+        } else{
+          isValid = true;
+        }
+      } else{
+        isValid = false;
+      }
+      return isValid;
+    }
 }
