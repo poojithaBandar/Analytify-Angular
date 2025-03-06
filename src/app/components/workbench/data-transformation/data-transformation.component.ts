@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, QueryList, ViewChildren } from '@angular/core';
 import { SharedModule } from '../../../shared/sharedmodule';
-import { NgbModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { NgbDropdown, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +11,7 @@ import _ from 'lodash';
 @Component({
   selector: 'app-data-transformation',
   standalone: true,
-  imports: [SharedModule,NgbModule,DragDropModule,CommonModule, NgbPopoverModule],
+  imports: [SharedModule,NgbModule,DragDropModule,CommonModule],
   templateUrl: './data-transformation.component.html',
   styleUrl: './data-transformation.component.scss'
 })
@@ -19,7 +19,7 @@ export class DataTransformationComponent {
   active=0;
   defaults = ['Connections'];
   tables = [{tables : '', columns : []}];
-  draggedtables: any[] = [];
+  draggedTables: any[] = [];
   isAddTransformation : boolean = false;
   selectedTransformations: any = {};
   hierarchyId : any;
@@ -39,7 +39,10 @@ export class DataTransformationComponent {
     'nullable(timestamp without time zone)', 'nullable(timezone)', 'nullable(time zone)', 'nullable(timestamptz)', 'nullable(datetime)', 
     'datetime64', 'datetime32', 'date32', 'nullable(date32)', 'nullable(datetime64)', 'nullable(datetime32)', 'date', 'datetime', 'time', 
     'datetime64', 'datetime32', 'date32', 'nullable(date)', 'nullable(time)', 'nullable(datetime64)', 'nullable(datetime32)', 
-    'nullable(date32)']
+    'nullable(date32)'
+  ]
+  isOpen : boolean = true;
+  @ViewChildren('dropdownRef') dropdowns!: QueryList<NgbDropdown>;
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
@@ -62,7 +65,34 @@ export class DataTransformationComponent {
     } else {
       this.selectedTransformations[index].push({});
     }
+
+    setTimeout(() => {
+      if (this.dropdowns.length > 0) {
+        const dropdownArray = this.dropdowns.toArray();
+        let lastDropdown;
+        if(this.draggedTables.length > 1){
+          if(index == 0){
+            lastDropdown = dropdownArray[this.selectedTransformations[index].length-1];
+          } else if(index > 0){
+            const keysList =  Object.keys(this.selectedTransformations);
+            let totalTransformations = 0;
+            keysList.forEach((key:any)=>{
+              if(key <= index){
+                totalTransformations += this.selectedTransformations[key].length;
+              }
+            });
+            lastDropdown = dropdownArray[totalTransformations-1];
+          }
+        } else{
+          lastDropdown = this.dropdowns.last;
+        }
+        if (lastDropdown) {
+          lastDropdown.open();
+        }
+      }
+    }, 100); 
   }  
+
   drop(event: CdkDragDrop<any[]>) {
     let item: any = event.previousContainer.data[event.previousIndex];
     let copy: any = JSON.parse(JSON.stringify(item));
@@ -74,7 +104,7 @@ export class DataTransformationComponent {
         element[attr] = copy[attr];
       }
     }
-    this.draggedtables.push(element);
+    this.draggedTables.push(element);
   }
 
   setTransformationType(index: number, transformationKey: any,event: any, isDropdown :boolean, isInput:boolean,transformationIndex: number) {
@@ -123,8 +153,22 @@ export class DataTransformationComponent {
     this.selectedTransformations[index].splice(transformationIndex, 1);
   }
   removeTable(index: number) {
-    this.draggedtables.splice(index,1);
+    this.draggedTables.splice(index,1);
     delete this.selectedTransformations[index];
+
+    const updatedTransformations: any = {};
+    const keysList =  Object.keys(this.selectedTransformations);
+    keysList.forEach((key:any)=>{
+      if(key > index){
+        updatedTransformations[key-1] = this.selectedTransformations[key];
+      } else {
+        updatedTransformations[key] = this.selectedTransformations[key];
+      }
+    })
+    this.selectedTransformations = updatedTransformations;
+
+    console.log(this.draggedTables);
+    console.log(this.selectedTransformations);
   }
 
   getTablesForDataTransformation(){
@@ -149,7 +193,7 @@ export class DataTransformationComponent {
 
   setTransformations(isInvidualTableRun : boolean){
     let transformationList : any[] = []
-    this.draggedtables.forEach((table:any,index:any)=>{
+    this.draggedTables.forEach((table:any,index:any)=>{
       let object = {
         database : this.schema,
         table : table.tables,

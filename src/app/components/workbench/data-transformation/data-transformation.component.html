@@ -14,7 +14,7 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="d-lg-flex d-block">
-                            <div class="col-3 p-4 border-end">
+                            <div class="col-3 p-4 border-end" [ngStyle]="{ 'display': isOpen ? 'block' : 'none' }">
                                 <div class="card mb-0 connections-layer-h">
                                     <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav flex-column nav-pills" id="vertical-tab" role="tablist" aria-orientation="vertical">
                                         <div
@@ -155,16 +155,17 @@
                                
                             </div>
                             <div class="col-9 py-0">
-                                <div type="button" class="card mb-0 hide-show-btn btn-primary">
-                                    <i class="fa fa-angle-left fs-18"></i>
+                                <div type="button" class="card mb-0 hide-show-btn btn-primary" (click)="isOpen = !isOpen">
+                                    <i *ngIf="isOpen" class="fa fa-angle-left fs-18"></i>
+                                    <i *ngIf="!isOpen" class="fa fa-angle-right fs-18"></i>
                                 </div>
                                 <div class="tab-content terms" id="vertical-tabContent">
                                     <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 p-0"> -->
                                         <!-- <div class="card card-body databse-T-H mb-0 br-0 p-0"> -->
                                             <div class="card-body example-list-drop mb-0 py-0" cdkDropList #destinationList="cdkDropList"
-                                                [cdkDropListData]="draggedtables" (cdkDropListDropped)="drop($event)">
+                                                [cdkDropListData]="draggedTables" (cdkDropListDropped)="drop($event)">
                                         
-                                                @for (item of draggedtables; track item; let index = $index) {
+                                                @for (item of draggedTables; track item; let index = $index) {
                                                     <div class="d-flex overflow-auto">
                                                       <!-- Table Element -->
                                                       <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center " ngbDropdown>
@@ -177,7 +178,7 @@
                                                             <a (click)="removeTable(index)" aria-label="remove" class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
                                                                 <i class="fe fe-trash"></i>
                                                             </a>
-                                                            <a *ngIf="!selectedTransformations[index]?.length" aria-label="add"
+                                                            <a *ngIf="!(selectedTransformations[index]?.length > 0)" aria-label="add"
                                                                 class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                 <i class="fe fe-plus text-white text-sm"></i>
                                                             </a>
@@ -188,7 +189,7 @@
                                                         <img src="../../../../assets/images/data-transformation/right_arrow.png" class="image-width" alt="arrow image">
                                                   
                                                         <div class="example-box p-2 border border-dark-subtle rounded-3 mb-1 cursor-auto table-width d-flex align-items-center "
-                                                            ngbDropdown>
+                                                            ngbDropdown #dropdownRef="ngbDropdown">
                                                             <span class="flex-grow-1" ngbTooltip="{{ selectedTransformations[index][transformationIndex].key }}" placement="top"
                                                                 container="body">
                                                                 {{ selectedTransformations[index][transformationIndex].key | slice:0:13 }}
@@ -204,8 +205,8 @@
                                                                     class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
                                                                     <i class="fe fe-trash"></i>
                                                                 </a>
-                                                                <a *ngIf="isLastTransformation(index, transformationIndex)" (click)="isAddTransformation = true" aria-label="add"
-                                                                    class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
+                                                                <a *ngIf="isLastTransformation(index, transformationIndex)" aria-label="add" [class.disabled]="!selectedTransformations[index][transformationIndex].key"
+                                                                    class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="isAddTransformation = true; addNewTransform(index)">
                                                                     <i class="fe fe-plus text-white text-sm"></i>
                                                                 </a>
                                                             </div>
@@ -266,7 +267,7 @@
                                                       }
                                                     </div>
                                                 }                                                  
-                                                @if (draggedtables.length === 0) {
+                                                @if (draggedTables.length === 0) {
                                                 <h6 class="fs-12 mt-2 mb-0 drag-txt">Drag tables here</h6>
                                                 }
                                             </div>
