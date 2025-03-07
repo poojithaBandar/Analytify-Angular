@@ -268,30 +268,36 @@ export class WorkbenchComponent implements OnInit{
           "display_name":this.displayName,
           "schema": this.selectedSchema
       }
-        this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
+          this.workbechService.postGreSqlConnection(obj).subscribe({
+            next: (responce) => {
               console.log(responce);
-              console.log('tablelist',this.tableList)
-              if(responce){
+              console.log('tablelist', this.tableList)
+              if (responce) {
                 this.databaseName = responce.database.display_name
                 this.databaseId = responce.database?.hierarchy_id
-                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                this.toasterservice.success('Connected', 'success', { positionClass: 'toast-top-right' });
                 this.openPostgreSqlForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                if(this.iscrossDbSelect){
+                if (this.iscrossDbSelect) {
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
-                }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
                 }
               }
             },
             error: (error) => {
               console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
             }
           }
-        )
-
+          )
+        } else {
+          this.checkDataSourceConnection(obj);
+        }
+      });
     }
 
     connectWiseUpdate(){
@@ -424,30 +430,37 @@ export class WorkbenchComponent implements OnInit{
           "service_name":this.postGreDatabaseName
 
       }
-        this.workbechService.postGreSqlConnection(obj).subscribe({next: (responce) => {
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
+          this.workbechService.postGreSqlConnection(obj).subscribe({
+            next: (responce) => {
               console.log(responce);
-              console.log('tablelist',this.tableList)
-              if(responce){
+              console.log('tablelist', this.tableList)
+              if (responce) {
                 this.databaseName = responce.database.database_name
                 this.databaseId = responce.database?.hierarchy_id
-                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                this.toasterservice.success('Connected', 'success', { positionClass: 'toast-top-right' });
                 this.modalService.dismissAll();
                 this.openOracleForm = false;
                 const encodedId = btoa(this.databaseId.toString());
-                if(this.iscrossDbSelect){
+                if (this.iscrossDbSelect) {
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
-                }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                } else {
+                  this.router.navigate(['/analytify/database-connection/tables/' + encodedId]);
                 }
               }
             },
             error: (error) => {
               console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+              this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
             }
           }
-        )
+          )
+        } else {
+          this.checkDataSourceConnection(obj);
+        }
+      });
     }
     openMySql(){
       this.openMySqlForm=true;
@@ -644,28 +657,34 @@ export class WorkbenchComponent implements OnInit{
           "database": this.postGreDatabaseName,
 
       }
-        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
-          console.log(responce)
-              if(responce){
-                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.hierarchy_id
-                this.modalService.dismissAll();
-                this.openMySqlForm = false;
-                const encodedId = btoa(this.databaseId.toString());
-                if(this.iscrossDbSelect){
-                  this.selectedHirchyIdCrsDb = this.databaseId
-                  this.connectCrossDbs();
-                }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
-                }
-              }
-            },
-            error: (error) => {
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
-              console.log(error);
-            }
-          }
-        )
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
+          this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+           console.log(responce)
+               if(responce){
+                 this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                 this.databaseId=responce.database?.hierarchy_id
+                 this.modalService.dismissAll();
+                 this.openMySqlForm = false;
+                 const encodedId = btoa(this.databaseId.toString());
+                 if(this.iscrossDbSelect){
+                   this.selectedHirchyIdCrsDb = this.databaseId
+                   this.connectCrossDbs();
+                 }else{
+                   this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                 }
+               }
+             },
+             error: (error) => {
+               this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
+               console.log(error);
+             }
+           }
+         )
+       } else {
+         this.checkDataSourceConnection(obj);
+       }
+      });
     }
     openMicrosoftSqlServer(){
       this.openMicrosoftSqlServerForm=true;
@@ -684,28 +703,34 @@ export class WorkbenchComponent implements OnInit{
           "database": this.postGreDatabaseName,
           "authentication_type":this.selectedMicroSoftAuthType
       }
-        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
-          console.log(responce)
-              if(responce){
-                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.hierarchy_id
-                this.modalService.dismissAll();
-                this.openMicrosoftSqlServerForm = false;
-                const encodedId = btoa(this.databaseId.toString());
-                if(this.iscrossDbSelect){
-                  this.selectedHirchyIdCrsDb = this.databaseId
-                  this.connectCrossDbs();
-                }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
+          this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+            console.log(responce)
+                if(responce){
+                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                  this.databaseId=responce.database?.hierarchy_id
+                  this.modalService.dismissAll();
+                  this.openMicrosoftSqlServerForm = false;
+                  const encodedId = btoa(this.databaseId.toString());
+                  if(this.iscrossDbSelect){
+                    this.selectedHirchyIdCrsDb = this.databaseId
+                    this.connectCrossDbs();
+                  }else{
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
                 }
+              },
+              error: (error) => {
+                console.log(error);
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
               }
-            },
-            error: (error) => {
-              console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
-          }
-        )
+          )
+        } else {
+          this.checkDataSourceConnection(obj);
+        }
+      });
     }
     openSnowflakeServer(){
       this.openSnowflakeServerForm=true;
@@ -723,28 +748,34 @@ export class WorkbenchComponent implements OnInit{
           "display_name":this.displayName,
           "database": this.postGreDatabaseName,
       }
-        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
-          console.log(responce)
-              if(responce){
-                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.hierarchy_id
-                this.modalService.dismissAll();
-                this.openSnowflakeServerForm = false;
-                const encodedId = btoa(this.databaseId.toString());
-                if(this.iscrossDbSelect){
-                  this.selectedHirchyIdCrsDb = this.databaseId
-                  this.connectCrossDbs();
-                }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
+          this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+            console.log(responce)
+                if(responce){
+                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                  this.databaseId=responce.database?.hierarchy_id
+                  this.modalService.dismissAll();
+                  this.openSnowflakeServerForm = false;
+                  const encodedId = btoa(this.databaseId.toString());
+                  if(this.iscrossDbSelect){
+                    this.selectedHirchyIdCrsDb = this.databaseId
+                    this.connectCrossDbs();
+                  }else{
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
                 }
+              },
+              error: (error) => {
+                console.log(error);
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
               }
-            },
-            error: (error) => {
-              console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
-          }
-        )
+          )
+        } else {
+          this.checkDataSourceConnection(obj);
+        }
+      });
     }
     openMOngoDb(){
       this.openMongoDbForm=true;
@@ -762,28 +793,34 @@ export class WorkbenchComponent implements OnInit{
           "display_name":this.displayName,
           "database": this.postGreDatabaseName,
       }
-        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
-          console.log(responce)
-              if(responce){
-                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.hierarchy_id
-                this.modalService.dismissAll();
-                this.openMongoDbForm = false;
-                const encodedId = btoa(this.databaseId.toString());
-                if(this.iscrossDbSelect){
-                  this.selectedHirchyIdCrsDb = this.databaseId
-                  this.connectCrossDbs();
-                }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
+          this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+            console.log(responce)
+                if(responce){
+                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                  this.databaseId=responce.database?.hierarchy_id
+                  this.modalService.dismissAll();
+                  this.openMongoDbForm = false;
+                  const encodedId = btoa(this.databaseId.toString());
+                  if(this.iscrossDbSelect){
+                    this.selectedHirchyIdCrsDb = this.databaseId
+                    this.connectCrossDbs();
+                  }else{
+                    this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  }
                 }
+              },
+              error: (error) => {
+                console.log(error);
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
               }
-            },
-            error: (error) => {
-              console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
-          }
-        )
+          )
+        } else {
+          this.checkDataSourceConnection(obj);
+        }
+      });
     }
     openIbmDb2(){
       this.ibmDb2Form=true;
@@ -801,23 +838,29 @@ export class WorkbenchComponent implements OnInit{
           "display_name":this.displayName,
           "database": this.postGreDatabaseName,
       }
-        this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
-          console.log(responce)
-              if(responce){
-                this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
-                this.databaseId=responce.database?.hierarchy_id
-                this.modalService.dismissAll();
-                this.ibmDb2Form = false;
-                const encodedId = btoa(this.databaseId.toString());
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
+          this.workbechService.DbConnection(obj).subscribe({next: (responce) => {
+            console.log(responce)
+                if(responce){
+                  this.toasterservice.success('Connected','success',{ positionClass: 'toast-top-right'});
+                  this.databaseId=responce.database?.hierarchy_id
+                  this.modalService.dismissAll();
+                  this.ibmDb2Form = false;
+                  const encodedId = btoa(this.databaseId.toString());
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                }
+              },
+              error: (error) => {
+                console.log(error);
+                this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
               }
-            },
-            error: (error) => {
-              console.log(error);
-              this.toasterservice.error(error.error.message,'error',{ positionClass: 'toast-center-center'})
             }
-          }
-        )
+          )
+        } else {
+          this.checkDataSourceConnection(obj);
+        }
+      });
     }
 
     opensqlLite(){
@@ -835,6 +878,8 @@ export class WorkbenchComponent implements OnInit{
       formData.append('database_type','sqlite');
       formData.append('display_name',this.displayName);
 
+      this.confirmPopupForDataTransformation().then((isSkip) => {
+        if (isSkip) {
         this.workbechService.DbConnection(formData).subscribe({next: (responce) => {
           console.log(responce)
               if(responce){
@@ -847,7 +892,7 @@ export class WorkbenchComponent implements OnInit{
                   this.selectedHirchyIdCrsDb = this.databaseId
                   this.connectCrossDbs();
                 }else{
-                this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
+                  this.router.navigate(['/analytify/database-connection/tables/'+encodedId]);
                 }
               }
             },
@@ -857,6 +902,10 @@ export class WorkbenchComponent implements OnInit{
             }
           }
         )
+      } else {
+        this.checkDataSourceConnection(formData);
+      }
+      });
     }
 
     triggerFileUpload(value:any) {
@@ -1585,5 +1634,31 @@ connectGoogleSheets(){
   }
   onSchemaChange(){
     this.toasterservice.info('On Updating your existing sheets will not work as expected as you are changing schema','info',{ positionClass: 'toast-center-center'});
+  }
+
+  confirmPopupForDataTransformation(): Promise<boolean> {
+    return Swal.fire({
+      position: "center",
+      icon: "question",
+      title: "Do you want to do transformations on the data?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Skip",
+      cancelButtonText: "Data Transformation",
+    }).then((result) => result.isConfirmed);
+  }
+
+  checkDataSourceConnection(object: any) {
+    this.workbechService.checkDatasourceConnection(object).subscribe({
+      next: (responce) => {
+        console.log(responce);
+        const encodedId = btoa(responce.server_id.toString());
+        this.router.navigate(['/analytify/databaseConnection/dataTransformation/' + encodedId]);
+      },
+      error: (error) => {
+        console.log(error);
+        this.toasterservice.error(error.error.message, 'error', { positionClass: 'toast-center-center' })
+      }
+    });
   }
 }
