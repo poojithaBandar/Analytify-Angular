@@ -197,7 +197,7 @@
                                                         
                                                         
                                                             <div class="d-flex  end-0 gap-1 m-1">
-                                                                <a (click)="isAddTransformation = false" aria-label="edit" class="btn btn-sm btn-primary-light rounded-circle plus-icon-size" ngbDropdownToggle
+                                                                <a aria-label="edit" class="btn btn-sm btn-primary-light rounded-circle plus-icon-size" ngbDropdownToggle
                                                                     data-bs-toggle="dropdown">
                                                                     <i class="fe fe-edit"></i>
                                                                 </a>
@@ -205,8 +205,8 @@
                                                                     class="btn btn-sm btn-danger-light rounded-circle plus-icon-size">
                                                                     <i class="fe fe-trash"></i>
                                                                 </a>
-                                                                <a *ngIf="isLastTransformation(index, transformationIndex)" aria-label="add" [class.disabled]="!selectedTransformations[index][transformationIndex].key"
-                                                                    class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="isAddTransformation = true; addNewTransform(index)">
+                                                                <a *ngIf="transformationIndex === this.selectedTransformations[index]?.length - 1" aria-label="add" [class.disabled]="!selectedTransformations[index][transformationIndex].key"
+                                                                    class="btn btn-sm btn-primary rounded-circle plus-icon-size" (click)="addNewTransform(index)">
                                                                     <i class="fe fe-plus text-white text-sm"></i>
                                                                 </a>
                                                             </div>
@@ -245,15 +245,6 @@
                                                                                 </select>
                                                                             </div>
                                                                         </ul>
-
-                                                                    <!-- <ul class="dropdown-menu custom-dropdown nested-dropdown" ngbDropdownMenu>
-                                                                        @for(column of item.columns; track column){
-                                                                        <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
-                                                                            (click)="isAddTransformation ? setTransformationType(index, transformation.key,null, false) : editTransformation(index, transformationIndex, [transformation.key,column.col])">
-                                                                            <a> {{column?.col}} </a>
-                                                                        </li>
-                                                                        }
-                                                                    </ul> -->
                                                                 </div>
                                                                 } @else{
                                                                 <li class="btn btn-primary-light border transformations-dropdown" ngbDropdownItem
@@ -281,7 +272,7 @@
                     </div>
                     <div class="card-footer p-3">
                         <div class="float-end d-inline-block btn-list">
-                            <a class="btn btn-primary" (click)="setTransformations(false)">Import & Load</a>
+                            <a class="btn btn-primary" [class.disabled]="draggedTables.length === 0" (click)="setTransformations(false)">Import & Load</a>
                             <!-- <a class="btn btn-secondary" (click)="getValue()">Agree and Continue</a> -->
                         </div>
                     </div>

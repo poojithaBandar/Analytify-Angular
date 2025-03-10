@@ -20,7 +20,6 @@ export class DataTransformationComponent {
   defaults = ['Connections'];
   tables = [{tables : '', columns : []}];
   draggedTables: any[] = [];
-  isAddTransformation : boolean = false;
   selectedTransformations: any = {};
   hierarchyId : any;
   schema : any;
@@ -124,18 +123,6 @@ export class DataTransformationComponent {
 
   }
 
-  editTransformation(index:any, transformationIndex:any, transformationKey: string[]){
-    if (!this.selectedTransformations[index]) {
-      this.selectedTransformations[index] = [];
-    }
-    if (!this.selectedTransformations[index][transformationIndex]) {
-      console.error(`Transformation at index ${transformationIndex} does not exist for table ${index}`);
-      return;
-    }
-
-    // this.selectedTransformations[index][transformationIndex] = transformationKey; 
-  }
-
   getTransformationLabel(index: number, transformationIndex: number): string {
     let selectedData = "";
     this.transformationTypes.forEach((transformation : any)=>{
@@ -144,10 +131,6 @@ export class DataTransformationComponent {
       }
     });
     return selectedData;
-  }
-
-  isLastTransformation(index: number, transformationIndex: number): boolean {
-    return transformationIndex === this.selectedTransformations[index]?.length - 1;
   }
   removeTransformation(index: number, transformationIndex: number) {
     this.selectedTransformations[index].splice(transformationIndex, 1);
