@@ -1838,7 +1838,7 @@
                 [yGridSwitch]="yGridSwitch" [yLabelSwitch]="yLabelSwitch" [yLabelFontFamily]="yLabelFontFamily" [yLabelFontSize]="yLabelFontSize" [ylabelFontWeight]="ylabelFontWeight"
                 [yGridColor]="yGridColor" [yGridSwitch]="yGridSwitch" [color]="color" [measureColor]="measureColor" [dimensionColor]="dimensionColor" [dataLabelsFontSize]="dataLabelsFontSize" 
                 [dataLabelsFontFamily]="dataLabelsFontFamily" [dataLabelsColor]="dataLabelsColor" [displayUnits]="displayUnits" [decimalPlaces]="decimalPlaces" [prefix]="prefix" [suffix]="suffix" [sortType]="sortType"
-                [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject"
+                [isSheetSaveOrUpdate]="isSheetSaveOrUpdate" [drillDownIndex]="drillDownIndex" [draggedDrillDownColumns]="draggedDrillDownColumns"[drillDownObject]="drillDownObject" [selectedColorScheme]="selectedColorScheme" [isDistributed]="isDistributed"
                 (setDrilldowns)="setDrilldowns($event)" (saveOrUpdateChart)="setChartOptions($event)"></app-insight-echart>
             </div>          
             }
@@ -3736,7 +3736,7 @@
                                                                      ></ngx-colors>
                                                                 </div>
 
-                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap||funnel || calendar)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="!((table && chartId) || (pie && chartId)||donut||kpi||barLine||sidebyside||stocked||horizentalStocked||grouped||multiLine||heatMap || calendar) && ((!isDistributed && (bar || funnel)) || area || line)" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
                                                                         <p>Chart</p>
                                                                     </div>
@@ -3753,11 +3753,11 @@
                                                                     [format]="'hex'"></ngx-colors>
                                                                 </div>
 
-                                                                <div 
+                                                                <!-- <div 
                                                                 class="dropdown" 
-                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || calendar || (funnel && isDistributed)">
+                                                                *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || calendar || (funnel && isDistributed)"> -->
                                                                 <!-- Dropdown Button -->
-                                                                <button class="dropdown-button" (click)="toggleDropdownColorScheme()">
+                                                                <!-- <button class="dropdown-button" (click)="toggleDropdownColorScheme()">
                                                                   <div class="selected-colors" *ngIf="selectedColorScheme.length > 0">
                                                                     <div
                                                                       *ngFor="let color of selectedColorScheme.slice(0, 9)"
@@ -3767,10 +3767,10 @@
                                                                   </div>
                                                                   <span *ngIf="selectedColorScheme.length === 0">Select Color Scheme</span>
                                                                   <span class="arrow-down"></span>
-                                                                </button>
+                                                                </button> -->
                                                               
                                                                 <!-- Dropdown Content -->
-                                                                <div class="dropdown-content" [class.show]="isColorSchemeDropdownOpen">
+                                                                <!-- <div class="dropdown-content" [class.show]="isColorSchemeDropdownOpen">
                                                                   <div
                                                                     *ngFor="let scheme of colorSchemes"
                                                                     class="dropdown-item"
@@ -3784,10 +3784,7 @@
                                                                     </div>
                                                                   </div>
                                                                 </div>
-                                                              </div>
-                                                              
-                                                                  
-                                                                  
+                                                              </div> -->
 
                                                                 <div *ngIf="barLine" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <div class=""> 
@@ -3909,7 +3906,7 @@
                                                                     [format] = "'hex'"
                                                                      ></ngx-colors>
                                                                 </div>
-                                                                <div *ngIf="funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <div *ngIf="funnel || bar" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <label>Distribution</label>
                                                                     <div *ngIf="isDistributed" class="toggle toggle-sm on mb-0" (click)="toggleSwitch('distributed')">
                                                                         <span></span>
@@ -3918,7 +3915,7 @@
                                                                         <span></span>
                                                                     </div>
                                                                 </div>
-                                                                <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
+                                                                <!-- <div *ngIf="!isDistributed && funnel" class="d-flex align-items-center justify-content-between mb-0 flex-wrap gap-2 p-3">
                                                                     <label>color</label>
                                                                     <div *ngIf="funnelColorSwitch" class="toggle toggle-sm on mb-0" (click)="funnelColorSwitch = !funnelColorSwitch; resetChartColor()">
                                                                         <span></span>
@@ -3928,6 +3925,93 @@
                                                                     </div>
                                                                     <ngx-colors *ngIf="funnelColorSwitch" [(ngModel)]="color" ngx-colors-trigger [format]="'hex'">
                                                                     </ngx-colors>
+                                                                </div> -->
+                                                                <div *ngIf="pie || donut || sidebyside || stocked || horizentalStocked || grouped || multiLine || heatMap || radar || ((funnel || bar) && isDistributed)" class="p-2">
+                                                                    <div class="d-flex justify-content-between p-1 border rounded-3">
+                                                                        <div class="colors-card">
+                                                                            <ul class="d-flex flex-wrap">
+                                                                                <li
+                                                                                *ngFor="let color of selectedColorScheme"
+                                                                                [style.background]="color"
+                                                                                class="color-box cursor-pointer"></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        <div class="down-arrow-icon">
+                                                                            <div class=" dropdown" ngbDropdown>
+                                                                                <a ngbDropdownToggle data-bs-toggle="dropdown" role="button" (click)="getColorSchemesForDropdown()"
+                                                                                    aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                                                                    <button class="btn btn-primary" style=" padding: 0px 4px; font-size: 12px;">
+                                                                                        <i class="fa fa-angle-down"></i>
+                                                                                    </button>
+                                                                                </a>
+                                                                                <div class="dropdown-menu p-2" ngbDropdownMenu>
+                                                                                    <div class="child-color-height pt-1">
+                                                                                        <ul class="justify-content-between align-items-center px-1 ">
+                                                                                            <li *ngFor="let key of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item">
+                                                                                                <div class="color-row">
+                                                                                                    <div class="cursor-pointer col-4" (click)="setColorSchemeForChart(key)"> {{key}} </div>
+                                                                                                    <div class="d-flex col-8" (click)="setColorSchemeForChart(key)">
+                                                                                                        <div class="color-box cursor-pointer" *ngFor="let color of defaultColorSchemes[key]"
+                                                                                                            [style.background]="color">
+                                                                                                        </div>
+                                                                                                        <div class="color-box cursor-pointer" *ngFor="let color of userDefinedColorSchemes[key]"
+                                                                                                            [style.background]="color">
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <button *ngIf="keysOfUsersColors.length > 0 && keysOfUsersColors.includes(key)" class="btn btn-danger-light"
+                                                                                                            style="margin-left: -20px;" (click)="removeColorScheme(key,keyIndex)">
+                                                                                                        <i class="fa fa-remove"></i>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                
+                                                                                    <div class=" dropdown mt-2" ngbDropdown #colorPickerDropdown="ngbDropdown">
+                                                                                        <div class="d-flex flex-row-reverse px-2 pb-2">
+                                                                                            <a href="javascript:void(0);" ngbDropdownToggle data-bs-toggle="dropdown" role="button"
+                                                                                                aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                                                                                <button class="btn btn-primary">
+                                                                                                    <i class="fa fa-plus"></i>Add
+                                                                                                </button>
+                                                                                            </a>
+                                                                                        </div>
+                                                                                        <div class="dropdown-menu add-color-popup ColorPickerAlign" ngbDropdownMenu>
+                                                                                            <div class="p-2">
+                                                                                                <div class="p-2">
+                                                                                                    <p class="border-bottom">Color Picker</p>
+                                                                                                </div>
+                                                                                                <div class="rainbow-text d-flex align-items-center p-2 bg-light">
+                                                                                                    <p class="mb-0 me-2">Name:</p>
+                                                                                                    <input type="text" id="input-placeholder" placeholder="Color Name"
+                                                                                                    class="form-control border me-2" [(ngModel)]="colorSchemeName">
+                                                                                                </div>
+                                                                                                <div class="py-2">
+                                                                                                    <div class="d-flex">
+                                                                                                        <div *ngFor="let color of newColorScheme; let i = index" class="border color-box cursor-pointer" 
+                                                                                                        [ngClass]="{ 'border-primary': i === selectedBox }" [style.background]="color" (click)="selectedBox = i"></div>
+                                                                                                        <div class="cursor-pointer border rounded-3 bg-light"  [class.disabled]="newColorScheme.length >= 10"> 
+                                                                                                            <i class="fa fa-plus px-1" (click)="addNewBox()"></i> 
+                                                                                                        </div>
+                                                                                                        <div class="cursor-pointer border rounded-3 bg-light">
+                                                                                                            <i class="fa fa-check px-1"></i> 
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="py-1">
+                                                                                                    <input type="color" id="body" name="body" class="w-100" [(ngModel)]="selectedColor" (ngModelChange)="setColorToBox()"/>
+                                                                                                </div>
+                                                                                                <div class="d-flex justify-content-end">
+                                                                                                    <button [disabled]="(newColorScheme.length < 2 || newColorScheme.length > 10) || !colorSchemeName" class="btn btn-primary me-1" (click)="saveColorScheme(colorPickerDropdown)">Apply</button>
+                                                                                                    <button class="btn btn-danger" (click)="closeColorPicker(colorPickerDropdown)">Close</button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </ng-template>
                                                           </div>

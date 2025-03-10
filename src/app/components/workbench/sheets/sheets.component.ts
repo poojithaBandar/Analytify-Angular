@@ -1,5 +1,5 @@
 import { Component,ViewChild,NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,Input } from '@angular/core';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '../../../shared/sharedmodule';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -373,14 +373,28 @@ export class SheetsComponent {
   valueKeys: string[] = [];
   rawData: any = {};
   
-  colorSchemes = [
-    ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
-    ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
-    ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
-    ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
-    ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
-  ];
-  selectedColorScheme=[] as  any;
+  // colorSchemes = [
+  //   ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'], // Example gradient 1
+  //   ['#67001F', '#B2182B', '#D6604D', '#F4A582', '#FDDBC7', '#D1E5F0', '#92C5DE', '#4393C3', '#2166AC'], // Example gradient 2
+  //   ['#FFFF19', '#FFFF13', '#FFFF0A', '##FFFF00', '#FFC100', '#FF7D00', '#FF0000', '#C30000', '#8A0000'], // Example gradient 3
+  //   ['#FFFFFF', '#DFDFDF', '#C0C0C0', '#A2A2A2', '#858585', '#4E4E4E', '#353535', '#1E1E1E', '#000000'], // Example gradient 4
+  //   ['#E70B81', '#F1609A', '#F890B5', '#FCBCD0', '#FCE5EC', '#C6C6C6', '#A5A5A5', '#858585', '#666666'], // Example gradient 4
+  // ];
+
+  defaultColorSchemes : { [key: string]: string[] } = {  
+    Blue : ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
+    Orange : ['#ff5500', '#ff4545', '#ff9c73', '#fac571', '#eee677'],
+    Green : ['#337d2e', '#43c36f', '#7fc472', '#a2cb97', '#367b6a'],
+    RAINBOW : ['#59D5E0', '#F5DD61', '#F4538A', '#FAA300'],
+    RETRO : ['#003092', '#00879E', '#FFAB5B', '#C1E2A4'],
+    HAPPY : ['#A587CA', '#36CEDC', '#8FE968', '#FFEA56', '#FFB750', '#FF787C'],
+    FUNNEL : ['#f7941d', '#ef3e36', '#a01f62', '#0e74bc', '#00a3c9', '#ca5f63', '#62c69c'],
+  };
+  userDefinedColorSchemes : { [key: string]: string[] } = {};
+  keysOfColorSchemes : any[] = [];
+  keysOfUsersColors : any[] = [];
+  selectedColorScheme = this.defaultColorSchemes['Blue'];
+
   hasUnSavedChanges = false;
   heirarchyColumnData : any [] = [];
   deleteSheetInSheetComponent = false;
@@ -536,10 +550,10 @@ export class SheetsComponent {
   toggleDropdownColorScheme() {
     this.isColorSchemeDropdownOpen = !this.isColorSchemeDropdownOpen;
   }
-  selectColorScheme(scheme: string[]) {
-    this.selectedColorScheme = scheme.slice(0, 9);
-    console.log('color pallete', this.selectedColorScheme)
-  }
+  // selectColorScheme(scheme: string[]) {
+  //   this.selectedColorScheme = scheme.slice(0, 9);
+  //   console.log('color pallete', this.selectedColorScheme)
+  // }
   getGradient(colors: string[]): string {
     return `linear-gradient(to right, ${colors.join(', ')})`;
   }
@@ -3859,7 +3873,7 @@ customizechangeChartPlugin() {
     this.xlabelFontWeight = data.xlabelFontWeight ?? 400;
     this.backgroundColor = data.backgroundColor ?? '#fff';
     this.color = data.color ?? '#2392c1';
-    this.selectedColorScheme = data.selectedColorScheme ?? ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.selectedColorScheme = data.selectedColorScheme ?? ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
     this.ylabelFontWeight = data.ylabelFontWeight ?? 400;
     this.isBold = data.isBold ?? false;
     this.isXlabelBold = data.isXlabelBold ?? false;
@@ -3954,7 +3968,7 @@ customizechangeChartPlugin() {
     this.xlabelFontWeight = 400;
     this.backgroundColor = '#fff';
     this.color = '#2392c1';
-    this.selectedColorScheme = ['#00d1c1', '#30e0cf', '#48efde', '#5dfeee', '#fee74f', '#feda40', '#fecd31', '#fec01e', '#feb300'],
+    this.selectedColorScheme = ['#1d2e92', '#088ed2', '#007cb9', '#36c2ce', '#52c9f7'],
     this.ylabelFontWeight = 400;
     this.isBold = false;
     this.isTableHeaderBold = false;
@@ -5823,4 +5837,68 @@ customizechangeChartPlugin() {
       }
       return isValid;
     }
+
+  newColorScheme : any[] = [];
+  colorSchemeName : string = '';
+  selectedBox : number = 0;
+  selectedColor : string = '#f6b73c';
+  getColorSchemesForDropdown() {
+    this.keysOfColorSchemes = Object.keys(this.defaultColorSchemes);
+    if (this.userDefinedColorSchemes) {
+      this.keysOfUsersColors = Object.keys(this.userDefinedColorSchemes);
+      if (this.keysOfUsersColors.length > 0) {
+        this.keysOfUsersColors.forEach((colorKey: any) => {
+          this.keysOfColorSchemes.push(colorKey);
+        });
+      }
+    }
+  }
+  setColorSchemeForChart(key: string) {
+    if(Object.keys(this.defaultColorSchemes).includes(key)){
+      this.selectedColorScheme = this.defaultColorSchemes[key];
+    } else if(Object.keys(this.userDefinedColorSchemes).includes(key)){
+      this.selectedColorScheme = this.userDefinedColorSchemes[key];
+    }
+  }
+  removeColorScheme(key: string, index: any){
+    Swal.fire({
+      position: "center",
+      icon: "question",
+      title: "would you like to delete color scheme?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        delete this.userDefinedColorSchemes[key];
+        this.keysOfColorSchemes.splice(index);
+        if (this.keysOfUsersColors.includes(key)) {
+          const userIndex = this.keysOfUsersColors.indexOf(key);
+          if (userIndex !== -1) {
+            this.keysOfUsersColors.splice(userIndex, 1);
+          }
+        }
+      }
+    });
+  }
+  addNewBox(){
+    this.newColorScheme.push('#FFFFFF');
+    this.selectedBox = this.newColorScheme.length-1;
+  }
+  setColorToBox(){
+    this.newColorScheme[this.selectedBox] = this.selectedColor;
+  }
+  closeColorPicker(colorPickerDropDown : NgbDropdown){
+    colorPickerDropDown.close();
+    this.selectedBox = 0;
+    this.newColorScheme = [];
+    this.selectedColor = '#f6b73c';
+    this.colorSchemeName = '';
+  }
+  saveColorScheme(colorPickerDropDown : NgbDropdown){
+    this.userDefinedColorSchemes[this.colorSchemeName] = this.newColorScheme;
+    this.closeColorPicker(colorPickerDropDown);
+    this.getColorSchemesForDropdown();
+  }
 }
