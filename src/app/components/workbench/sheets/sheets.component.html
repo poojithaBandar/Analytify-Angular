@@ -3949,8 +3949,8 @@
                                                                                         <ul class="justify-content-between align-items-center px-1 ">
                                                                                             <li *ngFor="let key of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item p-1">
                                                                                                 <div class="color-row">
-                                                                                                    <div class="d-flex align-items-center cursor-pointer col-4 me-1" (click)="setColorSchemeForChart(key)"> {{key}} </div>
-                                                                                                    <div class="d-flex col-8" (click)="setColorSchemeForChart(key)">
+                                                                                                    <div class="d-flex align-items-center cursor-pointer col-4 me-1 p-1" (click)="setColorSchemeForChart(key)" ngbTooltip="{{key}}"> {{key | slice:0:10}} </div>
+                                                                                                    <div class="d-flex col-8 p-1" (click)="setColorSchemeForChart(key)">
                                                                                                         <div class="color-box cursor-pointer" *ngFor="let color of defaultColorSchemes[key]"
                                                                                                             [style.background]="color">
                                                                                                         </div>
@@ -3960,7 +3960,7 @@
                                                                                                     </div>
                                                                                                     <button *ngIf="keysOfUsersColors.length > 0 && keysOfUsersColors.includes(key)" class="cursor-pointer border rounded-3 bg-light"
                                                                                                              (click)="removeColorScheme(key,keyIndex)">
-                                                                                                        <i class="fa fa-remove px-1"></i>
+                                                                                                        <i class="fa fa-remove"></i>
                                                                                                     </button>
                                                                                                 </div>
                                                                                             </li>
