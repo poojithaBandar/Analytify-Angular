@@ -185,7 +185,14 @@
                                                         (cdkDropListDropped)="drop($event)">
                                                            
                                                             <li *ngFor="let item of dashboardNew" ><a draggable="true" [ngClass]="{ 'sheet-bold': item['selectedSheet']}"
-                                                           class="dropdown-item"  cdkDrag><i data-bs-toggle="tooltip" ngbTooltip="{{item.data.title}}" (click)="viewSheet(item)" class="fa fa-plus-square icon-outline"></i> {{item.data.title | slice:0:15}}<i data-bs-toggle="tooltip"  ngbTooltip="clear"  (click)="clearSheet($event,item)" class="fa fa-close float-right mt-1"></i></a></li>
+                                                           class="dropdown-item"  cdkDrag>
+                                                           <app-insights-button [classesList]="'icon-outline'"
+                                                           [toolTip]="item.data.title" [faIconList]="'fa fa-plus-square'" [tabIndex]="0"
+                                                           [previledgeIdsList]="[20,18]" [isBtn]="false"
+                                                           (btnClickEvent)="viewSheet(item)" 
+                                                           [isIcon]="false"></app-insights-button>
+                                                           <!-- <i data-bs-toggle="tooltip" ngbTooltip="{{item.data.title}}" (click)="viewSheet(item)" class="fa fa-plus-square icon-outline"></i> -->
+                                                            {{item.data.title | slice:0:15}}<i data-bs-toggle="tooltip"  ngbTooltip="clear"  (click)="clearSheet($event,item)" class="fa fa-close float-right mt-1"></i></a></li>
 
                                                             
                                                         </ul>
