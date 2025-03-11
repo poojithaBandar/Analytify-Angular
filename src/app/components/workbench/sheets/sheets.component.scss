@@ -309,8 +309,8 @@ button.FaFaIconProperties { padding: 6px 8px; border-top-left-radius: 0px !impor
 .dark-green{ background-color: #208830;}
 .dark-blue{ background-color: #154fa6;}
 .brown{ background-color: #d4801c;}
-.child-color-height{ height: 150px; overflow: auto; width: 472px;}
-.add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-206.5px, -167.3333px, 7px) !important; }
+.child-color-height{ height: 150px; overflow: auto;}
+.add-color-popup { position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-299.5px, -162.3333px, 7px) !important; }
 
 
 
@@ -481,7 +481,7 @@ input.BitSpace {
   .dataCuCardHeight {height: calc(100% - 25px);}
   .show-chart-card {height: calc(100% - 160px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 129px);}
-  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-183.5px, -9.3333px, 7px) !important}
+  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-267.5px, 6.6667px, 7px) !important}
 
 }
 
@@ -492,7 +492,7 @@ input.BitSpace {
   .dataCuCardHeight {height: calc(100% - 24px);}
   .show-chart-card {height: calc(100% - 169px);}
   .show-chart-card-no-heirarchy {height: calc(100% - 135px);}
-  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-203.5px, -8.3333px, 7px) !important;}
+  .dropdown-menu.add-color-popup.ColorPickerAlign.show {transform: translate3d(-280.5px, 8.6667px, 7px) !important;}
 
 }
 @media ( 1480px <= width <= 1600px){

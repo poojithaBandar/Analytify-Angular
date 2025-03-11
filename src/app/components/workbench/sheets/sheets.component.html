@@ -3944,12 +3944,12 @@
                                                                                         <i class="fa fa-angle-down"></i>
                                                                                     </button>
                                                                                 </a>
-                                                                                <div class="dropdown-menu p-2" ngbDropdownMenu>
+                                                                                <div class="dropdown-menu p-1" ngbDropdownMenu>
                                                                                     <div class="child-color-height pt-1">
                                                                                         <ul class="justify-content-between align-items-center px-1 ">
-                                                                                            <li *ngFor="let key of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item">
+                                                                                            <li *ngFor="let key of keysOfColorSchemes; let keyIndex = index" ngbDropdownItem class="dropdown-item p-1">
                                                                                                 <div class="color-row">
-                                                                                                    <div class="cursor-pointer col-4" (click)="setColorSchemeForChart(key)"> {{key}} </div>
+                                                                                                    <div class="d-flex align-items-center cursor-pointer col-4 me-1" (click)="setColorSchemeForChart(key)"> {{key}} </div>
                                                                                                     <div class="d-flex col-8" (click)="setColorSchemeForChart(key)">
                                                                                                         <div class="color-box cursor-pointer" *ngFor="let color of defaultColorSchemes[key]"
                                                                                                             [style.background]="color">
@@ -3958,9 +3958,9 @@
                                                                                                             [style.background]="color">
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                    <button *ngIf="keysOfUsersColors.length > 0 && keysOfUsersColors.includes(key)" class="btn btn-danger-light"
-                                                                                                            style="margin-left: -20px;" (click)="removeColorScheme(key,keyIndex)">
-                                                                                                        <i class="fa fa-remove"></i>
+                                                                                                    <button *ngIf="keysOfUsersColors.length > 0 && keysOfUsersColors.includes(key)" class="cursor-pointer border rounded-3 bg-light"
+                                                                                                             (click)="removeColorScheme(key,keyIndex)">
+                                                                                                        <i class="fa fa-remove px-1"></i>
                                                                                                     </button>
                                                                                                 </div>
                                                                                             </li>
@@ -3990,11 +3990,8 @@
                                                                                                     <div class="d-flex">
                                                                                                         <div *ngFor="let color of newColorScheme; let i = index" class="border color-box cursor-pointer" 
                                                                                                         [ngClass]="{ 'border-primary': i === selectedBox }" [style.background]="color" (click)="selectedBox = i"></div>
-                                                                                                        <div class="cursor-pointer border rounded-3 bg-light"  [class.disabled]="newColorScheme.length >= 10"> 
-                                                                                                            <i class="fa fa-plus px-1" (click)="addNewBox()"></i> 
-                                                                                                        </div>
-                                                                                                        <div class="cursor-pointer border rounded-3 bg-light">
-                                                                                                            <i class="fa fa-check px-1"></i> 
+                                                                                                        <div class="cursor-pointer border rounded-3 bg-light"  [class.disabled]="newColorScheme.length >= 10" (click)="addNewBox()"> 
+                                                                                                            <i class="fa fa-plus px-1"></i> 
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>
