@@ -64,8 +64,8 @@
                                                         <p class="mb-0">XShop</p>
                                                     </div> -->
                                                     <div class="input-group mt-2 px-3">
-                                                        <input type="text" placeholder="Search" class="form-control border">
-                                                        <button type="button" aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0">
+                                                        <input type="text" placeholder="Search" [(ngModel)]="searchText" (input)="getFilteredTables()" class="form-control border">
+                                                        <button type="button" aria-label="button" class="btn input-group-text btn-primary tx-fixed-white border-start-0" (click)="getFilteredTables()">
                                                             <i aria-hidden="true" class="fe fe-search"></i>
                                                         </button>
                                                     </div>

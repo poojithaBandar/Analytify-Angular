@@ -7,11 +7,12 @@ import { WorkbenchService } from '../workbench.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import _ from 'lodash';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-data-transformation',
   standalone: true,
-  imports: [SharedModule,NgbModule,DragDropModule,CommonModule],
+  imports: [SharedModule,NgbModule,DragDropModule,CommonModule,FormsModule],
   templateUrl: './data-transformation.component.html',
   styleUrl: './data-transformation.component.scss'
 })
@@ -42,6 +43,8 @@ export class DataTransformationComponent {
   ]
   isOpen : boolean = true;
   @ViewChildren('dropdownRef') dropdowns!: QueryList<NgbDropdown>;
+  searchText : string = '';
+  originalTableData = [{tables : '', columns : []}];
 
   constructor(private workbechService: WorkbenchService, private route: ActivatedRoute, private router: Router) {
     if (this.router.url.includes('/analytify/databaseConnection/dataTransformation')) {
@@ -159,6 +162,7 @@ export class DataTransformationComponent {
       next: (response: any) => {
         console.log(response);
         this.tables = response.tables;
+        this.originalTableData = response.tables;
         this.schema = response.schema;
         this.databaseName = response.databas_name;
       },
@@ -229,5 +233,14 @@ export class DataTransformationComponent {
         })
       }
     });
+  }
+
+  getFilteredTables(){
+    this.tables = this.originalTableData;
+    if(this.searchText){
+      this.tables = this.tables.filter(table =>
+        table?.tables?.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
   }
 }
