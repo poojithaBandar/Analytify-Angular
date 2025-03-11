@@ -2204,9 +2204,14 @@ allowDrop(ev : any): void {
         this.cdr.detectChanges();  // Ensures ViewChildren is updated
         console.log("Pivot Containers:", this.pivotContainers);
         console.log("Pivot Containers Length:", this.pivotContainers.length);
-    
-        const pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
-    
+        let pivotTables: any;
+        if(isTabs){
+          // this.dashboardTest.push(element);
+          // this.sheetTabs[this.selectedTabIndex].dashboard = this.dashboardTest;
+          pivotTables = this.dashboardTest.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+        } else {
+          pivotTables = this.dashboard.filter(item => item.chartType === 'PIVOT' && item['chartId'] === 9);
+        }
         if (pivotTables.length !== this.pivotContainers.length) {
           console.warn(`Mismatch: Found ${pivotTables.length} Pivot Tables but ${this.pivotContainers.length} Pivot Containers`);
         }
